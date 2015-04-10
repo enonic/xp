@@ -4,6 +4,7 @@ package com.enonic.xp.node;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -30,7 +31,7 @@ public class NodeQuery
 
     private final AggregationQueries aggregationQueries;
 
-    private final ImmutableSet<OrderExpr> orderBys;
+    private final ImmutableList<OrderExpr> orderBys;
 
     private final Principals principals;
 
@@ -47,7 +48,7 @@ public class NodeQuery
         this.query = builder.query;
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
-        this.orderBys = query != null ? ImmutableSet.copyOf( query.getOrderSet() ) : ImmutableSet.<OrderExpr>of();
+        this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
         this.size = builder.size;
         this.from = builder.from;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
@@ -85,7 +86,7 @@ public class NodeQuery
         return queryFilters;
     }
 
-    public ImmutableSet<OrderExpr> getOrderBys()
+    public ImmutableList<OrderExpr> getOrderBys()
     {
         return orderBys;
     }

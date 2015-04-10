@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.query;
 
+import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.index.query.FilterBuilder;
@@ -9,6 +10,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
@@ -150,7 +152,7 @@ public class ElasticsearchQuery
 
         private String indexName;
 
-        private Set<SortBuilder> sortBuilders = Sets.newHashSet();
+        private List<SortBuilder> sortBuilders = Lists.newArrayList();
 
         private int from = 0;
 
@@ -192,7 +194,7 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder sortBuilders( final Set<SortBuilder> sortBuilders )
+        public Builder sortBuilders( final List<SortBuilder> sortBuilders )
         {
             this.sortBuilders = sortBuilders;
             return this;

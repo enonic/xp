@@ -15,7 +15,7 @@ public class QueryExprTest
         final QueryExpr expr = new QueryExpr( null, null );
 
         Assert.assertNull( expr.getConstraint() );
-        Assert.assertEquals( 0, expr.getOrderSet().size() );
+        Assert.assertEquals( 0, expr.getOrderList().size() );
         Assert.assertEquals( "", expr.toString() );
     }
 
@@ -27,7 +27,7 @@ public class QueryExprTest
         final QueryExpr expr = new QueryExpr( constraint, orderList );
 
         Assert.assertSame( constraint, expr.getConstraint() );
-        Assert.assertEquals( 1, expr.getOrderSet().size() );
+        Assert.assertEquals( 1, expr.getOrderList().size() );
         Assert.assertEquals( "a = 2.0 ORDER BY a DESC", expr.toString() );
     }
 
@@ -38,7 +38,7 @@ public class QueryExprTest
         final QueryExpr expr = new QueryExpr( constraint, null );
 
         Assert.assertSame( constraint, expr.getConstraint() );
-        Assert.assertEquals( 0, expr.getOrderSet().size() );
+        Assert.assertEquals( 0, expr.getOrderList().size() );
         Assert.assertEquals( "a = 2.0", expr.toString() );
     }
 
@@ -51,15 +51,15 @@ public class QueryExprTest
         final QueryExpr expr3 = QueryExpr.from( null, orderList );
 
         Assert.assertNull( expr1.getConstraint() );
-        Assert.assertEquals( 1, expr1.getOrderSet().size() );
+        Assert.assertEquals( 1, expr1.getOrderList().size() );
         Assert.assertEquals( "ORDER BY a DESC", expr1.toString() );
 
         Assert.assertNull( expr2.getConstraint() );
-        Assert.assertEquals( 1, expr2.getOrderSet().size() );
+        Assert.assertEquals( 1, expr2.getOrderList().size() );
         Assert.assertEquals( "ORDER BY a DESC", expr2.toString() );
 
         Assert.assertNull( expr3.getConstraint() );
-        Assert.assertEquals( 1, expr3.getOrderSet().size() );
+        Assert.assertEquals( 1, expr3.getOrderList().size() );
         Assert.assertEquals( "ORDER BY a DESC", expr3.toString() );
     }
 }
