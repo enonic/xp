@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -34,6 +36,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
@@ -945,6 +948,23 @@ public class ContentResourceTest
 
         assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
     }
+
+    @Test
+    public void move_with_moveContentException()
+    {
+        MoveContentJson json = new MoveContentJson();
+        json.setContentIds( Arrays.asList( "id1", "id2", "id3", "id4" ) );
+        json.setParentContentPath( "/root" );
+
+        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        Mockito.when( contentService.move( Mockito.any() ) ).thenThrow( new MoveContentException( "" ) ).thenReturn( null );
+
+        MoveContentResultJson resultJson = contentResource.move( json );
+
+        assertEquals( 3, resultJson.getSuccesses().size() );
+        assertEquals( 1, resultJson.getFailures().size() );
+    }
+
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
