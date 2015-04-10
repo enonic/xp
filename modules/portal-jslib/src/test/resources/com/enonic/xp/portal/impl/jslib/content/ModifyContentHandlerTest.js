@@ -52,11 +52,13 @@ var expectedJson = {
                                 "name": "mypart",
                                 "path": "top/1/bottom/0",
                                 "type": "part"
-                            }]
+                            }],
+                            "name": "bottom"
                         }
                     },
                     "type": "layout"
-                }]
+                }],
+                "name": "top"
             }
         }
     },

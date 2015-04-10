@@ -4,6 +4,8 @@ module api.liveedit {
 
     export class RegionItemType extends ItemType {
 
+        static ATTRIBUTE_NAME = "portal-region";
+
         private static INSTANCE = new RegionItemType();
 
         static get(): RegionItemType {
@@ -24,6 +26,10 @@ module api.liveedit {
                 contextMenuConfig: ['parent', 'clearRegion']
 
             });
+        }
+
+        static getRegionName(element: api.dom.Element): string {
+            return element.getEl().getAttribute('data-' + RegionItemType.ATTRIBUTE_NAME);
         }
 
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {

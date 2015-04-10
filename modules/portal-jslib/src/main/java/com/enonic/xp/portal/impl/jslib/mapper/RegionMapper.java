@@ -21,14 +21,14 @@ public final class RegionMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final Region value )
+    private void serialize( final MapGenerator gen, final Region value )
     {
         gen.map( value.getName() );
         serializeComponents( gen, value.getComponents() );
         gen.end();
     }
 
-    private static void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
+    private void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
     {
         gen.array( "components" );
         for ( final Component component : values )
@@ -38,5 +38,6 @@ public final class RegionMapper
             gen.end();
         }
         gen.end();
+        gen.value( "name", this.value.getName() );
     }
 }

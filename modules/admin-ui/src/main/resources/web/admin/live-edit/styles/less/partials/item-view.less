@@ -4,7 +4,8 @@
     display: none;
   }
 
-  &.empty > .item-placeholder {
+  &.empty > .item-placeholder,
+  &[data-portal-placeholder=true] > .item-placeholder {
     display: block;
   }
 
@@ -50,6 +51,15 @@
   margin: 1px 0 10px 0;
   text-align: center;
   .box-sizing(border-box);
+
+  [data-portal-placeholder=true] & {
+    background-color: white;
+    border: 1px solid @admin-medium-gray-border;
+
+    &:hover {
+      border-color: transparent;
+    }
+  }
 
   &:before {
     position: absolute;
