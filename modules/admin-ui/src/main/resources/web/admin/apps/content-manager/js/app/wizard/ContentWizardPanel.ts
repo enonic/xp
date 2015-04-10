@@ -209,7 +209,6 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
-                    this.publishAction.setEnabled(this.isValid());
                 });
 
                 this.addClass("content-wizard-panel");
