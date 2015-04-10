@@ -57,6 +57,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
@@ -90,7 +91,7 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
-import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
@@ -243,17 +244,24 @@ public final class ContentResource
 
     @POST
     @Path("move")
-    public ContentSummaryListJson move( final MoveContentJson params )
+    public MoveContentResultJson move( final MoveContentJson params )
     {
-        final Contents contentForMove = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( params.getContentIds() ) ) );
-        final Contents movedContents = contentService.move( new MoveContentParams(ContentIds.from( params.getContentIds() ), params.getParentContentPath() ) );
+        final MoveContentResultJson resultJson = new MoveContentResultJson();
 
-        final ContentListMetaData metaData = ContentListMetaData.create().
-            totalHits( movedContents.getSize() ).
-            hits( movedContents.getSize() ).
-            build();
+        for ( ContentId contentId : ContentIds.from( params.getContentIds() ) )
+        {
+            try
+            {
+                contentService.move( new MoveContentParams( ContentIds.from( contentId ), params.getParentContentPath() ) );
+                resultJson.addSuccess( contentId );
+            }
+            catch ( MoveContentException e )
+            {
+                resultJson.addFailure( contentId, e.getMessage() );
+            }
+        }
 
-        return new ContentSummaryListJson( movedContents, metaData, newContentIconUrlResolver() );
+        return resultJson;
     }
 
     @POST
@@ -455,7 +463,7 @@ public final class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath(ContentPath.from(pathParam));
+        final Content content = contentService.getByPath( ContentPath.from( pathParam ) );
 
         if ( content == null )
         {
