@@ -37,7 +37,13 @@ module api.util {
             return api.util.DateHelper.newUTCDate(parsedYear, parsedMonth - 1, parsedDayOfMonth);
         }
 
-        public static parseUTCDateTime(value: string): Date {
+        /**
+         * Parses passed UTC string into Date object.
+         * @param value
+         * @param ignoreLocalTimezone - local time zone will be ignored if this parameter is true.
+         * @returns {Date}
+         */
+        public static parseUTCDateTime(value: string, ignoreLocalTimezone: boolean = false): Date {
 
             var parsedYear: number = Number(value.substring(0, 4));
             var parsedMonth: number = Number(value.substring(5, 7));
@@ -45,8 +51,12 @@ module api.util {
             var parsedHours: number = Number(value.substring(11, 13));
             var parsedMinutes: number = Number(value.substring(14, 16));
             var parsedSeconds: number = Number(value.substring(17, 19));
-            return api.util.DateHelper.newUTCDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
-                parsedSeconds);
+            if(ignoreLocalTimezone)
+                return DateHelper.newDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
+                    parsedSeconds);
+            else
+                return DateHelper.newUTCDateTime(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes,
+                    parsedSeconds);
         }
 
         public static newUTCDate(year: number, month: number, date: number) {
@@ -59,14 +69,36 @@ module api.util {
             return new Date(Date.UTC(year, month, date, hours, minutes, seconds));
         }
 
+        /**
+         * Creates Date object from passes values. Method does not take in account local timezone unlike newUTCDateTime() method.
+         * @returns {Date}
+         */
+        public static newDateTime(year: number, month: number, date: number, hours: number, minutes: number, seconds: number = 0) {
+            return new Date(year, month, date, hours, minutes, seconds);
+        }
+
         public static formatUTCDate(date: Date): string {
             var yearAsString = "" + date.getUTCFullYear();
             return yearAsString + "-" + this.padNumber(date.getUTCMonth() + 1) + "-" + this.padNumber(date.getUTCDate());
         }
 
+        /**
+         * Formats date part of passed date object. Returns string like 2010-01-01
+         * @param date
+         * @returns {string}
+         */
         public static formatDate(date: Date): string {
             var yearAsString = "" + date.getFullYear();
             return yearAsString + "-" + this.padNumber(date.getMonth() + 1) + "-" + this.padNumber(date.getDate());
+        }
+
+        /**
+         * Formats time part of passed date object. Returns string like 10:55:00
+         * @param date
+         * @returns {string}
+         */
+        public static formatTime(date: Date): string {
+            return this.padNumber(date.getHours()) + ":" + this.padNumber(date.getMinutes()) + ":" + this.padNumber(date.getSeconds());
         }
 
         private static padNumber(num: number): string {
@@ -77,6 +109,17 @@ module api.util {
             var dateAsString = DateHelper.formatUTCDate(date);
             return dateAsString + "T" + this.padNumber(date.getUTCHours()) + ":" + this.padNumber(date.getUTCMinutes()) + ":" +
                    this.padNumber(date.getUTCSeconds());
+        }
+
+        /**
+         * Formats passed date as date string, like 2010-01-01T10:55:00
+         * @param date
+         * @returns {string}
+         */
+        public static formatDateTime(date: Date): string {
+            var dateAsString = DateHelper.formatDate(date);
+            var timeAsString = DateHelper.formatTime(date);
+            return dateAsString + "T" + timeAsString;
         }
 
         public static formatUTCDateTimeForInstant(date: Date): string {
@@ -102,6 +145,11 @@ module api.util {
                 : null;
         }
 
+        /**
+         * Parses passed value to Time object. Expected format is only 5 chars like "12:10"
+         * @param value
+         * @returns {*}
+         */
         private static parseTime(value: string): Time {
             var dateStr = (value || '').trim();
             if (dateStr.length != 5) {
@@ -119,6 +167,11 @@ module api.util {
             return {hour: hour, minute: minute};
         }
 
+        /**
+         * Parses passed value into Date object. Expected length is 14-16 chars, value should be like "2015-04-17 06:00"
+         * @param value
+         * @returns {*}
+         */
         static parseDateTime(value: string): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 14 || dateStr.length > 16) {
@@ -179,6 +232,15 @@ module api.util {
             };
         }
 
+        /**
+         * Parses passed string with use of given separators. Passed string should not contain timezone.
+         * @param value
+         * @param dateTimeSeparator
+         * @param dateSeparator
+         * @param timeSeparator
+         * @param fractionSeparator
+         * @returns {*}
+         */
         static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":", fractionSeparator: string = "."): Date {
             var dateStr = (value || '').trim();
 
