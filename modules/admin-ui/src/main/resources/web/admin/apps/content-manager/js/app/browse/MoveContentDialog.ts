@@ -6,6 +6,9 @@ module app.browse {
     import ContentSummary = api.content.ContentSummary;
     import ContentResponse = api.content.ContentResponse;
     import ContentIds = api.content.ContentIds;
+    import MoveContentResult = api.content.MoveContentResult;
+    import MoveContentResultFailure = api.content.MoveContentResultFailure;
+
 
     export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -86,14 +89,20 @@ module app.browse {
                 build();
 
             new api.content.MoveContentRequest(contentIds, parentRoot).
-                sendAndParse().then((response: ContentResponse<ContentSummary>) => {
-                    debugger;
+                sendAndParse().then((response: MoveContentResult) => {
                     if (parentContent) {
                         this.contentComboBox.deselect(parentContent);
                     }
                     this.contentMoveMask.hide();
-                    new api.content.ContentMovedEvent(ContentIds.fromContents(response.getContents())).fire();
-                    api.notify.showFeedback('Content was moved!');
+
+                    if (response.getMoved().length > 0) {
+                        new api.content.ContentMovedEvent(response.getMoved()).fire();
+                        api.notify.showFeedback('Content was moved!');
+                    }
+
+                    response.getMoveFailures().forEach((failure: MoveContentResultFailure) => {
+                        api.notify.showWarning(failure.getReason());
+                    });
                     this.close();
                 }).catch((reason)=> {
                     api.notify.showWarning(reason.getMessage());

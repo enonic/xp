@@ -67,6 +67,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -474,6 +475,10 @@ public class ContentServiceImpl
         catch ( MoveNodeException e )
         {
             throw new MoveContentException( e.getMessage() );
+        }
+        catch ( NodeAlreadyExistAtPathException e )
+        {
+            throw new MoveContentException( "Content already exists at path: " + e.getNode().toString() );
         }
     }
 
