@@ -59,28 +59,24 @@ module api.util {
            return true;
         }
 
-        /*static fromString(s: string): Timezone {
-            if (!Timezone.isValidTimezone(s)) {
-                throw new Error("Cannot parse Timezone from string: " + s);
+       static isValidOffset(s: number): boolean {
+            if (s > -13 && s < 13) {
+                return true;
             }
 
-            var date = DateHelper.parseLongTimezone(s, Timezone.DATE_TIME_SEPARATOR, Timezone.DATE_SEPARATOR, Timezone.TIME_SEPARATOR, Timezone.FRACTION_SEPARATOR);
+            return false;
+        }
 
-            if (!date) {
-                throw new Error("Cannot parse Timezone from string: " + s);
+        static fromOffset(s: number): Timezone {
+            if (!Timezone.isValidOffset(s)) {
+                throw new Error("Passed Timezone ofsset is invalid: " + s);
             }
 
             return Timezone.create()
-                .setYear(date.getFullYear())
-                .setMonth(date.getMonth())
-                .setDay(date.getDate())
-                .setHours(date.getHours())
-                .setMinutes(date.getMinutes())
-                .setSeconds(date.getSeconds())
-                .setFractions(date.getMilliseconds())
+                .setOffset(s)
                 .build();
-         }
-        */
+        }
+
 
         public static create(): TimezoneBuilder {
             return new TimezoneBuilder();

@@ -10,6 +10,10 @@ module api.util {
             return (new Date().getTimezoneOffset() / 60) * -1;
         }
 
+        public static getTZOffsetFromDate(s: Date): number {
+            return (s.getTimezoneOffset() / 60) * -1;
+        }
+
         public static parseUTCTime(localTime: string): string {
             var values = localTime.split(':');
             var date = new Date();
@@ -199,7 +203,7 @@ module api.util {
         }
 
         static parseOffset(value: string, offsetSeparator: string = "+"): number {
-            if(value != null && (value[value.length - 1] == "Z" || value[value.length - 1] == "z")) {
+            if(DateHelper.isUTCdate(value)) {
                 return 0;
             } else {
                 var dateStr = (value || '').trim();
@@ -217,6 +221,18 @@ module api.util {
 
                 return offset;
             }
+        }
+
+        /**
+         * Returns true if passed string ends with 'z'
+         * @param value
+         * @returns {number}
+         */
+        static isUTCdate(value: string): boolean {
+            if (value != null && (value[value.length - 1] == "Z" || value[value.length - 1] == "z")) {
+                return true;
+            }
+            return false;
         }
 
         /**

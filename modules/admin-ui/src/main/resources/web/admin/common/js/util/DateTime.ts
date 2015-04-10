@@ -130,14 +130,21 @@ module api.util {
             if (!DateTime.isValidDateTime(s)) {
                 throw new Error("Cannot parse DateTime from string: " + s);
             }
-            var withoutTZ = DateTime.trimTZ(s);
-            var date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
-            var offset = DateHelper.parseOffset(s);
-            var timezone : Timezone = null;
-            if(offset != null) {
-                timezone = Timezone.create().setOffset(offset).build();
+
+            var date, timezone;
+
+            if(DateHelper.isUTCdate(s)) {
+                date = DateHelper.parseUTCDateTime(s);
+                timezone = Timezone.create().setOffset(DateHelper.getTZOffset()).build();
             } else {
-                timezone = Timezone.create().buildDefault();
+                var withoutTZ = DateTime.trimTZ(s);
+                date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
+                var offset = DateHelper.parseOffset(s);
+                if(offset != null) {
+                    timezone = Timezone.fromOffset(offset);
+                } else {
+                    timezone = Timezone.create().setOffset(DateHelper.getTZOffset()).build();
+                }
             }
 
             if (!date) {
@@ -165,7 +172,7 @@ module api.util {
                 .setMinutes(s.getMinutes())
                 .setSeconds(s.getSeconds())
                 .setFractions(s.getMilliseconds())
-                //.setTimezone(timezone)
+                .setTimezone(Timezone.fromOffset(DateHelper.getTZOffsetFromDate(s))) // replace with timezone picker value
                 .build();
         }
 
