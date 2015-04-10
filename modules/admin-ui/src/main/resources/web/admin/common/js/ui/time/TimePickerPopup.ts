@@ -10,6 +10,9 @@ module api.ui.time {
 
         timezone: Timezone;
 
+        // use local timezone if timezone value is not initialized
+        useLocalTimezoneIfNotPresent: boolean = false;
+
         closeOnOutsideClick: boolean = true;
 
         setHours(value: number): TimePickerPopupBuilder {
@@ -37,6 +40,15 @@ module api.ui.time {
 
         getTimezone(): Timezone {
             return this.timezone;
+        }
+
+        setUseLocalTimezoneIfNotPresent(value: boolean): TimePickerPopupBuilder {
+            this.useLocalTimezoneIfNotPresent = value;
+            return this;
+        }
+
+        isUseLocalTimezoneIfNotPresent(): boolean {
+            return this.useLocalTimezoneIfNotPresent;
         }
 
         setCloseOnOutsideClick(value: boolean): TimePickerPopupBuilder {
@@ -71,6 +83,7 @@ module api.ui.time {
         private interval: number;
 
         private timezone: Timezone;
+        private useLocalTimezoneIfNotPresent: boolean = false;
 
         private timeChangedListeners: {(hours: number, minutes: number) : void}[] = [];
 
@@ -129,7 +142,11 @@ module api.ui.time {
             this.selectedHour = builder.getHours() || null;
             this.selectedMinute = builder.getMinutes() || null;
 
+            this.useLocalTimezoneIfNotPresent = builder.useLocalTimezoneIfNotPresent;
             this.timezone = builder.timezone;
+            if(!this.timezone && this.useLocalTimezoneIfNotPresent) {
+                this.timezone = Timezone.getLocalTimezone();
+            }
 
             if(this.timezone) {
                 var timezoneContainer = new api.dom.LiEl("timezone");

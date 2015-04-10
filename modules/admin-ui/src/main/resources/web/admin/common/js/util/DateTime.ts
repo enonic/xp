@@ -135,7 +135,7 @@ module api.util {
 
             if(DateHelper.isUTCdate(s)) {
                 date = DateHelper.parseUTCDateTime(s);
-                timezone = Timezone.create().setOffset(DateHelper.getTZOffset()).build();
+                timezone = Timezone.getLocalTimezone();
             } else {
                 var withoutTZ = DateTime.trimTZ(s);
                 date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
@@ -143,7 +143,7 @@ module api.util {
                 if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
-                    timezone = Timezone.create().setOffset(DateHelper.getTZOffset()).build();
+                    timezone = Timezone.getLocalTimezone();
                 }
             }
 

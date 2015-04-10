@@ -79,6 +79,7 @@ module api.content.form.inputtype.time {
 
         private createInputAsDateTime(property: Property, valueType: ValueType) {
             var dateTimeBuilder = new api.ui.time.DateTimePickerBuilder();
+            dateTimeBuilder.setUseLocalTimezoneIfNotPresent(true);
             if (property.hasNonNullValue()) {
                 var date : api.util.DateTime = property.getDateTime();
 

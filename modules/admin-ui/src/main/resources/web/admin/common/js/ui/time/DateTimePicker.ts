@@ -22,6 +22,9 @@ module api.ui.time {
 
         timezone: Timezone;
 
+        // use local timezone if timezone value is not initialized
+        useLocalTimezoneIfNotPresent: boolean = false;
+
         setYear(value: number): DateTimePickerBuilder {
             this.year = value;
             return this;
@@ -62,8 +65,8 @@ module api.ui.time {
             return this;
         }
 
-        setCloseOnOutsideClick(value: boolean): DateTimePickerBuilder {
-            this.closeOnOutsideClick = value;
+        setUseLocalTimezoneIfNotPresent(value: boolean): DateTimePickerBuilder {
+            this.useLocalTimezoneIfNotPresent = value;
             return this;
         }
 
@@ -123,6 +126,7 @@ module api.ui.time {
                 setMinutes(builder.minutes).
                 setCalendar(this.calendar).
                 setTimezone(builder.timezone).
+                setUseLocalTimezoneIfNotPresent(builder.useLocalTimezoneIfNotPresent).
                 setCloseOnOutsideClick(false);
             this.popup = new DateTimePickerPopup(popupBuilder);
             this.popup.onShown(() => {
