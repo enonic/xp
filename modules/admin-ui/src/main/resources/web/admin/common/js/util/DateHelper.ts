@@ -14,7 +14,12 @@ module api.util {
             return (s.getTimezoneOffset() / 60) * -1;
         }
 
-        public static parseUTCTime(localTime: string): string {
+        /**
+         * Parses passed string to UTC time string - local timezone will add a time shift to result.
+         * @param localTime
+         * @returns {string}
+         */
+        public static parseTimeToUTC(localTime: string): string {
             var values = localTime.split(':');
             var date = new Date();
             var localHours = Number(values[0]);

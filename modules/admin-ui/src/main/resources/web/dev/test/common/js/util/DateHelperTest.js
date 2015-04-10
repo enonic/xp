@@ -53,7 +53,7 @@ describe("api.util.DateHelperTest", function () {
         it("given a string with current local time then returned utc time is correct", function () {
             var now = new Date();
             var timeAsString = '' + now.getHours() + ':' + now.getMinutes();
-            var timeUTC = api.util.DateHelper.parseUTCTime(timeAsString);
+            var timeUTC = api.util.DateHelper.parseTimeToUTC(timeAsString);
             var expectedTime = now.getUTCHours() + ':' + now.getUTCMinutes();
             expect(timeUTC).toEqual(expectedTime);
 
@@ -64,7 +64,7 @@ describe("api.util.DateHelperTest", function () {
             date.setHours(0);
             date.setMinutes(59);
             var timeAsString = '' + date.getHours() + ':' + date.getMinutes();
-            var timeUTC = api.util.DateHelper.parseUTCTime(timeAsString);
+            var timeUTC = api.util.DateHelper.parseTimeToUTC(timeAsString);
             var expectedTime = date.getUTCHours() + ':' + date.getUTCMinutes();
             expect(timeUTC).toEqual(expectedTime);
 
