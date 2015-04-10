@@ -65,6 +65,11 @@ module api.ui.time {
             return this;
         }
 
+        setCloseOnOutsideClick(value: boolean): DateTimePickerBuilder {
+            this.closeOnOutsideClick = value;
+            return this;
+        }
+
         setUseLocalTimezoneIfNotPresent(value: boolean): DateTimePickerBuilder {
             this.useLocalTimezoneIfNotPresent = value;
             return this;
