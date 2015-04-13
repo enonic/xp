@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.script;
 
 import org.junit.Test;
 
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +58,14 @@ public class ScriptServiceImplTest
     public void testRequire()
     {
         final ResourceKey script = ResourceKey.from( "mymodule:/require/require-test.js" );
+        final ScriptExports exports = runTestScript( script );
+        assertNotNull( exports );
+    }
+
+    @Test
+    public void testRequire_3rd()
+    {
+        final ResourceKey script = ResourceKey.from( "mymodule:/require/3rd/require-3rd-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
     }

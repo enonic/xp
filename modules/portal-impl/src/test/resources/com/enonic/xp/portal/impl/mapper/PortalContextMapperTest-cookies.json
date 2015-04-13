@@ -20,5 +20,8 @@
     "header2": "value2",
     "header1": "value1"
   },
-  "cookies" : { }
+  "cookies": {
+    "a": "1",
+    "b": "2"
+  }
 }
