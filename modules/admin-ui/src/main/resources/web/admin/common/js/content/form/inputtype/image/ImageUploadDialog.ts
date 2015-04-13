@@ -11,7 +11,7 @@ module api.content.form.inputtype.image {
 
         private imageUploader: api.content.ImageUploader;
 
-        constructor(parentContent: api.content.ContentId, allowMultiSelection = false) {
+        constructor(parentContent: api.content.ContentId) {
 
             api.util.assertNotNull(parentContent, "parentContent required");
             super({
@@ -31,8 +31,7 @@ module api.content.form.inputtype.image {
                 operation: api.content.MediaUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
-                showResult: false,
-                allowMultiSelection: allowMultiSelection
+                showResult: false
             });
 
             this.imageUploader.onUploadCompleted(() => {

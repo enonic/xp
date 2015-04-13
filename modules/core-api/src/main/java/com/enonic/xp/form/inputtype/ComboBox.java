@@ -12,7 +12,7 @@ final class ComboBox
 {
     ComboBox()
     {
-        super( ComboBoxConfig.class );
+        super( ComboBoxConfig.class, true );
     }
 
     @Override

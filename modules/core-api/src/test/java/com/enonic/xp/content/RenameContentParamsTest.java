@@ -39,7 +39,8 @@ public class RenameContentParamsTest
     }
 
     @Test(expected = NullPointerException.class)
-    public void testValidateWithNullId() {
+    public void testValidateWithNullId()
+    {
 
         RenameContentParams params = RenameContentParams.create().
             contentId( null ).
@@ -50,7 +51,8 @@ public class RenameContentParamsTest
     }
 
     @Test(expected = NullPointerException.class)
-    public void testValidateWithNullName() {
+    public void testValidateWithNullName()
+    {
 
         RenameContentParams params = RenameContentParams.create().
             contentId( contentId ).
@@ -61,7 +63,8 @@ public class RenameContentParamsTest
     }
 
     @Test
-    public void testValidate() {
+    public void testValidate()
+    {
 
         RenameContentParams params = RenameContentParams.create().
             contentId( contentId ).

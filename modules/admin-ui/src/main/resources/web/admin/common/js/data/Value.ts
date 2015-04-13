@@ -79,11 +79,11 @@ module api.data {
             return this.type.valueToNumber(this);
         }
 
-        getDateTime(): Date {
+        getDateTime(): api.util.DateTime {
             if (this.isNull()) {
                 return null;
             }
-            return <Date>this.value;
+            return <api.util.DateTime>this.value;
         }
 
         getLocalDate(): Date {
@@ -93,7 +93,7 @@ module api.data {
             return <Date>this.value;
         }
 
-        getLocalDateTime(): Date {
+         getLocalDateTime(): Date {
             if (this.isNull()) {
                 return null;
             }

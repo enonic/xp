@@ -25,10 +25,10 @@ public class PageTemplatesTest
     public void getTemplate()
     {
         final PageTemplates pageTemplates = PageTemplates.from( PageTemplate.newPageTemplate().
-                                                                    key( PageTemplateKey.from( "testKey" ) ).
-                                                                    name( "testContentName" ).
-                                                                    parentPath( ContentPath.from( "path" ) ).
-                                                                    build() );
+            key( PageTemplateKey.from( "testKey" ) ).
+            name( "testContentName" ).
+            parentPath( ContentPath.from( "path" ) ).
+            build() );
 
         assertNotNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "testKey" ) ) ) );
         assertNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "nonExistingKey" ) ) ) );

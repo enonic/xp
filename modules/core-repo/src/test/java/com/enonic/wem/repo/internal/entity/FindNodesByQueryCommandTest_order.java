@@ -48,122 +48,132 @@ public class FindNodesByQueryCommandTest_order
     public void nodeInitializing()
         throws Exception
     {
-        createNode( "node1", createPropertyMap(1l, "b", false), NodePath.ROOT );
-        createNode( "node2", createPropertyMap(3l, "c", true), NodePath.ROOT );
-        createNode( "node3", createPropertyMap(2l, "a", false), NodePath.ROOT );
+        createNode( "node1", createPropertyMap( 1l, "b", false ), NodePath.ROOT );
+        createNode( "node2", createPropertyMap( 3l, "c", true ), NodePath.ROOT );
+        createNode( "node3", createPropertyMap( 2l, "a", false ), NodePath.ROOT );
     }
 
     @Test
-    public void testByLongSorting() {
-        String[] orders = {FIELD_LONG+" "+ORDER_DESC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByLongSorting()
+    {
+        String[] orders = {FIELD_LONG + " " + ORDER_DESC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
-
-    }
-
-    @Test
-    public void testByStringSorting() {
-        String[] orders = {FIELD_STRING+" "+ORDER_ASC};
-        FindNodesByQueryResult result = sort(orders);
-
-        Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
-        Assert.assertEquals("node2", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByBooleanSorting() {
-        String[] orders = {FIELD_BOOL+" "+ORDER_DESC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByStringSorting()
+    {
+        String[] orders = {FIELD_STRING + " " + ORDER_ASC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByLongAndBooleanSorting() {
-        String[] orders = {FIELD_LONG+" "+ORDER_DESC, FIELD_BOOL+" "+ORDER_DESC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByBooleanSorting()
+    {
+        String[] orders = {FIELD_BOOL + " " + ORDER_DESC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByBooleanAndLongSorting() {
-        String[] orders = {FIELD_BOOL+" "+ORDER_DESC, FIELD_LONG+" "+ORDER_DESC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByLongAndBooleanSorting()
+    {
+        String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByStringAndLongSorting() {
-        String[] orders = {FIELD_STRING+" "+ORDER_DESC, FIELD_LONG+" "+ORDER_ASC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByBooleanAndLongSorting()
+    {
+        String[] orders = {FIELD_BOOL + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_DESC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByLongAndStringSorting() {
-        String[] orders = {FIELD_LONG+" "+ORDER_ASC, FIELD_STRING+" "+ORDER_DESC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByStringAndLongSorting()
+    {
+        String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node1", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node2", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByLongAndStringAndBooleanSorting() {
-        String[] orders = {FIELD_LONG+" "+ORDER_DESC, FIELD_STRING+" "+ORDER_DESC, FIELD_BOOL+" "+ORDER_ASC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByLongAndStringSorting()
+    {
+        String[] orders = {FIELD_LONG + " " + ORDER_ASC, FIELD_STRING + " " + ORDER_DESC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
 
     }
 
     @Test
-    public void testByStringAndBooleanAndLongSorting() {
-        String[] orders = {FIELD_STRING+" "+ORDER_DESC, FIELD_BOOL+" "+ORDER_DESC, FIELD_LONG+" "+ORDER_ASC};
-        FindNodesByQueryResult result = sort(orders);
+    public void testByLongAndStringAndBooleanSorting()
+    {
+        String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_ASC};
+        FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = result.getNodes().iterator();
-        Assert.assertEquals("node2", iterator.next().name().toString());
-        Assert.assertEquals("node1", iterator.next().name().toString());
-        Assert.assertEquals("node3", iterator.next().name().toString());
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+
+    }
+
+    @Test
+    public void testByStringAndBooleanAndLongSorting()
+    {
+        String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
+        FindNodesByQueryResult result = sort( orders );
+
+        Iterator<Node> iterator = result.getNodes().iterator();
+        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        Assert.assertEquals( "node3", iterator.next().name().toString() );
 
     }
 
 
-    private Map<String, Object> createPropertyMap(Long longValue, String stringValue, Boolean booleanValue) {
-        Map<String, Object> properties = new HashMap(  );
+    private Map<String, Object> createPropertyMap( Long longValue, String stringValue, Boolean booleanValue )
+    {
+        Map<String, Object> properties = new HashMap();
         properties.put( FIELD_LONG, longValue );
         properties.put( FIELD_STRING, stringValue );
         properties.put( FIELD_BOOL, booleanValue );
@@ -198,11 +208,12 @@ public class FindNodesByQueryCommandTest_order
     private FindNodesByQueryResult sort( String[] orders )
     {
 
-        StringBuilder order = new StringBuilder(  );
-        for(String curOrder : orders) {
+        StringBuilder order = new StringBuilder();
+        for ( String curOrder : orders )
+        {
             order.append( curOrder ).append( "," );
         }
-        order.deleteCharAt( order.length()-1 );
+        order.deleteCharAt( order.length() - 1 );
 
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( order.toString() );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( PARENT_QUERY );

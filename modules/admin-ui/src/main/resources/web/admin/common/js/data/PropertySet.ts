@@ -1030,14 +1030,14 @@ module api.data {
 
         // date time methods
 
-        addDateTime(name: string, value: Date): Property {
+        addDateTime(name: string, value: api.util.DateTime): Property {
             return this.addProperty(name, new Value(value, ValueTypes.DATE_TIME));
         }
 
-        addDateTimes(name: string, values: Date[]): Property[] {
+        addDateTimes(name: string, values: api.util.DateTime[]): Property[] {
 
             var properties: Property[] = [];
-            values.forEach((value: Date) => {
+            values.forEach((value: api.util.DateTime) => {
                 properties.push(this.addDateTime(name, value));
             });
             return properties;
@@ -1047,17 +1047,17 @@ module api.data {
             return this.setProperty(name, index, new Value(value, ValueTypes.DATE_TIME));
         }
 
-        setDateTimeByPath(path: any, value: Date): Property {
+        setDateTimeByPath(path: any, value: api.util.DateTime): Property {
             return this.setPropertyByPath(path, new Value(value, ValueTypes.DATE_TIME));
         }
 
-        getDateTime(identifier: string, index?: number): Date {
+        getDateTime(identifier: string, index?: number): api.util.DateTime {
             var property = this.getProperty(identifier, index);
             return !property ? null : property.getDateTime();
         }
 
-        getDateTimes(name: string): Date[] {
-            var values: Date[] = [];
+        getDateTimes(name: string): api.util.DateTime[] {
+            var values: api.util.DateTime[] = [];
             var array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getDateTime());
