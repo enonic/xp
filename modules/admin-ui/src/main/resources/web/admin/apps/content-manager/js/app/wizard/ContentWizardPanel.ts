@@ -363,6 +363,7 @@ module app.wizard {
             if (this.liveFormPanel) {
                 this.liveFormPanel.skipNextReloadConfirmation(true);
             }
+            this.setRequireValid(false);
             return super.saveChanges();
         }
 
