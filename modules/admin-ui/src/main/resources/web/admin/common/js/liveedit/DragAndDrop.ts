@@ -261,7 +261,7 @@ module api.liveedit {
 
                 this.cancelDrag(event, ui);
             } else {
-                debugger;
+
                 var componentIndex = wemjq('>.drag-helper, >.item-view', regionView.getHTMLElement()).index(ui.item);
 
                 if (this.isDraggingFromContextWindow()) {
