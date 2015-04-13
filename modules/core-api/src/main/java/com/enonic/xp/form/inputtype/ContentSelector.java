@@ -13,7 +13,7 @@ final class ContentSelector
 {
     ContentSelector()
     {
-        super( ContentSelectorConfig.class );
+        super( ContentSelectorConfig.class, true );
     }
 
     @Override

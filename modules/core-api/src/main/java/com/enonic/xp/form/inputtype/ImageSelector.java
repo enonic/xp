@@ -11,7 +11,7 @@ final class ImageSelector
 {
     ImageSelector()
     {
-        super( ImageSelectorConfig.class );
+        super( ImageSelectorConfig.class, true );
     }
 
     @Override

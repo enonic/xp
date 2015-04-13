@@ -35,3 +35,12 @@ exports.functionsTest = function () {
 
 };
 
+exports.fragmentsTest = function () {
+
+    var view = resolve('fragment/fragment-main.html');
+    return execute('thymeleaf.render', {
+        view: view,
+        model: {}
+    });
+
+};

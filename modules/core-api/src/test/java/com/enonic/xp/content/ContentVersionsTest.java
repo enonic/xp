@@ -11,7 +11,8 @@ import static org.junit.Assert.*;
 public class ContentVersionsTest
 {
     @Test
-    public void testEquals() {
+    public void testEquals()
+    {
 
         final Instant now1 = Instant.now();
 
@@ -40,12 +41,13 @@ public class ContentVersionsTest
             build();
 
         assertEquals( versions.getContentId(), ContentId.from( "ab" ) );
-        assertEquals(versions.iterator().hasNext(), true );
+        assertEquals( versions.iterator().hasNext(), true );
 
     }
 
     @Test
-    public void testCompareTo() {
+    public void testCompareTo()
+    {
 
         final Instant now1 = Instant.now();
 
