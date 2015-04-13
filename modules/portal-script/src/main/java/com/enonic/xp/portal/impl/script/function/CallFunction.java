@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.script.function;
 
-import javax.script.Bindings;
-
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
@@ -9,6 +7,11 @@ import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 public final class CallFunction
     extends AbstractFunction
 {
+    public CallFunction()
+    {
+        super( "__call" );
+    }
+
     @Override
     public Object call( final Object thiz, final Object... args )
     {
@@ -17,11 +20,5 @@ public final class CallFunction
 
         final Object[] jsArray = JsObjectConverter.toJsArray( array );
         return func.call( thiz, jsArray );
-    }
-
-    @Override
-    public void register( final Bindings bindings )
-    {
-        bindings.put( "__call", this );
     }
 }

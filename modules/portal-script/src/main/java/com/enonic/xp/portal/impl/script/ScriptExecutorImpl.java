@@ -30,7 +30,6 @@ final class ScriptExecutorImpl
 {
     private final static String PRE_SCRIPT = "" + //
         "(function(log,module,execute,require,resolve) {" + //
-        "'use strict';" + //
         "var exports = {};";
 
     private final static String POST_SCRIPT = "" + //
