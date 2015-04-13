@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.script;
 
+import org.junit.Assert;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 

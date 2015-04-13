@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.script.function;
 
-import javax.script.Bindings;
-
 import com.enonic.xp.resource.ResourceKey;
 
 public final class ResolveFunction
@@ -11,6 +9,7 @@ public final class ResolveFunction
 
     public ResolveFunction( final ResourceKey script )
     {
+        super( "resolve" );
         this.script = script;
     }
 
@@ -36,11 +35,5 @@ public final class ResolveFunction
         {
             return this.script.resolve( "../" + name );
         }
-    }
-
-    @Override
-    public void register( final Bindings bindings )
-    {
-        bindings.put( "resolve", this );
     }
 }
