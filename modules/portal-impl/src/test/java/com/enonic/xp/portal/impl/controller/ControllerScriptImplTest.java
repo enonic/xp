@@ -25,7 +25,7 @@ public class ControllerScriptImplTest
     public void testExecute()
     {
         this.context.setMethod( "GET" );
-        execute( "mymodule:/service/test" );
+        execute( "mymodule:/service/simple" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
     }
 
@@ -35,7 +35,7 @@ public class ControllerScriptImplTest
         this.context.setMethod( "GET" );
         this.response.setPostProcess( true );
 
-        execute( "mymodule:/service/test" );
+        execute( "mymodule:/service/simple" );
 
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.postProcessor ).processResponse( this.context );
@@ -45,7 +45,7 @@ public class ControllerScriptImplTest
     public void testMethodNotSupported()
     {
         this.context.setMethod( "POST" );
-        execute( "mymodule:/service/test" );
+        execute( "mymodule:/service/simple" );
         assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
 

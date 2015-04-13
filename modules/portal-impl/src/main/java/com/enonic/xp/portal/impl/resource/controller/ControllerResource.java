@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -13,11 +14,12 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
+import com.enonic.xp.portal.rendering.RenderResult;
 
 public abstract class ControllerResource
     extends BaseResource
@@ -56,6 +58,8 @@ public abstract class ControllerResource
         context.setMethod( this.request.getMethod() );
         context.setBaseUri( this.baseUri );
         context.setBranch( this.branch );
+        context.getCookies().putAll( getCookieMap() );
+
         final Multimap<String, String> contextHeaders = context.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );
         setParams( context.getParams(), this.uriInfo.getQueryParameters() );
@@ -104,5 +108,16 @@ public abstract class ControllerResource
         }
 
         return builder.build();
+    }
+
+    private Map<String, String> getCookieMap()
+    {
+        final Map<String, String> result = Maps.newHashMap();
+        for ( final Cookie cookie : this.httpHeaders.getCookies().values() )
+        {
+            result.put( cookie.getName(), cookie.getValue() );
+        }
+
+        return result;
     }
 }

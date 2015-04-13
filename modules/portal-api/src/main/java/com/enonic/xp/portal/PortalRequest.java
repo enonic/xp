@@ -1,5 +1,7 @@
 package com.enonic.xp.portal;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
@@ -28,6 +30,8 @@ public interface PortalRequest
     Multimap<String, String> getFormParams();
 
     Multimap<String, String> getHeaders();
+
+    Map<String, String> getCookies();
 
     RenderMode getMode();
 
