@@ -28,7 +28,7 @@ final class HtmlArea
     @Override
     public Value newValue( final String value )
     {
-        return Value.newString( value );
+        return Value.newHtmlPart( value );
     }
 
     @Override

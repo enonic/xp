@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistException;
@@ -21,8 +19,10 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -62,7 +62,11 @@ final class CreateContentCommand
 
         final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
 
-        final CreateContentParams processedContent = runContentProcessors( type );
+        CreateContentParams processedContent = runContentProcessors( type );
+
+        processedContent = CreateContentParams.create( processedContent ).
+            contentData( PropertyTreeFormTranslator.transform( processedContent.getData(), type.form() ) ).
+            build();
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedContent );
 
