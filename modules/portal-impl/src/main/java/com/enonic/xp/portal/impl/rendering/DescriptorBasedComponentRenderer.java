@@ -43,7 +43,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
 
         // create controller
-        final ControllerScript controllerScript = this.controllerScriptFactory.newController( descriptor.getComponentPath() );
+        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( descriptor.getComponentPath() );
 
         // render
         final Component previousComponent = context.getComponent();
