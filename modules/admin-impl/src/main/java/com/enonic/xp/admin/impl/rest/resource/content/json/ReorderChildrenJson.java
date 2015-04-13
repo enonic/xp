@@ -10,15 +10,19 @@ public class ReorderChildrenJson
 {
     private Boolean silent;
 
+    private Boolean updateOrder;
+
     private String contentId;
 
     private List<ReorderChildJson> orderChildren = Lists.newLinkedList();
 
     @JsonCreator
-    public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("contentId") final String contentId,
+    public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("updateOrder") final Boolean updateOrder,
+                                @JsonProperty("contentId") final String contentId,
                                 @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
     {
         this.silent = silent;
+        this.updateOrder = updateOrder;
         this.contentId = contentId;
         this.orderChildren = orderChildren;
     }
@@ -27,6 +31,12 @@ public class ReorderChildrenJson
     public Boolean isSilent()
     {
         return silent;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Boolean isUpdateOrder()
+    {
+        return updateOrder;
     }
 
     @SuppressWarnings("UnusedDeclaration")

@@ -4,6 +4,8 @@ module api.content {
 
         private silent: boolean = false;
 
+        private updateOrder: boolean = false;
+
         private contentId: ContentId;
 
         private contentMovements: OrderChildMovements;
@@ -15,6 +17,11 @@ module api.content {
 
         setSilent(silent: boolean): OrderChildContentRequest {
             this.silent = silent;
+            return this;
+        }
+
+        setUpdateOrder(updateOrder: boolean): OrderChildContentRequest {
+            this.updateOrder = updateOrder;
             return this;
         }
 
@@ -30,8 +37,9 @@ module api.content {
 
         getParams(): json.ReorderChildContentsJson {
             return {
-                "contentId": this.contentId.toString(),
                 "silent": this.silent,
+                "updateOrder": this.updateOrder,
+                "contentId": this.contentId.toString(),
                 "reorderChildren": this.contentMovements.toArrayJson()
             };
         }
