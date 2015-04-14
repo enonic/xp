@@ -221,21 +221,23 @@ module api.form {
         }
 
         private doAddOccurrence(occurrence: FormItemOccurrence<V>) {
+            var countOccurrences = this.countOccurrences();
 
-            if (this.allowedOccurrences.maximumReached(this.countOccurrences())) {
+            if (this.allowedOccurrences.maximumReached(countOccurrences)) {
                 return;
             }
             var occurrenceView: V = this.createNewOccurrenceView(occurrence);
             var insertAtIndex = occurrence.getIndex();
             this.occurrences.splice(insertAtIndex, 0, occurrence);
 
-            var occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
-            if (occurrenceViewBefore != null) {
-                occurrenceView.insertAfterEl(occurrenceViewBefore);
-            }
-            else {
+            if (insertAtIndex == countOccurrences) {
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             }
+            else {
+                var occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
+                occurrenceView.insertAfterEl(occurrenceViewBefore);
+            }
+
             occurrenceView.layout().then(() => {
                 this.notifyOccurrenceRendered(occurrence, occurrenceView);
             }).done();
