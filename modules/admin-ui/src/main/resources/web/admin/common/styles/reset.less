@@ -52,8 +52,9 @@ sub {
   vertical-align: text-bottom;
 }
 
-input, textarea, select {
+input:not([type="radio"]), textarea, select {
   -webkit-appearance: none;
+  -moz-appearance: none;
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;

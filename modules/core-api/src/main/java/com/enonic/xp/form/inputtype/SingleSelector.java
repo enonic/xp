@@ -12,7 +12,7 @@ final class SingleSelector
 {
     SingleSelector()
     {
-        super( SingleSelectorConfig.class );
+        super( SingleSelectorConfig.class, true );
     }
 
     @Override

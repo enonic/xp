@@ -1,9 +1,12 @@
 package com.enonic.xp.portal;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
@@ -32,6 +35,8 @@ public final class PortalContext
     private final Multimap<String, String> formParams;
 
     private final Multimap<String, String> headers;
+
+    private final Map<String, String> cookies;
 
     private RenderMode mode;
 
@@ -67,6 +72,7 @@ public final class PortalContext
         this.params = HashMultimap.create();
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
+        this.cookies = Maps.newHashMap();
         this.response = new PortalResponse();
     }
 
@@ -239,5 +245,11 @@ public final class PortalContext
     public void setRawRequest( final HttpServletRequest rawRequest )
     {
         this.rawRequest = rawRequest;
+    }
+
+    @Override
+    public Map<String, String> getCookies()
+    {
+        return this.cookies;
     }
 }

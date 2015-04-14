@@ -1,0 +1,18 @@
+{
+  "mode": "edit",
+  "headers": {
+    "Language": "en",
+    "Cookies": "mycookie=123; other=abc;"
+  },
+  "method": "GET",
+  "formParams": {},
+  "params": {
+    "debug": "true"
+  },
+  "uri": "http://enonic.com/my/page",
+  "branch": "master",
+  "cookies": {
+    "mycookie": "123",
+    "other": "abc"
+  }
+}

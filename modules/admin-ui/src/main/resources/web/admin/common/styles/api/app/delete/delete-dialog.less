@@ -8,9 +8,6 @@
 
   .item-list {
     padding: 10px;
-
-    box-shadow: 0 0 5px #777;
-
     max-height: 400px;
     overflow-y: auto;
 
@@ -31,6 +28,27 @@
       max-height: 82%;
     }
 
+  }
+
+  .dialog-buttons {
+    .button {
+      &.delete-action {
+        .button(@form-button-font, @input-red-text, @form-button-font, lighten(@input-red-text, 10%));
+        padding: 4px 19px 4px 19px;
+        margin-left: 11px;
+
+        &.spinner {
+          font-family: 'live-edit-font-icon';
+
+          &:after {
+            .animation(rotate360, .5s, .0s, linear);
+            content: "\e007";
+            color: white;
+            display: inline-block;
+          }
+        }
+      }
+    }
   }
 
 }

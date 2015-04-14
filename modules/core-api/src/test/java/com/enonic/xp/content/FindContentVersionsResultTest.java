@@ -25,7 +25,7 @@ public class FindContentVersionsResultTest
             build();
 
         final FindContentVersionsResult result = FindContentVersionsResult.create().
-            contentVersions(contentVersions).from( 0 ).hits( 2 ).size( 2 ).totalHits( 2 ).
+            contentVersions( contentVersions ).from( 0 ).hits( 2 ).size( 2 ).totalHits( 2 ).
             build();
 
         assertEquals( result.getContentVersions(), contentVersions );

@@ -56,6 +56,7 @@
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentMovedEvent.ts' />
 ///<reference path='MoveContentResult.ts' />
+///<reference path='MoveContentResultJson.ts' />
 ///<reference path='ContentMoveComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />
@@ -80,6 +81,7 @@
 ///<reference path='OrderChildMovement.ts' />
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
+///<reference path='CountContentsWithDescendantsRequest.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

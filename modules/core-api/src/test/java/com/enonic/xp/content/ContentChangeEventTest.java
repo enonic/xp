@@ -42,8 +42,9 @@ public class ContentChangeEventTest
 
         final ContentChangeEvent.ContentChange[] contentChangesArray =
             {new ContentChangeEvent.ContentChange( ContentChangeEvent.ContentChangeType.CREATE, ContentPaths.from( CONTENT_PATH1 ) ),
-                new ContentChangeEvent.ContentChange( ContentChangeEvent.ContentChangeType.DELETE, ContentPaths.from( CONTENT_PATH2, CONTENT_PATH3 ) )};
+                new ContentChangeEvent.ContentChange( ContentChangeEvent.ContentChangeType.DELETE,
+                                                      ContentPaths.from( CONTENT_PATH2, CONTENT_PATH3 ) )};
 
-        assertArrayEquals( event.getChanges().toArray(), contentChangesArray);
+        assertArrayEquals( event.getChanges().toArray(), contentChangesArray );
     }
 }

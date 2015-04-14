@@ -6,11 +6,11 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 
 @Component
 public final class ControllerScriptFactoryImpl
@@ -29,9 +29,14 @@ public final class ControllerScriptFactoryImpl
     }
 
     @Override
-    public ControllerScript newController( final ResourceKey scriptDir )
+    public ControllerScript fromDir( final ResourceKey dir )
     {
-        final ResourceKey script = scriptDir.resolve( "controller.js" );
+        return fromScript( dir.resolve( "controller.js" ) );
+    }
+
+    @Override
+    public ControllerScript fromScript( final ResourceKey script )
+    {
         return getOrCreate( script );
     }
 

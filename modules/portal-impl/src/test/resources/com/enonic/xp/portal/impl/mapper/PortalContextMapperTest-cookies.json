@@ -1,0 +1,27 @@
+{
+  "uri": "/portal/live/master/a/b",
+  "method": "GET",
+  "mode": "live",
+  "branch": "draft",
+  "params": {
+    "param3": [
+      "value3-B",
+      "value3-A"
+    ],
+    "param1": "value1",
+    "param2": "value2"
+  },
+  "formParams": {},
+  "headers": {
+    "header3": [
+      "value3-B",
+      "value3-A"
+    ],
+    "header2": "value2",
+    "header1": "value1"
+  },
+  "cookies": {
+    "a": "1",
+    "b": "2"
+  }
+}

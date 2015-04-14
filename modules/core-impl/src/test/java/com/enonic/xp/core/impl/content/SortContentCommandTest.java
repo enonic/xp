@@ -46,7 +46,7 @@ public class SortContentCommandTest
             thenReturn( createNode( "s1", "s1Name", NodePath.ROOT.toString() ) );
 
         Mockito.when( contentNodeTranslator.fromNode( Mockito.isA( Node.class ) ) ).
-            thenReturn(  createContent( "s1", "s1Name", ContentPath.ROOT, true )  );
+            thenReturn( createContent( "s1", "s1Name", ContentPath.ROOT, true ) );
 
         SortContentParams params = new SortContentParams().contentId( ContentId.from( "s1" ) );
 
@@ -61,8 +61,8 @@ public class SortContentCommandTest
         assertEquals( "s1", resultContent.getId().toString() );
         SortContentParams params1 = new SortContentParams().contentId( resultContent.getId() );
 
-        assertEquals(params, params1);
-        assertEquals(params.hashCode(), params1.hashCode());
+        assertEquals( params, params1 );
+        assertEquals( params.hashCode(), params1.hashCode() );
     }
 
 

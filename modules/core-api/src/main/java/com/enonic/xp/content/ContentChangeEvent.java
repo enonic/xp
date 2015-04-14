@@ -143,7 +143,7 @@ public final class ContentChangeEvent
             {
                 return false;
             }
-            if ( type != null ? !(type == that.type) : that.type != null )
+            if ( type != null ? !( type == that.type ) : that.type != null )
             {
                 return false;
             }

@@ -32,7 +32,7 @@ public class ServiceResourceTest
         this.services.setControllerScriptFactory( controllerScriptFactory );
 
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.newController( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+        Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
     }
 
     @Test

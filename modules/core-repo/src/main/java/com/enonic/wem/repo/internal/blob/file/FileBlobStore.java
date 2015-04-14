@@ -15,11 +15,11 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.wem.repo.internal.blob.BlobKey;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.wem.repo.internal.blob.BlobKeyCreator;
 import com.enonic.wem.repo.internal.blob.BlobRecord;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.BlobStoreException;
+import com.enonic.xp.home.HomeDir;
 
 public final class FileBlobStore
     implements BlobStore

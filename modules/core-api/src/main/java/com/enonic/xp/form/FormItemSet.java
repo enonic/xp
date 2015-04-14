@@ -11,8 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import static com.enonic.xp.form.Occurrences.newOccurrences;
-
 @Beta
 public class FormItemSet
     extends FormItem

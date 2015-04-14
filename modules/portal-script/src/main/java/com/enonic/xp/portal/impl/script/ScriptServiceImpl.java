@@ -31,7 +31,7 @@ public final class ScriptServiceImpl
 
     public ScriptServiceImpl()
     {
-        this.engine = NashornHelper.getScriptEngine();
+        this.engine = NashornHelper.getScriptEngine( "-strict" );
         this.invoker = new CommandInvokerImpl();
         this.globalMap = Maps.newHashMap();
     }
