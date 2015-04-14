@@ -28,14 +28,15 @@ module app.wizard.page.contextwindow {
             this.getData();
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-            wemjq(this.getHTMLElement()).on("click", ".grid-row", (event: JQueryEventObject) => {
+            wemjq(this.getHTMLElement()).on("click", ".grid-row > div", (event: JQueryEventObject) => {
 
-                var width = wemjq(event.currentTarget).children('div').data("width");
-                var height = wemjq(event.currentTarget).children('div').data("height");
-                var type = wemjq(event.currentTarget).children('div').data("device.type");
+                var el = wemjq(event.currentTarget),
+                    width = el.data("width"),
+                    height = el.data("height"),
+                    units = el.data("units");
 
-                this.liveEditPage.setWidth(width);
-                this.liveEditPage.setHeight(height);
+                this.liveEditPage.setWidth(width + units);
+                this.liveEditPage.setHeight(height + units);
             });
 
             wemjq(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
