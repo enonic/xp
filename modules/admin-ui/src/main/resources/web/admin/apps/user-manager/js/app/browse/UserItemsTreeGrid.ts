@@ -165,12 +165,21 @@ module app.browse {
             }
         }
 
-        deleteUserNodes(principals: api.security.Principal[]) {
-            var userTreeGridItems = principals.map((principal) => {
-                return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
-            });
+        deleteUserNodes(principals: api.security.Principal[], userStores: api.security.UserStore[]) {
+            if(principals) {
+                var principalItems = principals.map((principal) => {
+                    return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+                });
 
-            this.deleteNodes(userTreeGridItems);
+                this.deleteNodes(principalItems);
+            }
+            if(userStores) {
+                var userStoreItems = userStores.map((userStore) => {
+                    return new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
+                });
+
+                this.deleteNodes(userStoreItems);
+            }
         }
 
         getDataId(item: app.browse.UserTreeGridItem): string {

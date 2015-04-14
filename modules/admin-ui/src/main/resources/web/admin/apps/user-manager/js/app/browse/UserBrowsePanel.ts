@@ -45,7 +45,7 @@ module app.browse {
                  Deleting content won't trigger browsePanel.onShow event,
                  because we are left on the same panel. We need to refresh manually.
                  */
-                this.userTreeGrid.deleteUserNodes(event.getPrincipals());
+                this.userTreeGrid.deleteUserNodes(event.getPrincipals(), event.getUserStores());
                 this.refreshFilter();
             });
 

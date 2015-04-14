@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -222,6 +224,20 @@ abstract class UserStoreNodeTranslator
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
+            } ).
+            build();
+    }
+
+    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final Node userStoreNode )
+    {
+        Preconditions.checkNotNull( userStoreNode );
+
+
+        return UpdateNodeParams.create().
+            id( userStoreNode.id() ).
+            editor( editableNode -> {
+                final PropertyTree data = editableNode.data;
+                data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
             } ).
             build();
     }
