@@ -51,6 +51,29 @@ public class DateTime
     @Override
     public InputTypeConfig getDefaultConfig()
     {
-        return null;
+        return DateTimeConfig.create().
+            withTimezone( false ).
+            build();
+    }
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        if ( config != null && !( config instanceof DateTimeConfig ) )
+        {
+            throw new IllegalArgumentException(
+                "Expected config of type " + DateTimeConfig.class.getName() + ", got " + config.getClass() );
+        }
+
+        DateTimeConfig dateTimeConfig = config == null ? (DateTimeConfig) getDefaultConfig() : (DateTimeConfig) config;
+
+        if ( dateTimeConfig.isWithTimezone() )
+        {
+            return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
+        }
+        else
+        {
+            return Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+        }
     }
 }

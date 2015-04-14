@@ -4,6 +4,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
@@ -48,9 +49,12 @@ public class PropertyTreeFormTranslator
             else
             {
                 final InputType inputType = input.getInputType();
-                inputType.checkBreaksRequiredContract( property );
+                //inputType.checkBreaksRequiredContract( property );
 
-                parentSet.addProperty( property.getName(), inputType.newValue( property.getString() ) );
+                final Value mappedPropertyValue =
+                    input.getInputType().createPropertyValue( property.getString(), input.getInputTypeConfig() );
+
+                parentSet.addProperty( property.getName(), mappedPropertyValue );
             }
         }
 

@@ -10,7 +10,7 @@ public final class DateTimeConfig
         super(builder);
     }
 
-    public static Builder newDateTimeConfig()
+    public static Builder create()
     {
         return new Builder();
     }

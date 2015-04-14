@@ -38,6 +38,13 @@ final class ComboBox
         }
     }
 
+    // TODO: This should probably consider config
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
+    }
+
     @Override
     public Value newValue( final String value )
     {

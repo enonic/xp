@@ -45,5 +45,10 @@ final class ImageSelector
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newReference( Reference.from( value ) );
+    }
 }
 

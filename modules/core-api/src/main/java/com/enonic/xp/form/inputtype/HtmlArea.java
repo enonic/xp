@@ -28,7 +28,7 @@ final class HtmlArea
     @Override
     public Value newValue( final String value )
     {
-        return Value.newHtmlPart( value );
+        return Value.newString( value );
     }
 
     @Override
@@ -37,4 +37,10 @@ final class HtmlArea
         return null;
     }
 
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
+    }
 }
