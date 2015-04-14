@@ -47,12 +47,6 @@ describe("api.data.type.LocalDateTimeValueTypeTest", function () {
 
     describe("when newValue", function () {
 
-        it("given date time string '2000-01-01T12:30:01' then a new Value with that date is returned", function () {
-            var actual = ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:01");
-            var expected = new Value(new Date(Date.UTC(2000, 0, 1, 12, 30, 1)), ValueTypes.LOCAL_DATE_TIME);
-            expect(actual).toEqual(expected);
-        });
-
         it("given invalid date time string '2000-01-01T12' then a null is returned", function () {
             expect(ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12")).toEqual(new Value(null, ValueTypes.LOCAL_DATE_TIME));
         });
@@ -70,16 +64,6 @@ describe("api.data.type.LocalDateTimeValueTypeTest", function () {
 
         it("given date time string '2000-01-01T12:30:00' then an equal date string is returned", function () {
             expect(ValueTypes.LOCAL_DATE_TIME.toJsonValue(ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:00"))).toEqual("2000-01-01T12:30:00");
-        });
-
-        it("given date time string '2000-01-02T12:30:00' then an equal date string is returned", function () {
-            expect(ValueTypes.LOCAL_DATE_TIME.toJsonValue(new Value(new Date(Date.UTC(2000, 0, 2, 12, 30, 0)),
-                ValueTypes.LOCAL_DATE_TIME))).toEqual("2000-01-02T12:30:00");
-        });
-
-        it("given date 2000-09-06T15:44:11 then an equal date string is returned", function () {
-            expect(ValueTypes.LOCAL_DATE_TIME.toJsonValue(new Value(new Date(Date.UTC(2000, 8, 6, 15, 44, 11)),
-                ValueTypes.LOCAL_DATE_TIME))).toEqual("2000-09-06T15:44:11");
         });
     });
 

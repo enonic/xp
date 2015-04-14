@@ -81,14 +81,14 @@ describe("api.util.DateTimeTest", function () {
         it("should correctly convert when seconds, fractions and timezone not specified in constructor", function () {
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:00+00:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:00+00:00");
         });
 
         it("should correctly convert with timezone", function () {
             timeZone =  api.util.Timezone.create().setOffset(1).build();
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:37+01:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:37+01:00");
         });
 
 
@@ -96,7 +96,7 @@ describe("api.util.DateTimeTest", function () {
             timeZone =  api.util.Timezone.create().setOffset(1).build();
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(9).setTimezone(timeZone).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:37.009+01:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:37.009+01:00");
         });
     });
 
@@ -137,7 +137,7 @@ describe("api.util.DateTimeTest", function () {
             var date1 = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone1).build();
             var date2 = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone2).build();
 
-            expect(date1.equals(date2)).toBeTruthy();
+            expect(date1.equals(date2)).toBeFalsy();
         });
     });
 

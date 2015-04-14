@@ -81,6 +81,9 @@ module api.util {
             return Timezone.fromOffset(DateHelper.getTZOffset());
         }
 
+        static getZeroOffsetTimezone(): Timezone {
+            return Timezone.create().setOffset(0).build();
+        }
 
         public static create(): TimezoneBuilder {
             return new TimezoneBuilder();
