@@ -562,15 +562,14 @@ public class ContentServiceImpl
     @Override
     public Content sort( final SortContentParams params )
     {
-        Content content = doGetById( params.getContentId() );
+        final Node existingNode = nodeService.getById( NodeId.from( params.getContentId() ) );
 
-        return SortContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final ContentChangeEvent event = ContentChangeEvent.create().
+            change( ContentChangeEvent.ContentChangeType.SORT, translateNodePathToContentPath( existingNode.path() ) ).
+            build();
+        eventPublisher.publish( event );
+
+        return contentNodeTranslator.fromNode( existingNode );
     }
 
     @Override
