@@ -58,17 +58,9 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        validateContentTypeProperties();
+        CreateContentParams processedParams = processCreateContentParams();
 
-        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-        CreateContentParams processedContent = runContentProcessors( type );
-
-        processedContent = CreateContentParams.create( processedContent ).
-            contentData( PropertyTreeFormTranslator.transform( processedContent.getData(), type.form() ) ).
-            build();
-
-        final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedContent );
+        final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
         final CreateNodeParams createNodeParams = translator.toCreateNodeParams( createContentTranslatorParams );
 
@@ -92,6 +84,16 @@ final class CreateContentCommand
         }
     }
 
+    private CreateContentParams processCreateContentParams()
+    {
+        CreateContentParams processedParams = validateAndTransformForContentType( this.params );
+
+        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
+        processedParams = runContentProcessors( processedParams, type );
+        return processedParams;
+    }
+
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
@@ -110,17 +112,17 @@ final class CreateContentCommand
         builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
-    private CreateContentParams runContentProcessors( ContentType contentType )
+    private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
         return ProxyContentProcessor.create().
             mediaInfo( mediaInfo ).
             contentType( contentType ).
             mixinService( mixinService ).
             build().
-            processCreate( params );
+            processCreate( createContentParams );
     }
 
-    private void validateContentTypeProperties()
+    private CreateContentParams validateAndTransformForContentType( final CreateContentParams params )
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
 
@@ -150,6 +152,10 @@ final class CreateContentCommand
                     "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
             }
         }
+
+        return CreateContentParams.create( params ).
+            contentData( ContentTypePropertyTransformer.transform( params.getData(), contentType.form() ) ).
+            build();
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )

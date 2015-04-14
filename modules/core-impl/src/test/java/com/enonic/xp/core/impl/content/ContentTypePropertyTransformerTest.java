@@ -14,7 +14,7 @@ import com.enonic.xp.form.inputtype.InputTypes;
 
 import static org.junit.Assert.*;
 
-public class PropertyTreeFormTranslatorTest
+public class ContentTypePropertyTransformerTest
 {
     @Test
     public void nestedProperties()
@@ -43,7 +43,7 @@ public class PropertyTreeFormTranslatorTest
                 build() ).
             build();
 
-        final PropertyTree transformedTree = PropertyTreeFormTranslator.transform( data, form );
+        final PropertyTree transformedTree = ContentTypePropertyTransformer.transform( data, form );
 
         assertNotNull( transformedTree.getProperty( "myProps.myHtmlArea" ) );
         assertEquals( ValueTypes.STRING.toString(), transformedTree.getProperty( "myProps.myHtmlArea" ).getType().toString() );
@@ -75,7 +75,7 @@ public class PropertyTreeFormTranslatorTest
                 build() ).
             build();
 
-        final PropertyTree transformedTree = PropertyTreeFormTranslator.transform( data, form );
+        final PropertyTree transformedTree = ContentTypePropertyTransformer.transform( data, form );
 
         assertNotNull( transformedTree.getProperty( "noTimezone" ) );
         assertNotNull( transformedTree.getProperty( "timezone" ) );
@@ -98,7 +98,7 @@ public class PropertyTreeFormTranslatorTest
                 build() ).
             build();
 
-        final PropertyTree transformedTree = PropertyTreeFormTranslator.transform( data, form );
+        final PropertyTree transformedTree = ContentTypePropertyTransformer.transform( data, form );
 
         assertNotNull( transformedTree.getProperty( "noTimezone" ) );
         assertNotNull( transformedTree.getProperty( "timezone" ) );

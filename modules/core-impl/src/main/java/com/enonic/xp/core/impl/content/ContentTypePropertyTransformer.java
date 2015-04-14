@@ -11,7 +11,7 @@ import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputType;
 
-public class PropertyTreeFormTranslator
+public class ContentTypePropertyTransformer
 {
     public static PropertyTree transform( final PropertyTree propertyTree, final Form form )
     {
