@@ -36,7 +36,7 @@ public final class PageRenderer
 
         if ( pageDescriptor != null )
         {
-            final ControllerScript controllerScript = this.controllerScriptFactory.newController( pageDescriptor.getResourceKey() );
+            final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
             controllerScript.execute( context );
         }
         else

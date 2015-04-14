@@ -22,7 +22,7 @@ public final class ServiceControllerResource
     protected RenderResult execute( final PortalContext context )
         throws Exception
     {
-        final ControllerScript controllerScript = this.services.getControllerScriptFactory().newController( this.scriptDir );
+        final ControllerScript controllerScript = this.services.getControllerScriptFactory().fromDir( this.scriptDir );
         controllerScript.execute( context );
 
         return new PortalResponseSerializer( context.getResponse() ).serialize();

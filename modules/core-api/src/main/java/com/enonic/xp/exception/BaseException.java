@@ -2,6 +2,9 @@ package com.enonic.xp.exception;
 
 import java.text.MessageFormat;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class BaseException
     extends RuntimeException
 {

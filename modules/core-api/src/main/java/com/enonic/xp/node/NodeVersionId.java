@@ -1,8 +1,10 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.blob.BlobKey;
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.support.AbstractId;
 
+@Beta
 public class NodeVersionId
     extends AbstractId
 {
@@ -11,14 +13,8 @@ public class NodeVersionId
         super( value );
     }
 
-    public static NodeVersionId from( final BlobKey blobKey )
-    {
-        return new NodeVersionId( blobKey.toString() );
-    }
-
     public static NodeVersionId from( final String value )
     {
         return new NodeVersionId( value );
     }
-
 }

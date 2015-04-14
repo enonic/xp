@@ -3,9 +3,12 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinService;
 
+@Beta
 public class InlineMixinsToFormItemsTransformer
 {
     private final MixinService mixinService;

@@ -3,10 +3,13 @@ package com.enonic.xp.security;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 
+@Beta
 public interface SecurityService
 {
     UserStores getUserStores();

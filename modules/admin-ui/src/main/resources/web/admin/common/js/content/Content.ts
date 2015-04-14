@@ -11,7 +11,7 @@ module api.content {
 
         private attachments: api.content.attachment.Attachments;
 
-        private metadata: Metadata[] = [];
+        private extraData: ExtraData[] = [];
 
         private pageObj: api.content.page.Page;
 
@@ -25,7 +25,7 @@ module api.content {
             api.util.assertNotNull(builder.data, "data is required for Content");
             this.data = builder.data;
             this.attachments = builder.attachments;
-            this.metadata = builder.metadata || [];
+            this.extraData = builder.extraData || [];
             this.pageObj = builder.pageObj;
             this.permissions = builder.permissions || new AccessControlList();
             this.inheritPermissions = builder.inheritPermissions;
@@ -39,12 +39,12 @@ module api.content {
             return this.attachments;
         }
 
-        getMetadata(name: api.schema.mixin.MixinName): Metadata {
-            return this.metadata.filter((item: Metadata) => item.getName().equals(name))[0];
+        getExtraData(name: api.schema.mixin.MixinName): ExtraData {
+            return this.extraData.filter((item: ExtraData) => item.getName().equals(name))[0];
         }
 
-        getAllMetadata(): Metadata[] {
-            return this.metadata;
+        getAllExtraData(): ExtraData[] {
+            return this.extraData;
         }
 
         getPageMode(): api.content.page.PageMode {
@@ -80,18 +80,18 @@ module api.content {
             return copy;
         }
 
-        private trimMetadata(metadata: Metadata): Metadata {
-            var copy = metadata.clone();
+        private trimExtraData(extraData: ExtraData): ExtraData {
+            var copy = extraData.clone();
             copy.getData().getRoot().removeEmptyValues();
             return copy;
         }
 
-        private metadataEqualsIgnoreEmpty(metadata: Metadata[], otherMeta: Metadata[]): boolean {
-            metadata = metadata.map((m) => this.trimMetadata(m)).filter((m) => !m.getData().isEmpty());
-            otherMeta = otherMeta.map((m) => this.trimMetadata(m)).filter((m) => !m.getData().isEmpty());
+        private extraDataEqualsIgnoreEmpty(extraData: ExtraData[], otherMeta: ExtraData[]): boolean {
+            extraData = extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
+            otherMeta = otherMeta.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
 
-            var comparator = new api.content.MetadataByMixinNameComparator();
-            return api.ObjectHelper.arrayEquals(metadata.sort(comparator.compare), otherMeta.sort(comparator.compare));
+            var comparator = new api.content.ExtraDataByMixinNameComparator();
+            return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherMeta.sort(comparator.compare));
         }
 
         equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
@@ -116,12 +116,12 @@ module api.content {
             }
 
             if (ignoreEmptyValues) {
-                if (!this.metadataEqualsIgnoreEmpty(this.metadata, other.metadata)) {
+                if (!this.extraDataEqualsIgnoreEmpty(this.extraData, other.extraData)) {
                     return false;
                 }
             } else {
-                var comparator = new api.content.MetadataByMixinNameComparator();
-                if (!api.ObjectHelper.arrayEquals(this.metadata.sort(comparator.compare), other.metadata.sort(comparator.compare))) {
+                var comparator = new api.content.ExtraDataByMixinNameComparator();
+                if (!api.ObjectHelper.arrayEquals(this.extraData.sort(comparator.compare), other.extraData.sort(comparator.compare))) {
                     return false;
                 }
             }
@@ -173,7 +173,7 @@ module api.content {
 
         attachments: api.content.attachment.Attachments;
 
-        metadata: Metadata[];
+        extraData: ExtraData[];
 
         pageObj: api.content.page.Page;
 
@@ -187,7 +187,7 @@ module api.content {
 
                 this.data = source.getContentData() ? source.getContentData().copy() : null;
                 this.attachments = source.getAttachments();
-                this.metadata = source.getAllMetadata() ? source.getAllMetadata().map((metadata: Metadata) => metadata.clone()) : [];
+                this.extraData = source.getAllExtraData() ? source.getAllExtraData().map((extraData: ExtraData) => extraData.clone()) : [];
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 this.permissions = source.getPermissions(); // TODO clone?
                 this.inheritPermissions = source.isInheritPermissionsEnabled();
@@ -200,9 +200,9 @@ module api.content {
 
             this.data = PropertyTree.fromJson(json.data, propertyIdProvider);
             this.attachments = new api.content.attachment.AttachmentsBuilder().fromJson(json.attachments).build();
-            this.metadata = [];
-            json.meta.forEach((metadataJson: api.content.json.MetadataJson) => {
-                this.metadata.push(Metadata.fromJson(metadataJson, propertyIdProvider));
+            this.extraData = [];
+            json.meta.forEach((extraDataJson: api.content.json.ExtraDataJson) => {
+                this.extraData.push(ExtraData.fromJson(extraDataJson, propertyIdProvider));
             });
 
             if (this.page) {
@@ -235,8 +235,8 @@ module api.content {
             return this;
         }
 
-        setMetadata(metadata: Metadata[]): ContentBuilder {
-            this.metadata = metadata;
+        setExtraData(extraData: ExtraData[]): ContentBuilder {
+            this.extraData = extraData;
             return this;
         }
 

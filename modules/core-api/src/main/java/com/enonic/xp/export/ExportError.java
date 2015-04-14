@@ -1,5 +1,8 @@
 package com.enonic.xp.export;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class ExportError
 {
     private final String message;

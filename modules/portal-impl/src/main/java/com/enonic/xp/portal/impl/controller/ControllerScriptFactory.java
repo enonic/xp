@@ -4,5 +4,7 @@ import com.enonic.xp.resource.ResourceKey;
 
 public interface ControllerScriptFactory
 {
-    public ControllerScript newController( ResourceKey scriptDir );
+    ControllerScript fromDir( ResourceKey dir );
+
+    ControllerScript fromScript( ResourceKey script );
 }

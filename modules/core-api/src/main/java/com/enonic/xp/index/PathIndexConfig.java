@@ -1,7 +1,10 @@
 package com.enonic.xp.index;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.PropertyPath;
 
+@Beta
 public class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {

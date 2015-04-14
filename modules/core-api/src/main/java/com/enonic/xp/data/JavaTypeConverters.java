@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.util.BinaryReference;
@@ -16,22 +18,31 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.NANO_OF_SECOND;
+import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+
 final class JavaTypeConverters
 {
-
     private final static DateTimeFormatter LOCAL_DATE_FORMATTER =
         new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
             ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).toFormatter();
 
-    private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER =
-        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
-            ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).appendLiteral( "T" ).appendValue(
-            ChronoField.HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral(
-            ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
+    private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private final static DateTimeFormatter LOCAL_TIME_FORMATTER =
-        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).appendLiteral(
-            ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 1, 2, SignStyle.NORMAL ).toFormatter();
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+    private final static DateTimeFormatter LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder().
+        appendValue( HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).
+        appendLiteral( ':' ).
+        appendValue( MINUTE_OF_HOUR, 2 ).
+        optionalStart().
+        appendLiteral( ':' ).
+        appendValue( SECOND_OF_MINUTE, 2 ).
+        optionalStart().
+        appendFraction( NANO_OF_SECOND, 0, 9, true ).
+        toFormatter();
 
     private final static PropertySetJsonSerializer DATA_SERIALIZER = new PropertySetJsonSerializer();
 
@@ -211,7 +222,8 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return Instant.parse( (String) value );
+            final TemporalAccessor temporalAccessor = DATE_TIME_FORMATTER.parse( (String) value );
+            return Instant.from( temporalAccessor );
         }
         else
         {

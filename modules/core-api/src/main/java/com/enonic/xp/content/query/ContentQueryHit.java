@@ -1,7 +1,10 @@
 package com.enonic.xp.content.query;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public class ContentQueryHit
 {
     private final ContentId contentId;
@@ -50,4 +53,13 @@ public class ContentQueryHit
         return true;
     }
 
+
+
+    @Override
+    public int hashCode()
+    {
+        int result = contentId != null ? contentId.hashCode() : 0;
+        result = 31 * result + ( score != +0.0f ? Float.floatToIntBits( score ) : 0 );
+        return result;
+    }
 }

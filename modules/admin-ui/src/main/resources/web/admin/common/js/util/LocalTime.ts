@@ -2,21 +2,18 @@ module api.util {
 
     export class LocalTime implements api.Equitable {
 
+        private static TIME_SEPARATOR: string = ":";
+
         private hours: number;
 
         private minutes: number;
 
         private seconds: number;
 
-        private tzo: number;
-
-        constructor(hours: number, minutes: number, tzo: number, seconds?: number) {
-            this.hours = hours;
-            this.minutes = minutes;
-            this.tzo = tzo;
-            if (seconds) {
-                this.seconds = seconds;
-            }
+        constructor(builder: LocalTimeBuilder) {
+            this.hours = builder.hours;
+            this.minutes = builder.minutes;
+            this.seconds = builder.seconds;
         }
 
         getHours(): number {
@@ -28,20 +25,13 @@ module api.util {
         }
 
         getSeconds(): number {
-            return this.seconds;
-        }
-
-        getTZO(): number {
-            return this.tzo;
+            return this.seconds || 0;
         }
 
         toString(): string {
-            if (this.seconds) {
-                return this.padNumber(this.hours) + ":" + this.padNumber(this.minutes) + ":" + this.padNumber(this.seconds);
-            }
-            else {
-                return this.padNumber(this.hours) + ":" + this.padNumber(this.minutes);
-            }
+            var strSeconds = this.seconds ? LocalTime.TIME_SEPARATOR + this.padNumber(this.seconds) : StringHelper.EMPTY_STRING;
+
+            return this.padNumber(this.hours) + LocalTime.TIME_SEPARATOR + this.padNumber(this.minutes) + strSeconds;
         }
 
         equals(o: api.Equitable): boolean {
@@ -52,22 +42,19 @@ module api.util {
 
             var other = <LocalTime>o;
 
-            if (!api.ObjectHelper.numberEquals(this.hours, other.hours)) {
+            if (!api.ObjectHelper.numberEquals(this.getHours(), other.getHours())) {
                 return false;
             }
-            if (!api.ObjectHelper.numberEquals(this.minutes, other.minutes)) {
+            if (!api.ObjectHelper.numberEquals(this.getMinutes(), other.getMinutes())) {
                 return false;
             }
-            if (!api.ObjectHelper.numberEquals(this.seconds, other.seconds)) {
-                return false;
-            }
-            if (!api.ObjectHelper.numberEquals(this.tzo, other.tzo)) {
+            if (!api.ObjectHelper.numberEquals(this.getSeconds(), other.getSeconds())) {
                 return false;
             }
             return true;
         }
 
-        private  padNumber(num: number): string {
+        private padNumber(num: number): string {
             return (num < 10 ? '0' : '') + num;
         }
 
@@ -75,7 +62,9 @@ module api.util {
             if (StringHelper.isBlank(s)) {
                 return false;
             }
-            var re = /^[0-2]?\d:[0-5]?\d$/;
+            //var re = /^[0-2]?\d:[0-5]?\d$/;
+            // looks for strings like '12', '1:19', '21:05', '6:7', '15:9:8', '6:59:29'
+            var re = /^(\d{1}|[0-1]{1}\d{1}|[2]{1}[0-3]{1})((?::)(\d{1}|[0-5]{1}\d{1}))?((?::)(\d{1}|[0-5]{1}\d{1}))?$/;
             return re.test(s);
         }
 
@@ -83,23 +72,60 @@ module api.util {
             if (!LocalTime.isValidString(s)) {
                 throw new Error("Cannot parse LocalTime from string: " + s);
             }
-            var tzo = api.util.DateHelper.getTZOffset();
             var localTime: string[] = s.split(':');
             var hours = Number(localTime[0]);
             var minutes = Number(localTime[1]);
-            return new LocalTime(hours, minutes, tzo);
+            var seconds = localTime.length>2 ? Number(localTime[2]) : 0;
 
-
+            return LocalTime.create()
+                .setHours(hours)
+                .setMinutes(minutes)
+                .setSeconds(seconds)
+                .build();
         }
 
-        public  getAdjustedTime(): {hour: number; minute: number} {
+        public getAdjustedTime(): {hour: number; minute: number; seconds: number} {
             var date = new Date();
-            date.setHours(this.getHours() + DateHelper.getTZOffset(), this.getMinutes());
+            date.setHours(this.getHours(), this.getMinutes(), this.getSeconds());
+
             return {
                 hour: date.getHours(),
-                minute: date.getMinutes()
+                minute: date.getMinutes(),
+                seconds: date.getSeconds()
             }
         }
 
+        public static create(): LocalTimeBuilder {
+            return new LocalTimeBuilder();
+        }
+
+    }
+
+    class LocalTimeBuilder {
+
+        hours: number;
+
+        minutes: number;
+
+        seconds: number;
+
+        public setHours(value: number): LocalTimeBuilder {
+            this.hours = value;
+            return this;
+        }
+
+        public setMinutes(value: number): LocalTimeBuilder {
+            this.minutes = value;
+            return this;
+        }
+
+        public setSeconds(value: number): LocalTimeBuilder {
+            this.seconds = value;
+            return this;
+        }
+
+        public build(): LocalTime {
+            return new LocalTime(this);
+        }
     }
 }

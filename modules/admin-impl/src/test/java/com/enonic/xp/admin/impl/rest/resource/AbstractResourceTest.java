@@ -26,8 +26,6 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
-
 public abstract class AbstractResourceTest
 {
     private Dispatcher dispatcher;
@@ -112,6 +110,11 @@ public abstract class AbstractResourceTest
     protected final void assertArrayEquals( Object[] a1, Object[] a2 )
     {
         Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
+    }
+
+    protected final void assertEquals( Object a1, Object a2 )
+    {
+        Assert.assertEquals(  a1 ,a2 );
     }
 
     protected final String arrayToString( Object[] a )

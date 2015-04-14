@@ -1,7 +1,9 @@
 package com.enonic.xp.schema.content;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public class GetContentTypeParams
 {
     private ContentTypeName contentTypeName;

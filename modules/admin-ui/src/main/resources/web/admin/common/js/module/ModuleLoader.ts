@@ -6,9 +6,13 @@ module api.module {
     export class ModuleLoader extends api.util.loader.BaseLoader<ModuleListResult, Module> {
 
         private preservedSearchString: string;
+        private filterObject: Object;
 
-        constructor(delay: number = 500) {
+        constructor(delay: number = 500, filterObject: Object = null) {
             super(new ListModulesRequest());
+            if (filterObject) {
+                this.filterObject = filterObject;
+            }
         }
 
         search(searchString: string): wemQ.Promise<Module[]> {
@@ -17,19 +21,38 @@ module api.module {
         }
 
         load(): wemQ.Promise<Module[]> {
+            var me = this;
+            me.notifyLoadingData();
 
-            this.notifyLoadingData();
-
-            return this.sendRequest()
+            return me.sendRequest()
                 .then((modules: Module[]) => {
-
-                    this.notifyLoadedData(modules);
-                    if (this.preservedSearchString) {
-                        this.search(this.preservedSearchString);
-                        this.preservedSearchString = null;
+                    if (me.filterObject) {
+                        modules = modules.filter(me.filterResults, me);
+                    }
+                    me.notifyLoadedData(modules);
+                    if (me.preservedSearchString) {
+                        me.search(me.preservedSearchString);
+                        me.preservedSearchString = null;
                     }
                     return modules;
                 });
+        }
+
+        private filterResults(module: Module): boolean {
+            if (!this.filterObject) {
+                return true;
+            }
+
+            var result = true;
+            for (var name in this.filterObject) {
+                if (this.filterObject.hasOwnProperty(name)) {
+                    if (!module.hasOwnProperty(name) || this.filterObject[name] != module[name]) {
+                        result = false;
+                    }
+                }
+            }
+
+            return result;
         }
 
     }

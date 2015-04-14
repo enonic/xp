@@ -3,12 +3,14 @@ package com.enonic.xp.index;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyPath;
 
+@Beta
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {

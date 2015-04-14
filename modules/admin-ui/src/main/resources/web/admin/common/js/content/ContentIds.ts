@@ -53,7 +53,7 @@ module api.content {
         }
     }
 
-    class ContentIdsBuilder {
+    export class ContentIdsBuilder {
 
         array: ContentId[] = [];
 

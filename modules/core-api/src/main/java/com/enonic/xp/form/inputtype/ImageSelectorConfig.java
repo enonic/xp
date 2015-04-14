@@ -1,9 +1,12 @@
 package com.enonic.xp.form.inputtype;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.InvalidValueException;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
+@Beta
 public final class ImageSelectorConfig
     implements InputTypeConfig
 {

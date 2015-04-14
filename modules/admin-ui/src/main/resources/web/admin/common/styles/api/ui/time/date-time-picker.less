@@ -36,11 +36,11 @@
       display: none;
       position: absolute;
       box-sizing: border-box;
-      min-width: 316px;
       width: 100%;
       z-index: 100;
-      padding: 10px 100px;
+      padding: 10px 0px;
       background-color: #fff;
+      text-align: center;
 
       .notSelectable();
 
@@ -49,6 +49,8 @@
       .date-picker-dialog-content();
 
       .date-picker-dialog {
+        width: auto;
+        padding: 10px;
         display: inline-block;
         position: static;
         vertical-align: middle;
@@ -65,6 +67,21 @@
       }
     }
 
+  }
+
+}
+@media screen and (max-width: 479px) {
+  .date-time-dialog {
+    .date-picker-dialog {
+      padding: 10px 0px !important;;
+      display: block !important;
+    }
+    .time-picker-dialog {
+      display: block !important;
+      text-align: center !important;
+      width: 50% !important;
+      margin: 0 auto !important;
+    }
   }
 
 }

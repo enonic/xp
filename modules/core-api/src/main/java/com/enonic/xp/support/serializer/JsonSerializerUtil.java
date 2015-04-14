@@ -4,9 +4,11 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.PrincipalKey;
 
+@Beta
 public class JsonSerializerUtil
 {
     public static PrincipalKey getPrincipalKeyValue( final String propertyName, final JsonNode node )

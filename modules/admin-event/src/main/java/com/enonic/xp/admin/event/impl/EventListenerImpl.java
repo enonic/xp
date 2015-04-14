@@ -7,6 +7,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
+import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.EventJson;
+import com.enonic.xp.admin.event.impl.json.ModuleUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ObjectMapperHelper;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentPublishedEvent;
@@ -14,17 +21,6 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.ModuleUpdatedEvent;
-import com.enonic.xp.schema.content.ContentTypeDeletedEvent;
-import com.enonic.xp.schema.content.ContentTypeUpdatedEvent;
-import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentTypeDeletedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentTypeUpdatedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
-import com.enonic.xp.admin.event.impl.json.EventJson;
-import com.enonic.xp.admin.event.impl.json.ModuleUpdatedEventJson;
-import com.enonic.xp.admin.event.impl.json.ObjectMapperHelper;
 
 @Component(immediate = true)
 public final class EventListenerImpl
@@ -85,14 +81,6 @@ public final class EventListenerImpl
         else if ( event instanceof ContentPublishedEvent )
         {
             return new ContentPublishedEventJson( (ContentPublishedEvent) event );
-        }
-        else if ( event instanceof ContentTypeUpdatedEvent )
-        {
-            return new ContentTypeUpdatedEventJson( (ContentTypeUpdatedEvent) event );
-        }
-        else if ( event instanceof ContentTypeDeletedEvent )
-        {
-            return new ContentTypeDeletedEventJson( (ContentTypeDeletedEvent) event );
         }
         return null;
     }

@@ -2,12 +2,14 @@ package com.enonic.xp.content.attachment;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public final class Attachment
 {
     private final long size;
@@ -130,6 +132,7 @@ public final class Attachment
             this.mimeType = attachment.mimeType;
             this.name = attachment.name;
             this.label = attachment.label;
+            this.size = attachment.size;
         }
 
         public Builder mimeType( final String mimeType )

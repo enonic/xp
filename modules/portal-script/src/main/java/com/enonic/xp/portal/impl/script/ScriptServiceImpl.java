@@ -11,14 +11,13 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.ScriptValue;
-import com.enonic.xp.portal.script.ScriptService;
-import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvokerImpl;
+import com.enonic.xp.portal.impl.script.util.NashornHelper;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptService;
+import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.resource.ResourceKey;
 
 @Component(immediate = true)
 public final class ScriptServiceImpl
@@ -32,7 +31,7 @@ public final class ScriptServiceImpl
 
     public ScriptServiceImpl()
     {
-        this.engine = new NashornScriptEngineFactory().getScriptEngine();
+        this.engine = NashornHelper.getScriptEngine( "-strict" );
         this.invoker = new CommandInvokerImpl();
         this.globalMap = Maps.newHashMap();
     }

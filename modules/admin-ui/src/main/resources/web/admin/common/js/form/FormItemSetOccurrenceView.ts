@@ -140,7 +140,7 @@ module api.form {
                 this.label.removeClass("drag-control");
             }
 
-            this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
+            this.removeButton.setVisible(this.formItemSetOccurrence.isRemoveButtonRequired());
         }
 
         showContainer(show: boolean) {

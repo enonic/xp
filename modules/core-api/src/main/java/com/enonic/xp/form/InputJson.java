@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.Beta;
 
-import static com.enonic.xp.form.Input.newInput;
-
+@Beta
 public class InputJson
     extends FormItemJson<Input>
 {
@@ -40,7 +40,7 @@ public class InputJson
         builder.validationRegexp( validationRegexp );
         builder.occurrences( occurrences.getOccurrences() );
         builder.inputType( inputType.getInputType() );
-        if ( inputType.getInputType().requiresConfig() )
+        if ( inputType.getInputType().hasConfig() && inputType.getInputType().getInputTypeConfigJsonSerializer() != null)
         {
             builder.inputTypeConfig( inputType.getInputType().getInputTypeConfigJsonSerializer().parseConfig( configObject ) );
         }
@@ -56,7 +56,7 @@ public class InputJson
         this.inputType = new InputTypeJson( input.getInputType() );
 
         final ObjectMapper objectMapper = new ObjectMapper();
-        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
+        if ( input.getInputType().hasConfig() && input.getInputTypeConfig() != null )
         {
 
             this.configJson =

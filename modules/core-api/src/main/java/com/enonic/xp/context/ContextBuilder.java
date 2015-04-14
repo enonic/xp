@@ -2,13 +2,15 @@ package com.enonic.xp.context;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.branch.Branch;
 
+@Beta
 public final class ContextBuilder
 {
     private LocalScope localScope;

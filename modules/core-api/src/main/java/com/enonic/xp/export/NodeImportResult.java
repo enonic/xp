@@ -3,12 +3,14 @@ package com.enonic.xp.export;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class NodeImportResult
 {
     public final NodePaths addedNodes;
@@ -74,7 +76,8 @@ public class NodeImportResult
     public String toString()
     {
         return "NodeImportResult{" +
-            "addedNodes=" + addedNodes +
+            "dryRun=" + dryRun +
+            ", addedNodes=" + addedNodes +
             ", updateNodes=" + updateNodes +
             ", importErrors=" + Arrays.toString( importErrors.toArray() ) +
             ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +

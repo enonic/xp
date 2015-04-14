@@ -1,6 +1,9 @@
 package com.enonic.xp.form.inputtype;
 
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class InputTypeExtension
     extends InputType
 {
@@ -11,7 +14,7 @@ public abstract class InputTypeExtension
 
     protected InputTypeExtension( final Class configClass )
     {
-        super( configClass );
+        super( configClass, true );
     }
 
 }

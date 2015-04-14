@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.osgi.framework.BundleEvent;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public enum ModuleEventType
 {
     INSTALLED( BundleEvent.INSTALLED ),

@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -9,6 +10,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class UpdateNodeParams
 {
     private final NodeId id;

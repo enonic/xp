@@ -312,7 +312,7 @@ module api.content.page.region {
         }
     }
 
-    class RegionBuilder {
+    export class RegionBuilder {
 
         name: string;
 

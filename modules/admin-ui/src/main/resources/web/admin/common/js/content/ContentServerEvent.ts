@@ -12,7 +12,7 @@ module api.content {
         SORT
     }
 
-    interface ContentServerEventItemJson {
+    export interface ContentServerEventItemJson {
         t: string;
         p: string[];
     }

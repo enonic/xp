@@ -2,6 +2,7 @@ package com.enonic.xp.content.query;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -14,6 +15,7 @@ import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
+@Beta
 public class ContentQuery
 {
     public static final int DEFAULT_FETCH_SIZE = 10;

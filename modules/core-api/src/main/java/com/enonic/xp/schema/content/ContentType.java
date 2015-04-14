@@ -1,6 +1,7 @@
 package com.enonic.xp.schema.content;
 
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.form.Form;
@@ -10,6 +11,7 @@ import com.enonic.xp.schema.mixin.MixinNames;
 
 import static com.enonic.xp.form.Form.newForm;
 
+@Beta
 public final class ContentType
     extends BaseSchema<ContentTypeName>
 {

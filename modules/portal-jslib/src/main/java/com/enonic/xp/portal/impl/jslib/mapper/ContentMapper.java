@@ -6,7 +6,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
@@ -38,7 +38,7 @@ public final class ContentMapper
         gen.value( "valid", value.isValid() );
 
         serializeData( gen, value.getData() );
-        serializeMetaData( gen, value.getAllMetadata() );
+        serializeExtraData( gen, value.getAllExtraData() );
         serializePage( gen, value.getPage() );
     }
 
@@ -49,28 +49,28 @@ public final class ContentMapper
         gen.end();
     }
 
-    private static void serializeMetaData( final MapGenerator gen, final Iterable<Metadata> values )
+    private static void serializeExtraData( final MapGenerator gen, final Iterable<ExtraData> values )
     {
         gen.map( "x" );
 
-        final ListMultimap<ModuleKey, Metadata> metadatasByModule = ArrayListMultimap.create();
-        for ( Metadata metadata : values )
+        final ListMultimap<ModuleKey, ExtraData> extradatasByModule = ArrayListMultimap.create();
+        for ( ExtraData extraData : values )
         {
-            metadatasByModule.put( metadata.getName().getModuleKey(), metadata );
+            extradatasByModule.put( extraData.getName().getModuleKey(), extraData );
         }
 
-        for ( final ModuleKey moduleKey : metadatasByModule.keys() )
+        for ( final ModuleKey moduleKey : extradatasByModule.keys() )
         {
-            final List<Metadata> metadatas = metadatasByModule.get( moduleKey );
-            if ( metadatas.isEmpty() )
+            final List<ExtraData> extraDatas = extradatasByModule.get( moduleKey );
+            if ( extraDatas.isEmpty() )
             {
                 continue;
             }
-            gen.map( metadatas.get( 0 ).getModulePrefix() );
-            for ( final Metadata metadata : metadatas )
+            gen.map( extraDatas.get( 0 ).getModulePrefix() );
+            for ( final ExtraData extraData : extraDatas )
             {
-                gen.map( metadata.getName().getLocalName() );
-                new PropertyTreeMapper( metadata.getData() ).serialize( gen );
+                gen.map( extraData.getName().getLocalName() );
+                new PropertyTreeMapper( extraData.getData() ).serialize( gen );
                 gen.end();
             }
             gen.end();

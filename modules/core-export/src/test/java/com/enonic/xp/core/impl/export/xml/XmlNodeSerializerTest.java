@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -100,8 +99,8 @@ public class XmlNodeSerializerTest
             data( propertyTree ).
             indexConfigDocument( indexConfig.build() ).
             attachedBinaries( AttachedBinaries.create().
-                add( new AttachedBinary( BinaryReference.from( "image.jpg" ), new BlobKey( "a" ) ) ).
-                add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), new BlobKey( "b" ) ) ).
+                add( new AttachedBinary( BinaryReference.from( "image.jpg" ), "a" ) ).
+                add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), "b" ) ).
                 build() ).
             build();
     }

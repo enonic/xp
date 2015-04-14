@@ -1,9 +1,11 @@
 package com.enonic.xp.relationship;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.relationship.editor.RelationshipEditor;
 
+@Beta
 public final class UpdateRelationshipParams
 {
     private RelationshipKey relationshipKey;

@@ -2,12 +2,10 @@ package com.enonic.xp.portal.impl.script.function;
 
 import java.util.Collections;
 
-import javax.script.Bindings;
-
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.invoker.CommandRequestImpl;
+import com.enonic.xp.resource.ResourceKey;
 
 public final class ExecuteFunction
     extends AbstractFunction
@@ -18,6 +16,7 @@ public final class ExecuteFunction
 
     public ExecuteFunction( final ResourceKey script, final CommandInvoker invoker )
     {
+        super( "execute" );
         this.script = script;
         this.invoker = invoker;
     }
@@ -38,11 +37,5 @@ public final class ExecuteFunction
         request.setScript( this.script );
         request.setParamsMap( JsObjectConverter.fromJsAsMap( params ) );
         return this.invoker.invoke( request );
-    }
-
-    @Override
-    public void register( final Bindings bindings )
-    {
-        bindings.put( "execute", this );
     }
 }

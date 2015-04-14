@@ -1,10 +1,11 @@
 package com.enonic.xp.name;
 
-
 import java.util.Arrays;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public class Name
 {
     private final String value;

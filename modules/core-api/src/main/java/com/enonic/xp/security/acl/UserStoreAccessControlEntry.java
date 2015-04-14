@@ -2,10 +2,13 @@ package com.enonic.xp.security.acl;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class UserStoreAccessControlEntry
 {
     private final PrincipalKey principal;
@@ -26,11 +29,6 @@ public final class UserStoreAccessControlEntry
     public UserStoreAccess getAccess()
     {
         return access;
-    }
-
-    public boolean hasAtLeastAccess( final UserStoreAccess access )
-    {
-        return this.access.compareTo( access ) >= 0;
     }
 
     @Override

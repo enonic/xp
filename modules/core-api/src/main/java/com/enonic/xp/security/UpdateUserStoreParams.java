@@ -1,9 +1,12 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class UpdateUserStoreParams
 {
 

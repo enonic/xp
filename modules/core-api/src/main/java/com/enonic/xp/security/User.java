@@ -1,9 +1,13 @@
 package com.enonic.xp.security;
 
+import java.util.Objects;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import static java.util.Objects.requireNonNull;
 
+@Beta
 public final class User
     extends Principal
 {
@@ -103,6 +107,28 @@ public final class User
         {
             this.authenticationHash = value;
             return this;
+        }
+
+        @Override
+        public boolean equals( final Object o )
+        {
+            if ( this == o )
+            {
+                return true;
+            }
+            if ( !( o instanceof User ) )
+            {
+                return false;
+            }
+
+            final User other = (User) o;
+
+            return super.equals( o ) &&
+                Objects.equals( email, other.email ) &&
+                Objects.equals( authenticationHash, other.authenticationHash ) &&
+                Objects.equals( login, other.login ) &&
+                Objects.equals( loginDisabled, other.loginDisabled );
+
         }
 
         @Override

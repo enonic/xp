@@ -1,5 +1,8 @@
 package com.enonic.xp.security.auth;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class PasswordAuthToken
     extends AuthenticationToken
 {

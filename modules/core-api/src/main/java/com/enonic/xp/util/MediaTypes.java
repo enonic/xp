@@ -2,9 +2,11 @@ package com.enonic.xp.util;
 
 import java.util.HashMap;
 
+import com.google.common.annotations.Beta;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
+@Beta
 public final class MediaTypes
     extends HashMap<String, MediaType>
 {

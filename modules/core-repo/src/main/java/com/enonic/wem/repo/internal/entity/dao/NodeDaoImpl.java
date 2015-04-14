@@ -10,7 +10,15 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.wem.repo.internal.blob.Blob;
+import com.enonic.wem.repo.internal.blob.BlobKey;
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.entity.NodeConstants;
+import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -20,14 +28,6 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RootNode;
-import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
-import com.enonic.wem.repo.internal.entity.NodeConstants;
-import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
 
 @Component
 public class NodeDaoImpl
@@ -44,7 +44,7 @@ public class NodeDaoImpl
     {
         final Blob blob = doStoreNodeAsBlob( node );
 
-        return NodeVersionId.from( blob.getKey() );
+        return NodeVersionId.from( blob.getKey().toString() );
     }
 
     private Blob doStoreNodeAsBlob( final Node newNode )

@@ -1,8 +1,11 @@
 package com.enonic.xp.content.page;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public final class PageTemplateKey
     extends ContentId
 {

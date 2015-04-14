@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -170,12 +172,17 @@ public final class XmlNodeParser
 
     private void addHtmlPartProperty( final PropertySet set, final String name, final String value )
     {
-        set.addHtmlPart( name, value );
+        set.addHtmlPart( name, xmlDecodeString( value ) );
     }
 
     private void addXmlProperty( final PropertySet set, final String name, final String value )
     {
-        set.addXml( name, value );
+        set.addXml( name, xmlDecodeString( value ) );
+    }
+
+    private String xmlDecodeString( final String value )
+    {
+        return StringEscapeUtils.unescapeXml( value );
     }
 
     private void addGeoPointProperty( final PropertySet set, final String name, final String value )

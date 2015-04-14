@@ -1,16 +1,19 @@
 package com.enonic.xp.portal.url;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface PortalUrlService
 {
-    public String assetUrl( AssetUrlParams params );
+    String assetUrl( AssetUrlParams params );
 
-    public String serviceUrl( ServiceUrlParams params );
+    String serviceUrl( ServiceUrlParams params );
 
-    public String pageUrl( PageUrlParams params );
+    String pageUrl( PageUrlParams params );
 
-    public String componentUrl( ComponentUrlParams params );
+    String componentUrl( ComponentUrlParams params );
 
-    public String imageUrl( ImageUrlParams params );
+    String imageUrl( ImageUrlParams params );
 
-    public String attachmentUrl( AttachmentUrlParams params );
+    String attachmentUrl( AttachmentUrlParams params );
 }

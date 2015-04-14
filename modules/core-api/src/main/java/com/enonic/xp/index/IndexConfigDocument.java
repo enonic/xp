@@ -1,10 +1,13 @@
 package com.enonic.xp.index;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.PropertyPath;
 
+@Beta
 public interface IndexConfigDocument
 {
-    public String getAnalyzer();
+    String getAnalyzer();
 
-    public IndexConfig getConfigForPath( final PropertyPath dataPath );
+    IndexConfig getConfigForPath( final PropertyPath dataPath );
 }

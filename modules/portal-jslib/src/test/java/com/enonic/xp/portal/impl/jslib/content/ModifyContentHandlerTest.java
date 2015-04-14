@@ -1,9 +1,8 @@
 package com.enonic.xp.portal.impl.jslib.content;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;

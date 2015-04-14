@@ -2,6 +2,9 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class NodeVersion
     implements Comparable<NodeVersion>
 {

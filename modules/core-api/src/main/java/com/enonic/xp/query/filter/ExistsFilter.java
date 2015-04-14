@@ -1,5 +1,8 @@
 package com.enonic.xp.query.filter;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class ExistsFilter
     extends FieldFilter
 {

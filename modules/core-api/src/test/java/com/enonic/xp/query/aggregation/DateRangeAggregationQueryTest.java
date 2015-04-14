@@ -4,13 +4,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.query.aggregation.DateRange;
-import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
+import static org.junit.Assert.*;
 
 public class DateRangeAggregationQueryTest
 {
@@ -29,15 +27,16 @@ public class DateRangeAggregationQueryTest
             addRange( DateRange.create().
                 key( "myRange1" ).
                 to( future ).build() ).
+            format( "dd.mmm.yyyy" ).
             build();
 
-        Assert.assertEquals( "myFieldName", query.getFieldName() );
-        Assert.assertEquals( 2, query.getRanges().size() );
+        assertEquals( "myFieldName", query.getFieldName() );
+        assertEquals( 2, query.getRanges().size() );
 
         final UnmodifiableIterator<DateRange> iterator = query.getRanges().iterator();
         final DateRange first = iterator.next();
         final DateRange second = iterator.next();
 
-        Assert.assertNotSame( first, second );
+        assertNotSame( first, second );
     }
 }

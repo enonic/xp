@@ -7,18 +7,20 @@ import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.support.AbstractEqualsTest;
 
+import static org.junit.Assert.*;
+
 public class PageTest
 {
     @Test
     public void equals()
     {
-        PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config1.addString( "some", "config" );
 
-        PropertyTree config2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config2.addString( "other", "config" );
 
-        Region region1 = Region.newRegion().
+        final Region region1 = Region.newRegion().
             name( "main" ).
             add( PartComponent.newPartComponent().
                 name( "MyPart" ).
@@ -32,7 +34,7 @@ public class PageTest
                 build() ).
             build();
 
-        Region region2 = Region.newRegion().
+        final Region region2 = Region.newRegion().
             name( "apart" ).
             add( PartComponent.newPartComponent().
                 name( "MyPart" ).
@@ -85,7 +87,7 @@ public class PageTest
                     regions( PageRegions.newPageRegions().add( region1 ).build() ).
                     build();
 
-                return new Object[]{notX1, notX2, notX3, notX4};
+                return new Object[]{notX1, notX2, notX3, notX4, new Object()};
             }
 
             @Override
@@ -109,5 +111,38 @@ public class PageTest
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
+    }
+
+    @Test
+    public void copy()
+    {
+        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        config1.addString( "some", "config" );
+
+        final Region region1 = Region.newRegion().
+            name( "main" ).
+            add( PartComponent.newPartComponent().
+                name( "MyPart" ).
+                descriptor( "descriptor-x" ).
+                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                build() ).
+            add( PartComponent.newPartComponent().
+                name( "MyOtherPart" ).
+                descriptor( "descriptor-y" ).
+                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                build() ).
+            build();
+
+        final Page sourcePage = Page.newPage().
+            config( config1 ).
+            template( PageTemplateKey.from( "template-x" ) ).
+            regions( PageRegions.newPageRegions().add( region1 ).build() ).
+            build();
+
+        final Page copiedPage = sourcePage.copy();
+
+        assertEquals( sourcePage.getConfig(), copiedPage.getConfig() );
+        assertEquals( sourcePage.getTemplate(), copiedPage.getTemplate() );
+        assertEquals( sourcePage.getRegions(), sourcePage.getRegions() );
     }
 }

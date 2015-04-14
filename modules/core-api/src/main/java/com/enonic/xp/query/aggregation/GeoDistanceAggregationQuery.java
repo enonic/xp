@@ -1,7 +1,10 @@
 package com.enonic.xp.query.aggregation;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.util.GeoPoint;
 
+@Beta
 public class GeoDistanceAggregationQuery
     extends AbstractRangeAggregationQuery<DistanceRange>
 {

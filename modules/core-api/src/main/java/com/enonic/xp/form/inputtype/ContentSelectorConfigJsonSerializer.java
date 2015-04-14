@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 
+@Beta
 public class ContentSelectorConfigJsonSerializer
     extends AbstractInputTypeConfigJsonSerializer<ContentSelectorConfig>
 {

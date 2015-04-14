@@ -1,6 +1,8 @@
 package com.enonic.xp.content.page.region;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public final class LayoutRegions
     extends AbstractRegions
 {

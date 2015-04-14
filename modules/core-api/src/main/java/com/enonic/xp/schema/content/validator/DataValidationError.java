@@ -2,8 +2,11 @@ package com.enonic.xp.schema.content.validator;
 
 import java.text.MessageFormat;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.form.FormItemPath;
 
+@Beta
 public class DataValidationError
 {
     private final FormItemPath path;

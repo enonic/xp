@@ -2,8 +2,11 @@ package com.enonic.xp.content;
 
 import java.time.Instant;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.security.PrincipalKey;
 
+@Beta
 public class ContentVersion
     implements Comparable<ContentVersion>
 {

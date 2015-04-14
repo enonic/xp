@@ -3,6 +3,9 @@ package com.enonic.xp.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class PropertyTreeJson
 {
     public static PropertyTree fromJson( final List<PropertyArrayJson> list )

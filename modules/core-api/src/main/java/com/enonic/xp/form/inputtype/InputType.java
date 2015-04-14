@@ -3,10 +3,13 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Occurrences;
 
+@Beta
 public abstract class InputType
 {
     private final InputTypeName inputTypeName;
@@ -15,20 +18,24 @@ public abstract class InputType
 
     private final boolean builtIn;
 
+    private final boolean requiresConfig;
+
     protected InputType()
     {
         this.builtIn = resolveBuiltIn();
         this.configClass = null;
         final String name = resolveName();
         this.inputTypeName = new InputTypeName( name, !this.builtIn );
+        this.requiresConfig = false;
     }
 
-    protected InputType( final Class configClass )
+    protected InputType( final Class configClass, final boolean requiresConfig )
     {
         this.builtIn = resolveBuiltIn();
         this.configClass = configClass;
         final String name = resolveName();
         this.inputTypeName = new InputTypeName( name, !this.builtIn );
+        this.requiresConfig = requiresConfig;
     }
 
     public String getName()
@@ -37,6 +44,11 @@ public abstract class InputType
     }
 
     public final boolean requiresConfig()
+    {
+        return requiresConfig;
+    }
+
+    public final boolean hasConfig()
     {
         return configClass != null;
     }

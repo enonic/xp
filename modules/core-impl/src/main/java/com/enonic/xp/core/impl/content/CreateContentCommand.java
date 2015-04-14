@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -20,7 +21,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.Metadatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
@@ -212,7 +212,7 @@ final class CreateContentCommand
         final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
             contentData( contentParams.getData() ).
             contentType( contentParams.getType() ).
-            metadatas( contentParams.getMetadata() != null ? Metadatas.from( contentParams.getMetadata() ) : Metadatas.empty() ).
+            extradatas( contentParams.getExtraDatas() != null ? ExtraDatas.from( contentParams.getExtraDatas() ) : ExtraDatas.empty() ).
             mixinService( this.mixinService ).
             moduleService( this.moduleService ).
             contentTypeService( this.contentTypeService ).

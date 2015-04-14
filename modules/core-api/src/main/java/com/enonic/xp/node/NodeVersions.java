@@ -3,9 +3,11 @@ package com.enonic.xp.node;
 import java.util.Iterator;
 import java.util.SortedSet;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
+@Beta
 public class NodeVersions
     implements Iterable<NodeVersion>
 {

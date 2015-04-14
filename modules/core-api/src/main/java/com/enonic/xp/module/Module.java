@@ -6,42 +6,43 @@ import java.util.Set;
 
 import org.osgi.framework.Bundle;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinNames;
 
+@Beta
 public interface Module
 {
-    public ModuleKey getKey();
+    ModuleKey getKey();
 
-    public ModuleVersion getVersion();
+    ModuleVersion getVersion();
 
-    public String getDisplayName();
+    String getDisplayName();
 
-    public String getSystemVersion();
+    String getSystemVersion();
 
-    public String getMaxSystemVersion();
+    String getMaxSystemVersion();
 
-    public String getMinSystemVersion();
+    String getMinSystemVersion();
 
-    public String getUrl();
+    String getUrl();
 
-    public String getVendorName();
+    String getVendorName();
 
-    public String getVendorUrl();
+    String getVendorUrl();
 
-    public Form getConfig();
+    Form getConfig();
 
-    public URL getResource( String path );
+    URL getResource( String path );
 
-    public Set<String> getResourcePaths();
+    Set<String> getResourcePaths();
 
-    public Bundle getBundle();
+    Bundle getBundle();
 
-    public MixinNames getMetaSteps();
+    MixinNames getMetaSteps();
 
-    public Instant getModifiedTime();
+    Instant getModifiedTime();
 
-    public boolean isStarted();
-
-    // public <T> T getValue( Class<T> type, Callable<T> creator );
+    boolean isStarted();
 }

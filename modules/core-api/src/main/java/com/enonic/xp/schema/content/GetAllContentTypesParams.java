@@ -1,5 +1,8 @@
 package com.enonic.xp.schema.content;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class GetAllContentTypesParams
 {
     private boolean inlineMixinsToFormItems = false;

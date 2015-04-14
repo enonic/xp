@@ -2,7 +2,10 @@ package com.enonic.xp.image;
 
 import java.awt.image.BufferedImage;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface ImageFilter
 {
-    public BufferedImage filter( BufferedImage source );
+    BufferedImage filter( BufferedImage source );
 }

@@ -1,5 +1,8 @@
 package com.enonic.xp.exception;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class SystemException
     extends BaseException
 {

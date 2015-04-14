@@ -1,11 +1,13 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNull;
 
+@Beta
 public final class ApplyContentPermissionsParams
 {
     private final ContentId contentId;
@@ -54,7 +56,8 @@ public final class ApplyContentPermissionsParams
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
         return Objects.equal( this.contentId, that.contentId ) &&
-            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions );
+            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
+            Objects.equal( this.modifier, that.modifier );
     }
 
     @Override

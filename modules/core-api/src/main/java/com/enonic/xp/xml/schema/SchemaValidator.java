@@ -8,8 +8,10 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.xml.sax.SAXException;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
+@Beta
 public final class SchemaValidator
     implements SchemaNamespaces
 {

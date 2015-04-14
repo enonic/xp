@@ -1,8 +1,11 @@
 package com.enonic.xp.portal.rendering;
 
-import com.enonic.xp.rendering.Renderable;
-import com.enonic.xp.portal.PortalContext;
+import com.google.common.annotations.Beta;
 
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.rendering.Renderable;
+
+@Beta
 public interface Renderer<R extends Renderable>
 {
     Class<R> getType();

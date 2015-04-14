@@ -3,9 +3,11 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
+import com.google.common.annotations.Beta;
 
+import static com.enonic.xp.form.FormItemSet.newFormItemSet;
+
+@Beta
 public abstract class FormItem
 {
     private FormItems parent;

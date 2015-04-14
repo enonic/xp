@@ -20,7 +20,7 @@ public class ContentSummaryJson
 
     private final ThumbnailJson thumbnailJson;
 
-    private final boolean deletable;
+    private final boolean deletable = true;
 
     private final boolean isSite;
 
@@ -38,7 +38,6 @@ public class ContentSummaryJson
         this.thumbnailJson = content.hasThumbnail() ? new ThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
-        this.deletable = !content.hasChildren();
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
     }

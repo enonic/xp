@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
@@ -13,6 +14,7 @@ import com.enonic.xp.form.inputtype.InputTypeConfig;
 
 import static com.enonic.xp.form.Occurrences.newOccurrences;
 
+@Beta
 public final class Input
     extends FormItem
 {
@@ -47,15 +49,13 @@ public final class Input
 
         if ( builder.inputType.requiresConfig() )
         {
-            Preconditions.checkArgument( builder.inputTypeConfig != null,
-                                         "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name,
-                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
+                Preconditions.checkArgument( builder.inputTypeConfig != null,
+                                             "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name, builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
 
-            //noinspection ConstantConditions
-            Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
-                                         "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
-                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(),
-                                         builder.inputTypeConfig.getClass().getName() );
+                //noinspection ConstantConditions
+                Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
+                                             "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
+                                             builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(), builder.inputTypeConfig.getClass().getName() );
         }
 
         this.name = builder.name;

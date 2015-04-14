@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
@@ -13,6 +14,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class CreateNodeParams
 {
     private final NodePath parent;

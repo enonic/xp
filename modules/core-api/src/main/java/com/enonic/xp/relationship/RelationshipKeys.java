@@ -3,10 +3,12 @@ package com.enonic.xp.relationship;
 
 import java.util.LinkedHashSet;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public class RelationshipKeys
     extends AbstractImmutableEntitySet<RelationshipKey>
 {

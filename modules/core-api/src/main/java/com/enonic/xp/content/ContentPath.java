@@ -4,12 +4,14 @@ package com.enonic.xp.content;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+@Beta
 public final class ContentPath
 {
     public static final ContentPath ROOT = newPath().absolute( true ).build();

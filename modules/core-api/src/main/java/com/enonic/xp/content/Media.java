@@ -1,13 +1,12 @@
 package com.enonic.xp.content;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
 
+@Beta
 public class Media
     extends Content
 {
@@ -34,7 +33,7 @@ public class Media
 
     public Attachment getBestFitImageAttachment( int requiredImageSize )
     {
-        if(isImage())
+        if ( isImage() )
         {
             switch ( getAttachments().getSize() )
             {
@@ -45,8 +44,10 @@ public class Media
                 default:
                     for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
                     {
-                        if( requiredImageSize < scale.getSize() )
+                        if ( requiredImageSize < scale.getSize() )
+                        {
                             return getAttachments().byLabel( scale.getLabel() );
+                        }
                     }
                     return getSourceAttachment();
             }

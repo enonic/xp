@@ -12,9 +12,6 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.impl.script.bean.ModuleScriptInfo;
 import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
@@ -24,17 +21,20 @@ import com.enonic.xp.portal.impl.script.function.RequireFunction;
 import com.enonic.xp.portal.impl.script.function.ResolveFunction;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
+import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private final static String PRE_SCRIPT = "" + //
         "(function(log,module,execute,require,resolve) {" + //
-        "'use strict';" + //
-        "var exports = {};";
+        "var exports = {};" + //
+        "module.exports = exports;";
 
     private final static String POST_SCRIPT = "" + //
-        "return exports;" + //
+        "return module.exports;" + //
         "});";
 
     private ScriptEngine engine;
@@ -112,7 +112,7 @@ final class ScriptExecutorImpl
             final RequireFunction require = new RequireFunction( script, this );
             final ScriptLogger logger = new ScriptLogger( script );
             final ExecuteFunction execute = new ExecuteFunction( script, this.invoker );
-            final ModuleScriptInfo moduleInfo = new ModuleScriptInfo( script.getModule() );
+            final ModuleScriptInfo moduleInfo = new ModuleScriptInfo( script );
 
             return func.call( this.global, logger, moduleInfo, execute, require, resolve );
         }

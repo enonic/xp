@@ -4,8 +4,11 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleKey;
 
+@Beta
 public final class DescriptorKey
 {
     protected static final String SEPARATOR = ":";

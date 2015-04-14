@@ -3,12 +3,14 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.LinkedHashMap;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
+@Beta
 public final class InputTypes
 {
     public static final InputType COLOR = new Color();

@@ -2,38 +2,38 @@ module app.wizard.page.contextwindow {
 
     export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
-        constructor(dataView:api.ui.grid.DataView<any>) {
+        constructor(dataView: api.ui.grid.DataView<any>) {
             super(dataView, this.createColumns(), this.createOptions());
         }
 
         private createOptions(): api.ui.grid.GridOptions<any> {
             return new api.ui.grid.GridOptionsBuilder().
-                    setHideColumnHeaders(true).
-                    setRowHeight(50).
-                    setHeight(400).
-                    setWidth(320)
+                setHideColumnHeaders(true).
+                setRowHeight(50).
+                setHeight(400).
+                setWidth(320)
                 .build();
         }
 
-        private createColumns():api.ui.grid.GridColumn<any>[] {
+        private createColumns(): api.ui.grid.GridColumn<any>[] {
             return [new api.ui.grid.GridColumnBuilder().
-                    setName("device").
-                    setField("device").
-                    setId("device").
-                    setWidth(320).
-                    setCssClass("grid-row").
-                    setFormatter((row, cell, value, columnDef, dataContext) => {
-                        return this.buildRow(row, cell, value).toString();
-                    }).
+                setName("device").
+                setField("device").
+                setId("device").
+                setWidth(320).
+                setCssClass("grid-row").
+                setFormatter((row, cell, value, columnDef, dataContext) => {
+                    return this.buildRow(row, cell, value).toString();
+                }).
                 build()
             ];
         }
 
-        private buildRow(row, cell, data):api.dom.DivEl {
+        private buildRow(row, cell, data): api.dom.DivEl {
             var rowEl = new api.dom.DivEl();
             rowEl.getEl().setData('width', data.width);
             rowEl.getEl().setData('height', data.height);
-            rowEl.getEl().setData('type', data.device_type);
+            rowEl.getEl().setData('units', data.units);
 
             var icon = new api.dom.DivEl();
             icon.setClass('icon-' + data.device_type);
@@ -43,7 +43,8 @@ module app.wizard.page.contextwindow {
             title.getEl().setInnerHtml(data.name);
 
             var subtitle = new api.dom.H6El();
-            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height);
+            var units = data.display_units ? data.units : "";
+            subtitle.getEl().setInnerHtml(data.width + units + " &times; " + data.height + units);
             rowEl.appendChild(icon);
             rowEl.appendChild(title);
             rowEl.appendChild(subtitle);
@@ -58,7 +59,7 @@ module app.wizard.page.contextwindow {
             return rowEl;
         }
 
-        static toSlickData(data:any[]):any[] {
+        static toSlickData(data: any[]): any[] {
             var result = [];
             var i = 1;
             data["devices"].forEach((item, index) => {

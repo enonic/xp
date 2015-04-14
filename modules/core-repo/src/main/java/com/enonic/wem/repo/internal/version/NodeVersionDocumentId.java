@@ -5,7 +5,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 
@@ -45,7 +44,7 @@ public class NodeVersionDocumentId
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeVersionId ) );
 
-        return new NodeVersionDocumentId( NodeId.from( value ), NodeVersionId.from( new BlobKey( nodeVersionId ) ) );
+        return new NodeVersionDocumentId( NodeId.from( value ), NodeVersionId.from( nodeVersionId ) );
     }
 
     public String getValue()

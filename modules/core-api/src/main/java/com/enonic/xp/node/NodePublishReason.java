@@ -1,8 +1,11 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface NodePublishReason
 {
-    public NodeId getContextualNodeId();
+    NodeId getContextualNodeId();
 
-    public String getMessage();
+    String getMessage();
 }

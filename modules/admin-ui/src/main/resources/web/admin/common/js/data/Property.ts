@@ -4,6 +4,7 @@ module api.data {
     import Reference = api.util.Reference;
     import GeoPoint = api.util.GeoPoint;
     import LocalTime = api.util.LocalTime;
+    import DateTime = api.util.DateTime;
     
     /**
      * A Property has a [[name]] and a [[value]],
@@ -183,7 +184,7 @@ module api.data {
             return this.value.getBoolean();
         }
 
-        getDateTime(): Date {
+        getDateTime(): DateTime {
             return this.value.getDateTime();
         }
 
@@ -322,7 +323,7 @@ module api.data {
         }
     }
 
-    class PropertyBuilder {
+    export class PropertyBuilder {
 
         array: PropertyArray;
 

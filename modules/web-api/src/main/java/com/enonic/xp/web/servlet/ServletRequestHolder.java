@@ -2,6 +2,9 @@ package com.enonic.xp.web.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ServletRequestHolder
 {
     private final static ThreadLocal<HttpServletRequest> CURRENT_REQUEST = new ThreadLocal<>();
