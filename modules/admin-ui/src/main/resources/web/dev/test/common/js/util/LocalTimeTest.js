@@ -93,12 +93,6 @@ describe("api.util.LocalTimeTest", function () {
             }).toThrow();
         });
 
-        it("should not parse time without hours", function () {
-            expect(function() {
-                api.util.LocalTime.fromString("12");
-            }).toThrow();
-        });
-
         it("should not parse time with incorrect separators", function () {
             expect(function() {
                 api.util.LocalTime.fromString("12.05.37");
@@ -114,6 +108,20 @@ describe("api.util.LocalTimeTest", function () {
         it("should parse time in correct format", function () {
             var parsedTime = api.util.LocalTime.fromString("12:05:37");
             var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(37).build();
+
+            expect(originalTime.equals(parsedTime)).toBeTruthy();
+        });
+
+        it("should parse time in correct format", function () {
+            var parsedTime = api.util.LocalTime.fromString("12");
+            var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(0).build();
+
+            expect(originalTime.equals(parsedTime)).toBeTruthy();
+        });
+
+        it("should parse time in correct format", function () {
+            var parsedTime = api.util.LocalTime.fromString("6:7");
+            var originalTime = api.util.LocalTime.create().setHours(6).setMinutes(7).build();
 
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
