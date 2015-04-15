@@ -85,11 +85,9 @@ module api.form.inputtype.combobox {
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
                 var value = new Value(event.getOption().value, ValueTypes.STRING);
-
-                if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
-                    this.propertyArray.set(0, value);
-                }
-                else {
+                if (event.getIndex() >= 0) {
+                    this.propertyArray.set(event.getIndex(), value);
+                } else {
                     this.propertyArray.add(value);
                 }
 

@@ -291,6 +291,7 @@ module api.ui.selector.combobox {
             if (!added) {
                 return;
             }
+            var index = this.countSelectedOptions() - 1;
 
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
             this.hideDropdown();
@@ -304,7 +305,7 @@ module api.ui.selector.combobox {
                 this.dropdownHandle.setEnabled(false);
             }
             if (!silent) {
-                this.notifyOptionSelected(option);
+                this.notifyOptionSelected(option, index);
             }
             if (this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
                 this.hide();
@@ -692,8 +693,8 @@ module api.ui.selector.combobox {
             });
         }
 
-        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>) {
-            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
+        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, index?: number) {
+            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, index);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
