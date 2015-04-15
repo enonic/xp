@@ -47,6 +47,7 @@ import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 public class SecurityResourceTest
     extends AbstractResourceTest
@@ -122,6 +123,26 @@ public class SecurityResourceTest
         String jsonString = request().path( "security/userstore" ).queryParam( "key", "local" ).get().getAsString();
 
         assertJson( "getUserstoreByKey.json", jsonString );
+    }
+
+    @Test
+    public void getDefaultUserStorePermissions()
+        throws Exception
+    {
+        final UserStoreAccessControlList userStoreAccessControlList = UserStoreAccessControlList.of(
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.authenticated" ) ).access( READ ).build(),
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
+
+        final Principals principals =
+            Principals.from( Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).build(),
+                             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).build() );
+
+        Mockito.when( securityService.getDefaultUserStorePermissions() ).thenReturn( userStoreAccessControlList );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
+
+        String jsonString = request().path( "security/userstore/default" ).get().getAsString();
+
+        assertJson( "getDefaultUserStorePermissions.json", jsonString );
     }
 
     @Test
