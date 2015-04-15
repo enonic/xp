@@ -194,7 +194,7 @@ module api.util {
     }
 
 
-    class DateTimeBuilder {
+    export class DateTimeBuilder {
 
         year: number;
 
