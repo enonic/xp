@@ -44,7 +44,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.page.DescriptorKey;
@@ -873,7 +872,6 @@ public class ContentResourceTest
         content = Content.newContent( content ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
-        Mockito.when( contentService.sort( Mockito.isA( SortContentParams.class ) ) ).thenReturn( content );
 
         final ReorderChildContentsParams reorderChildren = ReorderChildContentsParams.create().
             add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-1" ) ).contentToMoveBefore(
