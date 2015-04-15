@@ -11,10 +11,13 @@ public class SetContentChildOrderParams
 
     private final ChildOrder childOrder;
 
+    private final boolean silent;
+
     private SetContentChildOrderParams( Builder builder )
     {
         contentId = builder.contentId;
         childOrder = builder.childOrder;
+        silent = builder.silent;
     }
 
     public ContentId getContentId()
@@ -25,6 +28,11 @@ public class SetContentChildOrderParams
     public ChildOrder getChildOrder()
     {
         return childOrder;
+    }
+
+    public boolean isSilent()
+    {
+        return silent;
     }
 
     public static Builder create()
@@ -39,6 +47,8 @@ public class SetContentChildOrderParams
 
         private ChildOrder childOrder;
 
+        private boolean silent;
+
         private Builder()
         {
         }
@@ -52,6 +62,12 @@ public class SetContentChildOrderParams
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder silent( final boolean silent )
+        {
+            this.silent = silent;
             return this;
         }
 

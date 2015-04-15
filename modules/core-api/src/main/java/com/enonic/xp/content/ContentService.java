@@ -38,8 +38,6 @@ public interface ContentService
 
     Contents move( MoveContentParams params );
 
-    Content sort( SortContentParams params );
-
     Content setChildOrder( SetContentChildOrderParams params );
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );

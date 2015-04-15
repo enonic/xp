@@ -41,6 +41,7 @@ import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
+import com.enonic.xp.admin.impl.rest.exception.ReorderNotAllowedException;
 import com.enonic.xp.admin.impl.rest.multipart.MultipartForm;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -62,7 +63,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.SetAndReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.branch.Branches;
@@ -100,7 +100,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -366,12 +365,8 @@ public final class ContentResource
         final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
             childOrder( params.getChildOrder().getChildOrder() ).
             contentId( ContentId.from( params.getContentId() ) ).
+            silent( params.isSilent() ).
             build() );
-
-        if ( !params.isSilent() )
-        {
-            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
-        }
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
@@ -380,38 +375,28 @@ public final class ContentResource
     @Path("reorderChildren")
     public ReorderChildrenResultJson reorderChildContents( final ReorderChildrenJson params )
     {
-        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
+        Content content = this.contentService.getById( ContentId.from( params.getContentId() ) );
 
-        for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
+        if ( !content.getChildOrder().isManualOrder() )
         {
-            final String moveBefore = reorderChildJson.getMoveBefore();
-            builder.add( ReorderChildParams.create().
-                contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
-                contentToMoveBefore( isBlank( moveBefore ) ? null : ContentId.from( moveBefore ) ).
-                build() );
+            if ( params.isManualOrder() )
+            {
+                final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+                    childOrder( ChildOrder.manualOrder() ).
+                    contentId( ContentId.from( params.getContentId() ) ).
+                    silent( true ).
+                    build() );
+            }
+            else
+            {
+                throw new ReorderNotAllowedException(
+                    String.format( "Not allowed to reorder children manually, current parentOrder = [%s].",
+                                   content.getChildOrder().toString() ) );
+            }
         }
 
-        final ReorderChildContentsResult result = this.contentService.reorderChildren(builder.build());
-
-        if ( !params.isSilent() )
-        {
-            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
-        }
-
-        return new ReorderChildrenResultJson( result );
-    }
-
-    @POST
-    @Path("setAndReorderChildren")
-    public ContentJson setAndReorderChildContents( final SetAndReorderChildrenJson params )
-    {
-
-        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
-            childOrder( params.getChildOrder().getChildOrder() ).
-            contentId( ContentId.from( params.getContentId() ) ).
-            build() );
-
-        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
+        final ReorderChildContentsParams.Builder builder =
+            ReorderChildContentsParams.create().contentId( ContentId.from( params.getContentId() ) ).silent( params.isSilent() );
 
         for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
         {
@@ -424,12 +409,7 @@ public final class ContentResource
 
         final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
 
-        if ( !params.isSilent() )
-        {
-            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
-        }
-
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ReorderChildrenResultJson( result );
     }
 
     @GET
@@ -437,7 +417,7 @@ public final class ContentResource
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
 
-        final ContentId id = ContentId.from(idParam);
+        final ContentId id = ContentId.from( idParam );
         final Content content = contentService.getById( id );
 
         if ( content == null )
