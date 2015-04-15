@@ -459,7 +459,7 @@ public class ContentServiceImpl
             }
 
             final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                           params.getParentContentPath().toString() ).build() );
+                params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
@@ -651,9 +651,15 @@ public class ContentServiceImpl
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
 
-        return null;
+        // Check if contentType is null
 
-
+        return JsonToPropertyTreeTranslator.create().
+            form( contentType.form() ).
+            mode( contentType.getName().isUnstructured()
+                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
+                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
     }
 
     @Override
