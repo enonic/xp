@@ -21,6 +21,10 @@ module api.app.remove {
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
+
+            var descMessage = new api.dom.H6El().addClass("desc-message").
+                setHtml("Delete selected items and their children");
+            this.appendChildToTitle(descMessage);
         }
 
         show() {

@@ -14,7 +14,7 @@ module app.remove {
         private deleteButton: DialogButton;
 
         constructor() {
-            super("Content");
+            super("item");
 
             this.deleteButton = this.setDeleteAction(new ContentDeleteDialogAction());
 
