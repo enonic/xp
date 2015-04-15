@@ -51,7 +51,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.site.CreateSiteParams;
@@ -560,20 +559,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content sort( final SortContentParams params )
-    {
-        Content content = doGetById( params.getContentId() );
-
-        return SortContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
         final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
@@ -581,7 +566,18 @@ public class ContentServiceImpl
             childOrder( params.getChildOrder() ).
             build() );
 
-        return contentNodeTranslator.fromNode( node );
+        final Content content = contentNodeTranslator.fromNode( node );
+
+        if ( !params.isSilent() )
+        {
+            final ContentChangeEvent event = ContentChangeEvent.create().
+                change( ContentChangeEvent.ContentChangeType.SORT, content.getPath() ).
+                build();
+
+            eventPublisher.publish( event );
+        }
+
+        return content;
     }
 
     @Override
@@ -598,6 +594,17 @@ public class ContentServiceImpl
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
+
+        if ( !params.isSilent() )
+        {
+            final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
+
+            final ContentChangeEvent event = ContentChangeEvent.create().
+                change( ContentChangeEvent.ContentChangeType.SORT, translateNodePathToContentPath( node.path() ) ).
+                build();
+
+            eventPublisher.publish( event );
+        }
 
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
