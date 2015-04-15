@@ -153,9 +153,7 @@ final class CreateContentCommand
             }
         }
 
-        return CreateContentParams.create( params ).
-            contentData( ContentTypePropertyTransformer.transform( params.getData(), contentType.form() ) ).
-            build();
+        return params;
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )

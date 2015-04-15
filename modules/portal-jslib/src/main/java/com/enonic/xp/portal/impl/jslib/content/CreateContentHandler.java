@@ -5,6 +5,9 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -47,13 +50,15 @@ public final class CreateContentHandler
 
     private CreateContentParams createParams( final CommandRequest req )
     {
+        final ContentTypeName contentTypeName = contentTypeName( req.param( "contentType" ).value( String.class ) );
+
         return CreateContentParams.create().
             name( req.param( "name" ).value( String.class ) ).
             parent( contentPath( req.param( "parentPath" ).value( String.class ) ) ).
             displayName( req.param( "displayName" ).value( String.class ) ).
             requireValid( req.param( "requireValid" ).value( Boolean.class, true ) ).
-            type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
-            contentData( propertyTree( req.param( "data" ).map() ) ).
+            type( contentTypeName ).
+            contentData( propertyTree( req.param( "data" ).map(), contentTypeName ) ).
             extraDatas( extraDatas( req.param( "x" ).map() ) ).
             build();
     }
@@ -68,6 +73,16 @@ public final class CreateContentHandler
         return value != null ? ContentTypeName.from( value ) : null;
     }
 
+    private PropertyTree propertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+
+        return this.contentService.translateToPropertyTree( createJson( value ), contentTypeName );
+    }
+
     private PropertyTree propertyTree( final Map<?, ?> value )
     {
         if ( value == null )
@@ -78,6 +93,12 @@ public final class CreateContentHandler
         final PropertyTree tree = new PropertyTree();
         applyData( tree.getRoot(), value );
         return tree;
+    }
+
+    private JsonNode createJson( final Map<?, ?> value )
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree( value );
     }
 
     private void applyData( final PropertySet set, final Map<?, ?> value )

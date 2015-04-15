@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -636,6 +637,16 @@ public class ContentServiceImpl
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
         final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
+    {
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
+
+        return null;
+
+
     }
 
     @Override
