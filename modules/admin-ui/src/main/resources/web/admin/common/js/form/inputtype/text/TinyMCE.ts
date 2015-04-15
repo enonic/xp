@@ -63,15 +63,22 @@ module api.form.inputtype.text {
                     }
                 });
 
-                this.editor = tinymce.get(textAreaEl.getId());
-                if (property.hasNonNullValue()) {
-                    this.editor.setContent(property.getString());
-                }
+                this.editor = this.getEditor(textAreaEl.getId(), property);
             });
 
             var textAreaWrapper = new api.dom.DivEl();
             textAreaWrapper.appendChild(textAreaEl);
             return textAreaWrapper;
+        }
+
+        private getEditor(editorId: string, property: Property): TinyMceEditor {
+            var editor = tinymce.get(editorId);
+
+            if (property.hasNonNullValue()) {
+                editor.setContent(property.getString());
+            }
+
+            return editor;
         }
 
         private newValue(s: string): Value {
