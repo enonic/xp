@@ -14,6 +14,7 @@ module api.form.inputtype.text {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
+            this.addClass("tinymce-editor");
         }
 
         getValueType(): ValueType {
@@ -38,13 +39,14 @@ module api.form.inputtype.text {
                     document_base_url: baseUrl + '/common/lib/tinymce/',
                     skin_url: baseUrl + '/common/lib/tinymce/skins/lightgray',
                     theme_url: 'modern',
+
                     toolbar: [
-                        "undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect",
-                        "cut copy paste | bullist numlist outdent indent | fontselect fontsizeselect"
+                        "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap link unlink | table | code"
                     ],
                     menubar: false,
                     statusbar: false,
-                    plugins: 'autoresize',
+                    paste_as_text: true,
+                    plugins: ['autoresize', 'table', 'link', 'paste', 'charmap', 'code'],
                     autoresize_min_height: 100,
                     autoresize_max_height: 400,
                     autoresize_bottom_margin: 0,
