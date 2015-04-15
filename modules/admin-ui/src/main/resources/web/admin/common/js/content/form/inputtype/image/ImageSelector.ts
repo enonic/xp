@@ -178,7 +178,11 @@ module api.content.form.inputtype.image {
         }
 
         private layoutUploadDialog() {
-            this.uploadDialog = new ImageUploadDialog(this.config.contentId);
+            var multiSelection = false;
+            if (this.input.getOccurrences().getMaximum() != 1) {
+                multiSelection = true;
+            }
+            this.uploadDialog = new ImageUploadDialog(this.config.contentId, multiSelection);
 
             this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
