@@ -138,6 +138,14 @@ public final class SecurityServiceImpl
     }
 
     @Override
+    public UserStoreAccessControlList getDefaultUserStorePermissions()
+    {
+        final RootNode rootNode = callWithContext( () -> this.nodeService.getRoot() );
+
+        return UserStoreNodeTranslator.userStorePermissionsFromNode( rootNode, rootNode, rootNode );
+    }
+
+    @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
         try

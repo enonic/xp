@@ -99,7 +99,7 @@ module app.browse {
                         if (this.prevChildOrder && !this.prevChildOrder.isManual()) {
 
                             this.setContentChildOrder(this.prevChildOrder, true).done(() => {
-                                this.setOrderAndManualReorder(this.curChildOrder, this.gridDragHandler.getContentMovements()).
+                                this.setManualReorder(this.gridDragHandler.getContentMovements()).
                                     done(() => {
                                         new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
                                         this.close();
@@ -181,17 +181,8 @@ module app.browse {
         private setManualReorder(movements: OrderChildMovements, silent: boolean = false): wemQ.Promise<api.content.Content> {
             return new api.content.OrderChildContentRequest().
                 setSilent(silent).
+                setManualOrder(true).
                 setContentId(this.parentContent.getContentId()).
-                setContentMovements(movements).
-                sendAndParse();
-        }
-
-        private setOrderAndManualReorder(order: ChildOrder, movements: OrderChildMovements,
-                                         silent: boolean = false): wemQ.Promise<api.content.Content> {
-            return new api.content.OrderContentAndChildrenRequest().
-                setSilent(silent).
-                setContentId(this.parentContent.getContentId()).
-                setChildOrder(order).
                 setContentMovements(movements).
                 sendAndParse();
         }
