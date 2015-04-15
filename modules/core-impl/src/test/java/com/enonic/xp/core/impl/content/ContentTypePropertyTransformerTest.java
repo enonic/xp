@@ -29,14 +29,14 @@ public class ContentTypePropertyTransformerTest
         final Form form = Form.newForm().
             addFormItem( FormItemSet.newFormItemSet().
                 name( "myProps" ).
-                addFormItem( Input.newInput().
+                addFormItem( Input.create().
                     name( "myHtmlArea" ).
                     inputType( InputTypes.HTML_AREA ).
                     build() ).
                 build() ).
             addFormItem( FormItemSet.newFormItemSet().
                 name( "myOtherProps" ).
-                addFormItem( Input.newInput().
+                addFormItem( Input.create().
                     name( "myHtmlArea" ).
                     inputType( InputTypes.HTML_AREA ).
                     build() ).
@@ -59,14 +59,14 @@ public class ContentTypePropertyTransformerTest
         data.addString( "timezone", "2015-04-13T10:00:00+02:00" );
 
         final Form form = Form.newForm().
-            addFormItem( Input.newInput().
+            addFormItem( Input.create().
                 name( "noTimezone" ).
                 inputType( InputTypes.DATE_TIME ).
                 inputTypeConfig( DateTimeConfig.create().
                     withTimezone( false ).
                     build() ).
                 build() ).
-            addFormItem( Input.newInput().
+            addFormItem( Input.create().
                 name( "timezone" ).
                 inputType( InputTypes.DATE_TIME ).
                 inputTypeConfig( DateTimeConfig.create().
@@ -92,7 +92,7 @@ public class ContentTypePropertyTransformerTest
         //data.addString( "timezone", "2015-04-13T10:00:00+02:00" );
 
         final Form form = Form.newForm().
-            addFormItem( Input.newInput().
+            addFormItem( Input.create().
                 name( "noTimezone" ).
                 inputType( InputTypes.DATE_TIME ).
                 build() ).

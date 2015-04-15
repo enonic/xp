@@ -5,10 +5,10 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 
 import static com.enonic.xp.content.page.region.RegionDescriptors.newRegionDescriptors;
-import static com.enonic.xp.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class PageDescriptorsTest
@@ -23,7 +23,7 @@ public class PageDescriptorsTest
     public void from()
     {
         final Form pageForm = Form.newForm().
-            addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
 

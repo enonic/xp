@@ -58,8 +58,8 @@ class AbstractCreatingOrUpdatingContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( moduleService );
-            Preconditions.checkNotNull( mixinService );
+            Preconditions.checkNotNull( moduleService, "moduleService cannot be null" );
+            Preconditions.checkNotNull( mixinService, "mixinService cannot be null" );
         }
     }
 

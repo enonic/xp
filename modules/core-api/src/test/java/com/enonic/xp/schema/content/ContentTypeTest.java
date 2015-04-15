@@ -9,11 +9,11 @@ import org.junit.Test;
 
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
@@ -27,7 +27,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -43,7 +43,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).addFormItem( layout ).build();
@@ -56,15 +56,15 @@ public class ContentTypeTest
     public void address()
     {
         FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:test" ).
-            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
 
@@ -80,13 +80,13 @@ public class ContentTypeTest
     {
         FormItemSet formItemSet = newFormItemSet().
             name( "top-set" ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "myInput" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             addFormItem( newFormItemSet().
                 name( "inner-set" ).
-                addFormItem( newInput().
+                addFormItem( Input.create().
                     name( "myInnerInput" ).
                     inputType( InputTypes.TEXT_LINE ).
                     build() ).

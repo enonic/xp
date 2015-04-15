@@ -24,6 +24,7 @@ import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -34,7 +35,6 @@ import com.enonic.xp.util.Link;
 
 import static com.enonic.xp.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.xp.content.page.region.RegionDescriptors.newRegionDescriptors;
-import static com.enonic.xp.form.Input.newInput;
 
 public final class ContentFixtures2
 {
@@ -219,7 +219,7 @@ public final class ContentFixtures2
     public static PageDescriptor newPageDescriptor()
     {
         Form pageForm = Form.newForm().
-            addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         return PageDescriptor.create().
