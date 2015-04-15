@@ -18,6 +18,8 @@ public interface SecurityService
 
     UserStoreAccessControlList getUserStorePermissions( UserStoreKey userStore );
 
+    UserStoreAccessControlList getDefaultUserStorePermissions();
+
     UserStore createUserStore( CreateUserStoreParams createUserStoreParams );
 
     UserStore updateUserStore( UpdateUserStoreParams updateUserStoreParams );

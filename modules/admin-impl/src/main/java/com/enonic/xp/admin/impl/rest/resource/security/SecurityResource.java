@@ -111,7 +111,7 @@ public final class SecurityResource
     {
         final UserStore userStore = UserStore.newUserStore().displayName( "" ).key( UserStoreKey.createDefault() ).build();
 
-        final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( UserStoreKey.system() );
+        final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
         return new UserStoreJson( userStore, userStorePermissions, principals );
