@@ -136,6 +136,11 @@ module api.form.inputtype.singleselector {
                 this.validate(false);
             });
 
+            comboBox.onOptionDeselected((event: api.ui.selector.OptionSelectedEvent<string>)=> {
+                property.setValue(this.newInitialValue());
+                this.validate(false);
+            });
+
             comboAndSelectedOptionsWrapper.appendChild(comboBox);
             comboAndSelectedOptionsWrapper.appendChild(selectedOptionsView);
             return comboAndSelectedOptionsWrapper;

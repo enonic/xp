@@ -109,7 +109,10 @@ module api.content.form.inputtype.relationship {
             var contentIds: ContentId[] = [];
             propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
-                    contentIds.push(ContentId.fromReference(property.getReference()));
+                    var referenceValue = property.getReference();
+                    if (referenceValue instanceof api.util.Reference) {
+                        contentIds.push(ContentId.fromReference(referenceValue));
+                    }
                 }
             });
             return new api.content.GetContentSummaryByIds(contentIds).get().
