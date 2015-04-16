@@ -34,7 +34,7 @@ public class ComboBoxConfigJsonSerializer
     @Override
     public ComboBoxConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final ComboBoxConfig.Builder builder = ComboBoxConfig.newComboBoxConfig();
+        final ComboBoxConfig.Builder builder = ComboBoxConfig.create();
         final JsonNode optionsNode = inputTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.elements();
         while ( optionIterator.hasNext() )
