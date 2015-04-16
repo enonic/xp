@@ -46,7 +46,14 @@ public class Media
                     {
                         if ( requiredImageSize < scale.getSize() )
                         {
-                            return getAttachments().byLabel( scale.getLabel() );
+                            if ( getAttachments().byLabel( scale.getLabel() ) != null )
+                            {
+                                return getAttachments().byLabel( scale.getLabel() );
+                            }
+                            else
+                            {
+                                return getSourceAttachment();
+                            }
                         }
                     }
                     return getSourceAttachment();
