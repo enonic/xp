@@ -44,9 +44,16 @@ public class Media
                 default:
                     for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
                     {
-                        if ( requiredImageSize < scale.getSize() )
+                        if ( requiredImageSize <= scale.getSize() )
                         {
-                            return getAttachments().byLabel( scale.getLabel() );
+                            if ( getAttachments().byLabel( scale.getLabel() ) != null )
+                            {
+                                return getAttachments().byLabel( scale.getLabel() );
+                            }
+                            else
+                            {
+                                return getSourceAttachment();
+                            }
                         }
                     }
                     return getSourceAttachment();
