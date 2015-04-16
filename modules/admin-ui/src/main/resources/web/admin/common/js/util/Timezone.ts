@@ -88,7 +88,7 @@ module api.util {
     }
 
 
-    class TimezoneBuilder {
+    export class TimezoneBuilder {
 
         offset: number;
 
