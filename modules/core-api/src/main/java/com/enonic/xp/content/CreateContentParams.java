@@ -153,7 +153,7 @@ public final class CreateContentParams
 
         private AccessControlList permissions;
 
-        private boolean inheritPermissions;
+        private boolean inheritPermissions = true;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 

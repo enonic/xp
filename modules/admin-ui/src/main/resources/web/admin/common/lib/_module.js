@@ -23,3 +23,11 @@
 // @include q.js
 // @include noconflict.js
 // @include medium/medium-editor.js
+// @include tinymce/tinymce.js
+// @include tinymce/themes/modern/theme.js
+// @include tinymce/plugins/autoresize/plugin.js
+// @include tinymce/plugins/table/plugin.js
+// @include tinymce/plugins/link/plugin.js
+// @include tinymce/plugins/paste/plugin.js
+// @include tinymce/plugins/charmap/plugin.js
+// @include tinymce/plugins/code/plugin.js

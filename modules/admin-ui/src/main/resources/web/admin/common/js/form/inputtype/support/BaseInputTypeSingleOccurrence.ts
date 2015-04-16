@@ -9,11 +9,13 @@ module api.form.inputtype.support {
 
         private context: api.form.inputtype.InputTypeViewContext<CONTEXT>;
 
-        private input: api.form.Input;
+        protected input: api.form.Input;
+
+        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         constructor(CONTEXT: api.form.inputtype.InputTypeViewContext<CONTEXT>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(CONTEXT, "CONTEXT cannt be null");
+            api.util.assertNotNull(CONTEXT, "CONTEXT cannot be null");
             this.context = CONTEXT;
         }
 
@@ -67,10 +69,20 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
+        protected notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
+            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.push(listener);
         }
 
         unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
+            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
+                return listener == currentListener;
+            });
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

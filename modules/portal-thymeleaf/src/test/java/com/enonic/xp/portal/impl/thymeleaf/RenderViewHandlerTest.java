@@ -120,7 +120,7 @@ public class RenderViewHandlerTest
 
     private String normalizeTest( final String text )
     {
-        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\n|\r)" ) ).trimResults().split( text );
+        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\r\n|\n|\r)" ) ).trimResults().split( text );
         return Joiner.on( "\n" ).join( lines );
     }
 }
