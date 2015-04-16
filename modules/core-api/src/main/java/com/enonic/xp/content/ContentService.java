@@ -10,6 +10,7 @@ import com.enonic.xp.content.site.CreateSiteParams;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
@@ -73,6 +74,8 @@ public interface ContentService
     AccessControlList getRootPermissions();
 
     PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName );
+
+    PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName );
 
     boolean contentExists( ContentId contentId );
 

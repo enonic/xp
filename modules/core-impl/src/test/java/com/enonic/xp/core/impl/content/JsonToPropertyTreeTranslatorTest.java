@@ -35,7 +35,7 @@ public class JsonToPropertyTreeTranslatorTest
 
         JsonToPropertyTreeTranslator.create().
             mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
-            form( createFormForAllInputTypes() ).
+            formItems( createFormForAllInputTypes().getFormItems() ).
             build().
             translate( node );
     }
@@ -72,7 +72,7 @@ public class JsonToPropertyTreeTranslatorTest
         final JsonNode node = loadJson( "allInputTypes" );
 
         final PropertyTree data = JsonToPropertyTreeTranslator.create().
-            form( createFormForAllInputTypes() ).
+            formItems( createFormForAllInputTypes().getFormItems() ).
             mode( JsonToPropertyTreeTranslator.Mode.LENIENT ).
             build().
             translate( node );

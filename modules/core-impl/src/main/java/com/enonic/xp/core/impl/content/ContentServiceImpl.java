@@ -81,6 +81,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -651,13 +653,33 @@ public class ContentServiceImpl
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
 
-        // Check if contentType is null
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
+        }
 
         return JsonToPropertyTreeTranslator.create().
-            form( contentType.form() ).
+            formItems( contentType.form().getFormItems() ).
             mode( contentType.getName().isUnstructured()
                       ? JsonToPropertyTreeTranslator.Mode.LENIENT
                       : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
+    {
+        final Mixin mixin = this.mixinService.getByName( mixinName );
+
+        if ( mixin == null )
+        {
+            throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( mixin.getFormItems() ).
+            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
             build().
             translate( json );
     }

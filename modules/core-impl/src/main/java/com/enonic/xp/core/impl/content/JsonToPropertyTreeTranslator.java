@@ -24,7 +24,7 @@ public class JsonToPropertyTreeTranslator
 
     private JsonToPropertyTreeTranslator( final Builder builder )
     {
-        this.formItems = builder.form != null ? builder.form.getFormItems() : Form.newForm().build().getFormItems();
+        this.formItems = builder.formItems != null ? builder.formItems : Form.newForm().build().getFormItems();
         this.mode = builder.mode;
         this.propertyTree = new PropertyTree();
     }
@@ -149,13 +149,13 @@ public class JsonToPropertyTreeTranslator
 
     public static class Builder
     {
-        private Form form;
+        private FormItems formItems;
 
         private Mode mode = Mode.STRICT;
 
-        public Builder form( final Form form )
+        public Builder formItems( final FormItems formItems )
         {
-            this.form = form;
+            this.formItems = formItems;
             return this;
         }
 

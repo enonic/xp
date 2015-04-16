@@ -17,8 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
 public class CreateContentHandlerTest
@@ -26,18 +25,14 @@ public class CreateContentHandlerTest
 {
     private ContentService contentService;
 
-    private MixinService mixinService;
-
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
 
         final CreateContentHandler handler = new CreateContentHandler();
         handler.setContentService( this.contentService );
-        handler.setMixinService( this.mixinService );
 
         return handler;
     }
@@ -59,12 +54,16 @@ public class CreateContentHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ), Mockito.isA( ContentTypeName.class ) ) ).
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( ContentTypeName.from( "test:myContentType" ) ) ) ).
             thenReturn( data );
 
-        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:test" ).build();
+        final PropertyTree extraData = new PropertyTree();
+        extraData.addDouble( "a", 1.0 );
 
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
+            thenReturn( extraData );
 
         execute( "createContent" );
     }

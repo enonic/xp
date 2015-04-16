@@ -17,26 +17,22 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.MixinName;
 
 public class ModifyContentHandlerTest
     extends AbstractHandlerTest
 {
     private ContentService contentService;
 
-    private MixinService mixinService;
 
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
 
         final ModifyContentHandler handler = new ModifyContentHandler();
         handler.setContentService( this.contentService );
-        handler.setMixinService( this.mixinService );
 
         return handler;
     }
@@ -45,11 +41,6 @@ public class ModifyContentHandlerTest
     public void modifyById()
         throws Exception
     {
-        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:myschema" ).build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
-        final Mixin metaMixin2 = Mixin.newMixin().name( "com.enonic.mymodule:other" ).build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin2.getName() ) ) ).thenReturn( metaMixin2 );
-
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
 
@@ -58,6 +49,8 @@ public class ModifyContentHandlerTest
         Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ), Mockito.eq( content.getType() ) ) ).
             thenReturn( createPropertyTree() );
 
+        mockXData();
+
         execute( "modifyById" );
     }
 
@@ -65,11 +58,6 @@ public class ModifyContentHandlerTest
     public void modifyByPath()
         throws Exception
     {
-        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:myschema" ).build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
-        final Mixin metaMixin2 = Mixin.newMixin().name( "com.enonic.mymodule:other" ).build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin2.getName() ) ) ).thenReturn( metaMixin2 );
-
         final Content content = ContentFixtures.newSmallContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
         Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ), Mockito.eq( content.getType() ) ) ).
@@ -78,7 +66,26 @@ public class ModifyContentHandlerTest
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
 
+        mockXData();
+
         execute( "modifyByPath" );
+    }
+
+    private void mockXData()
+    {
+        final PropertyTree mySchema = new PropertyTree();
+        mySchema.addDouble( "a", 1.0 );
+
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
+            thenReturn( mySchema );
+
+        final PropertyTree other = new PropertyTree();
+        other.addString( "name", "test" );
+
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:other" ) ) ) ).
+            thenReturn( other );
     }
 
     private PropertyTree createPropertyTree()
