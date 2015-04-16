@@ -60,7 +60,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "base:unstructured",
+    "type": "test:myContentType",
     "valid": false,
     "x": {
         "com-enonic-mymodule": {

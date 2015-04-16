@@ -6,6 +6,9 @@ import java.util.function.Function;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
@@ -24,6 +27,7 @@ import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -48,31 +52,32 @@ public final class ModifyContentHandler
         final String key = req.param( "key" ).required().value( String.class );
         final Function<Object[], Object> editor = req.param( "editor" ).required().callback();
 
-        final ContentId id = findContentId( key );
-        if ( id == null )
+        final Content existingContent = getExistingContent( key );
+        if ( existingContent == null )
         {
             return null;
         }
 
         final UpdateContentParams params = new UpdateContentParams();
-        params.contentId( id );
-        params.editor( newContentEditor( editor ) );
+        params.contentId( existingContent.getId() );
+        params.editor( newContentEditor( editor, existingContent ) );
 
         final Content result = this.contentService.update( params );
         return result != null ? new ContentMapper( result ) : null;
     }
 
-    private ContentId findContentId( final String key )
+    private Content getExistingContent( final String key )
     {
-        if ( !key.startsWith( "/" ) )
-        {
-            return ContentId.from( key );
-        }
-
         try
         {
-            final Content content = this.contentService.getByPath( ContentPath.from( key ) );
-            return content.getId();
+            if ( !key.startsWith( "/" ) )
+            {
+                return this.contentService.getById( ContentId.from( key ) );
+            }
+            else
+            {
+                return this.contentService.getByPath( ContentPath.from( key ) );
+            }
         }
         catch ( final ContentNotFoundException e )
         {
@@ -80,18 +85,18 @@ public final class ModifyContentHandler
         }
     }
 
-    private ContentEditor newContentEditor( final Function<Object[], Object> func )
+    private ContentEditor newContentEditor( final Function<Object[], Object> func, final Content existingContent )
     {
         return edit -> {
             final Object value = func.apply( new Object[]{new ContentMapper( edit.source )} );
             if ( value instanceof Map )
             {
-                updateContent( edit, (Map) value );
+                updateContent( edit, (Map) value, existingContent );
             }
         };
     }
 
-    private void updateContent( final EditableContent target, final Map<?, ?> map )
+    private void updateContent( final EditableContent target, final Map<?, ?> map, final Content existingContent )
     {
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
         if ( displayName != null )
@@ -102,7 +107,7 @@ public final class ModifyContentHandler
         final Object data = map.get( "data" );
         if ( data instanceof Map )
         {
-            target.data = propertyTree( (Map) data );
+            target.data = propertyTree( (Map) data, existingContent.getType() );
         }
 
         final Object extraData = map.get( "x" );
@@ -110,6 +115,23 @@ public final class ModifyContentHandler
         {
             target.extraDatas = extraDatas( (Map) extraData );
         }
+    }
+
+    private PropertyTree propertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+
+        return this.contentService.translateToPropertyTree( createJson( value ), contentTypeName );
+    }
+
+
+    private JsonNode createJson( final Map<?, ?> value )
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree( value );
     }
 
     private PropertyTree propertyTree( final Map<?, ?> value )
