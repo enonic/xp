@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -39,9 +40,45 @@ public class ContentServiceImplTest_create
 
         final Content content = this.contentService.create( createContentParams );
 
+        assertNotNull( content.getName() );
+        assertEquals( "this-is-my-content", content.getName().toString() );
+        assertNotNull( content.getCreatedTime() );
+        assertNotNull( content.getCreator() );
+        assertNotNull( content.getModifiedTime() );
+        assertNotNull( content.getModifier() );
+        assertNotNull( content.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, content.getChildOrder() );
+
         final Content storedContent = this.contentService.getById( content.getId() );
 
         assertNotNull( storedContent.getName() );
+        assertEquals( "this-is-my-content", storedContent.getName().toString() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
+    }
+
+    @Test
+    @Ignore("This should work when XP-348 is done")
+    public void create_content_unnamed()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertEquals( "_unnamed_" + content.getId().toString(), storedContent.getName().toString() );
+
         assertNotNull( storedContent.getCreatedTime() );
         assertNotNull( storedContent.getCreator() );
         assertNotNull( storedContent.getModifiedTime() );
