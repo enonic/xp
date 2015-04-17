@@ -62,7 +62,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    @Ignore("This should work when XP-32 is done")
+    @Ignore("This should work when XP-348 is done")
     public void create_content_unnamed()
         throws Exception
     {
