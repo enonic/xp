@@ -22,7 +22,12 @@ public class ContentName
         return false;
     }
 
-    private final static String UNNAMED_PREFIX = "__unnamed__";
+    public final static String UNNAMED_PREFIX = "__unnamed__";
+
+    public static ContentName unnamed()
+    {
+        return Unnamed.from( UNNAMED_PREFIX );
+    }
 
     public static class Unnamed
         extends ContentName

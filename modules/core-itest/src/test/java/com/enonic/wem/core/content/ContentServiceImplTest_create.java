@@ -1,12 +1,12 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.attachment.Attachments;
@@ -62,7 +62,6 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    @Ignore("This should work when XP-348 is done")
     public void create_content_unnamed()
         throws Exception
     {
@@ -77,8 +76,8 @@ public class ContentServiceImplTest_create
         final Content storedContent = this.contentService.getById( content.getId() );
 
         assertNotNull( storedContent.getName() );
-        assertEquals( "_unnamed_" + content.getId().toString(), storedContent.getName().toString() );
-
+        assertTrue( storedContent.getName().isUnnamed() );
+        assertTrue( ( (ContentName.Unnamed) storedContent.getName() ).hasUniqueness() );
         assertNotNull( storedContent.getCreatedTime() );
         assertNotNull( storedContent.getCreator() );
         assertNotNull( storedContent.getModifiedTime() );
