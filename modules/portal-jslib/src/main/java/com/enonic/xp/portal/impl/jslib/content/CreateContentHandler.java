@@ -115,7 +115,7 @@ public final class CreateContentHandler
             for ( final Map.Entry<?, ?> entry : metadatas.entrySet() )
             {
                 final MixinName mixinName = MixinName.from( moduleKey, entry.getKey().toString() );
-                final ExtraData item = extraData( mixinName, entry.getValue() );
+                final ExtraData item = createExtraData( mixinName, entry.getValue() );
                 if ( item != null )
                 {
                     metadatasBuilder.add( item );
@@ -126,7 +126,7 @@ public final class CreateContentHandler
         return metadatasBuilder.build();
     }
 
-    private ExtraData extraData( final MixinName mixinName, final Object value )
+    private ExtraData createExtraData( final MixinName mixinName, final Object value )
     {
         if ( value instanceof Map )
         {
