@@ -43,57 +43,67 @@ module api.schema.content.inputtype {
             return null;
         }
 
+        private createPageTemplateLoader(): PageTemplateContentTypeLoader {
+            var contentId = this.context.site.getContentId(),
+                loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
+
+            loader.setComparator(new api.content.ContentSummaryByDisplayNameComparator());
+
+            return loader;
+        }
+
+        private createComboBox(): ContentTypeComboBox {
+            var loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null,
+                comboBox = new ContentTypeComboBox(this.input.getOccurrences().getMaximum(), loader);
+
+            comboBox.onLoaded((contentTypeArray: ContentTypeSummary[]) => this.onContentTypesLoaded(contentTypeArray));
+            comboBox.onOptionSelected((event: OptionSelectedEvent<ContentTypeSummary>) => this.onContentTypeSelected(event));
+            comboBox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => this.onContentTypeDeselected(option));
+
+            return comboBox;
+        }
+
+        private onContentTypesLoaded(contentTypeArray: ContentTypeSummary[]): void {
+            var contentTypes = [];
+            this.propertyArray.forEach((property: Property) => {
+                contentTypes.push(property.getString());
+            });
+
+            this.combobox.getComboBox().setValues(contentTypes);
+
+            this.layoutInProgress = false;
+            this.combobox.unLoaded(this.onContentTypesLoaded);
+
+            this.validate(false);
+        }
+
+        private onContentTypeSelected(event: OptionSelectedEvent<ContentTypeSummary>): void {
+            if (this.layoutInProgress) {
+                return;
+            }
+
+            var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
+            if (this.combobox.countSelected() == 1) { // overwrite initial value
+                this.propertyArray.set(0, value);
+            }
+            else {
+                this.propertyArray.add(value);
+            }
+
+            this.validate(false);
+        }
+
+        private onContentTypeDeselected(option: SelectedOption<ContentTypeSummary>): void {
+            this.propertyArray.remove(option.getIndex());
+            this.validate(false);
+        }
+
         layout(input: Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-
             this.layoutInProgress = true;
-
             this.input = input;
             this.propertyArray = propertyArray;
 
-            if (this.context.formContext.getContentTypeName().equals(ContentTypeName.PAGE_TEMPLATE)) {
-                this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum(),
-                    new api.schema.content.PageTemplateContentTypeLoader(this.context.site.getContentId()).setComparator(
-                        new api.content.ContentSummaryByDisplayNameComparator()
-                    ));
-            } else {
-                this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum());
-            }
-
-            // select properties once when combobox has been loaded first time
-            var selectProperties = (contentTypeArray: ContentTypeSummary[]) => {
-
-                propertyArray.forEach((property: Property) => {
-                    var contentTypeName = property.getString();
-                    this.combobox.getComboBox().setValue(contentTypeName);
-                });
-
-                this.layoutInProgress = false;
-                this.combobox.unLoaded(selectProperties);
-            };
-            this.combobox.onLoaded(selectProperties);
-
-            this.combobox.onOptionSelected((event: OptionSelectedEvent<ContentTypeSummary>) => {
-                if (this.layoutInProgress) {
-                    return;
-                }
-
-                var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
-                if (this.combobox.countSelected() == 1) { // overwrite initial value
-                    this.propertyArray.set(0, value);
-                }
-                else {
-                    this.propertyArray.add(value);
-                }
-
-                this.validate(false);
-            });
-
-            this.combobox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => {
-                this.propertyArray.remove(option.getIndex());
-                this.validate(false);
-            });
-
-            this.appendChild(this.combobox);
+            this.appendChild(this.combobox = this.createComboBox());
 
             return wemQ<void>(null);
         }
@@ -105,9 +115,14 @@ module api.schema.content.inputtype {
         }
 
         validate(silent: boolean = true): InputValidationRecording {
+            var recording = new InputValidationRecording();
 
-            var recording = new InputValidationRecording(),
-                values = this.getValues(),
+            if (this.layoutInProgress) {
+                this.validationRecording = recording;
+                return recording;
+            }
+
+            var values = this.getValues(),
                 occurrences = this.input.getOccurrences();
 
             recording.setBreaksMinimumOccurrences(occurrences.minimumBreached(values.length));

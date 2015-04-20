@@ -269,27 +269,6 @@ module api.util {
             return date;
         }
 
-        static parseOffset(value: string, offsetSeparator: string = "+"): number {
-            if(DateHelper.isUTCdate(value)) {
-                return 0;
-            } else {
-                var dateStr = (value || '').trim();
-
-                var parts = dateStr.split(offsetSeparator);
-                if (parts.length !== 2) {
-                    return null;
-                }
-
-                var offsetPart = parts[1];
-
-                var offset = parseFloat(offsetPart);
-                if (isNaN(offset))
-                    return null;
-
-                return offset;
-            }
-        }
-
         /**
          * Returns true if passed string ends with 'z'
          * @param value
