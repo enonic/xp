@@ -48,8 +48,8 @@ module api.liveedit {
 
             var deferred = wemQ.defer<PageModel>();
 
-            var pageModel = new PageModel(this, defaultPageTemplate, defaultTemplateDescriptor);
             var pageMode = this.content.getPageMode();
+            var pageModel = new PageModel(this, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
             var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
             var pageTemplatePromise: wemQ.Promise<PageTemplate> = null;

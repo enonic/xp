@@ -219,11 +219,8 @@ module app.wizard.page {
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
-                    if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                    if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
                         this.saveAndReloadPage();
-                    }
-                    else {
-                        // Skip save. Let user continue working instead.
                     }
                 }
             });
