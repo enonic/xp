@@ -136,7 +136,7 @@ module api.form.inputtype.singleselector {
                 this.validate(false);
             });
 
-            comboBox.onOptionDeselected((event: api.ui.selector.OptionSelectedEvent<string>)=> {
+            comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>)=> {
                 property.setValue(this.newInitialValue());
                 this.validate(false);
             });

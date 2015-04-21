@@ -139,7 +139,7 @@ module api.util {
     }
 
 
-    class LocalDateTimeBuilder {
+    export class LocalDateTimeBuilder {
 
         year: number;
 

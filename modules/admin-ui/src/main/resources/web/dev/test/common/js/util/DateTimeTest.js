@@ -71,24 +71,57 @@ describe("api.util.DateTimeTest", function () {
         });
 
         it("getTimezone().offsetToString() should return correctly padded value for offset", function () {
-            expect(dateTime.getTimezone().offsetToString()).toEqual("01:00");
+            expect(dateTime.getTimezone().offsetToString()).toEqual("+01:00");
         });
     });
 
+    describe("negative offset toString()", function () {
+
+        it("timeZone.toString() should return correctly padded value for offset", function () {
+            timeZone = api.util.Timezone.create().setOffset(-1).build();
+            expect((timeZone.getOffset())).toEqual(-1);
+        });
+
+        it("timeZone.toString() should return correctly padded value for offset", function () {
+            timeZone = api.util.Timezone.create().setOffset(-1).build();
+            expect(timeZone.toString()).toEqual("-01:00");
+        });
+
+        it("timeZone.toString() should return correctly padded value for offset", function () {
+            timeZone = api.util.Timezone.create().setOffset(-11).build();
+            expect(timeZone.toString()).toEqual("-11:00");
+        });
+    });
+
+
+    describe("parse string with negative offset", function () {
+
+        it("String with negative timezone should be parsed correctly", function () {
+            dateTime = api.util.DateTime.fromString("2015-04-25T12:05:00-05:00");
+            expect(dateTime.getTimezone().getOffset()).toEqual(-5);
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:00-05:00");
+        });
+
+        it("String with no tz be parsed correctly", function () {
+            dateTime = api.util.DateTime.fromString("2015-04-25T12:05:00");
+            expect(dateTime.getTimezone().getOffset()).toEqual(0);
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:00+00:00");
+        });
+    });
 
     describe("conversion to string", function () {
 
         it("should correctly convert when seconds, fractions and timezone not specified in constructor", function () {
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:00+00:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:00+00:00");
         });
 
         it("should correctly convert with timezone", function () {
             timeZone =  api.util.Timezone.create().setOffset(1).build();
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:37+01:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:37+01:00");
         });
 
 
@@ -96,7 +129,7 @@ describe("api.util.DateTimeTest", function () {
             timeZone =  api.util.Timezone.create().setOffset(1).build();
             dateTime = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(9).setTimezone(timeZone).build();
 
-            expect(dateTime.toString()).toEqual("2015-03-25T12:05:37.009+01:00");
+            expect(dateTime.toString()).toEqual("2015-04-25T12:05:37.009+01:00");
         });
     });
 
@@ -137,7 +170,7 @@ describe("api.util.DateTimeTest", function () {
             var date1 = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone1).build();
             var date2 = api.util.DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setTimezone(timeZone2).build();
 
-            expect(date1.equals(date2)).toBeTruthy();
+            expect(date1.equals(date2)).toBeFalsy();
         });
     });
 

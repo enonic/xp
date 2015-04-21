@@ -7,9 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
-import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistException;
@@ -18,11 +17,14 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -197,7 +199,15 @@ final class CreateContentCommand
     {
         if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
         {
-            builder.name( NamePrettyfier.create( params.getDisplayName() ) );
+            if ( !Strings.isNullOrEmpty( params.getDisplayName() ) )
+            {
+                builder.name( NamePrettyfier.create( params.getDisplayName() ) );
+            }
+            else
+            {
+                builder.displayName( "" );
+                builder.name( ContentName.unnamed() );
+            }
         }
     }
 

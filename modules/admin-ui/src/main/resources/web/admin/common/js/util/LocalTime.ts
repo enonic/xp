@@ -101,7 +101,7 @@ module api.util {
 
     }
 
-    class LocalTimeBuilder {
+    export class LocalTimeBuilder {
 
         hours: number;
 

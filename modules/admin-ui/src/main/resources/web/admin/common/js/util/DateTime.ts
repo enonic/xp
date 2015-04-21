@@ -12,13 +12,11 @@ module api.util {
 
         private static FRACTION_SEPARATOR: string = ".";
 
-        private static TIMEZONE_SEPARATOR: string = "+";
-
         private static DEFAULT_TIMEZONE: string = "+00:00";
 
         private year: number;
 
-        private month: number;
+        private month: number; // 0-11
 
         private day: number;
 
@@ -82,11 +80,13 @@ module api.util {
         timeToString(): string {
             var fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR + this.padNumber(this.seconds) + fractions;
+            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR + this.padNumber(this.seconds ? this.seconds : 0) + fractions;
         }
 
+        /** Returns date in ISO format. Month value is incremented because ISO month range is 1-12, whereas JS Date month range is 0-11 */
         toString(): string {
-            return this.dateToString() + DateTime.DATE_TIME_SEPARATOR + this.timeToString() + (this.timezone ?  DateTime.TIMEZONE_SEPARATOR + this.timezone.toString() : DateTime.DEFAULT_TIMEZONE);
+            return this.dateToString() + DateTime.DATE_TIME_SEPARATOR + this.timeToString() +
+                   (this.timezone ? this.timezone.toString() : DateTime.DEFAULT_TIMEZONE);
         }
 
         equals(o: api.Equitable): boolean {
@@ -121,11 +121,16 @@ module api.util {
             if (StringHelper.isBlank(s)) {
                 return false;
             }
-            //matches 2015-02-29T12:05:59Z or 2015-02-29T12:05:59+01:00 or 2015-02-29T12:05:59.001+01:00
-            var re = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z))/;
+            //matches 2015-02-29T12:05 or 2015-02-29T12:05:59 or 2015-02-29T12:05:59Z or 2015-02-29T12:05:59+01:00 or 2015-02-29T12:05:59.001+01:00
+            var re = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z)|$)$/;
             return re.test(s);
         }
 
+        /**
+         * Parsed passed string into DateTime object
+         * @param s - date to parse in ISO format
+         * @returns {DateTime}
+         */
         static fromString(s: string): DateTime {
             if (!DateTime.isValidDateTime(s)) {
                 throw new Error("Cannot parse DateTime from string: " + s);
@@ -139,11 +144,12 @@ module api.util {
             } else {
                 var withoutTZ = DateTime.trimTZ(s);
                 date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
-                var offset = DateHelper.parseOffset(s);
+                var offset = DateTime.parseOffset(s);
                 if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
-                    timezone = Timezone.getLocalTimezone();
+                    // assume that if passed date string is not in UTC format and does not contain explicit offset (like '2015-02-29T12:05:59') - use zero offset timezone
+                    timezone = Timezone.getZeroOffsetTimezone();
                 }
             }
 
@@ -180,9 +186,49 @@ module api.util {
             return new DateTimeBuilder();
         }
 
+        private static parseOffset(value: string): number {
+            if (DateHelper.isUTCdate(value)) {
+                return 0;
+            } else {
+                var dateStr = (value || '').trim();
+
+                if (dateStr.indexOf("+") > 0) { // case with positive offset
+                    var parts = dateStr.split("+");
+                    if (parts.length == 2) {
+                        var offsetPart = parts[1];
+
+                        var offset = parseFloat(offsetPart);
+                        if (isNaN(offset)) {
+                            return 0;
+                        }
+
+                        return offset;
+                    } else {
+                        return 0
+                    }
+                } else if (dateStr.split("-").length == 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
+                    var parts = dateStr.split("-");
+                    var offsetPart = parts[3];
+
+                    var offset = parseFloat(offsetPart);
+                    if (isNaN(offset)) {
+                        return 0;
+                    }
+
+                    return offset * -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+
         private static trimTZ(dateString : string): string {
             var tzStartIndex = dateString.indexOf("+");
             if(tzStartIndex > 0) {
+                return dateString.substr(0, tzStartIndex);
+            } else if (dateString.split("-").length == 4) {
+                // case when there is a negative tz (2015-02-29T12:05:59.001-01:00)
+                tzStartIndex = dateString.lastIndexOf("-");
                 return dateString.substr(0, tzStartIndex);
             } else {
                 tzStartIndex = dateString.toLowerCase().indexOf("z");
@@ -193,8 +239,7 @@ module api.util {
         }
     }
 
-
-    class DateTimeBuilder {
+    export class DateTimeBuilder {
 
         year: number;
 

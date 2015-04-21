@@ -20,7 +20,10 @@ module api.util {
         }
 
         offsetToString(): string {
-            return this.padOffset(this.offset);
+            if (this.offset < 0) {
+                return "-" + this.padOffset(Math.abs(this.offset));
+            }
+            return "+" + this.padOffset(Math.abs(this.offset));
         }
 
         toString(): string {
@@ -81,6 +84,9 @@ module api.util {
             return Timezone.fromOffset(DateHelper.getTZOffset());
         }
 
+        static getZeroOffsetTimezone(): Timezone {
+            return Timezone.create().setOffset(0).build();
+        }
 
         public static create(): TimezoneBuilder {
             return new TimezoneBuilder();
@@ -88,7 +94,7 @@ module api.util {
     }
 
 
-    class TimezoneBuilder {
+    export class TimezoneBuilder {
 
         offset: number;
 

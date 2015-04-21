@@ -6,6 +6,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.attachment.Attachments;
@@ -39,9 +40,44 @@ public class ContentServiceImplTest_create
 
         final Content content = this.contentService.create( createContentParams );
 
+        assertNotNull( content.getName() );
+        assertEquals( "this-is-my-content", content.getName().toString() );
+        assertNotNull( content.getCreatedTime() );
+        assertNotNull( content.getCreator() );
+        assertNotNull( content.getModifiedTime() );
+        assertNotNull( content.getModifier() );
+        assertNotNull( content.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, content.getChildOrder() );
+
         final Content storedContent = this.contentService.getById( content.getId() );
 
         assertNotNull( storedContent.getName() );
+        assertEquals( "this-is-my-content", storedContent.getName().toString() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
+    }
+
+    @Test
+    public void create_content_unnamed()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertTrue( storedContent.getName().isUnnamed() );
+        assertTrue( ( (ContentName.Unnamed) storedContent.getName() ).hasUniqueness() );
         assertNotNull( storedContent.getCreatedTime() );
         assertNotNull( storedContent.getCreator() );
         assertNotNull( storedContent.getModifiedTime() );
@@ -92,5 +128,4 @@ public class ContentServiceImplTest_create
         assertNotNull( content.getModifiedTime() );
         assertNotNull( content.getModifier() );
     }
-
 }

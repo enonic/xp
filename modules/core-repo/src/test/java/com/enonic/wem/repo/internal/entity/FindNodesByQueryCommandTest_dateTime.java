@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +38,25 @@ public class FindNodesByQueryCommandTest_dateTime
         queryAndAssert( "myInstant <= instant('2015-02-26T12:00:00Z')", 1 );
         queryAndAssert( "myInstant > instant('2015-02-26T12:00:00Z')", 1 );
         queryAndAssert( "myInstant >= instant('2015-02-26T12:00:00Z')", 2 );
+    }
+
+    @Test
+    public void dateTime()
+        throws Exception
+    {
+        createNodeWithInstant( convertToInstant( "2015-02-26T12:00:00+01:00" ), "node1", NodePath.ROOT );
+        createNodeWithInstant( convertToInstant( "2015-02-26T13:00:00-01:00" ), "node2", NodePath.ROOT );
+
+        // passed argument contains milliseconds
+        queryAndAssert( "myInstant = dateTime('2015-02-26T12:00:00+01:00')", 1 );
+        queryAndAssert( "myInstant = dateTime('2015-02-26T12:00:00.000+01:00')", 1 );
+        queryAndAssert( "myInstant = dateTime('2015-02-26T12:00:00+01:01')", 0 );
+        queryAndAssert( "myInstant < dateTime('2015-02-26T12:00:00+01:00')", 0 );
+        queryAndAssert( "myInstant <= dateTime('2015-02-26T12:00:00+01:00')", 1 );
+        queryAndAssert( "myInstant > dateTime('2015-02-26T12:00:00+01:00')", 1 );
+        queryAndAssert( "myInstant >= dateTime('2015-02-26T12:00:00+01:00')", 2 );
+        queryAndAssert( "myInstant > dateTime('2015-02-26T13:00:00-01:00')", 0 );
+        queryAndAssert( "myInstant >= dateTime('2015-02-26T13:00:00-01:00')", 1 );
     }
 
     @Test
@@ -149,6 +170,13 @@ public class FindNodesByQueryCommandTest_dateTime
             name( name ).
             data( data ).
             build() );
+    }
+
+    private static Instant convertToInstant( final String value )
+    {
+        final TemporalAccessor temporalAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse( value );
+        return Instant.from( temporalAccessor );
+
     }
 
 }
