@@ -151,7 +151,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    @Ignore("A track issue has been created")
+    @Ignore("Track issue: XP-371 When deleting a published content with children, the children are not marked for deletion")
     public void create_delete_published_content_with_children()
         throws Exception
     {
