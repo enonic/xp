@@ -30,35 +30,11 @@ All notable changes to this project will be documented in this file. This projec
 - N/A
 
 
-## 5.0.1 (2015-03-20)
+## Other releases
 
-### Added
-
-- N/A
-
-### Changed
-
-- N/A
-
-### Fixed
-
-- N/A
-
-### Removed
-
-- N/A
-
-### Deprecated
-
-- N/A
-
-### Security
-
-- N/A
+- [5.0.1] (2015-03-20)
+- [5.0.0] (2015-02-17)
 
 
-## 5.0.0 (2015-02-17)
-
-Initial version. Too much changes to list here.
-
-
+[5.0.1]: https://github.com/enonic/xp/releases/tag/v5.0.1
+[5.0.0]: https://github.com/enonic/xp/releases/tag/v5.0.0
