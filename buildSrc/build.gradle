@@ -6,6 +6,6 @@ repositories {
 
 dependencies {
     compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
-    compile 'com.moowork.gradle:gradle-grunt-plugin:0.6'
+    compile 'com.moowork.gradle:gradle-grunt-plugin:0.9'
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
 }
