@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
@@ -22,9 +20,6 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_delete
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Override
     public void setUp()
         throws Exception
