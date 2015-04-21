@@ -32,8 +32,8 @@ All notable changes to this project will be documented in this file. This projec
 
 ## Other releases
 
-- [5.0.1] (2015-03-20)
-- [5.0.0] (2015-02-17)
+- [5.0.1] - 2015-03-20
+- [5.0.0] - 2015-02-17
 
 
 [5.0.1]: https://github.com/enonic/xp/releases/tag/v5.0.1
