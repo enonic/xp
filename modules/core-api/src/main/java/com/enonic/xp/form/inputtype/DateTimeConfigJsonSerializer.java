@@ -12,7 +12,7 @@ public class DateTimeConfigJsonSerializer
     @Override
     public DateTimeConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final DateTimeConfig.Builder builder = DateTimeConfig.newDateTimeConfig();
+        final DateTimeConfig.Builder builder = DateTimeConfig.create();
         parseTimezone( inputTypeConfigNode, builder );
         return builder.build();
     }

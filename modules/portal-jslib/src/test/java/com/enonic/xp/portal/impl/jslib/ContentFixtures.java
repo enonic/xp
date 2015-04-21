@@ -23,6 +23,7 @@ import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
@@ -52,19 +53,19 @@ public final class ContentFixtures
 
     public static Content newSmallContent()
     {
-        final Content.Builder builder = Content.newContent();
-        builder.id( ContentId.from( "123456" ) );
-        builder.name( "mycontent" );
-        builder.displayName( "My Content" );
-        builder.parentPath( ContentPath.from( "/a/b" ) );
-        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
-        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
-        builder.creator( PrincipalKey.from( "user:system:admin" ) );
-        builder.createdTime( Instant.ofEpochSecond( 0 ) );
-        builder.data( newSmallPropertyTree() );
-
-        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
-        builder.page( newPage() );
+        final Content.Builder builder = Content.newContent().
+            id( ContentId.from( "123456" ) ).
+            name( "mycontent" ).
+            type( ContentTypeName.from( "test:myContentType" ) ).
+            displayName( "My Content" ).
+            parentPath( ContentPath.from( "/a/b" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            data( newSmallPropertyTree() ).
+            addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) ).
+            page( newPage() );
 
         return builder.build();
     }

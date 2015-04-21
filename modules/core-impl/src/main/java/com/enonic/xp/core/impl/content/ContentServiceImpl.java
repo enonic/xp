@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -80,6 +81,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -458,7 +461,7 @@ public class ContentServiceImpl
             }
 
             final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                           params.getParentContentPath().toString() ).build() );
+                params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
@@ -643,6 +646,42 @@ public class ContentServiceImpl
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
         final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
+    {
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
+
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( contentType.form().getFormItems() ).
+            mode( contentType.getName().isUnstructured()
+                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
+                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
+    {
+        final Mixin mixin = this.mixinService.getByName( mixinName );
+
+        if ( mixin == null )
+        {
+            throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( mixin.getFormItems() ).
+            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
     }
 
     @Override

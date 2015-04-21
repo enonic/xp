@@ -17,11 +17,11 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -31,7 +31,6 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.form.FieldSet.newFieldSet;
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
@@ -74,7 +73,7 @@ public class ContentTypeResourceTest
             displayName( "My ContentType" ).
             description( "My description" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
                 label( "My text line" ).
@@ -98,14 +97,14 @@ public class ContentTypeResourceTest
     {
         // setup
 
-        Input myTextLine = newInput().
+        Input myTextLine = Input.create().
             name( "myTextLine" ).
             inputType( TEXT_LINE ).
             label( "My text line" ).
             required( true ).
             build();
 
-        Input myCustomInput = newInput().
+        Input myCustomInput = Input.create().
             name( "myCustomInput" ).
             inputType( new DummyCustomInputType() ).
             label( "My custom input" ).
@@ -115,7 +114,7 @@ public class ContentTypeResourceTest
         FieldSet myFieldSet = newFieldSet().
             name( "myFieldSet" ).
             label( "My field set" ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
                 label( "My text line" ).
@@ -126,7 +125,7 @@ public class ContentTypeResourceTest
         FormItemSet myFormItemSet = newFormItemSet().
             name( "myFormItemSet" ).
             label( "My form item set" ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
                 label( "My text line" ).
@@ -170,7 +169,7 @@ public class ContentTypeResourceTest
             name( MY_CTY_QUALIFIED_NAME ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.unstructured() ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
                 label( "My text line" ).

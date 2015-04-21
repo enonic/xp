@@ -5,15 +5,19 @@ import java.time.Instant;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
 public class CreateContentHandlerTest
@@ -21,18 +25,14 @@ public class CreateContentHandlerTest
 {
     private ContentService contentService;
 
-    private MixinService mixinService;
-
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
 
         final CreateContentHandler handler = new CreateContentHandler();
         handler.setContentService( this.contentService );
-        handler.setMixinService( this.mixinService );
 
         return handler;
     }
@@ -41,12 +41,29 @@ public class CreateContentHandlerTest
     public void createContent()
         throws Exception
     {
+        final PropertyTree data = new PropertyTree();
+        data.addLong( "a", 1l );
+        data.addLong( "b", 2l );
+        data.addString( "c", "1" );
+        data.addString( "c", "2" );
+        final PropertySet d = data.addSet( "d" );
+        final PropertySet e = d.addSet( "e" );
+        e.addDouble( "f", 3.6 );
+        e.addBoolean( "g", true );
+
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:test" ).build();
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( ContentTypeName.from( "test:myContentType" ) ) ) ).
+            thenReturn( data );
 
-        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
+        final PropertyTree extraData = new PropertyTree();
+        extraData.addDouble( "a", 1.0 );
+
+        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
+                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
+            thenReturn( extraData );
 
         execute( "createContent" );
     }

@@ -47,4 +47,10 @@ public class Checkbox
                     occurrences.getMinimum() );
         }
     }
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
+    }
 }

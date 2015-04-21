@@ -15,6 +15,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -22,7 +23,6 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
@@ -61,7 +61,7 @@ public class MixinResourceTest
         Mixin mixin = Mixin.newMixin().
             createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
@@ -87,12 +87,12 @@ public class MixinResourceTest
     {
         Mixin mixin1 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
         Mixin mixin2 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( TEXT_AREA.getDefaultConfig() ).label(
+            Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( TEXT_AREA.getDefaultConfig() ).label(
                 "Text Area" ).required( true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
@@ -114,7 +114,7 @@ public class MixinResourceTest
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
             icon( icon ).
-            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
@@ -133,7 +133,7 @@ public class MixinResourceTest
         Mixin mixin = newMixin().
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
-            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 

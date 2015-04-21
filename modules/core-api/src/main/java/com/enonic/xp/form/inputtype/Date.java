@@ -50,4 +50,10 @@ final class Date
     {
         return null;
     }
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
+    }
 }

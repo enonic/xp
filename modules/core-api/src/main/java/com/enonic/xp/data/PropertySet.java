@@ -57,7 +57,7 @@ public final class PropertySet
         return this.tree;
     }
 
-    Property getProperty()
+    public Property getProperty()
     {
         return property;
     }

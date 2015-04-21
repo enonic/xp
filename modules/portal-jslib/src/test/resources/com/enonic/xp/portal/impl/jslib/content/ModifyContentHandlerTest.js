@@ -60,12 +60,12 @@ var expectedJson = {
             }
         }
     },
-    "type": "base:unstructured",
+    "type": "test:myContentType",
     "valid": false,
     "x": {
         "com-enonic-mymodule": {
             "myschema": {
-                "a": "1"
+                "a": 1.0
             },
             "other": {
                 "name": "test"
@@ -85,7 +85,6 @@ function editor(c) {
 
     c.x['com-enonic-mymodule'].other = {
         name: 'test'
-
     };
 
     return c;

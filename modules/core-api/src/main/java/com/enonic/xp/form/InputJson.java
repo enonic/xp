@@ -30,7 +30,7 @@ public class InputJson
         this.inputType = inputType;
         this.configJson = configObject;
 
-        final Input.Builder builder = Input.newInput();
+        final Input.Builder builder = Input.create();
         builder.name( name );
         builder.label( label );
         builder.immutable( immutable );

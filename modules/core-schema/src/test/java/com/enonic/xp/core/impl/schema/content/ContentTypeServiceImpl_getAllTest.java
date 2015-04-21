@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -14,7 +15,6 @@ import com.enonic.xp.schema.mixin.MixinName;
 
 import static com.enonic.xp.form.Form.newForm;
 import static com.enonic.xp.form.InlineMixin.newInlineMixin;
-import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
@@ -48,7 +48,7 @@ public class ContentTypeServiceImpl_getAllTest
         final String contentTypeName = "mymodule:my-contenttype-1";
 
         final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
