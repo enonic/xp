@@ -33,5 +33,10 @@ final class FileUploader
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newReference( Reference.from( value ) );
+    }
 }
 

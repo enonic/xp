@@ -7,21 +7,15 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ContentTypeTest
 {
@@ -33,7 +27,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -49,7 +43,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).addFormItem( layout ).build();
@@ -62,15 +56,15 @@ public class ContentTypeTest
     public void address()
     {
         FormItemSet formItemSet = newFormItemSet().name( "address" ).build();
-        formItemSet.add( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:test" ).
-            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
 
@@ -84,10 +78,21 @@ public class ContentTypeTest
     @Test
     public void formItemSet_in_formItemSet()
     {
-        FormItemSet formItemSet = newFormItemSet().name( "top-set" ).addFormItem(
-            newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newFormItemSet().name( "inner-set" ).addFormItem(
-                newInput().name( "myInnerInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        FormItemSet formItemSet = newFormItemSet().
+            name( "top-set" ).
+            addFormItem( Input.create().
+                name( "myInput" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( newFormItemSet().
+                name( "inner-set" ).
+                addFormItem( Input.create().
+                    name( "myInnerInput" ).
+                    inputType( InputTypes.TEXT_LINE ).
+                    build() ).
+                build() ).
+            build();
+
         ContentType contentType = newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:test" ).
@@ -104,12 +109,12 @@ public class ContentTypeTest
     @Test
     public void contentTypeBuilder()
     {
-        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form( ContentTypeForms.MEDIA_DEFAULT )
-            .setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" )
-            .metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime( Instant.now() )
-            .createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form(
+            ContentTypeForms.MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
+            "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
+            Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
-        ContentType contentType2 = newContentType(contentType1).build();
+        ContentType contentType2 = newContentType( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );
         assertEquals( contentType1.form(), contentType2.form() );
         assertEquals( contentType1.isAbstract(), contentType2.isAbstract() );
@@ -128,13 +133,13 @@ public class ContentTypeTest
     @Test
     public void contentTypeFilter()
     {
-        ContentTypeFilter.Builder builder = ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.media() )
-            .allowContentType( ContentTypeName.from( "mymodule:my_type" ) )
-            .allowContentTypes( ContentTypeNames.from( ContentTypeName.archiveMedia() ) )
-            .defaultDeny().denyContentType( ContentTypeName.audioMedia() )
-            .denyContentTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) )
-            .allowContentType( "mymodule:my_type1" )
-            .denyContentType( "mymodule:my_type2" );
+        ContentTypeFilter.Builder builder =
+            ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.media() ).allowContentType(
+                ContentTypeName.from( "mymodule:my_type" ) ).allowContentTypes(
+                ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
+                ContentTypeName.audioMedia() ).denyContentTypes(
+                ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType( "mymodule:my_type1" ).denyContentType(
+                "mymodule:my_type2" );
         ContentTypeFilter ctFilter = builder.build();
         ContentTypeFilter ctFilter1 = builder.build();
         assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "mymodule:my_type" ) ) );
@@ -150,15 +155,15 @@ public class ContentTypeTest
     @Test
     public void contentTypes()
     {
-        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form( ContentTypeForms.PAGE_TEMPLATE )
-            .setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" )
-            .metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime( Instant.now() )
-            .createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form(
+            ContentTypeForms.PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
+            "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
+            Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
-        ContentTypes contentTypes = ContentTypes.newContentTypes().add(contentType).build();
+        ContentTypes contentTypes = ContentTypes.newContentTypes().add( contentType ).build();
         assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );
-        assertTrue(ContentTypes.empty().getSize() == 0);
-        assertTrue(ContentTypes.from( contentType ).getSize() == 1);
+        assertTrue( ContentTypes.empty().getSize() == 0 );
+        assertTrue( ContentTypes.from( contentType ).getSize() == 1 );
         assertNotNull( contentTypes.getContentType( contentType.getName() ) );
     }
 
@@ -166,7 +171,7 @@ public class ContentTypeTest
     public void getAllContentTypesParams()
     {
         GetAllContentTypesParams params = new GetAllContentTypesParams();
-        params.inlineMixinsToFormItems(true);
+        params.inlineMixinsToFormItems( true );
         assertTrue( params.isInlineMixinsToFormItems() );
     }
 
@@ -206,7 +211,10 @@ public class ContentTypeTest
     @Test
     public void getContentTypesParams()
     {
-        List<ContentTypeName> list = new ArrayList<ContentTypeName>() {{add(ContentTypeName.audioMedia());}};
+        List<ContentTypeName> list = new ArrayList<ContentTypeName>()
+        {{
+                add( ContentTypeName.audioMedia() );
+            }};
         GetContentTypesParams params1 = new GetContentTypesParams();
         params1.contentTypeNames( ContentTypeNames.newContentTypeNames().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
         GetContentTypesParams params2 = new GetContentTypesParams();
@@ -219,8 +227,6 @@ public class ContentTypeTest
         assertNotEquals( params1.isInlineMixinsToFormItems(), params2.isInlineMixinsToFormItems() );
         assertNotEquals( params1, null );
     }
-
-
 
 
 }

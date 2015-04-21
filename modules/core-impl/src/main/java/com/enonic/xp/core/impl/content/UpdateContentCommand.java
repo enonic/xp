@@ -107,7 +107,6 @@ final class UpdateContentCommand
 
     private Content processContent( final Content contentBeforeChange, Content editedContent )
     {
-
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
 
         final ProxyContentProcessor proxyContentProcessor = ProxyContentProcessor.create().

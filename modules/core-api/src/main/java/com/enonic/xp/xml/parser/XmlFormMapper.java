@@ -85,7 +85,7 @@ public final class XmlFormMapper
 
     private Input buildInputItem( final DomElement root )
     {
-        final Input.Builder builder = Input.newInput();
+        final Input.Builder builder = Input.create();
 
         final InputType type = InputTypes.parse( root.getAttribute( "type" ) );
         builder.inputType( type );

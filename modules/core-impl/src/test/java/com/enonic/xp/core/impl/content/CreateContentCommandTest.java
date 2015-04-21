@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -29,41 +30,55 @@ public class CreateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
-    private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+    private ContentTypeService contentTypeService;
 
-    private final MixinService mixinService = Mockito.mock( MixinService.class );
+    private MixinService mixinService;
 
-    private final ModuleService moduleService = Mockito.mock( ModuleService.class );
+    private ModuleService moduleService;
 
-    private final NodeService nodeService = Mockito.mock( NodeService.class );
+    private NodeService nodeService;
 
-    private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
+    private ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
-    private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
+    private EventPublisher eventPublisher;
 
-    private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
+    private MediaInfo mediaInfo;
 
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        moduleService = Mockito.mock( ModuleService.class );
+        nodeService = Mockito.mock( NodeService.class );
+        eventPublisher = Mockito.mock( EventPublisher.class );
+        mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
+        mixinService = Mockito.mock( MixinService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+    }
 
     @Test(expected = IllegalArgumentException.class)
-    public void content_type_null() {
+    public void content_type_null()
+    {
 
-        CreateContentCommand command = createContentCommand(createContentParams());
+        CreateContentCommand command = createContentCommand( createContentParams() );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
         // exercise
         command.execute();
     }
 
     @Test(expected = ContentNotFoundException.class)
-    public void bad_parent_content_path() {
+    public void bad_parent_content_path()
+    {
         PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
-        CreateContentParams params = CreateContentParams.create()
-            .type( ContentTypeName.site() )
-            .parent( ContentPath.from( "/myPath/myContent" ) )
-            .contentData( existingContentData )
-            .displayName( "displayName" )
-            .build();
+        CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.site() ).
+            parent( ContentPath.from( "/myPath/myContent" ) ).
+            contentData( existingContentData ).
+            displayName( "displayName" ).
+            build();
 
         CreateContentCommand command = createContentCommand( params );
 
@@ -74,54 +89,67 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void content_params_not_present_test() {
-        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        existingContentData.addString( "myData", "aaa" );
+    public void content_params_not_present_test()
+    {
+        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "myData", "aaa" );
 
-        try {
-            CreateContentParams.create()
-                .type( ContentTypeName.site() )
-                .parent( ContentPath.from( "/myPath/myContent" ) )
-                .contentData( existingContentData )
-                .build();
-        } catch ( Exception e ) {
-            assertEquals("displayName cannot be null", e.getMessage());
+        try
+        {
+            CreateContentParams.create().
+                type( ContentTypeName.site() ).
+                parent( ContentPath.from( "/myPath/myContent" ) ).
+                contentData( data ).
+                build();
+        }
+        catch ( Exception e )
+        {
+            assertEquals( "displayName cannot be null", e.getMessage() );
         }
 
-        try {
-            CreateContentParams.create()
-                .parent( ContentPath.from( "/myPath/myContent" ) )
-                .contentData( existingContentData )
-                .displayName( "displayName" )
-                .build();
-        } catch ( Exception e ) {
-            assertEquals("type cannot be null", e.getMessage());
+        try
+        {
+            CreateContentParams.create().
+                parent( ContentPath.from( "/myPath/myContent" ) ).
+                contentData( data ).
+                displayName( "displayName" ).
+                build();
+        }
+        catch ( Exception e )
+        {
+            assertEquals( "type cannot be null", e.getMessage() );
         }
 
-        try {
-            CreateContentParams.create()
-                .type( ContentTypeName.site() )
-                .contentData( existingContentData )
-                .displayName( "displayName" )
-                .build();
-        } catch ( Exception e ) {
-            assertEquals("parentContentPath cannot be null", e.getMessage());
+        try
+        {
+            CreateContentParams.create().
+                type( ContentTypeName.site() ).
+                contentData( data ).
+                displayName( "displayName" ).
+                build();
+        }
+        catch ( Exception e )
+        {
+            assertEquals( "parentContentPath cannot be null", e.getMessage() );
         }
 
-        try {
-            CreateContentParams.create()
-                .parent( ContentPath.from( "/myPath/myContent" ) )
-                .type( ContentTypeName.site() )
-                .displayName( "displayName" )
-                .build();
-        } catch ( Exception e ) {
-            assertEquals("data cannot be null", e.getMessage());
+        try
+        {
+            CreateContentParams.create().
+                parent( ContentPath.from( "/myPath/myContent" ) ).
+                type( ContentTypeName.site() ).
+                displayName( "displayName" ).
+                build();
+        }
+        catch ( Exception e )
+        {
+            assertEquals( "data cannot be null", e.getMessage() );
         }
     }
 
     @Test(expected = NullPointerException.class)
-    public void name_generated_from_display_name() {
-
+    public void name_generated_from_display_name()
+    {
         final CreateContentParams params = createContentParams();
 
         CreateContentCommand command = createContentCommand( params );
@@ -129,9 +157,8 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             newContentType().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) )).thenAnswer(
-            (invocation) ->
-            {
+        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
+            ( invocation ) -> {
                 {
                     Object[] args = invocation.getArguments();
                     CreateContentTranslatorParams passedParam = (CreateContentTranslatorParams) args[0];
@@ -145,27 +172,23 @@ public class CreateContentCommandTest
     }
 
     @Test(expected = NullPointerException.class)
-    public void name_present_and_unchanged() {
+    public void name_present_and_unchanged()
+    {
 
         PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
-        final CreateContentParams params = CreateContentParams.create()
-            .name( "myname" )
-            .type( ContentTypeName.site() )
-            .parent( ContentPath.ROOT )
-            .contentData( existingContentData )
-            .displayName( "displayName" )
-            .build();
+        final CreateContentParams params =
+            CreateContentParams.create().name( "myname" ).type( ContentTypeName.site() ).parent( ContentPath.ROOT ).contentData(
+                existingContentData ).displayName( "displayName" ).build();
 
         CreateContentCommand command = createContentCommand( params );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             newContentType().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) )).thenAnswer(
-            (invocation) ->
-            {
+        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
+            ( invocation ) -> {
                 {
                     Object[] args = invocation.getArguments();
                     CreateContentTranslatorParams passedParam = (CreateContentTranslatorParams) args[0];
@@ -177,20 +200,18 @@ public class CreateContentCommandTest
         command.execute();
     }
 
-    private CreateContentParams createContentParams () {
+    private CreateContentParams createContentParams()
+    {
         PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
-        CreateContentParams params = CreateContentParams.create()
-            .type( ContentTypeName.site() )
-            .parent( ContentPath.ROOT )
-            .contentData( existingContentData )
-            .displayName( "displayName" )
-            .build();
+        CreateContentParams params = CreateContentParams.create().type( ContentTypeName.site() ).parent( ContentPath.ROOT ).contentData(
+            existingContentData ).displayName( "displayName" ).build();
         return params;
     }
 
-    private CreateContentCommand createContentCommand(CreateContentParams params) {
+    private CreateContentCommand createContentCommand( CreateContentParams params )
+    {
         CreateContentCommand command = CreateContentCommand.create().
             params( params ).
             contentTypeService( this.contentTypeService ).

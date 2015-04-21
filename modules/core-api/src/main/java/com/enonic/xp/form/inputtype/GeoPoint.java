@@ -34,4 +34,9 @@ final class GeoPoint
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
+    }
 }

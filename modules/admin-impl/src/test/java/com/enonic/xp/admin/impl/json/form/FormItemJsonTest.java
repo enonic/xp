@@ -31,7 +31,7 @@ public class FormItemJsonTest
     public void deserialize_serialization_of_Input()
         throws IOException
     {
-        InputJson inputJson = new InputJson( Input.newInput().
+        InputJson inputJson = new InputJson( Input.create().
             name( "myTextLine" ).
             label( "My TextLine" ).
             immutable( true ).
@@ -59,7 +59,7 @@ public class FormItemJsonTest
     public void deserialize_serialization_of_Input_with_config()
         throws IOException
     {
-        InputJson inputJson = new InputJson( Input.newInput().
+        InputJson inputJson = new InputJson( Input.create().
             name( "myTextLine" ).
             label( "My TextLine" ).
             immutable( true ).
@@ -94,8 +94,8 @@ public class FormItemJsonTest
             customText( "Custom text" ).
             helpText( "Help text" ).
             occurrences( 0, 10 ).
-            addFormItem( Input.newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
+            addFormItem( Input.create().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
         // serialize from object
@@ -117,8 +117,8 @@ public class FormItemJsonTest
         FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.newFieldSet().
             name( "myFieldSet" ).
             label( "My field set" ).
-            addFormItem( Input.newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
+            addFormItem( Input.create().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
         // serialize from object

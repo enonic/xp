@@ -37,5 +37,10 @@ final class Money
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -18,14 +19,20 @@ import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.ContentSelectorConfig;
+import com.enonic.xp.form.inputtype.DateTimeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
 
-import static com.enonic.xp.form.Input.newInput;
+import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
@@ -102,6 +109,70 @@ public class ContentServiceImplTest_update
         assertEquals( 3, attachments.getSize() ); // original, small, medium
     }
 
+    // TODO: This test should run, to be fixed
+    @Ignore
+    @Test
+    public void propertiesTransformedAccordingToContentTypeDefinition()
+        throws Exception
+    {
+        final Content createdContent = createContentWithTransform();
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( createdContent.getId() ).
+            editor( edit -> {
+                final PropertyTree editData = edit.data;
+                editData.setString( "myReference", "newValue" );
+            } );
+
+        this.contentService.update( updateContentParams );
+    }
+
+    private Content createContentWithTransform()
+    {
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.contentService.setContentTypeService( contentTypeService );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createTestContentType() );
+
+        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "myReference", "1234" );
+        data.addString( "myDateTime", "2015-03-13T10:00:00+02:00" );
+
+        return contentService.create( CreateContentParams.create().
+            type( ContentTypeName.from( "myContentType" ) ).
+            contentData( data ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            displayName( "my display-name" ).
+            build() );
+    }
+
+
+    private ContentType createTestContentType()
+    {
+        return newContentType().
+            superType( ContentTypeName.documentMedia() ).
+            name( "myContentType" ).
+            addFormItem( Input.create().
+                inputType( InputTypes.DATE_TIME ).
+                name( "myDateTime" ).
+                inputTypeConfig( DateTimeConfig.create().
+                    withTimezone( true ).
+                    build() ).
+                build() ).
+            addFormItem( Input.create().
+                inputType( InputTypes.CONTENT_SELECTOR ).
+                name( "myReference" ).
+                inputTypeConfig( ContentSelectorConfig.create().
+                    addAllowedContentType( ContentTypeName.from( "myContentType" ) ).
+                    build() ).
+                build() ).
+            build();
+    }
+
+
     @Test
     public void update_content_data()
         throws Exception
@@ -146,7 +217,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString2", "value" );
 
         final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
-            addFormItem( newInput().
+            addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).

@@ -41,7 +41,7 @@ public class ModuleImplTest
     public void testCreateModule()
     {
         final Form config = Form.newForm().
-            addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         final ModuleImpl module = new ModuleImpl();

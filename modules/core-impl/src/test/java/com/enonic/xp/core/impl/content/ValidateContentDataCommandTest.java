@@ -20,7 +20,6 @@ import com.enonic.xp.schema.mixin.MixinService;
 import static com.enonic.xp.content.Content.newContent;
 import static com.enonic.xp.form.FieldSet.newFieldSet;
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ValidateContentDataCommandTest
@@ -52,7 +51,7 @@ public class ValidateContentDataCommandTest
                 label( "My layout" ).
                 name( "myLayout" ).
                 addFormItem( FormItemSet.newFormItemSet().name( "mySet" ).required( true ).
-                    addFormItem( Input.newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).
+                    addFormItem( Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).
                         build() ).
                     build() ).
                 build() ).
@@ -86,7 +85,7 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:my_type" ).

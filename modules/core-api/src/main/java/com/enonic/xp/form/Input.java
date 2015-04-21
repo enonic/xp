@@ -180,7 +180,7 @@ public final class Input
     @Override
     public Input copy()
     {
-        return newInput( this ).build();
+        return create( this ).build();
     }
 
     @Override
@@ -215,12 +215,12 @@ public final class Input
                              this.helpText, this.validationRegexp, this.inputTypeConfig );
     }
 
-    public static Builder newInput()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newInput( final Input input )
+    public static Builder create( final Input input )
     {
         return new Builder( input );
     }

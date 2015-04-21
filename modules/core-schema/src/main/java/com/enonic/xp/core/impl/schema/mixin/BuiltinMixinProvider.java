@@ -110,22 +110,22 @@ public final class BuiltinMixinProvider
 
     private static Input.Builder createTextLine( final String name, final String label )
     {
-        return Input.newInput().inputType( InputTypes.TEXT_LINE ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypes.TEXT_LINE ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createLong( final String name, final String label )
     {
-        return Input.newInput().inputType( InputTypes.LONG ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypes.LONG ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createDate( final String name, final String label )
     {
-        return Input.newInput().inputType( InputTypes.DATE_TIME ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypes.DATE_TIME ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createGeoPoint( final String name, final String label )
     {
-        return Input.newInput().inputType( InputTypes.GEO_POINT ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypes.GEO_POINT ).label( label ).name( name ).immutable( true );
     }
 
     private List<Mixin> generateSystemMixins()

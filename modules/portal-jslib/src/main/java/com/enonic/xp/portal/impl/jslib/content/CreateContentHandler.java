@@ -5,13 +5,15 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
@@ -19,17 +21,13 @@ import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true, service = CommandHandler.class)
 public final class CreateContentHandler
     extends BaseContextHandler
 {
     private ContentService contentService;
-
-    private MixinService mixinService;
 
     @Override
     public String getName()
@@ -47,14 +45,16 @@ public final class CreateContentHandler
 
     private CreateContentParams createParams( final CommandRequest req )
     {
+        final ContentTypeName contentTypeName = contentTypeName( req.param( "contentType" ).value( String.class ) );
+
         return CreateContentParams.create().
             name( req.param( "name" ).value( String.class ) ).
             parent( contentPath( req.param( "parentPath" ).value( String.class ) ) ).
             displayName( req.param( "displayName" ).value( String.class ) ).
             requireValid( req.param( "requireValid" ).value( Boolean.class, true ) ).
-            type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
-            contentData( propertyTree( req.param( "data" ).map() ) ).
-            extraDatas( extraDatas( req.param( "x" ).map() ) ).
+            type( contentTypeName ).
+            contentData( createPropertyTree( req.param( "data" ).map(), contentTypeName ) ).
+            extraDatas( createExtraDatas( req.param( "x" ).map() ) ).
             build();
     }
 
@@ -68,77 +68,33 @@ public final class CreateContentHandler
         return value != null ? ContentTypeName.from( value ) : null;
     }
 
-    private PropertyTree propertyTree( final Map<?, ?> value )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        final PropertyTree tree = new PropertyTree();
-        applyData( tree.getRoot(), value );
-        return tree;
+        return this.contentService.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private void applyData( final PropertySet set, final Map<?, ?> value )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final MixinName mixinName )
     {
-        for ( final Map.Entry<?, ?> entry : value.entrySet() )
+        if ( value == null )
         {
-            final String name = entry.getKey().toString();
-            final Object item = entry.getValue();
-
-            if ( item instanceof Map )
-            {
-                applyData( set.addSet( name ), (Map) item );
-            }
-            else if ( item instanceof Iterable )
-            {
-                applyData( set, name, (Iterable<?>) item );
-            }
-            else if ( item instanceof Double )
-            {
-                set.addDouble( name, (Double) item );
-            }
-            else if ( item instanceof Number )
-            {
-                set.addLong( name, ( (Number) item ).longValue() );
-            }
-            else if ( item instanceof Boolean )
-            {
-                set.addBoolean( name, (Boolean) item );
-            }
-            else
-            {
-                set.addString( name, item.toString() );
-            }
+            return null;
         }
+
+        return this.contentService.translateToPropertyTree( createJson( value ), mixinName );
     }
 
-    private void applyData( final PropertySet set, final String name, final Object value )
+    private JsonNode createJson( final Map<?, ?> value )
     {
-        if ( value instanceof Map )
-        {
-            applyData( set.addSet( name ), (Map) value );
-        }
-        else if ( value instanceof Iterable )
-        {
-            applyData( set, name, (Iterable<?>) value );
-        }
-        else
-        {
-            set.addString( name, value.toString() );
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree( value );
     }
 
-    private void applyData( final PropertySet set, final String name, final Iterable<?> value )
-    {
-        for ( final Object item : value )
-        {
-            applyData( set, name, item );
-        }
-    }
-
-    private ExtraDatas extraDatas( final Map<String, Object> value )
+    private ExtraDatas createExtraDatas( final Map<String, Object> value )
     {
         if ( value == null )
         {
@@ -159,7 +115,7 @@ public final class CreateContentHandler
             for ( final Map.Entry<?, ?> entry : metadatas.entrySet() )
             {
                 final MixinName mixinName = MixinName.from( moduleKey, entry.getKey().toString() );
-                final ExtraData item = metaData( mixinName, entry.getValue() );
+                final ExtraData item = createExtraData( mixinName, entry.getValue() );
                 if ( item != null )
                 {
                     metadatasBuilder.add( item );
@@ -170,15 +126,11 @@ public final class CreateContentHandler
         return metadatasBuilder.build();
     }
 
-    private ExtraData metaData( final MixinName mixinName, final Object value )
+    private ExtraData createExtraData( final MixinName mixinName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final Mixin mixin = mixinService.getByName( mixinName );
-            if ( mixin != null )
-            {
-                return new ExtraData( mixin.getName(), propertyTree( (Map) value ) );
-            }
+            return new ExtraData( mixinName, createPropertyTree( (Map) value, mixinName ) );
         }
 
         return null;
@@ -188,11 +140,5 @@ public final class CreateContentHandler
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.mixinService = mixinService;
     }
 }

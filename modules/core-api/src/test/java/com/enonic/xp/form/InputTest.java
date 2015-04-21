@@ -3,12 +3,9 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class InputTest
@@ -17,7 +14,7 @@ public class InputTest
     public void copy()
     {
         // setup
-        Input original = newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
+        Input original = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
 
         // exercise
         Input copy = original.copy();
@@ -35,7 +32,7 @@ public class InputTest
     public void toInput_given_FormItem_of_type_Input_then_Input_is_returned()
     {
         // setup
-        FormItem formItem = newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
+        FormItem formItem = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
 
         // exercise
         Input input = formItem.toInput();
