@@ -100,10 +100,12 @@ module api.content.page {
 
         private configPropertyChangedHandler;
 
-        constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor) {
+        constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor,
+                    pageMode: api.content.page.PageMode) {
             this.liveEditModel = liveEditModel;
             this.defaultTemplate = defaultTemplate;
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
+            this.mode = pageMode;
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
@@ -251,6 +253,8 @@ module api.content.page {
             }
             if (setTemplate.regions) {
                 this.setRegions(setTemplate.regions, setTemplate.eventSource);
+            } else if (setTemplate.template && setTemplate.template.getRegions()) {
+                this.setRegions(setTemplate.template.getRegions(), setTemplate.eventSource);
             }
 
             if (this.regions) {
