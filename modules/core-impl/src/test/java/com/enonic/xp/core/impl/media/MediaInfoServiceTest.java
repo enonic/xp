@@ -54,4 +54,11 @@ public class MediaInfoServiceTest
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-FNumber-entries.JPG" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
     }
+
+    @Test
+    public void testIllegibleCheck()
+    {
+        assertTrue( service.isIllegibleMediaMimeType( MediaInfo.BINARY_FILE_MIME ) );
+        assertFalse( service.isIllegibleMediaMimeType( "application/gzip" ) );
+    }
 }

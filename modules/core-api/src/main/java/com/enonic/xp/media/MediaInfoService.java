@@ -9,4 +9,6 @@ public interface MediaInfoService
     MediaInfo parseMediaInfo( ByteSource byteSource );
 
     Integer getOrientation( ByteSource byteSource );
+
+    boolean isIllegibleMediaMimeType( String mimeType );
 }
