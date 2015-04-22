@@ -12,3 +12,126 @@
     margin-bottom: @size;
   }
 }
+
+.form-view {
+  margin-top: 20px;
+  font-size: 12px;
+  position: relative;
+  overflow: visible;
+
+  .validation-viewer {
+    display: none;
+    color: @input-red-text;
+  }
+
+  &.display-validation-errors {
+    .validation-viewer {
+      display: block;
+    }
+  }
+
+  .form-element-spacing(@form-field-set-spacing);
+
+  .field-set-view, .form-item-set-view {
+    .form-element-spacing(@form-field-set-spacing);
+  }
+
+  .input-view {
+    .form-element-spacing(@form-field-spacing);
+  }
+
+  .form-item {
+    padding: 10px 10px 0;
+    .clearfix();
+    .form-element-spacing(@form-field-spacing);
+
+    .error {
+      display: none;
+      float: right;
+      color: @admin-input-red;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    &.invalid {
+      .error {
+        display: block;
+      }
+
+      select, input, textarea {
+        .input-error();
+      }
+    }
+
+    label {
+      font-size: 12px;
+      max-width: @form-label-width - 10px;
+      margin-right: 10px;
+      display: block;
+      float: left;
+
+      &.required {
+        &:after {
+          position: absolute;
+          content: '\00a0*';
+          color: @input-red-text;
+        }
+      }
+    }
+
+    label + .form-input,
+    label + .input-wrapper,
+    label + .button{
+      margin-left: @form-label-width;
+    }
+
+    .input-wrapper .form-input {
+      width: 100%;
+    }
+
+    select, input, textarea {
+      .input-glow();
+    }
+  }
+
+  fieldset {
+    min-width: 100%;
+    .form-element-spacing(@form-field-set-spacing);
+
+    legend {
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid @admin-medium-gray-border;
+    }
+  }
+
+  .CodeMirror {
+    float: left;
+  }
+}
+
+.context-window, ._0-240, ._240-360, ._360-540, ._540-720 {
+  .form-fieldset-vertical();
+}
+
+.form-fieldset-vertical() {
+  .form-view .form-item {
+    label {
+      float: none;
+      max-width: 100%;
+      margin: 0 0 3px 0;
+    }
+
+    label + .form-input,
+    label + .input-wrapper, {
+      margin-left: 0;
+    }
+  }
+}
+
+._0-240, ._240-360, ._360-540 {
+  .form-view {
+    margin: 0 10px;
+  }
+}
