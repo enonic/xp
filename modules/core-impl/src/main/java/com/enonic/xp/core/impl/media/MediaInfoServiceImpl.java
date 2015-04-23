@@ -17,6 +17,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.content.Media;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.util.Exceptions;
@@ -58,12 +61,29 @@ public final class MediaInfoServiceImpl
     }
 
     @Override
-    public Integer getOrientation( ByteSource byteSource )
+    public Integer getImageOrientation( ByteSource byteSource )
     {
         Metadata metadata = this.parseMetadata( byteSource );
         String orientation = metadata.get( Metadata.ORIENTATION );
 
         return orientation == null ? 0 : Integer.valueOf( orientation );
+    }
+
+    @Override
+    public Integer getImageOrientation( Media media )
+    {
+        PropertyTree propertyTree = media.getExtraData( "media:photo-info" );
+
+        if ( propertyTree != null )
+        {
+            Property orientationProperty = propertyTree.getProperty( "tiffOrientation" );
+            if ( orientationProperty != null )
+            {
+                return Integer.valueOf( orientationProperty.getString() );
+            }
+        }
+
+        return 0;
     }
 
     private Metadata parseMetadata( final ByteSource byteSource )

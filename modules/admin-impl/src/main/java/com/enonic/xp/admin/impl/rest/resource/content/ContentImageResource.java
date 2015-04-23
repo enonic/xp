@@ -24,13 +24,12 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.RoleKeys;
-
-import static com.enonic.xp.admin.impl.rest.resource.content.ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
@@ -45,6 +44,8 @@ public final class ContentImageResource
     private ContentService contentService;
 
     private ContentImageHelper helper;
+
+    private MediaInfoService mediaInfoService;
 
     @GET
     @Path("{contentId}")
@@ -96,7 +97,10 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = helper.readImage( binary, size, SCALE_MAX_FILTER );
+                final int imageOrientation = mediaInfoService.getImageOrientation( binary );
+                final ImageParams imageParams = ImageParams.newImageParams().size( size ).orientation( imageOrientation ).build();
+
+                final BufferedImage contentImage = helper.readAndRotateImage( binary, imageParams );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -152,5 +156,11 @@ public final class ContentImageResource
     public void setContentImageHelper( ContentImageHelper contentImageHelper )
     {
         this.helper = contentImageHelper;
+    }
+
+    @Reference
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 }
