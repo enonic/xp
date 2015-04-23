@@ -62,6 +62,25 @@ module api.form.inputtype.text {
                         editor.on('blur', (e) => {
                             textAreaWrapper.removeClass(focusedEditorCls);
                         });
+                        editor.on('keydown', (e) => {
+                            if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+                                e.preventDefault();
+                                var value = this.newValue(this.editor.getContent());
+                                property.setValue(value); // ensure that entered value is stored
+
+                                wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
+                                    bubbles: e.bubbles,
+                                    cancelable: e.cancelable,
+                                    view: parent,
+                                    ctrlKey: e.ctrlKey,
+                                    altKey: e.altKey,
+                                    shiftKey: e.shiftKey,
+                                    metaKey: e.metaKey,
+                                    keyCode: e.keyCode,
+                                    charCode: e.charCode
+                                });
+                            }
+                        });
                     },
                     init_instance_callback: (editor) => {
                         editor.execCommand('mceAutoResize');
@@ -92,7 +111,7 @@ module api.form.inputtype.text {
 
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.HTML_PART) ||
-                api.util.StringHelper.isBlank(value.getString());
+                                                                                   api.util.StringHelper.isBlank(value.getString());
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
