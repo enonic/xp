@@ -40,7 +40,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
@@ -52,6 +51,8 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.SystemConstants;
@@ -518,11 +519,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node setNodeState( final NodeId nodeId, final NodeState nodeState )
+    public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
         return SetNodeStateCommand.create().
-            nodeId( nodeId ).
-            nodeState( nodeState ).
+            params( params ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             branchService( this.branchService ).

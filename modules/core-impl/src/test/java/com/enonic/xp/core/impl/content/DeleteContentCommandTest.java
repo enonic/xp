@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -15,6 +16,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.SetNodeStateResult;
 
 public class DeleteContentCommandTest
 {
@@ -46,6 +50,11 @@ public class DeleteContentCommandTest
             parentPath( NodePath.ROOT ).
             build();
 
+        final SetNodeStateResult setNodeStateResult = SetNodeStateResult.
+            create().
+            addUpdatedNode( node ).
+            build();
+
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
@@ -54,6 +63,11 @@ public class DeleteContentCommandTest
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
+
+        Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
+            thenReturn( setNodeStateResult);
+
+        Mockito.when( this.translator.fromNodes( Mockito.isA( Nodes.class ) ) ).thenReturn( Contents.empty() );
 
         DeleteContentCommand.create().
             params( DeleteContentParams.create().
@@ -80,6 +94,11 @@ public class DeleteContentCommandTest
             parentPath( NodePath.ROOT ).
             build();
 
+        final SetNodeStateResult setNodeStateResult = SetNodeStateResult.
+            create().
+            addUpdatedNode( node ).
+            build();
+
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
@@ -88,6 +107,11 @@ public class DeleteContentCommandTest
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
+
+        Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
+            thenReturn( setNodeStateResult);
+
+        Mockito.when( this.translator.fromNodes( Mockito.isA( Nodes.class ) ) ).thenReturn( Contents.empty() );
 
         DeleteContentCommand.create().
             params( DeleteContentParams.create().
@@ -99,8 +123,13 @@ public class DeleteContentCommandTest
             build().
             execute();
 
-        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).setNodeState( Mockito.eq( node.id() ),
-                                                                             Mockito.eq( NodeState.PENDING_DELETE ) );
+        final SetNodeStateParams params = SetNodeStateParams.create().
+            nodeId( node.id() ).
+            nodeState( NodeState.PENDING_DELETE ).
+            recursive( true ).
+            build();
+        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).setNodeState( Mockito.eq( params ) );
+
     }
 
 }

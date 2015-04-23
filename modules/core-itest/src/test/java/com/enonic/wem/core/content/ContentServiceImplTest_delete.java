@@ -45,9 +45,9 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final Content deletedContent = this.contentService.delete( deleteContentParams );
-        assertNotNull( deletedContent );
-        assertEquals( content, deletedContent );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
+        assertNotNull( deletedContents );
+        assertEquals( Contents.from( content ), deletedContents );
 
         //Checks that the content is deleted
         final ContentIds contentIds = ContentIds.from( content.getId() );
@@ -101,9 +101,9 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final Content deletedContent = this.contentService.delete( deleteContentParams );
-        assertNotNull( deletedContent );
-        assertEquals( content, deletedContent );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
+        assertNotNull( deletedContents );
+        assertEquals( Contents.from( content ), deletedContents );
 
         //Checks that the content and the children are deleted
         final ContentIds contentIds =
@@ -140,10 +140,13 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final Content deletedContent = this.contentService.delete( deleteContentParams );
-        assertNotNull( deletedContent );
-        assertEquals( content.getId(), deletedContent.getId() );
-        assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
+        assertNotNull( deletedContents );
+        assertEquals( 1, deletedContents.getSize());
+        for ( Content deletedContent : deletedContents )
+        {
+            assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
+        }
 
         //Checks that the content is marked for deletion
         final Content foundContent = this.contentService.getById( content.getId() );
@@ -151,7 +154,6 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    @Ignore("Track issue: XP-371 When deleting a published content with children, the children are not marked for deletion")
     public void create_delete_published_content_with_children()
         throws Exception
     {
@@ -205,10 +207,13 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final Content deletedContent = this.contentService.delete( deleteContentParams );
-        assertNotNull( deletedContent );
-        assertEquals( content.getId(), deletedContent.getId() );
-        assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
+        final Contents deletedContents = this.contentService.delete( deleteContentParams );
+        assertNotNull( deletedContents );
+        assertEquals( 4, deletedContents.getSize() );
+        for ( Content deletedContent : deletedContents )
+        {
+            assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
+        }
 
         //Checks that the content and children are marked for deletion
         final ContentIds contentIds =
