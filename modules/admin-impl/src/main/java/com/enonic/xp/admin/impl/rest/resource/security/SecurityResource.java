@@ -28,6 +28,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalsResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
@@ -137,6 +140,25 @@ public final class SecurityResource
 
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
         return new UserStoreJson( userStore, permissions, principals );
+    }
+
+    @POST
+    @Path("userstore/delete")
+    public DeleteUserStoresResultJson deleteUserStore( final DeleteUserStoreJson params )
+    {
+        final DeleteUserStoresResultJson resultsJson = new DeleteUserStoresResultJson();
+        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+            try
+            {
+                securityService.deleteUserStore( userStoreKey );
+                resultsJson.add( DeleteUserStoreResultJson.success( userStoreKey ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( DeleteUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
     }
 
     @GET

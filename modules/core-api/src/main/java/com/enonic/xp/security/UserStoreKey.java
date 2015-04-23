@@ -24,6 +24,10 @@ public final class UserStoreKey
         this.id = id;
     }
 
+    public static UserStoreKey from(final String id) {
+        return new UserStoreKey( id );
+    }
+
     @Override
     public String toString()
     {

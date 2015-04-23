@@ -20,6 +20,7 @@
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
+///<reference path="GetPrincipalsByUserStoreRequest.ts"/>
 ///<reference path="CheckEmailAvailabilityRequest.ts"/>
 ///<reference path="SetUserPasswordRequest.ts"/>
 ///<reference path="CreateUserRequest.ts"/>
@@ -29,9 +30,13 @@
 ///<reference path="UpdateGroupRequest.ts"/>
 ///<reference path="UpdateRoleRequest.ts"/>
 ///<reference path="DeletePrincipalResult.ts"/>
+///<reference path="DeleteUserStoreResult.ts"/>
 ///<reference path="DeletePrincipalResultJson.ts"/>
+///<reference path="DeleteUserStoreResultJson.ts"/>
 ///<reference path="DeletePrincipalResultsJson.ts"/>
+///<reference path="DeleteUserStoreResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
+///<reference path="DeleteUserStoreRequest.ts"/>
 ///<reference path='PrincipalLoader.ts' />
 ///<reference path="PrincipalNamedEvent.ts"/>
 ///<reference path="CreateUserStoreRequest.ts"/>

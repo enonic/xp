@@ -63,8 +63,14 @@ module api.app.browse {
         setItems(items: BrowseItem<M>[]) {
             var itemsToRemove = this.items.filter((item: BrowseItem<M>) => {
                 for (var i = 0; i < items.length; i++) {
-                    if (item.getPath() == items[i].getPath()) {
-                        return false;
+                    if (item.getPath()) {
+                        if (item.getPath() == items[i].getPath()) {
+                            return false;
+                        }
+                    } else {
+                        if (item.getId() == items[i].getId()) {
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -97,8 +103,14 @@ module api.app.browse {
 
         private indexOf(item: BrowseItem<M>): number {
             for (var i = 0; i < this.items.length; i++) {
-                if (item.getPath() == this.items[i].getPath()) {
-                    return i;
+                if (item.getPath()) {
+                    if (item.getPath() == this.items[i].getPath()) {
+                        return i;
+                    }
+                } else {
+                    if (item.getId() == this.items[i].getId()) {
+                        return i;
+                    }
                 }
             }
             return -1;
