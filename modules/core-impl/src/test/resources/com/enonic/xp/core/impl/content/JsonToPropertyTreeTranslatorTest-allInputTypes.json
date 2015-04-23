@@ -1,0 +1,30 @@
+{
+  "textLine": "myValue",
+  "color": "#12345",
+  "comboBox": "1234",
+  "checkbox": true,
+  "tinyMce": "<stuff>staff</stuff>",
+  "phone": "+4797773223",
+  "tag": "myTag",
+  "contentSelector": "1234abc",
+  "contentTypeFilter": "article",
+  "moduleConfigurator": "my config here",
+  "double": 1.1,
+  "long": 12345678910,
+  "stringArray": [
+    "a",
+    "b",
+    "c"
+  ],
+  "localDateTime": "2015-01-14T10:00:00",
+  "dateTime": "2015-01-15T10:15:00+02:00",
+  "date": "2015-01-15",
+  "time": "10:00:32.123",
+  "geoPoint": "-45,34",
+  "htmlArea": "<h1>test</h1>",
+  "xml": "<xml><car><color>blue</color></car></xml>",
+  "set": {
+    "setString": "ost",
+    "setDouble": 123
+  }
+}

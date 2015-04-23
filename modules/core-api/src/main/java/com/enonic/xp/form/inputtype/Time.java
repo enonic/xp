@@ -35,4 +35,11 @@ public class Time
     {
         return null;
     }
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
+    }
 }
+

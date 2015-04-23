@@ -10,7 +10,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
-public abstract class InputType
+public abstract class InputType<C extends InputTypeConfig>
 {
     private final InputTypeName inputTypeName;
 
@@ -123,4 +123,7 @@ public abstract class InputType
     {
         // Default: nothing
     }
+
+    public abstract Value createPropertyValue( final String value, final InputTypeConfig config );
+
 }

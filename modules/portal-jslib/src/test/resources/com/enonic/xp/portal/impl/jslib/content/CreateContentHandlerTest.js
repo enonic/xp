@@ -18,12 +18,12 @@ var expectedJson = {
     "displayName": "My Content",
     "hasChildren": false,
     "page": {},
-    "type": "base:unstructured",
+    "type": "test:myContentType",
     "valid": false,
     "x": {
         "com-enonic-mymodule": {
-            "test": {
-                "a": 1
+            "myschema": {
+                "a": 1.0
             }
         }
     }
@@ -35,7 +35,7 @@ exports.createContent = function () {
         parentPath: '/a/b',
         displayName: 'My Content',
         draft: true,
-        contentType: 'base:unstructured',
+        contentType: 'test:myContentType',
         data: {
             a: 1,
             b: 2,
@@ -49,7 +49,7 @@ exports.createContent = function () {
         },
         x: {
             "com-enonic-mymodule": {
-                test: {
+                myschema: {
                     a: 1
                 }
             }

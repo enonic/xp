@@ -1,5 +1,3 @@
-print(this);
-
 require('other/resolve-in-require').test();
 require('other/resolve-in-require').test();
 

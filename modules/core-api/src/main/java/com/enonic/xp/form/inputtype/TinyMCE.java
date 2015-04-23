@@ -28,7 +28,7 @@ final class TinyMCE
     @Override
     public Value newValue( final String value )
     {
-        return Value.newString( value );
+        return Value.newHtmlPart( value );
     }
 
     @Override
@@ -37,4 +37,9 @@ final class TinyMCE
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newHtmlPart( value );
+    }
 }

@@ -4,11 +4,6 @@ package com.enonic.xp.form;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.InlineMixin;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -17,7 +12,6 @@ import com.enonic.xp.schema.mixin.MixinService;
 import static com.enonic.xp.form.Form.newForm;
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
 import static com.enonic.xp.form.InlineMixin.newInlineMixin;
-import static com.enonic.xp.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class InlineMixinsToFormItemsTransformTest
@@ -39,14 +33,14 @@ public class InlineMixinsToFormItemsTransformTest
         // setup
         Mixin mixin = Mixin.newMixin().
             name( "mymodule:my_mixin" ).
-            addFormItem( newInput().name( "input1" ).
+            addFormItem( Input.create().name( "input1" ).
                 inputType( InputTypes.TEXT_LINE ).
                 helpText( "myHelpText" ).
                 build() ).
             build();
 
         Form form = newForm().
-            addFormItem( newInput().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( InlineMixin.newInlineMixin().mixin( "mymodule:my_mixin" ).build() ).
             build();
 
@@ -68,13 +62,13 @@ public class InlineMixinsToFormItemsTransformTest
     {
         // setup
         Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
-            newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+            Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         Form form = newForm().
-            addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInlineMixin( mixin ).build() ).
             build();
 
@@ -96,10 +90,10 @@ public class InlineMixinsToFormItemsTransformTest
         // setup
         Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).
             addFormItem( newFormItemSet().name( "address" ).
-                addFormItem( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 build() ).
             build();
 
@@ -144,16 +138,16 @@ public class InlineMixinsToFormItemsTransformTest
                 addFormItem( FieldSet.newFieldSet().
                     label( "My Field Set" ).
                     name( "fieldSet" ).
-                    addFormItem( newInput().
+                    addFormItem( Input.create().
                         name( "myFieldInLayout" ).
                         label( "MyFieldInLayout" ).
                         inputType( InputTypes.TEXT_LINE ).
                         build() ).
                     build() ).
-                addFormItem( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).
-                addFormItem( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).
+                addFormItem( Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 build() ).
             build();
 

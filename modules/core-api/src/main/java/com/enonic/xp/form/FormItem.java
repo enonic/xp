@@ -125,7 +125,7 @@ public abstract class FormItem
         }
         else if ( formItem instanceof Input )
         {
-            newFormItem = Input.newInput( (Input) formItem ).build();
+            newFormItem = Input.create( (Input) formItem ).build();
         }
         else
         {

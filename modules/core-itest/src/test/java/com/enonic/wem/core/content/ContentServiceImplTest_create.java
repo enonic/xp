@@ -113,7 +113,6 @@ public class ContentServiceImplTest_create
     public void create_site()
         throws Exception
     {
-
         final CreateSiteParams createSiteParams = new CreateSiteParams();
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My site" ).

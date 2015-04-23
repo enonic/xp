@@ -52,6 +52,12 @@ final class Color
         return valueHolder;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
+    }
+
     private static int parseInt( final String s, final String name )
     {
         try
