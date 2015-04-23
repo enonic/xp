@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentState;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -18,6 +19,9 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.SetNodeStateResult;
 
 
 final class DeleteContentCommand
@@ -31,27 +35,30 @@ final class DeleteContentCommand
         this.params = builder.params;
     }
 
-    Content execute()
+    Contents execute()
     {
         params.validate();
 
         try
         {
-            final Content deletedContent = doExecute();
-            if ( deletedContent != null )
+            final Contents deletedContents = doExecute();
+            for ( Content deletedContent : deletedContents )
             {
-                if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+                if ( deletedContent != null )
                 {
-                    eventPublisher.publish(
-                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-                }
-                else
-                {
-                    eventPublisher.publish(
-                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                    if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+                    {
+                        eventPublisher.publish(
+                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
+                    }
+                    else
+                    {
+                        eventPublisher.publish(
+                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                    }
                 }
             }
-            return deletedContent;
+            return deletedContents;
         }
         catch ( NodeAccessException e )
         {
@@ -59,7 +66,7 @@ final class DeleteContentCommand
         }
     }
 
-    private Content doExecute()
+    private Contents doExecute()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
 
@@ -70,12 +77,15 @@ final class DeleteContentCommand
         if ( status == CompareStatus.NEW )
         {
             final Node deletedNode = nodeService.deleteByPath( nodePath );
-            return translator.fromNode( deletedNode );
+            return translator.fromNodes( Nodes.from( deletedNode ) );
         }
         else
         {
-            final Node pendingDeleteNode = this.nodeService.setNodeState( nodeToDelete.id(), NodeState.PENDING_DELETE );
-            return translator.fromNode( pendingDeleteNode );
+            SetNodeStateParams setNodeStateParams =
+                SetNodeStateParams.create().nodeId( nodeToDelete.id() ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
+            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( setNodeStateParams );
+
+            return translator.fromNodes( setNodeStateResult.getUpdatedNodes() );
         }
     }
 
