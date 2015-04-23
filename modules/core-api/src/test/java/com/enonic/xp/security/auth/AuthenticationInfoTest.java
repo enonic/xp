@@ -10,7 +10,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +26,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -48,12 +47,12 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        final UserStoreKey userStore = new UserStoreKey( "myStore" );
+        final UserStoreKey userStore = UserStoreKey.from( "myStore" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );

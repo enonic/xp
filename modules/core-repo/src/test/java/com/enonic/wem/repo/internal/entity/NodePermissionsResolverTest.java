@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class NodePermissionsResolverTest
 {
 
-    private static final UserStoreKey USER_STORE_KEY = new UserStoreKey( "us" );
+    private static final UserStoreKey USER_STORE_KEY = UserStoreKey.from( "us" );
 
     private static final PrincipalKey USER_A = PrincipalKey.ofGroup( USER_STORE_KEY, "userA" );
 
