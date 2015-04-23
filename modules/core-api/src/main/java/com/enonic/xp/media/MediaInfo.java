@@ -16,6 +16,8 @@ public class MediaInfo
 
     public static final String MEDIA_SOURCE_SIZE = "bytesize";
 
+    public static final String BINARY_FILE_MIME = "application/octet-stream";
+
     private MediaInfo( final Builder builder )
     {
         this.mediaType = builder.mediaType;

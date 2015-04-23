@@ -66,6 +66,12 @@ public final class MediaInfoServiceImpl
         return orientation == null ? 0 : Integer.valueOf( orientation );
     }
 
+    @Override
+    public boolean isIllegibleMediaMimeType( final String mimeType )
+    {
+        return MediaInfo.BINARY_FILE_MIME.equalsIgnoreCase( mimeType );
+    }
+
     private Metadata parseMetadata( final ByteSource byteSource )
     {
         final ParseContext context = new ParseContext();

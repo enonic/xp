@@ -41,7 +41,7 @@ final class UpdateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        if ( params.getMimeType() == null )
+        if ( params.getMimeType() == null || mediaInfoService.isIllegibleMediaMimeType( params.getMimeType() ) )
         {
             params.mimeType( mediaInfo.getMediaType() );
         }

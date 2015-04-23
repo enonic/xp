@@ -36,7 +36,8 @@ final class CreateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        if ( params.getMimeType() == null && mediaInfo.getMediaType() != null )
+        if ( ( params.getMimeType() == null || mediaInfoService.isIllegibleMediaMimeType( params.getMimeType() ) ) &&
+            mediaInfo.getMediaType() != null )
         {
             params.mimeType( mediaInfo.getMediaType() );
         }
