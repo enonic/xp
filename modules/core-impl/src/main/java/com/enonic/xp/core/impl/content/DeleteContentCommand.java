@@ -81,8 +81,11 @@ final class DeleteContentCommand
         }
         else
         {
-            SetNodeStateParams setNodeStateParams =
-                SetNodeStateParams.create().nodeId( nodeToDelete.id() ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
+            final SetNodeStateParams setNodeStateParams = SetNodeStateParams.create().
+                nodeId( nodeToDelete.id() ).
+                nodeState( NodeState.PENDING_DELETE ).
+                recursive( true ).
+                build();
             final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( setNodeStateParams );
 
             return translator.fromNodes( setNodeStateResult.getUpdatedNodes() );
