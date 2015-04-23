@@ -190,15 +190,15 @@ module api.ui.selector.combobox {
             return false;
         }
 
-        private getDisplayValueId(value: OPTION_DISPLAY_VALUE): string {
+        protected getDisplayValueId(value: Object): string {
             var val = value[this.identifierMethod]();
             return typeof val == 'object' && val['toString'] ? val.toString() : val;
         }
 
-        private createOption(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
+        protected createOption(value: Object): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.getDisplayValueId(value),
-                displayValue: value
+                displayValue: <OPTION_DISPLAY_VALUE>value
             }
         }
 
@@ -239,9 +239,9 @@ module api.ui.selector.combobox {
             });
         }
 
-        private createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
+        private createOptions(items: Object[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             var options = [];
-            items.forEach((itemInst: OPTION_DISPLAY_VALUE) => {
+            items.forEach((itemInst: Object) => {
                 options.push(this.createOption(itemInst));
             });
             return options;
