@@ -11,8 +11,8 @@ var util = require('util');
 assert.assertEquals('Hello from Lib!', util.hello());
 
 var all1 = require('./export/all1');
-// assert.assertEquals(1, all1.a);
-// assert.assertEquals(2, all1.b);
+assert.assertEquals(1, all1.a);
+assert.assertEquals(2, all1.b);
 
 var all2 = require('export/all2');
 assert.assertEquals(1, all2.a);

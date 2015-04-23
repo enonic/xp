@@ -28,15 +28,6 @@ import com.enonic.xp.resource.ResourceKey;
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
-    private final static String PRE_SCRIPT = "" + //
-        "(function(log,module,execute,require,resolve) {" + //
-        "var exports = {};" + //
-        "module.exports = exports;";
-
-    private final static String POST_SCRIPT = "" + //
-        "return module.exports;" + //
-        "});";
-
     private ScriptEngine engine;
 
     private CommandInvoker invoker;
@@ -74,6 +65,7 @@ final class ScriptExecutorImpl
     {
         this.exportsCache = Maps.newHashMap();
         this.global = this.engine.createBindings();
+
         new CallFunction().register( this.global );
 
         if ( this.globalMap != null )
@@ -114,7 +106,7 @@ final class ScriptExecutorImpl
             final ExecuteFunction execute = new ExecuteFunction( script, this.invoker );
             final ModuleScriptInfo moduleInfo = new ModuleScriptInfo( script );
 
-            return func.call( this.global, logger, moduleInfo, execute, require, resolve );
+            return func.call( moduleInfo, script, logger, execute, require, resolve );
         }
         catch ( final Exception e )
         {
@@ -133,7 +125,7 @@ final class ScriptExecutorImpl
         try
         {
             final Resource resource = Resource.from( script );
-            final String source = PRE_SCRIPT + resource.readString() + POST_SCRIPT;
+            final String source = InitScriptReader.getScript( resource.readString() );
 
             return this.engine.eval( source, context );
         }
