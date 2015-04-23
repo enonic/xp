@@ -65,7 +65,7 @@ public class DeleteContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
-            thenReturn( setNodeStateResult);
+            thenReturn( setNodeStateResult );
 
         Mockito.when( this.translator.fromNodes( Mockito.isA( Nodes.class ) ) ).thenReturn( Contents.empty() );
 
@@ -109,7 +109,7 @@ public class DeleteContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
-            thenReturn( setNodeStateResult);
+            thenReturn( setNodeStateResult );
 
         Mockito.when( this.translator.fromNodes( Mockito.isA( Nodes.class ) ) ).thenReturn( Contents.empty() );
 
@@ -126,7 +126,6 @@ public class DeleteContentCommandTest
         final SetNodeStateParams params = SetNodeStateParams.create().
             nodeId( node.id() ).
             nodeState( NodeState.PENDING_DELETE ).
-            recursive( true ).
             build();
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).setNodeState( Mockito.eq( params ) );
 
