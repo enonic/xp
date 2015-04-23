@@ -26,7 +26,7 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-
+            var focusedEditorCls = "tinymce-editor-focused";
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
 
             var clazz = textAreaEl.getId().replace(/\./g, '_');
@@ -56,6 +56,12 @@ module api.form.inputtype.text {
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
+                        });
+                        editor.on('focus', (e) => {
+                            textAreaWrapper.addClass(focusedEditorCls);
+                        });
+                        editor.on('blur', (e) => {
+                            textAreaWrapper.removeClass(focusedEditorCls);
                         });
                     },
                     init_instance_callback: (editor) => {
