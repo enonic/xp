@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.ws.rs.core.Response;
 
 import com.enonic.xp.portal.PortalContext;
@@ -9,6 +12,11 @@ import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_BEGIN;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_END;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_BEGIN;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_END;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -69,7 +77,7 @@ final class ControllerScriptImpl
         populateContentType( response, result.getMember( "contentType" ) );
         populateBody( response, result.getMember( "body" ) );
         populateHeaders( response, result.getMember( "headers" ) );
-        populateContribute( response, result.getMember( "contribute" ) );
+        populateContributions( response, result.getMember( "pageContributions" ) );
         setRedirect( response, result.getMember( "redirect" ) );
     }
 
@@ -138,7 +146,7 @@ final class ControllerScriptImpl
     }
 
 
-    private void populateContribute( final PortalResponse response, final ScriptValue value )
+    private void populateContributions( final PortalResponse response, final ScriptValue value )
     {
         if ( value == null )
         {
@@ -152,7 +160,37 @@ final class ControllerScriptImpl
 
         for ( final String key : value.getKeys() )
         {
-            response.addContribution( key, value.getMember( key ).getValue( String.class ) );
+            if ( "headBegin".equals( key ) )
+            {
+                response.addContribution( HEAD_BEGIN, contributionValueAsString( value.getMember( key ) ) );
+            }
+            else if ( "headEnd".equals( key ) )
+            {
+                response.addContribution( HEAD_END, contributionValueAsString( value.getMember( key ) ) );
+            }
+            else if ( "bodyBegin".equals( key ) )
+            {
+                response.addContribution( BODY_BEGIN, contributionValueAsString( value.getMember( key ) ) );
+            }
+            else if ( "bodyEnd".equals( key ) )
+            {
+                response.addContribution( BODY_END, contributionValueAsString( value.getMember( key ) ) );
+            }
+        }
+    }
+
+    private String contributionValueAsString( final ScriptValue value )
+    {
+        if ( value.isArray() )
+        {
+            return value.getArray().stream().
+                map( scriptValue -> scriptValue.getValue( String.class ) ).
+                filter( Objects::nonNull ).
+                collect( Collectors.joining() );
+        }
+        else
+        {
+            return value.getValue( String.class );
         }
     }
 

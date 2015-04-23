@@ -9,6 +9,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
+
 @Beta
 public final class PortalResponse
 {
@@ -26,7 +28,7 @@ public final class PortalResponse
 
     private boolean postProcess = true;
 
-    private final ListMultimap<String, String> contributions;
+    private final ListMultimap<PostProcessInjection.Tag, String> contributions;
 
     public PortalResponse()
     {
@@ -91,13 +93,13 @@ public final class PortalResponse
         this.postProcess = postProcess;
     }
 
-    public void addContribution( final String name, final String value )
+    public void addContribution( final PostProcessInjection.Tag tag, final String value )
     {
-        this.contributions.put( name, value );
+        this.contributions.put( tag, value );
     }
 
-    public List<String> getContributions( final String name )
+    public List<String> getContributions( final PostProcessInjection.Tag tag )
     {
-        return this.contributions.containsKey( name ) ? this.contributions.get( name ) : Collections.emptyList();
+        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : Collections.emptyList();
     }
 }

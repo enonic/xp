@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.impl.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.attoparser.AttoParseException;
 import org.attoparser.markup.MarkupAttoParser;
 
@@ -13,17 +10,16 @@ public final class HtmlBlockParser
 {
     private StringBuilder currentBlock;
 
-    private final List<HtmlBlock> htmlBlocks;
+    private HtmlBlocks.Builder htmlBlocks;
 
     public HtmlBlockParser()
     {
-        this.htmlBlocks = new ArrayList<>();
     }
 
     public HtmlBlocks parse( final String html )
     {
         this.currentBlock = new StringBuilder();
-        this.htmlBlocks.clear();
+        this.htmlBlocks = HtmlBlocks.builder();
 
         try
         {
@@ -32,7 +28,7 @@ public final class HtmlBlockParser
 
             addStaticHtml();
 
-            return HtmlBlocks.from( this.htmlBlocks );
+            return this.htmlBlocks.build();
         }
         catch ( final AttoParseException e )
         {
