@@ -140,6 +140,14 @@ public interface SecurityService
      */
     void deletePrincipal( PrincipalKey principalKey );
 
+    /**
+     * Deletes an existing userStore.
+     *
+     * @param userStoreKey key of the userStore to be deleted
+     * @throws UserStoreNotFoundException if the specified userStore does not exist
+     */
+    void deleteUserStore( UserStoreKey userStoreKey );
+
     PrincipalQueryResult query( PrincipalQuery query );
 
     PrincipalRelationships getRelationships( PrincipalKey from );

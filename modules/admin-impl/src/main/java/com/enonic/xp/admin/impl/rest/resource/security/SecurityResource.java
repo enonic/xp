@@ -28,6 +28,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalsResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
@@ -92,7 +95,7 @@ public final class SecurityResource
             return null;
         }
 
-        final UserStoreKey userStoreKey = new UserStoreKey( keyParam );
+        final UserStoreKey userStoreKey = UserStoreKey.from( keyParam );
         final UserStore userStore = securityService.getUserStore( userStoreKey );
         if ( userStore == null )
         {
@@ -139,6 +142,25 @@ public final class SecurityResource
         return new UserStoreJson( userStore, permissions, principals );
     }
 
+    @POST
+    @Path("userstore/delete")
+    public DeleteUserStoresResultJson deleteUserStore( final DeleteUserStoreJson params )
+    {
+        final DeleteUserStoresResultJson resultsJson = new DeleteUserStoresResultJson();
+        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+            try
+            {
+                securityService.deleteUserStore( userStoreKey );
+                resultsJson.add( DeleteUserStoreResultJson.success( userStoreKey ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( DeleteUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
+    }
+
     @GET
     @Path("principals")
     public PrincipalsJson findPrincipals( @QueryParam("userStoreKey") final String storeKey, @QueryParam("types") final String types,
@@ -148,7 +170,7 @@ public final class SecurityResource
         UserStoreKey userStoreKey = null;
         if ( StringUtils.isNotEmpty( storeKey ) )
         {
-            userStoreKey = new UserStoreKey( storeKey );
+            userStoreKey = UserStoreKey.from( storeKey );
         }
         final List<PrincipalType> principalTypes = new ArrayList<>();
         if ( StringUtils.isNotBlank( types ) )
@@ -220,7 +242,7 @@ public final class SecurityResource
         {
             throw new WebApplicationException( "Expected email parameter" );
         }
-        final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : new UserStoreKey( userStoreKeyParam );
+        final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : UserStoreKey.from( userStoreKeyParam );
         final PrincipalQuery query = newQuery().email( email ).userStore( userStoreKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );

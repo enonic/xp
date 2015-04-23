@@ -4,25 +4,34 @@ module api.security {
 
         private userStore: UserStoreKey;
 
-        private principalType: PrincipalType;
+        private principalTypes: PrincipalType[];
 
-        constructor(userStore: UserStoreKey, principalType: PrincipalType) {
+        constructor(userStore: UserStoreKey, principalTypes: PrincipalType[]) {
             super();
             super.setMethod("GET");
             this.userStore = userStore;
-            this.principalType = principalType;
+            this.principalTypes = principalTypes;
         }
 
         getParams(): Object {
             return {
-                'userStoreKey': this.userStore.toString(),
-                'type': PrincipalType[this.principalType]
+                'userStoreKey': this.userStore.getId(),
+                'types': this.getType()
 
             };
         }
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), 'principals');
+        }
+
+        private getType(): string {
+            var typeStr: string = "";
+            this.principalTypes.forEach((type) => {
+                typeStr += PrincipalType[type];
+                typeStr += ",";
+            });
+            return typeStr.substr(0, typeStr.length - 1);
         }
 
         sendAndParse(): wemQ.Promise<Principal[]> {
