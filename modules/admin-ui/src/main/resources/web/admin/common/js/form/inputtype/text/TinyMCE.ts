@@ -48,7 +48,6 @@ module api.form.inputtype.text {
                     paste_as_text: true,
                     plugins: ['autoresize', 'table', 'link', 'paste', 'charmap', 'code'],
                     autoresize_min_height: 100,
-                    autoresize_max_height: 400,
                     autoresize_bottom_margin: 0,
                     height: 100,
 
