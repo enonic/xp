@@ -1,9 +1,12 @@
 package com.enonic.xp.portal.impl.view;
 
+import java.util.Locale;
+
 import org.junit.Before;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.site.Site;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.view.ViewFunction;
@@ -15,6 +18,8 @@ public abstract class AbstractViewFunctionTest
 
     protected PortalContext context;
 
+    protected Site site;
+
     @Before
     public final void setup()
         throws Exception
@@ -25,7 +30,17 @@ public abstract class AbstractViewFunctionTest
         this.context.setBaseUri( "/portal" );
         this.context.setContentPath( ContentPath.from( "context/path" ) );
 
+        this.site = Site.newSite().
+            description( "This is my site" ).
+            name( "my-content" ).
+            parentPath( ContentPath.ROOT ).
+            language( Locale.ENGLISH ).
+            build();
+
+        this.context.setSite( site );
+
         this.service = new ViewFunctionServiceImpl();
+
         setupFunction();
     }
 
