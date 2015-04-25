@@ -1,17 +1,8 @@
+@tinymce-editor-toolbar-opacity: 0.9;
+
 .tinymce-editor {
-  .mce-btn {
-    background-image: none;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-
-    button {
-      padding: 2px 8px;
-    }
-
-    &:hover {
-      background-image: none;
-    }
+  .mce-btn button {
+    padding: 2px 8px;
   }
 
   .mce-tinymce {
@@ -27,17 +18,230 @@
     border: 1px solid @admin-input-blue;
   }
 
-  .mce-btn-group {
+  //////////////////////
+  .mce-toolbar-grp {
+    display: none;
+  }
 
-    .mce-first, .mce-last, .mce-first.mce-last {
-      border-radius: 0;
-      border: none;
+  .tinymce-editor-focused .mce-toolbar-grp {
+    display: block;
+  }
+
+  .mce-toolbar-grp {
+    -webkit-animation: pop-upwards 160ms forwards linear;
+    -ms-animation: pop-upwards 160ms forwards linear;
+    animation: pop-upwards 160ms forwards linear;
+    transition: top 0.075s ease-out, left 0.075s ease-out;
+
+    font-size: 16px;
+    font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+    padding-bottom: 0px;
+
+    //z-index: @z-index-medium-editor;
+    // max-width: 282px;
+
+    background-color: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+    background: linear-gradient(bottom, #242424, rgba(36, 36, 36, @tinymce-editor-toolbar-opacity));
+
+    border: 1px solid rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+    box-shadow: 0 0 0px rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+
+    border-radius: 5px;
+
+    .mce-btn-group {
+      margin: 0px;
     }
 
-    border-right: 1px solid @admin-black;
+    .mce-btn {
+      min-width: 30px;
+      height: 30px;
+      background-color: transparent;
+      background-image: none;
+      border: 0px;
+      border-right: 1px solid rgba(0, 0, 0, @tinymce-editor-toolbar-opacity);
+
+      &:hover {
+        background-color: #000;
+      }
+
+      &.mce-active {
+        background-color: #000;
+
+        &:hover {
+          background-image: none;
+        }
+      }
+
+      button {
+        vertical-align: middle;
+        padding: 4px 8px;
+      }
+
+      .mce-caret {
+        display: none;
+      }
+
+      span {
+        font-family: FontAwesome;
+      }
+      .mce-ico, span {
+
+        text-shadow: none;
+        vertical-align: middle;
+        color: @admin-white;
+
+        &:before {
+          color: @admin-white;
+          font-size: 16px;
+        }
+        &:hover {
+          color: yellow;
+          &:before {
+            color: yellow;
+          }
+        }
+      }
+    }
   }
 
-  .mce-last {
-    border-right: none;
+  @-webkit-keyframes pop-upwards {
+    0% {
+      -webkit-transform: matrix(0.97, 0, 0, 1, 0, 12);
+      transform: matrix(0.97, 0, 0, 1, 0, 12);
+      opacity: 0;
+    }
+
+    20% {
+      -webkit-transform: matrix(0.99, 0, 0, 1, 0, 2);
+      transform: matrix(0.99, 0, 0, 1, 0, 2);
+      opacity: 0.7;
+    }
+
+    40% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, -1);
+      transform: matrix(1, 0, 0, 1, 0, -1);
+      opacity: 1;
+    }
+
+    70% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+      transform: matrix(1, 0, 0, 1, 0, 0);
+      opacity: 1;
+    }
+
+    100% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+      transform: matrix(1, 0, 0, 1, 0, 0);
+      opacity: 1;
+    }
   }
+
+  @keyframes pop-upwards {
+    0% {
+      -webkit-transform: matrix(0.97, 0, 0, 1, 0, 12);
+      transform: matrix(0.97, 0, 0, 1, 0, 12);
+      opacity: 0;
+    }
+
+    20% {
+      -webkit-transform: matrix(0.99, 0, 0, 1, 0, 2);
+      transform: matrix(0.99, 0, 0, 1, 0, 2);
+      opacity: 0.7;
+    }
+
+    40% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, -1);
+      transform: matrix(1, 0, 0, 1, 0, -1);
+      opacity: 1;
+    }
+
+    70% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+      transform: matrix(1, 0, 0, 1, 0, 0);
+      opacity: 1;
+    }
+
+    100% {
+      -webkit-transform: matrix(1, 0, 0, 1, 0, 0);
+      transform: matrix(1, 0, 0, 1, 0, 0);
+      opacity: 1;
+    }
+  }
+
+}
+
+// dropdown menus
+.mce-container.mce-menu {
+
+  background-color: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+  background: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+  color: @admin-white;
+
+  .mce-menu-item {
+
+    &:hover {
+      background-color: #000;
+    }
+
+    span.mce-text {
+      font-family: FontAwesome;
+      color: @admin-white;
+      &:hover {
+        color: yellow;
+      }
+    }
+  }
+
+  .mce-menu-item-preview.mce-active {
+    border-left: 4px solid;
+  }
+}
+
+// insert link
+.mce-window.mce-in {
+
+  background-color: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+  background: rgba(36, 36, 36, 0.8);
+
+  .mce-foot {
+    background-color: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+    background: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+
+    .mce-btn {
+      background: rgba(36, 36, 36, 1);
+      button {
+        font-family: FontAwesome;
+        color: @admin-white;
+      }
+    }
+  }
+
+  .mce-label, .mce-title {
+    font-family: FontAwesome;
+    color: @admin-white;
+    text-shadow: none;
+  }
+
+  .mce-listbox i.mce-caret {
+    font-family: FontAwesome;
+    color: @admin-white;
+  }
+
+  .mce-listbox.mce-menubtn {
+    font-family: FontAwesome;
+    background-color: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+    background: rgba(36, 36, 36, @tinymce-editor-toolbar-opacity);
+    color: @admin-white;
+    text-shadow: none;
+
+    span {
+      font-family: FontAwesome;
+      color: @admin-white;
+    }
+  }
+}
+
+// special char selector
+.mce-container td div {
+  color: @admin-white;
 }
