@@ -83,6 +83,25 @@ module api.content.form.inputtype.image {
                 this.uploadDialog.remove();
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
+
+            this.onShown(() => {
+                this.updateSelectedItemsIcons();
+            });
+        }
+
+        private updateSelectedItemsIcons() {
+            if (this.contentComboBox.getSelectedOptions().length > 0) {
+                this.doLoadContent(this.propertyArray).then((contents: ContentSummary[]) => {
+                    contents.forEach((content: ContentSummary) => {
+                        this.selectedOptionsView.updateUploadedOption(<Option<ImageSelectorDisplayValue>>{
+                            value: content.getId(),
+                            displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
+                        });
+                    });
+
+                    this.layoutInProgress = false;
+                });
+            }
         }
 
         availableSizeChanged() {
