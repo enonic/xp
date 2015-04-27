@@ -45,11 +45,20 @@
     display: none;
   }
 
-  .tinymce-editor-focused .mce-toolbar-grp {
-    display: block;
+  .mce-edit-area {
+    border-top: 0px;
   }
 
-  .mce-edit-area {
-    border: 0px;
+  .tinymce-editor-focused {
+
+    .mce-toolbar-grp {
+      display: block;
+      border-bottom-width: 1px;
+    }
+
+    .mce-edit-area {
+      border-top: 1px;
+    }
   }
+
 }
