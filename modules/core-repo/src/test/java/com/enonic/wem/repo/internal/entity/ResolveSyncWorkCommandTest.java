@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
 
@@ -152,9 +153,10 @@ public class ResolveSyncWorkCommandTest
 
     private void markAsDelete( final NodeId id )
     {
+        SetNodeStateParams setNodeStateParams =
+            SetNodeStateParams.create().nodeId( id ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
         SetNodeStateCommand.create().
-            nodeId( id ).
-            nodeState( NodeState.PENDING_DELETE ).
+            params( setNodeStateParams ).
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             branchService( this.branchService ).

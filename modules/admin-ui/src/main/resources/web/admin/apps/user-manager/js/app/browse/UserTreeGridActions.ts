@@ -2,6 +2,8 @@ module app.browse {
     import Action = api.ui.Action;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import BrowseItem = api.app.browse.BrowseItem;
+    import PrincipalType = api.security.PrincipalType;
+    import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
 
     export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
 
@@ -28,8 +30,8 @@ module app.browse {
         }
 
         updateActionsEnabledState(userItemBrowseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<BrowseItem<UserTreeGridItem>[]> {
-            var userStoresSelected:  number = 0,
-                principalsSelected:  number = 0,
+            var userStoresSelected: number = 0,
+                principalsSelected: number = 0,
                 directoriesSelected: number = 0;
 
             userItemBrowseItems.forEach((browseItem: BrowseItem<UserTreeGridItem>) => {
@@ -60,13 +62,35 @@ module app.browse {
 
             this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
             this.EDIT.setEnabled(anyUserStore || anyPrincipal);
-            this.DELETE.setEnabled(principalsSelected == 1 && totalSelection == 1);
+
+            if (totalSelection == 1) {
+                if (principalsSelected == 1) {
+                    this.DELETE.setEnabled(true);
+                } else {
+                    this.checkOnDeletable((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore().getKey());
+                }
+            } else {
+                this.DELETE.setEnabled(false);
+            }
+
             this.DUPLICATE.setEnabled((principalsSelected === 1) && (totalSelection === 1));
             this.SYNCH.setEnabled(anyUserStore);
 
             var deferred = wemQ.defer<BrowseItem<UserTreeGridItem>[]>();
             deferred.resolve(userItemBrowseItems);
             return deferred.promise;
+        }
+
+        private checkOnDeletable(key: api.security.UserStoreKey) {
+            new GetPrincipalsByUserStoreRequest(key,
+                [PrincipalType.USER, PrincipalType.GROUP]).
+                sendAndParse().then((principals: api.security.Principal[]) => {
+                    if (principals.length > 0) {
+                        this.DELETE.setEnabled(false);
+                    } else {
+                        this.DELETE.setEnabled(true);
+                    }
+                });
         }
     }
 }

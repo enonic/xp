@@ -40,9 +40,9 @@ class PrincipalKeyNodeTranslator
         switch ( type )
         {
             case USER:
-                return PrincipalKey.ofUser( new UserStoreKey( userStoreKey ), principalId );
+                return PrincipalKey.ofUser( UserStoreKey.from( userStoreKey ), principalId );
             case GROUP:
-                return PrincipalKey.ofGroup( new UserStoreKey( userStoreKey ), principalId );
+                return PrincipalKey.ofGroup( UserStoreKey.from( userStoreKey ), principalId );
             case ROLE:
                 return PrincipalKey.ofRole( principalId );
         }

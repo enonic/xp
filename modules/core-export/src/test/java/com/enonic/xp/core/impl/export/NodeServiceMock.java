@@ -46,6 +46,8 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RootNode;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.snapshot.DeleteSnapshotParams;
@@ -311,7 +313,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node setNodeState( final NodeId nodeId, final NodeState nodeState )
+    public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

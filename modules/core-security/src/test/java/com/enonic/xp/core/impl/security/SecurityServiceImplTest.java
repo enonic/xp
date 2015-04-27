@@ -645,7 +645,7 @@ public class SecurityServiceImplTest
                                                UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
                                                UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
             final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( new UserStoreKey( "enonic" ) ).
+                key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
                 build();
@@ -655,7 +655,7 @@ public class SecurityServiceImplTest
             assertEquals( "enonic", userStoreCreated.getKey().toString() );
             assertEquals( "Enonic User Store", userStoreCreated.getDisplayName() );
 
-            final UserStoreAccessControlList createdPermissions = securityService.getUserStorePermissions( new UserStoreKey( "enonic" ) );
+            final UserStoreAccessControlList createdPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
             assertNotNull( userStoreCreated );
             assertEquals( CREATE_USERS, createdPermissions.getEntry( userKey ).getAccess() );
             assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
@@ -678,7 +678,7 @@ public class SecurityServiceImplTest
                                                UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
                                                UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
             final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( new UserStoreKey( "enonic" ) ).
+                key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
                 build();
@@ -690,7 +690,7 @@ public class SecurityServiceImplTest
                                                UserStoreAccessControlEntry.create().principal( groupKey1 ).access(
                                                    ADMINISTRATOR ).build() );
             final UpdateUserStoreParams updateUserStore = UpdateUserStoreParams.create().
-                key( new UserStoreKey( "enonic" ) ).
+                key( UserStoreKey.from( "enonic" ) ).
                 displayName( "Enonic User Store updated" ).
                 permissions( updatePermissions ).
                 build();
@@ -701,7 +701,7 @@ public class SecurityServiceImplTest
             assertEquals( "enonic", userStoreUpdated.getKey().toString() );
             assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
 
-            final UserStoreAccessControlList updatedPermissions = securityService.getUserStorePermissions( new UserStoreKey( "enonic" ) );
+            final UserStoreAccessControlList updatedPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
             assertNotNull( userStoreCreated );
             assertEquals( CREATE_USERS, updatedPermissions.getEntry( userKey ).getAccess() );
             assertEquals( ADMINISTRATOR, updatedPermissions.getEntry( groupKey1 ).getAccess() );

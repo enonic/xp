@@ -160,7 +160,7 @@ public final class PrincipalKey
         {
             typeStr = matcher.group( 3 );
             final String userStore = matcher.group( 4 );
-            userStoreKey = new UserStoreKey( userStore );
+            userStoreKey = UserStoreKey.from( userStore );
             id = matcher.group( 5 );
         }
         final PrincipalType type = PrincipalType.valueOf( typeStr.toUpperCase() );

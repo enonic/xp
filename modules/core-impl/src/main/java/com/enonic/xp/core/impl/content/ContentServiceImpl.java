@@ -262,7 +262,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content delete( final DeleteContentParams params )
+    public Contents delete( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
