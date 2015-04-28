@@ -1,14 +1,12 @@
 package com.enonic.xp.portal.impl.controller;
 
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import javax.ws.rs.core.Response;
 
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
@@ -162,35 +160,48 @@ final class ControllerScriptImpl
         {
             if ( "headBegin".equals( key ) )
             {
-                response.addContribution( HEAD_BEGIN, contributionValueAsString( value.getMember( key ) ) );
+                addContribution( response, HEAD_BEGIN, value.getMember( key ) );
             }
             else if ( "headEnd".equals( key ) )
             {
-                response.addContribution( HEAD_END, contributionValueAsString( value.getMember( key ) ) );
+                addContribution( response, HEAD_END, value.getMember( key ) );
             }
             else if ( "bodyBegin".equals( key ) )
             {
-                response.addContribution( BODY_BEGIN, contributionValueAsString( value.getMember( key ) ) );
+                addContribution( response, BODY_BEGIN, value.getMember( key ) );
             }
             else if ( "bodyEnd".equals( key ) )
             {
-                response.addContribution( BODY_END, contributionValueAsString( value.getMember( key ) ) );
+                addContribution( response, BODY_END, value.getMember( key ) );
             }
         }
     }
 
-    private String contributionValueAsString( final ScriptValue value )
+    private void addContribution( final PortalResponse response, final PostProcessInjection.Tag tag, final ScriptValue value )
     {
+        if ( value == null )
+        {
+            return;
+        }
+
         if ( value.isArray() )
         {
-            return value.getArray().stream().
-                map( scriptValue -> scriptValue.getValue( String.class ) ).
-                filter( Objects::nonNull ).
-                collect( Collectors.joining() );
+            for ( ScriptValue arrayValue : value.getArray() )
+            {
+                final String strValue = arrayValue.getValue( String.class );
+                if ( strValue != null )
+                {
+                    response.addContribution( tag, strValue );
+                }
+            }
         }
         else
         {
-            return value.getValue( String.class );
+            final String strValue = value.getValue( String.class );
+            if ( strValue != null )
+            {
+                response.addContribution( tag, strValue );
+            }
         }
     }
 

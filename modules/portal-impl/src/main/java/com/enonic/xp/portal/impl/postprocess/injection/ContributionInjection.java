@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess.injection;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -17,9 +16,8 @@ public final class ContributionInjection
     }
 
     @Override
-    public String inject( final PortalContext context, final Tag tag )
+    public List<String> inject( final PortalContext context, final Tag tag )
     {
-        final List<String> contributions = context.getResponse().getContributions( tag );
-        return contributions.isEmpty() ? null : contributions.stream().distinct().collect( Collectors.joining() );
+        return context.getResponse().getContributions( tag );
     }
 }

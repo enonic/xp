@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.portal.PortalContext;
@@ -11,6 +12,8 @@ import com.enonic.xp.portal.impl.parser.StaticHtml;
 import com.enonic.xp.portal.impl.parser.TagMarker;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
+
+import static java.util.stream.Collectors.joining;
 
 final class PostProcessEvaluator
 {
@@ -106,20 +109,20 @@ final class PostProcessEvaluator
 
     private StaticHtml evalPostProcessInjection( final PostProcessInjection.Tag tag )
     {
-        StringBuilder html = null;
+        List<String> injections = null;
         for ( final PostProcessInjection injection : this.injections )
         {
-            final String htmlContrib = injection.inject( this.context, tag );
-            if ( htmlContrib != null )
+            final List<String> contributions = injection.inject( this.context, tag );
+            if ( contributions != null )
             {
-                if ( html == null )
+                if ( injections == null )
                 {
-                    html = new StringBuilder();
+                    injections = new ArrayList<>();
                 }
-                html.append( htmlContrib );
+                injections.addAll( contributions );
             }
         }
-        return html == null ? null : new StaticHtml( html.toString() );
+        return injections == null ? null : new StaticHtml( injections.stream().map( String::trim ).distinct().collect( joining() ) );
     }
 
     private boolean isInstruction( final HtmlBlock htmlBlock )

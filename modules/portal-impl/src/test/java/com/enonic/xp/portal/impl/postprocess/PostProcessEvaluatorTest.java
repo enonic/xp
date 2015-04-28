@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,13 +38,13 @@ public class PostProcessEvaluatorTest
             switch ( tag )
             {
                 case HEAD_BEGIN:
-                    return "<!-- HEAD BEGIN -->";
+                    return Arrays.asList( "<!-- HEAD BEGIN -->" );
                 case HEAD_END:
-                    return "<!-- HEAD END -->";
+                    return Arrays.asList( "<!-- HEAD END -->" );
                 case BODY_BEGIN:
-                    return "<!-- BODY BEGIN -->";
+                    return Arrays.asList( "<!-- BODY BEGIN -->" );
                 case BODY_END:
-                    return "<!-- BODY END -->";
+                    return Arrays.asList( "<!-- BODY END -->" );
                 default:
                     return null;
             }
@@ -65,13 +66,13 @@ public class PostProcessEvaluatorTest
             switch ( tag )
             {
                 case HEAD_BEGIN:
-                    return "<!-- HEAD BEGIN -->";
+                    return Arrays.asList( "<!-- HEAD BEGIN -->" );
                 case HEAD_END:
-                    return "<!-- HEAD END -->";
+                    return Arrays.asList( "<!-- HEAD END -->" );
                 case BODY_BEGIN:
-                    return "<!-- BODY BEGIN -->";
+                    return Arrays.asList( "<!-- BODY BEGIN -->" );
                 case BODY_END:
-                    return "<!-- BODY END -->";
+                    return Arrays.asList( "<!-- BODY END -->" );
                 default:
                     return null;
             }
@@ -80,9 +81,9 @@ public class PostProcessEvaluatorTest
             switch ( tag )
             {
                 case HEAD_BEGIN:
-                    return "<!-- HEAD BEGIN EXTRA-->";
+                    return Arrays.asList( "<!-- HEAD BEGIN EXTRA-->" );
                 case BODY_END:
-                    return "<!-- BODY END EXTRA-->";
+                    return Arrays.asList( "<!-- BODY END EXTRA-->" );
                 default:
                     return null;
             }
@@ -94,6 +95,45 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = Collections.emptyList();
         final String result = evaluator.evaluate();
         assertEquals( readResource( "postProcessEvalResult4.html" ), result );
+    }
+
+    @Test
+    public void testEvaluateDuplicatedContributions()
+        throws Exception
+    {
+        final PostProcessInjection contributionsInjection = ( context, tag ) -> {
+            switch ( tag )
+            {
+                case HEAD_BEGIN:
+                    return Arrays.asList( "<!-- HEAD BEGIN-->", "<!-- HEAD BEGIN DUPLICATED-1 -->", "<!-- HEAD BEGIN DUPLICATED-2 -->" );
+                case HEAD_END:
+                    return Arrays.asList( "<!-- HEAD END -->" );
+                case BODY_BEGIN:
+                    return Arrays.asList( "<!-- BODY BEGIN -->" );
+                case BODY_END:
+                    return Arrays.asList( "<!-- BODY END -->" );
+                default:
+                    return null;
+            }
+        };
+        final PostProcessInjection contributionsInjection2 = ( context, tag ) -> {
+            switch ( tag )
+            {
+                case HEAD_BEGIN:
+                    return Arrays.asList( "<!-- HEAD BEGIN DUPLICATED-2 -->", "<!-- HEAD BEGIN DUPLICATED-1 -->" );
+                case BODY_END:
+                    return Arrays.asList( "<!-- BODY END -->" );
+                default:
+                    return null;
+            }
+        };
+
+        final PostProcessEvaluator evaluator = new PostProcessEvaluator();
+        evaluator.input = readResource( "postProcessEvalSource5.html" );
+        evaluator.injections = Lists.newArrayList( contributionsInjection, contributionsInjection2 );
+        evaluator.instructions = Collections.emptyList();
+        final String result = evaluator.evaluate();
+        assertEquals( readResource( "postProcessEvalResult5.html" ), result );
     }
 
     @Test
