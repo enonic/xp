@@ -9,11 +9,7 @@ import com.enonic.xp.admin.impl.rest.resource.BaseImageHelper;
 interface ContentImageHelper
     extends BaseImageHelper
 {
-    public enum ImageFilter
-    {
-        SCALE_SQUARE_FILTER,
-        SCALE_MAX_FILTER
-    }
+    BufferedImage readImage( final ByteSource blob, final ImageParams imageParams );
 
-    BufferedImage readImage( final ByteSource blob, final int size, final ImageFilter imageFilter );
+    BufferedImage readAndRotateImage( final ByteSource blob, final ImageParams imageParams );
 }

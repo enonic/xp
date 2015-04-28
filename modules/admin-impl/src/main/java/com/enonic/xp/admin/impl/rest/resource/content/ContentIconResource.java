@@ -27,6 +27,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 
 
@@ -40,6 +41,8 @@ public final class ContentIconResource
     private ContentService contentService;
 
     private ContentImageHelper helper;
+
+    private MediaInfoService mediaInfoService;
 
     @GET
     @Path("{contentId}")
@@ -94,9 +97,11 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ContentImageHelper.ImageFilter filter =
-                    crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
-                final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
+                final int imageOrientation = mediaInfoService.getImageOrientation( binary );
+                final ImageParams imageParams =
+                    ImageParams.newImageParams().size( size ).cropRequired( crop ).orientation( imageOrientation ).build();
+
+                final BufferedImage thumbnailImage = helper.readAndRotateImage( binary, imageParams );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -108,16 +113,23 @@ public final class ContentIconResource
         final Attachment imageAttachment = media.getBestFitImageAttachment( size );
         if ( imageAttachment != null )
         {
-            final ByteSource binary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
-            if ( binary != null )
+            final ByteSource attachmentBinary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
+            if ( attachmentBinary != null )
             {
-                ContentImageHelper.ImageFilter filter =
-                    crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
-                final BufferedImage contentImage = helper.readImage( binary, size, filter );
+                final ImageParams imageParams = ImageParams.newImageParams().size( size ).cropRequired( crop ).orientation(
+                    getSourceAttachmentOrientation( media ) ).build();
+
+                final BufferedImage contentImage = helper.readAndRotateImage( attachmentBinary, imageParams );
                 return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
             }
         }
         return ResolvedImage.unresolved();
+    }
+
+    private int getSourceAttachmentOrientation( final Media media )
+    {
+        final ByteSource sourceBinary = contentService.getBinary( media.getId(), media.getMediaAttachment().getBinaryReference() );
+        return mediaInfoService.getImageOrientation( sourceBinary );
     }
 
     private Response cacheAndReturnResponse( final String timestamp, final ResolvedImage resolvedImage )
@@ -145,5 +157,11 @@ public final class ContentIconResource
     public void setContentImageHelper( ContentImageHelper contentImageHelper )
     {
         this.helper = contentImageHelper;
+    }
+
+    @Reference
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 }
