@@ -29,3 +29,132 @@
     border: 1px solid @color;
   }
 }
+
+.input-view {
+
+  .clearfix();
+  .form-element-spacing(@form-field-spacing);
+
+  //  padding: 10px 10px 0;
+  border-bottom-width: 0;
+
+  select, input, textarea {
+    .input-glow();
+  }
+
+  .display-validation-errors &.invalid {
+    .input-error();
+    padding: 10px;
+  }
+;
+
+  .error {
+    display: none;
+    float: right;
+    color: @admin-input-red;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+
+  &.no-label {
+
+    > .input-label {
+      display: none;
+    }
+
+    > .error {
+      display: block;
+    }
+
+    > select, > input, > textarea {
+      .input-error();
+    }
+
+    > .input-type-view,
+    > .bottom-button-row,
+    > .validation-viewer {
+      margin-left: 0px;
+    }
+  }
+
+  &:not(.no-label) {
+    .input-label {
+      display: block !important;
+    }
+  }
+
+  label + .form-input,
+  label + .input-wrapper,
+  label + .button {
+    margin-left: @form-label-width;
+  }
+
+  .input-label, label {
+    float: left;
+    max-width: @form-label-width - 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .required, .wrapper.required, &.required {
+      &:after {
+        position: absolute;
+        content: '\00a0*';
+        color: @input-red-text;
+      }
+    }
+
+    .label {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+  }
+
+  .input-wrapper .form-input {
+    width: 100%;
+  }
+  .input-type-view {
+    margin: 0 0 0 @form-label-width;
+  }
+
+  .bottom-button-row {
+    clear: left;
+    overflow: visible; // for button glow
+    margin: 0 0 0 @form-label-width;
+
+    button {
+      margin-top: 7px;
+    }
+  }
+
+  .validation-viewer {
+    margin-left: @form-label-width;
+
+    ul > li {
+      margin-top: 7px;
+    }
+  }
+
+  .context-window &,
+  ._0-240 &,
+  ._240-360 &,
+  ._360-540 &,
+  ._540-720 & {
+
+    .input-label {
+      float: none;
+      max-width: 100%;
+      margin: 0 0 3px 0;
+    }
+
+    .input-type-view,
+    .bottom-button-row,
+    .validation-viewer {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+}
