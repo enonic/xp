@@ -3,15 +3,15 @@
 # Usage info
 show_help() {
 cat << EOF
-Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -r REPOSITORY -b BRANCHES -i [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
+Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -r REPOSITORY -b BRANCHES [-i] [-h HOSTNAME] [-p PORT] [-n]
 
 Reindex content in search indices for the given repository and branches.
 
 	-?|--help			display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
-	-r REPOSITORY      the name of the repository to reindex
-	-b BRANCHES         a comma-separated list of branches to be reindexed
-	-i                  if flag -i given, the indices will be deleted before recreated
+	-r REPOSITORY      		the name of the repository to reindex
+	-b BRANCHES         		a comma-separated list of branches to be reindexed
+	-i                  		if flag -i given, the indices will be deleted before recreated
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
 	-n                  		enable nice format of output (requires python)
@@ -20,7 +20,7 @@ EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -r REPOSITORY [-h HOSTNAME] [-p PORT] [-n]"
+echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -r REPOSITORY -b BRANCHES [-i] [-h HOSTNAME] [-p PORT] [-n]"
 }
 
 PRETTY=""
@@ -113,5 +113,6 @@ IFS=';' read -ra BRANCH_ARRAY <<< "$BRANCHES"
 
 JSON="{\"repository\": \"$REPOSITORY\", \"branches\": \"$BRANCHES\", \"initialize\" : $INITIALIZE}";
 
-#echo "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/repo/reindex' -d '$JSON'"
-eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://localhost:8080/admin/rest/repo/reindex' -d '$JSON' | python -mjson.tool"
+#echo "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/repo/reindex' -d '$JSON' $PRETTY"
+eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/repo/reindex' -d '$JSON' $PRETTY"
+echo

@@ -30,10 +30,10 @@ public class ContentPathsTest
     public void addAndRemoveString()
         throws Exception
     {
-        Set set = ImmutableSet.of(STRING_PATH2, STRING_PATH3);
+        Set set = ImmutableSet.of( STRING_PATH2, STRING_PATH3 );
         String[] array = {STRING_PATH2, STRING_PATH3};
 
-        ContentPaths pathsFromSet = ContentPaths.from(  STRING_PATH1 ).
+        ContentPaths pathsFromSet = ContentPaths.from( STRING_PATH1 ).
             add( set );
         ContentPaths pathsFromArray = ContentPaths.from( STRING_PATH1 ).
             add( array );
@@ -53,7 +53,7 @@ public class ContentPathsTest
         throws Exception
     {
 
-        Set set = ImmutableSet.of(CONTENT_PATH2, CONTENT_PATH3);
+        Set set = ImmutableSet.of( CONTENT_PATH2, CONTENT_PATH3 );
         ContentPath[] array = {CONTENT_PATH2, CONTENT_PATH3};
 
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 ).add( set );
@@ -70,7 +70,8 @@ public class ContentPathsTest
     }
 
     @Test
-    public void empty() {
+    public void empty()
+    {
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 );
         assertTrue( pathsFromSet.isNotEmpty() );
 

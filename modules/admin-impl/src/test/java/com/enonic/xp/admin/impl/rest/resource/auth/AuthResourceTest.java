@@ -43,7 +43,7 @@ public class AuthResourceTest
 
         securityService = Mockito.mock( SecurityService.class );
         resource.setSecurityService( securityService );
-        final UserStore us1 = UserStore.newUserStore().key( new UserStoreKey( "remote" ) ).displayName( "Remote" ).build();
+        final UserStore us1 = UserStore.newUserStore().key( UserStoreKey.from( "remote" ) ).displayName( "Remote" ).build();
         final UserStore us2 = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
         final UserStores userStores = UserStores.from( us1, us2 );
         Mockito.when( securityService.getUserStores() ).thenReturn( userStores );

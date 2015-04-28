@@ -114,7 +114,7 @@ public final class FormItems
         return foundFormItem;
     }
 
-    Input getInput( final FormItemPath path )
+    public Input getInput( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Input.class );
     }
@@ -129,7 +129,7 @@ public final class FormItems
         return typeCast( getFormItem( path ), InlineMixin.class );
     }
 
-    Layout getLayout( final FormItemPath path )
+    public Layout getLayout( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Layout.class );
     }

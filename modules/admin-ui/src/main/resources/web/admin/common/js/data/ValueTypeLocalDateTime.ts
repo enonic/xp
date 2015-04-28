@@ -26,7 +26,7 @@ module api.data {
             if (value.length != 19) {
                 return false;
             }
-            var valueAsDate = api.util.DateHelper.parseUTCDateTime(value);
+            var valueAsDate = api.util.DateHelper.parseUTCDateTime(value, true);
             return this.isValid(valueAsDate);
         }
 
@@ -37,12 +37,12 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = api.util.DateHelper.parseUTCDateTime(value);
+            var date = api.util.DateHelper.parseUTCDateTime(value, true);
             return new Value(date, this);
         }
 
         toJsonValue(value: Value): string {
-            return value.isNull() ? null : api.util.DateHelper.formatUTCDateTime(value.getLocalDateTime());
+            return value.isNull() ? null : api.util.DateHelper.formatDateTime(value.getLocalDateTime());
         }
 
         valueToString(value: Value): string {

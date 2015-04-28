@@ -12,7 +12,7 @@ final class ComboBox
 {
     ComboBox()
     {
-        super( ComboBoxConfig.class );
+        super( ComboBoxConfig.class, true );
     }
 
     @Override
@@ -36,6 +36,13 @@ final class ComboBox
         {
             throw new BreaksRequiredContractException( property, this );
         }
+    }
+
+    // TODO: This should probably consider config
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
     }
 
     @Override

@@ -47,6 +47,7 @@ import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 public class SecurityResourceTest
     extends AbstractResourceTest
@@ -57,9 +58,9 @@ public class SecurityResourceTest
 
     private SecurityService securityService;
 
-    private static final UserStoreKey USER_STORE_1 = new UserStoreKey( "local" );
+    private static final UserStoreKey USER_STORE_1 = UserStoreKey.from( "local" );
 
-    private static final UserStoreKey USER_STORE_2 = new UserStoreKey( "file-store" );
+    private static final UserStoreKey USER_STORE_2 = UserStoreKey.from( "file-store" );
 
     @Override
     protected Object getResourceInstance()
@@ -125,6 +126,26 @@ public class SecurityResourceTest
     }
 
     @Test
+    public void getDefaultUserStorePermissions()
+        throws Exception
+    {
+        final UserStoreAccessControlList userStoreAccessControlList = UserStoreAccessControlList.of(
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.authenticated" ) ).access( READ ).build(),
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
+
+        final Principals principals =
+            Principals.from( Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).build(),
+                             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).build() );
+
+        Mockito.when( securityService.getDefaultUserStorePermissions() ).thenReturn( userStoreAccessControlList );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
+
+        String jsonString = request().path( "security/userstore/default" ).get().getAsString();
+
+        assertJson( "getDefaultUserStorePermissions.json", jsonString );
+    }
+
+    @Test
     public void createUserStore()
         throws Exception
     {
@@ -137,11 +158,11 @@ public class SecurityResourceTest
         final Principals principals = Principals.from( user1 );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final UserStore userStore = UserStore.newUserStore().
-            key( new UserStoreKey( "enonic" ) ).
+            key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
         Mockito.when( securityService.createUserStore( Mockito.isA( CreateUserStoreParams.class ) ) ).thenReturn( userStore );
@@ -168,11 +189,11 @@ public class SecurityResourceTest
         final Principals principals = Principals.from( user1 );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final UserStore userStore = UserStore.newUserStore().
-            key( new UserStoreKey( "enonic" ) ).
+            key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
         Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenReturn( userStore );

@@ -108,9 +108,19 @@ public class RenderViewHandlerTest
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
+    @Test
+    public void fragmentsTest()
+        throws Exception
+    {
+        final String result = execute( "fragmentsTest" ).toString();
+        final String expected =
+            Resources.toString( getClass().getResource( "/modules/mymodule/fragment/fragment-result.html" ), Charsets.UTF_8 );
+        assertEquals( normalizeTest( expected ), normalizeTest( result ) );
+    }
+
     private String normalizeTest( final String text )
     {
-        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\n|\r)" ) ).trimResults().split( text );
+        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\r\n|\n|\r)" ) ).trimResults().split( text );
         return Joiner.on( "\n" ).join( lines );
     }
 }

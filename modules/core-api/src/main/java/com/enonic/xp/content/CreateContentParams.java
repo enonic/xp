@@ -153,7 +153,7 @@ public final class CreateContentParams
 
         private AccessControlList permissions;
 
-        private boolean inheritPermissions;
+        private boolean inheritPermissions = true;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
@@ -273,7 +273,6 @@ public final class CreateContentParams
             Preconditions.checkArgument( parentPath.isAbsolute(), "parentContentPath must be absolute: " + parentPath );
             Preconditions.checkNotNull( data, "data cannot be null" );
             Preconditions.checkArgument( requireValid || this.parentPath != null, "parentContentPath cannot be null" );
-            Preconditions.checkNotNull( displayName, "displayName cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
             Preconditions.checkNotNull( type, "type cannot be null" );
         }

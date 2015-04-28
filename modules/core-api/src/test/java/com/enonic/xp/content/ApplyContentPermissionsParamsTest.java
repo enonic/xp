@@ -18,10 +18,10 @@ public class ApplyContentPermissionsParamsTest
             modifier( PrincipalKey.ofAnonymous() );
 
         ApplyContentPermissionsParams params = builder.build();
-        assertEquals( params.getContentId(), builder.build().getContentId());
-        assertEquals( params.getModifier(), builder.build().getModifier());
-        assertEquals( params.isOverwriteChildPermissions(), builder.build().isOverwriteChildPermissions());
-        assertEquals( params, builder.build());
+        assertEquals( params.getContentId(), builder.build().getContentId() );
+        assertEquals( params.getModifier(), builder.build().getModifier() );
+        assertEquals( params.isOverwriteChildPermissions(), builder.build().isOverwriteChildPermissions() );
+        assertEquals( params, builder.build() );
 
     }
 

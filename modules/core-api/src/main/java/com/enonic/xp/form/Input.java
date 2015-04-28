@@ -49,15 +49,13 @@ public final class Input
 
         if ( builder.inputType.requiresConfig() )
         {
-            Preconditions.checkArgument( builder.inputTypeConfig != null,
-                                         "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name,
-                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
+                Preconditions.checkArgument( builder.inputTypeConfig != null,
+                                             "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name, builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
 
-            //noinspection ConstantConditions
-            Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
-                                         "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
-                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(),
-                                         builder.inputTypeConfig.getClass().getName() );
+                //noinspection ConstantConditions
+                Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
+                                             "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
+                                             builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(), builder.inputTypeConfig.getClass().getName() );
         }
 
         this.name = builder.name;
@@ -182,7 +180,7 @@ public final class Input
     @Override
     public Input copy()
     {
-        return newInput( this ).build();
+        return create( this ).build();
     }
 
     @Override
@@ -217,12 +215,12 @@ public final class Input
                              this.helpText, this.validationRegexp, this.inputTypeConfig );
     }
 
-    public static Builder newInput()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newInput( final Input input )
+    public static Builder create( final Input input )
     {
         return new Builder( input );
     }

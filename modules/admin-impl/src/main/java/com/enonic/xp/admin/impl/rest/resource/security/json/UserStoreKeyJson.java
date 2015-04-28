@@ -14,7 +14,7 @@ public class UserStoreKeyJson
     public UserStoreKeyJson( @JsonProperty("id") final String id )
     {
 
-        this.userStoreKey = new UserStoreKey( id );
+        this.userStoreKey = UserStoreKey.from( id );
     }
 
     public UserStoreKeyJson( final UserStoreKey userStoreKey )

@@ -11,12 +11,12 @@ import com.enonic.xp.content.page.region.LayoutDescriptor;
 import com.enonic.xp.content.page.region.LayoutDescriptorService;
 import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKeys;
 
 import static com.enonic.xp.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.xp.content.page.region.RegionDescriptors.newRegionDescriptors;
-import static com.enonic.xp.form.Input.newInput;
 
 public class LayoutDescriptorResourceTest
     extends AbstractResourceTest
@@ -40,7 +40,7 @@ public class LayoutDescriptorResourceTest
     {
         final DescriptorKey key = DescriptorKey.from( "module:fancy-layout" );
         final Form layoutForm = Form.newForm().
-            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
@@ -67,7 +67,7 @@ public class LayoutDescriptorResourceTest
         throws Exception
     {
         final Form layoutForm = Form.newForm().
-            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().

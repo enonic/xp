@@ -70,6 +70,7 @@ import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.UserStoreNotFoundException;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -138,6 +139,14 @@ public final class SecurityServiceImpl
     }
 
     @Override
+    public UserStoreAccessControlList getDefaultUserStorePermissions()
+    {
+        final RootNode rootNode = callWithContext( () -> this.nodeService.getRoot() );
+
+        return UserStoreNodeTranslator.userStorePermissionsFromNode( rootNode, rootNode, rootNode );
+    }
+
+    @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
         try
@@ -181,6 +190,17 @@ public final class SecurityServiceImpl
     {
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
+    }
+
+    private void removeRelationships( final UserStoreKey from )
+    {
+        callWithContext( () -> {
+            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( from );
+            final Node node = this.nodeService.getByPath( userStoreNodePath );
+            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
             return null;
         } );
@@ -617,6 +637,25 @@ public final class SecurityServiceImpl
 
         }
         return Principals.from( principals.build() );
+    }
+
+    @Override
+    public void deleteUserStore( final UserStoreKey userStoreKey )
+    {
+        removeRelationships( userStoreKey );
+        final Node deletedNode = callWithContext( () -> {
+            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStoreKey );
+            final Node node = this.nodeService.getByPath( userStoreNodePath );
+            if ( node == null )
+            {
+                return null;
+            }
+            return this.nodeService.deleteById( node.id() );
+        } );
+        if ( deletedNode == null )
+        {
+            throw new UserStoreNotFoundException( userStoreKey );
+        }
     }
 
     @Override

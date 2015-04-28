@@ -36,7 +36,6 @@
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
 ///<reference path='OrderChildContentRequest.ts' />
-///<reference path='OrderContentAndChildrenRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='DuplicateContentRequest.ts' />
 ///<reference path='MoveContentRequest.ts' />
@@ -56,6 +55,7 @@
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentMovedEvent.ts' />
 ///<reference path='MoveContentResult.ts' />
+///<reference path='MoveContentResultJson.ts' />
 ///<reference path='ContentMoveComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />

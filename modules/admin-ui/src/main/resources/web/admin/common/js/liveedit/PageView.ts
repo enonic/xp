@@ -299,7 +299,7 @@ module api.liveedit {
             throw new Error("PageView is the topmost item view and cannot have a parent");
         }
 
-        registerRegionView(regionView: RegionView) {
+        private registerRegionView(regionView: RegionView) {
             this.regionViews.push(regionView);
 
             regionView.onItemViewAdded(this.itemViewAddedListener);

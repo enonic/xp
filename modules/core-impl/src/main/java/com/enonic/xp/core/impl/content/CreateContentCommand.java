@@ -7,9 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
-import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistException;
@@ -18,11 +17,14 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -58,13 +60,9 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        validateContentTypeProperties();
+        CreateContentParams processedParams = processCreateContentParams();
 
-        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-        final CreateContentParams processedContent = runContentProcessors( type );
-
-        final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedContent );
+        final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
         final CreateNodeParams createNodeParams = translator.toCreateNodeParams( createContentTranslatorParams );
 
@@ -88,6 +86,16 @@ final class CreateContentCommand
         }
     }
 
+    private CreateContentParams processCreateContentParams()
+    {
+        CreateContentParams processedParams = validateAndTransformForContentType( this.params );
+
+        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
+        processedParams = runContentProcessors( processedParams, type );
+        return processedParams;
+    }
+
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
@@ -106,17 +114,17 @@ final class CreateContentCommand
         builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
-    private CreateContentParams runContentProcessors( ContentType contentType )
+    private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
         return ProxyContentProcessor.create().
             mediaInfo( mediaInfo ).
             contentType( contentType ).
             mixinService( mixinService ).
             build().
-            processCreate( params );
+            processCreate( createContentParams );
     }
 
-    private void validateContentTypeProperties()
+    private CreateContentParams validateAndTransformForContentType( final CreateContentParams params )
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
 
@@ -146,6 +154,8 @@ final class CreateContentCommand
                     "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
             }
         }
+
+        return params;
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )
@@ -197,7 +207,15 @@ final class CreateContentCommand
     {
         if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
         {
-            builder.name( NamePrettyfier.create( params.getDisplayName() ) );
+            if ( !Strings.isNullOrEmpty( params.getDisplayName() ) )
+            {
+                builder.name( NamePrettyfier.create( params.getDisplayName() ) );
+            }
+            else
+            {
+                builder.displayName( "" );
+                builder.name( ContentName.unnamed() );
+            }
         }
     }
 

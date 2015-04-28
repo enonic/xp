@@ -25,7 +25,7 @@ public final class CreateUserStoreJson
 
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of( userStoreAclEntries );
         this.createUserStoreParams = CreateUserStoreParams.create().
-            key( new UserStoreKey( userStoreKey ) ).
+            key( UserStoreKey.from( userStoreKey ) ).
             displayName( displayName ).
             permissions( permissions ).
             build();

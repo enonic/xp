@@ -32,8 +32,7 @@ module api.content.form.inputtype.time {
             }
 
             localTimeEl.onTimeChanged((hours: number, minutes: number) => {
-                var utcTime = api.util.DateHelper.parseUTCTime(hours + ":" + minutes);
-                var changedValue: Value = ValueTypes.LOCAL_TIME.newValue(utcTime);
+                var changedValue: Value = ValueTypes.LOCAL_TIME.newValue(hours + ":" + minutes);
                 property.setValue(changedValue);
             });
 

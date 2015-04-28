@@ -1,10 +1,8 @@
 package com.enonic.xp.portal.impl.script.function;
 
-import javax.script.Bindings;
-
+import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.portal.impl.script.ScriptExecutor;
 
 public final class RequireFunction
     extends AbstractFunction
@@ -17,6 +15,7 @@ public final class RequireFunction
 
     public RequireFunction( final ResourceKey script, final ScriptExecutor executor )
     {
+        super( "require" );
         this.script = script;
         this.executor = executor;
     }
@@ -59,11 +58,5 @@ public final class RequireFunction
         }
 
         return this.script.resolve( "/cms/lib/" + name );
-    }
-
-    @Override
-    public void register( final Bindings bindings )
-    {
-        bindings.put( "require", this );
     }
 }

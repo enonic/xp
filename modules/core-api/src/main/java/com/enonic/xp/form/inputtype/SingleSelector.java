@@ -12,7 +12,7 @@ final class SingleSelector
 {
     SingleSelector()
     {
-        super( SingleSelectorConfig.class );
+        super( SingleSelectorConfig.class, true );
     }
 
     @Override
@@ -50,4 +50,10 @@ final class SingleSelector
         return null;
     }
 
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
+    }
 }

@@ -13,7 +13,7 @@ final class ContentSelector
 {
     ContentSelector()
     {
-        super( ContentSelectorConfig.class );
+        super( ContentSelectorConfig.class, true );
     }
 
     @Override
@@ -51,4 +51,9 @@ final class ContentSelector
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newReference( ValueTypes.REFERENCE.convert( value ) );
+    }
 }

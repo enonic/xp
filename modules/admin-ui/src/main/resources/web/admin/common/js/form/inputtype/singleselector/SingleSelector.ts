@@ -19,13 +19,17 @@ module api.form.inputtype.singleselector {
         }[]
     }
 
-    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<SingleSelectorConfig,string> {
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<SingleSelectorConfig,string> {
 
         public static TYPE_DROPDOWN: string = "DROPDOWN";
         public static TYPE_RADIO: string = "RADIO";
         public static TYPE_COMBOBOX: string = "COMBOBOX";
 
         private type: string;
+
+        private selector: api.dom.Element;
+        private property: Property;
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.form.inputtype.InputTypeViewContext<SingleSelectorConfig>) {
             super(config, "single-selector");
@@ -45,19 +49,58 @@ module api.form.inputtype.singleselector {
             return ValueTypes.STRING.newNullValue();
         }
 
-        createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
+        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
-            var name = this.getInput().getName() + "-" + index;
+            this.input = input;
+            this.property = property;
+
             if (SingleSelector.TYPE_RADIO == this.type) {
-                return this.createRadioElement(name, property);
+                this.selector = this.createRadioElement(input.getName(), property);
             }
             else if (SingleSelector.TYPE_COMBOBOX == this.type) {
-                return this.createComboBoxElement(name, property);
+                this.selector = this.createComboBoxElement(input.getName(), property);
             }
             else if (SingleSelector.TYPE_DROPDOWN == this.type) {
-                return this.createDropdownElement(name, property);
+                this.selector = this.createDropdownElement(input.getName(), property);
             }
-            return null;
+            this.appendChild(this.selector);
+
+            return wemQ<void>(null);
+        }
+
+        giveFocus(): boolean {
+            return this.selector.giveFocus();
+        }
+
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+            var recording = new api.form.inputtype.InputValidationRecording();
+            var propertyValue = this.property.getValue();
+            if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {
+                recording.setBreaksMinimumOccurrences(true);
+            }
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
+                }
+            }
+            this.previousValidationRecording = recording;
+            return recording;
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.selector.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.selector.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.selector.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.selector.unBlur(listener);
         }
 
         private createComboBoxElement(name: string, property: Property): api.dom.Element {
@@ -90,6 +133,12 @@ module api.form.inputtype.singleselector {
 
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>)=> {
                 property.setValue(this.newValue(event.getOption().value));
+                this.validate(false);
+            });
+
+            comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>)=> {
+                property.setValue(this.newInitialValue());
+                this.validate(false);
             });
 
             comboAndSelectedOptionsWrapper.appendChild(comboBox);
@@ -120,6 +169,7 @@ module api.form.inputtype.singleselector {
 
             dropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
                 property.setValue(this.newValue(event.getOption().value));
+                this.validate(false);
             });
 
             return dropdown;
@@ -144,6 +194,7 @@ module api.form.inputtype.singleselector {
 
             radioGroup.onValueChanged((event: api.ui.ValueChangedEvent)=> {
                 property.setValue(this.newValue(event.getNewValue()));
+                this.validate(false);
             });
 
             return radioGroup;
@@ -157,23 +208,6 @@ module api.form.inputtype.singleselector {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
-        valueBreaksRequiredContract(value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.STRING) || !this.isExistingValue(value.getString());
-        }
-
-        private isExistingValue(value: string): boolean {
-            var options = this.getContext().inputConfig.options || [];
-
-            return options.some((option: any) => {
-                return option.value == value;
-            });
-        }
-
-        hasInputElementValidUserInput(inputElement: api.dom.Element) {
-
-            // TODO
-            return true;
-        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("SingleSelector", SingleSelector));

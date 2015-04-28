@@ -18,6 +18,8 @@ public interface SecurityService
 
     UserStoreAccessControlList getUserStorePermissions( UserStoreKey userStore );
 
+    UserStoreAccessControlList getDefaultUserStorePermissions();
+
     UserStore createUserStore( CreateUserStoreParams createUserStoreParams );
 
     UserStore updateUserStore( UpdateUserStoreParams updateUserStoreParams );
@@ -139,6 +141,14 @@ public interface SecurityService
      * @throws PrincipalNotFoundException if the specified principal does not exist
      */
     void deletePrincipal( PrincipalKey principalKey );
+
+    /**
+     * Deletes an existing userStore.
+     *
+     * @param userStoreKey key of the userStore to be deleted
+     * @throws UserStoreNotFoundException if the specified userStore does not exist
+     */
+    void deleteUserStore( UserStoreKey userStoreKey );
 
     PrincipalQueryResult query( PrincipalQuery query );
 

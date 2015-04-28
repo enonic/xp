@@ -209,7 +209,6 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
-                    this.publishAction.setEnabled(this.isValid());
                 });
 
                 this.addClass("content-wizard-panel");
@@ -364,6 +363,7 @@ module app.wizard {
             if (this.liveFormPanel) {
                 this.liveFormPanel.skipNextReloadConfirmation(true);
             }
+            this.setRequireValid(false);
             return super.saveChanges();
         }
 
@@ -705,25 +705,14 @@ module app.wizard {
             if (this.contentType.getContentTypeName().isMedia()) {
                 deferred.resolve(null);
             } else {
-                var formContext = this.createFormContext(null);
-                var form = this.contentType.getForm();
-                var data = new PropertyTree();
-                var formView = new FormView(formContext, form, data.getRoot());
-                formView.layout().then(() => {
-
-                    deferred.resolve(new CreateContentRequest().
-                        setRequireValid(this.requireValid).
-                        setName(api.content.ContentUnnamed.newUnnamed()).
-                        setParent(parentPath).
-                        setContentType(this.contentType.getContentTypeName()).
-                        setDisplayName(this.contentWizardHeader.getDisplayName()).
-                        setData(data).
-                        setExtraData([]));
-
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-
+                deferred.resolve(new CreateContentRequest().
+                    setRequireValid(this.requireValid).
+                    setName(api.content.ContentUnnamed.newUnnamed()).
+                    setParent(parentPath).
+                    setContentType(this.contentType.getContentTypeName()).
+                    setDisplayName(this.contentWizardHeader.getDisplayName()).
+                    setData(new PropertyTree()).
+                    setExtraData([]));
             }
 
             return deferred.promise;

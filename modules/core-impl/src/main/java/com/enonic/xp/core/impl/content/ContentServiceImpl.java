@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -51,7 +52,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.site.CreateSiteParams;
@@ -67,6 +67,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -80,6 +81,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -259,7 +262,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content delete( final DeleteContentParams params )
+    public Contents delete( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
@@ -458,7 +461,7 @@ public class ContentServiceImpl
             }
 
             final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                           params.getParentContentPath().toString() ).build() );
+                params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
@@ -474,6 +477,10 @@ public class ContentServiceImpl
         catch ( MoveNodeException e )
         {
             throw new MoveContentException( e.getMessage() );
+        }
+        catch ( NodeAlreadyExistAtPathException e )
+        {
+            throw new MoveContentException( "Content already exists at path: " + e.getNode().toString() );
         }
     }
 
@@ -555,20 +562,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content sort( final SortContentParams params )
-    {
-        Content content = doGetById( params.getContentId() );
-
-        return SortContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
         final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
@@ -576,7 +569,18 @@ public class ContentServiceImpl
             childOrder( params.getChildOrder() ).
             build() );
 
-        return contentNodeTranslator.fromNode( node );
+        final Content content = contentNodeTranslator.fromNode( node );
+
+        if ( !params.isSilent() )
+        {
+            final ContentChangeEvent event = ContentChangeEvent.create().
+                change( ContentChangeEvent.ContentChangeType.SORT, content.getPath() ).
+                build();
+
+            eventPublisher.publish( event );
+        }
+
+        return content;
     }
 
     @Override
@@ -593,6 +597,17 @@ public class ContentServiceImpl
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
+
+        if ( !params.isSilent() )
+        {
+            final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
+
+            final ContentChangeEvent event = ContentChangeEvent.create().
+                change( ContentChangeEvent.ContentChangeType.SORT, translateNodePathToContentPath( node.path() ) ).
+                build();
+
+            eventPublisher.publish( event );
+        }
 
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
@@ -631,6 +646,42 @@ public class ContentServiceImpl
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
         final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
+    {
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
+
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( contentType.form().getFormItems() ).
+            mode( contentType.getName().isUnstructured()
+                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
+                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
+    }
+
+    @Override
+    public PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
+    {
+        final Mixin mixin = this.mixinService.getByName( mixinName );
+
+        if ( mixin == null )
+        {
+            throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( mixin.getFormItems() ).
+            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( json );
     }
 
     @Override

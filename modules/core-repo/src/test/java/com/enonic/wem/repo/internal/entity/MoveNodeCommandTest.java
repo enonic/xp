@@ -7,6 +7,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -108,7 +109,7 @@ public class MoveNodeCommandTest
     }
 
 
-    @Test(expected = MoveNodeException.class)
+    @Test(expected = NodeAlreadyExistAtPathException.class)
     public void move_node_already_exists()
         throws Exception
     {

@@ -22,8 +22,6 @@ module api.liveedit {
         // Set up selectors for jQuery.sortable configuration.
         public REGION_SELECTOR: string = RegionItemType.get().getConfig().getCssSelector();
 
-        public CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR: string = '[data-context-window-draggable="true"]';
-
         public ITEM_NOT_DRAGGABLE_SELECTOR: string = '.not-draggable';
 
         public DRAGGED_OVER_CLASS: string = 'dragged-over';
@@ -264,7 +262,7 @@ module api.liveedit {
                 this.cancelDrag(event, ui);
             } else {
 
-                var componentIndex = ui.item.index();
+                var componentIndex = wemjq('>.drag-helper, >.item-view', regionView.getHTMLElement()).index(ui.item);
 
                 if (this.isDraggingFromContextWindow()) {
                     // Create component and view if we drag from context window

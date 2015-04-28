@@ -61,7 +61,7 @@ module api.form.inputtype.combobox {
             this.propertyArray.forEach((property: Property) => {
                 valueArray.push(property.getString());
             });
-            this.comboBox.setValues(valueArray);
+            this.comboBox.setValues(valueArray, true);
 
 
             this.appendChild(this.comboBox);
@@ -72,7 +72,7 @@ module api.form.inputtype.combobox {
 
         createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<string> {
             var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
-                filter: this.comboboxFilter,
+                filter: this.comboBoxFilter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
                 optionDisplayValueViewer: new ComboBoxDisplayValueViewer(),
@@ -85,11 +85,9 @@ module api.form.inputtype.combobox {
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
                 var value = new Value(event.getOption().value, ValueTypes.STRING);
-
-                if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
-                    this.propertyArray.set(0, value);
-                }
-                else {
+                if (event.getIndex() >= 0) {
+                    this.propertyArray.set(event.getIndex(), value);
+                } else {
                     this.propertyArray.add(value);
                 }
 
@@ -124,7 +122,7 @@ module api.form.inputtype.combobox {
             });
         }
 
-        private comboboxFilter(item: api.ui.selector.Option<string>, args) {
+        private comboBoxFilter(item: api.ui.selector.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
@@ -132,11 +130,11 @@ module api.form.inputtype.combobox {
 
             var recording = new api.form.inputtype.InputValidationRecording();
 
-            var numberOfValids = this.comboBox.countSelectedOptions();
-            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
+            var numberOfValid = this.comboBox.countSelectedOptions();
+            if (numberOfValid < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
-            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
+            if (this.input.getOccurrences().maximumBreached(numberOfValid)) {
                 recording.setBreaksMaximumOccurrences(true);
             }
 

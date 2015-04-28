@@ -29,4 +29,10 @@ public class DummyCustomInputType2
     {
         return null;
     }
+
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newString( value );
+    }
 }

@@ -8,3 +8,4 @@
 ///<reference path='FocusChangedEvent.ts' />
 ///<reference path='ImageSelectorDisplayValue.ts' />
 ///<reference path='ImageSelectorViewer.ts' />
+///<reference path='ImageContentComboBox.ts' />

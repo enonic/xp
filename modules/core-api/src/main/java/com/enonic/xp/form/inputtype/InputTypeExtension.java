@@ -14,7 +14,7 @@ public abstract class InputTypeExtension
 
     protected InputTypeExtension( final Class configClass )
     {
-        super( configClass );
+        super( configClass, true );
     }
 
 }

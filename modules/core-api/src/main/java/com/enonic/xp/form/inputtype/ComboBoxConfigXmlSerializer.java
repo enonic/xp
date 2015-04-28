@@ -6,7 +6,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.form.inputtype.ComboBoxConfig.newComboBoxConfig;
+import static com.enonic.xp.form.inputtype.ComboBoxConfig.create;
 
 final class ComboBoxConfigXmlSerializer
     extends AbstractInputTypeConfigXmlSerializer<ComboBoxConfig>
@@ -32,7 +32,7 @@ final class ComboBoxConfigXmlSerializer
     @Override
     public ComboBoxConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final ComboBoxConfig.Builder builder = newComboBoxConfig();
+        final ComboBoxConfig.Builder builder = create();
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
 
         for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )

@@ -2,11 +2,15 @@ package com.enonic.xp.content;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.site.CreateSiteParams;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
@@ -27,15 +31,13 @@ public interface ContentService
 
     String generateContentName( String displayName );
 
-    Content delete( DeleteContentParams params );
+    Contents delete( DeleteContentParams params );
 
     PushContentsResult push( PushContentParams params );
 
     Content duplicate( DuplicateContentParams params );
 
     Contents move( MoveContentParams params );
-
-    Content sort( SortContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 
@@ -70,6 +72,10 @@ public interface ContentService
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
     AccessControlList getRootPermissions();
+
+    PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName );
+
+    PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName );
 
     boolean contentExists( ContentId contentId );
 

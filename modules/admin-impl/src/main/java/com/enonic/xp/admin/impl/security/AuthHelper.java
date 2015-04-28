@@ -65,7 +65,7 @@ public final class AuthHelper
             final String[] userParts = user.split( "\\\\" );
             final String userStore = userParts[0];
             final String userName = userParts[1];
-            final UserStoreKey userStoreKey = new UserStoreKey( userStore );
+            final UserStoreKey userStoreKey = UserStoreKey.from( userStore );
 
             final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
             usernameAuthToken.setUsername( userName );

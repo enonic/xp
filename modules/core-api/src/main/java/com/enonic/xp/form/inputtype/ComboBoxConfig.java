@@ -57,7 +57,7 @@ public class ComboBoxConfig
         return s.toString();
     }
 
-    public static Builder newComboBoxConfig()
+    public static Builder create()
     {
         return new Builder();
     }

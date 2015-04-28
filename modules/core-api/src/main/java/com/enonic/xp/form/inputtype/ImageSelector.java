@@ -11,7 +11,7 @@ final class ImageSelector
 {
     ImageSelector()
     {
-        super( ImageSelectorConfig.class );
+        super( ImageSelectorConfig.class, true );
     }
 
     @Override
@@ -45,5 +45,10 @@ final class ImageSelector
         return null;
     }
 
+    @Override
+    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    {
+        return Value.newReference( Reference.from( value ) );
+    }
 }
 
