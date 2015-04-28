@@ -88,11 +88,66 @@ module api.form.inputtype.text {
                 });
 
                 this.editor = this.getEditor(textAreaEl.getId(), property);
+
+                this.setupStickyEditorToolbar();
             });
 
             var textAreaWrapper = new api.dom.DivEl();
             textAreaWrapper.appendChild(textAreaEl);
             return textAreaWrapper;
+        }
+
+        private setupStickyEditorToolbar() {
+            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar());
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            });
+        }
+
+        private updateStickyEditorToolbar() {
+            if (!this.editorTopEdgeIsVisible() && this.editorLowerEdgeIsVisible()) {
+                ;
+                this.addClass("sticky-toolbar");
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            }
+            else {
+                this.removeClass("sticky-toolbar")
+            }
+        }
+
+        private updateEditorToolbarWidth() {
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").width(wemjq(this.getHTMLElement()).find(".mce-edit-area").innerWidth());
+        }
+
+        private updateEditorToolbarPos() {
+            var stickyToolbarHeight = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar").outerHeight(true);
+            var stickyToolbarOffset = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar").offset().top;
+            var offsetTop = stickyToolbarHeight + stickyToolbarOffset + 10;
+
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").css({top: offsetTop});
+        }
+
+        private editorTopEdgeIsVisible(): boolean {
+            var editorToolbarHeight = wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+
+            return (this.calcDistToTopOfScrlbleArea() + editorToolbarHeight / 2) > 0;
+        }
+
+        private editorLowerEdgeIsVisible(): boolean {
+            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea();
+            var editorToolbarHeight = wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+
+            return (this.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
+        }
+
+        private calcDistToTopOfScrlbleArea(): number {
+            var stickyToolbarHeight = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar").outerHeight(true);
+            var stickyToolbarOffset = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar").offset().top;
+
+            return this.getEl().getOffsetTop() - (stickyToolbarOffset + stickyToolbarHeight);
         }
 
         private getEditor(editorId: string, property: Property): TinyMceEditor {
