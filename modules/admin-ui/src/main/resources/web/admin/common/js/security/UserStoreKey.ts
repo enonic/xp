@@ -23,6 +23,10 @@ module api.security {
             return this.id;
         }
 
+        static fromString(value: string): UserStoreKey {
+            return new UserStoreKey(value);
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreKey)) {
                 return false;

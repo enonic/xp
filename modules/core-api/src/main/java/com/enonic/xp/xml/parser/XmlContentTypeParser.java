@@ -40,7 +40,7 @@ public final class XmlContentTypeParser
 
         this.builder.setAbstract( root.getChildValueAs( "is-abstract", Boolean.class, false ) );
         this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
-        this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, false ) );
+        this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, true ) );
 
         this.builder.metadata( buildMetaData( root ) );
 

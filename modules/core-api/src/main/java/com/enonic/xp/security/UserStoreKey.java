@@ -8,9 +8,9 @@ import com.google.common.base.Preconditions;
 @Beta
 public final class UserStoreKey
 {
-    private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
+    private final static UserStoreKey SYSTEM = UserStoreKey.from( "system" );
 
-    private final static UserStoreKey DEFAULT = new UserStoreKey( "default" );
+    private final static UserStoreKey DEFAULT = UserStoreKey.from( "default" );
 
     private final static String RESERVED_USER_STORE_ID = PrincipalKey.ROLES_NODE_NAME;
 
@@ -22,6 +22,11 @@ public final class UserStoreKey
         Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ),
                                      "UserStoreKey id is reserved and cannot be used: %s", id );
         this.id = id;
+    }
+
+    public static UserStoreKey from( final String id )
+    {
+        return new UserStoreKey( id );
     }
 
     @Override

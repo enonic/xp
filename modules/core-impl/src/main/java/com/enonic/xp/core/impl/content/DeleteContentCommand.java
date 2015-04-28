@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -10,14 +13,20 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentState;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.SetNodeStateResult;
 
 
 final class DeleteContentCommand
@@ -31,27 +40,30 @@ final class DeleteContentCommand
         this.params = builder.params;
     }
 
-    Content execute()
+    Contents execute()
     {
         params.validate();
 
         try
         {
-            final Content deletedContent = doExecute();
-            if ( deletedContent != null )
+            final Contents deletedContents = doExecute();
+            for ( Content deletedContent : deletedContents )
             {
-                if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+                if ( deletedContent != null )
                 {
-                    eventPublisher.publish(
-                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-                }
-                else
-                {
-                    eventPublisher.publish(
-                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                    if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+                    {
+                        eventPublisher.publish(
+                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
+                    }
+                    else
+                    {
+                        eventPublisher.publish(
+                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                    }
                 }
             }
-            return deletedContent;
+            return deletedContents;
         }
         catch ( NodeAccessException e )
         {
@@ -59,23 +71,52 @@ final class DeleteContentCommand
         }
     }
 
-    private Content doExecute()
+    private Contents doExecute()
     {
+        //Gets the node to delete
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
-
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
+        //Executes the deletion on the node and the sub nodes
+        final Set<Node> nodesToDelete = Sets.newLinkedHashSet();
+        recursiveDelete( nodeToDelete, nodesToDelete );
+
+        return translator.fromNodes( Nodes.from( nodesToDelete ) );
+    }
+
+    private void recursiveDelete( Node nodeToDelete, Set<Node> deletedNodes )
+    {
         final CompareStatus status = getCompareStatus( nodeToDelete );
 
         if ( status == CompareStatus.NEW )
         {
-            final Node deletedNode = nodeService.deleteByPath( nodePath );
-            return translator.fromNode( deletedNode );
+            //If the current node is new, deletes it
+            final Node deletedNode = nodeService.deleteByPath( nodeToDelete.path() );
+            deletedNodes.add( deletedNode );
         }
         else
         {
-            final Node pendingDeleteNode = this.nodeService.setNodeState( nodeToDelete.id(), NodeState.PENDING_DELETE );
-            return translator.fromNode( pendingDeleteNode );
+            //Else, marks the current node as PENDING_DELETE
+            final SetNodeStateParams setNodeStateParams = SetNodeStateParams.create().
+                nodeId( nodeToDelete.id() ).
+                nodeState( NodeState.PENDING_DELETE ).
+                build();
+            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( setNodeStateParams );
+            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes().getSet() );
+
+            //Recursive call for the children
+            if ( nodeToDelete.getHasChildren() )
+            {
+                final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
+                    parentPath( nodeToDelete.path() ).
+                    build();
+                final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( findNodesByParentParams );
+
+                for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
+                {
+                    recursiveDelete( childNodeToDelete, deletedNodes );
+                }
+            }
         }
     }
 

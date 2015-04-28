@@ -3,9 +3,6 @@ package com.enonic.xp.security;
 import org.junit.Test;
 
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +14,7 @@ public class PrincipalKeyTest
     public void testPrincipalUser()
         throws Exception
     {
-        final UserStoreKey userStore = new UserStoreKey( "myUserStore" );
+        final UserStoreKey userStore = UserStoreKey.from( "myUserStore" );
         final PrincipalKey user = PrincipalKey.ofUser( userStore, "userId" );
 
         assertEquals( "user:myUserStore:userId", user.toString() );
@@ -34,7 +31,7 @@ public class PrincipalKeyTest
     public void testPrincipalGroup()
         throws Exception
     {
-        final UserStoreKey userStore = new UserStoreKey( "myUserStore" );
+        final UserStoreKey userStore = UserStoreKey.from( "myUserStore" );
         final PrincipalKey group = PrincipalKey.ofGroup( userStore, "groupid" );
 
         assertEquals( "group:myUserStore:groupid", group.toString() );
