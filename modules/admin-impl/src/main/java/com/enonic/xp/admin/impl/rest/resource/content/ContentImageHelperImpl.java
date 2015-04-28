@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
@@ -15,7 +14,6 @@ import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.filter.ScaleMaxFilter;
 import com.enonic.xp.image.filter.ScaleSquareFilter;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -24,40 +22,41 @@ public final class ContentImageHelperImpl
     implements ContentImageHelper
 {
 
-    private MediaInfoService mediaInfoService;
+    public BufferedImage readAndRotateImage( final ByteSource blob, final ImageParams imageParams )
+    {
+        final BufferedImage image = readImage( blob, imageParams );
 
+        return ( imageParams.getOrientation() <= 1 ) ? // check image is need to be rotated
+            image : this.rotateImage( imageParams.getOrientation(), image );
+    }
 
-    public BufferedImage readImage( final ByteSource blob, final int size, final ImageFilter imageFilter )
+    public BufferedImage readImage( final ByteSource blob, final ImageParams imageParams )
     {
         BufferedImage image;
         try (final InputStream inputStream = blob.openStream())
         {
-            image = readImage( inputStream, size, imageFilter );
+            image = readImage( inputStream, imageParams );
         }
         catch ( IOException e )
         {
             throw Exceptions.unchecked( e );
         }
-        Integer orientation = mediaInfoService.getOrientation( blob );
-        return ( orientation <= 1 ) ? // check image is need to be rotated
-            image : this.rotateImage( orientation, image );
+
+        return image;
     }
 
-    private BufferedImage readImage( final InputStream inputStream, final int size, final ImageFilter imageFilter )
+    private BufferedImage readImage( final InputStream inputStream, final ImageParams imageParams )
     {
         final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
-        if ( size > 0 && ( image.getWidth() >= size ) )
+        if ( imageParams.getSize() > 0 && ( image.getWidth() >= imageParams.getSize() ) )
         {
-            switch ( imageFilter )
+            if ( imageParams.isCropRequired() )
             {
-                case SCALE_SQUARE_FILTER:
-                    return new ScaleSquareFilter( size ).filter( image );
-
-                case SCALE_MAX_FILTER:
-                    return new ScaleMaxFilter( size ).filter( image );
-
-                default:
-                    throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );
+                return new ScaleSquareFilter( imageParams.getSize() ).filter( image );
+            }
+            else
+            {
+                return new ScaleMaxFilter( imageParams.getSize() ).filter( image );
             }
         }
         else
@@ -124,12 +123,5 @@ public final class ContentImageHelperImpl
         AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( source, destinationImage );
     }
-
-    @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
-    {
-        this.mediaInfoService = mediaInfoService;
-    }
-
 
 }

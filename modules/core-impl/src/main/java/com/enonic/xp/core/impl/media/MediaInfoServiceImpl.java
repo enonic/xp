@@ -58,7 +58,7 @@ public final class MediaInfoServiceImpl
     }
 
     @Override
-    public Integer getOrientation( ByteSource byteSource )
+    public Integer getImageOrientation( ByteSource byteSource )
     {
         Metadata metadata = this.parseMetadata( byteSource );
         String orientation = metadata.get( Metadata.ORIENTATION );
