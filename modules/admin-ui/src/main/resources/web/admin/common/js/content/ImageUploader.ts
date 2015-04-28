@@ -10,10 +10,18 @@ module api.content {
 
         private images: api.dom.ImgEl[];
 
+        private focalPointButton: api.ui.button.Button;
+        private setFocusButton: api.ui.button.Button;
+        private cancelButton: api.ui.button.Button;
+        private editMode: boolean;
         private initialWidth: number;
+
+        private editModeListeners: {(edit: boolean): void}[];
 
         constructor(config: ImageUploaderConfig) {
             this.images = [];
+            this.editMode = false;
+            this.editModeListeners = [];
 
             if (config.allowTypes == undefined) {
                 config.allowTypes = [
@@ -26,7 +34,7 @@ module api.content {
 
             this.initialWidth = 0;
             this.onShown(() => {
-                if(this.getEl().getWidth() == 0) {
+                if (this.getEl().getWidth() == 0) {
                     this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
                     this.getEl().setMaxWidthPx(this.initialWidth);
                 }
@@ -67,6 +75,8 @@ module api.content {
             container.appendChild(image);
             this.images.push(image);
 
+            container.appendChild(this.createFocalPointToolbar());
+
             api.dom.Body.get().onClicked((event: MouseEvent) => {
                 this.images.forEach((img) => {
                     img.removeClass('selected');
@@ -74,6 +84,65 @@ module api.content {
             });
 
             return container;
+        }
+
+        private createFocalPointToolbar(): api.dom.DivEl {
+            var toolbar = new api.dom.DivEl('focal-point-toolbar');
+
+            this.focalPointButton = new api.ui.button.Button();
+            this.focalPointButton.addClass('no-bg icon-center-focus-strong');
+            this.focalPointButton.onClicked((event: MouseEvent) => {
+                this.setEditMode(true);
+            });
+            toolbar.appendChild(this.focalPointButton);
+
+            this.setFocusButton = new api.ui.button.Button('Set Focus');
+            this.setFocusButton.addClass('blue');
+            this.setFocusButton.setVisible(false);
+            this.setFocusButton.onClicked((event: MouseEvent) => {
+                this.setEditMode(false);
+            });
+            this.cancelButton = new api.ui.button.Button('Cancel');
+            this.cancelButton.setVisible(false);
+            this.cancelButton.onClicked((event: MouseEvent) => {
+                this.setEditMode(false);
+            });
+
+            var pullRight = new api.dom.DivEl('pull-right');
+            pullRight.appendChild(this.setFocusButton);
+            pullRight.appendChild(this.cancelButton);
+            toolbar.appendChild(pullRight);
+
+            return toolbar;
+        }
+
+        private setEditMode(edit: boolean) {
+            this.focalPointButton.setVisible(!edit);
+            this.setFocusButton.setVisible(edit);
+            this.cancelButton.setVisible(edit);
+
+            this.notifyEditModeChanged(edit);
+        }
+
+        isEditMode(): boolean {
+            return this.editMode;
+        }
+
+        onEditModeChanged(listener: (edit: boolean) => void) {
+            this.editModeListeners.push(listener);
+        }
+
+        unEditModeChanged(listener: (edit: boolean) => void) {
+            this.editModeListeners = this.editModeListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyEditModeChanged(edit: boolean) {
+            this.editMode = edit;
+            this.editModeListeners.forEach((listener) => {
+                listener(edit);
+            })
         }
 
     }
