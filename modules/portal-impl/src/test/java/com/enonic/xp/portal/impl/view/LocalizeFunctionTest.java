@@ -55,7 +55,7 @@ public class LocalizeFunctionTest
 
         Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
 
-        final Object result = execute( "localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
+        final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
         assertEquals( "localizedString", result );
 
     }
@@ -68,7 +68,7 @@ public class LocalizeFunctionTest
 
         Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
 
-        final Object result = execute( "localize", "_key=myPhrase", "a=5", "b=2" );
+        final Object result = execute( "i18n.localize", "_key=myPhrase", "a=5", "b=2" );
         assertEquals( "localizedString", result );
 
     }
@@ -81,7 +81,7 @@ public class LocalizeFunctionTest
 
         Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
 
-        final Object result = execute( "localize", "_key=myPhrase" );
+        final Object result = execute( "i18n.localize", "_key=myPhrase" );
         assertEquals( "localizedString", result );
 
     }

@@ -19,7 +19,7 @@ public final class LocalizeFunction
     @Override
     public String getName()
     {
-        return "localize";
+        return "i18n.localize";
     }
 
     @Override
