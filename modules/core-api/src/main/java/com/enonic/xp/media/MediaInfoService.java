@@ -8,5 +8,5 @@ public interface MediaInfoService
 {
     MediaInfo parseMediaInfo( ByteSource byteSource );
 
-    Integer getOrientation( ByteSource byteSource );
+    Integer getImageOrientation( ByteSource byteSource );
 }
