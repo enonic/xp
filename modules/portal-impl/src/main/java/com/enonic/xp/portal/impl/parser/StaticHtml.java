@@ -5,7 +5,7 @@ public final class StaticHtml
 {
     private final String html;
 
-    StaticHtml( final String html )
+    public StaticHtml( final String html )
     {
         this.html = html;
     }
