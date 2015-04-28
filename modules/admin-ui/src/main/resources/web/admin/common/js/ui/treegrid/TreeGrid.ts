@@ -511,8 +511,6 @@ module api.ui.treegrid {
 
             this.root.removeSelection(dataId);
 
-            this.triggerSelectionChangedListeners();
-
             if (oldSelected.length !== newSelected.length) {
                 this.grid.setSelectedRows(newSelected);
             }
