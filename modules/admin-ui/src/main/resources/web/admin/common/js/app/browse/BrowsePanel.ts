@@ -72,7 +72,7 @@ module api.app.browse {
             this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 this.browseItemPanel.setItems(browseItems);
-                               
+
                 this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(this.browseItemPanel.getItems()).
                     then(() => {
                         this.browseItemPanel.updateDisplayedPanel();

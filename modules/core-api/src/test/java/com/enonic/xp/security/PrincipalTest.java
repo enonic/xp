@@ -6,12 +6,6 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.enonic.xp.security.Group;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
-
 import static org.junit.Assert.*;
 
 public class PrincipalTest
@@ -26,7 +20,7 @@ public class PrincipalTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -49,7 +43,7 @@ public class PrincipalTest
     {
         final Group group = Group.create().
             displayName( "my group" ).
-            key( PrincipalKey.ofGroup( new UserStoreKey( "myuserstore" ), "groupid" ) ).
+            key( PrincipalKey.ofGroup( UserStoreKey.from( "myuserstore" ), "groupid" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
 

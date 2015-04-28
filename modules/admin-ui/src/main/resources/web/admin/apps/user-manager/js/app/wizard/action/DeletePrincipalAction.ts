@@ -29,7 +29,7 @@ module app.wizard.action {
                                         var key = json.results[0].principalKey;
 
                                         api.notify.showFeedback('Principal [' + key + '] deleted!');
-                                        new api.security.UserItemDeletedEvent([principal]).fire();
+                                        api.security.UserItemDeletedEvent.create().setPrincipals([principal]).build().fire();
                                     }
                                 });
                         }

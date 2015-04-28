@@ -125,10 +125,10 @@ public class ContentResourceTest
         final PropertyTree data = content.getData();
 
         data.setLong( "myArray[0]", 1L );
-        data.setLong("myArray[1]", 2L);
+        data.setLong( "myArray[1]", 2L );
 
-        data.setDouble("mySetWithArray.myArray[0]", 3.14159);
-        data.setDouble("mySetWithArray.myArray[1]", 1.333);
+        data.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        data.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( content );
@@ -148,15 +148,15 @@ public class ContentResourceTest
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
         final PropertyTree aContentData = aContent.getData();
-        aContentData.setLocalDate("myProperty", currentDate);
+        aContentData.setLocalDate( "myProperty", currentDate );
 
-        aContentData.setLong("mySet.setProperty1", 1L);
-        aContentData.setLong("mySet.setProperty2", 2L);
+        aContentData.setLong( "mySet.setProperty1", 1L );
+        aContentData.setLong( "mySet.setProperty2", 2L );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
 
-        String jsonString = request().path("content/bypath").queryParam("path", "/my_a_content").
+        String jsonString = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
             queryParam( "expand", "summary" ).get().getAsString();
 
         assertJson( "get_content_summary.json", jsonString );
@@ -164,22 +164,21 @@ public class ContentResourceTest
 
     @Test
     public void get_content_permissions_by_path()
-            throws Exception
+        throws Exception
     {
         final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn(
-                Optional.of( admin ) );
+            Optional.of( admin ) );
         final User anon = User.create().displayName( "Anonymous" ).key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build();
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn(
-                Optional.of( anon ) );
+            Optional.of( anon ) );
 
         final AccessControlList permissions = getTestPermissions();
 
-        Mockito.when( contentService.getPermissionsByPath(Mockito.isA(ContentPath.class)) ).
-                thenReturn( permissions );
+        Mockito.when( contentService.getPermissionsByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( permissions );
 
-        String jsonString = request().path("content/contentPermissions").queryParam("path", "/my_a_content")
-                .get().getAsString();
+        String jsonString = request().path( "content/contentPermissions" ).queryParam( "path", "/my_a_content" ).get().getAsString();
 
         assertJson( "get_content_permissions_success.json", jsonString );
     }
@@ -549,8 +548,12 @@ public class ContentResourceTest
         throws Exception
     {
 
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
-            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
+        Content content = newContent().
+            id( ContentId.from( "123" ) ).
+            parentPath( ContentPath.ROOT ).
+            name( "one" ).
+            build();
+        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -595,14 +598,19 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent1 );
 
+        final Content aContent2 = newContent().
+            id( ContentId.from( "123" ) ).
+            parentPath( ContentPath.ROOT ).
+            name( "one" ).
+            build();
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenReturn( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
+            thenReturn( Contents.from( aContent2 ) );
 
-        final Content aContent2 = createContent( "aaa", "my_a_content2", "mymodule:my_type" );
+        final Content aContent3 = createContent( "aaa", "my_a_content2", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent2 );
+            thenReturn( aContent3 );
 
         Mockito.when( contentService.delete( DeleteContentParams.create().
             contentPath( ContentPath.from( "/two" ) ).
@@ -973,37 +981,35 @@ public class ContentResourceTest
     private Site createSite( final String id, final String name, final String contentTypeName, ModuleConfigs moduleConfigs )
     {
         return newSite().
-            moduleConfigs(moduleConfigs).
-            id(ContentId.from(id)).
-            parentPath(ContentPath.ROOT).
-            name(name).
-            valid(true).
-            createdTime(Instant.parse(this.currentTime)).
-            creator(PrincipalKey.from("user:system:admin")).
-            owner(PrincipalKey.from("user:myStore:me")).
-            language(Locale.ENGLISH).
-            displayName("My Content").
-            modifiedTime(Instant.parse(this.currentTime)).
-            modifier(PrincipalKey.from("user:system:admin")).
-            type(ContentTypeName.from(contentTypeName)).
+            moduleConfigs( moduleConfigs ).
+            id( ContentId.from( id ) ).
+            parentPath( ContentPath.ROOT ).
+            name( name ).
+            valid( true ).
+            createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.from( contentTypeName ) ).
             build();
     }
 
     private ContentType createContentType( String name )
     {
         return ContentType.newContentType().
-            superType(ContentTypeName.structured()).
-            displayName("My type").
-            name(name).
-            icon(Icon.from(new byte[]{123}, "image/gif", Instant.now())).
+            superType( ContentTypeName.structured() ).
+            displayName( "My type" ).
+            name( name ).
+            icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
             build();
     }
 
     private AccessControlList getTestPermissions()
     {
-        return AccessControlList.of(
-                    AccessControlEntry.create().principal( PrincipalKey.from( "user:system:admin" ) ).allowAll().build(),
-                    AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build()
-        );
+        return AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.from( "user:system:admin" ) ).allowAll().build(),
+                                     AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
     }
 }

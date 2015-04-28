@@ -80,7 +80,7 @@ public interface NodeService
 
     RootNode createRootNode( CreateRootNodeParams params );
 
-    Node setNodeState( final NodeId nodeId, final NodeState nodeState );
+    SetNodeStateResult setNodeState( final SetNodeStateParams params );
 
     RootNode getRoot();
 
