@@ -206,8 +206,24 @@ public final class ImageContentProcessor
         }
         TikaFieldNameFormatter.fillComputedFormItems( metadataMap.values(), mediaInfo );
 
+        addTiffOrientation( metadataMap.values(), mediaInfo );
+
         return extradatasBuilder.build();
     }
+
+    private void addTiffOrientation( Collection<ExtraData> extraDataList, MediaInfo mediaInfo )
+    {
+        for ( ExtraData extraData : extraDataList )
+        {
+            if ( "photo-info".equals( extraData.getName().getLocalName() ) )
+            {
+                extraData.getData().addString( "tiffOrientation",
+                                               mediaInfo.getMetadata().get( "tiffOrientation" ).toArray()[0].toString() );
+                return;
+            }
+        }
+    }
+
 
     public static class Builder
     {
