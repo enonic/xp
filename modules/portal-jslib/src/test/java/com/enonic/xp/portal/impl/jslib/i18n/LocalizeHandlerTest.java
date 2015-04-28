@@ -2,18 +2,24 @@ package com.enonic.xp.portal.impl.jslib.i18n;
 
 import java.util.Locale;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.site.Site;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
-import com.enonic.xp.portal.impl.jslib.locale.LocaleHandler;
+import com.enonic.xp.portal.impl.jslib.locale.LocalizeHandler;
 import com.enonic.xp.portal.script.command.CommandHandler;
 
 
-public class LocaleHandlerTest
+public class LocalizeHandlerTest
     extends AbstractHandlerTest
 {
     private static final String RESULT_WITH_LOCALE = "result with locale";
@@ -24,13 +30,27 @@ public class LocaleHandlerTest
 
     private LocaleService localeService;
 
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        final PortalContext context = new PortalContext();
+        context.setSite( Site.newSite().
+            name( ContentName.from( "test" ) ).
+            parentPath( ContentPath.ROOT ).
+            language( Locale.ENGLISH ).
+            build() );
+
+        PortalContextAccessor.set( context );
+    }
+
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.localeService = Mockito.mock( LocaleService.class );
 
-        final LocaleHandler handler = new LocaleHandler();
+        final LocalizeHandler handler = new LocalizeHandler();
         handler.setLocaleService( this.localeService );
 
         return handler;

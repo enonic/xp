@@ -1,9 +1,9 @@
-package com.enonic.xp.portal.localize;
+package com.enonic.xp.portal.i18n;
 
 import java.util.Collection;
 import java.util.Locale;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -16,7 +16,7 @@ public class LocalizeParams
 
     private Locale locale;
 
-    private PortalContext context;
+    private final PortalContext context;
 
     private final Multimap<String, String> params;
 
@@ -31,7 +31,7 @@ public class LocalizeParams
         this.context = context;
     }
 
-    public void key( final String key )
+    private void key( final String key )
     {
         this.key = key;
     }
@@ -41,9 +41,9 @@ public class LocalizeParams
         return this.context.getModule();
     }
 
-    public void locale( final String locale )
+    private void locale( final String locale )
     {
-        this.locale = new Locale( locale );
+        this.locale = Strings.isNullOrEmpty( locale ) ? null : new Locale( locale );
     }
 
     public LocalizeParams setAsMap( final Multimap<String, String> map )
@@ -54,13 +54,7 @@ public class LocalizeParams
         return this;
     }
 
-    protected void buildToString( final MoreObjects.ToStringHelper helper )
-    {
-        helper.omitNullValues();
-        helper.add( "params", this.params );
-    }
-
-    protected static String singleValue( final Multimap<String, String> map, final String name )
+    private static String singleValue( final Multimap<String, String> map, final String name )
     {
         final Collection<String> values = map.removeAll( name );
         if ( values == null )
@@ -86,7 +80,7 @@ public class LocalizeParams
         return this.locale != null ? this.locale : this.getContext().getSite().getLanguage();
     }
 
-    public PortalContext getContext()
+    private PortalContext getContext()
     {
         return context;
     }

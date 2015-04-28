@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalContextAccessor;
-import com.enonic.xp.portal.localize.LocalizeParams;
+import com.enonic.xp.portal.i18n.LocalizeParams;
 import com.enonic.xp.portal.view.ViewFunction;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 

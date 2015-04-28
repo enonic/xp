@@ -48,7 +48,7 @@ public class LocalizeFunctionTest
 
 
     @Test
-    public void testParams()
+    public void all_params()
     {
         Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en-US" ) ) ) ).
             thenReturn( messageBundle );
@@ -56,6 +56,32 @@ public class LocalizeFunctionTest
         Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
+        assertEquals( "localizedString", result );
+
+    }
+
+    @Test
+    public void no_locale()
+    {
+        Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en" ) ) ) ).
+            thenReturn( messageBundle );
+
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+
+        final Object result = execute( "localize", "_key=myPhrase", "a=5", "b=2" );
+        assertEquals( "localizedString", result );
+
+    }
+
+    @Test
+    public void no_params()
+    {
+        Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en" ) ) ) ).
+            thenReturn( messageBundle );
+
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+
+        final Object result = execute( "localize", "_key=myPhrase" );
         assertEquals( "localizedString", result );
 
     }
