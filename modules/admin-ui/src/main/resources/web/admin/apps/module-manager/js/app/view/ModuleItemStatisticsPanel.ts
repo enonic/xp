@@ -68,13 +68,13 @@ module app.view {
 
             wemQ.all(schemaPromises).
                 spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-                    var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName());
+                    var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
                     schemasGroup.addDataArray("Content Types", contentTypeNames);
 
-                    var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName());
+                    var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
                     schemasGroup.addDataArray("Mixins", mixinsNames);
 
-                    var relationshipTypeNames = relationshipTypes.map((relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName());
+                    var relationshipTypeNames = relationshipTypes.map((relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
                     schemasGroup.addDataArray("RelationshipTypes", relationshipTypeNames);
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
@@ -89,13 +89,13 @@ module app.view {
 
             wemQ.all(descriptorPromises).
                 spread((pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
-                    var pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString());
+                    var pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(this.sortAlphabeticallyAsc);
                     descriptorsGroup.addDataArray("Page", pageNames);
 
-                    var partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString());
+                    var partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(this.sortAlphabeticallyAsc);
                     descriptorsGroup.addDataArray("Part", partNames);
 
-                    var layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString());
+                    var layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(this.sortAlphabeticallyAsc);
                     descriptorsGroup.addDataArray("Layout", layoutNames);
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
@@ -104,6 +104,10 @@ module app.view {
             this.moduleDataContainer.appendChild(infoGroup);
             this.moduleDataContainer.appendChild(schemasGroup);
             this.moduleDataContainer.appendChild(descriptorsGroup);
+        }
+
+        private sortAlphabeticallyAsc(a: string, b: string): number {
+            return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
         }
 
     }
