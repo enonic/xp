@@ -23,6 +23,8 @@ module app.wizard {
 
         private defaultUserStore: UserStore;
 
+        private persistedUserStoreKey: UserStoreKey;
+
         isUserStoreFormValid: boolean;
         userStorePath: string;
 
@@ -39,6 +41,9 @@ module app.wizard {
 
             this.userStorePath = params.persistedPath;
             this.defaultUserStore = params.defaultUserStore;
+            if (params.userStore) {
+                this.persistedUserStoreKey = params.userStore.getKey();
+            }
 
             var iconUrl = api.dom.ImgEl.PLACEHOLDER;
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
@@ -240,6 +245,10 @@ module app.wizard {
             } else {
                 return this.wizardHeader.getName();
             }
+        }
+
+        getPersistedItemKey(): UserStoreKey {
+            return this.persistedUserStoreKey;
         }
 
         private assembleViewedUserStore(): UserStore {
