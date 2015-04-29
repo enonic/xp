@@ -69,7 +69,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 if (id) {
                     anchorList.push({
                         text: id,
-                        value:    '#' + id,
+                        value: '#' + id,
                         selected: url.indexOf('#' + id) != -1
                     });
                 }
@@ -378,6 +378,9 @@ tinymce.PluginManager.add('link', function (editor) {
                 insertLink();
             }
         });
+
+        editor.execCommand("addContentSelector", false,
+            win.getEl().querySelectorAll(".mce-link-tab-content .mce-link-tab-content-target")[0]);
     }
 
     editor.addButton('link', {
