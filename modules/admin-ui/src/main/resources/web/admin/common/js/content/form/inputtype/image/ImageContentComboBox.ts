@@ -39,7 +39,7 @@ module api.content.form.inputtype.image {
         }
     }
 
-    class ImageContentComboBoxBuilder {
+    export class ImageContentComboBoxBuilder {
 
         name: string;
 
