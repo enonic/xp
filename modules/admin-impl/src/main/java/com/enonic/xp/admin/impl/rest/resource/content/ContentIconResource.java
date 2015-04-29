@@ -27,6 +27,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 
@@ -97,7 +98,7 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                final int imageOrientation = mediaInfoService.getImageOrientation( binary );
+                final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
                 final ImageParams imageParams =
                     ImageParams.newImageParams().size( size ).cropRequired( crop ).orientation( imageOrientation ).build();
 
@@ -126,7 +127,7 @@ public final class ContentIconResource
         return ResolvedImage.unresolved();
     }
 
-    private int getSourceAttachmentOrientation( final Media media )
+    private ImageOrientation getSourceAttachmentOrientation( final Media media )
     {
         final ByteSource sourceBinary = contentService.getBinary( media.getId(), media.getMediaAttachment().getBinaryReference() );
         return mediaInfoService.getImageOrientation( sourceBinary );

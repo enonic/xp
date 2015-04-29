@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -97,7 +98,7 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final int imageOrientation = mediaInfoService.getImageOrientation( binary );
+                final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
                 final ImageParams imageParams = ImageParams.newImageParams().size( size ).orientation( imageOrientation ).build();
 
                 final BufferedImage contentImage = helper.readAndRotateImage( binary, imageParams );

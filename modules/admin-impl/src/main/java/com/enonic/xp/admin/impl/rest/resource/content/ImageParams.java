@@ -1,17 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-public class ImageParams
+import com.enonic.xp.media.ImageOrientation;
+
+public final class ImageParams
 {
-    private int size;
+    private final int size;
 
-    private int orientation;
+    private final ImageOrientation orientation;
 
-    private boolean cropRequired;
+    private final boolean cropRequired;
 
     public ImageParams( Builder builder )
     {
         this.size = builder.size;
-        this.orientation = builder.orientation;
+        this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.cropRequired = builder.cropRequired;
     }
 
@@ -25,7 +27,7 @@ public class ImageParams
         return size;
     }
 
-    public int getOrientation()
+    public ImageOrientation getOrientation()
     {
         return orientation;
     }
@@ -35,20 +37,17 @@ public class ImageParams
         return new Builder();
     }
 
-    protected static class Builder
+    static class Builder
     {
         private int size;
 
-        private int orientation;
+        private ImageOrientation orientation;
 
         private boolean cropRequired;
 
         private Builder()
         {
-
         }
-
-        ;
 
         public Builder size( int size )
         {
@@ -56,7 +55,7 @@ public class ImageParams
             return this;
         }
 
-        public Builder orientation( int orientation )
+        public Builder orientation( ImageOrientation orientation )
         {
             this.orientation = orientation;
             return this;

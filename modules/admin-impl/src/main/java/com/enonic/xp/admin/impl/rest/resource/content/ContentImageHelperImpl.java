@@ -14,6 +14,7 @@ import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.filter.ScaleMaxFilter;
 import com.enonic.xp.image.filter.ScaleSquareFilter;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -25,9 +26,7 @@ public final class ContentImageHelperImpl
     public BufferedImage readAndRotateImage( final ByteSource blob, final ImageParams imageParams )
     {
         final BufferedImage image = readImage( blob, imageParams );
-
-        return ( imageParams.getOrientation() <= 1 ) ? // check image is need to be rotated
-            image : this.rotateImage( imageParams.getOrientation(), image );
+        return rotateImage( imageParams.getOrientation(), image );
     }
 
     public BufferedImage readImage( final ByteSource blob, final ImageParams imageParams )
@@ -65,42 +64,44 @@ public final class ContentImageHelperImpl
         }
     }
 
-    private BufferedImage rotateImage( Integer orientation, BufferedImage source )
+    private BufferedImage rotateImage( final ImageOrientation orientation, final BufferedImage source )
     {
+        if ( orientation == ImageOrientation.TopLeft )
+        {
+            return source;
+        }
 
-        AffineTransform transform = new AffineTransform();
-        Integer resultWidth = source.getWidth();
-        Integer resultHeight = source.getHeight();
+        final AffineTransform transform = new AffineTransform();
+        int resultWidth = source.getWidth();
+        int resultHeight = source.getHeight();
 
         switch ( orientation )
         {
-            case 1:
-                return source;
-            case 2: // Flip X
+            case TopRight: // Flip X
                 transform.scale( -1.0, 1.0 );
                 transform.translate( -resultWidth, 0 );
                 break;
-            case 3: // PI rotation
+            case BottomRight: // PI rotation
                 transform.translate( resultWidth, resultHeight );
                 transform.rotate( Math.PI );
                 break;
-            case 4: // Flip Y
+            case BottomLeft: // Flip Y
                 transform.scale( 1.0, -1.0 );
                 transform.translate( 0, -resultHeight );
                 break;
-            case 5: // - PI/2 and Flip X
+            case LeftTop: // - PI/2 and Flip X
                 transform.rotate( -Math.PI / 2 );
                 transform.scale( -1.0, 1.0 );
                 resultWidth = source.getHeight();
                 resultHeight = source.getWidth();
                 break;
-            case 6: // -PI/2 and -width
+            case RightTop: // -PI/2 and -width
                 transform.translate( resultHeight, 0 );
                 transform.rotate( Math.PI / 2 );
                 resultWidth = source.getHeight();
                 resultHeight = source.getWidth();
                 break;
-            case 7: // PI/2 and Flip
+            case RightBottom: // PI/2 and Flip
                 transform.scale( -1.0, 1.0 );
                 transform.translate( -resultHeight, 0 );
                 transform.translate( 0, resultWidth );
@@ -108,7 +109,7 @@ public final class ContentImageHelperImpl
                 resultWidth = source.getHeight();
                 resultHeight = source.getWidth();
                 break;
-            case 8: // PI / 2
+            case LeftBottom: // PI / 2
                 transform.translate( 0, resultWidth );
                 transform.rotate( 3 * Math.PI / 2 );
                 resultWidth = source.getHeight();
@@ -117,10 +118,9 @@ public final class ContentImageHelperImpl
             default:
                 return source;
 
-
         }
-        BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, source.getType() );
-        AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
+        final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, source.getType() );
+        final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( source, destinationImage );
     }
 
