@@ -310,7 +310,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2_1" ).
             build() );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1.id() );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1.id(), false );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
         assertEquals( 3, nodePublishRequests.size() );
@@ -620,13 +620,13 @@ public class ResolveSyncWorkCommandTest
         renameNode( node1_1 );
         renameNode( node2 );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1_1.id() );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1_1.id(), false );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
         assertEquals( 4, nodePublishRequests.size() );
     }
 
-    private ResolveSyncWorkResult getResolveSyncWorkResult( final NodeId nodeId )
+    private ResolveSyncWorkResult getResolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
     {
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
@@ -636,13 +636,14 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            includeChildren( includeChildren ).
             build().
             execute();
     }
 
     private ResolveSyncWorkResult getResolveSyncWorkResult( final String nodeId )
     {
-        return getResolveSyncWorkResult( NodeId.from( nodeId ) );
+        return getResolveSyncWorkResult( NodeId.from( nodeId ), false );
     }
 
 
@@ -841,6 +842,52 @@ public class ResolveSyncWorkCommandTest
         assertNode( nodePublishRequests, "b2_1" );
     }
 
+    /*
+    - S1 (New)
+     - A1 (New)
+     - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+    - S2 (New)
+     - B1 (New)
+     - B2 (New)
+         - B2_1 (New)
+    - S1d (New)
+    - A1d (New)
+    - A2d (New)
+         - A2_1d - Ref:B2_1 (New)
+
+    Publish S1 with children, should publish S1, A1, A2, A2_1, B2_1, B2, S2
+    */
+    @Test
+    public void resolve_with_include_children()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( NodeId.from( "s1" ), true );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 7, nodePublishRequests.size() );
+
+        assertNode( nodePublishRequests, "s1" );
+        assertNode( nodePublishRequests, "a1" );
+        assertNode( nodePublishRequests, "a2" );
+        assertNode( nodePublishRequests, "a2_1" );
+        assertNode( nodePublishRequests, "s2" );
+        assertNode( nodePublishRequests, "b2" );
+        assertNode( nodePublishRequests, "b2_1" );
+
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonParentFor() );
+
+        //assertTrue( nodePublishRequests.get( NodeId.from( "a1" ) ).reasonChildOf() );
+        //assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonChildOf() );
+        //assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
+    }
+
+
     @Test
     public void publish_duplicate_of_original_do_not_publish_original()
         throws Exception
@@ -849,7 +896,7 @@ public class ResolveSyncWorkCommandTest
 
         final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id() );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id(), false );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
 
