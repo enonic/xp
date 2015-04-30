@@ -4,6 +4,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 final class Long
     extends InputType
@@ -20,6 +21,16 @@ final class Long
         if ( value == null )
         {
             throw new BreaksRequiredContractException( property, this );
+        }
+    }
+
+    @Override
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
+    {
+        if ( !ValueTypes.LONG.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.LONG );
         }
     }
 
