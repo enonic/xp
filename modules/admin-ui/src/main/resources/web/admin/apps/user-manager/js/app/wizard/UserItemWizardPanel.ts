@@ -139,6 +139,10 @@ module app.wizard {
             throw new Error("Must be implemented by inheritors");
         }
 
+        getPersistedItemKey(): any {
+            throw new Error("Must be implemented by inheritors");
+        }
+
 
         getCloseAction(): api.ui.Action {
             return this.wizardActions.getCloseAction();

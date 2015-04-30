@@ -22,19 +22,6 @@ module api.ui.button {
             return !this.getEl().isDisabled();
         }
 
-        setActive(value: boolean) {
-            if (value) {
-                this.addClass("active");
-            }
-            else {
-                this.removeClass("active");
-            }
-        }
-
-        isActive() {
-            return this.hasClass("active");
-        }
-
         setLabel(label: string) {
             this.labelEl.getEl().setInnerHtml(label);
         }

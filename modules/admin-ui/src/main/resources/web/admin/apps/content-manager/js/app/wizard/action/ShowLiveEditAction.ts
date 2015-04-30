@@ -7,9 +7,8 @@ module app.wizard.action {
 
             this.setEnabled(false);
             this.onExecuted(() => {
-                new ShowLiveEditEvent().fire();
                 wizard.showLiveEdit();
-
+                new ShowLiveEditEvent().fire();
             });
         }
     }

@@ -25,6 +25,7 @@ final class NodeSettingsBuilderImpl
         builder.put( "cluster.name", "mycluster" );
         builder.put( "network.host", "127.0.0.1");
         builder.put( "discovery.zen.ping.multicast.enabled", "false" );
+        builder.put( "cluster.routing.allocation.disk.threshold_enabled", "false" );
 
         final HomeDir xpHome = HomeDir.get();
         final File indexPath = new File( xpHome.toFile(), "repo/index" );

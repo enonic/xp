@@ -18,11 +18,13 @@ import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -33,6 +35,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.DataValidationError;
 import com.enonic.xp.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.schema.content.validator.InputValidator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -60,6 +63,8 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
+        validateParameters();
+
         CreateContentParams processedParams = processCreateContentParams();
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
@@ -86,13 +91,132 @@ final class CreateContentCommand
         }
     }
 
+    private void validateParameters()
+    {
+        validateSpecificChecks( params );
+        validateContentType( params );
+        validateCreationAllowance( params );
+        validatePropertyTree( params );
+    }
+
+    private void validateSpecificChecks( final CreateContentParams params )
+    {
+        if ( params.getType().isTemplateFolder() )
+        {
+            validateCreateTemplateFolder( params );
+        }
+        else if ( params.getType().isPageTemplate() )
+        {
+            validateCreatePageTemplate( params );
+        }
+    }
+
+    private void validateCreateTemplateFolder( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = GetContentByPathCommand.create( params.getParent() ).
+                nodeService( this.nodeService ).
+                contentTypeService( this.contentTypeService ).
+                translator( this.translator ).
+                eventPublisher( this.eventPublisher ).
+                build().
+                execute();
+
+            if ( !parent.getType().isSite() )
+            {
+                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
+                throw new IllegalArgumentException( "A template folder can only be created below a content of type 'site'. Path: " + path );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
+            throw new IllegalArgumentException(
+                    "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path, e );
+        }
+    }
+
+    private void validateCreatePageTemplate( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = GetContentByPathCommand.create( params.getParent() ).
+                nodeService( this.nodeService ).
+                contentTypeService( this.contentTypeService ).
+                translator( this.translator ).
+                eventPublisher( this.eventPublisher ).
+                build().
+                execute();
+
+            if ( !parent.getType().isTemplateFolder() )
+            {
+                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
+                throw new IllegalArgumentException(
+                        "A page template can only be created below a content of type 'template-folder'. Path: " + path );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
+            throw new IllegalArgumentException(
+                    "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
+        }
+    }
+
+    private void validateContentType( final CreateContentParams params )
+    {
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
+        }
+        if ( contentType.isAbstract() )
+        {
+            throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
+        }
+    }
+
+    private void validateCreationAllowance( final CreateContentParams params )
+    {
+        final ContentPath parentPath = params.getParent();
+        if ( !parentPath.isRoot() )
+        {
+            final Content parent = getContent( parentPath );
+            if ( parent == null )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
+            }
+            final ContentType parentContentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
+            if ( !parentContentType.allowChildContent() )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
+            }
+        }
+    }
+
+    private void validatePropertyTree( final CreateContentParams params )
+    {
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        try
+        {
+            new InputValidator( contentType.form() ).validate( params.getData().getRoot() );
+        } catch ( InvalidDataException e ) {
+            final String name = params.getName() == null ? "" : params.getName().toString();
+            final ContentPath path = ContentPath.from( params.getParent(), name );
+            throw new IllegalArgumentException(
+                "Incorrect property for content: " + path, e );
+        }
+    }
+
     private CreateContentParams processCreateContentParams()
     {
-        CreateContentParams processedParams = validateAndTransformForContentType( this.params );
-
         final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-        processedParams = runContentProcessors( processedParams, type );
+        final CreateContentParams processedParams = runContentProcessors( this.params, type );
         return processedParams;
     }
 
@@ -122,40 +246,6 @@ final class CreateContentCommand
             mixinService( mixinService ).
             build().
             processCreate( createContentParams );
-    }
-
-    private CreateContentParams validateAndTransformForContentType( final CreateContentParams params )
-    {
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-        if ( contentType == null )
-        {
-            throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
-        }
-        if ( contentType.isAbstract() )
-        {
-            throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
-        }
-
-        final ContentPath parentPath = params.getParent();
-        if ( !parentPath.isRoot() )
-        {
-            final Content parent = getContent( parentPath );
-            if ( parent == null )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
-            }
-            final ContentType parentContentType =
-                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
-            if ( !parentContentType.allowChildContent() )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
-            }
-        }
-
-        return params;
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )

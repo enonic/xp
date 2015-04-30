@@ -73,8 +73,12 @@ module app.wizard.page.contextwindow.inspect {
             this.buttons.setVisible(showButtons);
         }
 
-        public clearSelection() {
+        public clearInspection() {
             this.showInspectionPanel(this.noSelectionPanel);
+        }
+
+        public isInspecting(): boolean {
+            return this.deck.getPanelShown() != this.noSelectionPanel;
         }
 
     }
