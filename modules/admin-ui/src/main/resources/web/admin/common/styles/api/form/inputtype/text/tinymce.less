@@ -78,8 +78,14 @@
 
   .mce-content-selector {
     left: 146px;
-    width: 295px;
+    width: 284px;
     background-color: @admin-white;
+    border: 1px solid #c5c5c5;
+  }
+
+  .mce-content-selector-focused, .mce-textbox:focus, .mce-checkbox:focus i.mce-i-checkbox {
+    .box-shadow(0px 0px 5px @admin-input-blue);
+    border: 1px solid @admin-input-blue;
   }
 
   .combobox.form-input {
@@ -96,5 +102,22 @@
   .remove {
     padding-top: 9px;
     padding-right: 12px;
+  }
+}
+
+.mce-floatpanel {
+  .mce-textbox {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box; /* Opera/IE 8+ */
+  }
+
+  .mce-textbox, i.mce-i-checkbox {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  i.mce-i-checkbox {
+    background: none repeat scroll 0 0 @admin-white;
   }
 }

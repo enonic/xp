@@ -218,7 +218,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 classes: 'link-tab-content',
                 items: [
                     {
-                        name: 'href',
+                        name: 'contentId',
                         type: 'textbox',
                         classes: 'link-tab-content-target',
                         size: 40,
@@ -267,7 +267,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 classes: 'link-tab-email',
                 items: [
                     {
-                        name: 'href',
+                        name: 'email',
                         type: 'textbox',
                         size: 40,
                         label: 'Email'
@@ -288,9 +288,13 @@ tinymce.PluginManager.add('link', function (editor) {
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
-                var href;
+                var href, contentId;
                 data = tinymce.extend(data, e.data);
                 href = data.href;
+                contentId = data.contentId;
+                if (data.contentId) {
+                    href = "content://" + contentId;
+                }
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -307,7 +311,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
-                        target: data.target ? data.target : null,
+                        target: data.target ? "_blank" : null,
                         rel: data.rel ? data.rel : null,
                         "class": data["class"] ? data["class"] : null,
                         title: data.title ? data.title : null
