@@ -8,6 +8,8 @@ module api.content.form.inputtype.upload {
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
         private imageUploader: api.content.ImageUploader;
+        private property: Property;
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super(config, "image");
@@ -21,6 +23,8 @@ module api.content.form.inputtype.upload {
                 name: input.getName(),
                 maximumOccurrences: 1
             });
+
+            this.imageUploader.onEditModeChanged((edit: boolean) => this.validate(false));
 
             this.appendChild(this.imageUploader);
         }
@@ -38,6 +42,10 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
+
+            this.input = input;
+            this.property = property;
+
             if (property.hasNonNullValue()) {
                 //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
                 new api.content.GetContentByIdRequest(this.getContext().contentId).
@@ -62,8 +70,22 @@ module api.content.form.inputtype.upload {
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+            var recording = new api.form.inputtype.InputValidationRecording();
+            var propertyValue = this.property.getValue();
 
-            return new api.form.inputtype.InputValidationRecording();
+            if (this.imageUploader.isEditMode()) {
+                recording.setBreaksMinimumOccurrences(true);
+            }
+            if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {
+                recording.setBreaksMinimumOccurrences(true);
+            }
+            if (!silent) {
+                if (recording.validityChanged(this.previousValidationRecording)) {
+                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
+                }
+            }
+            this.previousValidationRecording = recording;
+            return recording;
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

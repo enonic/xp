@@ -42,7 +42,7 @@
   }
 
   &:focus:not(:disabled) {
-    box-shadow: 0px 0px 5px @admin-input-blue;
+    box-shadow: 0 0 5px @admin-input-blue;
     border: 1px solid @admin-input-blue;
   }
 
@@ -58,6 +58,10 @@
 .button {
   .reset();
   .button(@form-button-font, @form-button-bg);
+
+  &.no-bg {
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
+  }
 
   &.small {
     padding: 0 15px 0 15px;
@@ -82,29 +86,24 @@
   &.red {
     .button-background(#C92606);
   }
-}
 
-.close-button.no-bg {
-  .button(@admin-white, transparent, @admin-almost-white, transparent);
-  .box-sizing(content-box); // for firefox to center the icon
-  padding: 0;
-  width: 24px;
-  height: 24px;
-}
-
-.close-button:not(.no-bg) {
-  .button(@admin-white, #A6A9A8);
-  .box-sizing(content-box); // for firefox to center the icon
-  padding: 0;
-  width: 24px;
-  height: 24px;
-
-  top: 1px;
-  right: -1px;
-  background: rgba(55, 55, 55, 0.2);
-
-  &:hover:not(:disabled) {
-    background: rgba(55, 55, 55, 0.5);
+  &.blue {
+    .button-background(@admin-button-blue2);
   }
+}
+
+.close-button {
+  .button(@admin-white, rgba(55, 55, 55, 0.2), @admin-white, rgba(55, 55, 55, 0.5));
+
+  &.no-bg {
+    .button(@admin-white, transparent, @admin-almost-white, transparent);
+  }
+
+  // should go last to override button defaults
+  .box-sizing(content-box); // for firefox to center the icon
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
 }
 

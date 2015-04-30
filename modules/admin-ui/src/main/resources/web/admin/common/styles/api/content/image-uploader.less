@@ -1,5 +1,5 @@
 .image-uploader {
-  .reset(true);
+  .reset();
 
   width: 100%;
 
@@ -26,6 +26,32 @@
         border-color: darken(@admin-input-blue, 10%);
         .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
       }
+    }
+
+    .focal-point-toolbar {
+      .clearfix();
+
+      button {
+        span {
+          line-height: 30px;
+        }
+
+        &.icon-center-focus-strong {
+          font-size: 32px;
+          padding: 0;
+
+          span {
+            display: none;
+          }
+        }
+      }
+
+      .pull-right {
+        button {
+          margin-left: 10px;
+        }
+      }
+
     }
 
   }
