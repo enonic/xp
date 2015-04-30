@@ -30,13 +30,21 @@ module api.content.form.inputtype.image {
             var content: ImageSelectorDisplayValue = this.getOption().displayValue;
 
             if (content.getContentSummary()) {
-                if (this.isVisible()) {
-                    this.showSpinner();
-                }
-                this.icon.setSrc(content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE);
+                this.updateIconSrc(content);
                 this.label.getEl().setInnerHtml(content.getLabel());
             } else {
                 this.showProgress();
+            }
+        }
+
+        private updateIconSrc(content: ImageSelectorDisplayValue) {
+            var newIconSrc = content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE;
+
+            if (this.icon.getSrc().indexOf(newIconSrc) == -1) {
+                if (this.isVisible()) {
+                    this.showSpinner();
+                }
+                this.icon.setSrc(newIconSrc);
             }
         }
 
@@ -85,10 +93,7 @@ module api.content.form.inputtype.image {
 
             this.onShown(() => {
                 if (this.getOption().displayValue.getContentSummary()) {
-                    if (this.icon.isLoaded()) {
-                        // refresh image in case it was changed by external wizard
-                        this.icon.refresh();
-                    } else {
+                    if (!this.icon.isLoaded()) {
                         this.showSpinner();
                     }
                 }

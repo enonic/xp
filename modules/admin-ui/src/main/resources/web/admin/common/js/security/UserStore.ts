@@ -23,6 +23,28 @@ module api.security {
             return this.permissions;
         }
 
+        isDeletable(): wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
+            new GetPrincipalsByUserStoreRequest(this.key,
+                [PrincipalType.USER, PrincipalType.GROUP]).
+                sendAndParse().then((principals: Principal[]) => {
+                    if (principals.length > 0) {
+                        deferred.resolve(false);
+                    } else {
+                        deferred.resolve(true);
+                    }
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    deferred.resolve(false);
+                }).done();
+            ;
+            return deferred.promise;
+        }
+
+        static checkOnDeletable(key: UserStoreKey): wemQ.Promise<boolean> {
+            return !!key ? UserStore.create().setKey(key.toString()).build().isDeletable() : null;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStore)) {
                 return false;

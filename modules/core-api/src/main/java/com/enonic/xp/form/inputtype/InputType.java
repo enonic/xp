@@ -70,6 +70,8 @@ public abstract class InputType<C extends InputTypeConfig>
 
     public abstract void checkBreaksRequiredContract( final Property property );
 
+    public abstract void checkTypeValidity( final Property property );
+
     @Override
     public boolean equals( final Object o )
     {

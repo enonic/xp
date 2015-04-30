@@ -7,9 +7,8 @@ module app.wizard.action {
 
             this.setEnabled(false);
             this.onExecuted(() => {
-                new ShowSplitEditEvent().fire();
                 wizard.showSplitEdit();
-
+                new ShowSplitEditEvent().fire();
             });
         }
     }
