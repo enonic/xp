@@ -25,6 +25,11 @@ public class NodePublishRequest
         return ( this.reason instanceof NodePublishReasonIsParent );
     }
 
+    public boolean reasonRequested()
+    {
+        return ( this.reason instanceof NodePublishReasonRequested );
+    }
+
     public boolean reasonReferredFrom()
     {
         return ( this.reason instanceof NodePublishReasonIsReferred );

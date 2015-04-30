@@ -878,6 +878,7 @@ public class ResolveSyncWorkCommandTest
         assertNode( nodePublishRequests, "b2" );
         assertNode( nodePublishRequests, "b2_1" );
 
+        assertTrue( nodePublishRequests.get( NodeId.from( "s1" ) ).reasonRequested() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
         assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonParentFor() );
@@ -886,6 +887,50 @@ public class ResolveSyncWorkCommandTest
         //assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonChildOf() );
         //assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
     }
+
+
+    /*
+    - S1 (New)
+     - A1 (New)
+     - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+    - S2 (New)
+     - B1 (New)
+     - B2 (New)
+         - B2_1 (New)
+    - S1d (New)
+    - A1d (New)
+    - A2d (New)
+         - A2_1d - Ref:B2_1 (New)
+
+    Publish A2 with children, should publish S1, A1, A2, A2_1, B2_1, B2, S2
+    */
+    @Test
+    public void resolve_with_include_children_2()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( NodeId.from( "a2" ), true );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 6, nodePublishRequests.size() );
+
+        assertNode( nodePublishRequests, "s1" );
+        assertNode( nodePublishRequests, "a2" );
+        assertNode( nodePublishRequests, "a2_1" );
+        assertNode( nodePublishRequests, "s2" );
+        assertNode( nodePublishRequests, "b2" );
+        assertNode( nodePublishRequests, "b2_1" );
+
+        assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonRequested() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonParentFor() );
+        //assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
+    }
+
 
 
     @Test
