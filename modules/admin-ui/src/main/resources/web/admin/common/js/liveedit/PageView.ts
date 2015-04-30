@@ -67,7 +67,20 @@ module api.liveedit {
 
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
-            this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
+            this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                /*
+                 if (event.getPropertyName() === PageModel.PROPERTY_REGIONS) {
+                 this.regionViews.forEach((regionView)=> {
+                 this.unregisterRegionView(regionView)
+                 });
+                 this.regionViews = [];
+                 this.regionIndex = 0;
+                 this.viewsById = {};
+                 this.parseItemViews();
+                 }
+                 */
+                this.refreshEmptyState();
+            });
             this.regionViews = [];
             this.regionIndex = 0;
             this.viewsById = {};

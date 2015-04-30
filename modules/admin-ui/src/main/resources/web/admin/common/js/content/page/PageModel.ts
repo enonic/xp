@@ -68,6 +68,10 @@ module api.content.page {
 
     export class PageModel {
 
+        public static PROPERTY_REGIONS = 'regions';
+
+        public static PROPERTY_TEMPLATE = 'template';
+
         private liveEditModel: api.liveedit.LiveEditModel;
 
         private defaultTemplate: PageTemplate;
@@ -253,8 +257,9 @@ module api.content.page {
             }
             if (setTemplate.regions) {
                 this.setRegions(setTemplate.regions, setTemplate.eventSource);
-            } else if (setTemplate.template && setTemplate.template.getRegions()) {
-                this.setRegions(setTemplate.template.getRegions(), setTemplate.eventSource);
+            } else if (setTemplate.template && setTemplate.template.hasRegions()) {
+                // copy regions to avoid modifying defaultTemplate regions
+                this.setRegions(setTemplate.template.getRegions().clone(), setTemplate.eventSource);
             }
 
             if (this.regions) {
@@ -264,7 +269,7 @@ module api.content.page {
             var newTemplateKey = this.template ? this.template.getKey() : null;
             if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
                 this.setIgnorePropertyChanges(true);
-                this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, setTemplate.eventSource);
+                this.notifyPropertyChanged(PageModel.PROPERTY_TEMPLATE, oldTemplateKey, newTemplateKey, setTemplate.eventSource);
                 this.setIgnorePropertyChanges(false);
             }
             return this;
@@ -280,7 +285,7 @@ module api.content.page {
             this.registerRegionsListeners(this.regions);
 
             this.setIgnorePropertyChanges(true);
-            this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
+            this.notifyPropertyChanged(PageModel.PROPERTY_REGIONS, oldValue, value, eventOrigin);
             this.setIgnorePropertyChanges(false);
             return this;
         }
