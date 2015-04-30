@@ -130,9 +130,7 @@ module api.form.inputtype.text {
                 placeholder: Element = <api.dom.InputEl>parent.findChildById(placeholderEl.id),
                 focusedSelectorCls = "mce-content-selector-focused";
 
-            var contentSelector = api.content.ContentComboBox.create()
-                .setMaximumOccurrences(1)
-                .build();
+            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
 
             contentSelector.addClass("mce-abs-layout-item mce-content-selector");
 
@@ -150,6 +148,9 @@ module api.form.inputtype.text {
 
             placeholder.hide();
             contentSelector.insertAfterEl(placeholder);
+            if (placeholder.getEl().getValue()) {
+                contentSelector.setValue(placeholder.getEl().getValue());
+            }
         }
 
     }
