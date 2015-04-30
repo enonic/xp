@@ -924,6 +924,7 @@ public class ResolveSyncWorkCommandTest
         assertNode( nodePublishRequests, "b2" );
         assertNode( nodePublishRequests, "b2_1" );
 
+        assertTrue( nodePublishRequests.get( NodeId.from( "s1" ) ).reasonParentFor() );
         assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonRequested() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
