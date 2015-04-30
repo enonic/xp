@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow {
     export class ContextWindowToggler extends api.ui.button.Button {
 
         private activeListeners: {(isActive: boolean): void}[] = [];
+        private forcedListeners: {(isActive: boolean): void}[] = [];
 
         constructor() {
             super();
@@ -16,13 +17,26 @@ module app.wizard.page.contextwindow {
             })
         }
 
-        setActive(value: boolean) {
+        setActive(value: boolean, silent: boolean = false) {
             this.toggleClass('active', value);
-            this.notifyActiveChanged(value);
+            if (!silent) {
+                this.notifyActiveChanged(value);
+            }
         }
 
         isActive() {
             return this.hasClass("active");
+        }
+
+        setForced(value: boolean, silent: boolean = false) {
+            this.toggleClass('forced', value);
+            if (!silent) {
+                this.notifyForcedChanged(value);
+            }
+        }
+
+        isForced(): boolean {
+            return this.hasClass('forced');
         }
 
         onActiveChanged(listener: (isActive: boolean) => void) {
@@ -38,6 +52,22 @@ module app.wizard.page.contextwindow {
         private notifyActiveChanged(isActive: boolean) {
             this.activeListeners.forEach((listener) => {
                 listener(isActive);
+            });
+        }
+
+        onForcedChanged(listener: (forced: boolean) => void) {
+            this.forcedListeners.push(listener);
+        }
+
+        unForcedChanged(listener: (forced: boolean) => void) {
+            this.forcedListeners = this.forcedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyForcedChanged(forced: boolean) {
+            this.forcedListeners.forEach((listener) => {
+                listener(forced);
             });
         }
     }

@@ -51,6 +51,8 @@ module app.wizard.page.contextwindow {
 
         private displayModeChangedListeners: {() : void}[] = [];
 
+        private animationTimer;
+
         constructor(config: ContextWindowConfig) {
             super();
             this.liveFormPanel = config.liveFormPanel;
@@ -140,19 +142,27 @@ module app.wizard.page.contextwindow {
         slideOut() {
             this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
             // there is a 100ms animation so wait until it's finished
-            setTimeout(() => {
+            if (this.animationTimer) {
+                clearTimeout(this.animationTimer);
+            }
+            this.animationTimer = setTimeout(() => {
                 this.getEl().addClass('hidden');
                 this.shown = false;
                 this.updateFrameSize();
+                this.animationTimer = null;
             }, 100);
         }
 
         slideIn() {
             this.getEl().removeClass('hidden').setRightPx(0);
             // there is a 100ms animation so wait until it's finished
-            setTimeout(() => {
+            if (this.animationTimer) {
+                clearTimeout(this.animationTimer);
+            }
+            this.animationTimer = setTimeout(() => {
                 this.shown = true;
                 this.updateFrameSize();
+                this.animationTimer = null
             }, 100);
         }
 

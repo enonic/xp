@@ -185,9 +185,9 @@ module app.wizard.page {
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 var forced = item.isInRangeOrSmaller(ResponsiveRanges._540_720) || item.isInRangeOrBigger(ResponsiveRanges._1380_1620);
-                this.contentWizardPanel.getContextWindowToggler().toggleClass('forced', forced);
+                this.contentWizardPanel.getContextWindowToggler().setForced(forced);
 
-                this.contextWindowController.slideContextWindowIfNecessary();
+                this.contextWindowController.resizeHandler();
             });
 
             this.liveEditListen();
