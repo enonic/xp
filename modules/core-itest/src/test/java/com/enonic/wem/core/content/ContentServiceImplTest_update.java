@@ -1,7 +1,11 @@
 package com.enonic.wem.core.content;
 
+import java.time.LocalDateTime;
+
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -31,6 +35,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
@@ -39,6 +44,9 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_update
     extends AbstractContentServiceTest
 {
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @Override
     public void setUp()
         throws Exception
@@ -172,7 +180,6 @@ public class ContentServiceImplTest_update
             build();
     }
 
-
     @Test
     public void update_content_data()
         throws Exception
@@ -205,6 +212,57 @@ public class ContentServiceImplTest_update
         assertEquals( "This is my content", storedContent.getDisplayName() );
         assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+    }
+
+
+    @Test
+    public void update_incorrect_content_data()
+        throws Exception
+    {
+
+        //Creates a content and a reference to this object
+        final Content referredContent = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Referred content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build() );
+        final Reference reference = Reference.from( referredContent.getId().toString() );
+
+
+        //Mocks the content service to return our content type
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.contentService.setContentTypeService( contentTypeService );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createTestContentType() );
+
+        //Creates a valid content
+        PropertyTree data = new PropertyTree( );
+        data.addReference( "myReference", reference );
+        data.addLocalDateTime( "myDateTime", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+
+        final Content content = this.contentService.create( CreateContentParams.create().
+            type( ContentTypeName.from( "myContentType" ) ).
+            contentData( data ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            displayName( "my display-name" ).
+            build() );
+
+        //Updates the content with an incorrect value
+        PropertyTree invalidData = new PropertyTree( );
+        invalidData.addString( "myReference", "1234" ); //Incorrect value
+        invalidData.addLocalDateTime( "myDateTime",  LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.data = invalidData;
+            } );
+
+        exception.expect( IllegalArgumentException.class );
+        this.contentService.update( updateContentParams );
     }
 
 
