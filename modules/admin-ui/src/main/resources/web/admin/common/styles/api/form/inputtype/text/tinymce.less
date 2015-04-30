@@ -62,3 +62,62 @@
   }
 
 }
+
+.mce-container-body.mce-abs-layout {
+  overflow: inherit !important;
+}
+
+.mce-link-tab-content {
+  div.mce-first {
+    top: 10px !important;
+
+    label {
+      margin-top: 5px;
+    }
+  }
+
+  .mce-content-selector {
+    .input-border();
+    left: 146px;
+    width: 284px;
+    background-color: @admin-white;
+  }
+
+  .mce-content-selector-focused, .mce-textbox:focus, .mce-checkbox:focus i.mce-i-checkbox {
+    .box-shadow(0px 0px 5px @admin-input-blue);
+    border: 1px solid @admin-input-blue;
+  }
+
+  .combobox.form-input {
+    width: 85%;
+    .option-filter-input {
+      padding-left: 5px;
+    }
+  }
+
+  .combobox + .selected-options .selected-option {
+    padding-top: 4px;
+  }
+
+  .remove {
+    padding-top: 9px;
+    padding-right: 12px;
+  }
+}
+
+.mce-floatpanel {
+  .mce-textbox {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box; /* Opera/IE 8+ */
+  }
+
+  .mce-textbox, i.mce-i-checkbox {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  i.mce-i-checkbox {
+    background: none repeat scroll 0 0 @admin-white;
+  }
+}

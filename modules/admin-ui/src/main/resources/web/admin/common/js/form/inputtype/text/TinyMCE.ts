@@ -7,6 +7,9 @@ module api.form.inputtype.text {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import ContentSummary = api.content.ContentSummary;
+    import Element = api.dom.Element;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -55,6 +58,7 @@ module api.form.inputtype.text {
                     height: 100,
 
                     setup: (editor) => {
+                        editor.addCommand("addContentSelector", this.createContentSelector);
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
@@ -119,6 +123,34 @@ module api.form.inputtype.text {
 
             // TODO
             return true;
+        }
+
+        private createContentSelector(ui: boolean, placeholderEl: HTMLElement) {
+            var parent: Element = Element.fromHtmlElement(placeholderEl.parentElement, true),
+                placeholder: Element = <api.dom.InputEl>parent.findChildById(placeholderEl.id),
+                focusedSelectorCls = "mce-content-selector-focused";
+
+            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
+
+            contentSelector.addClass("mce-abs-layout-item mce-content-selector");
+
+            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
+                placeholder.getEl().setValue(event.getOption().value);
+            });
+
+            contentSelector.onFocus((e) => {
+                contentSelector.addClass(focusedSelectorCls);
+            });
+
+            contentSelector.onBlur((e) => {
+                contentSelector.removeClass(focusedSelectorCls);
+            });
+
+            placeholder.hide();
+            contentSelector.insertAfterEl(placeholder);
+            if (placeholder.getEl().getValue()) {
+                contentSelector.setValue(placeholder.getEl().getValue());
+            }
         }
 
     }
