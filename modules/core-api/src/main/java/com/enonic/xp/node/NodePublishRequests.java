@@ -22,6 +22,8 @@ public class NodePublishRequests
 
     private final Set<NodePublishRequest> publishAsRequested = Sets.newHashSet();
 
+    private final Set<NodePublishRequest> publishAsChildOf = Sets.newHashSet();
+
     public int size()
     {
         return this.nodePublishRequests.size();
@@ -35,6 +37,11 @@ public class NodePublishRequests
     public Set<NodePublishRequest> getPublishAsParentFor()
     {
         return publishAsParentFor;
+    }
+
+    public Set<NodePublishRequest> getPublishAsChildOf()
+    {
+        return publishAsChildOf;
     }
 
     public Set<NodePublishRequest> getPublishAsReferredTo()
@@ -79,6 +86,10 @@ public class NodePublishRequests
         else if ( nodePublishRequest.reasonReferredFrom() )
         {
             publishAsReferredTo.add( nodePublishRequest );
+        }
+        else if ( nodePublishRequest.reasonChildOf() )
+        {
+            publishAsChildOf.add( nodePublishRequest );
         }
         else
         {

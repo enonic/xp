@@ -310,7 +310,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2_1" ).
             build() );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1.id(), false );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1_1.id(), false );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
         assertEquals( 3, nodePublishRequests.size() );
@@ -381,11 +381,11 @@ public class ResolveSyncWorkCommandTest
 
         final NodePublishRequest node2PublishRequest = nodePublishRequests.get( node2.id() );
         assertNotNull( node2PublishRequest );
-        assertTrue( node2PublishRequest.reasonParentFor() );
+        assertTrue( node2PublishRequest.reasonReferredFrom() );
 
         final NodePublishRequest node2_1PublishRequest = nodePublishRequests.get( node2_1.id() );
         assertNotNull( node2_1PublishRequest );
-        assertTrue( node2_1PublishRequest.reasonParentFor() );
+        assertTrue( node2_1PublishRequest.reasonReferredFrom() );
     }
 
     @Test
@@ -802,7 +802,6 @@ public class ResolveSyncWorkCommandTest
         assertNode( nodePublishRequests, "b2_1" );
     }
 
-
     /*
  - S1 (New)
      - A1 (New)
@@ -828,7 +827,7 @@ public class ResolveSyncWorkCommandTest
 
         duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "s1" );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( NodeId.from( "s1" ), true );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
 
@@ -880,12 +879,12 @@ public class ResolveSyncWorkCommandTest
 
         assertTrue( nodePublishRequests.get( NodeId.from( "s1" ) ).reasonRequested() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
-        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
-        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonParentFor() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonReferredFrom() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonReferredFrom() );
 
-        //assertTrue( nodePublishRequests.get( NodeId.from( "a1" ) ).reasonChildOf() );
-        //assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonChildOf() );
-        //assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "a1" ) ).reasonChildOf() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonChildOf() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
     }
 
 
@@ -927,12 +926,10 @@ public class ResolveSyncWorkCommandTest
         assertTrue( nodePublishRequests.get( NodeId.from( "s1" ) ).reasonParentFor() );
         assertTrue( nodePublishRequests.get( NodeId.from( "a2" ) ).reasonRequested() );
         assertTrue( nodePublishRequests.get( NodeId.from( "b2_1" ) ).reasonReferredFrom() );
-        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonParentFor() );
-        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonParentFor() );
-        //assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "b2" ) ).reasonReferredFrom() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "s2" ) ).reasonReferredFrom() );
+        assertTrue( nodePublishRequests.get( NodeId.from( "a2_1" ) ).reasonChildOf() );
     }
-
-
 
     @Test
     public void publish_duplicate_of_original_do_not_publish_original()
@@ -942,7 +939,7 @@ public class ResolveSyncWorkCommandTest
 
         final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id(), false );
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id(), true );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
 

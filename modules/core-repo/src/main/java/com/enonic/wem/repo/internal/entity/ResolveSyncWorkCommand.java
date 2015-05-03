@@ -57,7 +57,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodeId nodeId : diff.getNodesWithDifferences() )
         {
-            resolveDiffWithNodeId( nodeId, ResolveContext.requested() );
+            resolveDiffWithNodeId( nodeId );
         }
 
         return resultBuilder.build();
@@ -120,7 +120,7 @@ public class ResolveSyncWorkCommand
         return nodePath;
     }
 
-    private void resolveDiffWithNode( final Node node, final ResolveContext resolveContext )
+    private void resolveDiffWithNode( final Node node )
     {
         if ( isProcessed( node.id() ) )
         {
@@ -129,10 +129,10 @@ public class ResolveSyncWorkCommand
 
         this.processedIds.add( node.id() );
 
-        doResolveDiff( node, node.id(), resolveContext );
+        doResolveDiff( node, node.id() );
     }
 
-    private void resolveDiffWithNodeId( final NodeId nodeId, final ResolveContext resolveContext )
+    private void resolveDiffWithNodeId( final NodeId nodeId )
     {
         if ( isProcessed( nodeId ) )
         {
@@ -149,11 +149,11 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            doResolveDiff( node, nodeId, resolveContext );
+            doResolveDiff( node, nodeId );
         }
     }
 
-    private void doResolveDiff( final Node node, final NodeId nodeId, final ResolveContext resolveContext )
+    private void doResolveDiff( final Node node, final NodeId nodeId )
     {
         final NodeComparison comparison = getNodeComparison( nodeId );
 
@@ -162,7 +162,7 @@ public class ResolveSyncWorkCommand
             return;
         }
 
-        addResult( comparison, resolveContext );
+        addResult( comparison, node );
 
         if ( !allPossibleNodesAreIncluded )
         {
@@ -186,7 +186,7 @@ public class ResolveSyncWorkCommand
 
             if ( shouldBeResolvedDiffFor( nodeComparison ) )
             {
-                resolveDiffWithNode( thisParentNode, ResolveContext.parentFor( node.id() ) );
+                resolveDiffWithNode( thisParentNode );
             }
         }
     }
@@ -203,7 +203,7 @@ public class ResolveSyncWorkCommand
 
                 if ( !this.processedIds.contains( referredNodeId ) )
                 {
-                    resolveDiffWithNodeId( referredNodeId, ResolveContext.referredFrom( node.id() ) );
+                    resolveDiffWithNodeId( referredNodeId );
                 }
             }
         }
@@ -231,7 +231,7 @@ public class ResolveSyncWorkCommand
             execute();
     }
 
-    private void addResult( final NodeComparison comparison, final ResolveContext resolveContext )
+    private void addResult( final NodeComparison comparison, final Node nodeToAddToResult )
     {
         final NodeId nodeId = comparison.getNodeId();
 
@@ -241,6 +241,7 @@ public class ResolveSyncWorkCommand
         }
         else
         {
+            ResolveContext resolveContext = determineResolveContext( nodeToAddToResult );
             if ( comparison.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
                 resultBuilder.addDelete( nodeId );
@@ -253,11 +254,71 @@ public class ResolveSyncWorkCommand
             {
                 resultBuilder.publishParentFor( comparison.getNodeId(), resolveContext.contextNodeId );
             }
+            else if ( resolveContext.becauseChild )
+            {
+                resultBuilder.publishChildOf( comparison.getNodeId(), resolveContext.contextNodeId );
+            }
             else
             {
                 resultBuilder.publishRequested( comparison.getNodeId() );
             }
         }
+    }
+
+    /**
+     * Determines resolveContext with regard to the node that is passed for publishing (represented with this.nodeId).
+     * Determination is made in the following way:
+     * If passed node's id is equal to this.nodeId, then this node is requested to publish.
+     * If passed node's path contains path of initial node (this.nodeId), then it is a child of this.nodeId
+     * If passed node's path is contained within path of initial node (this.nodeId), then it is a parent of this.nodeId
+     * If this.nodeId is null, all resolved nodes are treated as requested to publish.
+     * Otherwise, passed node was referred.
+     *
+     * @return
+     */
+     /*
+    - S1 (New)
+     - A1 (New)
+     - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+    - S2 (New)
+     - B1 (New)
+     - B2 (New)
+         - B2_1 (New)
+
+    Publish S1 with children, will result in following contexts:
+    - S1 (publishRequested)
+     - A1 (childOf)
+     - A2 (childOf)
+         - A2_1 - Ref:B2_1 (childOf)
+    - S2 (referredTo)
+     - B1 (New)
+     - B2 (referredTo)
+         - B2_1 (referredTo)
+    */
+    private ResolveContext determineResolveContext( final Node nodeToResolve )
+    {
+        if ( nodeId == null )
+        {
+            return ResolveContext.requested();
+        }
+        if ( nodeToResolve.id().equals( nodeId ) )
+        {
+            return ResolveContext.requested();
+        }
+
+        final Node initialNode = doGetById( nodeId, false );
+
+        if ( nodeToResolve.path().toString().contains( initialNode.path().toString() ) )
+        {
+            return ResolveContext.childOf( nodeId );
+        }
+        if ( initialNode.path().toString().contains( nodeToResolve.path().toString() ) )
+        {
+            return ResolveContext.parentFor( nodeId );
+        }
+
+        return ResolveContext.referredFrom( nodeId );
     }
 
     private static class ResolveContext
@@ -266,10 +327,14 @@ public class ResolveSyncWorkCommand
 
         private boolean becauseParent = false;
 
+        private boolean becauseChild = false;
+
         private boolean becauseReferredTo = false;
 
-        private ResolveContext( final boolean becauseParent, final boolean becauseReferredTo, final NodeId contextNodeId )
+        private ResolveContext( final boolean becauseChild, final boolean becauseParent, final boolean becauseReferredTo,
+                                final NodeId contextNodeId )
         {
+            this.becauseChild = becauseChild;
             this.becauseParent = becauseParent;
             this.becauseReferredTo = becauseReferredTo;
             this.contextNodeId = contextNodeId;
@@ -277,17 +342,22 @@ public class ResolveSyncWorkCommand
 
         private static ResolveContext parentFor( final NodeId nodeId )
         {
-            return new ResolveContext( true, false, nodeId );
+            return new ResolveContext( false, true, false, nodeId );
+        }
+
+        private static ResolveContext childOf( final NodeId nodeId )
+        {
+            return new ResolveContext( true, false, false, nodeId );
         }
 
         private static ResolveContext referredFrom( final NodeId nodeId )
         {
-            return new ResolveContext( false, true, nodeId );
+            return new ResolveContext( false, false, true, nodeId );
         }
 
         private static ResolveContext requested()
         {
-            return new ResolveContext( false, false, null );
+            return new ResolveContext( false, false, false, null );
         }
 
     }
