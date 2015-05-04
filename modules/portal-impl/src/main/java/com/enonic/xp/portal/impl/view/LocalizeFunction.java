@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.view;
 
+import java.text.MessageFormat;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -16,6 +18,8 @@ public final class LocalizeFunction
 {
     private LocaleService localeService;
 
+    final static String NO_MATCHING_BUNDLE = "no localization bundle found in module ''{0}''";
+
     @Override
     public String getName()
     {
@@ -28,6 +32,11 @@ public final class LocalizeFunction
         final LocalizeParams localizeParams = new LocalizeParams( PortalContextAccessor.get() ).setAsMap( params.getArgs() );
 
         final MessageBundle bundle = this.localeService.getBundle( localizeParams.getModuleKey(), localizeParams.getLocale() );
+
+        if ( bundle == null )
+        {
+            return MessageFormat.format( NO_MATCHING_BUNDLE, localizeParams.getModuleKey() );
+        }
 
         return bundle.localize( localizeParams.getKey(), localizeParams.getParams() );
     }
