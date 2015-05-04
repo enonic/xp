@@ -143,6 +143,12 @@ module api.liveedit {
             //this.onDragEnd(this.handleDragEnd.bind(this));
         }
 
+        remove(): ComponentView {
+            super.remove();
+            this.unregisterComponentListeners(this.component);
+            return this;
+        }
+
         private registerComponentListeners(component: COMPONENT) {
             component.onReset(this.resetListener);
             component.onPropertyChanged(this.propertyChangedListener);

@@ -88,6 +88,8 @@ module LiveEdit {
             api.dom.WindowDOM.get().asWindow().onunload = (event) => {
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();
+                    // do remove to trigger model unbinding
+                    this.pageView.remove();
                 } else {
                     this.skipNextReloadConfirmation = false;
                 }

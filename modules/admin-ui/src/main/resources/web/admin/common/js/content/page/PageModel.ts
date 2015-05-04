@@ -276,6 +276,7 @@ module api.content.page {
         }
 
         setRegions(value: api.content.page.region.Regions, eventOrigin?: any): PageModel {
+            debugger;
             var oldValue = this.regions;
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
@@ -430,8 +431,7 @@ module api.content.page {
         }
 
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
-            this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
+            this.propertyChangedListeners = this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
                 return listener != curr;
             });
         }
