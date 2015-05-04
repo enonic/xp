@@ -53,7 +53,7 @@ module api.content.form.inputtype.time {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_DATE_TIME) || !value.getType().equals(ValueTypes.DATE_TIME);
+            return value.isNull() || !(value.getType().equals(ValueTypes.LOCAL_DATE_TIME) || value.getType().equals(ValueTypes.DATE_TIME));
         }
 
         private createInputAsLocalDateTime(property: Property, valueType: ValueType) {
@@ -94,7 +94,7 @@ module api.content.form.inputtype.time {
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var newValue = new Value(api.util.DateTime.fromDate(event.getDate()), valueType);
+                var newValue = new Value(event.getDate() == null ? null : api.util.DateTime.fromDate(event.getDate()), valueType);
                 property.setValue(newValue);
             });
             return dateTimePicker;
