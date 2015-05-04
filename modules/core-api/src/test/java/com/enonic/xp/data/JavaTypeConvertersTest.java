@@ -54,7 +54,8 @@ public class JavaTypeConvertersTest
         assertNotNull( JavaTypeConverters.STRING.convertFrom( "test convert" ) );
         assertEquals( "converting", JavaTypeConverters.STRING.convertFrom( "converting" ) );
         assertNotNull( JavaTypeConverters.STRING.convertFrom( LocalDateTime.now() ) );
-        assertNull( JavaTypeConverters.STRING.convertFrom( new PropertySet() ) );
+        assertNotNull( JavaTypeConverters.STRING.convertFrom( new PropertySet() ) );
+        assertEquals( "\n", JavaTypeConverters.STRING.convertFrom( new PropertySet() ) );
     }
 
     @Test
