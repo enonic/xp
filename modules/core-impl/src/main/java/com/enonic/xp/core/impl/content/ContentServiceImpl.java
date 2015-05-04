@@ -43,6 +43,8 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -288,6 +290,20 @@ public class ContentServiceImpl
             strategy( params.isAllowPublishOutsideSelection()
                           ? PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION
                           : PushContentCommand.PushContentStrategy.STRICT ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params )
+    {
+        return ResolvePublishDependenciesCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            contentIds( params.getContentIds() ).
+            target( params.getTarget() ).
             build().
             execute();
     }

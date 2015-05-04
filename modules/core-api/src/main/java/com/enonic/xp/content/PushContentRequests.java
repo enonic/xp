@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -45,6 +46,55 @@ public class PushContentRequests
         return pushedBecauseParentOfPusheds;
     }
 
+    public ImmutableSet<PushedBecauseChildOfPushed> getPushedBecauseChildOfPusheds()
+    {
+        return pushedBecauseChildOfPusheds;
+    }
+
+    public ContentIds getDependantsContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( PushedBecauseReferredTo to : pushedBecauseReferredTos )
+        {
+            ids.add( to.contentId );
+        }
+        for ( PushedBecauseParentOfPushed to : pushedBecauseParentOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        if ( filterRequestedToPublishContentIds )
+        {
+            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getPushedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( PushedBecauseChildOfPushed to : pushedBecauseChildOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        if ( filterRequestedToPublishContentIds )
+        {
+            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getPushedBecauseRequestedContentIds()
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( PushBecauseRequested to : pushBecauseRequested )
+        {
+            ids.add( to.contentId );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
 
     public static class PushBecauseRequested
     {
