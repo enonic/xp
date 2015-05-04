@@ -1,8 +1,6 @@
 module api.ui.form {
 
-    export class Form extends api.dom.DivEl {
-
-        private formEl: api.dom.FormEl;
+    export class Form extends api.dom.FormEl {
 
         private fieldsets: api.ui.form.Fieldset[] = [];
 
@@ -14,10 +12,9 @@ module api.ui.form {
 
         constructor(className?: string) {
             super(className);
-            this.formEl = new api.dom.FormEl("form-view");
-            this.formEl.preventSubmit();
+            this.addClass("form-view");
+            this.preventSubmit();
 
-            this.appendChild(this.formEl);
         }
 
         add(fieldset: Fieldset) {
@@ -34,7 +31,7 @@ module api.ui.form {
             });
 
             this.fieldsets.push(fieldset);
-            this.formEl.appendChild(fieldset);
+            this.appendChild(fieldset);
             return this;
         }
 
