@@ -94,11 +94,64 @@ module api.form.inputtype.text {
                         editor.execCommand('mceAutoResize');
                     }
                 });
+
+                this.setupStickyEditorToolbar();
             });
 
             var textAreaWrapper = new api.dom.DivEl();
             textAreaWrapper.appendChild(textAreaEl);
             return textAreaWrapper;
+        }
+
+        private setupStickyEditorToolbar() {
+            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar());
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            });
+        }
+
+        private updateStickyEditorToolbar() {
+            if (!this.editorTopEdgeIsVisible() && this.editorLowerEdgeIsVisible()) {
+                this.addClass("sticky-toolbar");
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            }
+            else {
+                this.removeClass("sticky-toolbar")
+            }
+        }
+
+        private updateEditorToolbarWidth() {
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").width(wemjq(this.getHTMLElement()).find(".mce-edit-area").innerWidth());
+        }
+
+        private updateEditorToolbarPos() {
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(10)});
+        }
+
+        private editorTopEdgeIsVisible(): boolean {
+            return this.calcDistToTopOfScrlbleArea() > 0;
+        }
+
+        private editorLowerEdgeIsVisible(): boolean {
+            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea();
+            var editorToolbarHeight = wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+
+            return (this.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
+        }
+
+        private calcDistToTopOfScrlbleArea(): number {
+            return this.getEl().getOffsetTop() - this.getToolbarOffsetTop();
+        }
+
+        private getToolbarOffsetTop(delta: number = 0): number {
+            var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
+                stickyToolbarHeight = toolbar.outerHeight(true),
+                stickyToolbarOffset = toolbar.offset().top;
+
+            return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
 
         private getEditor(editorId: string, property: Property): TinyMceEditor {
