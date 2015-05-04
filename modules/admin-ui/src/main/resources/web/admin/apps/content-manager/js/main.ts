@@ -22,6 +22,12 @@ function startApplication() {
         contentDeleteDialog.open();
     });
 
+    var contentPublishDialog = new app.publish.ContentPublishDialog();
+    app.browse.ContentPublishPromptEvent.on((event) => {
+        contentPublishDialog.setContentToPublish(event.getModels());
+        contentPublishDialog.open();
+    });
+
     var newContentDialog = new app.create.NewContentDialog();
     app.browse.ShowNewContentDialogEvent.on((event) => {
 

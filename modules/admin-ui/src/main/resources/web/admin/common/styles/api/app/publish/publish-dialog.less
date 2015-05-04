@@ -1,0 +1,86 @@
+.publish-dialog {
+
+  .dialog-content {
+    @media screen and (max-height: 360px) {
+      height: 60%;
+    }
+  }
+
+  .item-list {
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+
+    .viewer {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    @media screen and (max-height: 720px) {
+      max-height: 350px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 170px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 82%;
+    }
+
+  }
+
+  .dialog-buttons {
+    .button {
+      &.publish-action {
+        .button(@form-button-font, @input-red-text, @form-button-font, lighten(@input-red-text, 10%));
+        padding: 4px 19px 4px 19px;
+        margin-left: 11px;
+
+        &.spinner {
+          font-family: 'live-edit-font-icon';
+
+          &:after {
+            .animation(rotate360, .5s, .0s, linear);
+            content: "\e007";
+            color: white;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  .desc-message {
+    font-style: italic;
+    padding-top: 10px;
+    margin-bottom: -10px;
+    padding-left: 1px;
+  }
+
+  .include-child-check {
+    position: absolute;
+    bottom: 40px;
+    &.checkbox {
+      label {
+        color: @admin-blue !important;
+      }
+    }
+
+    @media screen and (max-height: 360px) {
+      bottom: 25px;
+    }
+  }
+
+  .publish-dialog-subheader {
+    margin-top: 20px;
+  }
+
+}
+
+.modal-dialog._0-240.publish-dialog, .modal-dialog._240-360.publish-dialog {
+  .include-child-check {
+    bottom: auto;
+    right: 10px;
+  }
+}

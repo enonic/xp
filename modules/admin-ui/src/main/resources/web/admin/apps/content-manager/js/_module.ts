@@ -5,6 +5,7 @@
 ///<reference path='app/browse/action/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/remove/_module.ts' />
+///<reference path='app/publish/_module.ts' />
 ///<reference path='app/create/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 
