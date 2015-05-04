@@ -53,7 +53,6 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.ComboBoxConfig;
 import com.enonic.xp.form.inputtype.ContentSelectorConfig;
-import com.enonic.xp.form.inputtype.DateTime;
 import com.enonic.xp.form.inputtype.DateTimeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.index.IndexType;

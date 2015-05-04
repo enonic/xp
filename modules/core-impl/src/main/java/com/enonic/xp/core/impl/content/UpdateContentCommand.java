@@ -12,9 +12,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentUpdatedEvent;
-import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
@@ -170,7 +168,8 @@ final class UpdateContentCommand
 
     private void validatePropertyTree( final Content editedContent )
     {
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
+        final ContentType contentType =
+            contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
         try
         {
             new InputValidator( contentType.form() ).validate( editedContent.getData().getRoot() );

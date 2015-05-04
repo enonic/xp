@@ -5,9 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -38,7 +36,6 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
