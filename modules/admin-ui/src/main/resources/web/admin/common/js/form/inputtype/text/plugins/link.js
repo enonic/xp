@@ -162,6 +162,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 name: 'text',
                 type: 'textbox',
                 size: 40,
+                classes: 'link-text',
                 label: 'Text to display',
                 onchange: function () {
                     data.text = this.value();
@@ -207,82 +208,69 @@ tinymce.PluginManager.add('link', function (editor) {
         win = editor.windowManager.open({
             title: 'Insert link',
             data: data,
-
-            bodyType: 'tabpanel',
+            classes: 'link-dialog',
             body: [{
-                title: 'Content',
                 type: "form",
-                classes: 'link-tab-content',
+                classes: 'link-form',
                 items: [
-                    {
+                    textListCtrl,
+                    linkTitleCtrl,
+                    targetListCtrl
+                ]
+            }, {
+                type: "tabpanel",
+                classes: 'link-panel',
+                items: [{
+                    title: 'Content',
+                    type: "form",
+                    classes: 'link-tab-content',
+                    items: [{
                         name: 'contentId',
                         type: 'textbox',
                         classes: 'link-tab-content-target',
                         size: 40,
                         label: 'Target',
                         value: (data.href.indexOf(contentIdPrefix) > -1) ? data.href.replace(contentIdPrefix, "") : ""
-                    },
-                    textListCtrl,
-                    linkTitleCtrl,
-                    targetListCtrl
-                ]
-            }, {
-                title: 'Download',
-                type: "form",
-                classes: 'link-tab-download',
-                items: [
-                    {
+                    }
+                    ]
+                }, {
+                    title: 'Download',
+                    type: "form",
+                    classes: 'link-tab-download',
+                    items: [{
                         name: 'href',
                         type: 'textbox',
                         classes: 'link-tab-download-target',
                         size: 40,
                         label: 'Target'
-                    },
-                    textListCtrl,
-                    linkTitleCtrl
-                ]
-            }, {
-                title: 'URL',
-                type: "form",
-                classes: 'link-tab-url',
-                items: [
-                    {
+                    }]
+                }, {
+                    title: 'URL',
+                    type: "form",
+                    classes: 'link-tab-url',
+                    items: [{
                         name: 'href',
-                        type: 'filepicker',
-                        filetype: 'file',
+                        type: 'textbox',
                         size: 40,
-                        label: 'URL',
-                        onchange: urlChange,
-                        onkeyup: updateText
-                    },
-                    textListCtrl,
-                    linkTitleCtrl,
-                    targetListCtrl
-                ]
-            }, {
-                title: 'Email',
-                type: "form",
-                classes: 'link-tab-email',
-                items: [
-                    {
+                        label: 'URL'
+                    }
+                    ]
+                }, {
+                    title: 'Email',
+                    type: "form",
+                    classes: 'link-tab-email',
+                    items: [{
                         name: 'email',
                         type: 'textbox',
                         size: 40,
                         label: 'Email'
-                    },
-                    textListCtrl,
-                    {
+                    }, {
                         name: 'subject',
                         type: 'textbox',
                         size: 40,
                         label: 'Subject'
-                    }, {
-                        name: 'body',
-                        type: 'textbox',
-                        size: 40,
-                        label: 'Body'
-                    }
-                ]
+                    }]
+                }]
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
@@ -379,8 +367,10 @@ tinymce.PluginManager.add('link', function (editor) {
             }
         });
 
-        editor.execCommand("addContentSelector", false,
-            win.getEl().querySelectorAll(".mce-link-tab-content .mce-link-tab-content-target")[0]);
+        editor.execCommand("addContentSelector", false, win.getEl()/*
+             win.getEl().querySelectorAll(".mce-link-tab-content .mce-link-tab-content-target")[0],
+             win.getEl().querySelectorAll(".mce-link-text")[0]*/
+        );
     }
 
     editor.addButton('link', {
