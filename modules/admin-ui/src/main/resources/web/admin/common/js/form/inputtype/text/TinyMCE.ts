@@ -58,7 +58,7 @@ module api.form.inputtype.text {
                     height: 100,
 
                     setup: (editor) => {
-                        editor.addCommand("addContentSelector", this.createContentSelector);
+                        editor.addCommand("addContentSelector", this.addContentSelector, this);
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
@@ -178,18 +178,11 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private createContentSelector(ui: boolean, placeholderEl: HTMLElement) {
-            var parent: Element = Element.fromHtmlElement(placeholderEl.parentElement, true),
-                placeholder: Element = <api.dom.InputEl>parent.findChildById(placeholderEl.id),
+        private createContentSelector(): api.content.ContentComboBox {
+            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build(),
                 focusedSelectorCls = "mce-content-selector-focused";
 
-            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
-
             contentSelector.addClass("mce-abs-layout-item mce-content-selector");
-
-            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
-                placeholder.getEl().setValue(event.getOption().value);
-            });
 
             contentSelector.onFocus((e) => {
                 contentSelector.addClass(focusedSelectorCls);
@@ -199,13 +192,30 @@ module api.form.inputtype.text {
                 contentSelector.removeClass(focusedSelectorCls);
             });
 
-            placeholder.hide();
-            contentSelector.insertAfterEl(placeholder);
-            if (placeholder.getEl().getValue()) {
-                contentSelector.setValue(placeholder.getEl().getValue());
-            }
+            return contentSelector;
         }
 
+        private addContentSelector(ui: boolean, dialogEl: HTMLElement) {
+            var placeholder = wemjq(dialogEl).find(".mce-link-tab-content-target"),
+                contentSelector = this.createContentSelector(),
+                focusEl = wemjq(dialogEl).find(".mce-link-text");
+
+            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
+                placeholder.val(event.getOption().value);
+            });
+
+            wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
+
+            placeholder.hide();
+
+            if (placeholder.val()) {
+                contentSelector.setValue(placeholder.val());
+            }
+
+            if (focusEl) {
+                focusEl.focus();
+            }
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
