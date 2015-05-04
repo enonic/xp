@@ -183,6 +183,15 @@ module api.dom {
             return this;
         }
 
+
+        public findChildById(id: string): Element {
+            var result: Element[] = this.children.filter((child: Element) => {
+                return child.getId() == id;
+            });
+
+            return result.length > 0 ? result[0] : null;
+        }
+
         init() {
             this.children.forEach((child: Element) => {
                 child.init();
