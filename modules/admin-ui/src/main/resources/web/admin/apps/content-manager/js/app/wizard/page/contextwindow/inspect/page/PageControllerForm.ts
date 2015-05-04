@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.inspect.page {
         private controllerSelector: PageControllerSelector;
 
         constructor(controllerSelector: PageControllerSelector) {
-            super('form-view');
+            super('page-controller-form');
             this.controllerSelector = controllerSelector;
 
             var fieldSet = new api.ui.form.Fieldset();
