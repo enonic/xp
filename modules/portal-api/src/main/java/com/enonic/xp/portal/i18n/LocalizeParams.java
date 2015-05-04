@@ -43,7 +43,7 @@ public class LocalizeParams
 
     private void locale( final String locale )
     {
-        this.locale = Strings.isNullOrEmpty( locale ) ? null : new Locale( locale );
+        this.locale = Strings.isNullOrEmpty( locale ) ? null : Locale.forLanguageTag( locale );
     }
 
     public LocalizeParams setAsMap( final Multimap<String, String> map )

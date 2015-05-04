@@ -1,10 +1,13 @@
 package com.enonic.xp.portal.impl.jslib.i18n;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -22,11 +25,10 @@ import com.enonic.xp.portal.script.command.CommandHandler;
 public class LocalizeHandlerTest
     extends AbstractHandlerTest
 {
-    private static final String RESULT_WITH_LOCALE = "result with locale";
 
-    private static final String RESULT_WITHOUT_LOCALE = "result without locale";
+    public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
-    private static final String RESULT_WITHOUT_PARAMS = "result without params";
+    public static final Locale OVERRIDE_LOCAL = Locale.US;
 
     private LocaleService localeService;
 
@@ -38,7 +40,7 @@ public class LocalizeHandlerTest
         context.setSite( Site.newSite().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
-            language( Locale.ENGLISH ).
+            language( DEFAULT_LOCALE ).
             build() );
 
         PortalContextAccessor.set( context );
@@ -60,40 +62,42 @@ public class LocalizeHandlerTest
     public void localize_with_locale()
         throws Exception
     {
-        final MessageBundle bundle = Mockito.mock( MessageBundle.class );
-        Mockito.when( bundle.localize( Mockito.any( String.class ), Mockito.any( Object[].class ) ) ).thenReturn( RESULT_WITH_LOCALE );
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
 
-        setServiceAndRun( bundle, "localize_with_locale" );
+        setServiceAndRun( bundle, "localize_with_locale", OVERRIDE_LOCAL );
     }
 
     @Test
     public void localize_without_locale()
         throws Exception
     {
-        final MessageBundle bundle = Mockito.mock( MessageBundle.class );
-        Mockito.when( bundle.localize( Mockito.any( String.class ), Mockito.any( Object[].class ) ) ).thenReturn( RESULT_WITHOUT_LOCALE );
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
 
-        setServiceAndRun( bundle, "localize_without_locale" );
+        setServiceAndRun( bundle, "localize_without_locale", DEFAULT_LOCALE );
     }
 
     @Test
     public void localize_without_params()
         throws Exception
     {
-        final MessageBundle bundle = Mockito.mock( MessageBundle.class );
-        Mockito.when( bundle.localize( Mockito.any( String.class ), Mockito.any( Object[].class ) ) ).thenReturn( RESULT_WITHOUT_PARAMS );
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
 
-        setServiceAndRun( bundle, "localize_without_params" );
+        setServiceAndRun( bundle, "localize_without_params", DEFAULT_LOCALE );
     }
 
-    private void setServiceAndRun( MessageBundle bundle, String exportName )
+    private void setServiceAndRun( final MessageBundle bundle, final String exportName, final Locale expectedLocale )
         throws Exception
     {
-        Mockito.when( this.localeService.getBundle( Mockito.any( ModuleKey.class ), Mockito.any( Locale.class ) ) ).
+        Mockito.when( this.localeService.getBundle( Mockito.any( ModuleKey.class ), Mockito.eq( expectedLocale ) ) ).
             thenAnswer( mock -> bundle );
 
         execute( exportName );
     }
 
+    private Object answer( final InvocationOnMock invocation )
+    {
+        final Object[] arguments = invocation.getArguments();
 
+        return Arrays.toString( arguments );
+    }
 }

@@ -1,11 +1,13 @@
 package com.enonic.xp.portal.impl.jslib.locale;
 
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.i18n.LocaleService;
@@ -21,6 +23,8 @@ public final class LocalizeHandler
     implements CommandHandler
 {
     private LocaleService localeService;
+
+    private List handlerParams = Lists.newArrayList( "key", "locale" );
 
     @Override
     public String getName()
@@ -44,26 +48,18 @@ public final class LocalizeHandler
         for ( final Map.Entry<String, Object> param : req.getParams().entrySet() )
         {
             final String key = param.getKey();
-            if ( key.equals( "params" ) )
+
+            if ( handlerParams.contains( key ) )
             {
-                applyParams( map, param.getValue() );
+                applyParam( map, "_" + key, param.getValue() );
             }
             else
             {
-                applyParam( map, "_" + key, param.getValue() );
+                applyParam( map, key, param.getValue() );
             }
         }
 
         return map;
-    }
-
-    private void applyParams( final Multimap<String, String> params, final Map<?, ?> value )
-    {
-        for ( final Map.Entry<?, ?> entry : value.entrySet() )
-        {
-            final String key = entry.getKey().toString();
-            applyParam( params, key, entry.getValue() );
-        }
     }
 
     private void applyParam( final Multimap<String, String> params, final String key, final Object value )
@@ -83,14 +79,6 @@ public final class LocalizeHandler
         for ( final Object value : values )
         {
             params.put( key, value.toString() );
-        }
-    }
-
-    private void applyParams( final Multimap<String, String> params, final Object value )
-    {
-        if ( value instanceof Map )
-        {
-            applyParams( params, (Map) value );
         }
     }
 
