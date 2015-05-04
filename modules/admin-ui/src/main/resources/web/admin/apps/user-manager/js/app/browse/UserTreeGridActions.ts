@@ -3,6 +3,7 @@ module app.browse {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import BrowseItem = api.app.browse.BrowseItem;
     import PrincipalType = api.security.PrincipalType;
+    import UserStore = api.security.UserStore;
     import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
 
     export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
@@ -67,7 +68,7 @@ module app.browse {
                 if (principalsSelected == 1) {
                     this.DELETE.setEnabled(true);
                 } else {
-                    this.checkOnDeletable((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore().getKey());
+                    this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore().getKey());
                 }
             } else {
                 this.DELETE.setEnabled(false);
@@ -81,16 +82,12 @@ module app.browse {
             return deferred.promise;
         }
 
-        private checkOnDeletable(key: api.security.UserStoreKey) {
-            new GetPrincipalsByUserStoreRequest(key,
-                [PrincipalType.USER, PrincipalType.GROUP]).
-                sendAndParse().then((principals: api.security.Principal[]) => {
-                    if (principals.length > 0) {
-                        this.DELETE.setEnabled(false);
-                    } else {
-                        this.DELETE.setEnabled(true);
-                    }
+        private establishDeleteActionState(key: api.security.UserStoreKey) {
+            if (key) {
+                UserStore.checkOnDeletable(key).then((result: boolean) => {
+                    this.DELETE.setEnabled(result);
                 });
+            }
         }
     }
 }

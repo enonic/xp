@@ -15,11 +15,14 @@ public class PushContentRequests
 
     private final ImmutableSet<PushedBecauseParentOfPushed> pushedBecauseParentOfPusheds;
 
+    private final ImmutableSet<PushedBecauseChildOfPushed> pushedBecauseChildOfPusheds;
+
     private PushContentRequests( Builder builder )
     {
         pushBecauseRequested = ImmutableSet.copyOf( builder.pushBecauseRequested );
         pushedBecauseReferredTos = ImmutableSet.copyOf( builder.pushedBecauseReferredTo );
         pushedBecauseParentOfPusheds = ImmutableSet.copyOf( builder.pushedBecauseParentOf );
+        pushedBecauseChildOfPusheds = ImmutableSet.copyOf( builder.pushedBecauseChildOf );
     }
 
     public static Builder create()
@@ -66,6 +69,19 @@ public class PushContentRequests
         }
     }
 
+    public static class PushedBecauseChildOfPushed
+    {
+        private final ContentId contentId;
+
+        private final ContentId childOf;
+
+        public PushedBecauseChildOfPushed( final ContentId contentId, final ContentId childOf )
+        {
+            this.contentId = contentId;
+            this.childOf = childOf;
+        }
+    }
+
     public static class PushedBecauseReferredTo
     {
         private final ContentId contentId;
@@ -88,6 +104,8 @@ public class PushContentRequests
 
         private final Set<PushedBecauseParentOfPushed> pushedBecauseParentOf = Sets.newHashSet();
 
+        private final Set<PushedBecauseChildOfPushed> pushedBecauseChildOf = Sets.newHashSet();
+
         private Builder()
         {
         }
@@ -101,6 +119,12 @@ public class PushContentRequests
         public Builder addParentOf( final ContentId contentId, final ContentId parentOf )
         {
             this.pushedBecauseParentOf.add( new PushedBecauseParentOfPushed( contentId, parentOf ) );
+            return this;
+        }
+
+        public Builder addChildOf( final ContentId contentId, final ContentId childOf )
+        {
+            this.pushedBecauseChildOf.add( new PushedBecauseChildOfPushed( contentId, childOf ) );
             return this;
         }
 

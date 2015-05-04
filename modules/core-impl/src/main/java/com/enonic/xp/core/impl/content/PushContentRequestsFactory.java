@@ -39,5 +39,11 @@ class PushContentRequestsFactory
         {
             builder.addRequested( ContentId.from( requested.getNodeId().toString() ) );
         }
+
+        for ( final NodePublishRequest childOf : nodePublishRequests.getPublishAsChildOf() )
+        {
+            builder.addChildOf( ContentId.from( childOf.getNodeId().toString() ),
+                                ContentId.from( childOf.getReason().getContextualNodeId().toString() ) );
+        }
     }
 }

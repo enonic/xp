@@ -5,6 +5,7 @@ module app.wizard {
     import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
     import UserStore = api.security.UserStore;
     import UserStoreKey = api.security.UserStoreKey;
+    import PrincipalKey = api.security.PrincipalKey;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -29,6 +30,8 @@ module app.wizard {
 
         private userStore: UserStore;
 
+        private persistedPrincipalKey: PrincipalKey;
+
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
             this.isPrincipalFormValid = false;
@@ -36,6 +39,9 @@ module app.wizard {
 
             this.principalType = params.persistedType;
             this.principalPath = params.persistedPath;
+            if (params.persistedPrincipal) {
+                this.persistedPrincipalKey = params.persistedPrincipal.getKey();
+            }
 
             this.parentOfSameType = params.parentOfSameType;
 
@@ -257,6 +263,10 @@ module app.wizard {
                 var viewedPrincipal = this.assembleViewedItem();
                 return !viewedPrincipal.equals(this.getPersistedItem());
             }
+        }
+
+        getPersistedItemKey(): PrincipalKey {
+            return this.persistedPrincipalKey;
         }
 
         assembleViewedItem(): Principal {

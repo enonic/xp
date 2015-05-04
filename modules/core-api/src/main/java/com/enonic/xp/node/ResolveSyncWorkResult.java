@@ -76,6 +76,12 @@ public class ResolveSyncWorkResult
             return this;
         }
 
+        public Builder publishChildOf( final NodeId nodeId, final NodeId childOf )
+        {
+            this.nodePublishRequests.add( NodePublishRequest.childOf( nodeId, childOf ) );
+            return this;
+        }
+
         public Builder publishReferredFrom( final NodeId nodeId, final NodeId referredFrom )
         {
             this.nodePublishRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );

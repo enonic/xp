@@ -46,7 +46,10 @@ module api.form.inputtype.text {
                     menubar: false,
                     statusbar: false,
                     paste_as_text: true,
-                    plugins: ['autoresize', 'table', 'link', 'paste', 'charmap', 'code'],
+                    plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                    external_plugins: {
+                        "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js"
+                    },
                     autoresize_min_height: 100,
                     autoresize_bottom_margin: 0,
                     height: 100,
@@ -83,11 +86,10 @@ module api.form.inputtype.text {
                         });
                     },
                     init_instance_callback: (editor) => {
+                        this.editor = this.getEditor(textAreaEl.getId(), property);
                         editor.execCommand('mceAutoResize');
                     }
                 });
-
-                this.editor = this.getEditor(textAreaEl.getId(), property);
             });
 
             var textAreaWrapper = new api.dom.DivEl();
@@ -118,6 +120,7 @@ module api.form.inputtype.text {
             // TODO
             return true;
         }
+
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));

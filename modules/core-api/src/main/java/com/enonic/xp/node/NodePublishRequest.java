@@ -25,6 +25,16 @@ public class NodePublishRequest
         return ( this.reason instanceof NodePublishReasonIsParent );
     }
 
+    public boolean reasonChildOf()
+    {
+        return ( this.reason instanceof NodePublishReasonIsChild );
+    }
+
+    public boolean reasonRequested()
+    {
+        return ( this.reason instanceof NodePublishReasonRequested );
+    }
+
     public boolean reasonReferredFrom()
     {
         return ( this.reason instanceof NodePublishReasonIsReferred );
@@ -43,6 +53,11 @@ public class NodePublishRequest
     public static NodePublishRequest parentFor( final NodeId nodeId, final NodeId parentOf )
     {
         return new NodePublishRequest( nodeId, new NodePublishReasonIsParent( parentOf ) );
+    }
+
+    public static NodePublishRequest childOf( final NodeId nodeId, final NodeId childOf )
+    {
+        return new NodePublishRequest( nodeId, new NodePublishReasonIsChild( childOf ) );
     }
 
     public static NodePublishRequest referredFrom( final NodeId nodeId, final NodeId referredFrom )
