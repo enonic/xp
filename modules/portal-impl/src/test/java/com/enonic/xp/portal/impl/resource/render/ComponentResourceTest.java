@@ -6,11 +6,11 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.rendering.Renderable;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.rendering.Renderable;
 
 import static org.junit.Assert.*;
 
@@ -81,5 +81,28 @@ public class ComponentResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
+    }
+
+    @Test
+    public void verifyUriSet()
+        throws Exception
+    {
+        setupContentAndSite();
+        setupTemplates();
+        final RenderResult result = RenderResult.newRenderResult().
+            entity( "component rendered" ).
+            header( "some-heaer", "some-value" ).
+            status( 200 ).
+            build();
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+
+        assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsContext.getValue().getUri() );
     }
 }
