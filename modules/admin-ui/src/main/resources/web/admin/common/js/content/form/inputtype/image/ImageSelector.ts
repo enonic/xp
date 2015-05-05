@@ -131,14 +131,6 @@ module api.content.form.inputtype.image {
             return rest;
         }
 
-        private createUploadButton(): api.dom.ButtonEl {
-            var uploadButton = new api.dom.ButtonEl();
-            uploadButton.addClass("upload-button");
-            uploadButton.onClicked((event: MouseEvent) => this.onUploadButtonClicked());
-
-            return uploadButton;
-        }
-
         private createSelectedOptionsView(): ImageSelectorSelectedOptionsView {
             var selectedOptionsView = new ImageSelectorSelectedOptionsView();
 
@@ -184,7 +176,10 @@ module api.content.form.inputtype.image {
             comboBox.setInputIconUrl(inputIconUrl);
 
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
-                this.propertyArray.remove(removed.getIndex());
+                // property not found.
+                if (!!removed.getOption().displayValue.getContentSummary()) {
+                    this.propertyArray.remove(removed.getIndex());
+                }
                 this.validate(false);
             });
 
@@ -251,7 +246,9 @@ module api.content.form.inputtype.image {
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,
-                allowMultiSelection: multiSelection
+                maximumOccurrences: this.getRemainingOccurrences(),
+                allowMultiSelection: multiSelection,
+                skipWizardEvents: true
             });
 
             this.uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
@@ -270,7 +267,11 @@ module api.content.form.inputtype.image {
                 var item = event.getUploadItem();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
-                (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
+                if (!!selectedOption) {
+                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
+                }
+
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
             this.uploader.onFileUploaded((event: FileUploadedEvent<Content>) => {
@@ -292,15 +293,24 @@ module api.content.form.inputtype.image {
 
                 this.setContentIdProperty(createdContent.getContentId());
                 this.validate(false);
+
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
             this.uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
                 var item = event.getUploadItem();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
-                (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+                if (!!selectedOption) {
+                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+                }
+
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
             });
 
+            this.uploader.onClicked(() => {
+                this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
+            });
 
             /*
              * Drag N' Drop
@@ -337,6 +347,7 @@ module api.content.form.inputtype.image {
 
             body.onDrop((event: DragEvent) => {
                 if (iFrame.isVisible()) {
+                    this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
                     this.uploader.toggleClass("minimized", true);
                 }
             });
