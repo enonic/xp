@@ -51,7 +51,7 @@ module api.liveedit {
 
         private viewsById: {[s:number] : ItemView;};
 
-        private ignorePropertyChanges: boolean = false;
+        private ignorePropertyChanges: boolean;
 
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
@@ -115,6 +115,7 @@ module api.liveedit {
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.ignorePropertyChanges = false;
             PageView.debug = true;
 
             var resetAction = new api.ui.Action('Reset');
