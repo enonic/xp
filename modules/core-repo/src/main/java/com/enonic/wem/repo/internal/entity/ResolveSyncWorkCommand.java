@@ -244,7 +244,22 @@ public class ResolveSyncWorkCommand
             ResolveContext resolveContext = determineResolveContext( nodeToAddToResult );
             if ( comparison.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
-                resultBuilder.addDelete( nodeId );
+                if ( resolveContext.becauseReferredTo )
+                {
+                    resultBuilder.deleteReferredFrom( comparison.getNodeId(), resolveContext.contextNodeId );
+                }
+                else if ( resolveContext.becauseParent )
+                {
+                    resultBuilder.deleteParentFor( comparison.getNodeId(), resolveContext.contextNodeId );
+                }
+                else if ( resolveContext.becauseChild )
+                {
+                    resultBuilder.deleteChildOf( comparison.getNodeId(), resolveContext.contextNodeId );
+                }
+                else
+                {
+                    resultBuilder.deleteRequested( comparison.getNodeId() );
+                }
             }
             else if ( resolveContext.becauseReferredTo )
             {
