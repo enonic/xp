@@ -16,6 +16,7 @@ class PushContentRequestsFactory
         for ( final ResolveSyncWorkResult syncWorkResult : syncWorkResults )
         {
             doCreate( builder, syncWorkResult.getNodePublishRequests() );
+            doCreateDeleted( builder, syncWorkResult.getNodeDeleteRequests() );
         }
 
         return builder.build();
@@ -43,6 +44,32 @@ class PushContentRequestsFactory
         for ( final NodePublishRequest childOf : nodePublishRequests.getPublishAsChildOf() )
         {
             builder.addChildOf( ContentId.from( childOf.getNodeId().toString() ),
+                                ContentId.from( childOf.getReason().getContextualNodeId().toString() ) );
+        }
+    }
+
+    private static void doCreateDeleted( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests )
+    {
+        for ( final NodePublishRequest parentOf : nodePublishRequests.getPublishAsParentFor() )
+        {
+            builder.addDeleteBecauseParentOf( ContentId.from( parentOf.getNodeId().toString() ),
+                                              ContentId.from( parentOf.getReason().getContextualNodeId().toString() ) );
+        }
+
+        for ( final NodePublishRequest referredTo : nodePublishRequests.getPublishAsReferredTo() )
+        {
+            builder.addDeleteBecauseReferredTo( ContentId.from( referredTo.getNodeId().toString() ),
+                                                ContentId.from( referredTo.getReason().getContextualNodeId().toString() ) );
+        }
+
+        for ( final NodePublishRequest requested : nodePublishRequests.getPublishAsRequested() )
+        {
+            builder.addDeleteRequested( ContentId.from( requested.getNodeId().toString() ) );
+        }
+
+        for ( final NodePublishRequest childOf : nodePublishRequests.getPublishAsChildOf() )
+        {
+            builder.addDeleteBecauseChildOf( ContentId.from( childOf.getNodeId().toString() ),
                                 ContentId.from( childOf.getReason().getContextualNodeId().toString() ) );
         }
     }

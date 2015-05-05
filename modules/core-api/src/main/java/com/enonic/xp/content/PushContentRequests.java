@@ -18,12 +18,25 @@ public class PushContentRequests
 
     private final ImmutableSet<PushedBecauseChildOfPushed> pushedBecauseChildOfPusheds;
 
+    private final ImmutableSet<DeleteBecauseRequested> deleteBecauseRequested;
+
+    private final ImmutableSet<DeletedBecauseReferredTo> deletedBecauseReferredTos;
+
+    private final ImmutableSet<DeletedBecauseParentOfPushed> deletedBecauseParentOfPusheds;
+
+    private final ImmutableSet<DeletedBecauseChildOfPushed> deletedBecauseChildOfPusheds;
+
     private PushContentRequests( Builder builder )
     {
         pushBecauseRequested = ImmutableSet.copyOf( builder.pushBecauseRequested );
         pushedBecauseReferredTos = ImmutableSet.copyOf( builder.pushedBecauseReferredTo );
         pushedBecauseParentOfPusheds = ImmutableSet.copyOf( builder.pushedBecauseParentOf );
         pushedBecauseChildOfPusheds = ImmutableSet.copyOf( builder.pushedBecauseChildOf );
+
+        deleteBecauseRequested = ImmutableSet.copyOf( builder.deleteBecauseRequested );
+        deletedBecauseReferredTos = ImmutableSet.copyOf( builder.deletedBecauseReferredTo );
+        deletedBecauseParentOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseParentOf );
+        deletedBecauseChildOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseChildOf );
     }
 
     public static Builder create()
@@ -49,6 +62,26 @@ public class PushContentRequests
     public ImmutableSet<PushedBecauseChildOfPushed> getPushedBecauseChildOfPusheds()
     {
         return pushedBecauseChildOfPusheds;
+    }
+
+    public ImmutableSet<DeleteBecauseRequested> getDeleteBecauseRequested()
+    {
+        return deleteBecauseRequested;
+    }
+
+    public ImmutableSet<DeletedBecauseReferredTo> getDeletedBecauseReferredTos()
+    {
+        return deletedBecauseReferredTos;
+    }
+
+    public ImmutableSet<DeletedBecauseParentOfPushed> getDeletedBecauseParentOfPusheds()
+    {
+        return deletedBecauseParentOfPusheds;
+    }
+
+    public ImmutableSet<DeletedBecauseChildOfPushed> getDeletedBecauseChildOfPusheds()
+    {
+        return deletedBecauseChildOfPusheds;
     }
 
     public ContentIds getDependantsContentIds( boolean filterRequestedToPublishContentIds )
@@ -91,6 +124,90 @@ public class PushContentRequests
         for ( PushBecauseRequested to : pushBecauseRequested )
         {
             ids.add( to.contentId );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getDeletedDependantsContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( DeletedBecauseReferredTo to : deletedBecauseReferredTos )
+        {
+            ids.add( to.contentId );
+        }
+        for ( DeletedBecauseParentOfPushed to : deletedBecauseParentOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        if ( filterRequestedToPublishContentIds )
+        {
+            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getDeletedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( DeletedBecauseChildOfPushed to : deletedBecauseChildOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        if ( filterRequestedToPublishContentIds )
+        {
+            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getDeletedBecauseRequestedContentIds()
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( DeleteBecauseRequested to : deleteBecauseRequested )
+        {
+            ids.add( to.contentId );
+        }
+        ContentIds result = ContentIds.from( ids );
+        return result;
+    }
+
+    public ContentIds getAllContentIdsExceptRequested( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
+    {
+        Set<ContentId> ids = new HashSet<>();
+        for ( PushedBecauseReferredTo to : pushedBecauseReferredTos )
+        {
+            ids.add( to.contentId );
+        }
+        for ( PushedBecauseParentOfPushed to : pushedBecauseParentOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        for ( PushedBecauseChildOfPushed to : pushedBecauseChildOfPusheds )
+        {
+            ids.add( to.contentId );
+        }
+        if ( includeDeleted )
+        {
+            for ( DeletedBecauseReferredTo to : deletedBecauseReferredTos )
+            {
+                ids.add( to.contentId );
+            }
+            for ( DeletedBecauseParentOfPushed to : deletedBecauseParentOfPusheds )
+            {
+                ids.add( to.contentId );
+            }
+            for ( DeletedBecauseChildOfPushed to : deletedBecauseChildOfPusheds )
+            {
+                ids.add( to.contentId );
+            }
+        }
+        if ( filterRequestedToPublishContentIds )
+        {
+            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
+            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
         }
         ContentIds result = ContentIds.from( ids );
         return result;
@@ -145,6 +262,55 @@ public class PushContentRequests
         }
     }
 
+    public static class DeleteBecauseRequested
+    {
+        private final ContentId contentId;
+
+        public DeleteBecauseRequested( final ContentId contentId )
+        {
+            this.contentId = contentId;
+        }
+    }
+
+    public static class DeletedBecauseParentOfPushed
+    {
+        private final ContentId contentId;
+
+        private final ContentId parentOf;
+
+        public DeletedBecauseParentOfPushed( final ContentId contentId, final ContentId parentOf )
+        {
+            this.contentId = contentId;
+            this.parentOf = parentOf;
+        }
+    }
+
+    public static class DeletedBecauseChildOfPushed
+    {
+        private final ContentId contentId;
+
+        private final ContentId childOf;
+
+        public DeletedBecauseChildOfPushed( final ContentId contentId, final ContentId childOf )
+        {
+            this.contentId = contentId;
+            this.childOf = childOf;
+        }
+    }
+
+    public static class DeletedBecauseReferredTo
+    {
+        private final ContentId contentId;
+
+        private final ContentId referredToBy;
+
+        public DeletedBecauseReferredTo( final ContentId contentId, final ContentId referredToBy )
+        {
+            this.contentId = contentId;
+            this.referredToBy = referredToBy;
+        }
+    }
+
 
     public static final class Builder
     {
@@ -155,6 +321,14 @@ public class PushContentRequests
         private final Set<PushedBecauseParentOfPushed> pushedBecauseParentOf = Sets.newHashSet();
 
         private final Set<PushedBecauseChildOfPushed> pushedBecauseChildOf = Sets.newHashSet();
+
+        private final Set<DeleteBecauseRequested> deleteBecauseRequested = Sets.newHashSet();
+
+        private final Set<DeletedBecauseReferredTo> deletedBecauseReferredTo = Sets.newHashSet();
+
+        private final Set<DeletedBecauseParentOfPushed> deletedBecauseParentOf = Sets.newHashSet();
+
+        private final Set<DeletedBecauseChildOfPushed> deletedBecauseChildOf = Sets.newHashSet();
 
         private Builder()
         {
@@ -181,6 +355,30 @@ public class PushContentRequests
         public Builder addReferredTo( final ContentId contentId, final ContentId referredTo )
         {
             this.pushedBecauseReferredTo.add( new PushedBecauseReferredTo( contentId, referredTo ) );
+            return this;
+        }
+
+        public Builder addDeleteRequested( final ContentId contentId )
+        {
+            this.deleteBecauseRequested.add( new DeleteBecauseRequested( contentId ) );
+            return this;
+        }
+
+        public Builder addDeleteBecauseParentOf( final ContentId contentId, final ContentId parentOf )
+        {
+            this.deletedBecauseParentOf.add( new DeletedBecauseParentOfPushed( contentId, parentOf ) );
+            return this;
+        }
+
+        public Builder addDeleteBecauseChildOf( final ContentId contentId, final ContentId childOf )
+        {
+            this.deletedBecauseChildOf.add( new DeletedBecauseChildOfPushed( contentId, childOf ) );
+            return this;
+        }
+
+        public Builder addDeleteBecauseReferredTo( final ContentId contentId, final ContentId referredTo )
+        {
+            this.deletedBecauseReferredTo.add( new DeletedBecauseReferredTo( contentId, referredTo ) );
             return this;
         }
 

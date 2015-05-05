@@ -3,10 +3,13 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.PushContentRequests;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -41,7 +44,7 @@ public class ResolvePublishDependenciesCommand
         final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults( true );
         final ResolveSyncWorkResults syncWorkResultsWithoutChildren = resolveSyncWorkResults( false );
 
-        appendSyncWorkResultsToResult( syncWorkResultsWithChildren, syncWorkResultsWithoutChildren );
+        populateResults( syncWorkResultsWithChildren, syncWorkResultsWithoutChildren );
     }
 
     private ResolveSyncWorkResults resolveSyncWorkResults( boolean includeChildren )
@@ -66,11 +69,17 @@ public class ResolvePublishDependenciesCommand
             build() );
     }
 
-    private void appendSyncWorkResultsToResult( final ResolveSyncWorkResults syncWorkResultsWithChildren,
+    private void populateResults( final ResolveSyncWorkResults syncWorkResultsWithChildren,
                                                 final ResolveSyncWorkResults syncWorkResultsWithoutChildren )
     {
-        this.resultBuilder.pushContentRequestsWithChildren( PushContentRequestsFactory.create( syncWorkResultsWithChildren ) );
+        PushContentRequests pushContentRequestsWithChildren = PushContentRequestsFactory.create( syncWorkResultsWithChildren );
+        this.resultBuilder.pushContentRequestsWithChildren( pushContentRequestsWithChildren );
         this.resultBuilder.pushContentRequestsWithoutChildren( PushContentRequestsFactory.create( syncWorkResultsWithoutChildren ) );
+
+        this.resultBuilder.setResolvedContent(
+            getContentByIds( new GetContentByIdsParams( pushContentRequestsWithChildren.getAllContentIdsExceptRequested( true, true ) ) ) );
+        this.resultBuilder.setCompareContentResults(
+            getCompareStatuses( pushContentRequestsWithChildren.getAllContentIdsExceptRequested( true, true ) ) );
     }
 
     private Contents getContentByIds( final GetContentByIdsParams getContentParams )
@@ -80,6 +89,16 @@ public class ResolvePublishDependenciesCommand
             translator( this.translator ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    private CompareContentResults getCompareStatuses( final ContentIds ids )
+    {
+        return CompareContentsCommand.create().
+            nodeService( this.nodeService ).
+            contentIds( ids ).
+            target( this.target ).
             build().
             execute();
     }
