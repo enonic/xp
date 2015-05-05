@@ -22,6 +22,10 @@ module app.publish {
 
         private includeChildItemsCheck: api.ui.Checkbox;
 
+        private subheaderMessage = new api.dom.H6El();
+
+        private publishContentDependants: api.content.ResolvePublishDependenciesResult;
+
         constructor() {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Publishing Wizard")
@@ -32,9 +36,8 @@ module app.publish {
             this.getEl().addClass("publish-dialog");
             this.appendChildToContentPanel(this.itemList);
 
-            var descMessage = new api.dom.H6El().addClass("publish-dialog-subheader").
-                setHtml("Based on your <b>selection</b> - we found <b>(x) dependent</b> changes");
-            this.appendChildToTitle(descMessage);
+            this.subheaderMessage.addClass("publish-dialog-subheader");
+            this.appendChildToTitle(this.subheaderMessage);
 
             this.publishButton = this.setPublishAction(new ContentPublishDialogAction());
 
@@ -44,13 +47,19 @@ module app.publish {
 
             this.addCancelButtonToBottom();
 
-            this.includeChildItemsCheck = new api.ui.Checkbox().setLabel('Include child items');
+            this.includeChildItemsCheck = new api.ui.Checkbox();
+            this.includeChildItemsCheck.getEl().setDisabled(true);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(() => {
-                this.countItemsToPublishAndUpdateButtonCounter();
+                this.countItemsToPublishAndUpdateCounterElements();
             });
             this.appendChildToContentPanel(this.includeChildItemsCheck);
+        }
 
+        initAndOpen() {
+            this.renderSelectedItems(this.selectedItems);
+            this.getPublishDependantsAndUpdateView();
+            this.open();
         }
 
         show() {
@@ -88,10 +97,6 @@ module app.publish {
             contents.forEach((content: ContentSummary) => {
                 this.selectedItems.push(this.createSelectionItemForPublish(content));
             });
-
-            this.renderSelectedItems(this.selectedItems);
-
-            this.countItemsToPublishAndUpdateButtonCounter();
         }
 
         private indexOf(item: SelectionItem<ContentSummary>): number {
@@ -126,34 +131,58 @@ module app.publish {
                 if (this.selectedItems.length == 0) {
                     this.close();
                 }
-                else {
-                    this.countItemsToPublishAndUpdateButtonCounter();
-                }
             });
 
             return selectionItem;
         }
 
-        private countItemsToPublishAndUpdateButtonCounter() {
+        private countItemsToPublishAndUpdateCounterElements() {
+            //subheader
+            if (this.includeChildItemsCheck.isChecked()) {
+                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
+                                              this.publishContentDependants.dependantsResolvedWithChildrenIncluded.length +
+                                              " dependent</b> changes");
+            } else {
+                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
+                                              this.publishContentDependants.dependantsResolvedWithoutChildrenIncluded.length +
+                                              " dependent</b> changes");
+            }
+
+            // publish button
             this.cleanPublishButtonText();
+            if (this.includeChildItemsCheck.isChecked()) {
+                this.updatePublishButtonCounter(this.selectedItems.length +
+                                                this.publishContentDependants.dependantsResolvedWithChildrenIncluded.length +
+                                                this.publishContentDependants.childrenCount);
+            } else {
+                this.updatePublishButtonCounter(this.selectedItems.length +
+                                                this.publishContentDependants.dependantsResolvedWithoutChildrenIncluded.length);
+            }
+
+            // includeChildren link
+            if (this.publishContentDependants.childrenCount > 0) {
+                this.includeChildItemsCheck.setLabel('Include child items (+' + this.publishContentDependants.childrenCount + ')');
+                this.includeChildItemsCheck.getEl().setDisabled(false);
+            } else {
+                this.includeChildItemsCheck.getEl().setDisabled(true);
+                this.includeChildItemsCheck.setLabel('Include child items');
+            }
+        }
+
+        private getPublishDependantsAndUpdateView() {
+
             this.showLoadingSpinner();
 
-            this.createRequestForCountingItemsToPublish().sendAndParse().then((itemsToPublishCounter: number) => {
-                this.hideLoadingSpinner();
-                this.updatePublishButtonCounter(itemsToPublishCounter);
+            var getPublishContentDependantsRequest = new api.content.ResolvePublishDependenciesRequest(this.selectedItems.map((el) => {
+                return new api.content.ContentId(el.getBrowseItem().getId());
+            }));
+
+            getPublishContentDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<api.content.ResolvePublishDependenciesResult>) => {
+                this.publishContentDependants = jsonResponse.getResult();
+                this.countItemsToPublishAndUpdateCounterElements();
             }).finally(() => {
                 this.hideLoadingSpinner();
             }).done();
-        }
-
-
-        private createRequestForCountingItemsToPublish(): api.content.CountContentsWithDescendantsRequest {
-            var countContentChildrenRequest = new api.content.CountContentsWithDescendantsRequest();
-            for (var j = 0; j < this.selectedItems.length; j++) {
-                countContentChildrenRequest.addContentPath(ContentPath.fromString(this.selectedItems[j].getBrowseItem().getPath()));
-            }
-
-            return countContentChildrenRequest;
         }
 
         private doPublish() {
@@ -162,14 +191,7 @@ module app.publish {
             })).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
-            }).catch((reason: any) => {
-                this.close();
-                if (reason && reason.message) {
-                    api.notify.showError(reason.message);
-                } else {
-                    api.notify.showError('Content could not be published.');
-                }
-            }).done();
+            });
         }
 
         private updatePublishButtonCounter(count: number) {

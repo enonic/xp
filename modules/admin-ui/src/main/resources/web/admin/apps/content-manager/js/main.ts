@@ -25,7 +25,7 @@ function startApplication() {
     var contentPublishDialog = new app.publish.ContentPublishDialog();
     app.browse.ContentPublishPromptEvent.on((event) => {
         contentPublishDialog.setContentToPublish(event.getModels());
-        contentPublishDialog.open();
+        contentPublishDialog.initAndOpen();
     });
 
     var newContentDialog = new app.create.NewContentDialog();
