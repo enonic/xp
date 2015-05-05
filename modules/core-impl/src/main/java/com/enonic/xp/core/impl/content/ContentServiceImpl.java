@@ -25,7 +25,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
@@ -62,7 +61,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.SystemException;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
@@ -179,15 +177,6 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
-        if ( params.getType().isTemplateFolder() )
-        {
-            validateCreateTemplateFolder( params );
-        }
-        else if ( params.getType().isPageTemplate() )
-        {
-            validateCreatePageTemplate( params );
-        }
-
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -376,46 +365,6 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
-    }
-
-    private void validateCreateTemplateFolder( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParent() );
-            if ( !parent.getType().isSite() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new SystemException( "A template folder can only be created below a content of type 'site'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
-                                           path );
-        }
-    }
-
-    private void validateCreatePageTemplate( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParent() );
-            if ( !parent.getType().isTemplateFolder() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new SystemException( "A page template can only be created below a content of type 'template-folder'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
-                                           path );
-        }
     }
 
     @Override

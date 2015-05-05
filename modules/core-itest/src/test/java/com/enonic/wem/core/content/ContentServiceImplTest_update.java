@@ -1,5 +1,9 @@
 package com.enonic.wem.core.content;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,6 +22,7 @@ import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.ContentSelectorConfig;
@@ -39,6 +44,7 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_update
     extends AbstractContentServiceTest
 {
+
     @Override
     public void setUp()
         throws Exception
@@ -172,7 +178,6 @@ public class ContentServiceImplTest_update
             build();
     }
 
-
     @Test
     public void update_content_data()
         throws Exception
@@ -205,6 +210,183 @@ public class ContentServiceImplTest_update
         assertEquals( "This is my content", storedContent.getDisplayName() );
         assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+    }
+
+
+    @Test
+    public void update_incorrect_content_data()
+        throws Exception
+    {
+
+        //Mocks the content service to return our content type
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.contentService.setContentTypeService( contentTypeService );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createContentTypeForAllInputTypes() );
+
+        //Creates a valid content
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        final Content content = this.contentService.create( CreateContentParams.create().
+            type( ContentTypeName.from( "myContentType" ) ).
+            contentData( data ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            displayName( "my display-name" ).
+            build() );
+
+        //Updates the content with an incorrect value
+        PropertyTree invalidData = new PropertyTree();
+        invalidData.addLong( "textLine", 1l );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addLong( "double", 1l );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "long", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addLong( "color", Long.parseLong( "FFFFFF", 16 ) );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addBoolean( "comboBox", true );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addString( "comboBox", "value4" );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "checkbox", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "tinyMce", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "phone", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "tag", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "phone", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "contentSelector", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        //TODO ContentSelectConfig should check the content types
+//        final Content referredContent = this.contentService.create( CreateContentParams.create().
+//            contentData( new PropertyTree() ).
+//            displayName( "Invalid Referred content" ).
+//            parent( ContentPath.ROOT ).
+//            type( ContentTypeName.shortcut() ).
+//            build() );
+//        final Reference invalidReference = Reference.from( referredContent.getId().toString() );
+//        invalidData = new PropertyTree();
+//        invalidData.addReference( "contentSelector", invalidReference );
+//        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addDouble( "contentTypeFilter", 1.0d );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        //TODO ModuleConfigurator should check the input type
+//        invalidData = new PropertyTree();
+//        invalidData.addDouble( "moduleConfigurator", 1.0d );
+//        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addLocalDateTime( "date", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addInstant( "time", Instant.now() );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addString( "geoPoint", "59.9127300, 10.7460900" );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addString( "htmlArea", "<p>paragraph</p>" );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addHtmlPart( "xml", "<elem>element</elem>" );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addLocalDate( "localDateTime", LocalDate.of( 2015, 03, 13 ) );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidData.addLocalDate( "dateTime", LocalDate.of( 2015, 03, 13 ) );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        PropertySet invalidSet = new PropertySet();
+        invalidSet.addDouble( "setString", 1.0d );
+        invalidData.addSet( "set", invalidSet );
+        update_incorrect_content_data( content, invalidData );
+
+        //Updates the content with an incorrect value
+        invalidData = new PropertyTree();
+        invalidSet = new PropertySet();
+        invalidSet.addLong( "setDouble", 1l );
+        invalidData.addSet( "set", invalidSet );
+        update_incorrect_content_data( content, invalidData );
+    }
+
+    private void update_incorrect_content_data(Content content, PropertyTree invalidData)
+    {
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.data = invalidData;
+            } );
+
+        boolean illegalArgumentExceptionThrown = false;
+        try
+        {
+            this.contentService.update( updateContentParams );
+        } catch ( IllegalArgumentException e )
+        {
+            illegalArgumentExceptionThrown = true;
+        }
+        assertTrue( illegalArgumentExceptionThrown );
     }
 
 

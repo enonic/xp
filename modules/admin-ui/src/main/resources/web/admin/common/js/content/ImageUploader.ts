@@ -4,6 +4,7 @@ module api.content {
     import CloseButton = api.ui.button.CloseButton;
 
     export interface ImageUploaderConfig extends MediaUploaderConfig {
+        skipWizardEvents: boolean;
     }
 
     export class ImageUploader extends MediaUploader {
@@ -32,9 +33,11 @@ module api.content {
                 }
             });
 
-            this.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                new api.app.wizard.ContentWizardImageUploadedEvent(event.getUploadItem().getModel(), this).fire();
-            });
+            if (!config.skipWizardEvents) {
+                this.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                    new api.app.wizard.ContentWizardImageUploadedEvent(event.getUploadItem().getModel(), this).fire();
+                });
+            }
         }
 
         createResultItem(value: string): api.dom.DivEl {

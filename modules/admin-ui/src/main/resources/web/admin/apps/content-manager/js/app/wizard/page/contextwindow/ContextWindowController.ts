@@ -10,37 +10,70 @@ module app.wizard.page.contextwindow {
 
         private contextWindowToggler: ContextWindowToggler;
 
+        private togglerOverriden: boolean = false;
+
         constructor(contextWindow: ContextWindow, contextWindowToggler: ContextWindowToggler) {
             this.contextWindow = contextWindow;
             this.contextWindowToggler = contextWindowToggler;
 
             this.contextWindowToggler.onClicked((event: MouseEvent) => {
-                var active = !this.contextWindowToggler.isActive();
-                this.contextWindowToggler.setActive(active);
+                // set overriden flag when toggle is on by click only
+                if (this.contextWindowToggler.isEnabled()) {
+                    this.togglerOverriden = true;
+                }
+            });
 
-                if (active) {
+            this.contextWindowToggler.onActiveChanged((isActive: boolean) => {
+                if (isActive) {
                     this.contextWindow.slideIn();
                 } else {
                     this.contextWindow.slideOut();
                 }
             });
 
-            this.contextWindow.onShown(() => {
-                if (this.contextWindow.isFloating()) {
-                    this.contextWindow.slideOut();
-                    this.contextWindowToggler.setActive(false);
-                } else {
-                    this.contextWindow.slideIn();
-                    this.contextWindowToggler.setActive(true);
-                }
-            });
+            var liveEditShownHandler = () => {
+                this.contextWindowToggler.setEnabled(true);
+                this.splitModeChangedHandler();
+            };
 
-            this.contextWindow.onDisplayModeChanged(() => {
-                if (!this.contextWindow.isFloating() && !this.contextWindowToggler.isActive() && this.contextWindow.isShown()) {
-                    this.contextWindow.slideOut();
-                }
-            });
+            var liveEditHiddenHandler = () => {
+                this.contextWindowToggler.setEnabled(false);
+                this.splitModeChangedHandler();
+            };
+
+            app.wizard.ShowLiveEditEvent.on(liveEditShownHandler);
+            app.wizard.ShowSplitEditEvent.on(liveEditShownHandler);
+            app.wizard.ShowContentFormEvent.on(liveEditHiddenHandler);
+
+            this.contextWindow.onShown(() => this.splitModeChangedHandler());
         }
+
+        public splitModeChangedHandler() {
+            // reset manual toggle override flag
+            this.togglerOverriden = false;
+            if (!this.contextWindow.isFloating()) {
+                // set toggler active by default for large screen
+                this.contextWindowToggler.setActive(true);
+            } else if (!this.togglerOverriden) {
+                // otherwise toggle it off if not overriden manually ( don't hide the context window if inspecting and can autoslide though )
+                this.contextWindowToggler.setActive(false, this.contextWindow.isInspecting() && this.contextWindow.canAutoSlide());
+            }
+        }
+
+        public resizeHandler() {
+            if (this.contextWindowToggler.isActive()) {
+                // context window should be shown anyway when toggler is active
+                return;
+            }
+            if (this.contextWindow.isShown() && !this.contextWindow.canAutoSlide()) {
+                // hide if it's shown and can not auto slide no matter if we inspecting or not
+                this.contextWindow.slideOut();
+            } else if (!this.contextWindow.isShown() && this.contextWindow.canAutoSlide() && this.contextWindow.isInspecting()) {
+                // show if it's not shown, but inspecting and can auto slide
+                this.contextWindow.slideIn();
+            }
+        }
+
     }
 
 }

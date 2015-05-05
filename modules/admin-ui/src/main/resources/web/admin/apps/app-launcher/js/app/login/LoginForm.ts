@@ -19,9 +19,9 @@ module app.login {
             this.userStores = {};
             this.onUserAuthenticatedHandler = null;
 
-            this.userIdInput = new api.ui.text.TextInput('form-item');
+            this.userIdInput = new api.ui.text.TextInput('input-view');
             this.userIdInput.setPlaceholder(_i18n('userid or e-mail'));
-            this.passwordInput = new api.ui.text.PasswordInput('form-item');
+            this.passwordInput = new api.ui.text.PasswordInput('input-view');
             this.passwordInput.setPlaceholder(_i18n('password'));
             this.userIdInput.onKeyUp((event: KeyboardEvent) => {
                 this.onInputTyped(event);

@@ -7,8 +7,8 @@ module app.wizard.action {
 
             this.setEnabled(true);
             this.onExecuted(() => {
-                new ShowContentFormEvent().fire();
                 wizard.showForm();
+                new ShowContentFormEvent().fire();
             })
         }
     }

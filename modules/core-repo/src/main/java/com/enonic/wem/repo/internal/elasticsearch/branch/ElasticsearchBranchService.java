@@ -8,14 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;
@@ -30,6 +22,13 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
 public class ElasticsearchBranchService
@@ -68,7 +67,7 @@ public class ElasticsearchBranchService
 
         final GetResult getResult = this.elasticsearchDao.get( GetQuery.create().
             id( branchDocumentId.toString() ).
-            indexName( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
+            indexName( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) ).
             indexTypeName( IndexType.BRANCH.getName() ).
             returnFields(
                 ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
@@ -96,7 +95,7 @@ public class ElasticsearchBranchService
             build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
+            index( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) ).
             indexType( IndexType.BRANCH.getName() ).
             query( queryBuilder ).
             size( nodeBranchQuery.getSize() ).

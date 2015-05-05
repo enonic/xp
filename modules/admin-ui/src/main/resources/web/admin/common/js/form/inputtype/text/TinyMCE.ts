@@ -7,6 +7,9 @@ module api.form.inputtype.text {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import ContentSummary = api.content.ContentSummary;
+    import Element = api.dom.Element;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -46,12 +49,16 @@ module api.form.inputtype.text {
                     menubar: false,
                     statusbar: false,
                     paste_as_text: true,
-                    plugins: ['autoresize', 'table', 'link', 'paste', 'charmap', 'code'],
+                    plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                    external_plugins: {
+                        "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js"
+                    },
                     autoresize_min_height: 100,
                     autoresize_bottom_margin: 0,
                     height: 100,
 
                     setup: (editor) => {
+                        editor.addCommand("addContentSelector", this.addContentSelector, this);
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
@@ -83,16 +90,68 @@ module api.form.inputtype.text {
                         });
                     },
                     init_instance_callback: (editor) => {
+                        this.editor = this.getEditor(textAreaEl.getId(), property);
                         editor.execCommand('mceAutoResize');
                     }
                 });
 
-                this.editor = this.getEditor(textAreaEl.getId(), property);
+                this.setupStickyEditorToolbar();
             });
 
             var textAreaWrapper = new api.dom.DivEl();
             textAreaWrapper.appendChild(textAreaEl);
             return textAreaWrapper;
+        }
+
+        private setupStickyEditorToolbar() {
+            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar());
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            });
+        }
+
+        private updateStickyEditorToolbar() {
+            if (!this.editorTopEdgeIsVisible() && this.editorLowerEdgeIsVisible()) {
+                this.addClass("sticky-toolbar");
+                this.updateEditorToolbarWidth();
+                this.updateEditorToolbarPos();
+            }
+            else {
+                this.removeClass("sticky-toolbar")
+            }
+        }
+
+        private updateEditorToolbarWidth() {
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").width(wemjq(this.getHTMLElement()).find(".mce-edit-area").innerWidth());
+        }
+
+        private updateEditorToolbarPos() {
+            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(10)});
+        }
+
+        private editorTopEdgeIsVisible(): boolean {
+            return this.calcDistToTopOfScrlbleArea() > 0;
+        }
+
+        private editorLowerEdgeIsVisible(): boolean {
+            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea();
+            var editorToolbarHeight = wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+
+            return (this.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
+        }
+
+        private calcDistToTopOfScrlbleArea(): number {
+            return this.getEl().getOffsetTop() - this.getToolbarOffsetTop();
+        }
+
+        private getToolbarOffsetTop(delta: number = 0): number {
+            var toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
+                stickyToolbarHeight = toolbar.outerHeight(true),
+                stickyToolbarOffset = toolbar.offset().top;
+
+            return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
 
         private getEditor(editorId: string, property: Property): TinyMceEditor {
@@ -117,6 +176,45 @@ module api.form.inputtype.text {
 
             // TODO
             return true;
+        }
+
+        private createContentSelector(): api.content.ContentComboBox {
+            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build(),
+                focusedSelectorCls = "mce-content-selector-focused";
+
+            contentSelector.addClass("mce-abs-layout-item mce-content-selector");
+
+            contentSelector.onFocus((e) => {
+                contentSelector.addClass(focusedSelectorCls);
+            });
+
+            contentSelector.onBlur((e) => {
+                contentSelector.removeClass(focusedSelectorCls);
+            });
+
+            return contentSelector;
+        }
+
+        private addContentSelector(ui: boolean, dialogEl: HTMLElement) {
+            var placeholder = wemjq(dialogEl).find(".mce-link-tab-content-target"),
+                contentSelector = this.createContentSelector(),
+                focusEl = wemjq(dialogEl).find(".mce-link-text");
+
+            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
+                placeholder.val(event.getOption().value);
+            });
+
+            wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
+
+            placeholder.hide();
+
+            if (placeholder.val()) {
+                contentSelector.setValue(placeholder.val());
+            }
+
+            if (focusEl) {
+                focusEl.focus();
+            }
         }
     }
 
