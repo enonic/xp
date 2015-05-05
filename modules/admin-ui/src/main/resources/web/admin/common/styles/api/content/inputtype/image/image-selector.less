@@ -43,6 +43,49 @@
 
   }
 
+  .image-uploader {
+    position: absolute;
+    top: 0;
+    .dropzone {
+      min-height: 37px;
+      height: 37px;
+      line-height: 30px;
+      font-size: 14px;
+      background-color: @admin-white;
+      border: 1px solid @admin-medium-gray-border;
+      z-index: @z-index-wizard-filed-element;
+
+      &:before {
+        display: inline-block;
+        content: "";
+        width: 31px;
+        height: 35px;
+        background: url("../images/upload.png") no-repeat center;
+      }
+
+      .box-sizing(border-box);
+      .input-border();
+      .input-glow();
+    }
+
+    &:focus {
+      .dropzone {
+        .box-shadow(0px 0px 5px @admin-input-blue);
+        border: 1px solid @admin-input-blue;
+      }
+    }
+
+    &.minimized {
+      .dropzone-container {
+        position: absolute;
+        right: 0;
+        .dropzone {
+          width: 37px;
+        }
+      }
+    }
+  }
+
   .selected-options {
     .clearfix();
     margin-right: -6%;
@@ -163,28 +206,6 @@
           background-color: #7a7a7a;
         }
       }
-    }
-  }
-
-  .upload-button {
-    .button(@admin-font-gray2, @admin-white, @admin-font-gray3, @admin-white);
-    .box-sizing(content-box);
-    .input-border();
-    .input-glow();
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    padding: 0;
-    margin: 0;
-    vertical-align: top;
-    background-image: url("../images/upload.png");
-    background-repeat: no-repeat;
-    background-position: center;
-
-    &:hover, &:focus {
-      z-index: @z-index-wizard-filed-element; // show shadow over the input
     }
   }
 
