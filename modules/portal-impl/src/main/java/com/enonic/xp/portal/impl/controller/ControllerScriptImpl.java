@@ -2,13 +2,19 @@ package com.enonic.xp.portal.impl.controller;
 
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
-import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptValue;
+
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_BEGIN;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_END;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_BEGIN;
+import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_END;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -69,6 +75,7 @@ final class ControllerScriptImpl
         populateContentType( response, result.getMember( "contentType" ) );
         populateBody( response, result.getMember( "body" ) );
         populateHeaders( response, result.getMember( "headers" ) );
+        populateContributions( response, result.getMember( "pageContributions" ) );
         setRedirect( response, result.getMember( "redirect" ) );
     }
 
@@ -135,4 +142,67 @@ final class ControllerScriptImpl
             response.addHeader( key, value.getMember( key ).getValue( String.class ) );
         }
     }
+
+
+    private void populateContributions( final PortalResponse response, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            return;
+        }
+
+        for ( final String key : value.getKeys() )
+        {
+            if ( "headBegin".equals( key ) )
+            {
+                addContribution( response, HEAD_BEGIN, value.getMember( key ) );
+            }
+            else if ( "headEnd".equals( key ) )
+            {
+                addContribution( response, HEAD_END, value.getMember( key ) );
+            }
+            else if ( "bodyBegin".equals( key ) )
+            {
+                addContribution( response, BODY_BEGIN, value.getMember( key ) );
+            }
+            else if ( "bodyEnd".equals( key ) )
+            {
+                addContribution( response, BODY_END, value.getMember( key ) );
+            }
+        }
+    }
+
+    private void addContribution( final PortalResponse response, final PostProcessInjection.Tag tag, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            for ( ScriptValue arrayValue : value.getArray() )
+            {
+                final String strValue = arrayValue.getValue( String.class );
+                if ( strValue != null )
+                {
+                    response.addContribution( tag, strValue );
+                }
+            }
+        }
+        else
+        {
+            final String strValue = value.getValue( String.class );
+            if ( strValue != null )
+            {
+                response.addContribution( tag, strValue );
+            }
+        }
+    }
+
 }

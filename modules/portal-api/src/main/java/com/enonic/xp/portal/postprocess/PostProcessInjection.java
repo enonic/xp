@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.postprocess;
 
+import java.util.List;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.portal.PortalContext;
@@ -15,5 +17,5 @@ public interface PostProcessInjection
         BODY_END
     }
 
-    String inject( PortalContext context, Tag tag );
+    List<String> inject( PortalContext context, Tag tag );
 }
