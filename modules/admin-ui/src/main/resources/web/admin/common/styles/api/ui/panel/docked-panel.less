@@ -1,7 +1,7 @@
 .docked-panel {
   position: absolute !important;
   top: 0;
-  right: 0;
+  right: -280px;
   bottom: 0;
   width: 280px;
   z-index: @z-index-docked-panel;
@@ -14,7 +14,7 @@
   }
 
   &.hidden {
-    visibility: hidden;
+    display: none;
   }
 
   &.floating {
@@ -30,6 +30,7 @@
     background-color: @admin-white;
     color: @admin-font-gray3;
     border-bottom: 1px solid @admin-medium-gray-border;
+
     .tab-bar-item {
       display: table-cell;
       padding: 10px 12px;

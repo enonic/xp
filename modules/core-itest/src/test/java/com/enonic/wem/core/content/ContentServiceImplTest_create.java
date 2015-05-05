@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.google.common.io.ByteSource;
 
@@ -20,6 +22,9 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest
 {
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @Override
     public void setUp()
         throws Exception
@@ -126,5 +131,23 @@ public class ContentServiceImplTest_create
         assertNotNull( content.getCreator() );
         assertNotNull( content.getModifiedTime() );
         assertNotNull( content.getModifier() );
+    }
+
+    @Test
+    public void create_incorrect_content()
+        throws Exception
+    {
+        final PropertyTree contentData = new PropertyTree();
+        contentData.addString( "target", "aStringValue" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( contentData).
+            displayName( "This is my shortcut" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.shortcut() ).
+            build();
+
+        exception.expect( IllegalArgumentException.class );
+        this.contentService.create( createContentParams );
     }
 }

@@ -49,6 +49,7 @@ tinymce.PluginManager.add('link', function (editor) {
     function showDialog(linkList) {
         var data = {}, selection = editor.selection, dom = editor.dom, selectedElm, anchorElm, initialText;
         var win, onlyText, textListCtrl, linkListCtrl, relListCtrl, targetListCtrl, classListCtrl, linkTitleCtrl, value;
+        var contentIdPrefix = "content://", targetBlank = "_blank";
 
         function linkListChangeHandler(e) {
             var textCtrl = win.find('#text');
@@ -69,7 +70,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 if (id) {
                     anchorList.push({
                         text: id,
-                        value:    '#' + id,
+                        value: '#' + id,
                         selected: url.indexOf('#' + id) != -1
                     });
                 }
@@ -137,6 +138,13 @@ tinymce.PluginManager.add('link', function (editor) {
 
         selectedElm = selection.getNode();
         anchorElm = dom.getParent(selectedElm, 'a[href]');
+
+        if (!anchorElm && selectedElm.localName == 'p' && (value = selectedElm.lastElementChild)) {
+            if (value.localName == 'a' && value.outerText == selectedElm.outerText) {
+                anchorElm = value;
+            }
+        }
+
         onlyText = isOnlyTextSelected();
 
         data.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
@@ -144,27 +152,17 @@ tinymce.PluginManager.add('link', function (editor) {
 
         if (anchorElm) {
             data.target = dom.getAttrib(anchorElm, 'target');
-        } else if (editor.settings.default_link_target) {
-            data.target = editor.settings.default_link_target;
-        }
 
-        if ((value = dom.getAttrib(anchorElm, 'rel'))) {
-            data.rel = value;
+            if ((value = dom.getAttrib(anchorElm, 'title'))) {
+                data.title = value;
+            }
         }
-
-        if ((value = dom.getAttrib(anchorElm, 'class'))) {
-            data['class'] = value;
-        }
-
-        if ((value = dom.getAttrib(anchorElm, 'title'))) {
-            data.title = value;
-        }
-
         if (onlyText) {
             textListCtrl = {
                 name: 'text',
                 type: 'textbox',
                 size: 40,
+                classes: 'link-text',
                 label: 'Text to display',
                 onchange: function () {
                     data.text = this.value();
@@ -195,7 +193,7 @@ tinymce.PluginManager.add('link', function (editor) {
             name: 'target',
             type: 'checkbox',
             label: 'Open new window',
-            checked: false
+            checked: (data.target == targetBlank)
         };
 
         if (editor.settings.link_title !== false) {
@@ -210,87 +208,79 @@ tinymce.PluginManager.add('link', function (editor) {
         win = editor.windowManager.open({
             title: 'Insert link',
             data: data,
-
-            bodyType: 'tabpanel',
+            classes: 'link-dialog',
             body: [{
-                title: 'Content',
                 type: "form",
-                classes: 'link-tab-content',
+                classes: 'link-form',
                 items: [
-                    {
-                        name: 'href',
-                        type: 'textbox',
-                        classes: 'link-tab-content-target',
-                        size: 40,
-                        label: 'Target'
-                    },
                     textListCtrl,
                     linkTitleCtrl,
                     targetListCtrl
                 ]
             }, {
-                title: 'Download',
-                type: "form",
-                classes: 'link-tab-download',
-                items: [
-                    {
+                type: "tabpanel",
+                classes: 'link-panel',
+                items: [{
+                    title: 'Content',
+                    type: "form",
+                    classes: 'link-tab-content',
+                    items: [{
+                        name: 'contentId',
+                        type: 'textbox',
+                        classes: 'link-tab-content-target',
+                        size: 40,
+                        label: 'Target',
+                        value: (data.href.indexOf(contentIdPrefix) > -1) ? data.href.replace(contentIdPrefix, "") : ""
+                    }
+                    ]
+                }, {
+                    title: 'Download',
+                    type: "form",
+                    classes: 'link-tab-download',
+                    items: [{
                         name: 'href',
                         type: 'textbox',
                         classes: 'link-tab-download-target',
                         size: 40,
                         label: 'Target'
-                    },
-                    textListCtrl,
-                    linkTitleCtrl
-                ]
-            }, {
-                title: 'URL',
-                type: "form",
-                classes: 'link-tab-url',
-                items: [
-                    {
-                        name: 'href',
-                        type: 'filepicker',
-                        filetype: 'file',
-                        size: 40,
-                        label: 'URL',
-                        onchange: urlChange,
-                        onkeyup: updateText
-                    },
-                    textListCtrl,
-                    linkTitleCtrl,
-                    targetListCtrl
-                ]
-            }, {
-                title: 'Email',
-                type: "form",
-                classes: 'link-tab-email',
-                items: [
-                    {
+                    }]
+                }, {
+                    title: 'URL',
+                    type: "form",
+                    classes: 'link-tab-url',
+                    items: [{
                         name: 'href',
                         type: 'textbox',
                         size: 40,
+                        label: 'URL'
+                    }
+                    ]
+                }, {
+                    title: 'Email',
+                    type: "form",
+                    classes: 'link-tab-email',
+                    items: [{
+                        name: 'email',
+                        type: 'textbox',
+                        size: 40,
                         label: 'Email'
-                    },
-                    textListCtrl,
-                    {
+                    }, {
                         name: 'subject',
                         type: 'textbox',
                         size: 40,
                         label: 'Subject'
-                    }, {
-                        name: 'body',
-                        type: 'textbox',
-                        size: 40,
-                        label: 'Body'
-                    }
-                ]
+                    }]
+                }]
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
-                var href;
+                var href, contentId;
                 data = tinymce.extend(data, e.data);
                 href = data.href;
+                contentId = data.contentId;
+                if (data.contentId) {
+                    href = contentIdPrefix + contentId;
+                }
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -307,9 +297,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
-                        target: data.target ? data.target : null,
-                        rel: data.rel ? data.rel : null,
-                        "class": data["class"] ? data["class"] : null,
+                        target: data.target ? targetBlank : null,
                         title: data.title ? data.title : null
                     };
 
@@ -378,6 +366,11 @@ tinymce.PluginManager.add('link', function (editor) {
                 insertLink();
             }
         });
+
+        editor.execCommand("addContentSelector", false, win.getEl()/*
+             win.getEl().querySelectorAll(".mce-link-tab-content .mce-link-tab-content-target")[0],
+             win.getEl().querySelectorAll(".mce-link-text")[0]*/
+        );
     }
 
     editor.addButton('link', {

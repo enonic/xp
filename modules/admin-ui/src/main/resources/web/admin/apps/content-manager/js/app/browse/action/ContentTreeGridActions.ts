@@ -75,7 +75,6 @@ module app.browse.action {
                 this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
                 this.MOVE_CONTENT.setEnabled(true);
-                this.SORT_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                 this.PREVIEW_CONTENT.setEnabled(false);
@@ -92,6 +91,7 @@ module app.browse.action {
                         sendAndParse().
                         then((contentType: api.schema.content.ContentType) => {
                             var allowsChildren = (contentType && contentType.isAllowChildContent());
+                            this.SORT_CONTENT.setEnabled(allowsChildren);
                             var hasCreatePermission = false;
                             new api.security.auth.IsAuthenticatedRequest().
                                 sendAndParse().

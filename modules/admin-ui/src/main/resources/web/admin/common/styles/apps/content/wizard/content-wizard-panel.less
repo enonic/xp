@@ -1,7 +1,7 @@
 .content-wizard-panel {
 
   .wizard-step-deck-panel {
-    .form + .form-view {
+    .form-view {
       margin-top: 0px;
     }
   }
@@ -62,6 +62,10 @@
       &:before {
         position: relative;
         top: 0px;
+      }
+
+      &.forced:not(.active):before {
+        color: red;
       }
 
       &.icon-medium {

@@ -35,7 +35,7 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
-        private shown: boolean;
+        private shown: boolean = false;
 
         private splitter: api.dom.DivEl;
 
@@ -51,9 +51,10 @@ module app.wizard.page.contextwindow {
 
         private displayModeChangedListeners: {() : void}[] = [];
 
+        private animationTimer;
+
         constructor(config: ContextWindowConfig) {
             super();
-
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionsPanel = config.inspectionPanel;
             this.emulatorPanel = config.emulatorPanel;
@@ -76,7 +77,7 @@ module app.wizard.page.contextwindow {
             this.addItem("Inspect", this.inspectionsPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
-            this.onRendered(() => this.initializeResizable());
+            this.onRendered(() => this.onRenderedHandler());
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
@@ -84,7 +85,7 @@ module app.wizard.page.contextwindow {
             });
         }
 
-        private initializeResizable() {
+        private onRenderedHandler() {
             var initialPos = 0;
             var splitterPosition = 0;
             var parent = this.getParentElement();
@@ -111,9 +112,8 @@ module app.wizard.page.contextwindow {
                 ResponsiveManager.fireResizeEvent();
             });
 
-            app.wizard.ShowLiveEditEvent.on(() => {
-                this.show();
-            })
+            // hide itself after all calculations have been made
+            this.addClass('hidden');
         }
 
         private splitterWithinBoundaries(offset: number) {
@@ -140,15 +140,30 @@ module app.wizard.page.contextwindow {
         }
 
         slideOut() {
-            this.getEl().addClass("hidden").setRight(-this.getEl().getWidthWithBorder() + "px");
-            this.shown = false;
-            this.updateFrameSize();
+            this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
+            // there is a 100ms animation so wait until it's finished
+            if (this.animationTimer) {
+                clearTimeout(this.animationTimer);
+            }
+            this.animationTimer = setTimeout(() => {
+                this.getEl().addClass('hidden');
+                this.shown = false;
+                this.updateFrameSize();
+                this.animationTimer = null;
+            }, 100);
         }
 
         slideIn() {
-            this.getEl().removeClass("hidden").setRight("0px");
-            this.shown = true;
-            this.updateFrameSize();
+            this.getEl().removeClass('hidden').setRightPx(0);
+            // there is a 100ms animation so wait until it's finished
+            if (this.animationTimer) {
+                clearTimeout(this.animationTimer);
+            }
+            this.animationTimer = setTimeout(() => {
+                this.shown = true;
+                this.updateFrameSize();
+                this.animationTimer = null
+            }, 100);
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {
@@ -157,16 +172,28 @@ module app.wizard.page.contextwindow {
         }
 
         public clearSelection() {
-            this.inspectionsPanel.clearSelection();
+            this.inspectionsPanel.clearInspection();
             this.selectPanel(this.insertablesPanel);
         }
 
-        private updateFrameSize() {
-            var contextWindowWidth = this.actualWidth || this.getEl().getWidth(),
-                displayModeChanged = this.hasClass('floating') && !this.isFloating();
-            this.liveFormPanel.updateFrameContainerSize(!this.isFloating() && this.shown, contextWindowWidth);
+        public isInspecting(): boolean {
+            return this.inspectionsPanel.isInspecting();
+        }
 
-            this.isFloating() ? this.addClass("floating") : this.removeClass("floating");
+        public canAutoSlide(): boolean {
+            var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
+            return liveFormPanelWidth > 720 && liveFormPanelWidth <= 1380;
+        }
+
+        private updateFrameSize() {
+            var isFloating = this.isFloating(),
+                displayModeChanged = this.hasClass('floating') && !isFloating,
+                contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+
+            this.liveFormPanel.updateFrameContainerSize(!isFloating && this.shown, contextWindowWidth);
+
+            this.toggleClass("floating", isFloating);
+
             if (displayModeChanged) {
                 this.notifyDisplayModeChanged();
             }
