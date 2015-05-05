@@ -57,7 +57,6 @@ module app.publish {
         }
 
         initAndOpen() {
-            this.renderSelectedItems(this.selectedItems);
             this.getPublishDependantsAndUpdateView();
             this.open();
         }
@@ -81,7 +80,7 @@ module app.publish {
             return this.publishAction;
         }
 
-        renderSelectedItems(selectedItems: SelectionItem<ContentSummary>[]) {
+        renderResolvedPublishItems(selectedItems: SelectionItem<ContentSummary>[]) {
             this.itemList.clear();
 
             for (var i in selectedItems) {
@@ -136,39 +135,6 @@ module app.publish {
             return selectionItem;
         }
 
-        private countItemsToPublishAndUpdateCounterElements() {
-            //subheader
-            if (this.includeChildItemsCheck.isChecked()) {
-                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
-                                              this.publishContentDependants.dependantsResolvedWithChildrenIncluded.length +
-                                              " dependent</b> changes");
-            } else {
-                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
-                                              this.publishContentDependants.dependantsResolvedWithoutChildrenIncluded.length +
-                                              " dependent</b> changes");
-            }
-
-            // publish button
-            this.cleanPublishButtonText();
-            if (this.includeChildItemsCheck.isChecked()) {
-                this.updatePublishButtonCounter(this.selectedItems.length +
-                                                this.publishContentDependants.dependantsResolvedWithChildrenIncluded.length +
-                                                this.publishContentDependants.childrenCount);
-            } else {
-                this.updatePublishButtonCounter(this.selectedItems.length +
-                                                this.publishContentDependants.dependantsResolvedWithoutChildrenIncluded.length);
-            }
-
-            // includeChildren link
-            if (this.publishContentDependants.childrenCount > 0) {
-                this.includeChildItemsCheck.setLabel('Include child items (+' + this.publishContentDependants.childrenCount + ')');
-                this.includeChildItemsCheck.getEl().setDisabled(false);
-            } else {
-                this.includeChildItemsCheck.getEl().setDisabled(true);
-                this.includeChildItemsCheck.setLabel('Include child items');
-            }
-        }
-
         private getPublishDependantsAndUpdateView() {
 
             this.showLoadingSpinner();
@@ -179,6 +145,7 @@ module app.publish {
 
             getPublishContentDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<api.content.ResolvePublishDependenciesResult>) => {
                 this.publishContentDependants = jsonResponse.getResult();
+                this.renderResolvedPublishItems(this.selectedItems);
                 this.countItemsToPublishAndUpdateCounterElements();
             }).finally(() => {
                 this.hideLoadingSpinner();
@@ -192,6 +159,57 @@ module app.publish {
                 this.close();
                 PublishContentRequest.feedback(jsonResponse);
             });
+        }
+
+        private countItemsToPublishAndUpdateCounterElements() {
+            //subheader
+            if (this.includeChildItemsCheck.isChecked()) {
+                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
+                                              this.getResolvedDependantsCount(true) +
+                                              " dependent</b> changes");
+            } else {
+                this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
+                                              this.getResolvedDependantsCount(false) +
+                                              " dependent</b> changes");
+            }
+
+            // publish button
+            this.cleanPublishButtonText();
+            if (this.includeChildItemsCheck.isChecked()) {
+                this.updatePublishButtonCounter(this.selectedItems.length +
+                                                this.getResolvedDependantsCount(true) + this.getResolvedChildrenCount());
+            } else {
+                this.updatePublishButtonCounter(this.selectedItems.length +
+                                                this.getResolvedDependantsCount(false));
+            }
+
+            // includeChildren link
+            if (this.getResolvedChildrenCount() > 0) {
+                this.includeChildItemsCheck.setLabel('Include child items (+' + this.getResolvedChildrenCount() + ')');
+                this.includeChildItemsCheck.getEl().setDisabled(false);
+            } else {
+                this.includeChildItemsCheck.getEl().setDisabled(true);
+                this.includeChildItemsCheck.setLabel('Include child items');
+            }
+        }
+
+        private getResolvedChildrenCount(): number {
+            var result = 0;
+            result += this.publishContentDependants.childrenResolved.length;
+            result += this.publishContentDependants.deletedChildrenResolved.length;
+            return result;
+        }
+
+        private getResolvedDependantsCount(childrenIncluded: boolean): number {
+            var result = 0;
+            if (childrenIncluded) {
+                result += this.publishContentDependants.dependantsResolvedWithChildrenIncluded.length;
+                result += this.publishContentDependants.deletedDependantsResolvedWithChildrenIncluded.length;
+            } else {
+                result += this.publishContentDependants.dependantsResolvedWithoutChildrenIncluded.length;
+                result += this.publishContentDependants.deletedDependantsResolvedWithoutChildrenIncluded.length;
+            }
+            return result;
         }
 
         private updatePublishButtonCounter(count: number) {
