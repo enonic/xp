@@ -106,7 +106,7 @@ module api.liveedit {
         }
 
         constructor(builder: PageViewBuilder) {
-
+// move super() call here?!
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
 
