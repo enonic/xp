@@ -48,68 +48,14 @@ tinymce.PluginManager.add('link', function (editor) {
 
     function showDialog(linkList) {
         var data = {}, selection = editor.selection, dom = editor.dom, selectedElm, anchorElm, initialText;
-        var win, onlyText, textListCtrl, linkListCtrl, relListCtrl, targetListCtrl, classListCtrl, linkTitleCtrl, value;
-        var contentIdPrefix = "content://", targetBlank = "_blank";
-
-        function linkListChangeHandler(e) {
-            var textCtrl = win.find('#text');
-
-            if (!textCtrl.value() || (e.lastControl && textCtrl.value() == e.lastControl.text())) {
-                textCtrl.value(e.control.text());
-            }
-
-            win.find('#href').value(e.control.value());
-        }
-
-        function buildAnchorListControl(url) {
-            var anchorList = [];
-
-            tinymce.each(editor.dom.select('a:not([href])'), function (anchor) {
-                var id = anchor.name || anchor.id;
-
-                if (id) {
-                    anchorList.push({
-                        text: id,
-                        value: '#' + id,
-                        selected: url.indexOf('#' + id) != -1
-                    });
-                }
-            });
-
-            if (anchorList.length) {
-                anchorList.unshift({text: 'None', value: ''});
-
-                return {
-                    name: 'anchor',
-                    type: 'listbox',
-                    label: 'Anchors',
-                    values: anchorList,
-                    onselect: linkListChangeHandler
-                };
-            }
-        }
-
-        function updateText() {
-            if (!initialText && data.text.length === 0 && onlyText) {
-                this.parent().parent().find('#text')[0].value(this.value());
-            }
-        }
-
-        function urlChange(e) {
-            var meta = e.meta || {};
-
-            if (linkListCtrl) {
-                linkListCtrl.value(editor.convertURL(this.value(), 'href'));
-            }
-
-            tinymce.each(e.meta, function (value, key) {
-                win.find('#' + key).value(value);
-            });
-
-            if (!meta.text) {
-                updateText.call(this);
-            }
-        }
+        var win, onlyText, textListCtrl, targetListCtrl, linkTitleCtrl, value;
+        var contentIdPrefix = "content://", mediaIdPrefix = "media://download/", subjectPrefix = "subject=", emailPrefix = "mailto:", targetBlank = "_blank";
+        var tabNames = {
+            content: "Content",
+            download: "Download",
+            url: "URL",
+            email: "Email"
+        };
 
         function isOnlyTextSelected(anchorElm) {
             var html = selection.getContent();
@@ -136,6 +82,41 @@ tinymce.PluginManager.add('link', function (editor) {
             return true;
         }
 
+        function isTabActive(tabName) {
+            var activeTab = win.getEl().querySelectorAll(".mce-tab.mce-active")[0];
+            return activeTab.innerText == tabName;
+        }
+
+        function getActiveTab(data) {
+            if (data.email) {
+                return 3;
+            }
+            if (data.url) {
+                return 2;
+            }
+            if (data.mediaId) {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        function getHref(data) {
+            if (isTabActive(tabNames.content) && data.contentId) {
+                return contentIdPrefix + data.contentId;
+            }
+
+            if (isTabActive(tabNames.download) && data.mediaId) {
+                return mediaIdPrefix + data.mediaId;
+            }
+
+            if (isTabActive(tabNames.email) && data.email) {
+                return emailPrefix + data.email + (data.subject ? "?" + subjectPrefix + encodeURI(data.subject) : "");
+            }
+
+            return encodeURI(data.url);
+        }
+
         selectedElm = selection.getNode();
         anchorElm = dom.getParent(selectedElm, 'a[href]');
 
@@ -146,15 +127,29 @@ tinymce.PluginManager.add('link', function (editor) {
         }
 
         onlyText = isOnlyTextSelected();
-
         data.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
-        data.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
 
         if (anchorElm) {
+            data.href = dom.getAttrib(anchorElm, 'href');
             data.target = dom.getAttrib(anchorElm, 'target');
 
             if ((value = dom.getAttrib(anchorElm, 'title'))) {
                 data.title = value;
+            }
+
+            if (data.href.startsWith(contentIdPrefix)) {
+                data.contentId = data.href.replace(contentIdPrefix, "");
+            }
+            else if (data.href.startsWith(mediaIdPrefix)) {
+                data.mediaId = data.href.replace(mediaIdPrefix, "");
+            } else if (data.href.startsWith(emailPrefix)) {
+                var email = data.href.replace(emailPrefix, "").split("?");
+                data.email = email[0];
+                data.subject =
+                (email.length > 1 && email[1].startsWith(subjectPrefix)) ? decodeURI(email[1].replace(subjectPrefix, "")) : "";
+            }
+            else {
+                data.url = decodeURI(data.href);
             }
         }
         if (onlyText) {
@@ -166,25 +161,6 @@ tinymce.PluginManager.add('link', function (editor) {
                 label: 'Text to display',
                 onchange: function () {
                     data.text = this.value();
-                }
-            };
-        }
-
-        if (linkList) {
-            linkListCtrl = {
-                type: 'listbox',
-                label: 'Link list',
-                values: buildListItems(
-                    linkList,
-                    function (item) {
-                        item.value = editor.convertURL(item.value || item.url, 'href');
-                    },
-                    [{text: 'None', value: ''}]
-                ),
-                onselect: linkListChangeHandler,
-                value: editor.convertURL(data.href, 'href'),
-                onPostRender: function () {
-                    linkListCtrl = this;
                 }
             };
         }
@@ -220,8 +196,9 @@ tinymce.PluginManager.add('link', function (editor) {
             }, {
                 type: "tabpanel",
                 classes: 'link-panel',
+                activeTab: getActiveTab(data),
                 items: [{
-                    title: 'Content',
+                    title: tabNames.content,
                     type: "form",
                     classes: 'link-tab-content',
                     items: [{
@@ -229,16 +206,14 @@ tinymce.PluginManager.add('link', function (editor) {
                         type: 'textbox',
                         classes: 'link-tab-content-target',
                         size: 40,
-                        label: 'Target',
-                        value: (data.href.indexOf(contentIdPrefix) > -1) ? data.href.replace(contentIdPrefix, "") : ""
-                    }
-                    ]
+                        label: 'Target'
+                    }]
                 }, {
                     title: 'Download',
                     type: "form",
                     classes: 'link-tab-download',
                     items: [{
-                        name: 'href',
+                        name: 'mediaId',
                         type: 'textbox',
                         classes: 'link-tab-download-target',
                         size: 40,
@@ -249,12 +224,11 @@ tinymce.PluginManager.add('link', function (editor) {
                     type: "form",
                     classes: 'link-tab-url',
                     items: [{
-                        name: 'href',
+                        name: 'url',
                         type: 'textbox',
                         size: 40,
                         label: 'URL'
-                    }
-                    ]
+                    }]
                 }, {
                     title: 'Email',
                     type: "form",
@@ -276,11 +250,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 /*eslint dot-notation: 0*/
                 var href, contentId;
                 data = tinymce.extend(data, e.data);
-                href = data.href;
-                contentId = data.contentId;
-                if (data.contentId) {
-                    href = contentIdPrefix + contentId;
-                }
+                href = getHref(data);
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -331,12 +301,12 @@ tinymce.PluginManager.add('link', function (editor) {
                 }
 
                 // Is email and not //user@domain.com
-                if (href.indexOf('@') > 0 && href.indexOf('//') == -1 && href.indexOf('mailto:') == -1) {
+                if (href.indexOf('@') > 0 && href.indexOf('//') == -1 && href.indexOf(emailPrefix) == -1) {
                     delayedConfirm(
                         'The URL you entered seems to be an email address. Do you want to add the required mailto: prefix?',
                         function (state) {
                             if (state) {
-                                href = 'mailto:' + href;
+                                href = emailPrefix + href;
                             }
 
                             insertLink();
@@ -367,10 +337,7 @@ tinymce.PluginManager.add('link', function (editor) {
             }
         });
 
-        editor.execCommand("addContentSelector", false, win.getEl()/*
-             win.getEl().querySelectorAll(".mce-link-tab-content .mce-link-tab-content-target")[0],
-             win.getEl().querySelectorAll(".mce-link-text")[0]*/
-        );
+        editor.execCommand("addContentSelector", false, win.getEl());
     }
 
     editor.addButton('link', {
