@@ -1,5 +1,5 @@
-@tinymce-input-left: 66px;
-@tinymce-input-width: 315px;
+@tinymce-input-left: 115px;
+@tinymce-input-width: 380px;
 
 .tinymce-editor {
   .mce-btn {
@@ -86,6 +86,11 @@
   .mce-link-form, .mce-link-panel {
     top: 0px !important;
     position: relative !important;
+
+    .mce-textbox, .mce-checkbox {
+      width: @tinymce-input-width !important;
+      left: @tinymce-input-left !important;
+    }
   }
 
   .mce-link-panel {
@@ -108,11 +113,6 @@
 
     &.mce-panel {
       background: none;
-    }
-
-    .mce-textbox {
-      width: @tinymce-input-width !important;
-      left: @tinymce-input-left !important;
     }
   }
 
@@ -144,10 +144,23 @@
       padding-top: 9px;
       padding-right: 12px;
     }
+
+    .mce-container.mce-first {
+      top: 10px !important;
+      label {
+        top: 16px !important;
+      }
+    }
+  }
+
+  .mce-link-tab-content, .mce-link-tab-url {
+    .mce-container.mce-last {
+      top: 65px !important;
+    }
   }
 
   .mce-reset > .mce-container-body {
-    height: 278px !important;
+    height: 260px !important;
   }
 
   .mce-container.mce-first.mce-last, .mce-container-body:nth-of-type(1) {

@@ -20,39 +20,13 @@ tinymce.PluginManager.add('link', function (editor) {
         };
     }
 
-    function buildListItems(inputList, itemCallback, startItems) {
-        function appendItems(values, output) {
-            output = output || [];
-
-            tinymce.each(values, function (item) {
-                var menuItem = {text: item.text || item.title};
-
-                if (item.menu) {
-                    menuItem.menu = appendItems(item.menu);
-                } else {
-                    menuItem.value = item.value;
-
-                    if (itemCallback) {
-                        itemCallback(menuItem);
-                    }
-                }
-
-                output.push(menuItem);
-            });
-
-            return output;
-        }
-
-        return appendItems(inputList, startItems || []);
-    }
-
-    function showDialog(linkList) {
+    function showDialog() {
         var data = {}, selection = editor.selection, dom = editor.dom, selectedElm, anchorElm, initialText;
-        var win, onlyText, textListCtrl, targetListCtrl, linkTitleCtrl, value;
+        var win, onlyText, textListCtrl, linkTitleCtrl, value;
         var contentIdPrefix = "content://", mediaIdPrefix = "media://download/", subjectPrefix = "subject=", emailPrefix = "mailto:", targetBlank = "_blank";
         var tabNames = {
             content: "Content",
-            download: "Download",
+            media: "Download",
             url: "URL",
             email: "Email"
         };
@@ -91,10 +65,10 @@ tinymce.PluginManager.add('link', function (editor) {
             if (data.email) {
                 return 3;
             }
-            if (data.url) {
+            if (data.mediaId) {
                 return 2;
             }
-            if (data.mediaId) {
+            if (data.url) {
                 return 1;
             }
 
@@ -106,7 +80,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 return contentIdPrefix + data.contentId;
             }
 
-            if (isTabActive(tabNames.download) && data.mediaId) {
+            if (isTabActive(tabNames.media) && data.mediaId) {
                 return mediaIdPrefix + data.mediaId;
             }
 
@@ -115,6 +89,10 @@ tinymce.PluginManager.add('link', function (editor) {
             }
 
             return encodeURI(data.url);
+        }
+
+        function getTarget(data) {
+            return ((isTabActive(tabNames.content) && data.targetContent) || (isTabActive(tabNames.url) && data.targetUrl));
         }
 
         selectedElm = selection.getNode();
@@ -139,6 +117,7 @@ tinymce.PluginManager.add('link', function (editor) {
 
             if (data.href.startsWith(contentIdPrefix)) {
                 data.contentId = data.href.replace(contentIdPrefix, "");
+                data.targetContent = data.target;
             }
             else if (data.href.startsWith(mediaIdPrefix)) {
                 data.mediaId = data.href.replace(mediaIdPrefix, "");
@@ -150,6 +129,7 @@ tinymce.PluginManager.add('link', function (editor) {
             }
             else {
                 data.url = decodeURI(data.href);
+                data.targetUrl = data.target;
             }
         }
         if (onlyText) {
@@ -164,13 +144,6 @@ tinymce.PluginManager.add('link', function (editor) {
                 }
             };
         }
-
-        targetListCtrl = {
-            name: 'target',
-            type: 'checkbox',
-            label: 'Open new window',
-            checked: (data.target == targetBlank)
-        };
 
         if (editor.settings.link_title !== false) {
             linkTitleCtrl = {
@@ -190,8 +163,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 classes: 'link-form',
                 items: [
                     textListCtrl,
-                    linkTitleCtrl,
-                    targetListCtrl
+                    linkTitleCtrl
                 ]
             }, {
                 type: "tabpanel",
@@ -207,9 +179,29 @@ tinymce.PluginManager.add('link', function (editor) {
                         classes: 'link-tab-content-target',
                         size: 40,
                         label: 'Target'
+                    }, {
+                        name: 'targetContent',
+                        type: 'checkbox',
+                        label: 'Open new window',
+                        checked: (data.targetContent == targetBlank)
                     }]
                 }, {
-                    title: 'Download',
+                    title: tabNames.url,
+                    type: "form",
+                    classes: 'link-tab-url',
+                    items: [{
+                        name: 'url',
+                        type: 'textbox',
+                        size: 40,
+                        label: 'URL'
+                    }, {
+                        name: 'targetUrl',
+                        type: 'checkbox',
+                        label: 'Open new window',
+                        checked: (data.targetUrl == targetBlank)
+                    }]   
+                }, {
+                    title: tabNames.media,
                     type: "form",
                     classes: 'link-tab-download',
                     items: [{
@@ -220,17 +212,7 @@ tinymce.PluginManager.add('link', function (editor) {
                         label: 'Target'
                     }]
                 }, {
-                    title: 'URL',
-                    type: "form",
-                    classes: 'link-tab-url',
-                    items: [{
-                        name: 'url',
-                        type: 'textbox',
-                        size: 40,
-                        label: 'URL'
-                    }]
-                }, {
-                    title: 'Email',
+                    title: tabNames.email,
                     type: "form",
                     classes: 'link-tab-email',
                     items: [{
@@ -248,9 +230,10 @@ tinymce.PluginManager.add('link', function (editor) {
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
-                var href, contentId;
+                var href, target;
                 data = tinymce.extend(data, e.data);
                 href = getHref(data);
+                target = getTarget(data);
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -267,7 +250,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
-                        target: data.target ? targetBlank : null,
+                        target: target ? targetBlank : "",
                         title: data.title ? data.title : null
                     };
 

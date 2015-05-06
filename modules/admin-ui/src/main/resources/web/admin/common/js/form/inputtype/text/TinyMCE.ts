@@ -204,6 +204,10 @@ module api.form.inputtype.text {
                 placeholder.val(event.getOption().value);
             });
 
+            contentSelector.onOptionDeselected(() => {
+                placeholder.val("");
+            });
+
             wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
 
             placeholder.hide();
