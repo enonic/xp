@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.inspect.page {
         private templateSelector: PageTemplateSelector;
 
         constructor(templateSelector: PageTemplateSelector) {
-            super('form-view');
+            super('page-template-form');
             this.templateSelector = templateSelector;
 
             var fieldSet = new api.ui.form.Fieldset();

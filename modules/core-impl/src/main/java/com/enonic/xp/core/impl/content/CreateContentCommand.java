@@ -63,7 +63,7 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        validateParameters();
+        validateBlockingChecks();
 
         CreateContentParams processedParams = processCreateContentParams();
 
@@ -91,7 +91,7 @@ final class CreateContentCommand
         }
     }
 
-    private void validateParameters()
+    private void validateBlockingChecks()
     {
         validateSpecificChecks( params );
         validateContentType( params );
@@ -223,7 +223,7 @@ final class CreateContentCommand
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
-        builder.valid( checkIsValid( processedContent ) );
+        builder.valid( validateNonBlockingChecks( processedContent ) );
         populateName( builder );
         populateCreator( builder );
         setChildOrder( builder );
@@ -315,7 +315,7 @@ final class CreateContentCommand
         builder.creator( currentUser.getKey() );
     }
 
-    private boolean checkIsValid( final CreateContentParams contentParams )
+    private boolean validateNonBlockingChecks( final CreateContentParams contentParams )
     {
         final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
             contentData( contentParams.getData() ).

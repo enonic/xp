@@ -59,6 +59,7 @@ public abstract class ControllerResource
         context.setBaseUri( this.baseUri );
         context.setBranch( this.branch );
         context.getCookies().putAll( getCookieMap() );
+        context.setUri( this.uriInfo.getRequestUri().toString() );
 
         final Multimap<String, String> contextHeaders = context.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );

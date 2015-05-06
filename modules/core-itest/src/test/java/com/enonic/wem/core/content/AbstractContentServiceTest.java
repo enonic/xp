@@ -2,6 +2,10 @@ package com.enonic.wem.core.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import org.apache.tika.detect.DefaultDetector;
@@ -43,16 +47,29 @@ import com.enonic.xp.core.impl.module.ModuleRegistry;
 import com.enonic.xp.core.impl.module.ModuleServiceImpl;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.ComboBoxConfig;
+import com.enonic.xp.form.inputtype.ContentSelectorConfig;
+import com.enonic.xp.form.inputtype.DateTimeConfig;
+import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Reference;
+
+import static com.enonic.xp.schema.content.ContentType.newContentType;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -243,5 +260,166 @@ public class AbstractContentServiceTest
             build();
 
         return this.contentService.create( createContentParams );
+    }
+
+
+    protected PropertyTree createPropertyTreeForAllInputTypes () {
+
+        //Creates a content and a reference to this object
+        final Content referredContent = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Referred content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build() );
+        final Reference reference = Reference.from( referredContent.getId().toString() );
+
+        //Creates a property set
+        PropertySet propertySet = new PropertySet();
+        propertySet.addString( "setString", "stringValue" );
+        propertySet.addDouble( "setDouble", 1.5d );
+
+        //Creates the property tree with value assigned for each attribute
+        PropertyTree data = new PropertyTree( );
+        data.addString( "textLine", "textLine" );
+        data.addDouble( "double", 1.4d );
+        data.addLong( "long", 2l );
+        data.addString( "color", "FFFFFF" );
+        data.addString( "comboBox", "value3" );
+        data.addBoolean( "checkbox", false );
+        data.addHtmlPart( "tinyMce", "<p>paragraph</p>" );
+        data.addString( "phone", "012345678" );
+        data.addString( "tag", "tag" );
+        data.addReference( "contentSelector", reference );
+        data.addString( "contentTypeFilter", "stringValue" );
+        data.addString( "moduleConfigurator", "com.enonic.xp.modules.features" );
+        data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
+        data.addLocalTime( "time", LocalTime.NOON );
+        data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
+        data.addHtmlPart( "htmlArea", "<p>paragraph</p>" );
+        data.addString( "xml", "<elem>paragraph</elem>" );
+        data.addLocalDateTime( "localDateTime", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+        data.addInstant( "dateTime", Instant.now() );
+        data.addSet( "set", propertySet );
+
+        return data;
+    }
+
+
+
+    protected ContentType createContentTypeForAllInputTypes()
+    {
+        final FormItemSet set = FormItemSet.newFormItemSet().
+            name( "set" ).
+            addFormItem( Input.create().
+                name( "setString" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "setDouble" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            build();
+
+        return newContentType().
+            superType( ContentTypeName.documentMedia() ).
+            name( "myContentType" ).
+            addFormItem( Input.create().
+                name( "textLine" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "stringArray" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "double" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "long" ).
+                inputType( InputTypes.LONG ).
+                build() ).
+            addFormItem( Input.create().
+                name( "color" ).
+                inputType( InputTypes.COLOR ).
+                build() ).
+            addFormItem( Input.create().
+                name( "comboBox" ).
+                inputType( InputTypes.COMBO_BOX ).
+                inputTypeConfig( ComboBoxConfig.create().
+                    addOption( "label1", "value1" ).
+                    addOption( "label2", "value2" ).
+                    addOption( "label3", "value3" ).
+                    build() ).
+                build() ).
+            addFormItem( Input.create().
+                name( "checkbox" ).
+                inputType( InputTypes.CHECKBOX ).
+                build() ).
+            addFormItem( Input.create().
+                name( "tinyMce" ).
+                inputType( InputTypes.TINY_MCE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "phone" ).
+                inputType( InputTypes.PHONE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "tag" ).
+                inputType( InputTypes.TAG ).
+                build() ).
+            addFormItem( Input.create().
+                name( "contentSelector" ).
+                inputType( InputTypes.CONTENT_SELECTOR ).
+                inputTypeConfig( ContentSelectorConfig.create().
+                    addAllowedContentType( ContentTypeName.folder() ).
+                    relationshipType( RelationshipTypeName.REFERENCE ).
+                    build() ).
+                build() ).
+            addFormItem( Input.create().
+                name( "contentTypeFilter" ).
+                inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                build() ).
+            addFormItem( Input.create().
+                name( "moduleConfigurator" ).
+                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                build() ).
+            addFormItem( Input.create().
+                name( "date" ).
+                inputType( InputTypes.DATE ).
+                build() ).
+            addFormItem( Input.create().
+                name( "time" ).
+                inputType( InputTypes.TIME ).
+                build() ).
+            addFormItem( Input.create().
+                name( "geoPoint" ).
+                inputType( InputTypes.GEO_POINT ).
+                build() ).
+            addFormItem( Input.create().
+                name( "htmlArea" ).
+                inputType( InputTypes.HTML_AREA ).
+                build() ).
+            addFormItem( Input.create().
+                name( "xml" ).
+                inputType( InputTypes.XML ).
+                build() ).
+            addFormItem( Input.create().
+                name( "localDateTime" ).
+                inputType( InputTypes.DATE_TIME ).
+                inputTypeConfig( DateTimeConfig.create().
+                    withTimezone( false ).
+                    build() ).
+                build() ).
+            addFormItem( Input.create().
+                name( "dateTime" ).
+                inputType( InputTypes.DATE_TIME ).
+                inputTypeConfig( DateTimeConfig.create().
+                    withTimezone( true ).
+                    build() ).
+                build() ).
+            addFormItem( set ).
+            build();
     }
 }

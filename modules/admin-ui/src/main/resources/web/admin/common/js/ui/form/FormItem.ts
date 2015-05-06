@@ -13,7 +13,7 @@ module api.ui.form {
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
         constructor(builder: FormItemBuilder) {
-            super("form-item");
+            super("input-view");
             this.error = new api.dom.SpanEl("error");
             this.appendChild(this.error);
 
@@ -29,7 +29,7 @@ module api.ui.form {
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
                 if(Validators.required == builder.getValidator()) {
-                    this.label.setClass("required");
+                    this.label.addClass("required");
                 }
                 this.appendChild(this.label);
             }

@@ -1,9 +1,15 @@
 package com.enonic.xp.portal;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
 
 @Beta
 public final class PortalResponse
@@ -22,9 +28,12 @@ public final class PortalResponse
 
     private boolean postProcess = true;
 
+    private final ListMultimap<PostProcessInjection.Tag, String> contributions;
+
     public PortalResponse()
     {
         this.headers = Maps.newHashMap();
+        this.contributions = ArrayListMultimap.create();
     }
 
     public int getStatus()
@@ -82,5 +91,15 @@ public final class PortalResponse
     public void setPostProcess( final boolean postProcess )
     {
         this.postProcess = postProcess;
+    }
+
+    public void addContribution( final PostProcessInjection.Tag tag, final String value )
+    {
+        this.contributions.put( tag, value );
+    }
+
+    public List<String> getContributions( final PostProcessInjection.Tag tag )
+    {
+        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : Collections.emptyList();
     }
 }

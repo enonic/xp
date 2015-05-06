@@ -1,3 +1,6 @@
+@tinymce-input-left: 66px;
+@tinymce-input-width: 315px;
+
 .tinymce-editor {
   .mce-btn {
     background-image: none;
@@ -61,4 +64,109 @@
     }
   }
 
+  &.sticky-toolbar {
+    .mce-toolbar-grp {
+      position: fixed;
+    }
+  }
+}
+
+.mce-link-dialog {
+  height: auto !important;
+
+  .mce-container, .mce-container *, .mce-widget {
+    font-size: @admin-font-size;
+    font-family: @admin-font-family;
+  }
+
+  .mce-container-body.mce-abs-layout {
+    overflow: inherit !important;
+  }
+
+  .mce-link-form, .mce-link-panel {
+    top: 0px !important;
+    position: relative !important;
+  }
+
+  .mce-link-panel {
+    .mce-tabs {
+      border-bottom: 1px solid @admin-medium-gray-border;
+    }
+
+    .mce-tab {
+      font-size: 14px;
+      background: none;
+      border: none;
+      border-bottom: 4px solid transparent;
+      padding: 10px 12px;
+
+      &.mce-active {
+        border-bottom-color: @admin-blue;
+        color: @admin-blue;
+      }
+    }
+
+    &.mce-panel {
+      background: none;
+    }
+
+    .mce-textbox {
+      width: @tinymce-input-width !important;
+      left: @tinymce-input-left !important;
+    }
+  }
+
+  .mce-link-tab-content {
+    .mce-content-selector {
+      .input-border();
+      left: @tinymce-input-left;
+      width: @tinymce-input-width;
+      background-color: @admin-white;
+    }
+
+    .mce-content-selector-focused, .mce-textbox:focus, .mce-checkbox:focus i.mce-i-checkbox {
+      .box-shadow(0px 0px 5px @admin-input-blue);
+      border: 1px solid @admin-input-blue;
+    }
+
+    .combobox.form-input {
+      width: 85%;
+      .option-filter-input {
+        padding-left: 5px;
+      }
+    }
+
+    .combobox + .selected-options .selected-option {
+      padding-top: 4px;
+    }
+
+    .remove {
+      padding-top: 9px;
+      padding-right: 12px;
+    }
+  }
+
+  .mce-reset > .mce-container-body {
+    height: 278px !important;
+  }
+
+  .mce-container.mce-first.mce-last, .mce-container-body:nth-of-type(1) {
+    height: auto !important;
+  }
+
+  .mce-textbox {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box; /* Opera/IE 8+ */
+  }
+
+  .mce-textbox, i.mce-i-checkbox {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  i.mce-i-checkbox {
+    background: none repeat scroll 0 0 @admin-white;
+    font-family: tinymce;
+  }
 }
