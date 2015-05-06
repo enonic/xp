@@ -89,10 +89,10 @@ module LiveEdit {
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();
                     // do remove to trigger model unbinding
-                    this.pageView.remove();
                 } else {
                     this.skipNextReloadConfirmation = false;
                 }
+                this.pageView.remove();
             };
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {

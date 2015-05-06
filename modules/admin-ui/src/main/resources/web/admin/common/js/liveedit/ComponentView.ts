@@ -191,6 +191,7 @@ module api.liveedit {
         }
 
         remove(): ComponentView<Component> {
+            this.unregisterComponentListeners(this.component);
             var parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);

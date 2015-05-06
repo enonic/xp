@@ -73,12 +73,9 @@ module api.liveedit {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
             }
-            debugger;
             this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
-                debugger;
                 // don't parse on regions change during reset, because it'll be done when page is loaded later
                 if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
-
                     this.regionViews.forEach((regionView)=> {
                         this.unregisterRegionView(regionView)
                     });
@@ -100,7 +97,6 @@ module api.liveedit {
             if (PageView.debug) {
                 console.log('PageView.unregisterPageModel', pageModel);
             }
-            debugger;
             pageModel.unPropertyChanged(this.propertyChangedListener);
             pageModel.unPageModeChanged(this.pageModeChangedListener);
         }
@@ -123,7 +119,6 @@ module api.liveedit {
                 if (PageView.debug) {
                     console.log('PageView.reset');
                 }
-                debugger;
                 this.setIgnorePropertyChanges(true);
                 this.pageModel.reset(this);
                 this.setIgnorePropertyChanges(false);
@@ -194,7 +189,6 @@ module api.liveedit {
         }
 
         remove(): PageView {
-            debugger;
             super.remove();
             this.unregisterPageModel(this.pageModel);
             return this;
