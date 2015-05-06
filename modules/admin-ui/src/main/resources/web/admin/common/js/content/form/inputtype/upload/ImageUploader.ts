@@ -19,6 +19,7 @@ module api.content.form.inputtype.upload {
                 },
                 operation: api.content.MediaUploaderOperation.update,
                 name: input.getName(),
+                skipWizardEvents: false,
                 maximumOccurrences: 1
             });
 

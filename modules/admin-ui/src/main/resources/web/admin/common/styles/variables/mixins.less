@@ -96,6 +96,28 @@
   }
 }
 
+.dropcircle(@radius: 200px) {
+  position: absolute;
+  display: block;
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  margin-top: -@radius;
+  margin-left: -@radius;
+  background-color: @admin-blue;
+  width: 2 * @radius;
+  height: 2 * @radius;
+  line-height: 2 * @radius;
+  color: #fff;
+  content: 'Drop files to upload!';
+  font-weight: normal;
+
+  .box-sizing(border-box);
+  .border-radius(@radius);
+  .box-shadow(0 0 10px @admin-shadow-gray);
+  .animation(pulsate, 4s);
+}
+
 .transition (@value1,@value2:X,...) {
   @params: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
 
