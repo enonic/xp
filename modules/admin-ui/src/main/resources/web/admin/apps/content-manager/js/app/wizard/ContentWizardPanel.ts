@@ -396,7 +396,7 @@ module app.wizard {
             this.updateThumbnailWithContent(persistedContent);
             this.notifyValidityChanged(persistedContent.isValid());
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
+            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
