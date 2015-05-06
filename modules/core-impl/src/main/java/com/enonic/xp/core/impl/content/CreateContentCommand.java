@@ -204,7 +204,12 @@ final class CreateContentCommand
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         try
         {
-            new InputValidator( contentType.form() ).validate( params.getData().getRoot() );
+            InputValidator.
+                newInputValidator().
+                contentType( contentType ).
+                requireMappedProperties( params.isRequireMappedProperties() ).
+                build().
+                validate( params.getData().getRoot() );
         } catch ( InvalidDataException e ) {
             final String name = params.getName() == null ? "" : params.getName().toString();
             final ContentPath path = ContentPath.from( params.getParent(), name );

@@ -1,86 +1,113 @@
 package com.enonic.xp.schema.content.validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.schema.content.ContentType;
 
 
 public final class InputValidator
 {
-    private final Form form;
+    private final PropertyValidationVisitor propertyValidationVisitor;
 
-    public InputValidator( final Form form )
+    private InputValidator( final ContentType contentType, final boolean requireMappedProperties )
     {
-        Preconditions.checkNotNull( form, "No form given" );
-        this.form = form;
+        if ( contentType.getName().isUnstructured() )
+        {
+            this.propertyValidationVisitor = null;
+        }
+        else
+        {
+            this.propertyValidationVisitor = new PropertyValidationVisitor( contentType.form(), requireMappedProperties );
+        }
     }
 
     public final void validate( final PropertySet dataSet )
     {
-        final List<PropertySet> parentDataSets = Lists.newArrayList();
-        parentDataSets.add( dataSet );
-        validate( form, parentDataSets );
-    }
-
-    private void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets )
-    {
-        for ( FormItem formItem : formItems )
+        if ( propertyValidationVisitor != null )
         {
-            if ( formItem instanceof Input )
-            {
-                validateInput( (Input) formItem, parentDataSets );
-            }
-            else if ( formItem instanceof FormItemSet )
-            {
-                validateFormItemSet( (FormItemSet) formItem, parentDataSets );
-            }
-            else if ( formItem instanceof FieldSet )
-            {
-                validate( ( (FieldSet) formItem ).formItemIterable(), parentDataSets );
-            }
+            propertyValidationVisitor.traverse( dataSet );
         }
     }
 
-    private void validateInput( final Input input, final List<PropertySet> parentDataSets )
+    public static Builder newInputValidator()
     {
-        for ( PropertySet parentDataSet : parentDataSets )
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentType contentType;
+
+        private boolean requireMappedProperties;
+
+        public Builder contentType( final ContentType contentType )
         {
-            final int entryCount = parentDataSet.countProperties( input.getName() );
-            for ( int i = 0; i < entryCount; i++ )
-            {
-                final Property property = parentDataSet.getProperty( input.getName(), i );
-                input.checkValidity( property );
-            }
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder requireMappedProperties( final boolean requireMappedProperties )
+        {
+            this.requireMappedProperties = requireMappedProperties;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( contentType, "No content type given" );
+        }
+
+        public InputValidator build()
+        {
+            this.validate();
+            return new InputValidator( this.contentType, this.requireMappedProperties );
         }
     }
 
-    private void validateFormItemSet( final FormItemSet formItemSet, final List<PropertySet> parentDataSets )
+    private class PropertyValidationVisitor
+        extends PropertyVisitor
     {
-        final List<PropertySet> dataSets = getDataSets( formItemSet.getName(), parentDataSets );
-        validate( formItemSet.getFormItems(), dataSets );
-    }
+        private final Form form;
 
-    private List<PropertySet> getDataSets( final String name, final List<PropertySet> parentDataSets )
-    {
-        final List<PropertySet> dataSets = new ArrayList<>();
-        for ( final PropertySet parentDataSet : parentDataSets )
+        private final boolean requireMappedProperties;
+
+        public PropertyValidationVisitor( final Form form, final boolean requireMappedProperties )
         {
-            for ( final PropertySet set : parentDataSet.getSets( name ) )
+            this.form = form;
+            this.requireMappedProperties = requireMappedProperties;
+        }
+
+        @Override
+        public void visit( final Property property )
+        {
+            FormItem formItem = form.getFormItem( property.getPath().toString() );
+
+            if ( formItem == null )
             {
-                dataSets.add( set );
+                if ( requireMappedProperties )
+                {
+                    throw new InvalidDataException( property, "No FormItem found for this property" );
+                }
+            }
+            else
+            {
+                if ( formItem instanceof Input )
+                {
+                    ( (Input) formItem ).checkValidity( property );
+                }
+                else
+                {
+                    throw new InvalidDataException( property, "The FormItem found for this property is not an Input" );
+                }
             }
         }
-        return dataSets;
     }
 }
 
