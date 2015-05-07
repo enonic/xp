@@ -249,12 +249,9 @@ tinymce.PluginManager.add('link', function (editor) {
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
-                        title: data.title ? data.title : null
+                        title: data.title ? data.title : null,
+                        target: getTarget(data) ? targetBlank : ""
                     };
-
-                    if (getTarget(data)) {
-                        tinymce.extend(linkAttrs, {target: targetBlank});
-                    }
 
                     if (anchorElm) {
                         editor.focus();
