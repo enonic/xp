@@ -176,7 +176,7 @@ tinymce.PluginManager.add('link', function (editor) {
                     items: [{
                         name: 'contentId',
                         type: 'textbox',
-                        classes: 'link-tab-content-target',
+                        classes: 'link-tab-content-placeholder',
                         size: 40,
                         label: 'Target'
                     }, {
@@ -203,11 +203,11 @@ tinymce.PluginManager.add('link', function (editor) {
                 }, {
                     title: tabNames.media,
                     type: "form",
-                    classes: 'link-tab-download',
+                    classes: 'link-tab-media',
                     items: [{
                         name: 'mediaId',
                         type: 'textbox',
-                        classes: 'link-tab-download-target',
+                        classes: 'link-tab-media-placeholder',
                         size: 40,
                         label: 'Target'
                     }]
@@ -320,7 +320,7 @@ tinymce.PluginManager.add('link', function (editor) {
             }
         });
 
-        editor.execCommand("addContentSelector", false, win.getEl());
+        editor.execCommand("initSelectors", false, win.getEl());
     }
 
     editor.addButton('link', {

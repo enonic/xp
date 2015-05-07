@@ -46,6 +46,10 @@ module api.content {
             this.contentQuery.setContentTypeNames(this.createContentTypeNames(contentTypes));
         }
 
+        setAllowedContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
+            this.contentQuery.setContentTypeNames(contentTypeNames);
+        }
+
         setSize(size: number) {
             this.contentQuery.setSize(size);
         }
