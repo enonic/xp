@@ -49,26 +49,28 @@
     right: 0;
     max-width: initial !important;
 
-    .dropzone {
-      min-height: 37px;
-      height: 37px;
-      line-height: 30px;
-      font-size: 14px;
-      background-color: @admin-white;
-      border: 1px solid @admin-medium-gray-border;
-      z-index: @z-index-wizard-filed-element;
+    .dropzone-container {
+      display: block !important;
 
-      &:before {
-        display: inline-block;
-        content: "";
-        width: 31px;
-        height: 35px;
-        background: url("../images/upload.png") no-repeat center;
+      .dropzone {
+        min-height: 37px;
+        height: 37px;
+        line-height: 30px;
+        font-size: 14px;
+        background-color: @admin-white;
+        border: 1px solid @admin-medium-gray-border;
+        z-index: @z-index-wizard-filed-element;
+
+        .box-sizing(border-box);
+        .input-border();
+        .input-glow();
       }
+    }
 
-      .box-sizing(border-box);
-      .input-border();
-      .input-glow();
+    .progress-bar {
+      display: none !important;
+      height: 37px;
+      margin: 0;
     }
 
     &:focus {
@@ -78,12 +80,31 @@
       }
     }
 
+    &:not(.minimized) {
+      .dropzone {
+        overflow: visible;
+        &:before {
+          .dropcircle(40px);
+          padding: 20px 5px 0;
+          line-height: 20px;
+        }
+      }
+    }
+
     &.minimized {
       .dropzone-container {
         position: absolute;
+        display: block !important;
         right: 0;
         .dropzone {
           width: 37px;
+          &:before {
+            display: inline-block;
+            content: "";
+            width: 31px;
+            height: 35px;
+            background: url("../images/upload.png") no-repeat center;
+          }
         }
       }
     }
@@ -139,6 +160,7 @@
       }
 
       > .error {
+        margin-left: 0px;
         text-align: center;
         color: @admin-white;
         font-weight: bold;
