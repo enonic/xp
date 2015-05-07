@@ -93,6 +93,14 @@
     }
   }
 
+  .mce-first.mce-formitem label {
+    &:after {
+      position: absolute;
+      content: '\00a0*';
+      color: @input-red-text;
+    }
+  }
+
   .mce-link-panel {
     .mce-tabs {
       border-bottom: 1px solid @admin-medium-gray-border;

@@ -277,8 +277,8 @@ tinymce.PluginManager.add('link', function (editor) {
                     }
                 }
 
-                if (!href) {
-                    editor.execCommand('unlink');
+                if (!href || !data.text) {
+                    e.preventDefault();
                     return;
                 }
 
