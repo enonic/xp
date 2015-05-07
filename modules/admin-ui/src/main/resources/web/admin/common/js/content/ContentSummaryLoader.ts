@@ -31,6 +31,10 @@ module api.content {
             this.contentSummaryRequest.setAllowedContentTypes(contentTypes);
         }
 
+        setAllowedContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
+            this.contentSummaryRequest.setAllowedContentTypeNames(contentTypeNames);
+        }
+
         setSize(size: number) {
             this.contentSummaryRequest.setSize(size);
         }
