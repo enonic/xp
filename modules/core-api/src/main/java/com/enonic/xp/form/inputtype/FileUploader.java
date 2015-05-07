@@ -27,10 +27,10 @@ final class FileUploader
     public void checkTypeValidity( final Property property )
         throws InvalidTypeException
     {
-        if ( !ValueTypes.REFERENCE.equals( property.getType() ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.REFERENCE );
-        }
+//        if ( !ValueTypes.REFERENCE.equals( property.getType() ) )
+//        {
+//            throw new InvalidTypeException( property, ValueTypes.REFERENCE );
+//        }
     }
 
     @Override
