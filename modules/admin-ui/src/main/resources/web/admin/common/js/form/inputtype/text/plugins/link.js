@@ -230,10 +230,9 @@ tinymce.PluginManager.add('link', function (editor) {
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
-                var href, target;
+                var href;
                 data = tinymce.extend(data, e.data);
                 href = getHref(data);
-                target = getTarget(data);
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -250,9 +249,12 @@ tinymce.PluginManager.add('link', function (editor) {
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
-                        target: target ? targetBlank : "",
                         title: data.title ? data.title : null
                     };
+
+                    if (getTarget(data)) {
+                        tinymce.extend(linkAttrs, {target: targetBlank});
+                    }
 
                     if (anchorElm) {
                         editor.focus();
