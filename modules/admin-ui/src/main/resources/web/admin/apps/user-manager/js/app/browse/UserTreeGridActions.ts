@@ -68,7 +68,7 @@ module app.browse {
                 if (principalsSelected == 1) {
                     this.DELETE.setEnabled(true);
                 } else {
-                    this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore().getKey());
+                    this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore());
                 }
             } else {
                 this.DELETE.setEnabled(false);
@@ -82,11 +82,14 @@ module app.browse {
             return deferred.promise;
         }
 
-        private establishDeleteActionState(key: api.security.UserStoreKey) {
-            if (key) {
-                UserStore.checkOnDeletable(key).then((result: boolean) => {
+        private establishDeleteActionState(userStore: api.security.UserStore) {
+            if (userStore && userStore.getKey()) {
+                UserStore.checkOnDeletable(userStore.getKey()).then((result: boolean) => {
                     this.DELETE.setEnabled(result);
                 });
+            }
+            else {
+                this.DELETE.setEnabled(false);
             }
         }
     }
