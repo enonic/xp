@@ -51,18 +51,6 @@ final class Date
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );

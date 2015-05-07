@@ -37,18 +37,6 @@ final class Region
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );

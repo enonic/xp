@@ -35,18 +35,6 @@ final class GeoPoint
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );

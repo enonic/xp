@@ -38,19 +38,6 @@ final class HtmlArea
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newHtmlPart( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newHtmlPart( value );
