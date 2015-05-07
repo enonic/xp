@@ -68,7 +68,7 @@ module app.browse {
                 if (principalsSelected == 1) {
                     this.DELETE.setEnabled(true);
                 } else {
-                    this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel().getUserStore());
+                    this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel());
                 }
             } else {
                 this.DELETE.setEnabled(false);
@@ -82,15 +82,20 @@ module app.browse {
             return deferred.promise;
         }
 
-        private establishDeleteActionState(userStore: api.security.UserStore) {
-            if (userStore && userStore.getKey()) {
-                UserStore.checkOnDeletable(userStore.getKey()).then((result: boolean) => {
+        private establishDeleteActionState(userBrowseItem: UserTreeGridItem) {
+            if (this.itemTypeAllowsDeletion(userBrowseItem.getType()) && userBrowseItem.getUserStore() &&
+                userBrowseItem.getUserStore().getKey()) {
+                UserStore.checkOnDeletable(userBrowseItem.getUserStore().getKey()).then((result: boolean) => {
                     this.DELETE.setEnabled(result);
                 });
             }
             else {
                 this.DELETE.setEnabled(false);
             }
+        }
+
+        private itemTypeAllowsDeletion(userTreeGridItemType: UserTreeGridItemType): boolean {
+            return (userTreeGridItemType !== UserTreeGridItemType.USERS && userTreeGridItemType !== UserTreeGridItemType.GROUPS);
         }
     }
 }
