@@ -56,6 +56,11 @@ public class ResolveSyncWorkCommand
         }
 
         this.publishRootNode = publishRootNode;
+
+        if ( this.repositoryRoot.equals( this.publishRootNode.path() ) )
+        {
+            this.allPossibleNodesAreIncluded = true;
+        }
     }
 
     public static Builder create()
@@ -84,51 +89,16 @@ public class ResolveSyncWorkCommand
                 build();
         }
 
-        final NodePath nodePath = resolveDiffRoot();
-
         return FindNodesWithVersionDifferenceCommand.create().
             versionService( this.versionService ).
             query( NodeVersionDiffQuery.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
-                nodePath( nodePath ).
+                nodePath( this.publishRootNode.path() ).
                 build() ).
             build().
             execute();
     }
-
-    private NodePath resolveDiffRoot()
-    {
-        final NodePath nodePath;
-
-        if ( this.publishRootNode != null )
-        {
-            nodePath = resolveDiffRootFromNodeId();
-        }
-        else
-        {
-            nodePath = NodePath.ROOT;
-            this.allPossibleNodesAreIncluded = true;
-        }
-        return nodePath;
-    }
-
-    private NodePath resolveDiffRootFromNodeId()
-    {
-        final NodePath nodePath = this.publishRootNode.path();
-
-        if ( nodePath.equals( repositoryRoot ) )
-        {
-            this.allPossibleNodesAreIncluded = true;
-        }
-
-        return nodePath;
-    }
-
-    //////////////////////////////////////////////////
-
-    // Here is stuff
-
 
     private void resolveDiffWithNodeAsInput( final Node node, final ResolveContext resolveContext )
     {
@@ -141,7 +111,6 @@ public class ResolveSyncWorkCommand
 
         doResolveDiff( node, resolveContext );
     }
-
 
     private void resolveDiffWithNodeIdAsInput( final NodeId nodeId, final ResolveContext resolveContext )
     {
@@ -173,7 +142,7 @@ public class ResolveSyncWorkCommand
             return;
         }
 
-        resolveAndAddDiffResult( resolveContext, comparison, node );
+        resolveAndAddDiffResult( resolveContext, comparison );
 
         if ( !allPossibleNodesAreIncluded )
         {
@@ -242,8 +211,7 @@ public class ResolveSyncWorkCommand
             execute();
     }
 
-    private void resolveAndAddDiffResult( final ResolveContext resolveContext, final NodeComparison comparison,
-                                          final Node nodeToAddToResult )
+    private void resolveAndAddDiffResult( final ResolveContext resolveContext, final NodeComparison comparison )
     {
         final NodeId nodeId = comparison.getNodeId();
 
@@ -298,12 +266,6 @@ public class ResolveSyncWorkCommand
         {
             final Node node = doGetById( nodeId, false );
 
-            if ( node.isRoot() )
-            {
-                this.resultBuilder.publishRequested( nodeId );
-                return;
-            }
-
             final NodePath parentPath = node.parentPath();
 
             final Node parentNode = doGetByPath( parentPath, false );
@@ -311,62 +273,6 @@ public class ResolveSyncWorkCommand
             this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
         }
     }
-
-    /**
-     * Determines resolveContext with regard to the node that is passed for publishing (represented with this.nodeId).
-     * Determination is made in the following way:
-     * If passed node's id is equal to this.nodeId, then this node is requested to publish.
-     * If passed node's path contains path of initial node (this.nodeId), then it is a child of this.nodeId
-     * If passed node's path is contained within path of initial node (this.nodeId), then it is a parent of this.nodeId
-     * If this.nodeId is null, all resolved nodes are treated as requested to publish.
-     * Otherwise, passed node was referred.
-     *
-     * @return
-     */
-     /*
-    - S1 (New)
-     - A1 (New)
-     - A2 (New)
-         - A2_1 - Ref:B2_1 (New)
-    - S2 (New)
-     - B1 (New)
-     - B2 (New)
-         - B2_1 (New)
-
-    Publish S1 with children, will result in following contexts:
-    - S1 (publishRequested)
-     - A1 (childOf)
-     - A2 (childOf)
-         - A2_1 - Ref:B2_1 (childOf)
-    - S2 (referredTo)
-     - B1 (New)
-     - B2 (referredTo)
-         - B2_1 (referredTo)
-    */
-    /*
-
-    private ResolveContext determineResolveContext( final Node nodeToResolve )
-    {
-        if ( nodeToResolve.id().equals( nodeId ) )
-        {
-            return ResolveContext.requested();
-        }
-
-        final Node initialNode = doGetById( nodeId, false );
-
-        if ( nodeToResolve.path().toString().contains( initialNode.path().toString() ) )
-        {
-            return ResolveContext.childOf( nodeId );
-        }
-        if ( initialNode.path().toString().contains( nodeToResolve.path().toString() ) )
-        {
-            return ResolveContext.parentFor( nodeId );
-        }
-
-        return ResolveContext.referredFrom( nodeId );
-    }
-
-    */
 
     public static class ResolveContext
     {
