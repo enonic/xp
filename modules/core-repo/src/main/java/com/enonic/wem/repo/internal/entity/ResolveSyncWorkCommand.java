@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
@@ -12,6 +13,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
@@ -20,13 +22,15 @@ import com.enonic.xp.node.ResolveSyncWorkResult;
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
-    private final NodeId nodeId;
+    //private final NodeId nodeId;
 
     private final Branch target;
 
     private final NodePath repositoryRoot;
 
     private final boolean includeChildren;
+
+    private final Node publishRootNode;
 
     private final ResolveSyncWorkResult.Builder resultBuilder;
 
@@ -37,13 +41,26 @@ public class ResolveSyncWorkCommand
     private ResolveSyncWorkCommand( final Builder builder )
     {
         super( builder );
-        this.nodeId = builder.nodeId;
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
         this.repositoryRoot = builder.repositoryRoot;
         this.resultBuilder = ResolveSyncWorkResult.create();
         this.processedIds = Sets.newHashSet();
         this.allPossibleNodesAreIncluded = false;
+
+        final Node publishRootNode = doGetById( builder.nodeId, false );
+
+        if ( publishRootNode == null )
+        {
+            throw new NodeNotFoundException( "Root node for publishing not found. Id: " + builder.nodeId );
+        }
+
+        this.publishRootNode = publishRootNode;
+
+        if ( this.repositoryRoot.equals( this.publishRootNode.path() ) )
+        {
+            this.allPossibleNodesAreIncluded = true;
+        }
     }
 
     public static Builder create()
@@ -57,7 +74,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodeId nodeId : diff.getNodesWithDifferences() )
         {
-            resolveDiffWithNodeId( nodeId );
+            resolveDiffWithNodeIdAsInput( nodeId, ResolveContext.requested() );
         }
 
         return resultBuilder.build();
@@ -68,59 +85,22 @@ public class ResolveSyncWorkCommand
         if ( !includeChildren )
         {
             return NodeVersionDiffResult.create().
-                add( this.nodeId ).
+                add( this.publishRootNode.id() ).
                 build();
         }
-
-        final NodePath nodePath = resolveDiffRoot();
 
         return FindNodesWithVersionDifferenceCommand.create().
             versionService( this.versionService ).
             query( NodeVersionDiffQuery.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
-                nodePath( nodePath ).
+                nodePath( this.publishRootNode.path() ).
                 build() ).
             build().
             execute();
     }
 
-    private NodePath resolveDiffRoot()
-    {
-        final NodePath nodePath;
-
-        if ( this.nodeId != null )
-        {
-            nodePath = resolveDiffRootFromNodeId();
-        }
-        else
-        {
-            nodePath = NodePath.ROOT;
-            this.allPossibleNodesAreIncluded = true;
-        }
-        return nodePath;
-    }
-
-    private NodePath resolveDiffRootFromNodeId()
-    {
-        final NodePath nodePath;
-        final Node node = doGetById( nodeId, false );
-
-        if ( node == null )
-        {
-            throw new IllegalArgumentException( "Node with id: " + this.nodeId + " not found" );
-        }
-
-        nodePath = node.path();
-
-        if ( nodePath.equals( repositoryRoot ) )
-        {
-            this.allPossibleNodesAreIncluded = true;
-        }
-        return nodePath;
-    }
-
-    private void resolveDiffWithNode( final Node node )
+    private void resolveDiffWithNodeAsInput( final Node node, final ResolveContext resolveContext )
     {
         if ( isProcessed( node.id() ) )
         {
@@ -129,10 +109,10 @@ public class ResolveSyncWorkCommand
 
         this.processedIds.add( node.id() );
 
-        doResolveDiff( node, node.id() );
+        doResolveDiff( node, resolveContext );
     }
 
-    private void resolveDiffWithNodeId( final NodeId nodeId )
+    private void resolveDiffWithNodeIdAsInput( final NodeId nodeId, final ResolveContext resolveContext )
     {
         if ( isProcessed( nodeId ) )
         {
@@ -149,20 +129,20 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            doResolveDiff( node, nodeId );
+            doResolveDiff( node, resolveContext );
         }
     }
 
-    private void doResolveDiff( final Node node, final NodeId nodeId )
+    private void doResolveDiff( final Node node, final ResolveContext resolveContext )
     {
-        final NodeComparison comparison = getNodeComparison( nodeId );
+        final NodeComparison comparison = getNodeComparison( node.id() );
 
         if ( nodeNotChanged( comparison ) )
         {
             return;
         }
 
-        addResult( comparison, node );
+        resolveAndAddDiffResult( resolveContext, comparison );
 
         if ( !allPossibleNodesAreIncluded )
         {
@@ -178,7 +158,7 @@ public class ResolveSyncWorkCommand
 
     private void ensureThatParentExists( final Node node )
     {
-        if ( !node.parentPath().equals( NodePath.ROOT ) )
+        if ( !node.isRoot() && !node.parentPath().equals( NodePath.ROOT ) )
         {
             final Node thisParentNode = doGetByPath( node.parentPath(), false );
 
@@ -186,7 +166,7 @@ public class ResolveSyncWorkCommand
 
             if ( shouldBeResolvedDiffFor( nodeComparison ) )
             {
-                resolveDiffWithNode( thisParentNode );
+                resolveDiffWithNodeAsInput( thisParentNode, ResolveContext.parentFor( node.id() ) );
             }
         }
     }
@@ -203,7 +183,7 @@ public class ResolveSyncWorkCommand
 
                 if ( !this.processedIds.contains( referredNodeId ) )
                 {
-                    resolveDiffWithNodeId( referredNodeId );
+                    resolveDiffWithNodeIdAsInput( referredNodeId, ResolveContext.referredFrom( node.id() ) );
                 }
             }
         }
@@ -231,7 +211,7 @@ public class ResolveSyncWorkCommand
             execute();
     }
 
-    private void addResult( final NodeComparison comparison, final Node nodeToAddToResult )
+    private void resolveAndAddDiffResult( final ResolveContext resolveContext, final NodeComparison comparison )
     {
         final NodeId nodeId = comparison.getNodeId();
 
@@ -241,7 +221,6 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            ResolveContext resolveContext = determineResolveContext( nodeToAddToResult );
             if ( comparison.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
                 if ( resolveContext.becauseReferredTo )
@@ -269,74 +248,33 @@ public class ResolveSyncWorkCommand
             {
                 resultBuilder.publishParentFor( comparison.getNodeId(), resolveContext.contextNodeId );
             }
-            else if ( resolveContext.becauseChild )
-            {
-                resultBuilder.publishChildOf( comparison.getNodeId(), resolveContext.contextNodeId );
-            }
             else
             {
-                resultBuilder.publishRequested( comparison.getNodeId() );
+                addRequestedOrChild( comparison.getNodeId() );
             }
         }
     }
 
-    /**
-     * Determines resolveContext with regard to the node that is passed for publishing (represented with this.nodeId).
-     * Determination is made in the following way:
-     * If passed node's id is equal to this.nodeId, then this node is requested to publish.
-     * If passed node's path contains path of initial node (this.nodeId), then it is a child of this.nodeId
-     * If passed node's path is contained within path of initial node (this.nodeId), then it is a parent of this.nodeId
-     * If this.nodeId is null, all resolved nodes are treated as requested to publish.
-     * Otherwise, passed node was referred.
-     *
-     * @return
-     */
-     /*
-    - S1 (New)
-     - A1 (New)
-     - A2 (New)
-         - A2_1 - Ref:B2_1 (New)
-    - S2 (New)
-     - B1 (New)
-     - B2 (New)
-         - B2_1 (New)
 
-    Publish S1 with children, will result in following contexts:
-    - S1 (publishRequested)
-     - A1 (childOf)
-     - A2 (childOf)
-         - A2_1 - Ref:B2_1 (childOf)
-    - S2 (referredTo)
-     - B1 (New)
-     - B2 (referredTo)
-         - B2_1 (referredTo)
-    */
-    private ResolveContext determineResolveContext( final Node nodeToResolve )
+    public void addRequestedOrChild( final NodeId nodeId )
     {
-        if ( nodeId == null )
+        if ( nodeId.equals( this.publishRootNode.id() ) )
         {
-            return ResolveContext.requested();
+            this.resultBuilder.publishRequested( nodeId );
         }
-        if ( nodeToResolve.id().equals( nodeId ) )
+        else
         {
-            return ResolveContext.requested();
-        }
+            final Node node = doGetById( nodeId, false );
 
-        final Node initialNode = doGetById( nodeId, false );
+            final NodePath parentPath = node.parentPath();
 
-        if ( nodeToResolve.path().toString().contains( initialNode.path().toString() ) )
-        {
-            return ResolveContext.childOf( nodeId );
-        }
-        if ( initialNode.path().toString().contains( nodeToResolve.path().toString() ) )
-        {
-            return ResolveContext.parentFor( nodeId );
-        }
+            final Node parentNode = doGetByPath( parentPath, false );
 
-        return ResolveContext.referredFrom( nodeId );
+            this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
+        }
     }
 
-    private static class ResolveContext
+    public static class ResolveContext
     {
         private final NodeId contextNodeId;
 
@@ -346,33 +284,36 @@ public class ResolveSyncWorkCommand
 
         private boolean becauseReferredTo = false;
 
+        private boolean becauseRequested = false;
+
         private ResolveContext( final boolean becauseChild, final boolean becauseParent, final boolean becauseReferredTo,
-                                final NodeId contextNodeId )
+                                final boolean becauseRequested, final NodeId contextNodeId )
         {
             this.becauseChild = becauseChild;
             this.becauseParent = becauseParent;
             this.becauseReferredTo = becauseReferredTo;
             this.contextNodeId = contextNodeId;
+            this.becauseRequested = becauseRequested;
         }
 
-        private static ResolveContext parentFor( final NodeId nodeId )
+        static ResolveContext parentFor( final NodeId nodeId )
         {
-            return new ResolveContext( false, true, false, nodeId );
+            return new ResolveContext( false, true, false, false, nodeId );
         }
 
-        private static ResolveContext childOf( final NodeId nodeId )
+        static ResolveContext childOf( final NodeId nodeId )
         {
-            return new ResolveContext( true, false, false, nodeId );
+            return new ResolveContext( true, false, false, false, nodeId );
         }
 
-        private static ResolveContext referredFrom( final NodeId nodeId )
+        static ResolveContext referredFrom( final NodeId nodeId )
         {
-            return new ResolveContext( false, false, true, nodeId );
+            return new ResolveContext( false, false, true, false, nodeId );
         }
 
-        private static ResolveContext requested()
+        static ResolveContext requested()
         {
-            return new ResolveContext( false, false, false, null );
+            return new ResolveContext( false, false, false, true, null );
         }
 
     }
@@ -417,9 +358,18 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeId, "nodeId must be provided" );
+            Preconditions.checkNotNull( target, "target branch must be provided" );
+        }
+
         public ResolveSyncWorkCommand build()
         {
+            validate();
             return new ResolveSyncWorkCommand( this );
         }
     }
+
 }
