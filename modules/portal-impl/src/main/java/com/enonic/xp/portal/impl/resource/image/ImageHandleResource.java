@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageScaleFunction;
@@ -42,6 +43,8 @@ public final class ImageHandleResource
     protected String name;
 
     protected ScaleParams scaleParams;
+
+    protected FocalPoint focalPoint = FocalPoint.DEFAULT;
 
     @GET
     public Response handle()
@@ -83,7 +86,8 @@ public final class ImageHandleResource
             return sourceImage;
         }
 
-        final ImageScaleFunction imageScaleFunction = this.services.getImageScaleFunctionBuilder().build( this.scaleParams );
+        final ImageScaleFunction imageScaleFunction =
+            this.services.getImageScaleFunctionBuilder().build( this.scaleParams, this.focalPoint );
         final BufferedImage targetImage = imageScaleFunction.scale( sourceImage );
 
         return targetImage;

@@ -12,21 +12,21 @@ import com.enonic.xp.portal.url.PortalUrlService;
 
 public interface PortalServices
 {
-    public ModuleService getModuleService();
+    ModuleService getModuleService();
 
-    public ControllerScriptFactory getControllerScriptFactory();
+    ControllerScriptFactory getControllerScriptFactory();
 
-    public ContentService getContentService();
+    ContentService getContentService();
 
-    public ImageFilterBuilder getImageFilterBuilder();
+    ImageFilterBuilder getImageFilterBuilder();
 
-    public RendererFactory getRendererFactory();
+    RendererFactory getRendererFactory();
 
-    public PageTemplateService getPageTemplateService();
+    PageTemplateService getPageTemplateService();
 
-    public PageDescriptorService getPageDescriptorService();
+    PageDescriptorService getPageDescriptorService();
 
-    public PortalUrlService getPortalUrlService();
+    PortalUrlService getPortalUrlService();
 
-    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder();
+    ImageScaleFunctionBuilder getImageScaleFunctionBuilder();
 }

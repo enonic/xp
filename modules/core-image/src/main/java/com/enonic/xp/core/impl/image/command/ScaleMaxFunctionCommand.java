@@ -4,6 +4,7 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageScaleFunction;
 import com.enonic.xp.image.filter.ScaleMaxFunction;
 
@@ -16,7 +17,7 @@ public final class ScaleMaxFunctionCommand
     }
 
     @Override
-    protected ImageScaleFunction doBuild( Object[] args )
+    protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
         return new ScaleMaxFunction( getIntArg( args, 0, 0 ) );
     }

@@ -10,14 +10,14 @@ import com.enonic.xp.core.impl.image.AwtImageFilter;
 import com.enonic.xp.core.impl.image.OperationImageFilter;
 import com.enonic.xp.image.ImageFilter;
 
-public abstract class FilterCommand extends BaseImageCommand
+public abstract class FilterCommand
+    extends BaseImageCommand
 {
     public FilterCommand( String name )
     {
         super( name );
     }
 
-    @Override
     public final ImageFilter build( Object[] args )
     {
         Object filter = doBuild( args );
