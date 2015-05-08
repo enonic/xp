@@ -172,7 +172,12 @@ final class UpdateContentCommand
             contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
         try
         {
-            new InputValidator( contentType.form() ).validate( editedContent.getData().getRoot() );
+            InputValidator.
+                create().
+                contentType( contentType ).
+                requireMappedProperties( params.isRequireMappedProperties() ).
+                build().
+                validate( editedContent.getData().getRoot() );
         } catch ( InvalidDataException e ) {
             throw new IllegalArgumentException(
                 "Incorrect property for content: " + editedContent.getPath(), e );
