@@ -8,14 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -549,6 +553,31 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "deletePrincipalsResult.json", jsonString );
+    }
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Test
+    public void setPassword_null_throws_exception()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", null );
+
+        exception.expect( WebApplicationException.class );
+        resource.setPassword( params );
+    }
+
+    @Test
+    public void setPassword_empty_throws_exception()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", "" );
+
+        exception.expect( WebApplicationException.class );
+        resource.setPassword( params );
     }
 
     private UserStores createUserStores()
