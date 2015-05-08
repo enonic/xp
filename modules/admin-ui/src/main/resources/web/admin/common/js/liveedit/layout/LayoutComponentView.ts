@@ -108,7 +108,6 @@ module api.liveedit.layout {
 
         private parseRegions() {
             this.regionViews = [];
-            this.regionIndex = 0;
 
             return this.doParseRegions();
         }

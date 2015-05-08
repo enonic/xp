@@ -5,7 +5,7 @@ module api.dom {
         private loaded: boolean;
 
         /* 1px x 1px gif with a 1bit palette */
-        static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+        public static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
         constructor(src?: string, className?: string) {
             super(new NewElementBuilder().

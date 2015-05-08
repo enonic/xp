@@ -455,7 +455,10 @@ module api.dom {
         }
 
         private registerChildElement(child: Element, index?: number) {
-            if (!(child.getHTMLElement().parentElement === this.getHTMLElement())) {
+            var parentNode = child.getHTMLElement().parentNode;
+            // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
+            // then parentElement will be null but parentNode will not
+            if (parentNode && parentNode !== this.getHTMLElement()) {
                 throw new Error("Given child must be a child of this Element in DOM before it can be registered");
             }
             if (!index) {
@@ -931,29 +934,24 @@ module api.dom {
                 setParentElement(parent));
         }
 
-        static fromString(s: string, setLoadExistingChildren: boolean = true): Element {
-            var elementAsJQ = wemjq(s);
-            var elementASHtmlElement = elementAsJQ.get(0);
-            return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(elementASHtmlElement)).
-                setLoadExistingChildren(setLoadExistingChildren).
-                setParentElement(Element.fromString(elementASHtmlElement.parentElement)))
-                : null;
+        static fromString(s: string, loadExistingChildren: boolean = true): Element {
+            var htmlEl = wemjq(s).get(0);
+            var parentEl;
+            if (htmlEl && htmlEl.parentElement) {
+                parentEl = Element.fromHtmlElement(htmlEl.parentElement);
+            }
+            return this.fromHtmlElement(htmlEl, loadExistingChildren, parentEl);
         }
 
-        static elementsFromRequest(s: string, setLoadExistingChildren: boolean = true): Element[] {
-            var elementAsJQ = wemjq(s);
-            var elements = [];
-            elementAsJQ.each((index, elem) => {
-                var e = wemjq(elem);
-                elements.push(
-                    new Element(new ElementFromHelperBuilder().
-                        setHelper(new ElementHelper(e.get(0))).
-                        setLoadExistingChildren(setLoadExistingChildren))
-                );
-            });
-
-            return elements;
+        static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
+            return wemjq(s).map((index, elem) => {
+                var htmlEl = <HTMLElement> elem,
+                    parentEl;
+                if (htmlEl && htmlEl.parentElement) {
+                    parentEl = Element.fromHtmlElement(htmlEl.parentElement);
+                }
+                return Element.fromHtmlElement(htmlEl, loadExistingChildren, parentEl);
+            }).get();
         }
     }
 }

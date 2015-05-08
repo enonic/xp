@@ -29,5 +29,9 @@ module api.dom {
         getNaturalWidth() {
             return this.imgEl.naturalWidth;
         }
+
+        getNaturalHeight() {
+            return this.imgEl.naturalHeight;
+        }
     }
 }

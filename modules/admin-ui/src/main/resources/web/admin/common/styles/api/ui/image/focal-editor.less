@@ -1,0 +1,66 @@
+.focal-editor {
+  .notSelectable();
+  display: inline-block;
+
+  &.edit {
+    .focal-canvas {
+      .focal-image {
+        .opacity(.5);
+      }
+
+      .focal-clip {
+        display: block;
+      }
+    }
+  }
+
+  .focal-canvas {
+    position: relative;
+    background-color: #000;
+
+    .focal-image {
+      vertical-align: top; // to remove padding below the image
+    }
+
+    .focal-clip {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      .stroke-circle {
+        cursor: move;
+      }
+    }
+  }
+
+  .focal-toolbar {
+    padding: 10px 0;
+    .clearfix();
+
+    button {
+      span {
+        line-height: 30px;
+      }
+
+      &.icon-center-focus-strong {
+        font-size: 32px;
+        padding: 0;
+
+        span {
+          display: none;
+        }
+      }
+    }
+
+    .pull-right {
+      button {
+        margin-left: 10px;
+      }
+    }
+
+  }
+
+}
