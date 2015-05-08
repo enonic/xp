@@ -133,7 +133,7 @@ final class CreateContentCommand
         {
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new IllegalArgumentException(
-                    "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path, e );
+                "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path, e );
         }
     }
 
@@ -153,14 +153,14 @@ final class CreateContentCommand
             {
                 final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
                 throw new IllegalArgumentException(
-                        "A page template can only be created below a content of type 'template-folder'. Path: " + path );
+                    "A page template can only be created below a content of type 'template-folder'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new IllegalArgumentException(
-                    "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
+                "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
         }
     }
 
@@ -201,15 +201,25 @@ final class CreateContentCommand
 
     private void validatePropertyTree( final CreateContentParams params )
     {
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        try
+        if ( !params.getType().isUnstructured() )
         {
-            new InputValidator( contentType.form() ).validate( params.getData().getRoot() );
-        } catch ( InvalidDataException e ) {
-            final String name = params.getName() == null ? "" : params.getName().toString();
-            final ContentPath path = ContentPath.from( params.getParent(), name );
-            throw new IllegalArgumentException(
-                "Incorrect property for content: " + path, e );
+            final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
+            try
+            {
+                InputValidator.
+                    create().
+                    contentType( contentType ).
+                    requireMappedProperties( params.isRequireMappedProperties() ).
+                    build().
+                    validate( params.getData().getRoot() );
+            }
+            catch ( InvalidDataException e )
+            {
+                final String name = params.getName() == null ? "" : params.getName().toString();
+                final ContentPath path = ContentPath.from( params.getParent(), name );
+                throw new IllegalArgumentException( "Incorrect property for content: " + path, e );
+            }
         }
     }
 

@@ -58,7 +58,7 @@ module api.form.inputtype.text {
                     height: 100,
 
                     setup: (editor) => {
-                        editor.addCommand("addContentSelector", this.addContentSelector, this);
+                        editor.addCommand("initSelectors", this.initSelectors, this);
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
@@ -178,9 +178,14 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private createContentSelector(): api.content.ContentComboBox {
-            var contentSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build(),
+        private createContentSelector(contentTypeNames?: api.schema.content.ContentTypeName[]): api.content.ContentComboBox {
+            var loader = new api.content.ContentSummaryLoader(),
+                contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 focusedSelectorCls = "mce-content-selector-focused";
+
+            if (contentTypeNames) {
+                loader.setAllowedContentTypeNames(contentTypeNames);
+            }
 
             contentSelector.addClass("mce-abs-layout-item mce-content-selector");
 
@@ -195,13 +200,16 @@ module api.form.inputtype.text {
             return contentSelector;
         }
 
-        private addContentSelector(ui: boolean, dialogEl: HTMLElement) {
-            var placeholder = wemjq(dialogEl).find(".mce-link-tab-content-target"),
-                contentSelector = this.createContentSelector(),
-                focusEl = wemjq(dialogEl).find(".mce-link-text");
+        private addContentSelector(dialogEl: HTMLElement, placeholderCls: string, contentTypeNames?: api.schema.content.ContentTypeName[]) {
+            var placeholder = wemjq(dialogEl).find(placeholderCls),
+                contentSelector = this.createContentSelector(contentTypeNames);
 
             contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
                 placeholder.val(event.getOption().value);
+            });
+
+            contentSelector.onOptionDeselected(() => {
+                placeholder.val("");
             });
 
             wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
@@ -211,6 +219,13 @@ module api.form.inputtype.text {
             if (placeholder.val()) {
                 contentSelector.setValue(placeholder.val());
             }
+        }
+
+        private initSelectors(ui: boolean, dialogEl: HTMLElement) {
+            var focusEl = wemjq(dialogEl).find(".mce-link-text");
+
+            this.addContentSelector(dialogEl, ".mce-link-tab-content-placeholder");
+            this.addContentSelector(dialogEl, ".mce-link-tab-media-placeholder", api.schema.content.ContentTypeName.getMediaTypes());
 
             if (focusEl) {
                 focusEl.focus();

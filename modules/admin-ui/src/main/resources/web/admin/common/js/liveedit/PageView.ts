@@ -49,6 +49,8 @@ module api.liveedit {
 
         private viewsById: {[s:number] : ItemView;};
 
+        private ignorePropertyChanges: boolean;
+
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
@@ -61,31 +63,70 @@ module api.liveedit {
 
         public static debug;
 
-        constructor(builder: PageViewBuilder) {
+        private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
 
+        private pageModeChangedListener: (event: PageModeChangedEvent) => void;
+
+        private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
+            if (PageView.debug) {
+                console.log('PageView.registerPageModel', pageModel);
+            }
+            this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
+                // don't parse on regions change during reset, because it'll be done when page is loaded later
+                if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
+                    this.regionViews.forEach((regionView)=> {
+                        this.unregisterRegionView(regionView)
+                    });
+
+                    this.parseItemViews();
+                }
+                this.refreshEmptyState();
+            };
+            pageModel.onPropertyChanged(this.propertyChangedListener);
+
+            this.pageModeChangedListener = (event: PageModeChangedEvent) => {
+                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
+                resetAction.setEnabled(resetEnabled);
+            };
+            pageModel.onPageModeChanged(this.pageModeChangedListener);
+        }
+
+        private unregisterPageModel(pageModel: PageModel) {
+            if (PageView.debug) {
+                console.log('PageView.unregisterPageModel', pageModel);
+            }
+            pageModel.unPropertyChanged(this.propertyChangedListener);
+            pageModel.unPageModeChanged(this.pageModeChangedListener);
+        }
+
+        constructor(builder: PageViewBuilder) {
+// move super() call here?!
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
-            this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
+
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.ignorePropertyChanges = false;
             PageView.debug = true;
 
-
             var resetAction = new api.ui.Action('Reset');
+            resetAction.onExecuted(() => {
+                if (PageView.debug) {
+                    console.log('PageView.reset');
+                }
+                this.setIgnorePropertyChanges(true);
+                this.pageModel.reset(this);
+                this.setIgnorePropertyChanges(false);
+            });
+            this.unlockedScreenActions = [resetAction];
+
             if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
                 resetAction.setEnabled(false);
             }
-            resetAction.onExecuted(() => {
-                this.pageModel.reset(this);
-                this.setLocked(true);
-            });
-            this.pageModel.onPageModeChanged((event: PageModeChangedEvent) => {
-                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
-                resetAction.setEnabled(resetEnabled);
-            });
-            this.unlockedScreenActions = [resetAction];
+
+            this.registerPageModel(this.pageModel, resetAction);
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
@@ -142,6 +183,16 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
+        }
+
+        remove(): PageView {
+            super.remove();
+            this.unregisterPageModel(this.pageModel);
+            return this;
+        }
+
+        private setIgnorePropertyChanges(value: boolean) {
+            this.ignorePropertyChanges = value;
         }
 
         private isPageModified(pageModel: PageModel): boolean {
@@ -463,6 +514,10 @@ module api.liveedit {
         }
 
         private parseItemViews() {
+            this.regionViews = [];
+            this.regionIndex = 0;
+            this.viewsById = {};
+
             this.doParseItemViews();
 
             // register everything that was parsed

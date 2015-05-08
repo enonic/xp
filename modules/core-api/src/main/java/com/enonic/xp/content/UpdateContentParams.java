@@ -19,6 +19,8 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
+    private boolean requireMappedProperties;
+
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -46,6 +48,12 @@ public final class UpdateContentParams
     public UpdateContentParams requireValid( final boolean value )
     {
         this.requireValid = value;
+        return this;
+    }
+
+    public UpdateContentParams requireMappedProperties( final boolean requireMappedProperties )
+    {
+        this.requireMappedProperties = requireMappedProperties;
         return this;
     }
 
@@ -79,5 +87,10 @@ public final class UpdateContentParams
     public boolean isRequireValid()
     {
         return requireValid;
+    }
+
+    public boolean isRequireMappedProperties()
+    {
+        return requireMappedProperties;
     }
 }

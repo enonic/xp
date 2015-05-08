@@ -31,6 +31,8 @@ public final class CreateContentParams
 
     private final boolean requireValid;
 
+    private final boolean requireMappedProperties;
+
     private final CreateAttachments createAttachments;
 
     private final AccessControlList permissions;
@@ -51,6 +53,7 @@ public final class CreateContentParams
         this.name = builder.name;
         this.parentContentPath = builder.parentPath;
         this.requireValid = builder.requireValid;
+        this.requireMappedProperties = builder.requireMappedProperties;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
@@ -108,6 +111,11 @@ public final class CreateContentParams
         return requireValid;
     }
 
+    public boolean isRequireMappedProperties()
+    {
+        return requireMappedProperties;
+    }
+
     public CreateAttachments getCreateAttachments()
     {
         return createAttachments;
@@ -151,6 +159,8 @@ public final class CreateContentParams
 
         private boolean requireValid;
 
+        private boolean requireMappedProperties;
+
         private AccessControlList permissions;
 
         private boolean inheritPermissions = true;
@@ -175,6 +185,7 @@ public final class CreateContentParams
             this.name = source.name;
             this.parentPath = source.parentContentPath;
             this.requireValid = source.requireValid;
+            this.requireMappedProperties = source.requireMappedProperties;
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
             this.createAttachments = source.createAttachments;
@@ -234,6 +245,12 @@ public final class CreateContentParams
         public Builder requireValid( final boolean requireValid )
         {
             this.requireValid = requireValid;
+            return this;
+        }
+
+        public Builder requireMappedProperties( final boolean requireMappedProperties )
+        {
+            this.requireMappedProperties = requireMappedProperties;
             return this;
         }
 

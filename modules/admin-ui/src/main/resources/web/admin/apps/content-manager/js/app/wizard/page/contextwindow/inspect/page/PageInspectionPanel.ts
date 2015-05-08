@@ -76,7 +76,7 @@ module app.wizard.page.contextwindow.inspect.page {
                         then((pageDescriptor: PageDescriptor) => {
                             var setTemplate = new SetTemplate(this).
                                 setTemplate(pageTemplate, pageDescriptor);
-                            this.pageModel.setTemplate(setTemplate);
+                            this.pageModel.setTemplate(setTemplate, true);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
