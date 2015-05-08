@@ -58,7 +58,7 @@ tinymce.PluginManager.add('link', function (editor) {
 
         function isTabActive(tabName) {
             var activeTab = win.getEl().querySelectorAll(".mce-tab.mce-active")[0];
-            return activeTab.innerText == tabName;
+            return activeTab.innerText == tabName || activeTab.innerHTML == tabName;
         }
 
         function getActiveTab(data) {
@@ -192,6 +192,7 @@ tinymce.PluginManager.add('link', function (editor) {
                     items: [{
                         name: 'url',
                         type: 'textbox',
+                        classes: 'link-tab-url-url',
                         size: 40,
                         label: 'URL'
                     }, {
@@ -218,6 +219,7 @@ tinymce.PluginManager.add('link', function (editor) {
                     items: [{
                         name: 'email',
                         type: 'textbox',
+                        classes: 'link-tab-email-email',
                         size: 40,
                         label: 'Email'
                     }, {
@@ -230,9 +232,10 @@ tinymce.PluginManager.add('link', function (editor) {
             }],
             onSubmit: function (e) {
                 /*eslint dot-notation: 0*/
-                var href;
+                var href, target;
                 data = tinymce.extend(data, e.data);
                 href = getHref(data);
+                target = getTarget(data);
 
                 // Delay confirm since onSubmit will move focus
                 function delayedConfirm(message, callback) {
@@ -246,11 +249,66 @@ tinymce.PluginManager.add('link', function (editor) {
                     }, 0);
                 }
 
+                function validateControl(fieldCls, value, parentCls) {
+                    var invalidClassName = "invalid",
+                        parentEl = parentCls ? win.getEl().getElementsByClassName(parentCls)[0] : win.getEl(),
+                        field = parentEl.getElementsByClassName(fieldCls)[0],
+                        isValid = value.trim().length > 0;
+
+                    field.classList.toggle(invalidClassName, !isValid);
+
+                    return isValid || field;
+                }
+
+                function validateForm() {
+                    var focusEl, field;
+
+                    if ((field = validateControl("mce-link-text", data.text)) != true) {
+                        focusEl = field;
+                    }
+
+                    if (isTabActive(tabNames.content) &&
+                        (field = validateControl("mce-content-selector", data.contentId, "mce-link-tab-content")) != true && !focusEl) {
+                        focusEl = field.getElementsByClassName("text-input")[0];
+                    }
+
+                    if (isTabActive(tabNames.media) &&
+                        (field = validateControl("mce-content-selector", data.mediaId, "mce-link-tab-media")) != true && !focusEl) {
+                        focusEl = field.getElementsByClassName("text-input")[0];
+                    }
+
+                    if (isTabActive(tabNames.url) && (field = validateControl("mce-link-tab-url-url", data.url)) != true && !focusEl) {
+                        focusEl = field;
+                    }
+
+                    if (isTabActive(tabNames.email)) {
+                        if (!isEmail(data.email)) {
+                            data.email = "";
+                        }
+                        if ((field = validateControl("mce-link-tab-email-email", data.email)) != true && !focusEl) {
+                            focusEl = field;
+                        }
+                    }
+
+                    if (focusEl) {
+                        focusEl.focus();
+
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                function isEmail(value) {
+                    return value.indexOf('@') > 0 && value.indexOf('.') > 0 && value.indexOf('//') == -1 &&
+                           value.indexOf(emailPrefix) == -1;
+                }
+
                 function insertLink() {
                     var linkAttrs = {
                         href: href,
                         title: data.title ? data.title : null,
-                        target: getTarget(data) ? targetBlank : ""
+                        target: target ? targetBlank : ""
                     };
 
                     if (anchorElm) {
@@ -277,13 +335,14 @@ tinymce.PluginManager.add('link', function (editor) {
                     }
                 }
 
-                if (!href) {
-                    editor.execCommand('unlink');
+                if (!validateForm()) {
+                    e.preventDefault();
+
                     return;
                 }
 
                 // Is email and not //user@domain.com
-                if (href.indexOf('@') > 0 && href.indexOf('//') == -1 && href.indexOf(emailPrefix) == -1) {
+                if (isEmail(href)) {
                     delayedConfirm(
                         'The URL you entered seems to be an email address. Do you want to add the required mailto: prefix?',
                         function (state) {
