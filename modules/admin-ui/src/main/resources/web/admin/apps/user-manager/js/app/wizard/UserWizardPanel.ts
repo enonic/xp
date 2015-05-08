@@ -37,22 +37,13 @@ module app.wizard {
         }
 
         saveChanges(): wemQ.Promise<Principal> {
-            // TODO: Add a validation of the password filed, when implemented.
-            var formEmail = this.userEmailWizardStepForm.getEmail(),
-                email = this.getPersistedItem() ? this.getPersistedItem().asUser().getEmail() : null;
-            if (this.userEmailWizardStepForm.isValid() || (formEmail === email)) {
+            if (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
                 return super.saveChanges();
             } else {
-                var deferred = wemQ.defer<Principal>(),
-                    message = "";
-                if (!formEmail) {
-                    message = "E-mail can not be empty.";
-                } else {
-                    message = "E-mail is invalid.";
-                }
-                api.notify.showError(message);
-                // deferred.resolve(null);
-                deferred.reject(new Error(message));
+                this.showErrors();
+
+                var deferred = wemQ.defer<Principal>();
+                deferred.resolve(null);
                 return deferred.promise;
             }
         }
@@ -270,6 +261,35 @@ module app.wizard {
                     this.userMembershipsWizardStepForm.getMemberships().length !== 0;
             } else {
                 return !this.isPersistedEqualsViewed();
+            }
+        }
+
+        private showErrors() {
+            if (!this.userEmailWizardStepForm.isValid()) {
+                this.showEmailErrors();
+            }
+
+            if (!(this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
+                this.showPasswordErrors();
+            }
+        }
+
+        private showEmailErrors() {
+            var formEmail = this.userEmailWizardStepForm.getEmail();
+            if (api.util.StringHelper.isEmpty(formEmail)) {
+                api.notify.showError("E-mail can not be empty.");
+            } else if (!this.userEmailWizardStepForm.isValid()) {
+                api.notify.showError("E-mail is invalid.");
+            }
+
+        }
+
+        private showPasswordErrors() {
+            var password = this.userPasswordWizardStepForm.getPassword();
+            if (api.util.StringHelper.isEmpty(password)) {
+                api.notify.showError("Password can not be empty.");
+            } else if (!this.userEmailWizardStepForm.isValid()) {
+                api.notify.showError("Password is invalid.");
             }
         }
     }
