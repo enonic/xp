@@ -1,10 +1,13 @@
 package com.enonic.xp.content;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Beta
@@ -26,6 +29,8 @@ public class PushContentRequests
 
     private final ImmutableSet<DeletedBecauseChildOfPushed> deletedBecauseChildOfPusheds;
 
+    private final ImmutableMap<ContentId, PushedNodeIdWithContextualContentId> mapWithContextualContentIds;
+
     private PushContentRequests( Builder builder )
     {
         pushBecauseRequested = ImmutableSet.copyOf( builder.pushBecauseRequested );
@@ -37,6 +42,8 @@ public class PushContentRequests
         deletedBecauseReferredTos = ImmutableSet.copyOf( builder.deletedBecauseReferredTo );
         deletedBecauseParentOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseParentOf );
         deletedBecauseChildOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseChildOf );
+
+        mapWithContextualContentIds = ImmutableMap.copyOf( builder.mapWithContextualContentIds );
     }
 
     public static Builder create()
@@ -84,133 +91,164 @@ public class PushContentRequests
         return deletedBecauseChildOfPusheds;
     }
 
-    public ContentIds getDependantsContentIds( boolean filterRequestedToPublishContentIds )
+    public PushedContentIdsWithInitialReason getPushedContentIdsWithInitialReason( boolean filterRequestedToPublishContentIds,
+                                                                                   PUSH_TYPE... pushTypes )
     {
-        Set<ContentId> ids = new HashSet<>();
-        for ( PushedBecauseReferredTo to : pushedBecauseReferredTos )
+        Set<PushedContentIdWithInitialReason> ids = new HashSet<>();
+        for ( PUSH_TYPE pushType : pushTypes )
         {
-            ids.add( to.contentId );
+            switch ( pushType )
+            {
+                case PUSH_REQUESTED:
+                    for ( PushBecauseRequested to : pushBecauseRequested )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId ) );
+                    }
+                    break;
+                case PUSH_REF:
+                    for ( PushedBecauseReferredTo to : pushedBecauseReferredTos )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                case PUSH_PARENT:
+                    for ( PushedBecauseParentOfPushed to : pushedBecauseParentOfPusheds )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                case PUSH_CHILD:
+                    for ( PushedBecauseChildOfPushed to : pushedBecauseChildOfPusheds )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                case DELETE_REQUESTED:
+                    for ( DeleteBecauseRequested to : deleteBecauseRequested )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId ) );
+                    }
+                    break;
+                case DELETE_REF:
+                    for ( DeletedBecauseReferredTo to : deletedBecauseReferredTos )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                case DELETE_PARENT:
+                    for ( DeletedBecauseParentOfPushed to : deletedBecauseParentOfPusheds )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                case DELETE_CHILD:
+                    for ( DeletedBecauseChildOfPushed to : deletedBecauseChildOfPusheds )
+                    {
+                        ids.add( new PushedContentIdWithInitialReason( to.contentId,
+                                                                       findContentIdThatInitiallyTriggeredPublish( to.contentId ) ) );
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-        for ( PushedBecauseParentOfPushed to : pushedBecauseParentOfPusheds )
-        {
-            ids.add( to.contentId );
-        }
+
         if ( filterRequestedToPublishContentIds )
         {
-            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
+            ids.removeAll( getPushedBecauseRequestedContentIds( true ).getSet() );
         }
-        ContentIds result = ContentIds.from( ids );
+
+        PushedContentIdsWithInitialReason result = PushedContentIdsWithInitialReason.from( ids );
         return result;
     }
 
-    public ContentIds getPushedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds )
+    /**
+     * Go all the way through the contextual contentIds to find the initial node that triggered publish.
+     *
+     * @param id
+     * @return
+     */
+    private ContentId findContentIdThatInitiallyTriggeredPublish( ContentId id )
     {
-        Set<ContentId> ids = new HashSet<>();
-        for ( PushedBecauseChildOfPushed to : pushedBecauseChildOfPusheds )
+        PushedNodeIdWithContextualContentId result = mapWithContextualContentIds.get( id );
+        while ( result.getContextualContentId() != null )
         {
-            ids.add( to.contentId );
+            result = mapWithContextualContentIds.get( result.getContextualContentId() );
         }
-        if ( filterRequestedToPublishContentIds )
-        {
-            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
-        }
-        ContentIds result = ContentIds.from( ids );
-        return result;
+        return result.getContentId();
     }
 
-    public ContentIds getPushedBecauseRequestedContentIds()
+    public PushedContentIdsWithInitialReason getDependantsContentIds( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
     {
-        Set<ContentId> ids = new HashSet<>();
-        for ( PushBecauseRequested to : pushBecauseRequested )
-        {
-            ids.add( to.contentId );
-        }
-        ContentIds result = ContentIds.from( ids );
-        return result;
-    }
-
-    public ContentIds getDeletedDependantsContentIds( boolean filterRequestedToPublishContentIds )
-    {
-        Set<ContentId> ids = new HashSet<>();
-        for ( DeletedBecauseReferredTo to : deletedBecauseReferredTos )
-        {
-            ids.add( to.contentId );
-        }
-        for ( DeletedBecauseParentOfPushed to : deletedBecauseParentOfPusheds )
-        {
-            ids.add( to.contentId );
-        }
-        if ( filterRequestedToPublishContentIds )
-        {
-            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
-        }
-        ContentIds result = ContentIds.from( ids );
-        return result;
-    }
-
-    public ContentIds getDeletedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds )
-    {
-        Set<ContentId> ids = new HashSet<>();
-        for ( DeletedBecauseChildOfPushed to : deletedBecauseChildOfPusheds )
-        {
-            ids.add( to.contentId );
-        }
-        if ( filterRequestedToPublishContentIds )
-        {
-            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
-        }
-        ContentIds result = ContentIds.from( ids );
-        return result;
-    }
-
-    public ContentIds getDeletedBecauseRequestedContentIds()
-    {
-        Set<ContentId> ids = new HashSet<>();
-        for ( DeleteBecauseRequested to : deleteBecauseRequested )
-        {
-            ids.add( to.contentId );
-        }
-        ContentIds result = ContentIds.from( ids );
-        return result;
-    }
-
-    public ContentIds getAllContentIdsExceptRequested( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
-    {
-        Set<ContentId> ids = new HashSet<>();
-        for ( PushedBecauseReferredTo to : pushedBecauseReferredTos )
-        {
-            ids.add( to.contentId );
-        }
-        for ( PushedBecauseParentOfPushed to : pushedBecauseParentOfPusheds )
-        {
-            ids.add( to.contentId );
-        }
-        for ( PushedBecauseChildOfPushed to : pushedBecauseChildOfPusheds )
-        {
-            ids.add( to.contentId );
-        }
         if ( includeDeleted )
         {
-            for ( DeletedBecauseReferredTo to : deletedBecauseReferredTos )
-            {
-                ids.add( to.contentId );
-            }
-            for ( DeletedBecauseParentOfPushed to : deletedBecauseParentOfPusheds )
-            {
-                ids.add( to.contentId );
-            }
-            for ( DeletedBecauseChildOfPushed to : deletedBecauseChildOfPusheds )
-            {
-                ids.add( to.contentId );
-            }
+            return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF,
+                                                         PUSH_TYPE.DELETE_PARENT, PUSH_TYPE.DELETE_REF );
         }
-        if ( filterRequestedToPublishContentIds )
+        else
         {
-            ids.removeAll( getPushedBecauseRequestedContentIds().getSet() );
-            ids.removeAll( getDeletedBecauseRequestedContentIds().getSet() );
+            return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF );
         }
-        ContentIds result = ContentIds.from( ids );
-        return result;
+    }
+
+    public PushedContentIdsWithInitialReason getPushedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds,
+                                                                                boolean includeDeleted )
+    {
+        if ( includeDeleted )
+        {
+            return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_CHILD, PUSH_TYPE.DELETE_CHILD );
+        }
+        else
+        {
+            return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_CHILD );
+        }
+    }
+
+    public PushedContentIdsWithInitialReason getPushedBecauseRequestedContentIds( boolean includeDeleted )
+    {
+        if ( includeDeleted )
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED, PUSH_TYPE.DELETE_REQUESTED );
+        }
+        else
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED );
+        }
+    }
+
+    public PushedContentIdsWithInitialReason getDeletedDependantsContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.DELETE_REF, PUSH_TYPE.DELETE_PARENT );
+    }
+
+    public PushedContentIdsWithInitialReason getDeletedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds )
+    {
+        return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.DELETE_CHILD );
+    }
+
+    public PushedContentIdsWithInitialReason getDeletedBecauseRequestedContentIds()
+    {
+        return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.DELETE_REQUESTED );
+    }
+
+    public PushedContentIdsWithInitialReason getAllContentIds( boolean includeDeleted )
+    {
+        if ( includeDeleted )
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF,
+                                                         PUSH_TYPE.PUSH_CHILD, PUSH_TYPE.DELETE_REQUESTED, PUSH_TYPE.DELETE_REQUESTED,
+                                                         PUSH_TYPE.DELETE_PARENT, PUSH_TYPE.DELETE_CHILD );
+        }
+        else
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF,
+                                                         PUSH_TYPE.PUSH_CHILD );
+        }
     }
 
     public static class PushBecauseRequested
@@ -311,6 +349,29 @@ public class PushContentRequests
         }
     }
 
+    public static class PushedNodeIdWithContextualContentId
+    {
+        private final ContentId contentId;
+
+        private final ContentId contextualContentId;
+
+        public PushedNodeIdWithContextualContentId( final ContentId contentId, final ContentId contextualContentId )
+        {
+            this.contentId = contentId;
+            this.contextualContentId = contextualContentId;
+        }
+
+        public ContentId getContentId()
+        {
+            return contentId;
+        }
+
+        public ContentId getContextualContentId()
+        {
+            return contextualContentId;
+        }
+    }
+
 
     public static final class Builder
     {
@@ -330,6 +391,8 @@ public class PushContentRequests
 
         private final Set<DeletedBecauseChildOfPushed> deletedBecauseChildOf = Sets.newHashSet();
 
+        private final Map<ContentId, PushedNodeIdWithContextualContentId> mapWithContextualContentIds = Maps.newHashMap();
+
         private Builder()
         {
         }
@@ -337,48 +400,56 @@ public class PushContentRequests
         public Builder addRequested( final ContentId contentId )
         {
             this.pushBecauseRequested.add( new PushBecauseRequested( contentId ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, null ) );
             return this;
         }
 
         public Builder addParentOf( final ContentId contentId, final ContentId parentOf )
         {
             this.pushedBecauseParentOf.add( new PushedBecauseParentOfPushed( contentId, parentOf ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, parentOf ) );
             return this;
         }
 
         public Builder addChildOf( final ContentId contentId, final ContentId childOf )
         {
             this.pushedBecauseChildOf.add( new PushedBecauseChildOfPushed( contentId, childOf ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, childOf ) );
             return this;
         }
 
         public Builder addReferredTo( final ContentId contentId, final ContentId referredTo )
         {
             this.pushedBecauseReferredTo.add( new PushedBecauseReferredTo( contentId, referredTo ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, referredTo ) );
             return this;
         }
 
         public Builder addDeleteRequested( final ContentId contentId )
         {
             this.deleteBecauseRequested.add( new DeleteBecauseRequested( contentId ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, null ) );
             return this;
         }
 
         public Builder addDeleteBecauseParentOf( final ContentId contentId, final ContentId parentOf )
         {
             this.deletedBecauseParentOf.add( new DeletedBecauseParentOfPushed( contentId, parentOf ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, parentOf ) );
             return this;
         }
 
         public Builder addDeleteBecauseChildOf( final ContentId contentId, final ContentId childOf )
         {
             this.deletedBecauseChildOf.add( new DeletedBecauseChildOfPushed( contentId, childOf ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, childOf ) );
             return this;
         }
 
         public Builder addDeleteBecauseReferredTo( final ContentId contentId, final ContentId referredTo )
         {
             this.deletedBecauseReferredTo.add( new DeletedBecauseReferredTo( contentId, referredTo ) );
+            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, referredTo ) );
             return this;
         }
 
@@ -386,5 +457,10 @@ public class PushContentRequests
         {
             return new PushContentRequests( this );
         }
+    }
+
+    public static enum PUSH_TYPE
+    {
+        PUSH_REQUESTED, PUSH_REF, PUSH_PARENT, PUSH_CHILD, DELETE_REQUESTED, DELETE_REF, DELETE_PARENT, DELETE_CHILD;
     }
 }

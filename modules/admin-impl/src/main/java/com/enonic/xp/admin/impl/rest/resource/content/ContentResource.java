@@ -346,7 +346,7 @@ public final class ContentResource
                                                            contentIds( contentIds ).
                                                            build() );
 
-        return ResolvePublishDependenciesResultJson.from( result );
+        return ResolvePublishDependenciesResultJson.from( result, newContentIconUrlResolver() );
     }
 
     @POST

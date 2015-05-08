@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ResolvePublishDependenciesRequest extends ContentResourceRequest<ResolvePublishDependenciesResult, any> {
+    export class ResolvePublishDependenciesRequest extends ContentResourceRequest<api.content.json.ResolvePublishDependenciesResultJson, any> {
 
         private ids: ContentId[] = [];
 
