@@ -76,10 +76,9 @@ public class ResolvePublishDependenciesCommand
         this.resultBuilder.pushContentRequestsWithChildren( pushContentRequestsWithChildren );
         this.resultBuilder.pushContentRequestsWithoutChildren( PushContentRequestsFactory.create( syncWorkResultsWithoutChildren ) );
 
-        this.resultBuilder.setResolvedContent(
-            getContentByIds( new GetContentByIdsParams( pushContentRequestsWithChildren.getAllContentIdsExceptRequested( true, true ) ) ) );
-        this.resultBuilder.setCompareContentResults(
-            getCompareStatuses( pushContentRequestsWithChildren.getAllContentIdsExceptRequested( true, true ) ) );
+        ContentIds allIds = pushContentRequestsWithChildren.getAllContentIds( true ).getPushedContentIds();
+        this.resultBuilder.setResolvedContent( getContentByIds( new GetContentByIdsParams( allIds ) ) );
+        this.resultBuilder.setCompareContentResults( getCompareStatuses( allIds ) );
     }
 
     private Contents getContentByIds( final GetContentByIdsParams getContentParams )
