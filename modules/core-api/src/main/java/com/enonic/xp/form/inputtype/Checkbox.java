@@ -37,18 +37,6 @@ public class Checkbox
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public void validateOccurrences( final Occurrences occurrences )
     {
         if ( occurrences.getMinimum() != 0 )

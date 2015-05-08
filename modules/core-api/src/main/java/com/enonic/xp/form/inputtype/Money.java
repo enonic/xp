@@ -37,18 +37,6 @@ final class Money
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );

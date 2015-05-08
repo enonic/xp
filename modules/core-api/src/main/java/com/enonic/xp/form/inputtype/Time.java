@@ -42,18 +42,6 @@ public class Time
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
