@@ -87,6 +87,11 @@ module api.ui {
             return this;
         }
 
+        setDisabled(value: boolean): Checkbox {
+            this.checkbox.getEl().setDisabled(value);
+            return this;
+        }
+
         getPlaceholder(): string {
             return this.checkbox.getEl().getAttribute('placeholder');
         }

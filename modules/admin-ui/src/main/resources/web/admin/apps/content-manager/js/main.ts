@@ -22,9 +22,9 @@ function startApplication() {
         contentDeleteDialog.open();
     });
 
-    var contentPublishDialog = new app.publish.ContentPublishDialog();
     app.browse.ContentPublishPromptEvent.on((event) => {
-        contentPublishDialog.setContentToPublish(event.getModels());
+        var contentPublishDialog = new app.publish.ContentPublishDialog();
+        contentPublishDialog.setSelectedContents(event.getModels());
         contentPublishDialog.initAndOpen();
     });
 
