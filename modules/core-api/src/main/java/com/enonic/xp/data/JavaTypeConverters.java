@@ -44,8 +44,6 @@ final class JavaTypeConverters
         appendFraction( NANO_OF_SECOND, 0, 9, true ).
         toFormatter();
 
-    private final static PropertySetJsonSerializer DATA_SERIALIZER = new PropertySetJsonSerializer();
-
     public final static JavaTypeConverter<String> STRING = newString();
 
     public final static JavaTypeConverter<Long> LONG = newLong();
@@ -87,10 +85,6 @@ final class JavaTypeConverters
         else if ( value instanceof LocalDate )
         {
             return ( (LocalDate) value ).format( LOCAL_DATE_FORMATTER );
-        }
-        else if ( value instanceof PropertySet )
-        {
-            return DATA_SERIALIZER.serializeToString( (PropertySet) value );
         }
         else
         {
@@ -175,10 +169,6 @@ final class JavaTypeConverters
         if ( value instanceof PropertySet )
         {
             return (PropertySet) value;
-        }
-        else if ( value instanceof String )
-        {
-            return DATA_SERIALIZER.parse( (String) value );
         }
         else
         {
