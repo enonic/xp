@@ -173,7 +173,7 @@ final class UpdateContentCommand
         try
         {
             InputValidator.
-                newInputValidator().
+                create().
                 contentType( contentType ).
                 requireMappedProperties( params.isRequireMappedProperties() ).
                 build().

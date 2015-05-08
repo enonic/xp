@@ -18,25 +18,15 @@ public final class InputValidator
 
     private InputValidator( final ContentType contentType, final boolean requireMappedProperties )
     {
-        if ( contentType.getName().isUnstructured() )
-        {
-            this.propertyValidationVisitor = null;
-        }
-        else
-        {
-            this.propertyValidationVisitor = new PropertyValidationVisitor( contentType.form(), requireMappedProperties );
-        }
+        this.propertyValidationVisitor = new PropertyValidationVisitor( contentType.form(), requireMappedProperties );
     }
 
     public final void validate( final PropertySet dataSet )
     {
-        if ( propertyValidationVisitor != null )
-        {
-            propertyValidationVisitor.traverse( dataSet );
-        }
+        propertyValidationVisitor.traverse( dataSet );
     }
 
-    public static Builder newInputValidator()
+    public static Builder create()
     {
         return new Builder();
     }

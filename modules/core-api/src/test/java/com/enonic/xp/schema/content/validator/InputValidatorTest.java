@@ -7,10 +7,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
@@ -41,7 +39,7 @@ public class InputValidatorTest
     {
         contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
         inputValidator = InputValidator.
-            newInputValidator().
+            create().
             contentType( contentType ).
             build();
     }
@@ -233,23 +231,6 @@ public class InputValidatorTest
     }
 
     @Test
-    @Ignore("ContentTypeName.isUnstructured() method is incorrect or define a recursive method ContentTypeName.isUnstructured()." +
-        " To discuss")
-    public void validate_incorrect_unstructured()
-    {
-        contentType = createContentTypeForAllInputTypes( ContentTypeName.unstructured() );
-        inputValidator = InputValidator.
-            newInputValidator().
-            contentType( contentType ).
-            build();
-
-        //Validates an incorrect value
-        PropertyTree invalidData = new PropertyTree();
-        invalidData.addLong( "textLine", 1l );
-        inputValidator.validate( invalidData.getRoot() );
-    }
-
-    @Test
     public void validate_unmapped_properties()
     {
         //Validates, with the default validator, data with an unmapped property
@@ -259,7 +240,7 @@ public class InputValidatorTest
 
         //Validates, with a validator failing on unmapped properties, data with an unmapped property
         inputValidator = InputValidator.
-            newInputValidator().
+            create().
             contentType( contentType ).
             requireMappedProperties( true ).
             build();
