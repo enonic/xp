@@ -1,14 +1,13 @@
 package com.enonic.xp.core.impl.image.command;
 
-public abstract class BaseImageCommand
+abstract class BaseImageCommand
 {
     protected final String name;
 
-    protected BaseImageCommand( String name) {
+    protected BaseImageCommand( String name )
+    {
         this.name = name;
     }
-
-    public abstract Object build( Object[] args );
 
     public final String getName()
     {

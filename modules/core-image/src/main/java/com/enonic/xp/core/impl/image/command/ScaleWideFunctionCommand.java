@@ -5,6 +5,7 @@
 package com.enonic.xp.core.impl.image.command;
 
 import com.enonic.xp.core.impl.image.effect.ScaleWideFunction;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageScaleFunction;
 
 public final class ScaleWideFunctionCommand
@@ -16,8 +17,8 @@ public final class ScaleWideFunctionCommand
     }
 
     @Override
-    protected ImageScaleFunction doBuild( Object[] args )
+    protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
-        return new ScaleWideFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getFloatArg( args, 2, 0.5f ) );
+        return new ScaleWideFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getFloatArg( args, 2, focalPoint.yOffset() ) );
     }
 }

@@ -20,10 +20,11 @@ public class PortalUrlServiceImpl_imageUrlTest
         this.context.setContent( createContent() );
 
         final ImageUrlParams params = new ImageUrlParams().
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent", url );
     }
 
     @Test
@@ -33,10 +34,11 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().
             format( "png" ).
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent.png", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent.png", url );
     }
 
     @Test
@@ -49,10 +51,12 @@ public class PortalUrlServiceImpl_imageUrlTest
             background( "00ff00" ).
             filter( "scale(10,10)" ).
             format( "jpg" ).
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
+        assertEquals(
+            "/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
                       url );
     }
 
@@ -63,10 +67,11 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().
             id( "123456" ).
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456/max-300/mycontent", url );
     }
 
     @Test
@@ -76,10 +81,11 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().
             path( "/a/b/mycontent" ).
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456/max-300/mycontent", url );
     }
 
     @Test
@@ -89,7 +95,8 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().
             id( "123456" ).
-            context( this.context );
+            context( this.context ).
+            scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/portal/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D", url );

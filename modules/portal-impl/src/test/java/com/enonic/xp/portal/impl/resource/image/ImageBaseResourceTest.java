@@ -14,6 +14,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageScaleFunction;
@@ -66,7 +67,7 @@ public abstract class ImageBaseResourceTest
             thenReturn( ByteSource.wrap( imageData ) );
         Mockito.when( this.imageFilterBuilder.build( Mockito.isA( String.class ) ) ).
             thenReturn( getImageFilterBuilder() );
-        Mockito.when( this.imageScaleFunctionBuilder.build( Mockito.isA( ScaleParams.class ) ) ).
+        Mockito.when( this.imageScaleFunctionBuilder.build( Mockito.isA( ScaleParams.class ), Mockito.isA( FocalPoint.class ) ) ).
             thenReturn( getImageScaleFunctionBuilder() );
     }
 

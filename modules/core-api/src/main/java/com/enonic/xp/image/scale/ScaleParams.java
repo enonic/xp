@@ -1,5 +1,9 @@
 package com.enonic.xp.image.scale;
 
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
+
 public final class ScaleParams
 {
     private final String name;
@@ -24,38 +28,24 @@ public final class ScaleParams
 
     public String toString()
     {
-        StringBuffer str = new StringBuffer();
-        str.append( this.name ).append( "(" );
-
-        for ( int i = 0; i < this.args.length; i++ )
-        {
-            if ( i > 0 )
-            {
-                str.append( "," );
-            }
-
-            str.append( encode( this.args[i] ) );
-        }
-
-        str.append( ")" );
-        return str.toString();
+        return this.name + "(" + Stream.of( this.args ).map( this::encode ).collect( joining( "," ) ) + ")";
     }
 
-    public int getRequiredImageSize() {
-        if(args == null) {
-          return -1;
+    public int getRequiredImageSize()
+    {
+        if ( args.length == 0 )
+        {
+            return -1;
         }
 
-        if(args.length == 1)
+        if ( args.length == 1 )
         {
-            int size = (Integer) args[0];
-            return size;
+            return args[0] instanceof Integer ? (int) args[0] : -1;
         }
 
-        if(args.length > 1)
+        if ( args.length > 1 && args[0] instanceof Integer && args[1] instanceof Integer )
         {
-            int max =  Math.max( (Integer) args[0] , (Integer) args[1] );
-            return max;
+            return Math.max( (int) args[0], (int) args[1] );
         }
 
         return -1;

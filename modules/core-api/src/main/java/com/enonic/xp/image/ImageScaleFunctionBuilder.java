@@ -4,5 +4,5 @@ import com.enonic.xp.image.scale.ScaleParams;
 
 public interface ImageScaleFunctionBuilder
 {
-    public ImageScaleFunction build( ScaleParams scaleParams );
+    ImageScaleFunction build( ScaleParams scaleParams, FocalPoint focalPoint );
 }

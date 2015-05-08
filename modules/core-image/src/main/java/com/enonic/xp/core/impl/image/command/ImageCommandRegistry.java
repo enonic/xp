@@ -2,12 +2,14 @@ package com.enonic.xp.core.impl.image.command;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
-public abstract class ImageCommandRegistry<T extends BaseImageCommand>
+abstract class ImageCommandRegistry<T extends BaseImageCommand>
 {
-    private final HashMap<String, T> map;
+    private final Map<String, T> map;
 
-    public ImageCommandRegistry() {
+    public ImageCommandRegistry()
+    {
         this.map = new HashMap<>();
     }
 

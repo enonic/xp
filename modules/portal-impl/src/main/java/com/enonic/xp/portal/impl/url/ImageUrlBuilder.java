@@ -65,13 +65,10 @@ final class ImageUrlBuilder
 
     private String resolveScale()
     {
-        if( this.params.getScale() != null) {
-            return this.params.getScale().replaceAll( "[(,]", "-" ).replace( ")", "" );
-        }
-        else
+        if ( this.params.getScale() == null )
         {
-            //throw param not found exception?
-            return null;
+            throw new IllegalArgumentException( "Missing mandatory parameter 'scale' for image URL" );
         }
+        return this.params.getScale().replaceAll( "[(,]", "-" ).replace( ")", "" );
     }
 }

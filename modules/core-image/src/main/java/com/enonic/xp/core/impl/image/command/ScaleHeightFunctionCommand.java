@@ -5,6 +5,7 @@
 package com.enonic.xp.core.impl.image.command;
 
 import com.enonic.xp.core.impl.image.effect.ScaleHeightFunction;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageScaleFunction;
 
 public final class ScaleHeightFunctionCommand
@@ -16,7 +17,7 @@ public final class ScaleHeightFunctionCommand
     }
 
     @Override
-    protected ImageScaleFunction doBuild( Object[] args )
+    protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
         return new ScaleHeightFunction( getIntArg( args, 0, 100 ) );
     }

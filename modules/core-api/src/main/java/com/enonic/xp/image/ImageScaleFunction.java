@@ -4,5 +4,5 @@ import java.awt.image.BufferedImage;
 
 public interface ImageScaleFunction
 {
-    public BufferedImage scale( BufferedImage source );
+    BufferedImage scale( BufferedImage source );
 }
