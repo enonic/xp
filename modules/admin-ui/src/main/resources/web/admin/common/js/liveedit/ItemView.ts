@@ -164,6 +164,15 @@ module api.liveedit {
              }*/
 
             if (builder.placeholder) {
+
+                if (this.getChildren().length > 0) {
+                    var children = this.getChildren().filter(children => {
+                        return !api.ObjectHelper.iFrameSafeInstanceOf(children, ItemViewPlaceholder)
+                    })
+                    this.removeChildren();
+                    this.appendChildren.apply(this, children);
+                }
+
                 this.placeholder = builder.placeholder;
                 this.appendChild(this.placeholder);
             }

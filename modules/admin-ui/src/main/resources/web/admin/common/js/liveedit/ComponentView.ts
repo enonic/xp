@@ -143,6 +143,12 @@ module api.liveedit {
             //this.onDragEnd(this.handleDragEnd.bind(this));
         }
 
+        //remove(): ComponentView {
+        //    super.remove();
+        //    this.unregisterComponentListeners(this.component);
+        //    return this;
+        //}
+
         private registerComponentListeners(component: COMPONENT) {
             component.onReset(this.resetListener);
             component.onPropertyChanged(this.propertyChangedListener);
@@ -185,12 +191,14 @@ module api.liveedit {
         }
 
         remove(): ComponentView<Component> {
+            this.unregisterComponentListeners(this.component);
             var parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
             } else {
                 super.remove();
             }
+            this.unregisterComponentListeners(this.component);
             return this;
         }
 
