@@ -542,7 +542,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     /*
-     - S1 (New)
+     - S1 (New) s
          - A1 (New)
          - A2 (New)
              - A2_1 - Ref:B2_1 (New)
