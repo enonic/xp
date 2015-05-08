@@ -47,6 +47,11 @@ final class ThymeleafViewFunctions
         return execute( "imagePlaceholder", params ).toString();
     }
 
+    public String processHtml( final List<String> params )
+    {
+        return execute( "processHtml", params ).toString();
+    }
+
     private Object execute( final String name, final List<String> args )
     {
         final ViewFunctionParams params = new ViewFunctionParams().name( name ).args( args ).context( this.context );
