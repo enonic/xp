@@ -238,7 +238,7 @@ module api.content.page {
             return this;
         }
 
-        setTemplate(setTemplate: SetTemplate): PageModel {
+        setTemplate(setTemplate: SetTemplate, ignoreRegionChanges: boolean = false): PageModel {
 
             var oldTemplateKey = this.template ? this.template.getKey() : null;
 
@@ -256,10 +256,10 @@ module api.content.page {
                 this.setConfig(setTemplate.config, setTemplate.eventSource);
             }
             if (setTemplate.regions) {
-                this.setRegions(setTemplate.regions, setTemplate.eventSource);
+                this.setRegions(setTemplate.regions, setTemplate.eventSource, ignoreRegionChanges);
             } else if (setTemplate.template && setTemplate.template.hasRegions()) {
                 // copy regions to avoid modifying defaultTemplate regions
-                this.setRegions(setTemplate.template.getRegions().clone(), setTemplate.eventSource);
+                this.setRegions(setTemplate.template.getRegions().clone(), setTemplate.eventSource, ignoreRegionChanges);
             }
 
             if (this.regions) {
@@ -275,7 +275,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: api.content.page.region.Regions, eventOrigin?: any): PageModel {
+        setRegions(value: api.content.page.region.Regions, eventOrigin?: any, ignoreRegionChanges = false): PageModel {
             var oldValue = this.regions;
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
@@ -285,7 +285,9 @@ module api.content.page {
             this.registerRegionsListeners(this.regions);
 
             this.setIgnorePropertyChanges(true);
-            this.notifyPropertyChanged(PageModel.PROPERTY_REGIONS, oldValue, value, eventOrigin);
+            if (!ignoreRegionChanges) {
+                this.notifyPropertyChanged(PageModel.PROPERTY_REGIONS, oldValue, value, eventOrigin);
+            }
             this.setIgnorePropertyChanges(false);
             return this;
         }
