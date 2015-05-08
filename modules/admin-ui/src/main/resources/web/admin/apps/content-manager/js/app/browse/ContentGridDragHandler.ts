@@ -76,7 +76,7 @@ module app.browse {
                 this.handleDragStart();
             }
             var gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, "."),
-                children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
+                children = Element.fromSelector(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
 
             //gets top of draggable item
             var draggableTop = !!this.draggableItem ? this.draggableItem.getEl().getTopPx() : 0;

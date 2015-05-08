@@ -24,8 +24,9 @@ module api.content.form.inputtype.upload {
                 skipWizardEvents: false,
                 maximumOccurrences: 1
             });
-
-            this.imageUploader.onEditModeChanged((edit: boolean) => this.validate(false));
+            this.imageUploader.onFocalEditModeChanged((edit: boolean, position: {x: number; y: number}) => {
+                this.validate(false);
+            });
 
             this.appendChild(this.imageUploader);
         }
@@ -74,7 +75,7 @@ module api.content.form.inputtype.upload {
             var recording = new api.form.inputtype.InputValidationRecording();
             var propertyValue = this.property.getValue();
 
-            if (this.imageUploader.isEditMode()) {
+            if (this.imageUploader.isFocalEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
             if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {

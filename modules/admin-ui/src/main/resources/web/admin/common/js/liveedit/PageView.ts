@@ -515,7 +515,6 @@ module api.liveedit {
 
         private parseItemViews() {
             this.regionViews = [];
-            this.regionIndex = 0;
             this.viewsById = {};
 
             this.doParseItemViews();
