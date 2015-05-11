@@ -5,12 +5,18 @@
   &.edit {
     .focal-canvas {
       .focal-image {
-        .opacity(.5);
+        .opacity(.7);
       }
 
       .focal-clip {
         display: block;
       }
+    }
+  }
+
+  &.auto {
+    .focal-toolbar button.icon-center-focus-strong {
+      .button-foreground(@admin-font-gray2);
     }
   }
 
@@ -48,6 +54,7 @@
       &.icon-center-focus-strong {
         font-size: 32px;
         padding: 0;
+        .button-foreground(@admin-blue);
 
         span {
           display: none;

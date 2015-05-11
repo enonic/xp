@@ -32,7 +32,8 @@ module api.ui.uploader {
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showInput?: boolean;
-        showButtons?: boolean;
+        showReset?: boolean;
+        showCancel?: boolean;
         showResult?: boolean;
         maximumOccurrences?: number;
         deferred?: boolean;
@@ -101,7 +102,7 @@ module api.ui.uploader {
             this.appendChild(this.resultContainer);
 
             this.cancelBtn = new Button("Cancel");
-            this.cancelBtn.setVisible(this.config.showButtons);
+            this.cancelBtn.setVisible(this.config.showCancel);
             this.cancelBtn.onClicked((event: MouseEvent) => {
                 this.stop();
                 this.reset();
@@ -109,7 +110,7 @@ module api.ui.uploader {
             this.appendChild(this.cancelBtn);
 
             this.resetBtn = new CloseButton();
-            this.resetBtn.setVisible(this.config.showButtons);
+            this.resetBtn.setVisible(this.config.showReset);
             this.resetBtn.onClicked((event: MouseEvent) => {
                 this.reset();
             });
@@ -138,6 +139,11 @@ module api.ui.uploader {
             }
 
             this.onRemoved((event) => this.destroyHandler.call(this, event));
+        }
+
+        public setResetVisible(visible: boolean) {
+            this.config.showReset = visible;
+            this.resetBtn.setVisible(visible);
         }
 
         private initHandler() {
@@ -180,8 +186,11 @@ module api.ui.uploader {
             if (this.config.allowMultiSelection == undefined) {
                 this.config.allowMultiSelection = false;
             }
-            if (this.config.showButtons == undefined) {
-                this.config.showButtons = true;
+            if (this.config.showCancel == undefined) {
+                this.config.showCancel = true;
+            }
+            if (this.config.showReset == undefined) {
+                this.config.showReset = true;
             }
             if (this.config.maximumOccurrences == undefined) {
                 this.config.maximumOccurrences = 0;
@@ -300,7 +309,7 @@ module api.ui.uploader {
             }
 
             this.progress.setVisible(visible);
-            this.cancelBtn.setVisible(visible && this.config.showButtons);
+            this.cancelBtn.setVisible(visible && this.config.showCancel);
         }
 
         private setResultVisible(visible: boolean = true) {
@@ -314,7 +323,7 @@ module api.ui.uploader {
             }
 
             this.resultContainer.setVisible(visible);
-            this.resetBtn.setVisible(visible && this.config.showButtons);
+            this.resetBtn.setVisible(visible && this.config.showReset);
         }
 
 
