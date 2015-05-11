@@ -57,6 +57,17 @@ public class LocalizeFunctionTest
     }
 
     @Test
+    public void arrayd_params()
+    {
+        Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
+            thenReturn( messageBundle );
+
+        final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a={1,2,3}" );
+        assertEquals( "no localization bundle found in module 'mymodule'", result );
+    }
+
+
+    @Test
     public void all_params()
     {
         Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).

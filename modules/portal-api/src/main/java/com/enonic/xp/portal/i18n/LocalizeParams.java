@@ -2,6 +2,7 @@ package com.enonic.xp.portal.i18n;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -15,6 +16,10 @@ public class LocalizeParams
     private String key;
 
     private Locale locale;
+
+    private Object[] args;
+
+    private Pattern ARGS_PATTERN = Pattern.compile( "\\{([^,]*)(,([^,]*))*\\}" );
 
     private final PortalContext context;
 
@@ -46,10 +51,16 @@ public class LocalizeParams
         this.locale = Strings.isNullOrEmpty( locale ) ? null : Locale.forLanguageTag( locale );
     }
 
+    private void args( final String argsAsString )
+    {
+
+    }
+
     public LocalizeParams setAsMap( final Multimap<String, String> map )
     {
         key( singleValue( map, "_key" ) );
         locale( singleValue( map, "_locale" ) );
+        args( singleValue( map, "_args" ) );
         getParams().putAll( map );
         return this;
     }
