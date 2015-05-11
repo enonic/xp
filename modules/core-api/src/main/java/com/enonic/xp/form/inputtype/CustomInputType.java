@@ -42,19 +42,6 @@ public class CustomInputType
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return null;
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );

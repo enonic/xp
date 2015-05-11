@@ -41,18 +41,6 @@ final class Color
         }
     }
 
-    @Override
-    public Value newValue( final String value )
-    {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
     private static ValueHolder parse( final String str )
     {
         final ValueHolder valueHolder = new ValueHolder();

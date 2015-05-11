@@ -78,20 +78,28 @@ module api.schema.content {
             return ContentTypeName.MEDIA.equals(this);
         }
 
+        static getMediaTypes(): ContentTypeName[] {
+            return [
+                ContentTypeName.MEDIA_ARCHIVE,
+                ContentTypeName.MEDIA_AUDIO,
+                ContentTypeName.MEDIA_VIDEO,
+                ContentTypeName.MEDIA_CODE,
+                ContentTypeName.MEDIA_DATA,
+                ContentTypeName.MEDIA_DOCUMENT,
+                ContentTypeName.MEDIA_EXECUTABLE,
+                ContentTypeName.MEDIA_IMAGE,
+                ContentTypeName.MEDIA_SPREADSHEET,
+                ContentTypeName.MEDIA_PRESENTATION,
+                ContentTypeName.MEDIA_VECTOR,
+                ContentTypeName.MEDIA_TEXT,
+                ContentTypeName.MEDIA_UNKNOWN
+            ];
+        }
+
         isDescendantOfMedia(): boolean {
-            return ContentTypeName.MEDIA_ARCHIVE.equals(this) ||
-                   ContentTypeName.MEDIA_AUDIO.equals(this) ||
-                   ContentTypeName.MEDIA_VIDEO.equals(this) ||
-                   ContentTypeName.MEDIA_CODE.equals(this) ||
-                   ContentTypeName.MEDIA_DATA.equals(this) ||
-                   ContentTypeName.MEDIA_DOCUMENT.equals(this) ||
-                   ContentTypeName.MEDIA_EXECUTABLE.equals(this) ||
-                   ContentTypeName.MEDIA_IMAGE.equals(this) ||
-                   ContentTypeName.MEDIA_SPREADSHEET.equals(this) ||
-                   ContentTypeName.MEDIA_PRESENTATION.equals(this) ||
-                   ContentTypeName.MEDIA_VECTOR.equals(this) ||
-                   ContentTypeName.MEDIA_TEXT.equals(this) ||
-                   ContentTypeName.MEDIA_UNKNOWN.equals(this);
+            return ContentTypeName.getMediaTypes().some((contentTypeName: ContentTypeName) => {
+                return contentTypeName.equals(this);
+            });
         }
     }
 }

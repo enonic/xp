@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess.injection;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -36,15 +38,15 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final String result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
+        final List<String> result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
         assertNull( result1 );
 
-        final String result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
+        final List<String> result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
         assertNull( result2 );
 
         this.context.setMode( RenderMode.LIVE );
 
-        final String result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
+        final List<String> result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNull( result3 );
     }
 
@@ -54,7 +56,7 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END );
+        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionHeadEnd.html" ).trim() + "\n", result );
     }
@@ -65,7 +67,7 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
+        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );
     }

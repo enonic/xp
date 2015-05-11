@@ -28,22 +28,7 @@ public class ModuleConfigurator
     public void checkTypeValidity( final Property property )
         throws InvalidTypeException
     {
-//        if ( !ValueTypes.STRING.equals( property.getType() ) )
-//        {
-//            throw new InvalidTypeException( property, ValueTypes.STRING );
-//        }
-    }
 
-    @Override
-    public Value newValue( final String value )
-    {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
     }
 
     @Override

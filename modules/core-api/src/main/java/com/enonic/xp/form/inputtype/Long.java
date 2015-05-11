@@ -35,18 +35,6 @@ final class Long
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newLong( ValueTypes.LONG.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLong( ValueTypes.LONG.convert( value ) );

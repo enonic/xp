@@ -1,6 +1,8 @@
 package com.enonic.xp.form.inputtype;
 
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
@@ -22,7 +24,11 @@ public class Time
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException
     {
-
+        final String stringValue = property.getString();
+        if ( StringUtils.isBlank( stringValue ) )
+        {
+            throw new BreaksRequiredContractException( property, this );
+        }
     }
 
     @Override
@@ -33,18 +39,6 @@ public class Time
         {
             throw new InvalidTypeException( property, ValueTypes.LOCAL_TIME );
         }
-    }
-
-    @Override
-    public Value newValue( final String value )
-    {
-        return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
     }
 
     @Override

@@ -69,6 +69,30 @@ public class PageResourceTest
     }
 
     @Test
+    public void verifyUriSet()
+        throws Exception
+    {
+        setupContentAndSite();
+        setupTemplates();
+
+        final RenderResult result = RenderResult.newRenderResult().
+            entity( "content rendered" ).
+            header( "some-header", "some-value" ).
+            status( 200 ).
+            build();
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+
+        MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
+        MockHttpServletResponse response = executeRequest( request );
+
+        ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+
+        assertEquals( "http://localhost/portal/master/site/somepath/content", jsContext.getValue().getUri() );
+    }
+
+    @Test
     public void getContentNotFound()
         throws Exception
     {

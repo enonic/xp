@@ -54,12 +54,6 @@ public class DateTime
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
-    }
-
-    @Override
     public InputTypeConfig getDefaultConfig()
     {
         return DateTimeConfig.create().

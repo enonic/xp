@@ -37,4 +37,5 @@ public class ControllerScriptImpl_simpleTest
         execute( "mymodule:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
+
 }

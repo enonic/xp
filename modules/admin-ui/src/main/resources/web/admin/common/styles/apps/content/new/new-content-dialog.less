@@ -232,24 +232,7 @@
           background-color: transparent;
 
           &:before {
-            position: absolute;
-            display: block;
-            margin: 0 auto;
-            top: 50%;
-            left: 50%;
-            margin-top: -200px;
-            margin-left: -200px;
-            background-color: @admin-blue;
-            width: 400px;
-            height: 400px;
-            line-height: 400px;
-            color: #fff;
-            content: 'Drop files to upload!';
-            font-weight: normal;
-
-            .border-radius(200px);
-            .box-shadow(0 0 10px @admin-shadow-gray);
-            .animation(pulsate, 4s);
+            .dropcircle();
           }
         }
       }

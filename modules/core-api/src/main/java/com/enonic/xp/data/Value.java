@@ -379,12 +379,6 @@ public abstract class Value
         {
             return new PropertySet( this, tree );
         }
-
-        @Override
-        public java.lang.String toString()
-        {
-            throw new UnsupportedOperationException( "Value of type PropertySet does not support invocation of toString()" );
-        }
     }
 
     static class String

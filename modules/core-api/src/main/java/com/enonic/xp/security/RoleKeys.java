@@ -9,7 +9,9 @@ public final class RoleKeys
     {
     }
 
-    public static final PrincipalKey ADMIN = PrincipalKey.ofRole( "system.admin" );
+    public static final String ADMIN_ID = "system.admin";
+
+    public static final PrincipalKey ADMIN = PrincipalKey.ofRole( ADMIN_ID );
 
     public static final PrincipalKey EVERYONE = PrincipalKey.ofRole( "system.everyone" );
 

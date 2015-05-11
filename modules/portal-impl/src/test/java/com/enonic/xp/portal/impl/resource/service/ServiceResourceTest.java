@@ -8,11 +8,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.impl.controller.ControllerScript;
-import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.controller.ControllerScript;
+import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
 
 import static org.junit.Assert.*;
@@ -56,5 +56,23 @@ public class ServiceResourceTest
         final Multimap<String, String> params = jsHttpRequest.getParams();
         assertNotNull( params );
         assertEquals( "b", params.get( "a" ).iterator().next() );
+    }
+
+    @Test
+    public void verifyUriSet()
+        throws Exception
+    {
+        final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/service/demo/test" );
+        request.setQueryString( "a=b" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 200, response.getStatus() );
+
+        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
+
+        final PortalRequest jsHttpRequest = jsContext.getValue();
+
+        assertEquals( "http://localhost/portal/master/path/to/content/_/service/demo/test?a=b", jsHttpRequest.getUri() );
     }
 }

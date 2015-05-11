@@ -35,7 +35,7 @@ public class SingleSelectorConfig
         throws InvalidValueException
     {
         final String valueAsString = property.getString();
-        if ( !optionsAsMap.containsKey( valueAsString ) )
+        if ( valueAsString != null && !optionsAsMap.containsKey( valueAsString ) )
         {
             throw new InvalidValueException( property,
                                              "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );

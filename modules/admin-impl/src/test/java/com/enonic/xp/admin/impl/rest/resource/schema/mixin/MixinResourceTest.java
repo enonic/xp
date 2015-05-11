@@ -17,6 +17,7 @@ import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.NullConfig;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -92,7 +93,7 @@ public class MixinResourceTest
 
         Mixin mixin2 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
-            Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( TEXT_AREA.getDefaultConfig() ).label(
+            Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( NullConfig.create() ).label(
                 "Text Area" ).required( true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );

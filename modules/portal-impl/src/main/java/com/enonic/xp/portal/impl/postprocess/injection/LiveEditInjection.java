@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.postprocess.injection;
 
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -31,7 +33,7 @@ public final class LiveEditInjection
     }
 
     @Override
-    public String inject( final PortalContext context, final Tag tag )
+    public List<String> inject( final PortalContext context, final Tag tag )
     {
         if ( RenderMode.EDIT != context.getMode() )
         {
@@ -40,12 +42,12 @@ public final class LiveEditInjection
 
         if ( tag == Tag.HEAD_END )
         {
-            return injectHeadEnd( context );
+            return Arrays.asList( injectHeadEnd( context ) );
         }
 
         if ( tag == Tag.BODY_END )
         {
-            return injectBodyEnd( context );
+            return Arrays.asList( injectBodyEnd( context ) );
         }
 
         return null;

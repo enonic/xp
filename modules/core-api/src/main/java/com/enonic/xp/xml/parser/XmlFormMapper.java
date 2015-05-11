@@ -144,7 +144,7 @@ public final class XmlFormMapper
     {
         if ( value == null )
         {
-            return null;
+            return type.getDefaultConfig();
         }
 
         return type.getInputTypeConfigXmlSerializer().parseConfig( this.currentModule, value.getWrapped() );

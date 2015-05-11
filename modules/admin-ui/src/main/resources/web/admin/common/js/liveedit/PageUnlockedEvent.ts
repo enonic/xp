@@ -13,11 +13,11 @@ module api.liveedit {
             return this.pageView;
         }
 
-        static on(handler: (event: PageLockedEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: PageUnlockedEvent) => void, contextWindow: Window = window) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: PageLockedEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: PageUnlockedEvent) => void, contextWindow: Window = window) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
