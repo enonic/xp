@@ -89,10 +89,23 @@ public class ResolvePublishDependenciesResult
 
         private void buildDependantsAndChildrenIds()
         {
-            dependantsIdsResolvedWithoutChildrenIncluded = pushContentRequestsWithoutChildren.getDependantsContentIds( true, true );
-            dependantsIdsResolvedWithChildrenIncluded = pushContentRequestsWithChildren.getDependantsContentIds( true, true );
-            childrenContentsIds = pushContentRequestsWithChildren.getPushedBecauseChildOfContentIds( true, true );
-            pushRequestedIds = pushContentRequestsWithChildren.getPushedBecauseRequestedContentIds( true );
+            if ( pushContentRequestsWithoutChildren != null )
+            {
+                dependantsIdsResolvedWithoutChildrenIncluded = pushContentRequestsWithoutChildren.getDependantsContentIds( true, true );
+            }
+
+            if ( pushContentRequestsWithChildren != null )
+            {
+                dependantsIdsResolvedWithChildrenIncluded = pushContentRequestsWithChildren.getDependantsContentIds( true, true );
+                childrenContentsIds = pushContentRequestsWithChildren.getPushedBecauseChildOfContentIds( true, true );
+                pushRequestedIds = pushContentRequestsWithChildren.getPushedBecauseRequestedContentIds( true );
+            }
+            else if ( pushContentRequestsWithoutChildren != null )
+            {
+                dependantsIdsResolvedWithChildrenIncluded = pushContentRequestsWithoutChildren.getDependantsContentIds( true, true );
+                childrenContentsIds = pushContentRequestsWithoutChildren.getPushedBecauseChildOfContentIds( true, true );
+                pushRequestedIds = pushContentRequestsWithoutChildren.getPushedBecauseRequestedContentIds( true );
+            }
         }
 
         public Builder pushContentRequestsWithChildren( final PushContentRequests pushContentRequests )
@@ -116,6 +129,32 @@ public class ResolvePublishDependenciesResult
         public Builder setCompareContentResults( final CompareContentResults compareContentResults )
         {
             this.compareContentResults = compareContentResults;
+            return this;
+        }
+
+        public Builder setDependantsIdsResolvedWithChildrenIncluded(
+            final PushedContentIdsWithInitialReason dependantsIdsResolvedWithChildrenIncluded )
+        {
+            this.dependantsIdsResolvedWithChildrenIncluded = dependantsIdsResolvedWithChildrenIncluded;
+            return this;
+        }
+
+        public Builder setDependantsIdsResolvedWithoutChildrenIncluded(
+            final PushedContentIdsWithInitialReason dependantsIdsResolvedWithoutChildrenIncluded )
+        {
+            this.dependantsIdsResolvedWithoutChildrenIncluded = dependantsIdsResolvedWithoutChildrenIncluded;
+            return this;
+        }
+
+        public Builder setChildrenContentsIds( final PushedContentIdsWithInitialReason childrenContentsIds )
+        {
+            this.childrenContentsIds = childrenContentsIds;
+            return this;
+        }
+
+        public Builder setPushRequestedIds( final PushedContentIdsWithInitialReason pushRequestedIds )
+        {
+            this.pushRequestedIds = pushRequestedIds;
             return this;
         }
 

@@ -25,12 +25,15 @@ public class ResolvePublishDependenciesCommand
 
     private final ResolvePublishDependenciesResult.Builder resultBuilder;
 
+    private final boolean includeChildren;
+
     private ResolvePublishDependenciesCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
         this.target = builder.target;
         this.resultBuilder = ResolvePublishDependenciesResult.create();
+        this.includeChildren = builder.includeChildren;
     }
 
     ResolvePublishDependenciesResult execute()
@@ -41,10 +44,9 @@ public class ResolvePublishDependenciesCommand
 
     private void resolveDependencies()
     {
-        final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults( true );
-        final ResolveSyncWorkResults syncWorkResultsWithoutChildren = resolveSyncWorkResults( false );
+        final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults( this.includeChildren );
 
-        populateResults( syncWorkResultsWithChildren, syncWorkResultsWithoutChildren );
+        populateResults( syncWorkResultsWithChildren );
     }
 
     private ResolveSyncWorkResults resolveSyncWorkResults( boolean includeChildren )
@@ -69,14 +71,19 @@ public class ResolvePublishDependenciesCommand
             build() );
     }
 
-    private void populateResults( final ResolveSyncWorkResults syncWorkResultsWithChildren,
-                                                final ResolveSyncWorkResults syncWorkResultsWithoutChildren )
+    private void populateResults( final ResolveSyncWorkResults syncWorkResults )
     {
-        PushContentRequests pushContentRequestsWithChildren = PushContentRequestsFactory.create( syncWorkResultsWithChildren );
-        this.resultBuilder.pushContentRequestsWithChildren( pushContentRequestsWithChildren );
-        this.resultBuilder.pushContentRequestsWithoutChildren( PushContentRequestsFactory.create( syncWorkResultsWithoutChildren ) );
+        PushContentRequests pushContentRequests = PushContentRequestsFactory.create( syncWorkResults );
+        if ( this.includeChildren )
+        {
+            this.resultBuilder.pushContentRequestsWithChildren( pushContentRequests );
+        }
+        else
+        {
+            this.resultBuilder.pushContentRequestsWithoutChildren( pushContentRequests );
+        }
 
-        ContentIds allIds = pushContentRequestsWithChildren.getAllContentIds( true ).getPushedContentIds();
+        ContentIds allIds = pushContentRequests.getAllContentIds( true ).getPushedContentIds();
         this.resultBuilder.setResolvedContent( getContentByIds( new GetContentByIdsParams( allIds ) ) );
         this.resultBuilder.setCompareContentResults( getCompareStatuses( allIds ) );
     }
@@ -114,6 +121,8 @@ public class ResolvePublishDependenciesCommand
 
         private Branch target;
 
+        private boolean includeChildren = true;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -123,6 +132,12 @@ public class ResolvePublishDependenciesCommand
         public Builder target( final Branch target )
         {
             this.target = target;
+            return this;
+        }
+
+        public Builder includeChildren( final boolean includeChildren )
+        {
+            this.includeChildren = includeChildren;
             return this;
         }
 

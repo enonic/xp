@@ -106,6 +106,7 @@ module app.publish {
                     this.publishDialogItemList.appendChild(item);
                 }
             });
+            this.centerMyself();
         }
 
         /**
@@ -241,7 +242,6 @@ module app.publish {
             }));
 
             getPublishContentDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
-                debugger;
                 this.initResolvedPublishItems(jsonResponse.getResult());
                 this.renderResolvedPublishItems();
                 this.countItemsToPublishAndUpdateCounterElements();

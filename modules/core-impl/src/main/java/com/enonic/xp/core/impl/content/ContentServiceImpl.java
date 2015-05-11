@@ -304,6 +304,7 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
+            includeChildren( params.isIncludeChildren() ).
             build().
             execute();
     }
