@@ -55,7 +55,6 @@ public final class LocaleServiceImpl
 
         if ( StringUtils.isNotEmpty( country ) )
         {
-            country = country.toLowerCase();
             props.putAll( loadBundle( module, DELIMITER + lang + DELIMITER + country ) );
         }
 

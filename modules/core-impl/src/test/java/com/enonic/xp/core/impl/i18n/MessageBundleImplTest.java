@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.util.Properties;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.i18n.MessageBundle;
@@ -11,18 +10,16 @@ import static org.junit.Assert.*;
 
 public class MessageBundleImplTest
 {
-
     private MessageBundle createDefault()
     {
         Properties properties = new Properties();
         properties.put( "key1", "value1" );
         properties.put( "key2", "value1" );
         properties.put( "key3", "value1" );
-        properties.put( "key4", "value {} was there" );
-
+        properties.put( "key4", "value is here {0}" );
+        properties.put( "key5", "value is here {0} and there {1}" );
         return new MessageBundleImpl( properties );
     }
-
 
     @Test
     public void testNonExistingKey()
@@ -42,42 +39,28 @@ public class MessageBundleImplTest
     }
 
     @Test
-    @Ignore("This is not implemented as expected yet")
     public void testParameterizedPhrase()
         throws Exception
     {
         MessageBundle resourceBundle = createDefault();
 
-        Object[] testArgs = {"number"};
+        Object[] testArgs = {"myValue1"};
 
         String resolvedPhrase = resourceBundle.localize( "key4", testArgs );
 
-        assertEquals( "det ble fisket 8 fisk av type torsk med musse p\u00e5 stampen", resolvedPhrase );
+        assertEquals( "value is here myValue1", resolvedPhrase );
     }
 
     @Test
-    @Ignore("This is not implemented as expected yet")
-    public void testMissingParametersPhrase()
+    public void testParameterizedPhrase_two_values()
         throws Exception
     {
         MessageBundle resourceBundle = createDefault();
 
-        Object[] testArgs = {"torsk"};
+        Object[] testArgs = {"myValue1", "myValue2"};
 
-        String resolvedPhrase = resourceBundle.localize( "fiskmessage", testArgs );
+        String resolvedPhrase = resourceBundle.localize( "key5", testArgs );
 
-        assertEquals( "det ble fisket {1} fisk av type torsk med musse p\u00e5 stampen", resolvedPhrase );
-    }
-
-    @Test
-    @Ignore("This is not implemented as expected yet")
-    public void testNullParametersPhrase()
-        throws Exception
-    {
-        MessageBundle resourceBundle = createDefault();
-
-        String resolvedPhrase = resourceBundle.localize( "fiskmessage", null );
-
-        assertEquals( "det ble fisket {1} fisk av type {0} med musse p\u00e5 stampen", resolvedPhrase );
+        assertEquals( "value is here myValue1 and there myValue2", resolvedPhrase );
     }
 }

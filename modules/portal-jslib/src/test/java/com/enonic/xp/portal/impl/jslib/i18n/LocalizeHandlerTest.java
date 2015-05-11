@@ -26,9 +26,9 @@ public class LocalizeHandlerTest
     extends AbstractHandlerTest
 {
 
-    public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
-    public static final Locale OVERRIDE_LOCAL = Locale.US;
+    private static final Locale OVERRIDE_LOCAL = Locale.US;
 
     private LocaleService localeService;
 
@@ -83,6 +83,16 @@ public class LocalizeHandlerTest
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
 
         setServiceAndRun( bundle, "localize_without_params", DEFAULT_LOCALE );
+    }
+
+
+    @Test
+    public void localize_with_placeholders()
+        throws Exception
+    {
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
+
+        setServiceAndRun( bundle, "localize_with_placeholders", DEFAULT_LOCALE );
     }
 
     private void setServiceAndRun( final MessageBundle bundle, final String exportName, final Locale expectedLocale )
