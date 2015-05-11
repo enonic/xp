@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
 public class LocalizeFunctionTest
     extends AbstractUrlViewFunctionTest
 {
-    private LocaleService localeService = Mockito.mock( LocaleService.class );
+    private final LocaleService localeService = Mockito.mock( LocaleService.class );
 
-    private MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+    private final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
 
     @Before
     public final void setupTest()
@@ -54,6 +54,20 @@ public class LocalizeFunctionTest
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
         assertEquals( "no localization bundle found in module 'mymodule'", result );
+    }
+
+    @Test
+    public void array_params()
+    {
+        Mockito.when( localeService.getBundle( Mockito.eq( this.context.getModule() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
+            thenReturn( messageBundle );
+
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Mockito.anyVararg() ) ).
+            thenReturn( "localizedString" );
+
+        final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US", "_values={a,1,date('2015-10-10T10:00Z')}" );
+
+        assertEquals( "localizedString", result );
     }
 
     @Test

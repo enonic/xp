@@ -23,8 +23,7 @@ public final class MessageBundleImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
 
-    private Properties properties;
-
+    private final Properties properties;
 
     public MessageBundleImpl( Properties properties )
     {
@@ -45,10 +44,15 @@ public final class MessageBundleImpl
     {
         String message = (String) handleGetObject( key );
 
-        return StringUtils.isNotEmpty( message ) ? MessageFormat.format( message, args ) : null;
+        return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
     }
 
-    protected Object handleGetObject( String key )
+    private String format( final String message, final Object[] args )
+    {
+        return MessageFormat.format( message, args );
+    }
+
+    private Object handleGetObject( String key )
     {
         return createUTF8EncodedPhrase( (String) this.properties.get( key ) );
     }

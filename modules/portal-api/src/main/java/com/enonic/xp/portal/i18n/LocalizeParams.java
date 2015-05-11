@@ -1,10 +1,13 @@
 package com.enonic.xp.portal.i18n;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.module.ModuleKey;
@@ -16,18 +19,14 @@ public class LocalizeParams
 
     private Locale locale;
 
+    private Object[] params;
+
+    private final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
+
     private final PortalContext context;
-
-    private final Multimap<String, String> params;
-
-    public final Multimap<String, String> getParams()
-    {
-        return this.params;
-    }
 
     public LocalizeParams( final PortalContext context )
     {
-        this.params = HashMultimap.create();
         this.context = context;
     }
 
@@ -46,12 +45,59 @@ public class LocalizeParams
         this.locale = Strings.isNullOrEmpty( locale ) ? null : Locale.forLanguageTag( locale );
     }
 
+    private void values( final Collection<String> values )
+    {
+        if ( values.size() == 1 && VALUES_PATTERN.matcher( values.iterator().next() ).find() )
+        {
+            parseValues( values.iterator().next() );
+        }
+        else
+        {
+            handleArray( values );
+        }
+    }
+
+    private void handleArray( final Collection<String> values )
+    {
+        final List<Object> params = Lists.newArrayList();
+
+        for ( final String value : values )
+        {
+            params.add( value );
+        }
+
+        this.params = params.toArray();
+    }
+
+    private void parseValues( final String valuesAsString )
+    {
+        if ( Strings.isNullOrEmpty( valuesAsString ) )
+        {
+            this.params = Lists.newArrayList().toArray();
+            return;
+        }
+
+        if ( !VALUES_PATTERN.matcher( valuesAsString ).find() )
+        {
+            throw new IllegalArgumentException( "Wrong format on values-parameter: " + valuesAsString );
+        }
+
+        final String argumentList = valuesAsString.substring( 1, valuesAsString.length() - 1 );
+
+        this.params = Arrays.asList( argumentList.split( "," ) ).toArray();
+    }
+
     public LocalizeParams setAsMap( final Multimap<String, String> map )
     {
         key( singleValue( map, "_key" ) );
         locale( singleValue( map, "_locale" ) );
-        getParams().putAll( map );
+        values( multipleValues( map, "_values" ) );
         return this;
+    }
+
+    private static Collection<String> multipleValues( final Multimap<String, String> map, final String name )
+    {
+        return map.removeAll( name );
     }
 
     private static String singleValue( final Multimap<String, String> map, final String name )
@@ -83,5 +129,10 @@ public class LocalizeParams
     private PortalContext getContext()
     {
         return context;
+    }
+
+    public Object[] getParams()
+    {
+        return params;
     }
 }

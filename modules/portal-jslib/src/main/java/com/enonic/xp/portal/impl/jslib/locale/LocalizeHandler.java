@@ -24,7 +24,7 @@ public final class LocalizeHandler
 {
     private LocaleService localeService;
 
-    private List handlerParams = Lists.newArrayList( "key", "locale" );
+    private final List handlerParams = Lists.newArrayList( "key", "locale", "values" );
 
     @Override
     public String getName()
