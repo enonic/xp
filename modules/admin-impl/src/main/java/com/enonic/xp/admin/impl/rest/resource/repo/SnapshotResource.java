@@ -55,7 +55,7 @@ public class SnapshotResource
 
     @POST
     @Path("restore")
-    @RolesAllowed( RoleKeys.ADMIN_ID )
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     public RestoreResultJson restore( final RestoreRequestJson params )
         throws Exception
     {
@@ -70,7 +70,7 @@ public class SnapshotResource
 
     @POST
     @Path("delete")
-    @RolesAllowed( RoleKeys.ADMIN_ID )
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     public DeleteSnapshotsResultJson delete( final DeleteSnapshotRequestJson params )
         throws Exception
     {

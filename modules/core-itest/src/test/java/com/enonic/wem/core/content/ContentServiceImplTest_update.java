@@ -422,7 +422,7 @@ public class ContentServiceImplTest_update
         update_incorrect_content_data( content, invalidData );
     }
 
-    private void update_incorrect_content_data(Content content, PropertyTree invalidData)
+    private void update_incorrect_content_data( Content content, PropertyTree invalidData )
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.
@@ -435,7 +435,8 @@ public class ContentServiceImplTest_update
         try
         {
             this.contentService.update( updateContentParams );
-        } catch ( IllegalArgumentException e )
+        }
+        catch ( IllegalArgumentException e )
         {
             illegalArgumentExceptionThrown = true;
         }

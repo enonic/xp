@@ -263,7 +263,8 @@ public class AbstractContentServiceTest
     }
 
 
-    protected PropertyTree createPropertyTreeForAllInputTypes () {
+    protected PropertyTree createPropertyTreeForAllInputTypes()
+    {
 
         //Creates a content and a reference to this object
         final Content referredContent = this.contentService.create( CreateContentParams.create().
@@ -280,7 +281,7 @@ public class AbstractContentServiceTest
         propertySet.addDouble( "setDouble", 1.5d );
 
         //Creates the property tree with value assigned for each attribute
-        PropertyTree data = new PropertyTree( );
+        PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addDouble( "double", 1.4d );
         data.addLong( "long", 2l );
@@ -304,7 +305,6 @@ public class AbstractContentServiceTest
 
         return data;
     }
-
 
 
     protected ContentType createContentTypeForAllInputTypes()

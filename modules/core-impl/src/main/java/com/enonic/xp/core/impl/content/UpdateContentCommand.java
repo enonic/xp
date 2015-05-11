@@ -178,9 +178,10 @@ final class UpdateContentCommand
                 requireMappedProperties( params.isRequireMappedProperties() ).
                 build().
                 validate( editedContent.getData().getRoot() );
-        } catch ( InvalidDataException e ) {
-            throw new IllegalArgumentException(
-                "Incorrect property for content: " + editedContent.getPath(), e );
+        }
+        catch ( InvalidDataException e )
+        {
+            throw new IllegalArgumentException( "Incorrect property for content: " + editedContent.getPath(), e );
         }
     }
 

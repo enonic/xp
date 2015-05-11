@@ -125,7 +125,7 @@ tinymce.PluginManager.add('link', function (editor) {
                 var email = data.href.replace(emailPrefix, "").split("?");
                 data.email = email[0];
                 data.subject =
-                (email.length > 1 && email[1].startsWith(subjectPrefix)) ? decodeURI(email[1].replace(subjectPrefix, "")) : "";
+                    (email.length > 1 && email[1].startsWith(subjectPrefix)) ? decodeURI(email[1].replace(subjectPrefix, "")) : "";
             }
             else {
                 data.url = decodeURI(data.href);
@@ -200,7 +200,7 @@ tinymce.PluginManager.add('link', function (editor) {
                         type: 'checkbox',
                         label: 'Open new window',
                         checked: (data.targetUrl == targetBlank)
-                    }]   
+                    }]
                 }, {
                     title: tabNames.media,
                     type: "form",
