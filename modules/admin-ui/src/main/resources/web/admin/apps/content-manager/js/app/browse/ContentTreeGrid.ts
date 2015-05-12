@@ -656,13 +656,15 @@ module app.browse {
 
             nodes.forEach((node) => {
                 if (!node.hasChildren()) {
-                    parallelPromises.push(
-                        new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).
-                            sendAndParse().
-                            then((content: api.content.Content) => {
-                                node.getData().setContentSummary(content);
-                            })
-                    );
+                    if (!!node.getData()) {
+                        parallelPromises.push(
+                            new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).
+                                sendAndParse().
+                                then((content: api.content.Content) => {
+                                    node.getData().setContentSummary(content);
+                                })
+                        );
+                    }
                 }
             });
 
