@@ -325,7 +325,7 @@ public final class SecurityResource
     {
         final PrincipalKey userKey = params.getUserKey();
 
-        if ( params.getPassword() != null )
+        if ( params.getPassword() != null && params.getPassword() != "" )
         {
             final User user = securityService.setPassword( userKey, params.getPassword() );
             return new UserJson( user );
