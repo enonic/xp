@@ -8,18 +8,34 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.page.Page;
+import com.enonic.xp.content.page.PageRegions;
+import com.enonic.xp.content.page.PageTemplateKey;
+import com.enonic.xp.content.page.region.ComponentName;
+import com.enonic.xp.content.page.region.PartComponent;
+import com.enonic.xp.content.page.region.Region;
+import com.enonic.xp.content.site.Site;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
 public class ServiceResourceTest
     extends ModuleBaseResourceTest
 {
+    protected ContentService contentService;
+
     private ControllerScript controllerScript;
 
     @Override
@@ -33,6 +49,9 @@ public class ServiceResourceTest
 
         this.controllerScript = Mockito.mock( ControllerScript.class );
         Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+
+        this.contentService = Mockito.mock( ContentService.class );
+        this.services.setContentService( this.contentService );
     }
 
     @Test
@@ -74,5 +93,93 @@ public class ServiceResourceTest
         final PortalRequest jsHttpRequest = jsContext.getValue();
 
         assertEquals( "http://localhost/portal/master/path/to/content/_/service/demo/test?a=b", jsHttpRequest.getUri() );
+    }
+
+    @Test
+    public void executeScript_validSite()
+        throws Exception
+    {
+        setupContentAndSite();
+
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/service/demo/test" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 200, response.getStatus() );
+
+        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
+
+        final PortalContext context = jsContext.getValue();
+        assertNotNull( context.getModule() );
+        assertNotNull( context.getSite() );
+        assertNotNull( context.getContent() );
+    }
+
+    private void setupContentAndSite()
+        throws Exception
+    {
+        final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
+
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+            thenReturn( content );
+
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
+
+        Mockito.when( this.contentService.getById( content.getId() ) ).
+            thenReturn( content );
+    }
+
+    private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
+    {
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.addString( "property1", "value1" );
+
+        final Content.Builder content = Content.newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( path ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.from( contentTypeName ) );
+
+        if ( withPage )
+        {
+            PageRegions pageRegions = PageRegions.newPageRegions().
+                add( Region.newRegion().name( "main-region" ).
+                    add( PartComponent.newPartComponent().name( ComponentName.from( "mypart" ) ).
+                        build() ).
+                    build() ).
+                build();
+
+            Page page = Page.newPage().
+                template( PageTemplateKey.from( "my-page" ) ).
+                regions( pageRegions ).
+                config( rootDataSet ).
+                build();
+            content.page( page );
+        }
+        return content.build();
+    }
+
+    private Site createSite( final String id, final String path, final String contentTypeName )
+    {
+        PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addString( "property1", "value1" );
+
+        Page page = Page.newPage().
+            template( PageTemplateKey.from( "my-page" ) ).
+            config( rootDataSet ).
+            build();
+
+        return Site.newSite().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( path ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.from( contentTypeName ) ).
+            page( page ).
+            build();
     }
 }
