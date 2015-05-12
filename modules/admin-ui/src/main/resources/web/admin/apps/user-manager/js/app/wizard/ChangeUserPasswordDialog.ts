@@ -31,13 +31,10 @@ module app.wizard {
             this.appendChildToContentPanel(descMessage);
 
             this.password = new PasswordGenerator();
-            this.password.onInput(() => {
-               if(this.password.getValue().length == 0) {
-                    this.changePasswordButton.setEnabled(false);
-               } else {
-                   this.changePasswordButton.setEnabled(true);
-               }
-            });
+            this.password.onInput(() => this.toggleChangePasswordButton());
+            this.password.onValidityChanged(() => this.toggleChangePasswordButton());
+
+            this.onShown(() => this.toggleChangePasswordButton());
 
             var passwordFormItem = new FormItemBuilder(this.password).
                 setLabel('Password').
@@ -72,6 +69,14 @@ module app.wizard {
                     });
             }));
             this.changePasswordButton.setEnabled(false);
+        }
+
+        private toggleChangePasswordButton() {
+            if (this.password.getValue().length == 0) {
+                this.changePasswordButton.setEnabled(false);
+            } else {
+                this.changePasswordButton.setEnabled(true);
+            }
         }
 
         open() {
