@@ -166,6 +166,17 @@ module app.publish {
             return unCheckedRequestedContentsIds;
         }
 
+        // get array of contents ids that were initially requested to publish and have given checked value
+        private getCheckedContentsIds(): string[] {
+            var checkedContentsIds: string[] = [];
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+                if (item.isChecked()) {
+                    checkedContentsIds.push(item.getBrowseItem().getId());
+                }
+            });
+            return checkedContentsIds;
+        }
+
         /**
          * Ensures that contents that were unchecked in the dialog are restored after re-render.
          * @param unCheckedRequestedContentsIds
@@ -265,7 +276,7 @@ module app.publish {
         }
 
         private doPublish() {
-            new PublishContentRequest().setIds(this.getCheckedRequestedContentsIds(true).map((id) => {
+            new PublishContentRequest().setIds(this.getCheckedContentsIds().map((id) => {
                 return new api.content.ContentId(id);
             })).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                 this.close();
