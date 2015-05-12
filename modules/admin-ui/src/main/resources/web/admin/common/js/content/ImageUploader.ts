@@ -45,7 +45,10 @@ module api.content {
                 resolve();
 
             var focalEditor = new api.ui.image.FocalEditor(imgUrl);
-            focalEditor.onEditModeChanged((edit, position) => this.notifyFocalEditModeChanged(edit, position));
+            focalEditor.onEditModeChanged((edit, position) => {
+                this.setResetVisible(!edit);
+                this.notifyFocalEditModeChanged(edit, position);
+            });
             var image = focalEditor.getImage();
 
             this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());

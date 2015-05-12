@@ -6,8 +6,30 @@
   }
 }
 
+.button-foreground(@color: @form-button-font, @hoverColor: darken(@color, 10%), @activeColor: @color) {
+
+  &:before, span {
+    color: @color;
+  }
+
+  &:hover:not(:disabled) {
+
+    &:before, span {
+      color: @hoverColor;
+    }
+  }
+
+  &.active:not(:disabled) {
+
+    &:before, span {
+      color: @activeColor;
+    }
+  }
+}
+
 .button(@color: @form-button-font, @bg: @form-button-bg, @hoverColor: @color, @hoverBg: lighten(@bg, 10%)) {
   .button-background(@bg, @hoverBg);
+  .button-foreground(@color, @hoverColor, @admin-button-blue1);
   .box-sizing(border-box);
 
   display: inline-block;
@@ -18,15 +40,10 @@
   outline: none;
 
   span {
-    color: @color;
     line-height: 24px;
     font-size: 14px;
     font-family: @admin-font-family;
     .color-transition;
-  }
-
-  &:before {
-    color: @color; // updates icons color
   }
 
   &:disabled {
@@ -34,23 +51,9 @@
     cursor: default;
   }
 
-  &:hover:not(:disabled) {
-
-    &:before, span {
-      color: @hoverColor;
-    }
-  }
-
   &:focus:not(:disabled) {
     box-shadow: 0 0 5px @admin-input-blue;
     border: 1px solid @admin-input-blue;
-  }
-
-  &.active:not(:disabled) {
-
-    &:before, span {
-      color: @admin-button-blue1;
-    }
   }
 
 }

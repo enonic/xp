@@ -11,7 +11,8 @@ module api.ui.image {
 
         private position: {x: number; y: number} = {x: 0, y: 0};
         private revertToPosition: {x: number; y: number};
-        private autoPositioned: boolean = true;
+        private autoPositioned: boolean;
+        private revertAutoPositioned: boolean;
 
         private imgW: number;
         private imgH: number;
@@ -54,6 +55,8 @@ module api.ui.image {
             if (src) {
                 this.setSrc(src);
             }
+
+            this.setAutoPositioned(true);
         }
 
         private createToolbar(): api.dom.DivEl {
@@ -111,12 +114,13 @@ module api.ui.image {
 
             if (edit) {
                 this.revertToPosition = this.getPosition();
+                this.revertAutoPositioned = this.autoPositioned;
+                // update mask position in case it was updated during stand by
                 this.updateMaskPosition();
             } else {
                 if (!applyChanges) {
-                    var auto = this.autoPositioned;
                     this.setPosition(this.revertToPosition.x, this.revertToPosition.y);
-                    this.autoPositioned = auto;
+                    this.setAutoPositioned(this.revertAutoPositioned);
                 }
                 this.revertToPosition = undefined;
             }
@@ -154,7 +158,7 @@ module api.ui.image {
 
             this.position.x = this.restrainWidth(x);
             this.position.y = this.restrainHeight(y);
-            this.autoPositioned = false;
+            this.setAutoPositioned(false);
 
             if (oldX != this.position.x || oldY != this.position.y) {
                 this.notifyPositionChanged(this.position);
@@ -175,13 +179,13 @@ module api.ui.image {
 
         resetPosition() {
             this.setPosition(this.imgW / 2, this.imgH / 2);
-            this.autoPositioned = true;
+            this.setAutoPositioned(true);
         }
 
         setRadius(r: number) {
             var oldR = this.imgR;
             this.imgR = r;
-            this.autoPositioned = false;
+            this.setAutoPositioned(false);
 
             if (oldR != this.imgR) {
                 this.notifyRadiusChanged(this.imgR);
@@ -194,6 +198,12 @@ module api.ui.image {
 
         getRadius(): number {
             return this.imgR;
+        }
+
+        private setAutoPositioned(auto: boolean) {
+            debugger;
+            this.autoPositioned = auto;
+            this.toggleClass('auto', auto);
         }
 
         private restrainWidth(x: number) {
