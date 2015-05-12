@@ -35,6 +35,7 @@ module api.form.inputtype.text {
             var clazz = textAreaEl.getId().replace(/\./g, '_');
             textAreaEl.addClass(clazz);
             var baseUrl = CONFIG.assetsUri;
+            var textAreaWrapper = new api.dom.DivEl();
 
             textAreaEl.onRendered(() => {
                 tinymce.init({
@@ -64,9 +65,11 @@ module api.form.inputtype.text {
                             property.setValue(value);
                         });
                         editor.on('focus', (e) => {
+                            this.resetInputHeight();
                             textAreaWrapper.addClass(focusedEditorCls);
                         });
                         editor.on('blur', (e) => {
+                            this.setStaticInputHeight();
                             textAreaWrapper.removeClass(focusedEditorCls);
                         });
                         editor.on('keydown', (e) => {
@@ -91,35 +94,43 @@ module api.form.inputtype.text {
                     },
                     init_instance_callback: (editor) => {
                         this.editor = this.getEditor(textAreaEl.getId(), property);
-                        editor.execCommand('mceAutoResize');
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                 });
 
-                this.setupStickyEditorToolbar();
             });
 
-            var textAreaWrapper = new api.dom.DivEl();
             textAreaWrapper.appendChild(textAreaEl);
             return textAreaWrapper;
         }
 
-        private setupStickyEditorToolbar() {
-            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar());
+        private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element) {
+            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar(inputOccurence));
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
                 this.updateEditorToolbarWidth();
-                this.updateEditorToolbarPos();
+                this.updateEditorToolbarPos(inputOccurence);
+            });
+
+            this.onOccurrenceAdded(() => {
+                this.resetInputHeight();
+                this.updateEditorToolbarWidth();
+            });
+
+            this.onOccurrenceRemoved(() => {
+                this.resetInputHeight();
+                this.updateEditorToolbarWidth();
             });
         }
 
-        private updateStickyEditorToolbar() {
-            if (!this.editorTopEdgeIsVisible() && this.editorLowerEdgeIsVisible()) {
-                this.addClass("sticky-toolbar");
+        private updateStickyEditorToolbar(inputOccurence: Element) {
+            if (!this.editorTopEdgeIsVisible(inputOccurence) && this.editorLowerEdgeIsVisible(inputOccurence)) {
+                inputOccurence.addClass("sticky-toolbar");
                 this.updateEditorToolbarWidth();
-                this.updateEditorToolbarPos();
+                this.updateEditorToolbarPos(inputOccurence);
             }
             else {
-                this.removeClass("sticky-toolbar")
+                inputOccurence.removeClass("sticky-toolbar")
             }
         }
 
@@ -127,23 +138,22 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").width(wemjq(this.getHTMLElement()).find(".mce-edit-area").innerWidth());
         }
 
-        private updateEditorToolbarPos() {
-            wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(10)});
+        private updateEditorToolbarPos(inputOccurence: Element) {
+            wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(10)});
         }
 
-        private editorTopEdgeIsVisible(): boolean {
-            return this.calcDistToTopOfScrlbleArea() > 0;
+        private editorTopEdgeIsVisible(inputOccurence: Element): boolean {
+            return this.calcDistToTopOfScrlbleArea(inputOccurence) > 0;
         }
 
-        private editorLowerEdgeIsVisible(): boolean {
-            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea();
-            var editorToolbarHeight = wemjq(this.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
-
-            return (this.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
+        private editorLowerEdgeIsVisible(inputOccurence: Element): boolean {
+            var distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
+            var editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
+            return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight + distToTopOfScrlblArea) > 0;
         }
 
-        private calcDistToTopOfScrlbleArea(): number {
-            return this.getEl().getOffsetTop() - this.getToolbarOffsetTop();
+        private calcDistToTopOfScrlbleArea(inputOccurence: Element): number {
+            return inputOccurence.getEl().getOffsetTop() - this.getToolbarOffsetTop();
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
@@ -152,6 +162,14 @@ module api.form.inputtype.text {
                 stickyToolbarOffset = toolbar.offset().top;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
+        }
+
+        private resetInputHeight() {
+            wemjq(this.getHTMLElement()).height("auto");
+        }
+
+        private setStaticInputHeight() {
+            wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
         private getEditor(editorId: string, property: Property): TinyMceEditor {
