@@ -51,18 +51,6 @@ final class ContentSelector
     }
 
     @Override
-    public Value newValue( final String value )
-    {
-        return Value.newReference( ValueTypes.REFERENCE.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newReference( ValueTypes.REFERENCE.convert( value ) );

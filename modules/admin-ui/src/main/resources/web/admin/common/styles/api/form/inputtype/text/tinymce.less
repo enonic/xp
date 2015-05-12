@@ -25,13 +25,7 @@
     background-image: none;
   }
 
-  .tinymce-editor-focused .mce-tinymce {
-    .box-shadow(0px 0px 5px @admin-input-blue);
-    border: 1px solid @admin-input-blue;
-  }
-
   .mce-btn-group {
-
     .mce-first, .mce-last, .mce-first.mce-last {
       border-radius: 0;
       border: none;
@@ -53,6 +47,10 @@
   }
 
   .tinymce-editor-focused {
+    .mce-tinymce {
+      .box-shadow(0px 0px 5px @admin-input-blue);
+      .input-border(@admin-input-blue);
+    }
 
     .mce-toolbar-grp {
       display: block;
@@ -74,6 +72,11 @@
 .mce-link-dialog {
   height: auto !important;
 
+  .mce-textbox:focus, .mce-checkbox:focus i.mce-i-checkbox {
+    .input-glow(@admin-input-blue);
+    .input-border(@admin-input-blue);
+  }
+
   .mce-container, .mce-container *, .mce-widget {
     font-size: @admin-font-size;
     font-family: @admin-font-family;
@@ -90,6 +93,14 @@
     .mce-textbox, .mce-checkbox {
       width: @tinymce-input-width !important;
       left: @tinymce-input-left !important;
+    }
+  }
+
+  .mce-first.mce-formitem label {
+    &:after {
+      position: absolute;
+      content: '\00a0*';
+      color: @input-red-text;
     }
   }
 
@@ -126,11 +137,19 @@
       left: @tinymce-input-left;
       width: @tinymce-input-width;
       background-color: @admin-white;
+
+      &.invalid {
+        .input-border(@admin-input-red);
+      }
     }
 
-    .mce-content-selector-focused, .mce-textbox:focus, .mce-checkbox:focus i.mce-i-checkbox {
+    .mce-content-selector-focused {
       .box-shadow(0px 0px 5px @admin-input-blue);
-      border: 1px solid @admin-input-blue;
+      .input-border(@admin-input-blue);
+
+      &.invalid {
+        .box-shadow(0px 0px 5px @admin-input-red);
+      }
     }
 
     .combobox.form-input {
@@ -175,6 +194,11 @@
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box; /* Firefox, other Gecko */
     box-sizing: border-box; /* Opera/IE 8+ */
+
+    &.invalid {
+      .input-glow(@admin-input-red);
+      .input-border(@admin-input-red);
+    }
   }
 
   .mce-textbox, i.mce-i-checkbox {
