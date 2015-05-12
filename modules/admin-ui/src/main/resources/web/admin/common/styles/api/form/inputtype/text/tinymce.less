@@ -64,9 +64,12 @@
     }
   }
 
-  &.sticky-toolbar {
+  .sticky-toolbar {
     .mce-toolbar-grp {
       position: fixed;
+      .box-shadow(2px 2px 10px @admin-dark-gray);
+      z-index: 1000;
+      border-top: 1px solid @admin-dark-gray-border;
     }
   }
 }
