@@ -329,6 +329,7 @@ public final class ContentResource
             contentIds( contentIds ).
             includeChildren( true ).
             allowPublishOutsideSelection( true ).
+            resolveDependencies( false ).
             build() );
 
         return PublishContentResultJson.from( result );

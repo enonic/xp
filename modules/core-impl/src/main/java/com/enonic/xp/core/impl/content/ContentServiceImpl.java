@@ -290,6 +290,7 @@ public class ContentServiceImpl
             strategy( params.isAllowPublishOutsideSelection()
                           ? PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION
                           : PushContentCommand.PushContentStrategy.STRICT ).
+            resolveDependencies( params.isResolveDependencies() ).
             build().
             execute();
     }
