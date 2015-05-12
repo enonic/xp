@@ -47,17 +47,19 @@ final class ControllerScriptImpl
 
     private void doExecute( final PortalContext context )
     {
-        final String method = context.getMethod();
-        final String methodName = method.toLowerCase();
+        final String method = context.getMethod().toLowerCase();
+        final boolean isHead = "head".equals( method );
+        final String runMethod = isHead ? "get" : method;
 
-        if ( !this.scriptExports.hasMethod( methodName ) )
+        boolean exists = this.scriptExports.hasMethod( runMethod );
+        if ( !exists )
         {
             populateResponse( context.getResponse(), null );
             return;
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( context );
-        final ScriptValue result = this.scriptExports.executeMethod( methodName, requestMapper );
+        final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
         populateResponse( context.getResponse(), result );
     }
