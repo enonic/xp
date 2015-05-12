@@ -9,10 +9,13 @@ public class NodePublishRequest
 
     private final NodePublishReason reason;
 
-    private NodePublishRequest( final NodeId nodeId, final NodePublishReason reason )
+    private final NodeId initialReasonNodeId;
+
+    private NodePublishRequest( final NodeId nodeId, final NodePublishReason reason, final NodeId initialReasonNodeId )
     {
         this.nodeId = nodeId;
         this.reason = reason;
+        this.initialReasonNodeId = initialReasonNodeId;
     }
 
     public NodeId getNodeId()
@@ -45,23 +48,28 @@ public class NodePublishRequest
         return reason;
     }
 
-    public static NodePublishRequest requested( final NodeId nodeId )
+    public NodeId getInitialReasonNodeId()
     {
-        return new NodePublishRequest( nodeId, new NodePublishReasonRequested() );
+        return initialReasonNodeId;
     }
 
-    public static NodePublishRequest parentFor( final NodeId nodeId, final NodeId parentOf )
+    public static NodePublishRequest requested( final NodeId nodeId, final NodeId initialReasonNodeId )
     {
-        return new NodePublishRequest( nodeId, new NodePublishReasonIsParent( parentOf ) );
+        return new NodePublishRequest( nodeId, new NodePublishReasonRequested(), initialReasonNodeId );
     }
 
-    public static NodePublishRequest childOf( final NodeId nodeId, final NodeId childOf )
+    public static NodePublishRequest parentFor( final NodeId nodeId, final NodeId parentOf, final NodeId initialReasonNodeId )
     {
-        return new NodePublishRequest( nodeId, new NodePublishReasonIsChild( childOf ) );
+        return new NodePublishRequest( nodeId, new NodePublishReasonIsParent( parentOf ), initialReasonNodeId );
     }
 
-    public static NodePublishRequest referredFrom( final NodeId nodeId, final NodeId referredFrom )
+    public static NodePublishRequest childOf( final NodeId nodeId, final NodeId childOf, final NodeId initialReasonNodeId )
     {
-        return new NodePublishRequest( nodeId, new NodePublishReasonIsReferred( referredFrom ) );
+        return new NodePublishRequest( nodeId, new NodePublishReasonIsChild( childOf ), initialReasonNodeId );
+    }
+
+    public static NodePublishRequest referredFrom( final NodeId nodeId, final NodeId referredFrom, final NodeId initialReasonNodeId )
+    {
+        return new NodePublishRequest( nodeId, new NodePublishReasonIsReferred( referredFrom ), initialReasonNodeId );
     }
 }
