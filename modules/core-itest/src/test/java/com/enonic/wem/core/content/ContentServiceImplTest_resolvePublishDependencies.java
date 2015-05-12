@@ -1,9 +1,13 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -46,42 +50,14 @@ public class ContentServiceImplTest_resolvePublishDependencies
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
-        assertFalse( result.getResolvedContent().contains( content ) );
+        assertTrue( result.getResolvedContent().contains( content ) );
     }
-/*
-    @Test
-    public void push_deleted()
-        throws Exception
-    {
-        final Content content = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
-
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
-            build();
-
-        this.contentService.push( pushParams );
-
-        contentService.delete( DeleteContentParams.create().
-            contentPath( content.getPath() ).
-            build() );
-
-        final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
-
-        assertEquals( 1, pushWithDeleted.getDeleted().getSize() );
-    }*/
 
     @Test
     public void resolve_against_child_with_reference()
         throws Exception
     {
-        final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, false, false, true );
+        final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, false, false, true, true );
 
         assertEquals( 3, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
         assertEquals( 0, result.getChildrenContentsIds().getSize() );
@@ -91,7 +67,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     public void resolve_against_content_with_child_no_refs()
         throws Exception
     {
-        final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, false, false, false );
+        final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, false, false, false, true );
 
         assertEquals( 1, result.getChildrenContentsIds().getSize() );
         assertEquals( 0, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
@@ -101,15 +77,26 @@ public class ContentServiceImplTest_resolvePublishDependencies
     public void resolve_against_content_with_child_with_refs()
         throws Exception
     {
-        final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, true, false, false );
+        final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, true, false, false, true );
 
         assertEquals( 1, result.getChildrenContentsIds().getSize() );
         assertEquals( 2, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+    }
+
+    @Test
+    public void resolve_without_children_no_refs()
+        throws Exception
+    {
+        final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, true, false, false, false );
+
+        assertEquals( 0, result.getChildrenContentsIds().getSize() );
         assertEquals( 0, result.getDependantsIdsResolvedWithoutChildrenIncluded().getSize() );
+        assertEquals( 0, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 2, result.getPushRequestedIds().getSize() );
     }
 
     private ResolvePublishDependenciesResult doResolveWithDependencies( boolean isCont1, boolean isCont2, boolean isChild1,
-                                                                        boolean isChild2 )
+                                                                        boolean isChild2, boolean includeChildren )
     {
         final Content content1 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -142,27 +129,30 @@ public class ContentServiceImplTest_resolvePublishDependencies
             type( ContentTypeName.folder() ).
             build() );
 
-        ContentIds ids;
+        List<ContentId> listIds = new ArrayList<>();
+
         if ( isCont1 )
         {
-            ids = ContentIds.from( content1.getId() );
+            listIds.add( content1.getId() );
         }
-        else if ( isCont2 )
+        if ( isCont2 )
         {
-            ids = ContentIds.from( content2.getId() );
+            listIds.add( content2.getId() );
         }
-        else if ( isChild1 )
+        if ( isChild1 )
         {
-            ids = ContentIds.from( child1.getId() );
+            listIds.add( child1.getId() );
         }
-        else
+        if ( isChild2 )
         {
-            ids = ContentIds.from( child2.getId() );
+            listIds.add( child2.getId() );
         }
+        ContentIds ids = ContentIds.from( listIds );
 
         return contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( CTX_OTHER.getBranch() ).
             contentIds( ids ).
+            includeChildren( includeChildren ).
             build() );
 
     }

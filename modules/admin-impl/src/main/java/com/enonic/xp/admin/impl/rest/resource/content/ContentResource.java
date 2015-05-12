@@ -340,13 +340,30 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final ResolvePublishDependenciesResult result =
+        final ResolvePublishDependenciesResult resolvedWithChildren =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                                                           target( ContentConstants.BRANCH_MASTER ).
-                                                           contentIds( contentIds ).
-                                                           build() );
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                includeChildren( true ).
+                build() );
 
-        return ResolvePublishDependenciesResultJson.from( result );
+        final ResolvePublishDependenciesResult resolvedWithoutChildren =
+            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                includeChildren( false ).
+                build() );
+
+        ResolvePublishDependenciesResult result = ResolvePublishDependenciesResult.create().
+            setChildrenContentsIds( resolvedWithChildren.getChildrenContentsIds() ).
+            setCompareContentResults( resolvedWithChildren.getCompareContentResults() ).
+            setDependantsIdsResolvedWithChildrenIncluded( resolvedWithChildren.getDependantsIdsResolvedWithChildrenIncluded() ).
+            setDependantsIdsResolvedWithoutChildrenIncluded( resolvedWithoutChildren.getDependantsIdsResolvedWithoutChildrenIncluded() ).
+            setResolvedContent( resolvedWithChildren.getResolvedContent() ).
+            setPushRequestedIds( resolvedWithChildren.getPushRequestedIds() ).
+            build();
+
+        return ResolvePublishDependenciesResultJson.from( result, newContentIconUrlResolver() );
     }
 
     @POST
