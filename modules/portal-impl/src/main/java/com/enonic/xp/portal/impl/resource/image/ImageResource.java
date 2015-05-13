@@ -2,9 +2,6 @@ package com.enonic.xp.portal.impl.resource.image;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-
-import com.google.common.primitives.Floats;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -12,7 +9,6 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.image.scale.ScaleParamsParser;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
@@ -26,8 +22,7 @@ public final class ImageResource
 
     @Path("{id}/{scale}/{name}")
     public ImageHandleResource imageById( @PathParam("id") final String id, @PathParam("scale") final String scale,
-                                          @PathParam("name") final String name, @QueryParam("x") final String focalX,
-                                          @QueryParam("y") final String focalY )
+                                          @PathParam("name") final String name )
     {
         final ImageHandleResource resource = initResource( new ImageHandleResource() );
 
@@ -65,14 +60,7 @@ public final class ImageResource
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
         resource.scaleParams = scaleParams;
-
-        // TODO remove x,y parameters and use values from imageContent.getData() (XP-409)
-        final Float x = focalX == null ? null : Floats.tryParse( focalX );
-        final Float y = focalY == null ? null : Floats.tryParse( focalY );
-        if ( x != null && y != null )
-        {
-            resource.focalPoint = new FocalPoint( x, y );
-        }
+        resource.focalPoint = imageContent.getFocalPoint();
         return resource;
     }
 

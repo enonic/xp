@@ -35,10 +35,11 @@ final class ImageUploader
         throws InvalidTypeException
     {
         // accept STRING for backwards compatibility
-        if ( !( ValueTypes.PROPERTY_SET.equals( property.getType() ) || ValueTypes.STRING.equals( property.getType() ) ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.PROPERTY_SET );
-        }
+        // commented out due to issues with InputValidator
+//        if ( !( ValueTypes.PROPERTY_SET.equals( property.getType() ) || ValueTypes.STRING.equals( property.getType() ) ) )
+//        {
+//            throw new InvalidTypeException( property, ValueTypes.PROPERTY_SET );
+//        }
     }
 
     @Override
