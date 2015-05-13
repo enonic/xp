@@ -29,7 +29,7 @@ public class PushContentRequests
 
     private final ImmutableSet<DeletedBecauseChildOfPushed> deletedBecauseChildOfPusheds;
 
-    private final ImmutableMap<ContentId, PushedNodeIdWithContextualContentId> mapWithContextualContentIds;
+    private final ImmutableMap<ContentId, ContentId> mapWithInitialReasonContentIds;
 
     private PushContentRequests( Builder builder )
     {
@@ -43,7 +43,7 @@ public class PushContentRequests
         deletedBecauseParentOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseParentOf );
         deletedBecauseChildOfPusheds = ImmutableSet.copyOf( builder.deletedBecauseChildOf );
 
-        mapWithContextualContentIds = ImmutableMap.copyOf( builder.mapWithContextualContentIds );
+        mapWithInitialReasonContentIds = ImmutableMap.copyOf( builder.mapWithInitialReasonContentIds );
     }
 
     public static Builder create()
@@ -175,12 +175,7 @@ public class PushContentRequests
      */
     private ContentId findContentIdThatInitiallyTriggeredPublish( ContentId id )
     {
-        PushedNodeIdWithContextualContentId result = mapWithContextualContentIds.get( id );
-        while ( result.getContextualContentId() != null )
-        {
-            result = mapWithContextualContentIds.get( result.getContextualContentId() );
-        }
-        return result.getContentId();
+        return mapWithInitialReasonContentIds.get( id );
     }
 
     public PushedContentIdsWithInitialReason getDependantsContentIds( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
@@ -349,30 +344,6 @@ public class PushContentRequests
         }
     }
 
-    public static class PushedNodeIdWithContextualContentId
-    {
-        private final ContentId contentId;
-
-        private final ContentId contextualContentId;
-
-        public PushedNodeIdWithContextualContentId( final ContentId contentId, final ContentId contextualContentId )
-        {
-            this.contentId = contentId;
-            this.contextualContentId = contextualContentId;
-        }
-
-        public ContentId getContentId()
-        {
-            return contentId;
-        }
-
-        public ContentId getContextualContentId()
-        {
-            return contextualContentId;
-        }
-    }
-
-
     public static final class Builder
     {
         private final Set<PushBecauseRequested> pushBecauseRequested = Sets.newHashSet();
@@ -391,65 +362,67 @@ public class PushContentRequests
 
         private final Set<DeletedBecauseChildOfPushed> deletedBecauseChildOf = Sets.newHashSet();
 
-        private final Map<ContentId, PushedNodeIdWithContextualContentId> mapWithContextualContentIds = Maps.newHashMap();
+        private final Map<ContentId, ContentId> mapWithInitialReasonContentIds = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        public Builder addRequested( final ContentId contentId )
+        public Builder addRequested( final ContentId contentId, final ContentId initialReasonContentId )
         {
             this.pushBecauseRequested.add( new PushBecauseRequested( contentId ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, null ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addParentOf( final ContentId contentId, final ContentId parentOf )
+        public Builder addParentOf( final ContentId contentId, final ContentId parentOf, final ContentId initialReasonContentId )
         {
             this.pushedBecauseParentOf.add( new PushedBecauseParentOfPushed( contentId, parentOf ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, parentOf ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addChildOf( final ContentId contentId, final ContentId childOf )
+        public Builder addChildOf( final ContentId contentId, final ContentId childOf, final ContentId initialReasonContentId )
         {
             this.pushedBecauseChildOf.add( new PushedBecauseChildOfPushed( contentId, childOf ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, childOf ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addReferredTo( final ContentId contentId, final ContentId referredTo )
+        public Builder addReferredTo( final ContentId contentId, final ContentId referredTo, final ContentId initialReasonContentId )
         {
             this.pushedBecauseReferredTo.add( new PushedBecauseReferredTo( contentId, referredTo ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, referredTo ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addDeleteRequested( final ContentId contentId )
+        public Builder addDeleteRequested( final ContentId contentId, final ContentId initialReasonContentId )
         {
             this.deleteBecauseRequested.add( new DeleteBecauseRequested( contentId ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, null ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addDeleteBecauseParentOf( final ContentId contentId, final ContentId parentOf )
+        public Builder addDeleteBecauseParentOf( final ContentId contentId, final ContentId parentOf,
+                                                 final ContentId initialReasonContentId )
         {
             this.deletedBecauseParentOf.add( new DeletedBecauseParentOfPushed( contentId, parentOf ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, parentOf ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addDeleteBecauseChildOf( final ContentId contentId, final ContentId childOf )
+        public Builder addDeleteBecauseChildOf( final ContentId contentId, final ContentId childOf, final ContentId initialReasonContentId )
         {
             this.deletedBecauseChildOf.add( new DeletedBecauseChildOfPushed( contentId, childOf ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, childOf ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
-        public Builder addDeleteBecauseReferredTo( final ContentId contentId, final ContentId referredTo )
+        public Builder addDeleteBecauseReferredTo( final ContentId contentId, final ContentId referredTo,
+                                                   final ContentId initialReasonContentId )
         {
             this.deletedBecauseReferredTo.add( new DeletedBecauseReferredTo( contentId, referredTo ) );
-            this.mapWithContextualContentIds.put( contentId, new PushedNodeIdWithContextualContentId( contentId, referredTo ) );
+            this.mapWithInitialReasonContentIds.put( contentId, initialReasonContentId );
             return this;
         }
 
