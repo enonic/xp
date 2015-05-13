@@ -14,4 +14,6 @@ public interface ScriptExports
     boolean hasMethod( String name );
 
     ScriptValue executeMethod( String name, Object... args );
+
+    Object getRawValue();
 }

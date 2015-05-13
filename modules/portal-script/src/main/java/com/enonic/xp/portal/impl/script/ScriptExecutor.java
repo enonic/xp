@@ -1,13 +1,11 @@
 package com.enonic.xp.portal.impl.script;
 
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.ResourceKey;
 
 public interface ScriptExecutor
 {
-    public Object executeMain();
+    Object executeRequire( ResourceKey script );
 
-    public Object executeRequire( ResourceKey script );
-
-    public ScriptValue newScriptValue( Object value );
+    ScriptValue newScriptValue( Object value );
 }

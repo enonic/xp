@@ -11,7 +11,7 @@ public abstract class AbstractScriptTest
 {
     private final static ModuleKey MYMODULE_KEY = ModuleKey.from( "mymodule" );
 
-    private final ScriptServiceImpl scriptService;
+    protected final ScriptServiceImpl scriptService;
 
     public AbstractScriptTest()
     {
