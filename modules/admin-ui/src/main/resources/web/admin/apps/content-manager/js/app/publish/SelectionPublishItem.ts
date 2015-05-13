@@ -1,6 +1,7 @@
 module app.publish {
 
     import BrowseItem = api.app.browse.BrowseItem;
+    import CompareStatus = api.content.CompareStatus;
 
     export class SelectionPublishItem<M extends api.Equitable> extends api.dom.DivEl {
 
@@ -16,7 +17,7 @@ module app.publish {
 
         private resolvedContext: ResolvedPublishContext;
 
-        constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>, status: string, resolvedContext: ResolvedPublishContext,
+        constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>, status: CompareStatus, resolvedContext: ResolvedPublishContext,
                     changeCallback?: () => void,
                     isCheckBoxEnabled: boolean = true, isHidden: boolean = false, isChecked: boolean = true) {
             super("browse-selection-publish-item");
@@ -28,9 +29,9 @@ module app.publish {
             this.initCheckBox(isCheckBoxEnabled, isChecked, changeCallback);
         }
 
-        private initStatusDiv(status: string) {
+        private initStatusDiv(status: CompareStatus) {
             this.statusDiv = new api.dom.DivEl("status");
-            this.statusDiv.setHtml(status);
+            this.statusDiv.setHtml(this.formatStatus(status));
         }
 
 
@@ -48,6 +49,52 @@ module app.publish {
                     }
                 });
             }
+        }
+
+        private formatStatus(compareStatus: CompareStatus): string {
+
+            var status;
+
+            switch (compareStatus) {
+            case CompareStatus.NEW:
+                status = "New";
+                break;
+            case CompareStatus.NEWER:
+                status = "Modified";
+                break;
+            case CompareStatus.OLDER:
+                status = "Behind";
+                break;
+            case CompareStatus.UNKNOWN:
+                status = "Unknown";
+                break;
+            case CompareStatus.PENDING_DELETE:
+                status = "Pending delete";
+                break;
+            case CompareStatus.EQUAL:
+                status = "Online";
+                break;
+            case CompareStatus.MOVED:
+                status = "Moved";
+                break;
+            case CompareStatus.PENDING_DELETE_TARGET:
+                status = "Deleted in prod";
+                break;
+            case CompareStatus.NEW_TARGET:
+                status = "New in prod";
+                break;
+            case CompareStatus.CONFLICT_PATH_EXISTS:
+                status = "Conflict";
+                break;
+            default:
+                status = "Unknown"
+            }
+
+            if (!!CompareStatus[status]) {
+                return "Unknown";
+            }
+
+            return status;
         }
 
         getResolvedContext(): ResolvedPublishContext {
