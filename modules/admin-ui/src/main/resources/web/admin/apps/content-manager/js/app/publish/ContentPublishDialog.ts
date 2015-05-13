@@ -9,6 +9,13 @@ module app.publish {
     import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishDependenciesResultJson
     import CompareStatus = api.content.CompareStatus;
 
+    /**
+     * ContentPublishDialog manages list of items resolved via ResolvePublishDependenceies command.
+     * Resolved items are converted into array of SelectionPublishItem<ContentPublishItem> items and stored in selectionItems property.
+     * SelectionPublishItem has checked/unchecked state which determines if item's id will be included into a list of contentIds of Publish request.
+     * Items displayed in dialog and selectionItems property will change depending on includeChildren checkbox state as
+     * resolved dependencies usually differ in that case.
+     */
     export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
 
         private modelName: string;
@@ -209,7 +216,7 @@ module app.publish {
                 setPath(content.getPath().toString()).
                 setIconUrl(content.getIconUrl());
 
-            var selectionPublishItem = new SelectionPublishItem(publishItemViewer, browseItem, CompareStatus[content.getCompareStatus()],
+            var selectionPublishItem = new SelectionPublishItem(publishItemViewer, browseItem, content.getCompareStatus(),
                 resolvedPublishContext,
                 () => {
                     if (isCheckBoxEnabled) {
@@ -333,15 +340,22 @@ module app.publish {
                     }
                 }
             });
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                switch (item.getResolvedContext()) {
-                case ResolvedPublishContext.CHILD:
-                    var itemReason = (<ContentPublishItem>item.getBrowseItem().getModel()).getIdOfInitialContentThatTriggeredPublish();
-                    if (checkedRequestedContentsIds.indexOf(itemReason) > -1) {
-                        result++
-                    }
+            // case when there are initially requested contents returned via resolve command
+            if (this.pushRequestedContents.length > 0) {
+                if (checkedRequestedContentsIds.length > 0) { // ... and some of them checked
+                    this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+                        switch (item.getResolvedContext()) {
+                        case ResolvedPublishContext.CHILD:
+                            var itemReason = (<ContentPublishItem>item.getBrowseItem().getModel()).getIdOfInitialContentThatTriggeredPublish();
+                            if (checkedRequestedContentsIds.indexOf(itemReason) > -1) {
+                                result++
+                            }
+                        }
+                    });
                 }
-            });
+            } else { // nothing checked and no initially requested contents returned for publish, but there might be children available for publish
+                result = this.childrenResolved.length;
+            }
             return result;
         }
 
