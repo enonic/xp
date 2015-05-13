@@ -1,39 +1,44 @@
-module api.ui.selector.dropdown {
+module api.ui.selector {
 
-    import Option = api.ui.selector.Option;
-    import DropdownGridConfig = api.ui.selector.DropdownGridConfig;
-    import DropdownGrid = api.ui.selector.DropdownGrid;
-    import DropdownGridRowSelectedEvent = api.ui.selector.DropdownGridRowSelectedEvent;
-
-    export interface DropdownDropdownConfig<OPTION_DISPLAY_VALUE> {
+    export interface DropdownListConfig<DISPLAY_VALUE> {
 
         maxHeight?: number;
 
         width: number;
 
-        optionDisplayValueViewer?: Viewer<OPTION_DISPLAY_VALUE>;
+        optionDisplayValueViewer?: Viewer<DISPLAY_VALUE>;
 
-        filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
+        filter: (item: Option<DISPLAY_VALUE>, args: any) => boolean;
 
         dataIdProperty?:string;
     }
 
-    export class DropdownDropdown<OPTION_DISPLAY_VALUE> {
+    export class DropdownList<OPTION_DISPLAY_VALUE> {
+
+        private emptyDropdown: api.dom.DivEl;
 
         private dropdownGrid: DropdownGrid<OPTION_DISPLAY_VALUE>;
 
-        constructor(config: DropdownDropdownConfig<OPTION_DISPLAY_VALUE>) {
+        constructor(config: DropdownListConfig<OPTION_DISPLAY_VALUE>) {
 
-            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
+            this.emptyDropdown = new api.dom.DivEl("empty-options");
+            this.emptyDropdown.getEl().setInnerHtml("No matching items");
+            this.emptyDropdown.hide();
+
+            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(this.assembleGridConfig(config));
+        }
+
+        assembleGridConfig(config: DropdownListConfig<OPTION_DISPLAY_VALUE>): DropdownGridConfig<OPTION_DISPLAY_VALUE> {
+            return <DropdownGridConfig<OPTION_DISPLAY_VALUE>> {
                 maxHeight: config.maxHeight,
                 width: config.width,
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty
-            });
+            };
         }
 
-        getGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
+        getDropdownGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
             return this.dropdownGrid;
         }
 
@@ -41,17 +46,20 @@ module api.ui.selector.dropdown {
             this.dropdownGrid.renderGrid();
         }
 
-
-        isDropdownShown(): boolean {
-            return this.dropdownGrid.isVisible();
+        getEmptyDropdown(): api.dom.DivEl {
+            return this.emptyDropdown;
         }
 
-        setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
+        isDropdownShown(): boolean {
+            return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
+        }
+
+        setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = []) {
 
             this.dropdownGrid.setOptions(options);
 
             if (this.dropdownGrid.isVisible()) {
-                this.showDropdown(null);
+                this.showDropdown([]);
             }
         }
 
@@ -87,26 +95,40 @@ module api.ui.selector.dropdown {
             this.dropdownGrid.setFilterArgs(args);
         }
 
-        showDropdown(selectedOption: Option<OPTION_DISPLAY_VALUE>) {
+        showDropdown(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
 
             if (this.hasOptions()) {
+                this.emptyDropdown.hide();
                 this.dropdownGrid.show();
                 this.dropdownGrid.adjustGridHeight();
-                if (selectedOption) {
-                    this.dropdownGrid.markSelections([selectedOption]);
+                if (!!selectedOptions) {
+                    this.dropdownGrid.markSelections(selectedOptions.splice(1));
                 }
             } else {
                 this.dropdownGrid.hide();
+                this.emptyDropdown.getEl().setInnerHtml("No matching items");
+                this.emptyDropdown.show();
             }
         }
 
         hideDropdown() {
 
+            this.emptyDropdown.hide();
             this.dropdownGrid.hide();
+        }
+
+        setEmptyDropdownText(label: string) {
+
+            if (this.isDropdownShown()) {
+                this.dropdownGrid.hide();
+                this.emptyDropdown.getEl().setInnerHtml(label);
+                this.emptyDropdown.show();
+            }
         }
 
         setTopPx(value: number) {
             this.dropdownGrid.setTopPx(value);
+            this.emptyDropdown.getEl().setTopPx(value);
         }
 
         setWidth(value: number) {
@@ -137,8 +159,8 @@ module api.ui.selector.dropdown {
             this.dropdownGrid.navigateToPreviousRow();
         }
 
-        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.dropdownGrid.markSelections(selectedOptions);
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
+            this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
         }
 
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
