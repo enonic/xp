@@ -5,6 +5,11 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueType;
+import com.enonic.xp.data.ValueTypes;
 
 @Beta
 public class Media
@@ -22,7 +27,26 @@ public class Media
 
     public Attachment getMediaAttachment()
     {
-        final String mediaAttachmentName = getData().getString( ContentPropertyNames.MEDIA );
+        final PropertyTree contentData = getData();
+        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
+        final ValueType mediaPropertyType = mediaProperty.getType();
+
+        final String mediaAttachmentName;
+        if ( mediaPropertyType.equals( ValueTypes.STRING ) )
+        {
+            // backwards compatibility
+            mediaAttachmentName = getData().getString( ContentPropertyNames.MEDIA );
+        }
+        else if ( mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
+        {
+            final PropertySet mediaData = getData().getSet( ContentPropertyNames.MEDIA );
+            mediaAttachmentName = mediaData.getString( ContentPropertyNames.MEDIA_ATTACHMENT );
+        }
+        else
+        {
+            return null;
+        }
+
         if ( mediaAttachmentName == null )
         {
             return null;

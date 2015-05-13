@@ -25,6 +25,8 @@ public class ContentPropertyNames
 
     public static final String MEDIA = "media";
 
+    public static final String MEDIA_ATTACHMENT = "attachment";
+
     public static final String ATTACHMENT = "attachment";
 
     public static final String OWNER = "owner";

@@ -5,9 +5,13 @@ import com.enonic.xp.data.PropertyTree;
 final class ImageFormDataBuilder
 {
     private String image;
+
     private String caption = "";
+
     private String artist = "";
+
     private String copyright = "";
+
     private String tags = "";
 
     ImageFormDataBuilder image( final String name )
@@ -16,25 +20,25 @@ final class ImageFormDataBuilder
         return this;
     }
 
-     ImageFormDataBuilder caption( final String caption )
+    ImageFormDataBuilder caption( final String caption )
     {
         this.caption = caption;
         return this;
     }
 
-     ImageFormDataBuilder artist( final String artist )
+    ImageFormDataBuilder artist( final String artist )
     {
         this.artist = artist;
         return this;
     }
 
-     ImageFormDataBuilder copyright( final String copyright )
+    ImageFormDataBuilder copyright( final String copyright )
     {
         this.copyright = copyright;
         return this;
     }
 
-     ImageFormDataBuilder tags( final String tags )
+    ImageFormDataBuilder tags( final String tags )
     {
         this.tags = tags;
         return this;
@@ -42,7 +46,9 @@ final class ImageFormDataBuilder
 
     void build( PropertyTree data )
     {
-        data.setString( "media", image );
+        final PropertyTree imageData = new PropertyTree();
+        imageData.setString( "attachment", this.image );
+        data.setSet( "media", imageData.getRoot() );
         data.setString( "caption", caption );
         data.setString( "artist", artist );
         data.setString( "copyright", copyright );

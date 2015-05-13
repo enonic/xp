@@ -3,6 +3,7 @@ package com.enonic.xp.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
@@ -19,7 +20,11 @@ final class ImageUploader
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException
     {
-        if ( StringUtils.isBlank( property.getString() ) )
+        if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
+        {
+            // TODO
+        }
+        else if ( StringUtils.isBlank( property.getString() ) )
         {
             throw new BreaksRequiredContractException( property, this );
         }
@@ -29,15 +34,17 @@ final class ImageUploader
     public void checkTypeValidity( final Property property )
         throws InvalidTypeException
     {
-        if ( !ValueTypes.STRING.equals( property.getType() ) )
+        // accept STRING for backwards compatibility
+        if ( !( ValueTypes.PROPERTY_SET.equals( property.getType() ) || ValueTypes.STRING.equals( property.getType() ) ) )
         {
-            throw new InvalidTypeException( property, ValueTypes.STRING );
+            throw new InvalidTypeException( property, ValueTypes.PROPERTY_SET );
         }
     }
 
     @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
-        return Value.newString( value );
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        return Value.newData( tree.newSet() );
     }
 }
