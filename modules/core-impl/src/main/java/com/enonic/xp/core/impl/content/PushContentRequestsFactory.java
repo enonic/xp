@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.PushContentRequests;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.NodePublishRequests;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -15,62 +16,71 @@ class PushContentRequestsFactory
 
         for ( final ResolveSyncWorkResult syncWorkResult : syncWorkResults )
         {
-            doCreate( builder, syncWorkResult.getNodePublishRequests() );
-            doCreateDeleted( builder, syncWorkResult.getNodeDeleteRequests() );
+            doCreate( builder, syncWorkResult.getNodePublishRequests(), syncWorkResult.getInitialReasonNodeId() );
+            doCreateDeleted( builder, syncWorkResult.getNodeDeleteRequests(), syncWorkResult.getInitialReasonNodeId() );
         }
 
         return builder.build();
     }
 
-    private static void doCreate( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests )
+    private static void doCreate( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
+                                  final NodeId initialReasonNodeId )
     {
         for ( final NodePublishRequest parentOf : nodePublishRequests.getPublishAsParentFor() )
         {
             builder.addParentOf( ContentId.from( parentOf.getNodeId().toString() ),
-                                 ContentId.from( parentOf.getReason().getContextualNodeId().toString() ) );
+                                 ContentId.from( parentOf.getReason().getContextualNodeId().toString() ),
+                                 ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest referredTo : nodePublishRequests.getPublishAsReferredTo() )
         {
             builder.addReferredTo( ContentId.from( referredTo.getNodeId().toString() ),
-                                   ContentId.from( referredTo.getReason().getContextualNodeId().toString() ) );
+                                   ContentId.from( referredTo.getReason().getContextualNodeId().toString() ),
+                                   ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest requested : nodePublishRequests.getPublishAsRequested() )
         {
-            builder.addRequested( ContentId.from( requested.getNodeId().toString() ) );
+            builder.addRequested( ContentId.from( requested.getNodeId().toString() ), ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest childOf : nodePublishRequests.getPublishAsChildOf() )
         {
             builder.addChildOf( ContentId.from( childOf.getNodeId().toString() ),
-                                ContentId.from( childOf.getReason().getContextualNodeId().toString() ) );
+                                ContentId.from( childOf.getReason().getContextualNodeId().toString() ),
+                                ContentId.from( initialReasonNodeId.toString() ) );
         }
     }
 
-    private static void doCreateDeleted( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests )
+    private static void doCreateDeleted( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
+                                         final NodeId initialReasonNodeId )
     {
         for ( final NodePublishRequest parentOf : nodePublishRequests.getPublishAsParentFor() )
         {
             builder.addDeleteBecauseParentOf( ContentId.from( parentOf.getNodeId().toString() ),
-                                              ContentId.from( parentOf.getReason().getContextualNodeId().toString() ) );
+                                              ContentId.from( parentOf.getReason().getContextualNodeId().toString() ),
+                                              ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest referredTo : nodePublishRequests.getPublishAsReferredTo() )
         {
             builder.addDeleteBecauseReferredTo( ContentId.from( referredTo.getNodeId().toString() ),
-                                                ContentId.from( referredTo.getReason().getContextualNodeId().toString() ) );
+                                                ContentId.from( referredTo.getReason().getContextualNodeId().toString() ),
+                                                ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest requested : nodePublishRequests.getPublishAsRequested() )
         {
-            builder.addDeleteRequested( ContentId.from( requested.getNodeId().toString() ) );
+            builder.addDeleteRequested( ContentId.from( requested.getNodeId().toString() ),
+                                        ContentId.from( initialReasonNodeId.toString() ) );
         }
 
         for ( final NodePublishRequest childOf : nodePublishRequests.getPublishAsChildOf() )
         {
             builder.addDeleteBecauseChildOf( ContentId.from( childOf.getNodeId().toString() ),
-                                ContentId.from( childOf.getReason().getContextualNodeId().toString() ) );
+                                             ContentId.from( childOf.getReason().getContextualNodeId().toString() ),
+                                             ContentId.from( initialReasonNodeId.toString() ) );
         }
     }
 }

@@ -53,6 +53,7 @@ public class PushContentCommandTest
             thenReturn( ResolveSyncWorkResult.create().
                 publishRequested( NodeId.from( "s1" ) ).
                 publishRequested( NodeId.from( "s2" ) ).
+                setInitialReasonNodeId( NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -90,6 +91,7 @@ public class PushContentCommandTest
             thenReturn( ResolveSyncWorkResult.create().
                 publishRequested( NodeId.from( "s1" ) ).
                 publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
+                setInitialReasonNodeId( NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -129,6 +131,7 @@ public class PushContentCommandTest
             thenReturn( ResolveSyncWorkResult.create().
                 publishRequested( NodeId.from( "s1" ) ).
                 publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
+                setInitialReasonNodeId( NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -160,15 +163,15 @@ public class PushContentCommandTest
         assertEquals( 1, result.getPushContentRequests().getPushedBecauseReferredTos().size() );
     }
 
-
     @Test
     public void pending_deleted()
         throws Exception
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                addDelete( NodeId.from( "s3" ) ).
-                addDelete( NodeId.from( "s4" ) ).
+                deleteRequested( NodeId.from( "s3" ) ).
+                deleteRequested( NodeId.from( "s4" ) ).
+                setInitialReasonNodeId( NodeId.from( "s3" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -210,6 +213,7 @@ public class PushContentCommandTest
             thenReturn( ResolveSyncWorkResult.create().
                 publishRequested( NodeId.from( "s1" ) ).
                 publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
+                setInitialReasonNodeId( NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).

@@ -77,7 +77,7 @@ public class ResolveSyncWorkCommand
             resolveDiffWithNodeIdAsInput( nodeId, ResolveContext.requested() );
         }
 
-        return resultBuilder.build();
+        return resultBuilder.setInitialReasonNodeId( this.publishRootNode.id() ).build();
     }
 
     private NodeVersionDiffResult getInitialDiff()

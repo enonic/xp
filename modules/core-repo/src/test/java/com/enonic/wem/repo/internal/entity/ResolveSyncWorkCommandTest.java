@@ -1,5 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,8 +94,12 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 1, nodePublishRequests.size() );
         assertNotNull( nodePublishRequests.get( rootNode.id() ) );
 
-        final NodeIds deleted = result.getDelete();
-        assertEquals( 2, deleted.getSize() );
+        Set<NodeId> deleted = new HashSet<>();
+        for ( NodePublishRequest deleteRequest : result.getNodeDeleteRequests() )
+        {
+            deleted.add( deleteRequest.getNodeId() );
+        }
+        assertEquals( 2, deleted.size() );
         assertTrue( deleted.contains( node2_1.id() ) );
         assertTrue( deleted.contains( node3.id() ) );
     }

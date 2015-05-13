@@ -21,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.ResolveSyncWorkResults;
@@ -169,9 +170,9 @@ public class PushContentCommand
             branch( target ).
             build() ) );
 
-        for ( final NodeId nodeId : result.getDelete() )
+        for ( final NodePublishRequest publishRequest : result.getNodeDeleteRequests() )
         {
-            this.resultBuilder.addDeleted( ContentId.from( nodeId.toString() ) );
+            this.resultBuilder.addDeleted( ContentId.from( publishRequest.getNodeId().toString() ) );
         }
 
         if ( !deletedContents.isEmpty() )
@@ -185,9 +186,9 @@ public class PushContentCommand
     {
         return context.callWith( () -> {
             final List<ContentPath> deletedNodes = new ArrayList<>();
-            for ( final NodeId nodeId : result.getDelete() )
+            for ( final NodePublishRequest publishRequest : result.getNodeDeleteRequests() )
             {
-                final Node node = nodeService.deleteById( nodeId );
+                final Node node = nodeService.deleteById( publishRequest.getNodeId() );
                 if ( node != null )
                 {
                     deletedNodes.add( translateNodePathToContentPath( node.path() ) );
