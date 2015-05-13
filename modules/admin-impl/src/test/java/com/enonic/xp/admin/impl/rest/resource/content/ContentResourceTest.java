@@ -741,6 +741,8 @@ public class ContentResourceTest
     public void publish_content_deleted()
         throws Exception
     {
+        Contents deleted = Contents.from( Arrays.asList( createContent( "content-id", "content-name", "mymodule:content-type" ) ) );
+
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
             setPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
@@ -748,7 +750,7 @@ public class ContentResourceTest
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addDeleted( ContentId.from( "myContentId" ) ).
+            setDeleted( deleted ).
             build() );
 
         String jsonString = request().path( "content/publish" ).
