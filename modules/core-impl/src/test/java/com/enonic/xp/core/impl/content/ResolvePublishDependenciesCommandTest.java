@@ -56,8 +56,8 @@ public class ResolvePublishDependenciesCommandTest
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                publishRequested( NodeId.from( "s1" ) ).
-                publishRequested( NodeId.from( "s2" ) ).
+                publishRequested( NodeId.from( "s1" ), NodeId.from( "s1" ) ).
+                publishRequested( NodeId.from( "s2" ), NodeId.from( "s2" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -90,8 +90,8 @@ public class ResolvePublishDependenciesCommandTest
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                publishRequested( NodeId.from( "s1" ) ).
-                publishReferredFrom( NodeId.from( "s2" ), NodeId.from( "s1" ) ).
+                publishRequested( NodeId.from( "s1" ), NodeId.from( "s1" ) ).
+                publishReferredFrom( NodeId.from( "s2" ), NodeId.from( "s1" ), NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -125,9 +125,9 @@ public class ResolvePublishDependenciesCommandTest
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                publishRequested( NodeId.from( "s1" ) ).
-                publishReferredFrom( NodeId.from( "s2" ), NodeId.from( "s1" ) ).
-                publishParentFor( NodeId.from( "s3" ), NodeId.from( "s1" ) ).
+                publishRequested( NodeId.from( "s1" ), NodeId.from( "s1" ) ).
+                publishReferredFrom( NodeId.from( "s2" ), NodeId.from( "s1" ), NodeId.from( "s1" ) ).
+                publishParentFor( NodeId.from( "s3" ), NodeId.from( "s1" ), NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
@@ -165,9 +165,9 @@ public class ResolvePublishDependenciesCommandTest
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                publishRequested( NodeId.from( "s1" ) ).
-                deleteRequested( NodeId.from( "s2" ) ).
-                deleteRequested( NodeId.from( "s3" ) ).
+                publishRequested( NodeId.from( "s1" ), NodeId.from( "s1" ) ).
+                deleteRequested( NodeId.from( "s2" ), NodeId.from( "s1" ) ).
+                deleteRequested( NodeId.from( "s3" ), NodeId.from( "s1" ) ).
                 build() );
 
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).

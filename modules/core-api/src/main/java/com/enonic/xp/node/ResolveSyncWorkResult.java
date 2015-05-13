@@ -74,55 +74,55 @@ public class ResolveSyncWorkResult
         {
         }
 
-        public Builder publishRequested( final NodeId nodeId )
+        public Builder publishRequested( final NodeId nodeId, final NodeId initialReasonNodeId )
         {
-            this.nodePublishRequests.add( NodePublishRequest.requested( nodeId ) );
+            this.nodePublishRequests.add( NodePublishRequest.requested( nodeId, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder publishParentFor( final NodeId nodeId, final NodeId parentOf )
+        public Builder publishParentFor( final NodeId nodeId, final NodeId parentOf, final NodeId initialReasonNodeId )
         {
-            this.nodePublishRequests.add( NodePublishRequest.parentFor( nodeId, parentOf ) );
+            this.nodePublishRequests.add( NodePublishRequest.parentFor( nodeId, parentOf, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder publishChildOf( final NodeId nodeId, final NodeId childOf )
+        public Builder publishChildOf( final NodeId nodeId, final NodeId childOf, final NodeId initialReasonNodeId )
         {
-            this.nodePublishRequests.add( NodePublishRequest.childOf( nodeId, childOf ) );
+            this.nodePublishRequests.add( NodePublishRequest.childOf( nodeId, childOf, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder publishReferredFrom( final NodeId nodeId, final NodeId referredFrom )
+        public Builder publishReferredFrom( final NodeId nodeId, final NodeId referredFrom, final NodeId initialReasonNodeId )
         {
-            this.nodePublishRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );
+            this.nodePublishRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder deleteRequested( final NodeId nodeId )
+        public Builder deleteRequested( final NodeId nodeId, final NodeId initialReasonNodeId )
         {
             this.delete.add( nodeId );
-            this.nodeDeleteRequests.add( NodePublishRequest.requested( nodeId ) );
+            this.nodeDeleteRequests.add( NodePublishRequest.requested( nodeId, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder deleteParentFor( final NodeId nodeId, final NodeId parentOf )
+        public Builder deleteParentFor( final NodeId nodeId, final NodeId parentOf, final NodeId initialReasonNodeId )
         {
             this.delete.add( nodeId );
-            this.nodeDeleteRequests.add( NodePublishRequest.parentFor( nodeId, parentOf ) );
+            this.nodeDeleteRequests.add( NodePublishRequest.parentFor( nodeId, parentOf, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder deleteChildOf( final NodeId nodeId, final NodeId childOf )
+        public Builder deleteChildOf( final NodeId nodeId, final NodeId childOf, final NodeId initialReasonNodeId )
         {
             this.delete.add( nodeId );
-            this.nodeDeleteRequests.add( NodePublishRequest.childOf( nodeId, childOf ) );
+            this.nodeDeleteRequests.add( NodePublishRequest.childOf( nodeId, childOf, initialReasonNodeId ) );
             return this;
         }
 
-        public Builder deleteReferredFrom( final NodeId nodeId, final NodeId referredFrom )
+        public Builder deleteReferredFrom( final NodeId nodeId, final NodeId referredFrom, final NodeId initialReasonNodeId )
         {
             this.delete.add( nodeId );
-            this.nodeDeleteRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );
+            this.nodeDeleteRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom, initialReasonNodeId ) );
             return this;
         }
 
