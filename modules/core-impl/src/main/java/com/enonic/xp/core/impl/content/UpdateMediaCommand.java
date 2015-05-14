@@ -65,6 +65,8 @@ final class UpdateMediaCommand
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).
+            focalX( params.getFocalX() ).
+            focalY( params.getFocalY() ).
             build( data );
 
         final UpdateContentParams updateParams = new UpdateContentParams().

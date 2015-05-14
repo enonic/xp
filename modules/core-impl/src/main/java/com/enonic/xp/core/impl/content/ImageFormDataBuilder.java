@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 
 final class ImageFormDataBuilder
@@ -13,6 +15,10 @@ final class ImageFormDataBuilder
     private String copyright = "";
 
     private String tags = "";
+
+    private Double focalX = 0.5;
+
+    private Double focalY = 0.5;
 
     ImageFormDataBuilder image( final String name )
     {
@@ -44,11 +50,26 @@ final class ImageFormDataBuilder
         return this;
     }
 
+    ImageFormDataBuilder focalX( final Double focalX )
+    {
+        this.focalX = focalX;
+        return this;
+    }
+
+    ImageFormDataBuilder focalY( final Double focalY )
+    {
+        this.focalY = focalY;
+        return this;
+    }
+
     void build( PropertyTree data )
     {
-        final PropertyTree imageData = new PropertyTree();
-        imageData.setString( "attachment", this.image );
-        data.setSet( "media", imageData.getRoot() );
+        PropertyTree tree = new PropertyTree( new PropertyTree.DefaultPropertyIdProvider() );
+        tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, image );
+        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
+        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+
+        data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
         data.setString( "caption", caption );
         data.setString( "artist", artist );
         data.setString( "copyright", copyright );

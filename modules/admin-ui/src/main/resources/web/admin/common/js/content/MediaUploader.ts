@@ -2,6 +2,7 @@ module api.content {
 
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
+    import ValueTypes = api.data.ValueTypes;
 
     export enum MediaUploaderOperation
     {
@@ -49,7 +50,17 @@ module api.content {
         }
 
         getMediaValue(item: Content): api.data.Value {
-            return item.getContentData().getPropertyArray("media").getValue(0);
+            var mediaProperty = item.getContentData().getProperty("media");
+            var mediaValue;
+            switch (mediaProperty.getType()) {
+            case ValueTypes.DATA:
+                mediaValue = mediaProperty.getPropertySet().getProperty('attachment').getValue();
+                break;
+            case ValueTypes.STRING:
+                mediaValue = mediaProperty.getValue();
+                break;
+            }
+            return mediaValue;
         }
 
         setFileName(name: string) {
