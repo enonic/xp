@@ -261,10 +261,12 @@ module api.liveedit {
 
                 this.cancelDrag(event, ui);
             } else {
-
                 var componentIndex = wemjq('>.drag-helper, >.item-view', regionView.getHTMLElement()).index(ui.item);
 
                 if (this.isDraggingFromContextWindow()) {
+                    if (this.pageView.isLocked()) {
+                        this.pageView.setLocked(false);
+                    }
                     // Create component and view if we drag from context window
                     var componentType: ComponentItemType = <ComponentItemType> this._newItemItemType;
 
@@ -534,7 +536,7 @@ module api.liveedit {
             var helper = DragHelper.get();
             var placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
-            if (!enter || this.pageView.isLocked()) {
+            if (!enter) {
                 helper.setDropAllowed(false);
             } else if (this.isDraggingLayoutOverLayout(regionView, this.getItemType())) {
                 helper.setDropAllowed(false);
