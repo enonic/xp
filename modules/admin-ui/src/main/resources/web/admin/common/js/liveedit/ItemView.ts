@@ -680,5 +680,9 @@ module api.liveedit {
             }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
+
+        protected getContextMenuTitle(): ItemViewContextMenuTitle {
+            return this.contextMenuTitle;
+        }
     }
 }
