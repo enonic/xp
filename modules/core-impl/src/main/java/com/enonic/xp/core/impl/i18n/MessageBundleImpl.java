@@ -21,6 +21,8 @@ public final class MessageBundleImpl
 
     private static final String LATIN_1_ENCODING = "ISO-8859-1";
 
+    public static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
+
     private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
 
     private final Properties properties;
@@ -44,7 +46,7 @@ public final class MessageBundleImpl
     {
         String message = (String) handleGetObject( key );
 
-        return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
+        return StringUtils.isNotEmpty( message ) ? format( message, args ) : MISSING_VALUE_MESSAGE;
     }
 
     private String format( final String message, final Object[] args )

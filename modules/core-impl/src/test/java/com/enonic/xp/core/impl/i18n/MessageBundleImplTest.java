@@ -18,6 +18,7 @@ public class MessageBundleImplTest
         properties.put( "key3", "value1" );
         properties.put( "key4", "value is here {0}" );
         properties.put( "key5", "value is here {0} and there {1}" );
+        properties.put( "key6", "" );
         return new MessageBundleImpl( properties );
     }
 
@@ -26,16 +27,22 @@ public class MessageBundleImplTest
         throws Exception
     {
         MessageBundle resourceBundle = createDefault();
+        assertEquals( resourceBundle.localize( "dummyKey" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
+    }
 
-        assertNull( resourceBundle.localize( "dummyKey" ) );
-
+    @Test
+    public void testEmptyValue()
+        throws Exception
+    {
+        MessageBundle resourceBundle = createDefault();
+        assertEquals( resourceBundle.localize( "key6" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
     }
 
     @Test
     public void testEmptyResourceBundle()
     {
         MessageBundle resourceBundle = new MessageBundleImpl( new Properties() );
-        assertNull( resourceBundle.localize( "key1" ) );
+        assertEquals( resourceBundle.localize( "dummyKey" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
     }
 
     @Test
@@ -49,6 +56,19 @@ public class MessageBundleImplTest
         String resolvedPhrase = resourceBundle.localize( "key4", testArgs );
 
         assertEquals( "value is here myValue1", resolvedPhrase );
+    }
+
+    @Test
+    public void testParameterizedPhraseMissingParameter()
+        throws Exception
+    {
+        MessageBundle resourceBundle = createDefault();
+
+        Object[] testArgs = {"myValue1"};
+
+        String resolvedPhrase = resourceBundle.localize( "key5", testArgs );
+
+        assertEquals( "value is here myValue1 and there {1}", resolvedPhrase );
     }
 
     @Test
