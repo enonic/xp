@@ -39,6 +39,8 @@ final class ModuleImpl
 
     protected MixinNames metaSteps;
 
+    protected ClassLoader classLoader;
+
     @Override
     public ModuleKey getKey()
     {
@@ -145,6 +147,12 @@ final class ModuleImpl
     public boolean isStarted()
     {
         return this.bundle.getState() == Bundle.ACTIVE;
+    }
+
+    @Override
+    public ClassLoader getClassLoader()
+    {
+        return this.classLoader;
     }
 
     private void findResourcePaths( final Set<String> set, final Bundle bundle, final String parentPath )

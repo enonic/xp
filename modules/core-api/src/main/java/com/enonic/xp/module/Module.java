@@ -45,4 +45,6 @@ public interface Module
     Instant getModifiedTime();
 
     boolean isStarted();
+
+    ClassLoader getClassLoader();
 }

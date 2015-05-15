@@ -7,8 +7,6 @@ import javax.script.ScriptEngine;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
@@ -16,19 +14,18 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleUpdatedEvent;
-import com.enonic.xp.portal.impl.script.invoker.CommandInvokerImpl;
+import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
 import com.enonic.xp.portal.script.ScriptValue;
-import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.resource.ResourceKey;
 
 @Component(immediate = true, service = {ScriptService.class, EventListener.class})
 public final class ScriptServiceImpl
     implements ScriptService, EventListener
 {
-    private final CommandInvokerImpl invoker;
+    private CommandInvoker invoker;
 
     private final Map<String, Object> globalMap;
 
@@ -36,7 +33,6 @@ public final class ScriptServiceImpl
 
     public ScriptServiceImpl()
     {
-        this.invoker = new CommandInvokerImpl();
         this.globalMap = Maps.newHashMap();
         this.executors = Maps.newConcurrentMap();
     }
@@ -54,17 +50,6 @@ public final class ScriptServiceImpl
         final Object exports = executor.executeRequire( script );
         final ScriptValue value = executor.newScriptValue( exports );
         return new ScriptExportsImpl( script, value, exports );
-    }
-
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addHandler( final CommandHandler handler )
-    {
-        this.invoker.register( handler );
-    }
-
-    public void removeHandler( final CommandHandler handler )
-    {
-        this.invoker.unregister( handler );
     }
 
     private ScriptExecutor getExecutor( final ModuleKey key )
@@ -96,5 +81,11 @@ public final class ScriptServiceImpl
         {
             invalidate( ( (ModuleUpdatedEvent) event ).getModuleKey() );
         }
+    }
+
+    @Reference
+    public void setInvoker( final CommandInvoker invoker )
+    {
+        this.invoker = invoker;
     }
 }

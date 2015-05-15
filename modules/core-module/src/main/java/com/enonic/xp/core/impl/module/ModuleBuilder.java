@@ -14,7 +14,7 @@ import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 
-final class ModuleBuilder2
+final class ModuleBuilder
 {
     public final static String X_MODULE_URL = "X-Module-Url";
 
@@ -28,7 +28,7 @@ final class ModuleBuilder2
 
     private Bundle bundle;
 
-    public ModuleBuilder2 bundle( final Bundle value )
+    public ModuleBuilder bundle( final Bundle value )
     {
         this.bundle = value;
         return this;
@@ -46,6 +46,7 @@ final class ModuleBuilder2
         module.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
         module.vendorUrl = getHeader( this.bundle, X_VENDOR_URL, null );
         module.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
+        module.classLoader = new BundleClassLoader( this.bundle );
 
         readXmlDescriptor( module );
 
