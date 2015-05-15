@@ -96,7 +96,7 @@ module app.browse.action {
                             new api.security.auth.IsAuthenticatedRequest().
                                 sendAndParse().
                                 then((loginResult: api.security.auth.LoginResult) => {
-                                    new api.content.GetContentPermissionsByPathRequest(contentSummary.getPath()).
+                                    new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
                                         sendAndParse().
                                         then((accessControlList: AccessControlList) => {
                                             hasCreatePermission = this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);

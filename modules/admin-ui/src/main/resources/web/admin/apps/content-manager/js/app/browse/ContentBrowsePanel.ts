@@ -274,8 +274,10 @@ module app.browse {
                     var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                     return ContentSummaryAndCompareStatusFetcher.
-                        fetchByPaths(updateResult.map((el) => {
-                            return el.getPath();
+                        fetchByIds(updateResult.map((el) => {
+                            return el.getNodes().map((node) => {
+                                return node.getData().getContentId();
+                            });
                         })).
                         then((data: ContentSummaryAndCompareStatus[]) => {
                             var results = [];
