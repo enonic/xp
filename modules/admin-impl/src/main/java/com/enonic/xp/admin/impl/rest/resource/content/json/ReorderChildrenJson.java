@@ -14,16 +14,20 @@ public class ReorderChildrenJson
 
     private String contentId;
 
+    private ChildOrderJson childOrder;
+
     private List<ReorderChildJson> orderChildren = Lists.newLinkedList();
 
     @JsonCreator
     public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("manualOrder") final Boolean manualOrder,
                                 @JsonProperty("contentId") final String contentId,
+                                @JsonProperty("childOrder") final ChildOrderJson childOrder,
                                 @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
     {
         this.silent = silent;
         this.manualOrder = manualOrder;
         this.contentId = contentId;
+        this.childOrder= childOrder;
         this.orderChildren = orderChildren;
     }
 
@@ -43,6 +47,12 @@ public class ReorderChildrenJson
     public String getContentId()
     {
         return contentId;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public ChildOrderJson getChildOrder()
+    {
+        return childOrder;
     }
 
     @SuppressWarnings("UnusedDeclaration")
