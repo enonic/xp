@@ -12,7 +12,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
+import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
@@ -30,6 +32,8 @@ public final class ScriptServiceImpl
     private final Map<String, Object> globalMap;
 
     private final ConcurrentMap<ModuleKey, ScriptExecutor> executors;
+
+    private ModuleService moduleService;
 
     public ScriptServiceImpl()
     {
@@ -59,7 +63,8 @@ public final class ScriptServiceImpl
 
     private ScriptExecutor createExecutor( final ModuleKey key )
     {
-        final ScriptEngine engine = NashornHelper.getScriptEngine( "-strict" );
+        final Module module = this.moduleService.getModule( key );
+        final ScriptEngine engine = NashornHelper.getScriptEngine( module.getClassLoader(), "-strict" );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
@@ -87,5 +92,11 @@ public final class ScriptServiceImpl
     public void setInvoker( final CommandInvoker invoker )
     {
         this.invoker = invoker;
+    }
+
+    @Reference
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
     }
 }

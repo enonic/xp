@@ -1,6 +1,10 @@
 package com.enonic.xp.portal.impl.script;
 
+import org.mockito.Mockito;
+
+import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvokerImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.command.CommandHandler;
@@ -26,6 +30,14 @@ public abstract class AbstractScriptTest
 
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
+
+        final Module module = Mockito.mock( Module.class );
+        Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+
+        final ModuleService moduleService = Mockito.mock( ModuleService.class );
+        Mockito.when( moduleService.getModule( MYMODULE_KEY ) ).thenReturn( module );
+
+        this.scriptService.setModuleService( moduleService );
     }
 
     protected final void addHandler( final CommandHandler handler )
