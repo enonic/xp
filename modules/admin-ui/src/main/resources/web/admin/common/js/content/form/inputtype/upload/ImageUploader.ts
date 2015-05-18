@@ -24,9 +24,6 @@ module api.content.form.inputtype.upload {
                 skipWizardEvents: false,
                 maximumOccurrences: 1
             });
-            this.imageUploader.onFocalEditModeChanged((edit: boolean, position: {x: number; y: number}) => {
-                this.validate(false);
-            });
 
             this.appendChild(this.imageUploader);
         }
@@ -61,11 +58,39 @@ module api.content.form.inputtype.upload {
             }
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                property.setValue(this.imageUploader.getMediaValue(event.getUploadItem().getModel()));
+                var value = this.imageUploader.getMediaValue(event.getUploadItem().getModel());
+
+                switch (property.getType()) {
+                case ValueTypes.DATA:
+                    property.getPropertySet().setProperty('attachment', 0, value);
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(value);
+                    break;
+                }
             });
 
             this.imageUploader.onUploadReset(() => {
-                property.setValue(ValueTypes.STRING.newNullValue());
+                switch (property.getType()) {
+                case ValueTypes.DATA:
+                    var set = property.getPropertySet();
+                    set.setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
+                    set.setDoubleByPath('focalPoint.x', 0.5);
+                    set.setDoubleByPath('focalPoint.y', 0.5);
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(ValueTypes.STRING.newNullValue());
+                    break;
+                }
+            });
+
+            this.imageUploader.onFocalEditModeChanged((edit: boolean, position: {x: number; y: number}) => {
+                this.validate(false);
+                if (!edit && ValueTypes.DATA.equals(property.getType())) {
+                    var set = property.getPropertySet();
+                    set.setDoubleByPath('focalPoint.x', position.x);
+                    set.setDoubleByPath('focalPoint.y', position.y);
+                }
             });
 
             return wemQ<void>(null);

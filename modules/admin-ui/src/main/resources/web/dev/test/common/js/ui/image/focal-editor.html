@@ -75,9 +75,9 @@
     }
 
     var focalEditor = new api.ui.image.FocalEditor('green_railway_683x1024.jpg');
-    focalEditor.onPositionChanged(function (x, y) {
-        curX = x;
-        curY = y;
+    focalEditor.onPositionChanged(function (position) {
+        curX = position.x;
+        curY = position.y;
         renderCurrent();
     });
     focalEditor.onRadiusChanged(function (r) {
@@ -99,7 +99,7 @@
     var newButton = new ButtonEl();
     newButton.setHtml('OK');
     newButton.onClicked(function () {
-        focalEditor.setPosition(parseInt(newX.getValue()), parseInt(newY.getValue()));
+        focalEditor.setPosition(parseFloat(newX.getValue()), parseFloat(newY.getValue()));
     });
     newValue.appendChildren(newX, newY, newButton);
     newRow.appendChildren(newLabel, newValue);

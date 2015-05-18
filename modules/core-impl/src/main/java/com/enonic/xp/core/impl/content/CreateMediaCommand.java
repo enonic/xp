@@ -51,6 +51,8 @@ final class CreateMediaCommand
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).
+            focalX( params.getFocalX() ).
+            focalY( params.getFocalY() ).
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
