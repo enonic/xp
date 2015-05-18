@@ -101,6 +101,18 @@ module api.form.inputtype.text {
             });
 
             textAreaWrapper.appendChild(textAreaEl);
+
+            textAreaWrapper.giveFocus = () => {
+                try {
+                    this.editor.focus();
+                    return true;
+                }
+                catch (e) {
+                    console.log("Element.giveFocus(): Failed to give focus to TinyMCE element: id = " + this.getId());
+                    return false;
+                }
+            };
+
             return textAreaWrapper;
         }
 
