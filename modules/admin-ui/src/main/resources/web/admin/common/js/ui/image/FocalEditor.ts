@@ -18,7 +18,7 @@ module api.ui.image {
         private imgH: number;
         private imgR: number;
 
-        private mouseDownListener;
+        private mouseUpListener;
         private mouseMoveListener;
 
         private focalPointButton: api.ui.button.Button;
@@ -50,7 +50,7 @@ module api.ui.image {
 
             this.appendChildren(this.canvas, this.createToolbar());
 
-            this.bindDragListeners();
+            this.bindMouseListeners();
 
             if (src) {
                 this.setSrc(src);
@@ -303,7 +303,11 @@ module api.ui.image {
             }
         }
 
-        private bindDragListeners() {
+        private getPositionFromEvent(event: MouseEvent): {x: number; y: number} {
+            return
+        }
+
+        private bindMouseListeners() {
             var mouseDown: boolean = false;
             var lastPos: {x: number; y: number};
 
@@ -319,20 +323,30 @@ module api.ui.image {
                         y: this.restrainHeight(this.position.y + this.getOffsetY(event) - lastPos.y)
                     };
                     this.setPositionPx(restrainedPos);
+
                     lastPos = restrainedPos;
                 }
             };
             api.dom.Body.get().onMouseMove(this.mouseMoveListener);
 
-            this.mouseDownListener = (event: MouseEvent) => {
-                mouseDown = false;
+            this.mouseUpListener = (event: MouseEvent) => {
+                if (mouseDown) {
+                    // allow focus positioning by clicking
+                    var restrainedPos = {
+                        x: this.restrainWidth(this.getOffsetX(event)),
+                        y: this.restrainHeight(this.getOffsetY(event))
+                    };
+                    this.setPositionPx(restrainedPos);
+
+                    mouseDown = false;
+                }
             };
-            api.dom.Body.get().onMouseUp(this.mouseDownListener);
+            api.dom.Body.get().onMouseUp(this.mouseUpListener);
         }
 
         private unbindDragListeners() {
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
-            api.dom.Body.get().unMouseUp(this.mouseDownListener);
+            api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
 
         private createToolbar(): api.dom.DivEl {
