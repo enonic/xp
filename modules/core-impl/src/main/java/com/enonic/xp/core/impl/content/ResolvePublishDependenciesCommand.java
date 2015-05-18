@@ -3,8 +3,12 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareContentParams;
+import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
@@ -44,18 +48,20 @@ public class ResolvePublishDependenciesCommand
 
     private void resolveDependencies()
     {
-        final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults( this.includeChildren );
+        final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults();
 
         populateResults( syncWorkResultsWithChildren );
     }
 
-    private ResolveSyncWorkResults resolveSyncWorkResults( boolean includeChildren )
+    private ResolveSyncWorkResults resolveSyncWorkResults()
     {
         final ResolveSyncWorkResults.Builder resultsBuilder = ResolveSyncWorkResults.create();
 
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId, includeChildren );
+            final CompareStatus compareStatus = getCompareStatus( contentId ).getCompareStatus();
+            final ResolveSyncWorkResult syncWorkResult =
+                getWorkResult( contentId, this.includeChildren && CompareStatus.MOVED != compareStatus );
 
             resultsBuilder.add( syncWorkResult );
         }
@@ -104,6 +110,16 @@ public class ResolvePublishDependenciesCommand
         return CompareContentsCommand.create().
             nodeService( this.nodeService ).
             contentIds( ids ).
+            target( this.target ).
+            build().
+            execute();
+    }
+
+    public CompareContentResult getCompareStatus( final ContentId contentId )
+    {
+        return CompareContentCommand.create().
+            nodeService( this.nodeService ).
+            contentId( contentId ).
             target( this.target ).
             build().
             execute();

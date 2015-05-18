@@ -240,6 +240,10 @@ public class ResolveSyncWorkCommand
                     resultBuilder.deleteRequested( comparison.getNodeId() );
                 }
             }
+            else if ( comparison.getNodeId().equals( this.publishRootNode.id() ) )
+            {
+                this.resultBuilder.publishRequested( nodeId );
+            }
             else if ( resolveContext.becauseReferredTo )
             {
                 resultBuilder.publishReferredFrom( comparison.getNodeId(), resolveContext.contextNodeId );
@@ -250,28 +254,23 @@ public class ResolveSyncWorkCommand
             }
             else
             {
-                addRequestedOrChild( comparison.getNodeId() );
+                addChild( comparison.getNodeId() );
             }
         }
     }
 
 
-    public void addRequestedOrChild( final NodeId nodeId )
+    public void addChild( final NodeId nodeId )
     {
-        if ( nodeId.equals( this.publishRootNode.id() ) )
-        {
-            this.resultBuilder.publishRequested( nodeId );
-        }
-        else
-        {
-            final Node node = doGetById( nodeId, false );
 
-            final NodePath parentPath = node.parentPath();
+        final Node node = doGetById( nodeId, false );
 
-            final Node parentNode = doGetByPath( parentPath, false );
+        final NodePath parentPath = node.parentPath();
 
-            this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
-        }
+        final Node parentNode = doGetByPath( parentPath, false );
+
+        this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
+
     }
 
     public static class ResolveContext
