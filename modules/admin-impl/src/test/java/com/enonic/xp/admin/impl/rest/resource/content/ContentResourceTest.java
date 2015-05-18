@@ -163,7 +163,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_content_permissions_by_path()
+    public void get_content_permissions_by_id()
         throws Exception
     {
         final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
@@ -175,10 +175,10 @@ public class ContentResourceTest
 
         final AccessControlList permissions = getTestPermissions();
 
-        Mockito.when( contentService.getPermissionsByPath( Mockito.isA( ContentPath.class ) ) ).
+        Mockito.when( contentService.getPermissionsById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( permissions );
 
-        String jsonString = request().path( "content/contentPermissions" ).queryParam( "path", "/my_a_content" ).get().getAsString();
+        String jsonString = request().path( "content/contentPermissions" ).queryParam( "id", "/my_a_content" ).get().getAsString();
 
         assertJson( "get_content_permissions_success.json", jsonString );
     }

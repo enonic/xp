@@ -63,6 +63,19 @@ module api.content {
             return deferred.promise;
         }
 
+        static fetchByIds(ids: ContentId[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+
+            new GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
+                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
+                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                });
+            });
+
+            return deferred.promise;
+        }
+
         static fetchStatus(contentSummaries: ContentSummary[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
@@ -74,7 +87,8 @@ module api.content {
             return deferred.promise;
         }
 
-        static fetchIds(parentContentId: ContentId, from: number = 0, size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
+        static fetchChildrenIds(parentContentId: ContentId, from: number = 0,
+                                size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummary>>();
 

@@ -465,9 +465,9 @@ public final class ContentResource
 
     @GET
     @Path("contentPermissions")
-    public RootPermissionsJson getPermissionsByPath( @QueryParam("path") final String pathParam )
+    public RootPermissionsJson getPermissionsById( @QueryParam("id") final String contentId )
     {
-        final AccessControlList permissions = contentService.getPermissionsByPath( ContentPath.from( pathParam ) );
+        final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
         return new RootPermissionsJson( permissions, principalsResolver );
     }
 

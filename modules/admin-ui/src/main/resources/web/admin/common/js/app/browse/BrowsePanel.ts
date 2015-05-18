@@ -46,10 +46,6 @@ module api.app.browse {
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
-            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.treeGrid.deselectNode(event.getBrowseItem().getId());
-            });
-
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
 

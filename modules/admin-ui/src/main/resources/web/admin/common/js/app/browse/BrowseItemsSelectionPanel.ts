@@ -53,7 +53,7 @@ module api.app.browse {
                 this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
             }
 
-            this.notifyDeselected(item);
+            // this.notifyDeselected(item);
         }
 
         getItems(): BrowseItem<M>[] {
@@ -115,22 +115,5 @@ module api.app.browse {
             }
             return -1;
         }
-
-        onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
-            this.deselectedListeners.push(listener);
-        }
-
-        unDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
-            this.deselectedListeners = this.deselectedListeners.filter((currentListener: (event: ItemDeselectedEvent<M>)=>void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyDeselected(item: BrowseItem<M>) {
-            this.deselectedListeners.forEach((listener: (event: ItemDeselectedEvent<M>)=>void) => {
-                listener.call(this, new ItemDeselectedEvent(item));
-            });
-        }
-
     }
 }
