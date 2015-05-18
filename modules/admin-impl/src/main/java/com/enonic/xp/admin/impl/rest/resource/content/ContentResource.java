@@ -377,11 +377,23 @@ public final class ContentResource
     {
         Content content = this.contentService.getById( ContentId.from( params.getContentId() ) );
 
+        //If a initial sort is required before the manual reordering
+        if ( params.getChildOrder() != null && !params.getChildOrder().getChildOrder().equals( content.getChildOrder() ) )
+        {
+            content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+                childOrder( params.getChildOrder().getChildOrder() ).
+                contentId( ContentId.from( params.getContentId() ) ).
+                silent( true ).
+                build() );
+        }
+
+        //If the content is not already manually ordered, sets it to manually ordered
         if ( !content.getChildOrder().isManualOrder() )
         {
             if ( params.isManualOrder() )
             {
-                final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+
+                content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
                     childOrder( ChildOrder.manualOrder() ).
                     contentId( ContentId.from( params.getContentId() ) ).
                     silent( true ).
@@ -395,6 +407,8 @@ public final class ContentResource
             }
         }
 
+
+        //Applies the manual movements
         final ReorderChildContentsParams.Builder builder =
             ReorderChildContentsParams.create().contentId( ContentId.from( params.getContentId() ) ).silent( params.isSilent() );
 

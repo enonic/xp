@@ -901,6 +901,37 @@ public class ContentResourceTest
     }
 
     @Test
+    public void resortReorderChildrenContents()
+        throws Exception
+    {
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
+
+        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
+        content = Content.newContent( content ).childOrder( ChildOrder.defaultOrder() ).build();
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
+
+        final ReorderChildContentsParams reorderChildren = ReorderChildContentsParams.create().
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-1" ) ).contentToMoveBefore(
+                ContentId.from( "content-id-2" ) ).build() ).
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-3" ) ).build() ).
+            build();
+        final ReorderChildContentsResult result = new ReorderChildContentsResult( 2 );
+        Mockito.when( contentService.reorderChildren( Mockito.eq( reorderChildren ) ) ).thenReturn( result );
+
+        String jsonString = request().path( "content/reorderChildren" ).
+            entity( readFromFile( "resort_reorder_children_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 2 ) ).setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) );
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).reorderChildren( Mockito.isA( ReorderChildContentsParams.class ) );
+
+        assertJson( "reorder_children_success.json", jsonString );
+    }
+
+    @Test
     public void countContentsWithDescendants_check_children_filtered()
     {
         Set<String> contentPaths = new HashSet<String>( Arrays.asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
