@@ -79,8 +79,8 @@ module api.ui.image {
                 this.revertToPosition = undefined;
                 this.revertAutoPositioned = undefined;
             }
-
-            this.notifyEditModeChanged(edit, this.position);
+            // notify position updated in case we exit edit mode and apply changes
+            this.notifyEditModeChanged(edit, !edit && applyChanges ? this.position : undefined);
         }
 
         isEditMode(): boolean {
@@ -114,7 +114,20 @@ module api.ui.image {
          * @returns {undefined}
          */
         setPosition(x: number, y: number) {
-            return this.setPositionPx(this.denormalizePosition(x, y));
+            if (this.isImageLoaded()) {
+                // placeholder image is 1x1 so don't count it
+                this.setPositionPx(this.denormalizePosition(x, y));
+            } else {
+                // use revert position to temporary save values until the image is loaded
+                this.revertToPosition = {
+                    x: x,
+                    y: y
+                }
+            }
+        }
+
+        private isImageLoaded(): boolean {
+            return this.image.isLoaded() && !this.image.isPlaceholder();
         }
 
         private setPositionPx(position: {x: number; y: number}) {
@@ -255,17 +268,23 @@ module api.ui.image {
             this.imgH = imgEl.getNaturalHeight() + imgEl.getBorderTopWidth() + imgEl.getBorderBottomWidth() +
                         imgEl.getPaddingTop() + imgEl.getPaddingBottom();
 
+            // calculate radius first as it will be needed when setting position
             var autoPositioned = this.autoPositioned;
             this.setRadius(0.25);
             this.setAutoPositioned(autoPositioned);
 
+            if (this.isImageLoaded() && this.revertToPosition) {
+                // position was set while image was not yet loaded
+                this.setPosition(this.revertToPosition.x, this.revertToPosition.y);
+                this.revertToPosition = undefined;
+            } else if (this.autoPositioned) {
+                // set position to center by default
+                this.resetPosition();
+            }
+
             var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
             image.setAttribute('width', this.imgW.toString());
             image.setAttribute('height', this.imgH.toString());
-
-            if (this.autoPositioned) {
-                this.resetPosition();
-            }
 
             if (this.image.isLoaded()) {
                 this.updateMaskPosition();
@@ -346,10 +365,22 @@ module api.ui.image {
             return toolbar;
         }
 
+        /**
+         * Bind listener to edit mode change
+         * @param listener has following params:
+         *  - edit - tells if we enter or exit edit mode
+         *  - position - will be supplied if we exit edit mode and apply changes
+         */
         onEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.editModeListeners.push(listener);
         }
 
+        /**
+         * Unbind listener from edit mode change
+         * @param listener has following params:
+         *  - edit - tells if we enter or exit edit mode
+         *  - position - will be supplied if we exit edit mode and apply changes
+         */
         unEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.editModeListeners = this.editModeListeners.filter((curr) => {
                 return curr !== listener;
@@ -357,7 +388,11 @@ module api.ui.image {
         }
 
         private notifyEditModeChanged(edit: boolean, position: {x: number; y: number}) {
-            var normalizedPosition = this.normalizePosition(position);
+            var normalizedPosition;
+            if (position) {
+                // position can be undefined when auto positioned
+                normalizedPosition = this.normalizePosition(position);
+            }
             this.editModeListeners.forEach((listener) => {
                 listener(edit, normalizedPosition);
             })

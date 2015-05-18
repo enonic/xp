@@ -16,9 +16,9 @@ final class ImageFormDataBuilder
 
     private String tags = "";
 
-    private Double focalX = 0.5;
+    private Double focalX;
 
-    private Double focalY = 0.5;
+    private Double focalY;
 
     ImageFormDataBuilder image( final String name )
     {
@@ -66,8 +66,14 @@ final class ImageFormDataBuilder
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.DefaultPropertyIdProvider() );
         tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, image );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+        if ( focalX != null )
+        {
+            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
+        }
+        if ( focalY != null )
+        {
+            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+        }
 
         data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
         data.setString( "caption", caption );

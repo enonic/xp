@@ -46,5 +46,9 @@ module api.dom {
         isLoaded(): boolean {
             return this.loaded;
         }
+
+        isPlaceholder(): boolean {
+            return this.getSrc() == ImgEl.PLACEHOLDER;
+        }
     }
 }

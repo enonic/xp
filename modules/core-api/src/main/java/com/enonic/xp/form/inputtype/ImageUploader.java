@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
@@ -26,8 +25,8 @@ final class ImageUploader
         boolean isX = ContentPropertyNames.MEDIA_FOCAL_POINT_X.equals( property.getName() );
         boolean isY = ContentPropertyNames.MEDIA_FOCAL_POINT_Y.equals( property.getName() );
         if ( isAttachment && StringUtils.isBlank( property.getString() ) ||
-            isX && ( property.getDouble() < 0 || property.getDouble() > 1 ) ||
-            isY && ( property.getDouble() < 0 || property.getDouble() > 1 ) )
+            isX && ( property.getDouble() == null || property.getDouble() < 0 || property.getDouble() > 1 ) ||
+            isY && ( property.getDouble() == null || property.getDouble() < 0 || property.getDouble() > 1 ) )
         {
             throw new BreaksRequiredContractException( property, this );
         }
@@ -53,8 +52,6 @@ final class ImageUploader
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.DefaultPropertyIdProvider() );
         tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, value );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), 0.5 );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), 0.5 );
         return Value.newData( tree.getRoot() );
     }
 }

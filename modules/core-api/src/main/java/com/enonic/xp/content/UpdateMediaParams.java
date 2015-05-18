@@ -16,9 +16,9 @@ public class UpdateMediaParams
 
     private ByteSource inputStream;
 
-    private Double focalX = 0.5;
+    private Double focalX;
 
-    private Double focalY = 0.5;
+    private Double focalY;
 
     public UpdateMediaParams content( final ContentId value )
     {

@@ -47,7 +47,7 @@ module api.content {
             var focalEditor = new api.ui.image.FocalEditor(imgUrl);
             focalEditor.onEditModeChanged((edit, position) => {
                 this.setResetVisible(!edit);
-                this.notifyFocalEditModeChanged(edit, position);
+                this.notifyFocalPointEditModeChanged(edit, position);
             });
             var image = focalEditor.getImage();
 
@@ -78,23 +78,29 @@ module api.content {
             return focalEditor;
         }
 
-        isFocalEditMode(): boolean {
-            return this.focalEditors.some((editor) => {
+        setFocalPoint(x: number, y: number) {
+            this.focalEditors.forEach((editor: api.ui.image.FocalEditor) => {
+                editor.setPosition(x, y);
+            })
+        }
+
+        isFocalPointEditMode(): boolean {
+            return this.focalEditors.some((editor: api.ui.image.FocalEditor) => {
                 return editor.isEditMode();
             });
         }
 
-        onFocalEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        onFocalPointEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.focalEditModeListeners.push(listener);
         }
 
-        unFocalEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        unFocalPointEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.focalEditModeListeners = this.focalEditModeListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyFocalEditModeChanged(edit: boolean, position: {x: number; y: number}) {
+        private notifyFocalPointEditModeChanged(edit: boolean, position: {x: number; y: number}) {
             this.focalEditModeListeners.forEach((listener) => {
                 listener(edit, position);
             })
