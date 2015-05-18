@@ -210,9 +210,8 @@ final class CreateContentCommand
                 InputValidator.
                     create().
                     contentType( contentType ).
-                    requireMappedProperties( params.isRequireMappedProperties() ).
                     build().
-                    validate( params.getData().getRoot() );
+                    validate( params.getData() );
             }
             catch ( InvalidDataException e )
             {
