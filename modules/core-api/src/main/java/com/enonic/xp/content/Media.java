@@ -85,7 +85,7 @@ public class Media
             return FocalPoint.DEFAULT;
         }
 
-        return new FocalPoint( focalX.floatValue(), focalY.floatValue() );
+        return new FocalPoint( focalX, focalY );
     }
 
     public Attachment getBestFitImageAttachment( int requiredImageSize )

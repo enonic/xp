@@ -5,13 +5,13 @@ import com.google.common.base.Preconditions;
 
 public final class FocalPoint
 {
-    public final static FocalPoint DEFAULT = new FocalPoint( 0.5f, 0.5f );
+    public final static FocalPoint DEFAULT = new FocalPoint( 0.5, 0.5 );
 
-    private final float x;
+    private final double x;
 
-    private final float y;
+    private final double y;
 
-    public FocalPoint( final float x, final float y )
+    public FocalPoint( final double x, final double y )
     {
         Preconditions.checkArgument( x >= 0.0 && x <= 1.0, "FocalPoint x value must be between 0 and 1 : %s", x );
         Preconditions.checkArgument( y >= 0.0 && y <= 1.0, "FocalPoint y value must be between 0 and 1 : %s", y );
@@ -19,12 +19,12 @@ public final class FocalPoint
         this.y = y;
     }
 
-    public float xOffset()
+    public double xOffset()
     {
         return x;
     }
 
-    public float yOffset()
+    public double yOffset()
     {
         return y;
     }

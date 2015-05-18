@@ -19,6 +19,6 @@ public final class ScaleWideFunctionCommand
     @Override
     protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
-        return new ScaleWideFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getFloatArg( args, 2, focalPoint.yOffset() ) );
+        return new ScaleWideFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getDoubleArg( args, 2, focalPoint.yOffset() ) );
     }
 }

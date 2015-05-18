@@ -15,7 +15,7 @@ public class ScaleBlockFunctionCommand
     @Override
     protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
-        return new ScaleBlockFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getFloatArg( args, 2, focalPoint.xOffset() ),
-                                       getFloatArg( args, 3, focalPoint.yOffset() ) );
+        return new ScaleBlockFunction( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getDoubleArg( args, 2, focalPoint.xOffset() ),
+                                       getDoubleArg( args, 3, focalPoint.yOffset() ) );
     }
 }

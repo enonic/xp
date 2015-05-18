@@ -19,6 +19,6 @@ public final class ScaleSquareFunctionCommand
     @Override
     protected ImageScaleFunction doBuild( Object[] args, FocalPoint focalPoint )
     {
-        return new ScaleSquareFunction( getIntArg( args, 0, 0 ) );
+        return new ScaleSquareFunction( getIntArg( args, 0, 0 ), focalPoint.xOffset(), focalPoint.yOffset() );
     }
 }
