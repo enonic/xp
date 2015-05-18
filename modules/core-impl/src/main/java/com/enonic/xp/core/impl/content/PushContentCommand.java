@@ -162,6 +162,8 @@ public class PushContentCommand
     {
         final Context currentContext = ContextAccessor.current();
 
+        final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( result.getDelete() ) ) );
+
         final List<ContentPath> deletedContents = new ArrayList<>();
         deletedContents.addAll( deleteNodesInContext( result, currentContext ) );
 
@@ -169,10 +171,7 @@ public class PushContentCommand
             branch( target ).
             build() ) );
 
-        for ( final NodeId nodeId : result.getDelete() )
-        {
-            this.resultBuilder.addDeleted( ContentId.from( nodeId.toString() ) );
-        }
+        this.resultBuilder.setDeleted( contents );
 
         if ( !deletedContents.isEmpty() )
         {
