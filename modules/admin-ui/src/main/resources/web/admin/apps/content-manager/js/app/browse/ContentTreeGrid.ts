@@ -335,7 +335,7 @@ module app.browse {
             }
 
             if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
-                return ContentSummaryAndCompareStatusFetcher.fetchIds(parentContentId, 0, size + 1).
+                return ContentSummaryAndCompareStatusFetcher.fetchChildrenIds(parentContentId, 0, size + 1).
                     then((response: ContentResponse<ContentSummary>) => {
                         return response.getContents();
                     });

@@ -67,6 +67,8 @@ module api.liveedit {
 
         private pageModeChangedListener: (event: PageModeChangedEvent) => void;
 
+        private lockedContextMenu: api.liveedit.ItemViewContextMenu;
+
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
@@ -226,12 +228,6 @@ module api.liveedit {
             }
         }
 
-        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            if (!this.isLocked()) {
-                super.showContextMenu(clickPosition, menuPosition);
-            }
-        }
-
         unshade() {
             if (!this.isLocked()) {
                 super.unshade();
@@ -244,6 +240,15 @@ module api.liveedit {
                     this.setLocked(false);
                 }
             })
+
+            this.onMouseOverView(() => {
+                var isDragging = DragAndDrop.get().isDragging();
+                if (isDragging && this.lockedContextMenu) {
+                    if (this.lockedContextMenu.isVisible()) {
+                        this.lockedContextMenu.hide();
+                    }
+                }
+            });
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
@@ -252,9 +257,35 @@ module api.liveedit {
             new PageSelectedEvent(this).fire();
         }
 
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (!this.isLocked()) {
+                super.showContextMenu(clickPosition, menuPosition);
+            }
+        }
+
+        createLockedContextMenu() {
+            return new api.liveedit.ItemViewContextMenu(this.getContextMenuTitle(), this.getLockedMenuActions());
+        }
+
+        getLockedMenuActions(): api.ui.Action[] {
+            var unlockAction = new api.ui.Action("Customize");
+
+            unlockAction.onExecuted(() => {
+                this.setLocked(false);
+            });
+
+            return [unlockAction];
+        }
 
         handleShaderClick(event: MouseEvent) {
-            if (!this.isLocked() && this.isSelected()) {
+            if (this.isLocked()) {
+                if (!this.lockedContextMenu) {
+                    this.lockedContextMenu = this.createLockedContextMenu();
+                }
+
+                this.lockedContextMenu.showAt(event.pageX, event.pageY);
+            }
+            else if (this.isSelected()) {
                 this.deselect();
             }
         }
@@ -267,10 +298,6 @@ module api.liveedit {
             } else {
                 super.handleClick(event);
             }
-        }
-
-        setLockVisible(visible: boolean) {
-            this.toggleClass('force-locked', visible);
         }
 
         isLocked() {

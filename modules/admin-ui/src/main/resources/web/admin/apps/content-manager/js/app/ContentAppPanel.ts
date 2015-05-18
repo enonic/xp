@@ -184,8 +184,8 @@ module app {
 
                     new app.wizard.ContentWizardPanelFactory().
                         setAppBarTabId(tabId).
-                        setContentToEdit(content.getContentId()).
-                        createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
+                        setContentIdToEdit(content.getContentId()).
+                        createForEdit(content).then((wizard: app.wizard.ContentWizardPanel) => {
                             if (closeViewPanelMenuItem != null) {
                                 this.getAppBarTabMenu().deselectNavigationItem();
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);

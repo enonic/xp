@@ -22,7 +22,7 @@ import com.enonic.xp.module.ModuleVersion;
 
 import static org.junit.Assert.*;
 
-public class ModuleBuilder2Test
+public class ModuleBuilderTest
 {
     private PojoServiceRegistry serviceRegistry;
 
@@ -42,12 +42,12 @@ public class ModuleBuilder2Test
         headers.put( Constants.BUNDLE_SYMBOLICNAME, "com.enonic.test.mybundle" );
         headers.put( Constants.BUNDLE_VERSION, "1.0.0" );
         headers.put( Constants.BUNDLE_NAME, "My test module" );
-        headers.put( ModuleBuilder2.X_MODULE_URL, "http://enonic.com/path/to/module" );
-        headers.put( ModuleBuilder2.X_VENDOR_NAME, "Enonic AS" );
-        headers.put( ModuleBuilder2.X_VENDOR_URL, "http://enonic.com" );
-        headers.put( ModuleBuilder2.X_SYSTEM_VERSION, "[5.0,6.0)" );
+        headers.put( ModuleBuilder.X_MODULE_URL, "http://enonic.com/path/to/module" );
+        headers.put( ModuleBuilder.X_VENDOR_NAME, "Enonic AS" );
+        headers.put( ModuleBuilder.X_VENDOR_URL, "http://enonic.com" );
+        headers.put( ModuleBuilder.X_SYSTEM_VERSION, "[5.0,6.0)" );
 
-        final ModuleBuilder2 builder = new ModuleBuilder2();
+        final ModuleBuilder builder = new ModuleBuilder();
         builder.bundle( newBundle( "bundle1", headers ) );
 
         final Module module = builder.build();
@@ -59,6 +59,7 @@ public class ModuleBuilder2Test
         assertEquals( "Enonic AS", module.getVendorName() );
         assertEquals( "http://enonic.com", module.getVendorUrl() );
         assertEquals( "[5.0,6.0)", module.getSystemVersion() );
+        assertNotNull( module.getClassLoader() );
     }
 
     private Bundle newBundle( final String name, final Map<String, String> headers )

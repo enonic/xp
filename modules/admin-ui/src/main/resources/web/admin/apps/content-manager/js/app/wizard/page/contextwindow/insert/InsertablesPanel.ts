@@ -45,11 +45,7 @@ module app.wizard.page.contextwindow.insert {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                this.liveEditPageProxy.getDragMask().setTransparent(this.pageView.isLocked());
             });
-
-            this.liveEditPageProxy.onPageLocked((event) => this.liveEditPageProxy.getDragMask().setTransparent(true));
-            this.liveEditPageProxy.onPageUnlocked((event) => this.liveEditPageProxy.getDragMask().setTransparent(false));
 
             this.liveEditPageProxy.onComponentViewDragStopped(() => {
                 // Drop was performed on live edit page
@@ -103,13 +99,12 @@ module app.wizard.page.contextwindow.insert {
             this.liveEditPageProxy.getDragMask().show();
 
             // force the lock mask to be shown
-            this.pageView.setLockVisible(true);
             this.contextWindowDraggable = wemjq(event.target);
         }
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             var over = this.isOverIFrame(event);
-            if (!this.pageView.isLocked() && this.overIFrame != over) {
+            if (/*!this.pageView.isLocked() && */this.overIFrame != over) {
                 if (over) {
                     this.onEnterIFrame(event, ui);
                 } else {
@@ -125,7 +120,6 @@ module app.wizard.page.contextwindow.insert {
             }
             this.liveEditPageProxy.getDragMask().hide();
             // remove forced lock mask
-            this.pageView.setLockVisible(false);
             this.contextWindowDraggable = null;
 
             if (this.iFrameDraggable) {

@@ -140,7 +140,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             this.layoutSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
                 if (this.handleSelectorEvents) {
-                    this.layoutComponent.setDescriptor(null, null);
+                    this.layoutComponent.reset();
                 }
 
             });

@@ -96,18 +96,13 @@ module app.browse {
                     this.close();
                 } else {
                     if (this.curChildOrder.isManual()) {
-                        if (this.prevChildOrder && !this.prevChildOrder.isManual()) {
-
-                            this.setContentChildOrder(this.prevChildOrder, true).done(() => {
-                                this.setManualReorder(this.gridDragHandler.getContentMovements()).
-                                    done(() => {
-                                        new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
-                                        this.close();
-                                    });
+                        if (this.prevChildOrder && !this.prevChildOrder.equals(this.parentContent.getChildOrder())) {
+                            this.setManualReorder(this.prevChildOrder, this.gridDragHandler.getContentMovements()).done(() => {
+                                new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                                this.close();
                             });
-
                         } else {
-                            this.setManualReorder(this.gridDragHandler.getContentMovements()).done(() => {
+                            this.setManualReorder(null, this.gridDragHandler.getContentMovements()).done(() => {
                                 new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
                                 this.close();
                             });
@@ -124,6 +119,7 @@ module app.browse {
             OpenSortDialogEvent.on((event) => {
                 this.parentContent = event.getContent();
                 this.curChildOrder = this.parentContent.getChildOrder();
+                this.prevChildOrder = undefined;
                 this.sortContentMenu.selectNavigationItemByOrder(this.curChildOrder);
                 api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
                     done((response: api.content.ContentSummaryAndCompareStatus) => {
@@ -178,11 +174,12 @@ module app.browse {
                 sendAndParse();
         }
 
-        private setManualReorder(movements: OrderChildMovements, silent: boolean = false): wemQ.Promise<api.content.Content> {
+        private setManualReorder(order: ChildOrder, movements: OrderChildMovements, silent: boolean = false): wemQ.Promise<api.content.Content> {
             return new api.content.OrderChildContentRequest().
                 setSilent(silent).
                 setManualOrder(true).
                 setContentId(this.parentContent.getContentId()).
+                setChildOrder(order).
                 setContentMovements(movements).
                 sendAndParse();
         }

@@ -135,12 +135,10 @@ module app.wizard.page {
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
                 var itemView = this.pageView.getSelectedView();
-                if (itemView) {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                        this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
-                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
-                        this.saveAndReloadPage();
-                    }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
+                } else if (this.pageView.isLocked() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
+                    this.saveAndReloadPage();
                 }
             });
 
@@ -225,12 +223,12 @@ module app.wizard.page {
                 // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
                 if (event.getPropertyName() == "controller" && this !== event.getSource()) {
-                    this.saveAndReloadPage();
+                    this.saveAndReloadPage(true);
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
                     if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
-                        this.saveAndReloadPage();
+                        this.saveAndReloadPage(true);
                     }
                 }
             });
@@ -291,11 +289,14 @@ module app.wizard.page {
             }
         }
 
-        saveAndReloadPage() {
+        saveAndReloadPage(clearInspection: boolean = false) {
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 then(() => {
                     this.pageSkipReload = false;
+                    if (clearInspection) {
+                        this.contextWindow.clearSelection();
+                    }
                     this.liveEditPageProxy.load();
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
@@ -340,6 +341,10 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
                 this.inspectPage();
+            });
+
+            this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
+                this.contextWindow.clearSelection();
             });
 
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {

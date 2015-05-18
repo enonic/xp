@@ -52,7 +52,7 @@ module api.content {
                 } else if (failed === 1) {
                     api.notify.showError('Content [' + result.failures[0].path + '] failed, reason: ' + result.failures[0].reason);
                 } else {
-                    api.notify.showSuccess('Content [' + result.deleted[0] + '] deleted');
+                    api.notify.showSuccess('Content [' + result.deleted[0].name + '] deleted');
                 }
                 break;
             default: // > 1

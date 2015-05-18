@@ -25,12 +25,6 @@ module api.liveedit {
 
         constructor() {
             this.pageShader = new DivEl(Shader.CLS_NAME + " page");
-            var centeredContainer = new api.dom.DivEl('centered');
-            var unlockLink = new api.dom.AEl('unlock-link');
-            unlockLink.setHtml('Unlock').onClicked((event: MouseEvent) => this.handleUnlockClick(event));
-            centeredContainer.appendChild(unlockLink);
-            this.pageShader.appendChild(centeredContainer);
-
             this.northShader = new DivEl(Shader.CLS_NAME + " north");
             this.eastShader = new DivEl(Shader.CLS_NAME + " east");
             this.southShader = new DivEl(Shader.CLS_NAME + " south");

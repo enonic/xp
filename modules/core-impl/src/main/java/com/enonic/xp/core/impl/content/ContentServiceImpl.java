@@ -333,9 +333,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public AccessControlList getPermissionsByPath( ContentPath path )
+    public AccessControlList getPermissionsById( ContentId contentId )
     {
-        Content content = getByPath( path );
+        Content content = getById( contentId );
         if ( content != null && content.getPermissions() != null )
         {
             return content.getPermissions();

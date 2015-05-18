@@ -118,7 +118,7 @@ module api.ui.selector.combobox {
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
-            this.appendChild(this.comboBoxDropdown.getGrid().getElement());
+            this.appendChild(this.comboBoxDropdown.getDropdownGrid().getElement());
 
             this.setupListeners();
 
@@ -260,8 +260,8 @@ module api.ui.selector.combobox {
                     filteredOption.push(selectedOptions[k].value);
                 }
             }
-            this.comboBoxDropdown.getGrid().getElement().getSelectedRows().forEach((row: number) => {
-                gridOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row).value);
+            this.comboBoxDropdown.getDropdownGrid().getElement().getSelectedRows().forEach((row: number) => {
+                gridOptions.push(this.comboBoxDropdown.getDropdownGrid().getOptionByRow(row).value);
             });
 
             return (filteredOption.length !== gridOptions.length) ||
@@ -533,6 +533,7 @@ module api.ui.selector.combobox {
                     this.preservedInputValueChangedEvent.getNewValue());
 
                 this.comboBoxDropdown.resetActiveSelection();
+                this.showDropdown();
 
                 this.input.setReadOnly(false);
             }
@@ -712,7 +713,7 @@ module api.ui.selector.combobox {
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
-                this.comboBoxDropdown.getGrid().getElement());
+                this.comboBoxDropdown.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
