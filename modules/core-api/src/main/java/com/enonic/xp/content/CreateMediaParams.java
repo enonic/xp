@@ -16,9 +16,9 @@ public class CreateMediaParams
 
     private ByteSource byteSource;
 
-    private Double focalX = 0.5;
+    private Double focalX;
 
-    private Double focalY = 0.5;
+    private Double focalY;
 
     public CreateMediaParams parent( final ContentPath value )
     {

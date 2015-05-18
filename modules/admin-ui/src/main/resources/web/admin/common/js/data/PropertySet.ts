@@ -216,7 +216,7 @@ module api.data {
             if (array) {
                 array.remove(index);
             }
-            if (array.isEmpty()) {
+            if (!array || array.isEmpty()) {
                 delete this.propertyArrayByName[name];
             }
         }
