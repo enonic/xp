@@ -10,7 +10,7 @@ module app.publish {
     import CompareStatus = api.content.CompareStatus;
 
     /**
-     * ContentPublishDialog manages list of items resolved via ResolvePublishDependenceies command.
+     * ContentPublishDialog manages list of items resolved via ResolvePublishDependencies command.
      * Resolved items are converted into array of SelectionPublishItem<ContentPublishItem> items and stored in selectionItems property.
      * SelectionPublishItem has checked/unchecked state which determines if item's id will be included into a list of contentIds of Publish request.
      * Items displayed in dialog and selectionItems property will change depending on includeChildren checkbox state as
@@ -322,8 +322,10 @@ module app.publish {
             var childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
             if (childrenEligibleForPublish > 0) {
                 this.includeChildItemsCheck.setLabel('Include child items (+' + childrenEligibleForPublish + ')');
+                this.includeChildItemsCheck.setDisabled(false);
             } else {
                 this.includeChildItemsCheck.setLabel('Include child items');
+                this.includeChildItemsCheck.setDisabled(true);
             }
         }
 
