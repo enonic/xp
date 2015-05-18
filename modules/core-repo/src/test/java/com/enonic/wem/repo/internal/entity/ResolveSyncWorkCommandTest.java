@@ -175,6 +175,64 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
+    public void resolveDependenciesOfMovedNodes()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
+
+        moveNode( node1, node2.path() );
+
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
+
+        // assertEquals( resultChildrenIncluded.getNodePublishRequests().size(), resultChildrenNotIncluded.getNodePublishRequests().size());
+    }
+
+    private void moveNode( Node moveMe, NodePath to )
+    {
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            branchService( this.branchService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( moveMe.id() ).
+            newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
+            newParent( to ).
+            build().
+            execute();
+    }
+
+    @Test
     public void include_referred_nodes()
         throws Exception
     {
