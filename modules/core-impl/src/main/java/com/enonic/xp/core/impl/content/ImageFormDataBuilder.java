@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
@@ -16,9 +18,9 @@ final class ImageFormDataBuilder
 
     private String tags = "";
 
-    private Double focalX;
+    private double focalX = 0.5;
 
-    private Double focalY;
+    private double focalY = 0.5;
 
     ImageFormDataBuilder image( final String name )
     {
@@ -50,13 +52,13 @@ final class ImageFormDataBuilder
         return this;
     }
 
-    ImageFormDataBuilder focalX( final Double focalX )
+    ImageFormDataBuilder focalX( final double focalX )
     {
         this.focalX = focalX;
         return this;
     }
 
-    ImageFormDataBuilder focalY( final Double focalY )
+    ImageFormDataBuilder focalY( final double focalY )
     {
         this.focalY = focalY;
         return this;
@@ -64,16 +66,13 @@ final class ImageFormDataBuilder
 
     void build( PropertyTree data )
     {
+        Preconditions.checkArgument( focalX >= 0.0 && focalX <= 1.0, "Image focal point x value must be between 0 and 1 : %s", focalX );
+        Preconditions.checkArgument( focalY >= 0.0 && focalY <= 1.0, "Image focal point y value must be between 0 and 1 : %s", focalY );
+
         PropertyTree tree = new PropertyTree( new PropertyTree.DefaultPropertyIdProvider() );
         tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, image );
-        if ( focalX != null )
-        {
-            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
-        }
-        if ( focalY != null )
-        {
-            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
-        }
+        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
+        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
 
         data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
         data.setString( "caption", caption );

@@ -16,9 +16,9 @@ public class CreateMediaParams
 
     private ByteSource byteSource;
 
-    private Double focalX;
+    private double focalX = 0.5;
 
-    private Double focalY;
+    private double focalY = 0.5;
 
     public CreateMediaParams parent( final ContentPath value )
     {
@@ -44,13 +44,13 @@ public class CreateMediaParams
         return this;
     }
 
-    public CreateMediaParams focalX( final Double focalX )
+    public CreateMediaParams focalX( final double focalX )
     {
         this.focalX = focalX;
         return this;
     }
 
-    public CreateMediaParams focalY( final Double focalY )
+    public CreateMediaParams focalY( final double focalY )
     {
         this.focalY = focalY;
         return this;
@@ -84,12 +84,12 @@ public class CreateMediaParams
         return byteSource;
     }
 
-    public Double getFocalX()
+    public double getFocalX()
     {
         return focalX;
     }
 
-    public Double getFocalY()
+    public double getFocalY()
     {
         return focalY;
     }
