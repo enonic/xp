@@ -230,7 +230,7 @@ module api.content.page {
                           api.content.page.region.Regions.create().build();
 
             var setTemplate = new SetTemplate(eventSource).
-                setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor).
+                setTemplate(null, this.defaultTemplateDescriptor).
                 setRegions(regions).
                 setConfig(config);
 
