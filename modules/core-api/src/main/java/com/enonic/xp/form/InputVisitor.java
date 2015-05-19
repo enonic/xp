@@ -1,4 +1,4 @@
-package com.enonic.xp.form.inputtype;
+package com.enonic.xp.form;
 
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;

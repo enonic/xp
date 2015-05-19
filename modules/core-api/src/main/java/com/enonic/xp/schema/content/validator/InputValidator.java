@@ -6,7 +6,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputVisitor;
+import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.schema.content.ContentType;
 
 
