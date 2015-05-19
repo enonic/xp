@@ -1,10 +1,5 @@
 package com.enonic.xp.form;
 
-import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemSet;
-import com.enonic.xp.form.Input;
-
 public abstract class InputVisitor
 {
     public void traverse( final Iterable<FormItem> formItems )
