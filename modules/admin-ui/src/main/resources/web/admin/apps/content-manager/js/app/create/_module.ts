@@ -8,3 +8,6 @@
 
 ///<reference path='RecentItems.ts' />
 ///<reference path='RecentItemsList.ts' />
+
+///<reference path='MostPopularItemsList.ts' />
+///<reference path='MostPopularItem.ts' />
