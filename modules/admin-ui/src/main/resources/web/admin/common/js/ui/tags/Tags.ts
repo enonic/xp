@@ -42,6 +42,8 @@ module api.ui.tags {
 
         private preservedValue: string;
 
+        private searchTimeout: number;
+
         private tagAddedListeners: {(event: TagAddedEvent) : void}[] = [];
 
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
@@ -105,35 +107,46 @@ module api.ui.tags {
             });
 
             this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                if (this.searchTimeout) {
+                    clearTimeout(this.searchTimeout);
+                    this.searchTimeout = undefined;
+                }
 
                 var searchString = event.getNewValue();
-
-                this.tagSuggester.suggest(searchString).then((values: string[]) => {
-
-                    var existingValues = this.getTags().concat(searchString);
-                    values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
-
-                    if (values.length == 0) {
-                        this.tagSuggestions.hide();
-                    } else {
-                        this.tagSuggestions.setTags(values);
-                        this.tagSuggestions.getEl().
-                            setTopPx(this.textInput.getEl().getOffsetToParent().top + this.textInput.getEl().getHeightWithMargin()).
-                            setLeftPx(this.textInput.getEl().getOffsetToParent().left);
-                        this.tagSuggestions.show();
-                        this.preservedValue = searchString;
-                    }
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                    return [];
-                }).done();
+                this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 300);
             });
 
             this.onClicked(() => {
                 // restore input width to default
                 this.textInput.getEl().setWidth('');
-                this.textInput.giveFocus()
+                this.textInput.giveFocus();
             });
+        }
+
+        private searchSuggestions(searchString: string) {
+            this.tagSuggester.suggest(searchString).then((values: string[]) => {
+                if (searchString !== this.textInput.getValue()) {
+                    // if input text changed during the request, cancel suggestions
+                    return;
+                }
+
+                var existingValues = this.getTags().concat(searchString);
+                values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
+
+                if (values.length == 0) {
+                    this.tagSuggestions.hide();
+                } else {
+                    this.tagSuggestions.setTags(values);
+                    this.tagSuggestions.getEl().
+                        setTopPx(this.textInput.getEl().getOffsetToParent().top + this.textInput.getEl().getHeightWithMargin()).
+                        setLeftPx(this.textInput.getEl().getOffsetToParent().left);
+                    this.tagSuggestions.show();
+                    this.preservedValue = searchString;
+                }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+                return [];
+            }).done();
         }
 
         private handleWordCompleted() {
@@ -148,6 +161,7 @@ module api.ui.tags {
                 if (this.isMaxTagsReached()) {
                     this.textInput.hide();
                 }
+                this.tagSuggestions.hide();
             }
         }
 
