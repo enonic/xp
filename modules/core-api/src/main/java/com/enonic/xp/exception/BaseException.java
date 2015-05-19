@@ -25,6 +25,6 @@ public abstract class BaseException
 
     public BaseException( final Throwable cause, final String message, final Object... args )
     {
-        super( MessageFormat.format( message, args ), cause );
+        super( message == null ? "" : MessageFormat.format( message, args ), cause );
     }
 }
