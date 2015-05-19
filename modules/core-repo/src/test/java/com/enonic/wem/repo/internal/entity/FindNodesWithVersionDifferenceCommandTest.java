@@ -285,6 +285,59 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
+    public void assure_correct_diff_order_when_there_are_children2()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id() );
+
+        NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1_1.path() );
+
+        assertEquals( 3, result.getNodesWithDifferences().getSize() );
+
+        int counter = 0;
+        for ( final NodeId nodeId : result.getNodesWithDifferences() )
+        {
+            if ( counter == 0 )
+            {
+                assertEquals( node1_1.id().toString(), nodeId.toString() );
+            }
+            else if ( counter == 1 )
+            {
+                assertEquals( node1_1_1.id().toString(), nodeId.toString() );
+            }
+            else if ( counter == 2 )
+            {
+                assertEquals( node1_1_1_1.id().toString(), nodeId.toString() );
+            }
+
+            counter++;
+        }
+    }
+
+    @Test
     public void deleted_in_target()
         throws Exception
     {
