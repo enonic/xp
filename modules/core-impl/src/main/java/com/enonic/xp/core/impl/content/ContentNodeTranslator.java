@@ -106,7 +106,9 @@ public class ContentNodeTranslator
     private Content doGetFromNode( final Node node )
     {
         final NodePath parentNodePath = node.path().getParentPath();
-        final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( ContentConstants.CONTENT_ROOT_PATH );
+        final NodePath parentContentPathAsNodePath =
+            !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) ? parentNodePath.removeFromBeginning(
+                ContentConstants.CONTENT_ROOT_PATH ) : NodePath.ROOT;
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
         final Content.Builder builder = contentSerializer.fromData( node.data().getRoot() );
