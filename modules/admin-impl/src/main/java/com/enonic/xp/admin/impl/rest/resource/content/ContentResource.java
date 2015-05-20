@@ -341,30 +341,16 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final ResolvePublishDependenciesResult resolvedWithChildren =
+        final ResolvePublishDependenciesResult resolved =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( contentIds ).
-                includeChildren( true ).
+                includeChildren( params.includeChildren() ).
                 build() );
 
-        final ResolvePublishDependenciesResult resolvedWithoutChildren =
-            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                target( ContentConstants.BRANCH_MASTER ).
-                contentIds( contentIds ).
-                includeChildren( false ).
-                build() );
-
-        ResolvePublishDependenciesResult result = ResolvePublishDependenciesResult.create().
-            setChildrenContentsIds( resolvedWithChildren.getChildrenContentsIds() ).
-            setCompareContentResults( resolvedWithChildren.getCompareContentResults() ).
-            setDependantsIdsResolvedWithChildrenIncluded( resolvedWithChildren.getDependantsIdsResolvedWithChildrenIncluded() ).
-            setDependantsIdsResolvedWithoutChildrenIncluded( resolvedWithoutChildren.getDependantsIdsResolvedWithoutChildrenIncluded() ).
-            setResolvedContent( resolvedWithChildren.getResolvedContent() ).
-            setPushRequestedIds( resolvedWithChildren.getPushRequestedIds() ).
-            build();
-
-        return ResolvePublishDependenciesResultJson.from( result, newContentIconUrlResolver() );
+        return ResolvePublishDependenciesResultJson.create().
+            resolvedPublishDependencies( resolved ).
+            iconUrlResolver( newContentIconUrlResolver() ).build();
     }
 
     @POST

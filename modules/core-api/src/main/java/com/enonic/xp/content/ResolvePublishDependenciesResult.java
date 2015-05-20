@@ -6,9 +6,7 @@ import com.google.common.annotations.Beta;
 public class ResolvePublishDependenciesResult
 {
 
-    private final PushedContentIdsWithInitialReason dependantsIdsResolvedWithChildrenIncluded;
-
-    private final PushedContentIdsWithInitialReason dependantsIdsResolvedWithoutChildrenIncluded;
+    private final PushedContentIdsWithInitialReason dependantsContentIds;
 
     private final PushedContentIdsWithInitialReason childrenContentsIds;
 
@@ -16,12 +14,11 @@ public class ResolvePublishDependenciesResult
 
     private final Contents resolvedContent;
 
-    private CompareContentResults compareContentResults;
+    private final CompareContentResults compareContentResults;
 
     private ResolvePublishDependenciesResult( final Builder builder )
     {
-        this.dependantsIdsResolvedWithChildrenIncluded = builder.dependantsIdsResolvedWithChildrenIncluded;
-        this.dependantsIdsResolvedWithoutChildrenIncluded = builder.dependantsIdsResolvedWithoutChildrenIncluded;
+        this.dependantsContentIds = builder.dependantsContentIds;
         this.childrenContentsIds = builder.childrenContentsIds;
         this.pushRequestedIds = builder.pushRequestedIds;
 
@@ -34,14 +31,9 @@ public class ResolvePublishDependenciesResult
         return childrenContentsIds;
     }
 
-    public PushedContentIdsWithInitialReason getDependantsIdsResolvedWithChildrenIncluded()
+    public PushedContentIdsWithInitialReason getDependantsContentIds()
     {
-        return dependantsIdsResolvedWithChildrenIncluded;
-    }
-
-    public PushedContentIdsWithInitialReason getDependantsIdsResolvedWithoutChildrenIncluded()
-    {
-        return dependantsIdsResolvedWithoutChildrenIncluded;
+        return dependantsContentIds;
     }
 
     public PushedContentIdsWithInitialReason getPushRequestedIds()
@@ -67,17 +59,13 @@ public class ResolvePublishDependenciesResult
     public static final class Builder
     {
         // dependants resolved with includeChildren=true might include nodes <b>referred</b> by <b>children</b>!
-        private PushedContentIdsWithInitialReason dependantsIdsResolvedWithChildrenIncluded;
-
-        private PushedContentIdsWithInitialReason dependantsIdsResolvedWithoutChildrenIncluded;
+        private PushedContentIdsWithInitialReason dependantsContentIds;
 
         private PushedContentIdsWithInitialReason childrenContentsIds;
 
         private PushedContentIdsWithInitialReason pushRequestedIds;
 
-        private PushContentRequests pushContentRequestsWithChildren;
-
-        private PushContentRequests pushContentRequestsWithoutChildren;
+        private PushContentRequests pushContentRequests;
 
         private Contents resolvedContent = Contents.empty();
 
@@ -89,72 +77,26 @@ public class ResolvePublishDependenciesResult
 
         private void buildDependantsAndChildrenIds()
         {
-            if ( pushContentRequestsWithoutChildren != null )
-            {
-                dependantsIdsResolvedWithoutChildrenIncluded = pushContentRequestsWithoutChildren.getDependantsContentIds( true, true );
-            }
-
-            if ( pushContentRequestsWithChildren != null )
-            {
-                dependantsIdsResolvedWithChildrenIncluded = pushContentRequestsWithChildren.getDependantsContentIds( true, true );
-                childrenContentsIds = pushContentRequestsWithChildren.getPushedBecauseChildOfContentIds( true, true );
-                pushRequestedIds = pushContentRequestsWithChildren.getPushedBecauseRequestedContentIds( true );
-            }
-            else if ( pushContentRequestsWithoutChildren != null )
-            {
-                dependantsIdsResolvedWithChildrenIncluded = pushContentRequestsWithoutChildren.getDependantsContentIds( true, true );
-                childrenContentsIds = pushContentRequestsWithoutChildren.getPushedBecauseChildOfContentIds( true, true );
-                pushRequestedIds = pushContentRequestsWithoutChildren.getPushedBecauseRequestedContentIds( true );
-            }
+            dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
+            childrenContentsIds = pushContentRequests.getPushedBecauseChildOfContentIds( true, true );
+            pushRequestedIds = pushContentRequests.getPushedBecauseRequestedContentIds( true );
         }
 
-        public Builder pushContentRequestsWithChildren( final PushContentRequests pushContentRequests )
+        public Builder pushContentRequests( final PushContentRequests pushContentRequests )
         {
-            this.pushContentRequestsWithChildren = pushContentRequests;
+            this.pushContentRequests = pushContentRequests;
             return this;
         }
 
-        public Builder pushContentRequestsWithoutChildren( final PushContentRequests pushContentRequests )
-        {
-            this.pushContentRequestsWithoutChildren = pushContentRequests;
-            return this;
-        }
-
-        public Builder setResolvedContent( final Contents resolvedContent )
+        public Builder resolvedContent( final Contents resolvedContent )
         {
             this.resolvedContent = resolvedContent;
             return this;
         }
 
-        public Builder setCompareContentResults( final CompareContentResults compareContentResults )
+        public Builder compareContentResults( final CompareContentResults compareContentResults )
         {
             this.compareContentResults = compareContentResults;
-            return this;
-        }
-
-        public Builder setDependantsIdsResolvedWithChildrenIncluded(
-            final PushedContentIdsWithInitialReason dependantsIdsResolvedWithChildrenIncluded )
-        {
-            this.dependantsIdsResolvedWithChildrenIncluded = dependantsIdsResolvedWithChildrenIncluded;
-            return this;
-        }
-
-        public Builder setDependantsIdsResolvedWithoutChildrenIncluded(
-            final PushedContentIdsWithInitialReason dependantsIdsResolvedWithoutChildrenIncluded )
-        {
-            this.dependantsIdsResolvedWithoutChildrenIncluded = dependantsIdsResolvedWithoutChildrenIncluded;
-            return this;
-        }
-
-        public Builder setChildrenContentsIds( final PushedContentIdsWithInitialReason childrenContentsIds )
-        {
-            this.childrenContentsIds = childrenContentsIds;
-            return this;
-        }
-
-        public Builder setPushRequestedIds( final PushedContentIdsWithInitialReason pushRequestedIds )
-        {
-            this.pushRequestedIds = pushRequestedIds;
             return this;
         }
 

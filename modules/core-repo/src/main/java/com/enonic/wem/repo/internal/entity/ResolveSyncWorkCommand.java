@@ -231,13 +231,9 @@ public class ResolveSyncWorkCommand
                 {
                     resultBuilder.deleteParentFor( comparison.getNodeId(), resolveContext.contextNodeId );
                 }
-                else if ( resolveContext.becauseChild )
-                {
-                    resultBuilder.deleteChildOf( comparison.getNodeId(), resolveContext.contextNodeId );
-                }
                 else
                 {
-                    resultBuilder.deleteRequested( comparison.getNodeId() );
+                    addRequestedOrChild( comparison.getNodeId(), true );
                 }
             }
             else if ( resolveContext.becauseReferredTo )
@@ -250,17 +246,24 @@ public class ResolveSyncWorkCommand
             }
             else
             {
-                addRequestedOrChild( comparison.getNodeId() );
+                addRequestedOrChild( comparison.getNodeId(), false );
             }
         }
     }
 
 
-    public void addRequestedOrChild( final NodeId nodeId )
+    public void addRequestedOrChild( final NodeId nodeId, boolean isDelete )
     {
         if ( nodeId.equals( this.publishRootNode.id() ) )
         {
-            this.resultBuilder.publishRequested( nodeId );
+            if ( isDelete )
+            {
+                this.resultBuilder.deleteRequested( nodeId );
+            }
+            else
+            {
+                this.resultBuilder.publishRequested( nodeId );
+            }
         }
         else
         {
@@ -270,7 +273,14 @@ public class ResolveSyncWorkCommand
 
             final Node parentNode = doGetByPath( parentPath, false );
 
-            this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
+            if ( isDelete )
+            {
+                this.resultBuilder.deleteChildOf( nodeId, parentNode.id() );
+            }
+            else
+            {
+                this.resultBuilder.publishChildOf( nodeId, parentNode.id() );
+            }
         }
     }
 

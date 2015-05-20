@@ -83,7 +83,7 @@ public class ResolvePublishDependenciesCommandTest
             execute();
 
         assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 1, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 1, result.getDependantsContentIds().getSize() );
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ResolvePublishDependenciesCommandTest
             execute();
 
         assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 1, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 1, result.getDependantsContentIds().getSize() );
     }
 
     @Test
@@ -159,7 +159,7 @@ public class ResolvePublishDependenciesCommandTest
             execute();
 
         assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 2, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 2, result.getDependantsContentIds().getSize() );
     }
 
 
