@@ -119,7 +119,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendParams( str, params.entries() );
 
         final String uri = str.toString();
-        return ServletRequestUrlHelper.rewriteUri( uri );
+        final String rewrittenUri = ServletRequestUrlHelper.rewriteUri( uri );
+        return rewriteUri( rewrittenUri );
     }
 
     @SuppressWarnings("unchecked")
@@ -127,6 +128,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
         appendPart( url, getBranch().toString() );
+    }
+
+    protected String rewriteUri( final String uri )
+    {
+        return uri;
     }
 
     protected String buildErrorUrl( final Exception e )
