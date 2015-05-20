@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -260,28 +262,11 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 4, result.getNodesWithDifferences().getSize() );
 
-        int counter = 0;
-        for ( final NodeId nodeId : result.getNodesWithDifferences() )
-        {
-            if ( counter == 0 )
-            {
-                assertEquals( "dddd", nodeId.toString() );
-            }
-            else if ( counter == 1 )
-            {
-                assertEquals( "ccc", nodeId.toString() );
-            }
-            else if ( counter == 2 )
-            {
-                assertEquals( "11", nodeId.toString() );
-            }
-            else if ( counter == 3 )
-            {
-                assertEquals( "_a", nodeId.toString() );
-            }
-
-            counter++;
-        }
+        final Iterator<NodeId> iterator = result.getNodesWithDifferences().iterator();
+        assertEquals( "dddd", iterator.next().toString() );
+        assertEquals( "ccc", iterator.next().toString() );
+        assertEquals( "11", iterator.next().toString() );
+        assertEquals( "_a", iterator.next().toString() );
     }
 
     @Test
@@ -317,24 +302,10 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 3, result.getNodesWithDifferences().getSize() );
 
-        int counter = 0;
-        for ( final NodeId nodeId : result.getNodesWithDifferences() )
-        {
-            if ( counter == 0 )
-            {
-                assertEquals( node1_1.id().toString(), nodeId.toString() );
-            }
-            else if ( counter == 1 )
-            {
-                assertEquals( node1_1_1.id().toString(), nodeId.toString() );
-            }
-            else if ( counter == 2 )
-            {
-                assertEquals( node1_1_1_1.id().toString(), nodeId.toString() );
-            }
-
-            counter++;
-        }
+        final Iterator<NodeId> iterator = result.getNodesWithDifferences().iterator();
+        assertEquals( node1_1.id().toString(), iterator.next().toString() );
+        assertEquals( node1_1_1.id().toString(), iterator.next().toString() );
+        assertEquals( node1_1_1_1.id().toString(), iterator.next().toString() );
     }
 
     @Test
