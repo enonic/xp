@@ -89,10 +89,7 @@ module api.liveedit {
             pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
-                if (PageView.debug) {
-                    console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
-                }
+                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
                 resetAction.setEnabled(resetEnabled);
             };
             pageModel.onPageModeChanged(this.pageModeChangedListener);
