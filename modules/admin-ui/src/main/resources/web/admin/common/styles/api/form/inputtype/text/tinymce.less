@@ -15,6 +15,28 @@
     &:hover {
       background-image: none;
     }
+
+    i {
+      text-shadow: none;
+    }
+
+    &.mce-active {
+      background-image: none;
+      background-color: @admin-toolbar-toggle-button;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+
+      .mce-ico {
+        color: @admin-white;
+      }
+
+      &:hover {
+        background-image: none;
+        box-shadow: none;
+        background-color: @admin-toolbar-toggle-button;
+      }
+    }
   }
 
   .mce-tinymce {
@@ -70,6 +92,7 @@
       border-top: 1px solid @admin-medium-gray-border;
     }
   }
+
 }
 
 .mce-link-dialog {
