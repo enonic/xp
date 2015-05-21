@@ -60,15 +60,33 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         //Calls the method with a virtual mapping /main -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal" );
+        url = this.service.assetUrl( params );
+        assertEquals( "/main/draft/_/asset/mymodule/css/my.css", url );
+
+        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/_/asset/mymodule/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        //Calls the method with a virtual mapping / -> /portal/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context" );
         url = this.service.assetUrl( params );
         assertEquals( "/_/asset/mymodule/css/my.css", url );
+
+        //Calls the method with a virtual mapping /main/path -> /portal/draft/context/path
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/main/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
+        url = this.service.assetUrl( params );
+        assertEquals( "/main/path/_/asset/mymodule/css/my.css", url );
+
+        //Calls the method with a virtual mapping /portal/draft/context/path -> /portal/draft/context/path
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/portal/draft/context/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
+        url = this.service.assetUrl( params );
+        assertEquals( "/portal/draft/context/path/_/asset/mymodule/css/my.css", url );
 
         //Post treatment
         ServletRequestHolder.setRequest( null );

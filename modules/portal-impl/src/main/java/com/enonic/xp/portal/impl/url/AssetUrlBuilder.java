@@ -8,6 +8,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.web.servlet.UriRewritingResult;
 
 final class AssetUrlBuilder
     extends PortalUrlBuilder<AssetUrlParams>
@@ -33,21 +34,31 @@ final class AssetUrlBuilder
     }
 
     @Override
-    protected String rewriteUri( final String uri )
+    protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
     {
-        //Example of uri: /portal/draft/context/path/_/asset/mymodule/css/my.css
+        //Example of URI: /portal/draft/context/path/_/asset/mymodule/css/my.css
         //Corresponding result: /portal/draft/_/asset/mymodule/css/my.css
+
+        StringBuilder result = new StringBuilder();
+        String uriToProcess = uriRewritingResult.getRewrittenUri();
+
+        //If the URI has been rewritten, the rewritten prefix cannot be removed
+        if ( uriRewritingResult.getNewUriPrefix() != null )
+        {
+            result.append( uriRewritingResult.getNewUriPrefix() );
+            uriToProcess = uriToProcess.substring( uriRewritingResult.getNewUriPrefix().length() );
+        }
 
         //Builds the regexp that will catch the content path
         final String regexp = buildContentPathRegExp();
 
         //Creates a matcher for this regexp and this uri
         final Pattern pattern = Pattern.compile( regexp );
-        final Matcher matcher = pattern.matcher( uri );
+        final Matcher matcher = pattern.matcher( uriToProcess );
 
         //Removes the content path and return the uri
-        final String rewrittenUri = matcher.replaceFirst( "/_/asset" );
-        return rewrittenUri;
+        result.append( matcher.replaceFirst( "_/asset" ) );
+        return result.toString();
     }
 
     private String buildContentPathRegExp()
@@ -67,11 +78,11 @@ final class AssetUrlBuilder
         //For each element of the content path, closes the corresponding optional group and encapsulates the previous groups
         for ( int i = 0; i < contentPath.elementCount(); i++ )
         {
-            regexp.append( "/" ).append( contentPath.getElement( i ) ).append( ")?" );
+            regexp.append( contentPath.getElement( i ) ).append( "/" ).append( ")?" );
         }
 
         //The content path is located before "/_/asset" in the case of an asset
-        regexp.append( "/_/asset" );
+        regexp.append( "_/asset" );
 
         return regexp.toString();
     }
