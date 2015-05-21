@@ -40,7 +40,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void diff_detect_deleted()
+    public void detect_children_marked_for_deletion()
         throws Exception
     {
         final Node node1 = createNode( CreateNodeParams.create().
@@ -110,7 +110,7 @@ public class ResolveSyncWorkCommandTest
      * @throws Exception
      */
     @Test
-    public void diff_detect_deleted2()
+    public void deleted_child_dont_include_parent_deletion()
         throws Exception
     {
         final Node node1 = createNode( CreateNodeParams.create().
@@ -164,26 +164,11 @@ public class ResolveSyncWorkCommandTest
         {
             deleted.add( deleteRequest.getNodeId() );
         }
-        // assertEquals( 4, deleted.size() );
+
+        assertEquals( 3, deleted.size() );
         assertTrue( deleted.contains( node1_1.id() ) );
         assertTrue( deleted.contains( node1_1_1.id() ) );
         assertTrue( deleted.contains( node1_1_1_1.id() ) );
-        //assertTrue( deleted.contains( node1.id() ) );
-    }
-
-    private void markAsDelete( final NodeId id )
-    {
-        SetNodeStateParams setNodeStateParams =
-            SetNodeStateParams.create().nodeId( id ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
-        SetNodeStateCommand.create().
-            params( setNodeStateParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            build().
-            execute();
     }
 
     @Test
@@ -1215,6 +1200,21 @@ public class ResolveSyncWorkCommandTest
             build();
 
         updateNode( updateNodeParams );
+    }
+
+    private void markAsDelete( final NodeId id )
+    {
+        SetNodeStateParams setNodeStateParams =
+            SetNodeStateParams.create().nodeId( id ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
+        SetNodeStateCommand.create().
+            params( setNodeStateParams ).
+            indexServiceInternal( this.indexServiceInternal ).
+            queryService( this.queryService ).
+            branchService( this.branchService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            build().
+            execute();
     }
 
     void moveNode( final String nodeId, final NodePath newParent, final String newName )
