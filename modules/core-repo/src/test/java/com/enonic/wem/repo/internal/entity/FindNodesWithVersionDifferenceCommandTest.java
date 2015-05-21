@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -260,28 +262,50 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 4, result.getNodesWithDifferences().getSize() );
 
-        int counter = 0;
-        for ( final NodeId nodeId : result.getNodesWithDifferences() )
-        {
-            if ( counter == 0 )
-            {
-                assertEquals( "dddd", nodeId.toString() );
-            }
-            else if ( counter == 1 )
-            {
-                assertEquals( "ccc", nodeId.toString() );
-            }
-            else if ( counter == 2 )
-            {
-                assertEquals( "11", nodeId.toString() );
-            }
-            else if ( counter == 3 )
-            {
-                assertEquals( "_a", nodeId.toString() );
-            }
+        final Iterator<NodeId> iterator = result.getNodesWithDifferences().iterator();
+        assertEquals( "dddd", iterator.next().toString() );
+        assertEquals( "ccc", iterator.next().toString() );
+        assertEquals( "11", iterator.next().toString() );
+        assertEquals( "_a", iterator.next().toString() );
+    }
 
-            counter++;
-        }
+    @Test
+    public void assure_correct_diff_order_when_there_are_children2()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id() );
+
+        NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1_1.path() );
+
+        assertEquals( 3, result.getNodesWithDifferences().getSize() );
+
+        final Iterator<NodeId> iterator = result.getNodesWithDifferences().iterator();
+        assertEquals( node1_1.id().toString(), iterator.next().toString() );
+        assertEquals( node1_1_1.id().toString(), iterator.next().toString() );
+        assertEquals( node1_1_1_1.id().toString(), iterator.next().toString() );
     }
 
     @Test

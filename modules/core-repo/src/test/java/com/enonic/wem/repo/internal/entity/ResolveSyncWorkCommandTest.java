@@ -241,6 +241,23 @@ public class ResolveSyncWorkCommandTest
         assertNotNull( nodePublishRequests.get( rootNode.id() ) );
     }
 
+    /**
+     * node1                                   (Moved)
+     * .....|
+     * .....node1_1                            (New)
+     * ............|
+     * .............node1_1_1                  (New)
+     * ......................|
+     * .......................node1_1_1_1      (New)
+     * <p>
+     * Contents created below look like pic above.
+     * ResolveSyncWorkCommand will return empty set for node1_1_1_1.id() when called with includeChildren=true,
+     * and will return all four when called with includeChildren=false, because:
+     * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
+     * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
+     * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
+     * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
+     */
     @Test
     public void resolveDependenciesOfMovedNodes()
     {
@@ -281,7 +298,129 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
 
-        // assertEquals( resultChildrenIncluded.getNodePublishRequests().size(), resultChildrenNotIncluded.getNodePublishRequests().size());
+        assertEquals( resultChildrenIncluded.getNodePublishRequests().size(), 0 );
+        assertEquals( resultChildrenNotIncluded.getNodePublishRequests().size(), 4 );
+    }
+
+    /**
+     * node1                                   (Moved)
+     * .....|
+     * .....node1_1                            (New)
+     * ............|
+     * .............node1_1_1                  (New)
+     * ......................|
+     * .......................node1_1_1_1      (New)
+     * <p>
+     * Contents created below look like pic above.
+     * ResolveSyncWorkCommand will return empty set for node1_1_1.id() when called with includeChildren=true,
+     * and will return node1_1_1 and two of its parents when called with includeChildren=false, because:
+     * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
+     * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
+     * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
+     * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
+     */
+    @Test
+    public void resolveDependenciesOfMovedNodes2()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
+
+        moveNode( node1, node2.path() );
+
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
+
+        assertEquals( resultChildrenIncluded.getNodePublishRequests().size(), 0 );
+        assertEquals( resultChildrenNotIncluded.getNodePublishRequests().size(), 3 );
+    }
+
+    /**
+     * node1                                   (New)
+     * .....|
+     * .....node1_1                            (New)
+     * ............|
+     * .............node1_1_1                  (Moved)
+     * ......................|
+     * .......................node1_1_1_1      (New)
+     * <p>
+     * Contents created below look like pic above.
+     * ResolveSyncWorkCommand will return node1_1_1 for node1_1_1.id() when called both with includeChildren=true and with includeChildren=false
+     * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
+     * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
+     * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
+     * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
+     */
+    @Test
+    public void resolveDependenciesOfMovedNodes3()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
+
+        moveNode( node1_1_1, node2.path() );
+
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
+
+        assertEquals( resultChildrenIncluded.getNodePublishRequests().size(), 1 );
+        assertEquals( resultChildrenNotIncluded.getNodePublishRequests().size(), 1 );
     }
 
     private void moveNode( Node moveMe, NodePath to )
