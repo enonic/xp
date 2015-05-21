@@ -113,7 +113,7 @@ module api.ui.tags {
                 }
 
                 var searchString = event.getNewValue();
-                this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 300);
+                this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 100);
             });
 
             this.onClicked(() => {
