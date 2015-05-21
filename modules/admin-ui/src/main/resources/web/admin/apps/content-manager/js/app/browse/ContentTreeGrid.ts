@@ -123,7 +123,7 @@ module app.browse {
                      * node is clicked, edit event will be triggered by default.
                      */
                     if (!!this.getDataId(node.getData())) { // default event
-                        new EditContentEvent([node.getData().getContentSummary()]).fire();
+                        new api.content.EditContentEvent([node.getData().getContentSummary()]).fire();
                     }
                 }
             });
