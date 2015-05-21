@@ -8,6 +8,8 @@ module api.content {
 
         private ts: string = null;
 
+        private scaleWidth: string = null; // parameter states if width of the image must be preferred over its height
+
         setContentId(value: ContentId): ContentImageUrlResolver {
             this.contentId = value;
             return this;
@@ -23,6 +25,11 @@ module api.content {
             return this;
         }
 
+        setScaleWidth(value: boolean): ContentImageUrlResolver {
+            this.scaleWidth = "" + value;
+            return this;
+        }
+
         resolve(): string {
 
             var url = "content/image/" + this.contentId.toString();
@@ -31,6 +38,9 @@ module api.content {
             }
             if (this.ts) {
                 url = this.appendParam("ts", this.ts, url);
+            }
+            if (this.scaleWidth) {
+                url = this.appendParam("scaleWidth", this.scaleWidth, url);
             }
 
             return api.util.UriHelper.getRestUri(url);

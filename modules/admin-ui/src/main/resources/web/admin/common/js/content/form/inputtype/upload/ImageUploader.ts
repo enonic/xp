@@ -20,7 +20,8 @@ module api.content.form.inputtype.upload {
                 operation: api.content.MediaUploaderOperation.update,
                 name: input.getName(),
                 skipWizardEvents: false,
-                maximumOccurrences: 1
+                maximumOccurrences: 1,
+                scaleWidth: true
             });
 
             this.appendChild(this.imageUploader);
