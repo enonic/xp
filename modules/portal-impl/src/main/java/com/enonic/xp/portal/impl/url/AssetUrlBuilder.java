@@ -64,7 +64,7 @@ final class AssetUrlBuilder
     private String buildContentPathRegExp()
     {
         //Example of uri: /portal/draft/context/path/_/asset/mymodule/css/my.css
-        //Corresponding regexp: (?:(?:/context)?/path)?/_/asset
+        //Corresponding regexp: (?:(?:context/)?path/)?_/asset
 
         final StringBuilder regexp = new StringBuilder();
 
