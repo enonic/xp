@@ -1,14 +1,17 @@
 .tooltip {
   .reset();
-  .opacity(1);
+  .opacity(.8);
 
   position: absolute;
   background: @admin-tooltip-bg;
-  padding: 5px !important; // to override bootstraps .tooltip.top etc.
+  padding: 5px 8px 4px 8px !important; // to override bootstraps .tooltip.top etc.
   z-index: @z-index-tooltip;
   font-size: 11px;
-  color: @admin-dark-gray;
+  color: @admin-white;
   pointer-events: none; // to fight tooltip hijacking mouse over when lagging behind mouse
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 
   &:before {
     content: " ";
@@ -38,6 +41,6 @@
     }
   }
 
-  .arrow(@admin-tooltip-bg, 7px);
+  .arrow(@admin-tooltip-bg, 5px);
 
 }
