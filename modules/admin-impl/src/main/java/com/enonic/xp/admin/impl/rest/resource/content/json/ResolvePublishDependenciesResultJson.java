@@ -22,7 +22,7 @@ public class ResolvePublishDependenciesResultJson
 
     private final List<DependantContent> pushRequestedContents;
 
-    private ResolvePublishDependenciesResultJson( Builder builder )
+    private ResolvePublishDependenciesResultJson( final Builder builder )
     {
         dependantsResolved = builder.dependantsResolved;
         childrenResolved = builder.childrenResolved;

@@ -6,14 +6,10 @@ import java.util.List;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.data.PropertyTree;
@@ -59,7 +55,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     {
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, false, false, true, true );
 
-        assertEquals( 3, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 3, result.getDependantsContentIds().getSize() );
         assertEquals( 0, result.getChildrenContentsIds().getSize() );
     }
 
@@ -70,7 +66,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, false, false, false, true );
 
         assertEquals( 1, result.getChildrenContentsIds().getSize() );
-        assertEquals( 0, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 0, result.getDependantsContentIds().getSize() );
     }
 
     @Test
@@ -80,7 +76,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, true, false, false, true );
 
         assertEquals( 1, result.getChildrenContentsIds().getSize() );
-        assertEquals( 2, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 2, result.getDependantsContentIds().getSize() );
     }
 
     @Test
@@ -90,8 +86,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, true, false, false, false );
 
         assertEquals( 0, result.getChildrenContentsIds().getSize() );
-        assertEquals( 0, result.getDependantsIdsResolvedWithoutChildrenIncluded().getSize() );
-        assertEquals( 0, result.getDependantsIdsResolvedWithChildrenIncluded().getSize() );
+        assertEquals( 0, result.getDependantsContentIds().getSize() );
         assertEquals( 2, result.getPushRequestedIds().getSize() );
     }
 

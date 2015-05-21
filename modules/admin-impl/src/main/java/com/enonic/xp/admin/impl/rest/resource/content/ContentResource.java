@@ -56,8 +56,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -65,6 +63,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.branch.Branches;
@@ -93,8 +93,6 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
-import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -103,6 +101,8 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
@@ -341,7 +341,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final ResolvePublishDependenciesResult resolved =
+        final ResolvePublishDependenciesResult result =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( contentIds ).
@@ -349,8 +349,9 @@ public final class ContentResource
                 build() );
 
         return ResolvePublishDependenciesResultJson.create().
-            resolvedPublishDependencies( resolved ).
-            iconUrlResolver( newContentIconUrlResolver() ).build();
+            resolvedPublishDependencies( result ).
+            iconUrlResolver( newContentIconUrlResolver() ).
+            build();
     }
 
     @POST
