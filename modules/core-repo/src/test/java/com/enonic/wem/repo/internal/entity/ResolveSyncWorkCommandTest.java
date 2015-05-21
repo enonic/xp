@@ -104,6 +104,73 @@ public class ResolveSyncWorkCommandTest
         assertTrue( deleted.contains( node3.id() ) );
     }
 
+    /**
+     * Tries to resolve one of the nodes in the middle of tree of deleted nodes.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void diff_detect_deleted2()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1_1" ) ).
+            parent( node1_1_1.path() ).
+            name( "node1_1_1_1" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
+
+        markAsDelete( node1.id() );
+        markAsDelete( node1_1.id() );
+        markAsDelete( node1_1_1.id() );
+        markAsDelete( node1_1_1_1.id() );
+
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
+            nodeId( node1_1.id() ).
+            includeChildren( true ).
+            target( WS_OTHER ).
+            branchService( this.branchService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+        assertEquals( 0, nodePublishRequests.size() );
+
+        Set<NodeId> deleted = new HashSet<>();
+        for ( NodePublishRequest deleteRequest : result.getNodeDeleteRequests() )
+        {
+            deleted.add( deleteRequest.getNodeId() );
+        }
+        // assertEquals( 4, deleted.size() );
+        assertTrue( deleted.contains( node1_1.id() ) );
+        assertTrue( deleted.contains( node1_1_1.id() ) );
+        assertTrue( deleted.contains( node1_1_1_1.id() ) );
+        //assertTrue( deleted.contains( node1.id() ) );
+    }
+
     private void markAsDelete( final NodeId id )
     {
         SetNodeStateParams setNodeStateParams =

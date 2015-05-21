@@ -128,17 +128,6 @@ module app.publish {
             return true;
         }
 
-        static getAllContentsResolvedWithChildrenIncluded(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
-            var array: ContentPublishItem[] = [];
-            json.dependantsResolvedWithChildrenIncluded.forEach((obj: ResolvedPublishDependencyJson) => {
-                array.push(new ContentPublishItemBuilder().fromJson(obj).build());
-            });
-            json.childrenResolved.forEach((obj: ResolvedPublishDependencyJson) => {
-                array.push(new ContentPublishItemBuilder().fromJson(obj).build());
-            });
-            return array;
-        }
-
         /**
          * Builds array of ContentPublishItem[] from contents that were returned as initially requsted to publish.
          * Returned array should correspond to contents with ids used for ResolvePublishDependenciesRequest.
@@ -151,17 +140,9 @@ module app.publish {
             return array;
         }
 
-        static getDependantsResolvedWithChildrenIncluded(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
+        static getDependantsResolved(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            json.dependantsResolvedWithChildrenIncluded.forEach((obj: ResolvedPublishDependencyJson) => {
-                array.push(new ContentPublishItemBuilder().fromJson(obj).build());
-            });
-            return array;
-        }
-
-        static getDependantsResolvedWithoutChildrenIncluded(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
-            var array: ContentPublishItem[] = [];
-            json.dependantsResolvedWithoutChildrenIncluded.forEach((obj: ResolvedPublishDependencyJson) => {
+            json.dependantsResolved.forEach((obj: ResolvedPublishDependencyJson) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;

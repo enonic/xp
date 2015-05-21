@@ -34,13 +34,15 @@ module app.publish {
 
         private selectedContents: ContentSummary[];
 
-        private dependantsResolvedWithChildrenIncluded: ContentPublishItem[];
+        private dependantsResolvedWithChildrenIncluded: ContentPublishItem[] = [];
 
-        private dependantsResolvedWithoutChildrenIncluded: ContentPublishItem[];
+        private dependantsResolvedWithoutChildrenIncluded: ContentPublishItem[] = [];
 
-        private childrenResolved: ContentPublishItem[];
+        private childrenResolved: ContentPublishItem[] = [];
 
-        private pushRequestedContents: ContentPublishItem[];
+        private pushRequestedContents: ContentPublishItem[] = [];
+
+        private alreadyResolvedWithChildren: boolean = false;
 
         constructor() {
             super({
@@ -67,10 +69,13 @@ module app.publish {
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(() => {
 
-                // re-render required as among the dependant items might be ones resolved via children references (rare case though)
-                this.renderResolvedPublishItems();
-
-                this.countItemsToPublishAndUpdateCounterElements();
+                if (this.alreadyResolvedWithChildren) {
+                    // re-render required as among the dependant items might be ones resolved via children references (rare case though)
+                    this.renderResolvedPublishItems();
+                    this.countItemsToPublishAndUpdateCounterElements();
+                } else {
+                    this.getPublishDependantsAndUpdateView();
+                }
             });
             this.appendChildToContentPanel(this.includeChildItemsCheck);
         }
@@ -149,10 +154,10 @@ module app.publish {
                     this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
                         ResolvedPublishContext.DEPENDANT));
                 });
-                this.childrenResolved.forEach((content: ContentPublishItem) => {
+                /* this.childrenResolved.forEach((content: ContentPublishItem) => {
                     this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
                         ResolvedPublishContext.CHILD, true, false));
-                });
+                 });*/
             }
 
             this.restoreUncheckedState(unCheckedRequestedContentsIds, publishRequestedSelectionItems);
@@ -257,7 +262,7 @@ module app.publish {
 
             var getPublishContentDependantsRequest = new api.content.ResolvePublishDependenciesRequest(this.selectedContents.map((el) => {
                 return new api.content.ContentId(el.getId());
-            }));
+            }), this.includeChildItemsCheck.isChecked());
 
             getPublishContentDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
                 this.initResolvedPublishItems(jsonResponse.getResult());
@@ -275,11 +280,13 @@ module app.publish {
 
             this.pushRequestedContents = ContentPublishItem.getPushRequestedContents(json);
 
-            this.dependantsResolvedWithChildrenIncluded = ContentPublishItem.getDependantsResolvedWithChildrenIncluded(json);
-
-            this.dependantsResolvedWithoutChildrenIncluded = ContentPublishItem.getDependantsResolvedWithoutChildrenIncluded(json);
-
-            this.childrenResolved = ContentPublishItem.getResolvedChildren(json);
+            if (this.includeChildItemsCheck.isChecked()) {
+                this.dependantsResolvedWithChildrenIncluded = ContentPublishItem.getDependantsResolved(json);
+                this.childrenResolved = ContentPublishItem.getResolvedChildren(json);
+                this.alreadyResolvedWithChildren = true;
+            } else {
+                this.dependantsResolvedWithoutChildrenIncluded = ContentPublishItem.getDependantsResolved(json);
+            }
         }
 
         private doPublish() {
@@ -366,22 +373,6 @@ module app.publish {
                     result++;
                 }
             });
-            return result;
-        }
-
-        private getResolvedChildrenCount(): number {
-            var result = 0;
-            result += this.childrenResolved.length;
-            return result;
-        }
-
-        private getResolvedDependantsCount(resolvedWithChildren: boolean): number {
-            var result = 0;
-            if (resolvedWithChildren) {
-                result += this.dependantsResolvedWithChildrenIncluded.length;
-            } else {
-                result += this.dependantsResolvedWithoutChildrenIncluded.length;
-            }
             return result;
         }
 

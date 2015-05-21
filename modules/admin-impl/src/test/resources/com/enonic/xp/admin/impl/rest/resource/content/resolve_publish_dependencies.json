@@ -1,0 +1,41 @@
+{
+  "childrenResolved": [
+    {
+      "compareStatus": "NEW",
+      "displayName": "My Content",
+      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "id": "node1_1_1",
+      "initialReasonId": "node1_1",
+      "name": "node1_1_1_content",
+      "path": "/node1_1_1_content",
+      "type": "mymodule:my_type",
+      "valid": true
+    }
+  ],
+  "dependantsResolved": [
+    {
+      "compareStatus": "NEW",
+      "displayName": "My Content",
+      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "id": "node1",
+      "initialReasonId": "node1_1",
+      "name": "node1_content",
+      "path": "/node1_content",
+      "type": "mymodule:my_type",
+      "valid": true
+    }
+  ],
+  "pushRequestedContents": [
+    {
+      "compareStatus": "NEW",
+      "displayName": "My Content",
+      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "id": "node1_1",
+      "initialReasonId": null,
+      "name": "node1_1_content",
+      "path": "/node1_1_content",
+      "type": "mymodule:my_type",
+      "valid": true
+    }
+  ]
+}

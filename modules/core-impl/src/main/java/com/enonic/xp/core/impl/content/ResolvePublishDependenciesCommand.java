@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
-import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
@@ -74,18 +73,11 @@ public class ResolvePublishDependenciesCommand
     private void populateResults( final ResolveSyncWorkResults syncWorkResults )
     {
         PushContentRequests pushContentRequests = PushContentRequestsFactory.create( syncWorkResults );
-        if ( this.includeChildren )
-        {
-            this.resultBuilder.pushContentRequestsWithChildren( pushContentRequests );
-        }
-        else
-        {
-            this.resultBuilder.pushContentRequestsWithoutChildren( pushContentRequests );
-        }
+        this.resultBuilder.pushContentRequests( pushContentRequests );
 
         ContentIds allIds = pushContentRequests.getAllContentIds( true ).getPushedContentIds();
-        this.resultBuilder.setResolvedContent( getContentByIds( new GetContentByIdsParams( allIds ) ) );
-        this.resultBuilder.setCompareContentResults( getCompareStatuses( allIds ) );
+        this.resultBuilder.resolvedContent( getContentByIds( new GetContentByIdsParams( allIds ) ) );
+        this.resultBuilder.compareContentResults( getCompareStatuses( allIds ) );
     }
 
     private Contents getContentByIds( final GetContentByIdsParams getContentParams )
