@@ -15,6 +15,7 @@ module app.create {
     import ModuleKey = api.module.ModuleKey;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
+    import ListContentByPathRequest = api.content.ListContentByPathRequest;
 
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -22,7 +23,6 @@ module app.create {
 
         private contentDialogTitle: NewContentDialogTitle;
 
-        private recentList: RecentItemsList;
         private contentList: NewContentDialogList;
 
         private contentListMask: api.ui.mask.LoadMask;
@@ -33,10 +33,16 @@ module app.create {
         private mediaUploader: api.content.MediaUploader;
 
         private listItems: NewContentDialogListItem[];
+        private mostPopularItems: MostPopularItem[];
 
         private uploaderEnabled: boolean;
 
         private mockModalDialog: NewContentDialog; //used to calculate modal window height for smooth animation
+
+        private mostPopularItemsBlock: MostPopularItemsBlock;
+        private mostPopularBlockMaxItemsAllowed;
+
+        private recentItemsBlock: RecentItemsBlock;
 
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
@@ -61,28 +67,28 @@ module app.create {
 
             this.contentList = new app.create.NewContentDialogList();
 
-            section.appendChildren(<api.dom.Element>this.fileInput, <api.dom.Element>this.contentList);
+            this.mostPopularItemsBlock = new MostPopularItemsBlock();
+            this.mostPopularItemsBlock.hide();
 
-            var aside = new api.dom.AsideEl("column");
-            this.appendChildToContentPanel(aside);
+            this.mostPopularBlockMaxItemsAllowed = MostPopularItemsBlock.DEFAULT_MAX_ITEMS;
+
+            section.appendChildren(<api.dom.Element>this.fileInput, <api.dom.Element>this.mostPopularItemsBlock,
+                <api.dom.Element>this.contentList);
+
+            this.recentItemsBlock = new RecentItemsBlock();
+            this.appendChildToContentPanel(this.recentItemsBlock);
 
             this.initMediaUploader();
-
-            var recentTitle = new api.dom.H1El();
-            recentTitle.setHtml('Recently Used');
-
-            this.recentList = new RecentItemsList();
-
-            aside.appendChildren(recentTitle, this.recentList);
 
             api.dom.Body.get().appendChild(this);
 
             this.contentListMask = new api.ui.mask.LoadMask(this.contentList);
-            this.recentListMask = new api.ui.mask.LoadMask(this.recentList);
+            this.recentListMask = new api.ui.mask.LoadMask(this.recentItemsBlock.getRecentItemsList());
 
             this.listItems = [];
 
             this.fileInput.onInput((event: Event) => {
+                this.mostPopularItemsBlock.hide();
                 this.filterList();
             });
             this.fileInput.onKeyUp((event: KeyboardEvent) => {
@@ -91,11 +97,15 @@ module app.create {
                 }
             });
 
+            this.mostPopularItemsBlock.getMostPopularList().onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
+                this.closeAndFireEventFromContentType(event.getItem());
+            });
+
             this.contentList.onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
-            this.recentList.onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
+            this.recentItemsBlock.getRecentItemsList().onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
@@ -215,35 +225,17 @@ module app.create {
         }
 
         show() {
-            if (this.parentContent) {
-                this.contentDialogTitle.setPath(this.parentContent.getPath().toString());
-            } else {
-                this.contentDialogTitle.setPath('');
-            }
+            this.updateDialogTitlePath();
 
-            this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
-            this.mediaUploader.reset();
-            this.fileInput.reset();
-            this.mediaUploader.setEnabled(this.uploaderEnabled);
-            this.fileInput.getUploader().setEnabled(this.uploaderEnabled);
+            this.toggleUploaderEnabled();
+            this.resetFileInputWithUploader();
 
             super.show();
 
             this.fileInput.giveFocus();
-            if (this.uploaderEnabled) {
-                this.removeClass("no-uploader");
-            } else {
-                this.addClass("no-uploader");
-            }
 
             if (this.mockModalDialog == null) {
-                this.mockModalDialog = new NewContentDialog();
-                this.mockModalDialog.close = function () {
-                    wemjq(this.getEl().getHTMLElement()).hide();
-                };
-                this.getParentElement().appendChild(this.mockModalDialog);
-                this.mockModalDialog.addClass("mock-modal-dialog");
-                this.mockModalDialog.removeClass("hidden");
+                this.createMockDialog();
             }
 
             // CMS-3711: reload content types each time when dialog is show.
@@ -256,6 +248,7 @@ module app.create {
             this.mediaUploader.stop();
             this.addClass("hidden");
             this.removeClass("animated");
+            this.mostPopularItemsBlock.hide();
         }
 
         close() {
@@ -264,44 +257,52 @@ module app.create {
         }
 
         private loadContentTypes() {
-            this.contentList.insertChild(this.contentListMask, 0);
-            this.recentList.insertChild(this.recentListMask, 0);
-            this.contentListMask.show();
-            this.recentListMask.show();
 
-            var requests: wemQ.Promise<any>[] = [];
-            requests.push(new GetAllContentTypesRequest().sendAndParse());
-            if (this.parentContent) {
-                requests.push(new GetNearestSiteRequest(this.parentContent.getContentId()).sendAndParse());
-            }
+            this.showLoadingMasks();
 
-            wemQ.all(requests)
-                .spread((contentTypes: ContentTypeSummary[], parentSite: Site) => {
-                    var listItems = this.createListItems(contentTypes);
+            wemQ.all(this.prepareRequestsToFetchContentData())
+                .spread((contentTypes: ContentTypeSummary[], directChilds: api.content.ContentResponse<api.content.ContentSummary>,
+                         parentSite: Site) => {
 
-                    var siteModules: ModuleKey[] = parentSite ? parentSite.getModuleKeys() : [];
-                    this.listItems = this.filterByParentContent(listItems, siteModules);
+                    this.listItems = this.createListOfContentTypeItems(contentTypes, parentSite);
+                    this.mostPopularItems = this.createListOfMostPopularContentTypeItems(contentTypes, directChilds.getContents());
 
-                    if (this.listItems.length > 0) {
-                        this.contentList.setItems(this.listItems);
-                        this.recentList.setItems(this.listItems);
-                    } else {
-                        this.contentList.clearItems();
-                        this.recentList.clearItems();
-                    }
-
-
+                    this.resetNewContentDialogContent();
+                    this.toggleMostPopularBlockShown();
                 }).catch((reason: any) => {
 
                     api.DefaultErrorHandler.handle(reason);
 
                 }).finally(() => {
                     this.filterList();
-                    this.contentListMask.hide();
-                    this.recentListMask.hide();
-
+                    this.hideLoadingMasks();
                     this.handleModalDialogAnimation();
                 }).done();
+        }
+
+        private showLoadingMasks() {
+            this.contentList.insertChild(this.contentListMask, 0);
+            this.recentItemsBlock.getRecentItemsList().insertChild(this.recentListMask, 0);
+            this.contentListMask.show();
+            this.recentListMask.show();
+        }
+
+        private hideLoadingMasks() {
+            this.contentListMask.hide();
+            this.recentListMask.hide();
+        }
+
+        private prepareRequestsToFetchContentData(): wemQ.Promise<any>[] {
+            var requests: wemQ.Promise<any>[] = [];
+            requests.push(new GetAllContentTypesRequest().sendAndParse());
+            if (this.parentContent) {
+                requests.push(new ListContentByPathRequest(this.parentContent.getPath()).sendAndParse());
+                requests.push(new GetNearestSiteRequest(this.parentContent.getContentId()).sendAndParse());
+            } else {
+                requests.push(new ListContentByPathRequest(ContentPath.ROOT).sendAndParse());
+            }
+
+            return requests;
         }
 
         private showMockDialog() {
@@ -310,18 +311,91 @@ module app.create {
 
         private handleModalDialogAnimation() {
 
+            this.mockModalDialog.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
+
+            this.toggleMockDialogMostPopularBlockShown();
+
             this.mockModalDialog.contentList.setItems(this.listItems);
 
+            this.updateMockDialogTitlePath();
+
+            this.mockModalDialog.showMockDialog();
+
+            this.updateContentListMaxHeight();
+
+            this.addClass("animated");
+            this.removeClass("hidden");
+            this.getEl().setMarginTop("-" + ( this.mockModalDialog.getEl().getHeightWithBorder() / 2) + "px");
+        }
+
+        private toggleMockDialogMostPopularBlockShown() {
+            if (this.mostPopularItems.length > 0) {
+                this.mockModalDialog.mostPopularItemsBlock.show();
+            } else {
+                this.mockModalDialog.mostPopularItemsBlock.hide();
+            }
+        }
+
+        private toggleMostPopularBlockShown() {
+            if (this.mostPopularItems.length > 0) {
+                this.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
+                this.mostPopularItemsBlock.show();
+            }
+        }
+
+        private updateMockDialogTitlePath() {
             if (this.parentContent) {
                 this.mockModalDialog.contentDialogTitle.setPath(this.parentContent.getPath().toString());
             } else {
                 this.mockModalDialog.contentDialogTitle.setPath('');
             }
-            this.mockModalDialog.showMockDialog();
+        }
 
-            this.addClass("animated");
-            this.removeClass("hidden");
-            this.getEl().setMarginTop("-" + ( this.mockModalDialog.getEl().getHeightWithBorder() / 2) + "px");
+        private updateDialogTitlePath() {
+            if (this.parentContent) {
+                this.contentDialogTitle.setPath(this.parentContent.getPath().toString());
+            } else {
+                this.contentDialogTitle.setPath('');
+            }
+        }
+
+        private resetNewContentDialogContent() {
+            if (this.listItems.length > 0) {
+                this.contentList.setItems(this.listItems);
+                this.recentItemsBlock.getRecentItemsList().setItems(this.listItems);
+                this.mostPopularItemsBlock.getMostPopularList().setItems(this.mostPopularItems);
+            } else {
+                this.mostPopularItemsBlock.getMostPopularList().clearItems();
+                this.contentList.clearItems();
+                this.recentItemsBlock.getRecentItemsList().clearItems();
+            }
+        }
+
+        private toggleUploaderEnabled() {
+            this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
+
+            if (this.uploaderEnabled) {
+                this.removeClass("no-uploader");
+            } else {
+                this.addClass("no-uploader");
+            }
+        }
+
+        private resetFileInputWithUploader() {
+            this.mediaUploader.reset();
+            this.fileInput.reset();
+            this.mediaUploader.setEnabled(this.uploaderEnabled);
+            this.fileInput.getUploader().setEnabled(this.uploaderEnabled);
+        }
+
+        private createMockDialog() {
+            this.mockModalDialog = new NewContentDialog();
+            this.mockModalDialog.close = function () {
+                wemjq(this.getEl().getHTMLElement()).hide();
+            };
+            this.getParentElement().appendChild(this.mockModalDialog);
+            this.mockModalDialog.addClass("mock-modal-dialog");
+            this.mockModalDialog.removeClass("hidden");
         }
 
         private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
@@ -341,6 +415,88 @@ module app.create {
             return items;
         }
 
+        private createListOfContentTypeItems(allContentTypes: ContentTypeSummary[], parentSite: Site): NewContentDialogListItem[] {
+            var allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
+            var siteModules: ModuleKey[] = parentSite ? parentSite.getModuleKeys() : [];
+            return this.filterByParentContent(allListItems, siteModules);
+        }
+
+        private createListOfMostPopularContentTypeItems(allContentTypes: ContentTypeSummary[],
+                                            directChildContents: api.content.ContentSummary[]): MostPopularItem[] {
+
+            var contentTypesWithHitsMap: {[name: string]: number} = this.createContentTypesWithHitsMap(directChildContents);
+            var contentTypesWithLastModifiedDateMap: {[name: string]: Date} = this.createContentTypesWithLastModifiedDateMap(directChildContents);
+
+            return this.findMostPopularContentTypes(allContentTypes, contentTypesWithHitsMap, contentTypesWithLastModifiedDateMap);
+        }
+
+        private createContentTypesWithHitsMap(directChildContents: api.content.ContentSummary[]): {[name: string]: number} {
+            var contentTypesWithHitsMap: {[name: string]: number} = {};
+
+            directChildContents.forEach((content: api.content.ContentSummary) => {
+                if (!content.getType().isMedia() && !content.getType().isDescendantOfMedia()) {
+                    if (!contentTypesWithHitsMap[content.getType().toString()]) {
+                        contentTypesWithHitsMap[content.getType().toString()] = 1;
+                    } else {
+                        contentTypesWithHitsMap[content.getType().toString()]++;
+                    }
+                }
+            });
+
+            return contentTypesWithHitsMap;
+        }
+
+        private createContentTypesWithLastModifiedDateMap(directChildContents: api.content.ContentSummary[]): {[name: string]: Date} {
+            var contentTypesWithLastModifiedDateMap: {[name: string]: Date} = {};
+
+            directChildContents.forEach((content: api.content.ContentSummary) => {
+                if (!content.getType().isMedia() && !content.getType().isDescendantOfMedia()) {
+                    if (!contentTypesWithLastModifiedDateMap[content.getType().toString()] ||
+                        content.getModifiedTime() > contentTypesWithLastModifiedDateMap[content.getType().toString()]) {
+                        contentTypesWithLastModifiedDateMap[content.getType().toString()] = content.getModifiedTime();
+                    }
+                }
+            });
+
+            return contentTypesWithLastModifiedDateMap;
+        }
+
+        private findMostPopularContentTypes(allContentTypes: ContentTypeSummary[], contentTypesWithHitsMap: {[name: string]: number},
+                                            contentTypesWithLastModifiedDateMap: {[name: string]: Date}): MostPopularItem[] {
+            var mostPopularItems: MostPopularItem[] = [];
+
+            for (var x = 1; x <= this.mostPopularBlockMaxItemsAllowed; x++) {
+                var mostPopularItemHits = 0;
+                var mostPopularItemContentType = undefined;
+                for (var contentTypeName in contentTypesWithHitsMap) {
+                    if (contentTypesWithHitsMap[contentTypeName] > mostPopularItemHits) {
+                        mostPopularItemHits = contentTypesWithHitsMap[contentTypeName];
+                        mostPopularItemContentType = contentTypeName;
+                    } else if (contentTypesWithHitsMap[contentTypeName] == mostPopularItemHits) {
+                        if (contentTypesWithLastModifiedDateMap[contentTypeName] >
+                            contentTypesWithLastModifiedDateMap[mostPopularItemContentType]) {
+                            mostPopularItemHits = contentTypesWithHitsMap[contentTypeName];
+                            mostPopularItemContentType = contentTypeName;
+                        }
+                    }
+                }
+
+                delete contentTypesWithHitsMap[mostPopularItemContentType];
+
+                if (mostPopularItemContentType) {
+                    allContentTypes.forEach((contentType: ContentTypeSummary) => {
+                        if (contentType.getContentTypeName().toString() == mostPopularItemContentType) {
+                            mostPopularItems.push(new MostPopularItem(contentType, mostPopularItemHits));
+                        }
+                    });
+                }
+            }
+
+            mostPopularItems.sort(this.compareMostPopularItems);
+
+            return mostPopularItems;
+        }
+
         private compareListItems(item1: NewContentDialogListItem, item2: NewContentDialogListItem): number {
             if (item1.getDisplayName().toLowerCase() > item2.getDisplayName().toLowerCase()) {
                 return 1;
@@ -352,6 +508,20 @@ module app.create {
                 return -1;
             } else {
                 return 0;
+            }
+        }
+
+        private compareMostPopularItems(item1: MostPopularItem, item2: MostPopularItem): number {
+            return item2.getHits() - item1.getHits();
+        }
+
+        private updateContentListMaxHeight() {
+            if (this.mostPopularItems && this.mostPopularItems.length > 0) {
+                var mockModalDialog = wemjq(".mock-modal-dialog");
+                mockModalDialog.find(".content-types-list").css('max-height', '');
+                var oldMaxHeight = parseInt(mockModalDialog.find(".content-types-list").css('max-height'), 10);
+                var mostPopularBlockSize = mockModalDialog.find(".most-popular-content-types-container").outerHeight(true);
+                wemjq(".content-types-list").css('max-height', oldMaxHeight - mostPopularBlockSize);
             }
         }
     }

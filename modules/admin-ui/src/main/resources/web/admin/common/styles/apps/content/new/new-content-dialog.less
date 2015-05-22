@@ -24,7 +24,7 @@
 
     .dialog-content {
       .column {
-        .content-types-list {
+        .content-types-list, .most-popular-content-types-list, .recent-content-types-list {
           .transition(none);
         }
       }
@@ -50,10 +50,30 @@
   &.hidden {
     .dialog-content {
       .column {
-        .content-types-list {
+        .content-types-list, .most-popular-content-types-list, .recent-content-types-list {
           max-height: 0px;
         }
       }
+    }
+  }
+
+  .most-popular-content-types-container {
+    border: 1px solid #cccccc;
+    background-color: #F0F8FF;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    h2 {
+      font-size: 18px;
+      padding-left: 5px;
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    @media screen and (max-height: 540px) {
+      display: none;
     }
   }
 
@@ -69,7 +89,7 @@
       height: 100%;
       float: left;
 
-      .content-types-list {
+      .content-types-list, .most-popular-content-types-list, .recent-content-types-list {
         max-height: 480px;
         overflow-y: auto;
         overflow-x: hidden;
