@@ -653,6 +653,32 @@ module api.ui.treegrid {
 
         }
 
+        private xDeleteNode(root: TreeNode<DATA>, data: DATA): void {
+            var dataId = this.getDataId(data),
+                node: TreeNode<DATA>;
+
+            while (node = root.findNode(dataId)) {
+                if (node.hasChildren()) {
+                    node.getChildren().forEach((child: TreeNode<DATA>) => {
+                        this.deleteNode(child.getData());
+                    });
+                }
+                if (this.gridData.getItemById(node.getId())) {
+                    this.gridData.deleteItem(node.getId());
+                }
+
+                var parent = node.getParent();
+                if (node && parent) {
+                    parent.removeChild(node);
+                    parent.setMaxChildren(parent.getMaxChildren() - 1);
+                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.DELETED));
+                }
+            }
+
+            this.root.removeSelection(dataId);
+
+        }
+
         /**
          * @param data
          * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
@@ -736,15 +762,21 @@ module api.ui.treegrid {
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.root.getCurrentRoot(),
-                updated: TreeNode<DATA>[] = [],
+            this.xDeleteNodes(this.root.getDefaultRoot(), dataList);
+            if (this.root.isFiltered()) {
+                this.xDeleteNodes(this.root.getFilteredRoot(), dataList);
+            }
+        }
+
+        private xDeleteNodes(root: TreeNode<DATA>, dataList: DATA[]): void {
+            var updated: TreeNode<DATA>[] = [],
                 deleted: TreeNode<DATA>[] = [];
 
             dataList.forEach((data: DATA) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
-                    this.deleteNode(node.getData());
+                    this.xDeleteNode(root, node.getData());
                     updated.push(parent);
                     deleted.push(node);
                     updated.filter((el) => {

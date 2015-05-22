@@ -5,6 +5,7 @@ module app.browse.filter {
     import Principal = api.security.Principal;
     import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
     import PrincipalType = api.security.PrincipalType;
+    import RefreshEvent = api.app.browse.filter.RefreshEvent;
 
     export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -32,19 +33,30 @@ module app.browse.filter {
         private searchFacets(event: api.app.browse.filter.SearchEvent) {
             var searchText = event.getSearchInputValues().getTextSearchFieldValue();
             if (!searchText) {
-                this.resetFacets(true);
+                this.handleEmptyFilterInput(event);
                 return;
             }
+
+            this.searchDataAndHandleResponse(searchText);
+        }
+
+        private  handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
+            if (event instanceof RefreshEvent) {
+                this.resetFacets(true);
+            } else { // it's SearchEvent, usual reset with grid reload
+                this.reset();
+            }
+        }
+
+        private searchDataAndHandleResponse(searchString: string) {
             new FindPrincipalsRequest().
                 setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).
-                setSearchQuery(searchText).
+                setSearchQuery(searchString).
                 sendAndParse().then((principals: Principal[]) => {
                     new PrincipalBrowseSearchEvent(principals).fire();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
         }
-
-
     }
 }
