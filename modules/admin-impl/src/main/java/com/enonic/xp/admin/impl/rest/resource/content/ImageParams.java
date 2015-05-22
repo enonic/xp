@@ -10,11 +10,14 @@ public final class ImageParams
 
     private final boolean cropRequired;
 
+    private final boolean scaleWidth;
+
     public ImageParams( Builder builder )
     {
         this.size = builder.size;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.cropRequired = builder.cropRequired;
+        this.scaleWidth = builder.scaleWidth;
     }
 
     public boolean isCropRequired()
@@ -32,6 +35,11 @@ public final class ImageParams
         return orientation;
     }
 
+    public boolean isScaleWidth()
+    {
+        return scaleWidth;
+    }
+
     public static Builder newImageParams()
     {
         return new Builder();
@@ -44,6 +52,8 @@ public final class ImageParams
         private ImageOrientation orientation;
 
         private boolean cropRequired;
+
+        private boolean scaleWidth;
 
         private Builder()
         {
@@ -64,6 +74,12 @@ public final class ImageParams
         public Builder cropRequired( boolean cropRequired )
         {
             this.cropRequired = cropRequired;
+            return this;
+        }
+
+        public Builder scaleWidth( boolean scaleWidth )
+        {
+            this.scaleWidth = scaleWidth;
             return this;
         }
 

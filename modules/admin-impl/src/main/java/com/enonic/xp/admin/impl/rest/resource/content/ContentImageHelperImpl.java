@@ -14,6 +14,7 @@ import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.filter.ScaleMaxFilter;
 import com.enonic.xp.image.filter.ScaleSquareFilter;
+import com.enonic.xp.image.filter.ScaleWidthFilter;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.Exceptions;
 
@@ -34,7 +35,7 @@ public final class ContentImageHelperImpl
         BufferedImage image;
         try (final InputStream inputStream = blob.openStream())
         {
-            image = readImage( inputStream, imageParams );
+            image = readImage( inputStream, imageParams, imageParams.isScaleWidth() );
         }
         catch ( IOException e )
         {
@@ -44,7 +45,7 @@ public final class ContentImageHelperImpl
         return image;
     }
 
-    private BufferedImage readImage( final InputStream inputStream, final ImageParams imageParams )
+    private BufferedImage readImage( final InputStream inputStream, final ImageParams imageParams, final boolean scaleWidth )
     {
         final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
         if ( imageParams.getSize() > 0 && ( image.getWidth() >= imageParams.getSize() ) )
@@ -52,6 +53,10 @@ public final class ContentImageHelperImpl
             if ( imageParams.isCropRequired() )
             {
                 return new ScaleSquareFilter( imageParams.getSize() ).filter( image );
+            }
+            else if ( scaleWidth )
+            {
+                return new ScaleWidthFilter( imageParams.getSize() ).filter( image );
             }
             else
             {
