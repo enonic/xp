@@ -626,9 +626,15 @@ module api.ui.treegrid {
                 });
         }
 
-        deleteNode(data: DATA, stashedParentNode?: TreeNode<DATA>): void {
-            var root = stashedParentNode || this.root.getCurrentRoot(),
-                dataId = this.getDataId(data),
+        deleteNode(data: DATA): void {
+            this.deleteRootNode(this.root.getDefaultRoot(), data);
+            if (this.root.isFiltered()) {
+                this.deleteRootNode(this.root.getFilteredRoot(), data);
+            }
+        }
+
+        private deleteRootNode(root: TreeNode<DATA>, data: DATA): void {
+            var dataId = this.getDataId(data),
                 node: TreeNode<DATA>;
 
             while (node = root.findNode(dataId)) {
@@ -650,7 +656,6 @@ module api.ui.treegrid {
             }
 
             this.root.removeSelection(dataId);
-
         }
 
         /**
@@ -736,15 +741,21 @@ module api.ui.treegrid {
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.root.getCurrentRoot(),
-                updated: TreeNode<DATA>[] = [],
+            this.deleteRootNodes(this.root.getDefaultRoot(), dataList);
+            if (this.root.isFiltered()) {
+                this.deleteRootNodes(this.root.getFilteredRoot(), dataList);
+            }
+        }
+
+        private deleteRootNodes(root: TreeNode<DATA>, dataList: DATA[]): void {
+            var updated: TreeNode<DATA>[] = [],
                 deleted: TreeNode<DATA>[] = [];
 
             dataList.forEach((data: DATA) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
-                    this.deleteNode(node.getData());
+                    this.deleteRootNode(root, node.getData());
                     updated.push(parent);
                     deleted.push(node);
                     updated.filter((el) => {
