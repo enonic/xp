@@ -70,6 +70,16 @@
       border-top: 1px solid @admin-medium-gray-border;
     }
   }
+
+  div[aria-label="Paste as text"] {
+    &.mce-active {
+      background-image: none;
+      background-color: @admin-input-blue;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+    }
+  }
 }
 
 .mce-link-dialog {
