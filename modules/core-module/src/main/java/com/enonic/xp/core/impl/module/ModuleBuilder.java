@@ -70,7 +70,8 @@ final class ModuleBuilder
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load module descriptor [" + url + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load module descriptor [bundle:" + module.bundle.getSymbolicName() + ":" + url.getFile() +
+                "]: " + e.getMessage() );
         }
     }
 
