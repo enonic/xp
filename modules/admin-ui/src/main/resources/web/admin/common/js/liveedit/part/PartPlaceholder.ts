@@ -15,6 +15,8 @@ module api.liveedit.part {
 
         private comboBox: PartDescriptorComboBox;
 
+        private displayName: api.dom.H2El;
+
         private partComponentView: PartComponentView;
 
         constructor(partView: PartComponentView) {
@@ -44,6 +46,17 @@ module api.liveedit.part {
                     loader.load();
                 }
             });
+
+            this.displayName = new api.dom.H3El('display-name');
+            this.appendChild(this.displayName);
+            var partComponent = this.partComponentView.getComponent();
+            if (partComponent && partComponent.getName()) {
+                this.setDisplayName(partComponent.getName().toString());
+            }
+        }
+
+        setDisplayName(name: string) {
+            this.displayName.setHtml(name);
         }
 
         select() {

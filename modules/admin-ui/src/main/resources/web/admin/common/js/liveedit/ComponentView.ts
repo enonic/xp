@@ -192,13 +192,13 @@ module api.liveedit {
 
         remove(): ComponentView<Component> {
             this.unregisterComponentListeners(this.component);
+
             var parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
             } else {
                 super.remove();
             }
-            this.unregisterComponentListeners(this.component);
             return this;
         }
 
@@ -324,7 +324,10 @@ module api.liveedit {
             }
 
             // Unregister from previous region...
-            this.remove();
+            var parentView = this.getParentItemView();
+            if (parentView) {
+                parentView.removeComponentView(this);
+            }
 
             // Register with new region...
             toRegionView.addComponentView(this, toIndex);

@@ -19,17 +19,30 @@ module api.liveedit.part {
 
         private partComponent: PartComponent;
 
+        private partPlaceholder: PartPlaceholder;
+
         constructor(builder: PartComponentViewBuilder) {
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             this.partComponent = builder.component;
 
+            this.partPlaceholder = new PartPlaceholder(this);
+
             super(builder.
                 setTooltipViewer(new PartComponentViewer()).
-                setPlaceholder(new PartPlaceholder(this)));
+                setPlaceholder(this.partPlaceholder));
             this.addClass('part-view');
 
             this.parseContentViews(this);
+        }
+
+        setComponent(partComponent: PartComponent) {
+            super.setComponent(partComponent);
+
+            // name can be null when emptying component
+            if (partComponent && partComponent.getName()) {
+                this.partPlaceholder.setDisplayName(partComponent.getName().toString());
+            }
         }
 
         addContent(view: ContentView) {
