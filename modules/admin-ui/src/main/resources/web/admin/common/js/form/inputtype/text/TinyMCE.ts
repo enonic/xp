@@ -13,8 +13,6 @@ module api.form.inputtype.text {
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
-        private editor: TinyMceEditor;
-
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
             this.addClass("tinymce-editor");
@@ -61,7 +59,7 @@ module api.form.inputtype.text {
                     setup: (editor) => {
                         editor.addCommand("initSelectors", this.initSelectors, this);
                         editor.on('change', (e) => {
-                            var value = this.newValue(this.editor.getContent());
+                            var value = this.newValue(this.getEditor(textAreaEl.getId()).getContent());
                             property.setValue(value);
                         });
                         editor.on('focus', (e) => {
@@ -75,7 +73,7 @@ module api.form.inputtype.text {
                         editor.on('keydown', (e) => {
                             if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
                                 e.preventDefault();
-                                var value = this.newValue(this.editor.getContent());
+                                var value = this.newValue(this.getEditor(textAreaEl.getId()).getContent());
                                 property.setValue(value); // ensure that entered value is stored
 
                                 wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
@@ -93,7 +91,7 @@ module api.form.inputtype.text {
                         });
                     },
                     init_instance_callback: (editor) => {
-                        this.editor = this.getEditor(textAreaEl.getId(), property);
+                        this.setEditorContent(textAreaEl.getId(), property);
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
                     }
                 });
@@ -104,7 +102,7 @@ module api.form.inputtype.text {
 
             textAreaWrapper.giveFocus = () => {
                 try {
-                    this.editor.focus();
+                    this.getEditor(textAreaEl.getId()).focus();
                     return true;
                 }
                 catch (e) {
@@ -184,14 +182,14 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
-        private getEditor(editorId: string, property: Property): TinyMceEditor {
-            var editor = tinymce.get(editorId);
+        private getEditor(editorId: string): TinyMceEditor {
+            return tinymce.get(editorId);
+        }
 
+        private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                editor.setContent(property.getString());
+                this.getEditor(editorId).setContent(property.getString());
             }
-
-            return editor;
         }
 
         private newValue(s: string): Value {
