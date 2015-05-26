@@ -167,12 +167,6 @@ public class PushContentRequests
         return result;
     }
 
-    /**
-     * Go all the way through the contextual contentIds to find the initial node that triggered publish.
-     *
-     * @param id
-     * @return
-     */
     private ContentId findContentIdThatInitiallyTriggeredPublish( ContentId id )
     {
         return mapWithInitialReasonContentIds.get( id );
@@ -188,6 +182,19 @@ public class PushContentRequests
         else
         {
             return getPushedContentIdsWithInitialReason( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF );
+        }
+    }
+
+    public PushedContentIdsWithInitialReason getRequstedAndDependantContentIds( boolean includeDeleted )
+    {
+        if ( includeDeleted )
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED, PUSH_TYPE.DELETE_REQUESTED, PUSH_TYPE.PUSH_PARENT,
+                                                         PUSH_TYPE.PUSH_REF, PUSH_TYPE.DELETE_PARENT, PUSH_TYPE.DELETE_REF );
+        }
+        else
+        {
+            return getPushedContentIdsWithInitialReason( false, PUSH_TYPE.PUSH_REQUESTED, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF );
         }
     }
 

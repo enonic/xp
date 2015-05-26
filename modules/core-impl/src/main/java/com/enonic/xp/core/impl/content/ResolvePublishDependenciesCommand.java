@@ -43,9 +43,9 @@ public class ResolvePublishDependenciesCommand
 
     private void resolveDependencies()
     {
-        final ResolveSyncWorkResults syncWorkResultsWithChildren = resolveSyncWorkResults( this.includeChildren );
+        final ResolveSyncWorkResults syncWorkResults = resolveSyncWorkResults( this.includeChildren );
 
-        populateResults( syncWorkResultsWithChildren );
+        populateResults( syncWorkResults );
     }
 
     private ResolveSyncWorkResults resolveSyncWorkResults( boolean includeChildren )
@@ -75,9 +75,10 @@ public class ResolvePublishDependenciesCommand
         PushContentRequests pushContentRequests = PushContentRequestsFactory.create( syncWorkResults );
         this.resultBuilder.pushContentRequests( pushContentRequests );
 
-        ContentIds allIds = pushContentRequests.getAllContentIds( true ).getPushedContentIds();
-        this.resultBuilder.resolvedContent( getContentByIds( new GetContentByIdsParams( allIds ) ) );
-        this.resultBuilder.compareContentResults( getCompareStatuses( allIds ) );
+        ContentIds pushRequestedAndDependantContentIds =
+            pushContentRequests.getRequstedAndDependantContentIds( true ).getPushedContentIds();
+        this.resultBuilder.resolvedContent( getContentByIds( new GetContentByIdsParams( pushRequestedAndDependantContentIds ) ) );
+        this.resultBuilder.compareContentResults( getCompareStatuses( pushRequestedAndDependantContentIds ) );
     }
 
     private Contents getContentByIds( final GetContentByIdsParams getContentParams )

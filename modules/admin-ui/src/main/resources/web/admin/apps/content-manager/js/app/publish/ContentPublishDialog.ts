@@ -7,20 +7,22 @@ module app.publish {
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishDependenciesResultJson
+    import GetDependantsResultJson = api.content.json.ResolveDependantsResultJson;
     import CompareStatus = api.content.CompareStatus;
 
     /**
-     * ContentPublishDialog manages list of items resolved via ResolvePublishDependenceies command.
-     * Resolved items are converted into array of SelectionPublishItem<ContentPublishItem> items and stored in selectionItems property.
+     * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
+     * Resolved items are converted into array of SelectionPublishItem<ContentPublishRequestedItem> items and stored in selectionItems property.
+     * ContentPublishRequestedItem contains info for the initially checked item with number of children and dependants items that will get published with it.
      * SelectionPublishItem has checked/unchecked state which determines if item's id will be included into a list of contentIds of Publish request.
-     * Items displayed in dialog and selectionItems property will change depending on includeChildren checkbox state as
-     * resolved dependencies usually differ in that case.
+     * If dependant items are selected to be shown - their number will change depending on includeChildren checkbox state as
+     * resolved dependencies usually differ in that case. Resolved dependant items are stored within their parents ContentPublishRequestedItem object.
      */
     export class ContentPublishDialog extends api.ui.dialog.ModalDialog {
 
         private modelName: string;
 
-        private selectionItems: SelectionPublishItem<ContentPublishItem>[] = [];
+        private selectionItems: SelectionPublishItem<ContentPublishRequestedItem>[] = [];
 
         private publishButton: DialogButton;
 
@@ -34,13 +36,9 @@ module app.publish {
 
         private selectedContents: ContentSummary[];
 
-        private dependantsResolvedWithChildrenIncluded: ContentPublishItem[] = [];
+        private pushRequestedContentsWithChildren: ContentPublishRequestedItem[] = [];
 
-        private dependantsResolvedWithoutChildrenIncluded: ContentPublishItem[] = [];
-
-        private childrenResolved: ContentPublishItem[] = [];
-
-        private pushRequestedContents: ContentPublishItem[] = [];
+        private pushRequestedContentsWithoutChildren: ContentPublishRequestedItem[] = [];
 
         private alreadyResolvedWithChildren: boolean = false;
 
@@ -50,6 +48,7 @@ module app.publish {
             });
 
             this.modelName = "item";
+
 
             this.getEl().addClass("publish-dialog");
             this.appendChildToContentPanel(this.publishDialogItemList);
@@ -68,20 +67,18 @@ module app.publish {
             this.includeChildItemsCheck = new api.ui.Checkbox();
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(() => {
-
-                if (this.alreadyResolvedWithChildren) {
-                    // re-render required as among the dependant items might be ones resolved via children references (rare case though)
+                if (this.includeChildItemsCheck.isChecked() && !this.alreadyResolvedWithChildren) {
+                    this.resolvePublishRequestedContentsAndUpdateView();
+                } else {
                     this.renderResolvedPublishItems();
                     this.countItemsToPublishAndUpdateCounterElements();
-                } else {
-                    this.getPublishDependantsAndUpdateView();
                 }
             });
             this.appendChildToContentPanel(this.includeChildItemsCheck);
         }
 
         initAndOpen() {
-            this.getPublishDependantsAndUpdateView();
+            this.resolvePublishRequestedContentsAndUpdateView();
             this.open();
         }
 
@@ -113,7 +110,7 @@ module app.publish {
             this.initSelectionItems();
             this.publishDialogItemList.clear();
 
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
                 if (!item.isHidden()) {
                     this.publishDialogItemList.appendChild(item);
                 }
@@ -126,63 +123,47 @@ module app.publish {
          * Method is called from renderResolvedPublishItems() so it also saves and restores unchecked items.
          */
         private initSelectionItems() {
-            var unCheckedRequestedContentsIds: string[] = this.getCheckedRequestedContentsIds(false); // store unchecked publish requested values before re-init
-            var publishRequestedSelectionItems: SelectionPublishItem<ContentPublishItem>[] = []; // store selection items of publish requested values during init
+            var unCheckedRequestedContentsIds: string[] = this.getCheckedContentsIds(false); // store unchecked publish requested values before re-init
+            var publishRequestedSelectionItems: SelectionPublishItem<ContentPublishRequestedItem>[] = []; // store selection items of publish requested values during init
 
             this.selectionItems = [];
 
-            //initially requested
-            this.pushRequestedContents.forEach((content: ContentPublishItem) => {
-                var item: SelectionPublishItem<ContentPublishItem> = this.createSelectionPublishItemFromResolvedContent(content, true,
-                    ResolvedPublishContext.REQUESTED);
+            var pushRequestedItems: ContentPublishRequestedItem[];
+
+            if (this.includeChildItemsCheck.isChecked()) {
+                pushRequestedItems = this.pushRequestedContentsWithChildren;
+            } else {
+                pushRequestedItems = this.pushRequestedContentsWithoutChildren;
+            }
+
+            pushRequestedItems.forEach((content: ContentPublishRequestedItem) => {
+                var item: SelectionPublishItem<ContentPublishRequestedItem>;
+                item = new SelectionPublishItemBuilder<ContentPublishRequestedItem>().create().
+                    setContent(content).
+                    setIsCheckBoxEnabled(true).
+                    setIsHidden(false).
+                    setIsChecked(true).
+                    setExpandable(true).
+                    setChangeCallback(() => {
+                        this.countItemsToPublishAndUpdateCounterElements();
+                    }).
+                    setToggleCallback((isExpand: boolean) => {
+                        this.resolveDependantsAndUpdateView(item, isExpand);
+                    }).
+                    build();
                 this.selectionItems.push(item);
                 publishRequestedSelectionItems.push(item);
             });
-
-            //dependants and children resolved with parameter includeChildren=true
-            if (this.includeChildItemsCheck.isChecked()) {
-                this.dependantsResolvedWithChildrenIncluded.forEach((content: ContentPublishItem) => {
-                    this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
-                        ResolvedPublishContext.DEPENDANT));
-                });
-                this.childrenResolved.forEach((content: ContentPublishItem) => {
-                    this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
-                        ResolvedPublishContext.CHILD, true));
-                });
-            } else {//dependants and children resolved with parameter includeChildren=false
-                this.dependantsResolvedWithoutChildrenIncluded.forEach((content: ContentPublishItem) => {
-                    this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
-                        ResolvedPublishContext.DEPENDANT));
-                });
-                /* this.childrenResolved.forEach((content: ContentPublishItem) => {
-                    this.selectionItems.push(this.createSelectionPublishItemFromResolvedContent(content, false,
-                        ResolvedPublishContext.CHILD, true, false));
-                 });*/
-            }
 
             this.restoreUncheckedState(unCheckedRequestedContentsIds, publishRequestedSelectionItems);
         }
 
         // get array of contents ids that were initially requested to publish and have given checked value
-        private getCheckedRequestedContentsIds(checked: boolean): string[] {
-            var unCheckedRequestedContentsIds: string[] = [];
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                if (item.isChecked() == checked) {
-                    switch (item.getResolvedContext()) {
-                    case ResolvedPublishContext.REQUESTED:
-                        unCheckedRequestedContentsIds.push(item.getBrowseItem().getId());
-                        break;
-                    }
-                }
-            });
-            return unCheckedRequestedContentsIds;
-        }
+        private getCheckedContentsIds(checked: boolean): string[] {
 
-        // get array of contents ids that were initially requested to publish and have given checked value
-        private getCheckedContentsIds(): string[] {
             var checkedContentsIds: string[] = [];
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                if (item.isChecked()) {
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
+                if (item.isChecked() == checked) {
                     checkedContentsIds.push(item.getBrowseItem().getId());
                 }
             });
@@ -195,8 +176,8 @@ module app.publish {
          * @param publishRequestedSelectionItems
          */
         private restoreUncheckedState(unCheckedRequestedContentsIds: string[],
-                                      publishRequestedSelectionItems: SelectionPublishItem<ContentPublishItem>[]) {
-            publishRequestedSelectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+                                      publishRequestedSelectionItems: SelectionPublishItem<ContentPublishRequestedItem>[]) {
+            publishRequestedSelectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
                 if (unCheckedRequestedContentsIds.indexOf(item.getBrowseItem().getId()) > -1) {
                     item.setChecked(false);
                 }
@@ -204,67 +185,17 @@ module app.publish {
         }
 
         /**
-         * Creates selection item from passed ContentPublishItem object.
-         * @param content
-         */
-        private createSelectionPublishItemFromResolvedContent(content: ContentPublishItem, isCheckBoxEnabled: boolean,
-                                                              resolvedPublishContext: ResolvedPublishContext,
-                                                              isHidden: boolean = false,
-                                                              isChecked: boolean = true): SelectionPublishItem<ContentPublishItem> {
-
-            var publishItemViewer = new app.publish.ResolvedPublishContentViewer();
-            publishItemViewer.setObject(content);
-
-            var browseItem = new BrowseItem<ContentPublishItem>(content).
-                setId(content.getId()).
-                setDisplayName(content.getDisplayName()).
-                setPath(content.getPath().toString()).
-                setIconUrl(content.getIconUrl());
-
-            var selectionPublishItem = new SelectionPublishItem(publishItemViewer, browseItem, content.getCompareStatus(),
-                resolvedPublishContext,
-                () => {
-                    if (isCheckBoxEnabled) {
-                        if (selectionPublishItem.isChecked()) {
-                            this.setCheckedForItemsWithGivenReason(selectionPublishItem, true);
-                        } else {
-                            this.setCheckedForItemsWithGivenReason(selectionPublishItem, false);
-                        }
-                        this.countItemsToPublishAndUpdateCounterElements();
-                    }
-                }, isCheckBoxEnabled, isHidden, isChecked);
-
-            return selectionPublishItem;
-        }
-
-        /**
-         * Sets checked state to all contents that are target for publish via passed selectionPublishItem (referenced via idOfContentThatTriggeredPublishForMe).
-         * @param selectionPublishItem
-         * @param checked
-         */
-        private setCheckedForItemsWithGivenReason(selectionPublishItem: SelectionPublishItem<ContentPublishItem>, checked: boolean) {
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                var iteratedPublishItem: ContentPublishItem = <ContentPublishItem>item.getBrowseItem().getModel(),
-                    checkedPublishItem: ContentPublishItem = <ContentPublishItem>selectionPublishItem.getBrowseItem().getModel();
-                if (iteratedPublishItem.getId() != checkedPublishItem.getId()
-                    && iteratedPublishItem.getIdOfInitialContentThatTriggeredPublish() == checkedPublishItem.getId()) {
-                    item.setChecked(checked);
-                }
-            });
-        }
-
-        /**
          * Perform request to resolve publish items, init and render results.
          */
-        private getPublishDependantsAndUpdateView() {
+        private resolvePublishRequestedContentsAndUpdateView() {
 
             this.showLoadingSpinner();
 
-            var getPublishContentDependantsRequest = new api.content.ResolvePublishDependenciesRequest(this.selectedContents.map((el) => {
+            var resolvePublishDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.selectedContents.map((el) => {
                 return new api.content.ContentId(el.getId());
             }), this.includeChildItemsCheck.isChecked());
 
-            getPublishContentDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
+            resolvePublishDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
                 this.initResolvedPublishItems(jsonResponse.getResult());
                 this.renderResolvedPublishItems();
                 this.countItemsToPublishAndUpdateCounterElements();
@@ -273,57 +204,97 @@ module app.publish {
             }).done();
         }
 
+
+        /**
+         * Perform request to resolve dependant items of passed item.
+         */
+        private resolveDependantsAndUpdateView(selectionItem: SelectionPublishItem<ContentPublishRequestedItem>, showDependants: boolean) {
+
+            var contentPublishRequestedItem: ContentPublishRequestedItem = <ContentPublishRequestedItem>selectionItem.getBrowseItem().getModel();
+            if (showDependants) {
+                if (!contentPublishRequestedItem.isDependantsResolved()) {
+                    var getDependantsRequest = new api.content.ResolveDependantsRequest(contentPublishRequestedItem.getId(),
+                        this.includeChildItemsCheck.isChecked());
+                    getDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
+                        contentPublishRequestedItem.setDependantsResolved(ContentPublishDependantItem.getDependantsResolved(jsonResponse.getResult()));
+                        this.initDependantsView(selectionItem);
+                        selectionItem.showDependants();
+                    }).done();
+                } else {
+                    if (!selectionItem.hasDependants()) {
+                        this.initDependantsView(selectionItem);
+                    }
+                    selectionItem.showDependants();
+                }
+            } else {
+                selectionItem.hideDependants();
+            }
+            this.centerMyself();
+        }
+
+        /**
+         * Creates SelectionPublishItem from resolved dependants and appends them as children to SelectionPublishItem of initial object.
+         * @param selectionItem
+         */
+        private initDependantsView(selectionItem: SelectionPublishItem<ContentPublishRequestedItem>): void {
+
+            var contentPublishRequestedItem: ContentPublishRequestedItem = <ContentPublishRequestedItem>selectionItem.getBrowseItem().getModel();
+
+            contentPublishRequestedItem.getDependantsResolved().forEach((dependant: ContentPublishDependantItem)  => {
+                var dependantView: SelectionPublishItem<ContentPublishDependantItem> = new SelectionPublishItemBuilder<ContentPublishDependantItem>().create().
+                    setContent(dependant).
+                    setIsCheckBoxEnabled(false).
+                    setIsHidden(false).
+                    setIsChecked(true).
+                    setExpandable(false).
+                    setChangeCallback(() => {
+                    }).
+                    setToggleCallback(() => {
+                    }).
+                    build();
+
+                selectionItem.appendDependant(dependantView);
+            });
+        }
+
         /**
          * Inits arrays of properties that store results of performing resolve request.
          */
         private initResolvedPublishItems(json: ResolvePublishDependenciesResultJson) {
 
-            this.pushRequestedContents = ContentPublishItem.getPushRequestedContents(json);
-
             if (this.includeChildItemsCheck.isChecked()) {
-                this.dependantsResolvedWithChildrenIncluded = ContentPublishItem.getDependantsResolved(json);
-                this.childrenResolved = ContentPublishItem.getResolvedChildren(json);
+                this.pushRequestedContentsWithChildren = ContentPublishRequestedItem.getPushRequestedContents(json);
                 this.alreadyResolvedWithChildren = true;
             } else {
-                this.dependantsResolvedWithoutChildrenIncluded = ContentPublishItem.getDependantsResolved(json);
+                this.pushRequestedContentsWithoutChildren = ContentPublishRequestedItem.getPushRequestedContents(json);
             }
         }
 
         private doPublish() {
-            new PublishContentRequest().setIds(this.getCheckedContentsIds().map((id) => {
-                return new api.content.ContentId(id);
-            })).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
-                this.close();
-                PublishContentRequest.feedback(jsonResponse);
-            });
+
+            new PublishContentRequest().
+                setIncludeChildren(this.includeChildItemsCheck.isChecked()).
+                setIds(this.getCheckedContentsIds(true).map((id) => {
+                    return new api.content.ContentId(id);
+                })).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+                    this.close();
+                    PublishContentRequest.feedback(jsonResponse);
+                });
         }
 
         private countItemsToPublishAndUpdateCounterElements() {
 
-            var checkedRequested = 0, checkedDependants = 0, checkedChildren = 0;
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                if (item.isChecked()) {
-                    switch (item.getResolvedContext()) {
-                    case ResolvedPublishContext.REQUESTED:
-                        checkedRequested++;
-                        break;
-                    case ResolvedPublishContext.DEPENDANT:
-                        checkedDependants++;
-                        break;
-                    case ResolvedPublishContext.CHILD:
-                        checkedChildren++;
-                        break;
-                    }
-                }
-            });
+            var checkedRequested = this.getCheckedItemsCount(),
+                dependantsEligibleForPublish = this.getDependantsEligibleForPublishCount(),
+                childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
 
             //subheader
             this.subheaderMessage.setHtml("Based on your <b>selection</b> - we found <b>" +
-                                          checkedDependants + " dependent</b> changes");
+                                          dependantsEligibleForPublish + " dependent</b> changes");
 
             // publish button
             this.cleanPublishButtonText();
-            this.updatePublishButtonCounter(checkedRequested + checkedDependants + checkedChildren);
+            this.updatePublishButtonCounter(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
 
             // includeChildren link
             var childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
@@ -337,38 +308,28 @@ module app.publish {
         // counts number of children that can be published with given selections upon pressing publish button
         private getChildrenEligibleForPublishCount(): number {
             var result = 0;
-            var checkedRequestedContentsIds: string[] = [];
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
                 if (item.isChecked()) {
-                    switch (item.getResolvedContext()) {
-                    case ResolvedPublishContext.REQUESTED:
-                        checkedRequestedContentsIds.push(item.getBrowseItem().getId());
-                        break;
-                    }
+                    result += item.getBrowseItem().getModel().getChildrenCount();
                 }
             });
-            // case when there are initially requested contents returned via resolve command
-            if (this.pushRequestedContents.length > 0) {
-                if (checkedRequestedContentsIds.length > 0) { // ... and some of them checked
-                    this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
-                        switch (item.getResolvedContext()) {
-                        case ResolvedPublishContext.CHILD:
-                            var itemReason = (<ContentPublishItem>item.getBrowseItem().getModel()).getIdOfInitialContentThatTriggeredPublish();
-                            if (checkedRequestedContentsIds.indexOf(itemReason) > -1) {
-                                result++
-                            }
-                        }
-                    });
+            return result;
+        }
+
+        // counts number of dependants that can be published with given selections upon pressing publish button
+        private getDependantsEligibleForPublishCount(): number {
+            var result = 0;
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
+                if (item.isChecked()) {
+                    result += item.getBrowseItem().getModel().getDependantsCount();
                 }
-            } else { // nothing checked and no initially requested contents returned for publish, but there might be children available for publish
-                result = this.childrenResolved.length;
-            }
+            });
             return result;
         }
 
         private getCheckedItemsCount(): number {
             var result = 0;
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
                 if (item.isChecked()) {
                     result++;
                 }

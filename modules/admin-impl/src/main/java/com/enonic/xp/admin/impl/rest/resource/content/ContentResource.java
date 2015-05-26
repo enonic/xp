@@ -56,6 +56,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolveDependantsRequestParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolveDependantsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -327,9 +329,9 @@ public final class ContentResource
         final PushContentsResult result = contentService.push( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
-            includeChildren( true ).
+            includeChildren( params.isIncludeChildren() ).
             allowPublishOutsideSelection( true ).
-            resolveDependencies( false ).
+            resolveDependencies( true ).
             build() );
 
         return PublishContentResultJson.from( result );
@@ -353,6 +355,26 @@ public final class ContentResource
             iconUrlResolver( newContentIconUrlResolver() ).
             build();
     }
+
+    @POST
+    @Path("getDependants")
+    public ResolveDependantsResultJson getDependants( final ResolveDependantsRequestParamsJson params )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getId() );
+
+        final ResolvePublishDependenciesResult result =
+            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                includeChildren( params.includeChildren() ).
+                build() );
+
+        return ResolveDependantsResultJson.create().
+            resolvedPublishDependencies( result ).
+            iconUrlResolver( newContentIconUrlResolver() ).
+            build();
+    }
+
 
     @POST
     @Path("applyPermissions")
