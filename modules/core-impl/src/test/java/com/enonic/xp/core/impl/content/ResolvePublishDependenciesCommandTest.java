@@ -183,11 +183,11 @@ public class ResolvePublishDependenciesCommandTest
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ),
                                        createContent( "s3", "s3Name", ContentPath.ROOT, true ) ) );
 
-        Mockito.when( nodeService.compare( NodeIds.from( NodeId.from( "s1" ), NodeId.from( "s2" ), NodeId.from( "s3" ) ),
+        Mockito.when( nodeService.compare( NodeIds.from( NodeId.from( "s1" ) ),
                                            ContentConstants.BRANCH_MASTER ) ).
             thenReturn( NodeComparisons.create().add( new NodeComparison( NodeId.from( "s1" ), CompareStatus.NEW ) ).add(
-                new NodeComparison( NodeId.from( "s2" ), CompareStatus.PENDING_DELETE ) ).add(
-                new NodeComparison( NodeId.from( "s3" ), CompareStatus.PENDING_DELETE ) ).build() );
+                new NodeComparison( NodeId.from( "s2" ), CompareStatus.NEW ) ).add(
+                new NodeComparison( NodeId.from( "s3" ), CompareStatus.NEW ) ).build() );
 
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
@@ -200,7 +200,7 @@ public class ResolvePublishDependenciesCommandTest
             execute();
 
         assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 2, result.getChildrenContentsIds().getSize() );
+        assertEquals( 0, result.getDependantsContentIds().getSize() );
     }
 
     private Content createContent( final String id, final String name, final ContentPath path, boolean valid )

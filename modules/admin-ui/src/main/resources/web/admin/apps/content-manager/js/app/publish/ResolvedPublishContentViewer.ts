@@ -4,13 +4,13 @@ module app.publish {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import CompareStatus = api.content.CompareStatus;
 
-    export class ResolvedPublishContentViewer extends api.ui.NamesAndIconViewer<ContentPublishItem> {
+    export class ResolvedPublishContentViewer<M extends ContentPublishItem> extends api.ui.NamesAndIconViewer<M> {
 
         constructor() {
             super("content-resolved-publish-viewer");
         }
 
-        resolveDisplayName(object: ContentPublishItem): string {
+        resolveDisplayName(object: M): string {
             var contentName = object.getName(),
                 invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
                 pendingDelete = CompareStatus.PENDING_DELETE == object.getCompareStatus() ? true : false;
@@ -20,11 +20,11 @@ module app.publish {
             return object.getDisplayName();
         }
 
-        resolveUnnamedDisplayName(object: ContentPublishItem): string {
+        resolveUnnamedDisplayName(object: M): string {
             return object.getType() ? object.getType().getLocalName() : "";
         }
 
-        resolveSubName(object: ContentPublishItem, relativePath: boolean = false): string {
+        resolveSubName(object: M, relativePath: boolean = false): string {
             var contentName = object.getName();
             if (relativePath) {
                 return !contentName.isUnnamed() ? object.getName().toString() :
@@ -36,11 +36,11 @@ module app.publish {
             }
         }
 
-        resolveSubTitle(object: ContentPublishItem): string {
+        resolveSubTitle(object: M): string {
             return object.getPath().toString();
         }
 
-        resolveIconUrl(object: ContentPublishItem): string {
+        resolveIconUrl(object: M): string {
             return new ContentIconUrlResolver().setContent(object).resolve();
         }
     }

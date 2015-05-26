@@ -3,7 +3,6 @@ module app.publish {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentPath = api.content.ContentPath;
-    import SelectionItem = api.app.browse.SelectionItem;
     import ContentSummary = api.content.ContentSummary;
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
@@ -25,8 +24,6 @@ module app.publish {
 
         private compareStatus: CompareStatus;
 
-        private idOfInitialContentThatTriggeredPublish: string;
-
         private name: ContentName;
 
         private type: api.schema.content.ContentTypeName;
@@ -38,7 +35,6 @@ module app.publish {
             this.path = builder.path;
             this.iconUrl = builder.iconUrl;
             this.id = builder.id;
-            this.idOfInitialContentThatTriggeredPublish = builder.initialReasonId;
             this.name = builder.name;
             this.type = builder.type;
             this.valid = builder.valid;
@@ -51,10 +47,6 @@ module app.publish {
 
         getCompareStatus(): api.content.CompareStatus {
             return this.compareStatus;
-        }
-
-        getIdOfInitialContentThatTriggeredPublish(): string {
-            return this.idOfInitialContentThatTriggeredPublish;
         }
 
         hasParent(): boolean {
@@ -112,9 +104,6 @@ module app.publish {
             if (this.compareStatus != other.compareStatus) {
                 return false;
             }
-            if (!api.ObjectHelper.stringEquals(this.idOfInitialContentThatTriggeredPublish, other.idOfInitialContentThatTriggeredPublish)) {
-                return false;
-            }
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
             }
@@ -140,29 +129,11 @@ module app.publish {
             return array;
         }
 
-        static getDependantsResolved(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
-            var array: ContentPublishItem[] = [];
-            json.dependantsResolved.forEach((obj: ResolvedPublishDependencyJson) => {
-                array.push(new ContentPublishItemBuilder().fromJson(obj).build());
-            });
-            return array;
-        }
-
-        static getResolvedChildren(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
-            var array: ContentPublishItem[] = [];
-            json.childrenResolved.forEach((obj: ResolvedPublishDependencyJson) => {
-                array.push(new ContentPublishItemBuilder().fromJson(obj).build());
-            });
-            return array;
-        }
-
     }
 
     export class ContentPublishItemBuilder {
 
         id: string;
-
-        initialReasonId: string;
 
         displayName: string;
 
@@ -171,8 +142,6 @@ module app.publish {
         iconUrl: string;
 
         compareStatus: api.content.CompareStatus;
-
-        idOfContentThatTriggeredPublishForMe: string;
 
         name: ContentName;
 
@@ -186,12 +155,10 @@ module app.publish {
                 this.displayName = source.getDisplayName();
                 this.path = source.getPath();
                 this.iconUrl = source.getIconUrl();
-                this.idOfContentThatTriggeredPublishForMe = source.getIdOfInitialContentThatTriggeredPublish();
                 this.compareStatus = source.getCompareStatus();
                 this.name = source.getName();
                 this.type = source.getType();
                 this.valid = source.isValid();
-                this.initialReasonId = source.getIdOfInitialContentThatTriggeredPublish();
             }
         }
 
@@ -206,7 +173,6 @@ module app.publish {
             this.name = ContentName.fromString(json.name);
             this.type = new ContentTypeName(json.type);
             this.valid = json.isValid;
-            this.initialReasonId = json.initialReasonId;
 
             return this;
         }

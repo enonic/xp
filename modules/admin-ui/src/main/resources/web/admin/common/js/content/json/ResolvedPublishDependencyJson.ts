@@ -4,8 +4,6 @@ module api.content.json {
 
         id: string;
 
-        initialReasonId: string;
-
         path: string;
 
         compareStatus: string;
