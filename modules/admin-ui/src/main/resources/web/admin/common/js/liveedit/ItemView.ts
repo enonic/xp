@@ -110,6 +110,14 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
+        private mouseOverViewListener;
+        private mouseLeaveViewListener;
+        private shaderClickedListener;
+        private mouseEnterListener;
+        private mouseLeaveListener;
+        private mouseClickedListener;
+        private contextMenuListener;
+
         public static debug: boolean = false;
 
         constructor(builder: ItemViewBuilder) {
@@ -177,20 +185,25 @@ module api.liveedit {
                 this.appendChild(this.placeholder);
             }
 
-            // safe to use bind here because it's the same object who handles the events
-            // and we are not going to unbind them on remove
-            this.onMouseEnter(this.handleMouseEnter.bind(this));
-            this.onMouseLeave(this.handleMouseLeave.bind(this));
-            this.onClicked(this.handleClick.bind(this));
-            this.onContextMenu(this.handleClick.bind(this));
-            this.onTouchStart(this.handleClick.bind(this));
             this.onRemoved(this.invalidateContextMenu.bind(this));
-
 
             this.bindMouseListeners();
         }
 
         private bindMouseListeners() {
+            this.mouseEnterListener = this.handleMouseEnter.bind(this);
+            this.onMouseEnter(this.mouseEnterListener);
+
+            this.mouseLeaveListener = this.handleMouseLeave.bind(this);
+            this.onMouseLeave(this.mouseLeaveListener);
+
+            this.mouseClickedListener = this.handleClick.bind(this);
+            this.onClicked(this.mouseClickedListener);
+            this.onTouchStart(this.mouseClickedListener);
+
+            this.contextMenuListener = this.handleClick.bind(this);
+            this.onContextMenu(this.contextMenuListener);
+
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 // no need to check if the view manages shader and highlighter here
                 // because it is essential to resize them on window resize
@@ -200,7 +213,10 @@ module api.liveedit {
                 }
             });
 
-            this.onMouseOverView(() => {
+            this.shaderClickedListener = this.handleShaderClick.bind(this);
+            Shader.get().onClicked(this.shaderClickedListener);
+
+            this.mouseOverViewListener = () => {
                 var hasSelectedView = this.getPageView().hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
@@ -209,9 +225,10 @@ module api.liveedit {
                     this.showCursor();
                     this.highlight();
                 }
-            });
+            };
+            this.onMouseOverView(this.mouseOverViewListener);
 
-            this.onMouseLeaveView(() => {
+            this.mouseLeaveViewListener = () => {
                 var hasSelectedView = this.getPageView().hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
@@ -220,9 +237,21 @@ module api.liveedit {
                     this.resetCursor();
                     this.unhighlight();
                 }
-            });
+            };
+            this.onMouseLeaveView(this.mouseLeaveViewListener);
+        }
 
-            Shader.get().onClicked((event: MouseEvent) => this.handleShaderClick(event));
+        private unbindMouseListeners() {
+            this.unMouseEnter(this.mouseEnterListener);
+            this.unMouseLeave(this.mouseLeaveListener);
+            this.unClicked(this.mouseClickedListener);
+            this.unTouchStart(this.mouseClickedListener);
+            this.unContextMenu(this.contextMenuListener);
+
+            api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
+            Shader.get().unClicked(this.shaderClickedListener);
+            this.unMouseOverView(this.mouseOverViewListener);
+            this.unMouseLeaveView(this.mouseLeaveViewListener);
         }
 
         highlight() {
@@ -258,6 +287,11 @@ module api.liveedit {
         }
 
         remove(): ItemView {
+            if (ItemView.debug) {
+                console.log('ItemView.remove [' + this.toString() + ']');
+            }
+
+
             if (this.contextMenu) {
                 this.contextMenu.remove();
             }
@@ -267,6 +301,8 @@ module api.liveedit {
 
             this.unhighlight();
             this.unshade();
+
+            this.unbindMouseListeners();
 
             super.remove();
             return this;

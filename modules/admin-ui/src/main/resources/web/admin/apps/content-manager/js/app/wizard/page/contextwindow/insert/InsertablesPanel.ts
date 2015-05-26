@@ -27,7 +27,7 @@ module app.wizard.page.contextwindow.insert {
 
         private contextWindowDraggable: JQuery;
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");

@@ -82,7 +82,7 @@ module app.wizard.page.contextwindow.inspect.page {
                         }).done();
                 }
                 else {
-                    this.pageModel.setAutomaticTemplate(this);
+                    this.pageModel.setAutomaticTemplate(this, true);
                 }
             });
         }

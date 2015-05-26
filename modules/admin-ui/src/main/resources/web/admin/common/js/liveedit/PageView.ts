@@ -78,10 +78,6 @@ module api.liveedit {
             this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
                 // don't parse on regions change during reset, because it'll be done when page is loaded later
                 if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
-                    this.regionViews.forEach((regionView)=> {
-                        this.unregisterRegionView(regionView)
-                    });
-
                     this.parseItemViews();
                 }
                 this.refreshEmptyState();
@@ -89,7 +85,10 @@ module api.liveedit {
             pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
+                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                if (PageView.debug) {
+                    console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
+                }
                 resetAction.setEnabled(resetEnabled);
             };
             pageModel.onPageModeChanged(this.pageModeChangedListener);
@@ -544,6 +543,18 @@ module api.liveedit {
         }
 
         private parseItemViews() {
+            // unregister existing views
+            for (var itemView in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(itemView)) {
+                    this.unregisterItemView(this.viewsById[itemView]);
+                }
+            }
+
+            // unregister existing regions
+            this.regionViews.forEach((regionView: RegionView)=> {
+                this.unregisterRegionView(regionView)
+            });
+
             this.regionViews = [];
             this.regionIndex = 0;
             this.viewsById = {};
