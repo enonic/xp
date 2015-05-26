@@ -17,6 +17,7 @@ module app.browse {
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
     import ContentChangeResult = api.content.ContentChangeResult;
+    import ContentId = api.content.ContentId;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
