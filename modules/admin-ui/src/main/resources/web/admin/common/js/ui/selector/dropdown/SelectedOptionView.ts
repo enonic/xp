@@ -61,6 +61,10 @@ module api.ui.selector.dropdown {
             });
         }
 
+        resetOption() {
+            this.option = null;
+        }
+
         onOpenDropdown(listener: {(): void;}) {
             this.openDropdownListeners.push(listener);
         }
