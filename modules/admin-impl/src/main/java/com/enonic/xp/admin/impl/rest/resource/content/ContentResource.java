@@ -360,7 +360,7 @@ public final class ContentResource
     @Path("getDependants")
     public ResolveDependantsResultJson getDependants( final ResolveDependantsRequestParamsJson params )
     {
-        final ContentIds contentIds = ContentIds.from( params.getId() );
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final ResolvePublishDependenciesResult result =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().

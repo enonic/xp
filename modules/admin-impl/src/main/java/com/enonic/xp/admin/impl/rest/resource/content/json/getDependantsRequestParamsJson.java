@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.Set;
 
-public class ResolveDependantsRequestParamsJson
+public class getDependantsRequestParamsJson
 {
     private Set<String> ids;
 

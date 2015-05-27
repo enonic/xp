@@ -7,17 +7,13 @@
   }
 
   .item-list {
-    padding: 10px;
+    padding: 0px;
     max-height: 400px;
     overflow-y: auto;
 
-    .viewer {
-      padding-top: 5px;
-      padding-bottom: 5px;
-    }
-
     @media screen and (max-height: 720px) {
       max-height: 350px;
+      min-height: 200px;
     }
 
     @media screen and (max-height: 540px) {
@@ -30,10 +26,14 @@
 
   }
 
+  .dependencies-toggle-label {
+    color: @admin-blue;
+  }
+
   .dialog-buttons {
     .button {
       &.publish-action {
-        .button(@form-button-font, @input-red-text, @form-button-font, lighten(@input-red-text, 10%));
+        .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
         padding: 4px 19px 4px 19px;
         margin-left: 11px;
 
@@ -61,10 +61,9 @@
   .include-child-check {
     position: absolute;
     bottom: 40px;
-    &.checkbox {
-      label {
-        color: @admin-blue !important;
-      }
+
+    input[type="checkbox"] + label {
+      color: @admin-blue !important;
     }
 
     @media screen and (max-height: 360px) {
@@ -76,6 +75,156 @@
     margin-top: 20px;
   }
 
+  .content-resolved-publish-viewer, .content-resolved-dependant-viewer {
+    &.pending-delete .names-and-icon-view .names-view {
+      .main-name, .sub-name {
+        text-decoration: line-through;
+      }
+    }
+    &.invalid .names-and-icon-view .wrapper {
+      &:before {
+        content: "!";
+        background: #cb0300;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .initial-items {
+
+    &.item-list {
+      padding-bottom: 10px;
+    }
+
+    .browse-selection-publish-item {
+      padding: 4px 0px 4px 0px;
+      margin: 0px;
+      overflow: hidden;
+
+      .viewer {
+        overflow: hidden;
+        display: inline;
+      }
+
+      .status {
+        right: 32px;
+        margin-top: -33px;
+        display: inline-block;
+        float: right;
+      }
+
+      .disabled.checkbox {
+
+        display: none;
+
+        label {
+          &:before {
+            background: url("../images/admin-unchecked.gif") -1px -2px no-repeat;
+          }
+        }
+
+        input[type="checkbox"] {
+
+          &:checked + label {
+            &:before {
+              background: url("../images/admin-checked.gif") -1px -2px no-repeat;
+            }
+          }
+        }
+      }
+
+      .toggle {
+        .icon-arrow-right3();
+      }
+
+      .toggle.collapse {
+        .icon-arrow-down2();
+      }
+
+      .toggle {
+        &.collapse {
+          .icon-arrow-down2();
+        }
+        &.expand {
+          .icon-arrow-right3();
+        }
+        display: inline;
+        float: left;
+        padding: 5px 5px 5px 0px;
+        margin-top: 7px;
+        cursor: pointer;
+      }
+
+      .remove {
+        height: 32px;
+        margin: 0 5px 0 0;
+        float: left;
+        font-size: 20px;
+        cursor: pointer;
+        clear: right;
+        font-weight: bold;
+        .icon-close2();
+
+        &:before {
+          position: relative;
+          display: block;
+          top: 50%;
+          margin: -10px 0 0;
+          font-size: 20px;
+        }
+      }
+
+    }
+  }
+
+  .dependant-items {
+
+    &.item-list {
+      padding-top: 10px;
+    }
+
+    .browse-selection-publish-item {
+
+      .content-resolved-dependant-viewer {
+        padding: 4px 0px 4px 0px;
+      }
+
+      .viewer {
+
+        display: inline-block;
+
+        .names-and-icon-view {
+          .wrapper {
+            margin: 0px;
+          }
+
+          .name-span {
+            margin: 0px 15px 0px 8px;
+            line-height: 32px;
+          }
+
+        }
+      }
+
+      display: inline;
+
+      &.disabled {
+        .checkbox {
+
+          display: inherit;
+
+          input[type="checkbox"] {
+
+            &:checked + label {
+              &:before {
+                background: url("../images/link.png") -1px -2px no-repeat;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .modal-dialog._0-240.publish-dialog, .modal-dialog._240-360.publish-dialog {
