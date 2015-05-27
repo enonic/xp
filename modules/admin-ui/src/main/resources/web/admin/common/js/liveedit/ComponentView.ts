@@ -196,9 +196,10 @@ module api.liveedit {
             var parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
-            } else {
-                super.remove();
             }
+
+            super.remove();
+
             return this;
         }
 

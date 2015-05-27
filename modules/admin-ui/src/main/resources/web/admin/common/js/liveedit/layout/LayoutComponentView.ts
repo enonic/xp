@@ -109,6 +109,10 @@ module api.liveedit.layout {
         }
 
         private parseRegions() {
+            this.regionViews.forEach((regionView) => {
+                this.unregisterRegionView(regionView);
+            });
+
             this.regionViews = [];
             this.regionIndex = 0;
 
