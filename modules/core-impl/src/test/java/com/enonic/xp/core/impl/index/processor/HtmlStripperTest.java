@@ -36,7 +36,7 @@ public class HtmlStripperTest
         assertEquals( Value.newString( "ValueWithoutTags" ), this.htmlStripper.process( Value.newString( "ValueWithoutTags" ) ) );
         assertEquals( Value.newString( " Value " ), this.htmlStripper.process( Value.newString( "<a>Value</a>" ) ) );
         assertEquals( Value.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process(
-            Value.newString( "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/>" ) ) );
+            Value.newString( "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/><SecondEmptyNode/>" ) ) );
     }
 
     public void processDifferentTypes()
