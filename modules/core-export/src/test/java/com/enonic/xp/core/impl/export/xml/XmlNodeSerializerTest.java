@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexValueProcessor;
+import com.enonic.xp.index.IndexValueProcessorRegistry;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -86,9 +89,18 @@ public class XmlNodeSerializerTest
         propertyTree.addSet( "nullSet", null );
 
         // Index configs
-        final PatternIndexConfigDocument.Builder indexConfig = PatternIndexConfigDocument.create();
-        indexConfig.analyzer( "no" );
-        indexConfig.add( "mydata", IndexConfig.FULLTEXT );
+        final IndexConfig indexConfig = IndexConfig.create().
+            enabled( true ).
+            fulltext( true ).
+            nGram( true ).
+            decideByType( false ).
+            includeInAllText( true ).
+            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
+            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
+            build();
+        final PatternIndexConfigDocument.Builder indexConfigDocumentBuilder = PatternIndexConfigDocument.create();
+        indexConfigDocumentBuilder.analyzer( "no" );
+        indexConfigDocumentBuilder.add( "mydata", indexConfig );
 
         return Node.newNode().
             id( NodeId.from( "abc" ) ).
@@ -97,7 +109,7 @@ public class XmlNodeSerializerTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).
-            indexConfigDocument( indexConfig.build() ).
+            indexConfigDocument( indexConfigDocumentBuilder.build() ).
             attachedBinaries( AttachedBinaries.create().
                 add( new AttachedBinary( BinaryReference.from( "image.jpg" ), "a" ) ).
                 add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), "b" ) ).

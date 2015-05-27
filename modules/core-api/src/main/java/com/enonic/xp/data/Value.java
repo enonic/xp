@@ -62,10 +62,16 @@ public abstract class Value
         return this.type == ValueTypes.GEO_POINT;
     }
 
+    public boolean isText()
+    {
+        return type == ValueTypes.STRING || type == ValueTypes.HTML_PART || type == ValueTypes.XML;
+    }
+
     public boolean isJavaType( final Class javaType )
     {
         return javaType.isInstance( this.object );
     }
+
 
     public ValueType getType()
     {

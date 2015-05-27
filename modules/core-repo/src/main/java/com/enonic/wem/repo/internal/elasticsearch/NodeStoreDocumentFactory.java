@@ -6,6 +6,10 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.Value;
@@ -16,10 +20,6 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.branch.Branch;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 
 class NodeStoreDocumentFactory
