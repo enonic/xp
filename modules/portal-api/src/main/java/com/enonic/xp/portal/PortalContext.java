@@ -141,7 +141,7 @@ public final class PortalContext
     @Override
     public String rewriteUri( final String uri )
     {
-        return ServletRequestUrlHelper.rewriteUri( uri );
+        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
     }
 
     public PortalResponse getResponse()
