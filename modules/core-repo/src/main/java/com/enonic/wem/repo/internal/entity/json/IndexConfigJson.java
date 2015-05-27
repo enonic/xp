@@ -71,7 +71,7 @@ final class IndexConfigJson
     private static List<String> toStringList( final Iterable<IndexValueProcessor> indexValueProcessors )
     {
         return stream( indexValueProcessors.spliterator(), false ).
-            map( IndexValueProcessor::toString ).
+            map( IndexValueProcessor::getName ).
             collect( toList() );
     }
 }

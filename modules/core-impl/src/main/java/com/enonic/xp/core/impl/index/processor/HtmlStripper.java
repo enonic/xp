@@ -19,7 +19,7 @@ public class HtmlStripper
 {
     public final static String NAME = "constructor";
 
-    private final static Pattern XML_TAG_PATTERN = Pattern.compile( "<[^>]*>", Pattern.MULTILINE );
+    private final static Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
 
     @Activate
     public void register()
@@ -42,7 +42,7 @@ public class HtmlStripper
         }
 
         final Matcher matcher = XML_TAG_PATTERN.matcher( value.toString() );
-        final String strippedHtml = matcher.replaceAll( "" );
+        final String strippedHtml = matcher.replaceAll( " " );
 
         final ValueType valueType = value.getType();
         if ( valueType == ValueTypes.HTML_PART )

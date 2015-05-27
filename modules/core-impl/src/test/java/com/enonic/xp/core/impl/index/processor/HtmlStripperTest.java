@@ -25,30 +25,28 @@ public class HtmlStripperTest
     @Test
     public void processEmpty()
     {
-        Value emptyStringValue = Value.newString( "" );
-
         assertNull( this.htmlStripper.process( null ) );
-        assertEquals( emptyStringValue, this.htmlStripper.process( Value.newString( "" ) ) );
-        assertEquals( emptyStringValue, this.htmlStripper.process( Value.newString( "<tag/>" ) ) );
+        assertEquals( Value.newString( "" ), this.htmlStripper.process( Value.newString( "" ) ) );
+        assertEquals( Value.newString( " " ), this.htmlStripper.process( Value.newString( "<tag/>" ) ) );
     }
 
     @Test
     public void process()
     {
         assertEquals( Value.newString( "ValueWithoutTags" ), this.htmlStripper.process( Value.newString( "ValueWithoutTags" ) ) );
-        assertEquals( Value.newString( "Value" ), this.htmlStripper.process( Value.newString( "<a>Value</a>" ) ) );
-        assertEquals( Value.newString( "TextBeforeTextBetweenTextAfter" ), this.htmlStripper.process(
+        assertEquals( Value.newString( " Value " ), this.htmlStripper.process( Value.newString( "<a>Value</a>" ) ) );
+        assertEquals( Value.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process(
             Value.newString( "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/>" ) ) );
     }
 
     public void processDifferentTypes()
     {
         Value valueToProcess = Value.newString( "abc<tag>def</tag>" );
-        assertEquals( Value.newString( "abcdef" ), valueToProcess );
+        assertEquals( Value.newString( "abc def" ), valueToProcess );
         valueToProcess = Value.newHtmlPart( "<div>abc</div>" );
-        assertEquals( Value.newHtmlPart( "abc" ), valueToProcess );
+        assertEquals( Value.newHtmlPart( " abc " ), valueToProcess );
         valueToProcess = Value.newXml( "<xml>xmlValue</xml>" );
-        assertEquals( Value.newXml( "xmlValue" ), valueToProcess );
+        assertEquals( Value.newXml( " xmlValue " ), valueToProcess );
 
         valueToProcess = Value.newBoolean( false );
         assertEquals( valueToProcess, valueToProcess );
