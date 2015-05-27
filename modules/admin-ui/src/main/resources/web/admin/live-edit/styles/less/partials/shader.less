@@ -9,4 +9,14 @@
   &.page {
     position: fixed !important;
   }
+
+  .page-view.locked.force-locked & {
+    .opacity(.4);
+    .transition(all 50ms);
+
+    .centered {
+      display: block;
+    }
+  }
+
 }

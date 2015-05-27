@@ -284,8 +284,14 @@ module api.liveedit {
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
-
-                this.lockedContextMenu.showAt(event.pageX, event.pageY);
+                if (this.lockedContextMenu.isVisible()) {
+                    this.setLockVisible(false);
+                    this.lockedContextMenu.hide();
+                }
+                else {
+                    this.setLockVisible(true);
+                    this.lockedContextMenu.showAt(event.pageX, event.pageY);
+                }
             }
             else if (this.isSelected()) {
                 this.deselect();
@@ -304,6 +310,10 @@ module api.liveedit {
 
         isLocked() {
             return this.hasClass('locked');
+        }
+
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
         }
 
         setLocked(locked: boolean) {
