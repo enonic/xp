@@ -12,4 +12,4 @@
 
 ///<reference path='MostPopularItemsList.ts' />
 ///<reference path='MostPopularItem.ts' />
-///<reference path='MostPopularItemsBlock.ts' />
+///<reference path='MostPopularItemsBlock_temp.ts' />
