@@ -2,16 +2,16 @@ package com.enonic.wem.repo.internal.elasticsearch.document;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.data.ValueType;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
 
 public class StoreDocumentItemFactory
 {
@@ -38,13 +38,19 @@ public class StoreDocumentItemFactory
             return indexDocumentItems;
         }
 
-        addIndexBaseTypeEntries( path, indexDocumentItems, propertyValue );
+        Value processedPropertyValue = propertyValue;
+        for ( IndexValueProcessor indexValueProcessor : indexConfig.getIndexValueProcessors() )
+        {
+            processedPropertyValue = indexValueProcessor.process( processedPropertyValue );
+        }
 
-        addFulltextFields( indexConfig, path, propertyValue, indexDocumentItems );
+        addIndexBaseTypeEntries( path, indexDocumentItems, processedPropertyValue );
 
-        indexDocumentItems.add( createOrderbyItemType( path, propertyValue ) );
+        addFulltextFields( indexConfig, path, processedPropertyValue, indexDocumentItems );
 
-        addAllFields( propertyValue, indexDocumentItems, indexConfig );
+        indexDocumentItems.add( createOrderbyItemType( path, processedPropertyValue ) );
+
+        addAllFields( processedPropertyValue, indexDocumentItems, indexConfig );
 
         return indexDocumentItems;
     }
@@ -84,20 +90,12 @@ public class StoreDocumentItemFactory
     private static void addFulltextFieldsTypeBased( final IndexPath path, final Value propertyValue,
                                                     final Set<AbstractStoreDocumentItem> indexDocumentItems )
     {
-        final ValueType valueType = propertyValue.getType();
 
-        if ( isTextField( valueType ) )
+        if ( propertyValue.isText() )
         {
             indexDocumentItems.add( new StoreDocumentAnalyzedItem( path, propertyValue.asString() ) );
             indexDocumentItems.add( new StoreDocumentNGramItem( path, propertyValue.asString() ) );
         }
-    }
-
-    private static boolean isTextField( final ValueType valueType )
-    {
-        return ( valueType == ValueTypes.STRING ) ||
-            ( valueType == ValueTypes.HTML_PART ) ||
-            ( valueType == ValueTypes.XML );
     }
 
     private static StoreDocumentOrderbyItem createOrderbyItemType( final IndexPath path, final Value propertyValue )

@@ -13,6 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexValueProcessorRegistry;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
@@ -267,12 +268,22 @@ public final class XmlNodeParser
 
     private IndexConfig parseIndexConfig( final DomElement root )
     {
-        final IndexConfig.Builder builder = IndexConfig.create();
-        builder.decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) );
-        builder.enabled( root.getChildValueAs( "enabled", Boolean.class, false ) );
-        builder.fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) );
-        builder.nGram( root.getChildValueAs( "nGram", Boolean.class, false ) );
-        builder.includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
+        final IndexConfig.Builder builder = IndexConfig.create().
+            decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) ).
+            enabled( root.getChildValueAs( "enabled", Boolean.class, false ) ).
+            fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) ).
+            nGram( root.getChildValueAs( "nGram", Boolean.class, false ) ).
+            includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
+
+        final DomElement indexValueProcessors = root.getChild( "indexValueProcessors" );
+        if ( indexValueProcessors != null )
+        {
+            for ( DomElement indexValueProcessor : indexValueProcessors.getChildren() )
+            {
+                builder.addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor( indexValueProcessor.getValue() ) );
+            }
+        }
+
         return builder.build();
     }
 
