@@ -45,11 +45,7 @@ public class HtmlStripper
         final String strippedHtml = matcher.replaceAll( " " );
 
         final ValueType valueType = value.getType();
-        if ( valueType == ValueTypes.HTML_PART )
-        {
-            return Value.newHtmlPart( strippedHtml );
-        }
-        else if ( valueType == ValueTypes.XML )
+        if ( valueType == ValueTypes.XML )
         {
             return Value.newXml( strippedHtml );
         }

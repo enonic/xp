@@ -28,7 +28,7 @@ public class PropertyTest
             {
                 PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 return new Object[]{tree.addString( "myString", "otherValue" ), tree.addString( "otherString", "myValue" ),
-                    tree.addHtmlPart( "otherType", "myValue" )};
+                    tree.addXml( "otherType", "myValue" )};
             }
 
             @Override

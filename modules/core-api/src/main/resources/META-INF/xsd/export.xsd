@@ -28,7 +28,7 @@
         <xs:element name="binaryReference" type="binaryReferenceProperty"/>
         <xs:element name="reference" type="referenceProperty"/>
         <xs:element name="link" type="linkProperty"/>
-        <xs:element name="htmlPart" type="htmlPartProperty"/>
+        <xs:element name="htmlPart" type="stringProperty"/>
         <xs:element name="xml" type="xmlProperty"/>
         <xs:element name="property-set" type="propertySet"/>
       </xs:choice>
@@ -117,14 +117,6 @@
   </xs:complexType>
 
   <xs:complexType name="binaryReferenceProperty">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-
-  <xs:complexType name="htmlPartProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attributeGroup ref="nullableValueProperty"/>

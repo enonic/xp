@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -399,33 +398,6 @@ public final class PropertyTree
     public Property[] addStrings( final String name, final Collection<String> values )
     {
         return this.root.addStrings( name, values );
-    }
-
-    // setting html part
-
-    public Property setHtmlPart( final PropertyPath path, final String value )
-    {
-        return this.root.setHtmlPart( path, value );
-    }
-
-    public Property setHtmlPart( final String path, final String value )
-    {
-        return this.root.setHtmlPart( path, value );
-    }
-
-    public Property setHtmlPart( final String name, final int index, final String value )
-    {
-        return this.root.setHtmlPart( name, index, value );
-    }
-
-    public Property addHtmlPart( final String name, final String value )
-    {
-        return this.root.addHtmlPart( name, value );
-    }
-
-    public Property[] addHtmlParts( final String name, final String... value )
-    {
-        return this.root.addHtmlParts( name, value );
     }
 
     // setting xml

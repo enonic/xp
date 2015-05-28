@@ -9,8 +9,6 @@ module api.data {
 
         static STRING = new ValueTypeString();
 
-        static HTML_PART = new ValueTypeHtmlPart();
-
         static XML = new ValueTypeXml();
 
         static LOCAL_DATE = new ValueTypeLocalDate();
@@ -36,7 +34,6 @@ module api.data {
         static ALL: ValueType[] = [
             ValueTypes.DATA,
             ValueTypes.STRING,
-            ValueTypes.HTML_PART,
             ValueTypes.XML,
             ValueTypes.LOCAL_DATE,
             ValueTypes.LOCAL_TIME,

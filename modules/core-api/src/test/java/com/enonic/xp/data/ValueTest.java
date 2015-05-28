@@ -22,7 +22,6 @@ public class ValueTest
     public void tostring()
     {
         assertEquals( "abc", Value.newString( "abc" ).toString() );
-        assertEquals( "<div>abc</div>", Value.newHtmlPart( "<div>abc</div>" ).toString() );
         assertEquals( "<xml></xml>", Value.newXml( "<xml></xml>" ).toString() );
         assertEquals( "false", Value.newBoolean( false ).toString() );
         assertEquals( "abc", Value.newReference( Reference.from( "abc" ) ).toString() );

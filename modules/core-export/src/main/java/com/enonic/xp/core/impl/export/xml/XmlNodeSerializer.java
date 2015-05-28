@@ -153,10 +153,6 @@ public final class XmlNodeSerializer
         {
             serializeProperty( "long", name, value.getLong() );
         }
-        else if ( type == ValueTypes.HTML_PART )
-        {
-            serializeProperty( "htmlPart", name, value.getString() );
-        }
         else if ( type == ValueTypes.XML )
         {
             serializeProperty( "xml", name, value.getString() );

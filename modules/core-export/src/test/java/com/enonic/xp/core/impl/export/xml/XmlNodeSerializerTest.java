@@ -9,10 +9,8 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
-import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.IndexValueProcessorRegistry;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
@@ -54,7 +52,6 @@ public class XmlNodeSerializerTest
         propertyTree.addBoolean( "myBoolean", true );
         propertyTree.addDouble( "myDouble", 123.1 );
         propertyTree.addLong( "myLong", 111L );
-        propertyTree.addHtmlPart( "myHtmlPart", "<h1>This is the title</h1><h2>This is the subheading</h2>" );
         propertyTree.addXml( "myXml", "<car><color>Arctic Grey<color><car>" );
         propertyTree.addGeoPoint( "myGeoPoint", GeoPoint.from( "8,4" ) );
 
@@ -84,7 +81,6 @@ public class XmlNodeSerializerTest
 
         // Nullable values
         propertyTree.addString( "myString", null );
-        propertyTree.addHtmlPart( "myHtmlPart", null );
         propertyTree.addXml( "myXml", null );
         propertyTree.addSet( "nullSet", null );
 

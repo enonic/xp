@@ -40,7 +40,6 @@
       "property": "value"
     },
     "xml": "<xml><my-xml hello='world'/></xml>",
-    "htmlPart": "<p>some<b>html</b></p>",
     "binaryReference": "abc",
     "link": "/my/content",
     "geoPoint": "1.1,-1.1",

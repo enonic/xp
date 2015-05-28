@@ -1,7 +1,6 @@
 ///<reference path='ValueType.ts' />
 ///<reference path='ValueTypePropertySet.ts' />
 ///<reference path='ValueTypeString.ts' />
-///<reference path='ValueTypeHtmlPart.ts' />
 ///<reference path='ValueTypeXml.ts' />
 ///<reference path='ValueTypeBoolean.ts' />
 ///<reference path='ValueTypeLong.ts' />

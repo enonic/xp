@@ -104,8 +104,8 @@ public final class XmlNodeParser
             case "long":
                 addLongProperty( set, name, isNull ? null : value );
                 break;
-            case "htmlPart":
-                addHtmlPartProperty( set, name, isNull ? null : value );
+            case "htmlPart": //For backward compatibility
+                addStringProperty( set, name, isNull ? null : value );
                 break;
             case "xml":
                 addXmlProperty( set, name, isNull ? null : value );
@@ -169,11 +169,6 @@ public final class XmlNodeParser
     private void addLongProperty( final PropertySet set, final String name, final String value )
     {
         set.addLong( name, value != null ? Long.valueOf( value ) : null );
-    }
-
-    private void addHtmlPartProperty( final PropertySet set, final String name, final String value )
-    {
-        set.addHtmlPart( name, xmlDecodeString( value ) );
     }
 
     private void addXmlProperty( final PropertySet set, final String name, final String value )

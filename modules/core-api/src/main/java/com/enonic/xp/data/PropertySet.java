@@ -698,38 +698,6 @@ public final class PropertySet
         return properties;
     }
 
-    // setting html part
-
-    public Property setHtmlPart( final String path, final String value )
-    {
-        return this.setProperty( PropertyPath.from( path ), Value.newHtmlPart( value ) );
-    }
-
-    public Property setHtmlPart( final PropertyPath path, final String value )
-    {
-        return this.setProperty( path, Value.newHtmlPart( value ) );
-    }
-
-    public Property setHtmlPart( final String name, final int index, final String value )
-    {
-        return this.setProperty( name, index, Value.newHtmlPart( value ) );
-    }
-
-    public Property addHtmlPart( final String name, final String value )
-    {
-        return this.addProperty( name, Value.newHtmlPart( value ) );
-    }
-
-    public Property[] addHtmlParts( final String name, final String... values )
-    {
-        final Property[] properties = new Property[values.length];
-        for ( int i = 0; i < values.length; i++ )
-        {
-            properties[i] = this.addProperty( name, Value.newHtmlPart( values[i] ) );
-        }
-        return properties;
-    }
-
     // setting boolean
 
     public Property setBoolean( final String path, final Boolean value )
