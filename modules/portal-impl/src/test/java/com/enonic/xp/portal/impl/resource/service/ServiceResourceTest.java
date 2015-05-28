@@ -21,7 +21,6 @@ import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -67,7 +66,7 @@ public class ServiceResourceTest
         final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
         Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
 
-        final PortalRequest jsHttpRequest = jsContext.getValue();
+        final PortalContext jsHttpRequest = jsContext.getValue();
         assertNotNull( jsHttpRequest );
         assertEquals( "GET", jsHttpRequest.getMethod() );
         assertEquals( RenderMode.LIVE, jsHttpRequest.getMode() );
@@ -90,7 +89,7 @@ public class ServiceResourceTest
         final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
         Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
 
-        final PortalRequest jsHttpRequest = jsContext.getValue();
+        final PortalContext jsHttpRequest = jsContext.getValue();
 
         assertEquals( "http://localhost/portal/master/path/to/content/_/service/demo/test?a=b", jsHttpRequest.getUri() );
     }

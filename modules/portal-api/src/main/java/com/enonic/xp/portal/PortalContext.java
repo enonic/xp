@@ -22,7 +22,6 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
 public final class PortalContext
-    implements PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
@@ -76,37 +75,31 @@ public final class PortalContext
         this.response = new PortalResponse();
     }
 
-    @Override
     public String getUri()
     {
         return this.uri;
     }
 
-    @Override
     public String getMethod()
     {
         return this.method;
     }
 
-    @Override
     public Branch getBranch()
     {
         return branch;
     }
 
-    @Override
     public Multimap<String, String> getParams()
     {
         return this.params;
     }
 
-    @Override
     public Multimap<String, String> getFormParams()
     {
         return this.formParams;
     }
 
-    @Override
     public RenderMode getMode()
     {
         return this.mode;
@@ -132,13 +125,11 @@ public final class PortalContext
         this.branch = branch;
     }
 
-    @Override
     public Multimap<String, String> getHeaders()
     {
         return this.headers;
     }
 
-    @Override
     public String rewriteUri( final String uri )
     {
         return ServletRequestUrlHelper.rewriteUri( uri );
@@ -214,19 +205,16 @@ public final class PortalContext
         this.pageDescriptor = pageDescriptor;
     }
 
-    @Override
     public ContentPath getContentPath()
     {
         return ( this.content != null ) ? this.content.getPath() : this.contentPath;
     }
 
-    @Override
     public HttpServletRequest getRawRequest()
     {
         return this.rawRequest;
     }
 
-    @Override
     public String getBaseUri()
     {
         return this.baseUri;
@@ -247,7 +235,6 @@ public final class PortalContext
         this.rawRequest = rawRequest;
     }
 
-    @Override
     public Map<String, String> getCookies()
     {
         return this.cookies;
