@@ -93,6 +93,7 @@ module api.form.inputtype.text {
                     init_instance_callback: (editor) => {
                         this.setEditorContent(textAreaEl.getId(), property);
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                        this.removeTooltipFromEditorArea(textAreaWrapper);
                     }
                 });
 
@@ -258,6 +259,10 @@ module api.form.inputtype.text {
             if (focusEl) {
                 focusEl.focus();
             }
+        }
+
+        private removeTooltipFromEditorArea(inputOccurence: Element) {
+            wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
         }
     }
 
