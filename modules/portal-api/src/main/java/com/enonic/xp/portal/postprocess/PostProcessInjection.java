@@ -9,13 +9,5 @@ import com.enonic.xp.portal.PortalContext;
 @Beta
 public interface PostProcessInjection
 {
-    enum Tag
-    {
-        HEAD_BEGIN,
-        HEAD_END,
-        BODY_BEGIN,
-        BODY_END
-    }
-
-    List<String> inject( PortalContext context, Tag tag );
+    List<String> inject( PortalContext context, HtmlTag htmlTag );
 }

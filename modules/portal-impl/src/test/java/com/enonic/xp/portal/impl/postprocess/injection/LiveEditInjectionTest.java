@@ -13,7 +13,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
@@ -38,15 +38,15 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final List<String> result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
+        final List<String> result1 = this.injection.inject( this.context, HtmlTag.HEAD_BEGIN );
         assertNull( result1 );
 
-        final List<String> result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
+        final List<String> result2 = this.injection.inject( this.context, HtmlTag.BODY_BEGIN );
         assertNull( result2 );
 
         this.context.setMode( RenderMode.LIVE );
 
-        final List<String> result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
+        final List<String> result3 = this.injection.inject( this.context, HtmlTag.BODY_END );
         assertNull( result3 );
     }
 
@@ -56,7 +56,7 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END ).get( 0 );
+        final String result = this.injection.inject( this.context, HtmlTag.HEAD_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionHeadEnd.html" ).trim() + "\n", result );
     }
@@ -67,7 +67,7 @@ public class LiveEditInjectionTest
     {
         this.context.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END ).get( 0 );
+        final String result = this.injection.inject( this.context, HtmlTag.BODY_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );
     }

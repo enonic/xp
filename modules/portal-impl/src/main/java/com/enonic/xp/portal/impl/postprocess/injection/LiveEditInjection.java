@@ -16,6 +16,7 @@ import com.samskivert.mustache.Template;
 
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 
 @Component(immediate = true)
@@ -33,19 +34,19 @@ public final class LiveEditInjection
     }
 
     @Override
-    public List<String> inject( final PortalContext context, final Tag tag )
+    public List<String> inject( final PortalContext context, final HtmlTag htmlTag )
     {
         if ( RenderMode.EDIT != context.getMode() )
         {
             return null;
         }
 
-        if ( tag == Tag.HEAD_END )
+        if ( htmlTag == HtmlTag.HEAD_END )
         {
             return Arrays.asList( injectHeadEnd( context ) );
         }
 
-        if ( tag == Tag.BODY_END )
+        if ( htmlTag == HtmlTag.BODY_END )
         {
             return Arrays.asList( injectBodyEnd( context ) );
         }
