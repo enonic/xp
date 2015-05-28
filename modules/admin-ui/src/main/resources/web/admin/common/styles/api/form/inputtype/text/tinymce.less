@@ -20,6 +20,21 @@
     box-shadow: none;
     position: inherit !important;
   }
+  .input-view.invalid:not(:last-child) {
+    margin-bottom: 0;
+  }
+  div.input-view.invalid + div.validation-viewer {
+    background-color: @input-light-red;
+    padding: 10px;
+  }
+  .form-view {
+    fieldset:not(:last-child) {
+      margin-bottom: 10px;
+    }
+    fieldset:not(:first-child) {
+      margin-top: 10px;
+    }
+  }
 }
 
 .tinymce-editor {

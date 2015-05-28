@@ -58,6 +58,7 @@ module api.ui.form {
                 if(validationMessage) {
                     validationResult.addError(new ValidationError(this, validationMessage));
                 }
+                this.notifyValidityChanged(api.util.StringHelper.isBlank(validationMessage));
                 if (markInvalid) {
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
