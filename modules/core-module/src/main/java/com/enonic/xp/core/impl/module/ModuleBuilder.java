@@ -13,8 +13,9 @@ import com.google.common.io.Resources;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
+import com.enonic.xp.xml.XmlException;
 
-final class ModuleBuilder2
+final class ModuleBuilder
 {
     public final static String X_MODULE_URL = "X-Module-Url";
 
@@ -28,7 +29,7 @@ final class ModuleBuilder2
 
     private Bundle bundle;
 
-    public ModuleBuilder2 bundle( final Bundle value )
+    public ModuleBuilder bundle( final Bundle value )
     {
         this.bundle = value;
         return this;
@@ -46,6 +47,7 @@ final class ModuleBuilder2
         module.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
         module.vendorUrl = getHeader( this.bundle, X_VENDOR_URL, null );
         module.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
+        module.classLoader = new BundleClassLoader( this.bundle );
 
         readXmlDescriptor( module );
 
@@ -55,24 +57,28 @@ final class ModuleBuilder2
     private static void readXmlDescriptor( final ModuleImpl module )
     {
         final URL url = module.bundle.getResource( MODULE_XML );
-        final String xml = parseModuleXml( url );
 
-        final XmlModuleParser parser = new XmlModuleParser();
-        parser.module( module );
-        parser.source( xml );
-        parser.parse();
+        try
+        {
+            final String xml = parseModuleXml( url );
+
+            final XmlModuleParser parser = new XmlModuleParser();
+            parser.module( module );
+            parser.source( xml );
+            parser.parse();
+            ;
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e, "Could not load module descriptor [bundle:" + module.bundle.getSymbolicName() + ":" + url.getFile() +
+                "]: " + e.getMessage() );
+        }
     }
 
     private static String parseModuleXml( final URL moduleResource )
+        throws IOException
     {
-        try
-        {
-            return Resources.toString( moduleResource, Charsets.UTF_8 );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Invalid module.xml file", e );
-        }
+       return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )

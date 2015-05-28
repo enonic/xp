@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.postprocess;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
+import static java.util.stream.Collectors.joining;
 import static junit.framework.Assert.assertEquals;
 
 public class PostProcessEvaluatorTest
@@ -27,7 +29,7 @@ public class PostProcessEvaluatorTest
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = Collections.emptyList();
         final String result = evaluator.evaluate();
-        assertEquals( readResource( "postProcessEvalResult1.html" ), result );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), result );
     }
 
     @Test
@@ -55,7 +57,7 @@ public class PostProcessEvaluatorTest
         evaluator.injections = Lists.newArrayList( contributionsInjection );
         evaluator.instructions = Collections.emptyList();
         final String result = evaluator.evaluate();
-        assertEquals( readResource( "postProcessEvalResult2.html" ), result );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result );
     }
 
     @Test
@@ -94,7 +96,7 @@ public class PostProcessEvaluatorTest
         evaluator.injections = Lists.newArrayList( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
         final String result = evaluator.evaluate();
-        assertEquals( readResource( "postProcessEvalResult4.html" ), result );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), result );
     }
 
     @Test
@@ -133,7 +135,7 @@ public class PostProcessEvaluatorTest
         evaluator.injections = Lists.newArrayList( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
         final String result = evaluator.evaluate();
-        assertEquals( readResource( "postProcessEvalResult5.html" ), result );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), result );
     }
 
     @Test
@@ -160,7 +162,19 @@ public class PostProcessEvaluatorTest
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = Lists.newArrayList( uppercaseInstruction, expandInstruction );
         final String result = evaluator.evaluate();
-        assertEquals( readResource( "postProcessEvalResult3.html" ), result );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result );
+    }
+
+    private void assertEqualsTrimmed( final String expected, final String actual )
+    {
+        assertEquals( trimLines( expected ), trimLines( actual ) );
+    }
+
+    private String trimLines( final String text )
+    {
+        return text == null ? null : Stream.of( text.split( "\\r?\\n" ) ).
+            map( String::trim ).
+            collect( joining( "\r\n" ) );
     }
 
     private String readResource( final String resourceName )

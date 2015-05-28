@@ -214,59 +214,6 @@ public class ContentServiceImplTest_update
 
 
     @Test
-    public void update_content_with_unmapped_property()
-        throws Exception
-    {
-        final PropertyTree contentData = new PropertyTree();
-        contentData.addString( "unmappedPropertyName", "aValue" );
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( contentData ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( BuiltinContentTypeProvider.FOLDER.getName() ).
-            build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                final PropertyTree editData = edit.data;
-                editData.setString( "unmappedPropertyName", "value-updated" );
-            } );
-
-        this.contentService.update( updateContentParams );
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-
-        assertEquals( "This is my content", storedContent.getDisplayName() );
-        assertEquals( "value-updated", storedContent.getData().getString( "unmappedPropertyName" ) );
-
-        updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            requireMappedProperties( true ).
-            editor( edit -> {
-                final PropertyTree editData = edit.data;
-                editData.setString( "unmappedPropertyName", "value-updated-twice" );
-            } );
-
-        boolean illegalArgumentExceptionThrown = false;
-        try
-        {
-            this.contentService.update( updateContentParams );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            illegalArgumentExceptionThrown = true;
-        }
-        assertTrue( illegalArgumentExceptionThrown );
-    }
-
-
-    @Test
     public void update_incorrect_content_data()
         throws Exception
     {

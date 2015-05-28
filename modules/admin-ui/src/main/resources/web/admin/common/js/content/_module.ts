@@ -31,7 +31,7 @@
 ///<reference path='GetContentSummaryByIdRequest' />
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
-///<reference path='GetContentPermissionsByPathRequest.ts' />
+///<reference path='GetContentPermissionsByIdRequest.ts' />
 ///<reference path='GetContentRootPermissionsRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
@@ -90,4 +90,6 @@
 ///<reference path='MediaUploader.ts' />
 ///<reference path='ImageUploader.ts' />
 ///<reference path='ThumbnailUploader.ts' />
+
+///<reference path='EditContentEvent.ts' />
 

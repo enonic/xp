@@ -4,14 +4,15 @@ import java.util.LinkedHashSet;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
@@ -57,6 +58,7 @@ public class SetNodeChildOrderCommand
         final NodeQueryResult childNodeResult = queryService.find( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
+            size( QueryService.GET_ALL_SIZE_FLAG ).
             build(), IndexContext.from( ContextAccessor.current() ) );
 
         final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();

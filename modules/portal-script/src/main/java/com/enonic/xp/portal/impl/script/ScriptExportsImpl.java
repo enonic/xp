@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.script;
 
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.ResourceKey;
 
 final class ScriptExportsImpl
     implements ScriptExports
@@ -11,10 +11,13 @@ final class ScriptExportsImpl
 
     private final ScriptValue value;
 
-    public ScriptExportsImpl( final ResourceKey script, final ScriptValue value )
+    private final Object raw;
+
+    public ScriptExportsImpl( final ResourceKey script, final ScriptValue value, final Object raw )
     {
         this.script = script;
         this.value = value;
+        this.raw = raw;
     }
 
     @Override
@@ -51,5 +54,11 @@ final class ScriptExportsImpl
         }
 
         return method.call( args );
+    }
+
+    @Override
+    public Object getRawValue()
+    {
+        return this.raw;
     }
 }

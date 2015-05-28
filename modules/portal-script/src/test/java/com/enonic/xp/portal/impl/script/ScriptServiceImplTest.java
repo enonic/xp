@@ -2,6 +2,9 @@ package com.enonic.xp.portal.impl.script;
 
 import org.junit.Test;
 
+import com.enonic.xp.module.ModuleEventType;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 import com.enonic.xp.resource.ResourceKey;
@@ -105,5 +108,26 @@ public class ScriptServiceImplTest
             assertEquals( 1, e.getLineNumber() );
             assertEquals( ResourceKey.from( "mymodule:/error/error-test.js" ), e.getResource() );
         }
+    }
+
+    @Test
+    public void testCache()
+    {
+        final ResourceKey script = ResourceKey.from( "mymodule:/empty-test.js" );
+
+        final ScriptExports exports1 = runTestScript( script );
+        final ScriptExports exports2 = runTestScript( script );
+        assertNotNull( exports2 );
+        assertSame( exports1.getRawValue(), exports2.getRawValue() );
+
+        this.scriptService.onEvent( new ModuleUpdatedEvent( ModuleKey.from( "othermodule" ), ModuleEventType.UPDATED ) );
+
+        final ScriptExports exports3 = runTestScript( script );
+        assertSame( exports1.getRawValue(), exports3.getRawValue() );
+
+        this.scriptService.onEvent( new ModuleUpdatedEvent( script.getModule(), ModuleEventType.UPDATED ) );
+
+        final ScriptExports exports4 = runTestScript( script );
+        assertNotSame( exports1.getRawValue(), exports4.getRawValue() );
     }
 }

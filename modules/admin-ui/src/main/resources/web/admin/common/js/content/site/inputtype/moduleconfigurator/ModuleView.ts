@@ -74,11 +74,13 @@ module api.content.site.inputtype.moduleconfigurator {
             this.appendChild(this.formView);
             this.formView.layout().then(() => {
                 this.notifyModuleConfigFormDisplayed(this.module.getModuleKey());
+                this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
+                    new api.content.EditContentEvent([content]).fire();
+                });
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }
-
 
         getModule(): Module {
             return this.module;

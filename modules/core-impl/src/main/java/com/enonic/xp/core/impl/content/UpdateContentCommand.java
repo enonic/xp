@@ -175,9 +175,8 @@ final class UpdateContentCommand
             InputValidator.
                 create().
                 contentType( contentType ).
-                requireMappedProperties( params.isRequireMappedProperties() ).
                 build().
-                validate( editedContent.getData().getRoot() );
+                validate( editedContent.getData() );
         }
         catch ( InvalidDataException e )
         {

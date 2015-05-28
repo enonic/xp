@@ -12,7 +12,7 @@ module app.browse.action {
                     = grid.getSelectedDataList().map((elem) => {
                     return elem.getContentSummary();
                 });
-                new EditContentEvent(contentSummaries).fire();
+                new api.content.EditContentEvent(contentSummaries).fire();
             });
         }
     }

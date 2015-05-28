@@ -219,7 +219,7 @@ module api.content.page {
             return this;
         }
 
-        setAutomaticTemplate(eventSource?: any): PageModel {
+        setAutomaticTemplate(eventSource?: any, ignoreRegionChanges: boolean = false): PageModel {
 
             var config = this.defaultTemplate.hasConfig() ?
                          this.defaultTemplate.getConfig().copy() :
@@ -234,7 +234,7 @@ module api.content.page {
                 setRegions(regions).
                 setConfig(config);
 
-            this.setTemplate(setTemplate);
+            this.setTemplate(setTemplate, ignoreRegionChanges);
             return this;
         }
 

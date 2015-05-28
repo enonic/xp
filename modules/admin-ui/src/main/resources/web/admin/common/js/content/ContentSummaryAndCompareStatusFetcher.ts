@@ -38,12 +38,36 @@ module api.content {
             return deferred.promise;
         }
 
+        static fetchByContent(content: Content): wemQ.Promise<ContentSummaryAndCompareStatus> {
+
+            var deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
+
+            CompareContentRequest.fromContentSummaries([content]).sendAndParse().then((compareResults: CompareContentResults) => {
+                deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus([content], compareResults)[0]);
+            });
+
+            return deferred.promise;
+        }
+
         static fetchByPaths(paths: ContentPath[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
 
             new BatchContentRequest().setContentPaths(paths).sendAndParse().then((response: ContentResponse<ContentSummary>) => {
                 var contentSummaries: ContentSummary[] = response.getContents();
+                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
+                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                });
+            });
+
+            return deferred.promise;
+        }
+
+        static fetchByIds(ids: ContentId[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+
+            new GetContentSummaryByIds(ids).get().then((contentSummaries: ContentSummary[]) => {
                 CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
                     deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
                 });
@@ -63,7 +87,8 @@ module api.content {
             return deferred.promise;
         }
 
-        static fetchIds(parentContentId: ContentId, from: number = 0, size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
+        static fetchChildrenIds(parentContentId: ContentId, from: number = 0,
+                                size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummary>>();
 

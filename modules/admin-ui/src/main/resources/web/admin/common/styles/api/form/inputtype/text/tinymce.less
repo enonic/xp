@@ -15,6 +15,28 @@
     &:hover {
       background-image: none;
     }
+
+    i {
+      text-shadow: none;
+    }
+
+    &.mce-active {
+      background-image: none;
+      background-color: @admin-toolbar-toggle-button;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+
+      .mce-ico {
+        color: @admin-white;
+      }
+
+      &:hover {
+        background-image: none;
+        box-shadow: none;
+        background-color: @admin-toolbar-toggle-button;
+      }
+    }
   }
 
   .mce-tinymce {
@@ -62,11 +84,15 @@
     }
   }
 
-  &.sticky-toolbar {
+  .sticky-toolbar {
     .mce-toolbar-grp {
       position: fixed;
+      .box-shadow(0px 3px 6px 0 @admin-toolbar-shadow);
+      z-index: 1000;
+      border-top: 1px solid @admin-medium-gray-border;
     }
   }
+
 }
 
 .mce-link-dialog {
@@ -209,5 +235,14 @@
   i.mce-i-checkbox {
     background: none repeat scroll 0 0 @admin-white;
     font-family: tinymce;
+  }
+}
+
+.mce-tooltip {
+  .mce-tooltip-inner {
+    font-family: "Open Sans", sans-serif;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
   }
 }

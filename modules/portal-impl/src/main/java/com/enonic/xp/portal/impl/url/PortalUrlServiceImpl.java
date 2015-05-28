@@ -22,7 +22,9 @@ public final class PortalUrlServiceImpl
     implements PortalUrlService
 {
 
-    private static final int LINK_INDEX = 1;
+    private static final int MATCH_INDEX = 1;
+
+    private static final int LINK_INDEX = MATCH_INDEX + 1;
 
     private static final int TYPE_INDEX = LINK_INDEX + 1;
 
@@ -41,7 +43,7 @@ public final class PortalUrlServiceImpl
     private static final String INLINE_MODE = "inline";
 
     private final static Pattern CONTENT_PATTERN = Pattern.compile(
-        "href=\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\"",
+        "(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\")",
         Pattern.MULTILINE | Pattern.UNIX_LINES );
 
 
@@ -99,10 +101,11 @@ public final class PortalUrlServiceImpl
         {
             if ( contentMatcher.groupCount() == NB_GROUPS )
             {
-                String link = contentMatcher.group( LINK_INDEX );
-                String type = contentMatcher.group( TYPE_INDEX );
-                String mode = contentMatcher.group( MODE_INDEX );
-                String id = contentMatcher.group( ID_INDEX );
+                final String match = contentMatcher.group( MATCH_INDEX );
+                final String link = contentMatcher.group( LINK_INDEX );
+                final String type = contentMatcher.group( TYPE_INDEX );
+                final String mode = contentMatcher.group( MODE_INDEX );
+                final String id = contentMatcher.group( ID_INDEX );
 
                 if ( CONTENT_TYPE.equals( type ) )
                 {
@@ -112,7 +115,7 @@ public final class PortalUrlServiceImpl
 
                     final String pageUrl = pageUrl( pageUrlParams );
 
-                    processedHtml = processedHtml.replaceAll( link, pageUrl );
+                    processedHtml = processedHtml.replaceFirst( match, "\"" + pageUrl + "\"" );
                 }
                 else
                 {
@@ -123,7 +126,7 @@ public final class PortalUrlServiceImpl
 
                     final String attachmentUrl = attachmentUrl( attachmentUrlParams );
 
-                    processedHtml = processedHtml.replaceAll( link, attachmentUrl );
+                    processedHtml = processedHtml.replaceFirst( match, "\"" + attachmentUrl + "\"" );
                 }
             }
         }

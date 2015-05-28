@@ -2,23 +2,23 @@ module api.content {
 
     import AccessControlList = api.security.acl.AccessControlList;
 
-    export class GetContentPermissionsByPathRequest extends ContentResourceRequest<json.ContentPermissionsJson, AccessControlList> {
+    export class GetContentPermissionsByIdRequest extends ContentResourceRequest<json.ContentPermissionsJson, AccessControlList> {
 
-        private contentPath:ContentPath;
+        private contentId: ContentId;
 
-        constructor(path:ContentPath) {
+        constructor(contentId: ContentId) {
             super();
             super.setMethod("GET");
-            this.contentPath = path;
+            this.contentId = contentId;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
-                path: this.contentPath.toString()
+                id: this.contentId.toString()
             };
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "contentPermissions");
         }
 

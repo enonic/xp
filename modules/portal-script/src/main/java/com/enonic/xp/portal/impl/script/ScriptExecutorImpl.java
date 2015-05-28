@@ -32,8 +32,6 @@ final class ScriptExecutorImpl
 
     private CommandInvoker invoker;
 
-    private ResourceKey script;
-
     private Map<String, Object> globalMap;
 
     private Bindings global;
@@ -50,30 +48,21 @@ final class ScriptExecutorImpl
         this.invoker = invoker;
     }
 
-    public void setScript( final ResourceKey script )
-    {
-        this.script = script;
-    }
-
     public void setGlobalMap( final Map<String, Object> globalMap )
     {
         this.globalMap = globalMap;
     }
 
-    @Override
-    public Object executeMain()
+    public void initialize()
     {
         this.exportsCache = Maps.newHashMap();
         this.global = this.engine.createBindings();
-
         new CallFunction().register( this.global );
 
         if ( this.globalMap != null )
         {
             this.global.putAll( this.globalMap );
         }
-
-        return executeRequire( this.script );
     }
 
     @Override

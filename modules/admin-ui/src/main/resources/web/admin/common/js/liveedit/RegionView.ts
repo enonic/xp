@@ -418,6 +418,10 @@ module api.liveedit {
         }
 
         private parseComponentViews() {
+            this.componentViews.forEach((componentView) => {
+                this.unregisterComponentView(componentView);
+            });
+
             this.componentViews = [];
             this.componentIndex = 0;
 

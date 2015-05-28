@@ -87,7 +87,7 @@ public final class ModuleRegistryImpl
 
     private boolean isModule( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && ModuleBuilder2.isModule( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ModuleBuilder.isModule( bundle );
     }
 
     private void publishModuleChangeEvent( final BundleEvent event )
@@ -117,7 +117,7 @@ public final class ModuleRegistryImpl
 
     private void installModule( final Bundle bundle )
     {
-        final ModuleBuilder2 builder = new ModuleBuilder2();
+        final ModuleBuilder builder = new ModuleBuilder();
         builder.bundle( bundle );
 
         final Module module = builder.build();

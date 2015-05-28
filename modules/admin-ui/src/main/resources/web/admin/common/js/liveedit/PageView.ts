@@ -69,6 +69,8 @@ module api.liveedit {
 
         private pageModeChangedListener: (event: PageModeChangedEvent) => void;
 
+        private lockedContextMenu: api.liveedit.ItemViewContextMenu;
+
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
@@ -76,10 +78,6 @@ module api.liveedit {
             this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
                 // don't parse on regions change during reset, because it'll be done when page is loaded later
                 if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
-                    this.regionViews.forEach((regionView)=> {
-                        this.unregisterRegionView(regionView)
-                    });
-
                     this.parseItemViews();
                 }
                 this.refreshEmptyState();
@@ -87,7 +85,10 @@ module api.liveedit {
             pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
+                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                if (PageView.debug) {
+                    console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
+                }
                 resetAction.setEnabled(resetEnabled);
             };
             pageModel.onPageModeChanged(this.pageModeChangedListener);
@@ -229,12 +230,6 @@ module api.liveedit {
             }
         }
 
-        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            if (!this.isLocked()) {
-                super.showContextMenu(clickPosition, menuPosition);
-            }
-        }
-
         unshade() {
             if (!this.isLocked()) {
                 super.unshade();
@@ -247,6 +242,15 @@ module api.liveedit {
                     this.setLocked(false);
                 }
             })
+
+            this.onMouseOverView(() => {
+                var isDragging = DragAndDrop.get().isDragging();
+                if (isDragging && this.lockedContextMenu) {
+                    if (this.lockedContextMenu.isVisible()) {
+                        this.lockedContextMenu.hide();
+                    }
+                }
+            });
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
@@ -255,9 +259,67 @@ module api.liveedit {
             new PageSelectedEvent(this).fire();
         }
 
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (!this.isLocked()) {
+                super.showContextMenu(clickPosition, menuPosition);
+            }
+        }
+
+        createLockedContextMenu() {
+            return new api.liveedit.ItemViewContextMenu(this.getContextMenuTitle(), this.getLockedMenuActions());
+        }
+
+        getLockedMenuActions(): api.ui.Action[] {
+            var unlockAction = new api.ui.Action("Customize");
+
+            unlockAction.onExecuted(() => {
+                this.setLocked(false);
+            });
+
+            return [unlockAction];
+        }
+
+        selectLocked(itemView: ItemView, pos: Position) {
+            this.setLockVisible(true);
+
+            if (itemView) {
+                new ItemViewSelectedEvent(itemView, pos).fire();
+            }
+
+            if (!itemView || itemView == this) {
+                new PageSelectedEvent(this).fire();
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
+                new RegionSelectedEvent(<RegionView>itemView).fire();
+            }
+
+            this.lockedContextMenu.showAt(pos.x, pos.y);
+        }
+
+        deselectLocked(itemView: ItemView) {
+            this.setLockVisible(false);
+            this.lockedContextMenu.hide();
+
+            if (itemView) {
+                new ItemViewDeselectEvent(itemView).fire();
+            }
+        }
 
         handleShaderClick(event: MouseEvent) {
-            if (!this.isLocked() && this.isSelected()) {
+            if (this.isLocked()) {
+                var itemView = this.getItemViewByCoordinates(event.pageX, event.pageY);
+
+                if (!this.lockedContextMenu) {
+                    this.lockedContextMenu = this.createLockedContextMenu();
+                }
+                if (this.lockedContextMenu.isVisible()) {
+                    this.deselectLocked(itemView);
+                }
+                else {
+                    this.selectLocked(itemView, {x: event.pageX, y: event.pageY});
+                }
+            }
+            else if (this.isSelected()) {
                 this.deselect();
             }
         }
@@ -272,12 +334,12 @@ module api.liveedit {
             }
         }
 
-        setLockVisible(visible: boolean) {
-            this.toggleClass('force-locked', visible);
-        }
-
         isLocked() {
             return this.hasClass('locked');
+        }
+
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
         }
 
         setLocked(locked: boolean) {
@@ -517,6 +579,18 @@ module api.liveedit {
         }
 
         private parseItemViews() {
+            // unregister existing views
+            for (var itemView in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(itemView)) {
+                    this.unregisterItemView(this.viewsById[itemView]);
+                }
+            }
+
+            // unregister existing regions
+            this.regionViews.forEach((regionView: RegionView)=> {
+                this.unregisterRegionView(regionView)
+            });
+
             this.regionViews = [];
             this.regionIndex = 0;
             this.viewsById = {};
@@ -586,6 +660,24 @@ module api.liveedit {
         private notifyItemViewRemoved(itemView: ItemView) {
             var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
+        }
+
+
+        private getItemViewByCoordinates(x: number, y: number): ItemView {
+            var view: ItemView;
+            for (var key in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(key)) {
+                    var itemView = this.viewsById[key],
+                        elementDimensions = itemView.getElementDimensions();
+
+                    if (y >= elementDimensions.top && y <= elementDimensions.top + elementDimensions.height &&
+                        x >= elementDimensions.left && x <= elementDimensions.left + elementDimensions.width) {
+                        view = itemView;
+                    }
+                }
+            }
+
+            return view;
         }
     }
 }

@@ -8,6 +8,8 @@ module api.content {
 
         private contentId: ContentId;
 
+        private childOrder: ChildOrder;
+
         private contentMovements: OrderChildMovements;
 
         constructor() {
@@ -30,6 +32,11 @@ module api.content {
             return this;
         }
 
+        setChildOrder(value: ChildOrder): OrderChildContentRequest {
+            this.childOrder = value;
+            return this;
+        }
+
         setContentMovements(value: OrderChildMovements): OrderChildContentRequest {
             this.contentMovements = value;
             return this;
@@ -40,6 +47,7 @@ module api.content {
                 "silent": this.silent,
                 "manualOrder": this.manualOrder,
                 "contentId": this.contentId.toString(),
+                "childOrder": this.childOrder ? this.childOrder.toJson() : undefined,
                 "reorderChildren": this.contentMovements.toArrayJson()
             };
         }

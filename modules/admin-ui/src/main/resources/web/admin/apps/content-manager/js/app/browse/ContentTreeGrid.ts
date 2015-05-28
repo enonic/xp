@@ -123,7 +123,7 @@ module app.browse {
                      * node is clicked, edit event will be triggered by default.
                      */
                     if (!!this.getDataId(node.getData())) { // default event
-                        new EditContentEvent([node.getData().getContentSummary()]).fire();
+                        new api.content.EditContentEvent([node.getData().getContentSummary()]).fire();
                     }
                 }
             });
@@ -335,7 +335,7 @@ module app.browse {
             }
 
             if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
-                return ContentSummaryAndCompareStatusFetcher.fetchIds(parentContentId, 0, size + 1).
+                return ContentSummaryAndCompareStatusFetcher.fetchChildrenIds(parentContentId, 0, size + 1).
                     then((response: ContentResponse<ContentSummary>) => {
                         return response.getContents();
                     });
@@ -656,13 +656,15 @@ module app.browse {
 
             nodes.forEach((node) => {
                 if (!node.hasChildren()) {
-                    parallelPromises.push(
-                        new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).
-                            sendAndParse().
-                            then((content: api.content.Content) => {
-                                node.getData().setContentSummary(content);
-                            })
-                    );
+                    if (!!node.getData()) {
+                        parallelPromises.push(
+                            new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).
+                                sendAndParse().
+                                then((content: api.content.Content) => {
+                                    node.getData().setContentSummary(content);
+                                })
+                        );
+                    }
                 }
             });
 

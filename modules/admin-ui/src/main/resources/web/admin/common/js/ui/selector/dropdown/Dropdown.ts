@@ -27,7 +27,7 @@ module api.ui.selector.dropdown {
 
         private input: DropdownOptionFilterInput;
 
-        private dropdownDropdown: DropdownDropdown<OPTION_DISPLAY_VALUE>;
+        private dropdownList: DropdownList<OPTION_DISPLAY_VALUE>;
 
         private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
 
@@ -64,7 +64,7 @@ module api.ui.selector.dropdown {
             if (config.filter) {
                 filter = config.filter;
             }
-            this.dropdownDropdown = new DropdownDropdown(<DropdownDropdownConfig<OPTION_DISPLAY_VALUE>>{
+            this.dropdownList = new DropdownList(<DropdownListConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
@@ -72,21 +72,22 @@ module api.ui.selector.dropdown {
                 dataIdProperty: config.dataIdProperty
             });
             if (filter) {
-                this.dropdownDropdown.setFilterArgs({searchString: ""});
+                this.dropdownList.setFilterArgs({searchString: ""});
             }
 
-            this.dropdownDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
+            this.dropdownList.onRowSelection((event: DropdownGridRowSelectedEvent) => {
                 this.selectRow(event.getRow());
             });
 
-            this.appendChild(this.dropdownDropdown.getGrid().getElement());
+            this.appendChild(this.dropdownList.getEmptyDropdown());
+            this.appendChild(this.dropdownList.getDropdownGrid().getElement());
             this.selectedOptionView = new SelectedOptionView<OPTION_DISPLAY_VALUE>(this.optionDisplayValueViewer);
             this.selectedOptionView.hide();
             this.appendChild(this.selectedOptionView);
 
             this.selectedOptionView.onOpenDropdown(() => {
                 this.showDropdown();
-                this.dropdownDropdown.navigateToFirstRowIfNotActive();
+                this.dropdownList.navigateToFirstRowIfNotActive();
                 this.input.giveFocus();
             });
 
@@ -96,6 +97,13 @@ module api.ui.selector.dropdown {
 
                 this.doUpdateDropdownTopPositionAndWidth();
             });
+        }
+
+        reset() {
+            this.input.show();
+            this.selectedOptionView.hide();
+            this.selectedOptionView.resetOption();
+            this.dropdownHandle.show();
         }
 
         private defaultFilter(option: Option<OPTION_DISPLAY_VALUE>, args: any) {
@@ -131,8 +139,8 @@ module api.ui.selector.dropdown {
 
         private doUpdateDropdownTopPositionAndWidth() {
             var inputEl = this.input.getEl();
-            this.dropdownDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
-            this.dropdownDropdown.setWidth(inputEl.getWidthWithBorder());
+            this.dropdownList.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
+            this.dropdownList.setWidth(inputEl.getWidthWithBorder());
         }
 
         giveFocus(): boolean {
@@ -140,7 +148,7 @@ module api.ui.selector.dropdown {
         }
 
         isDropdownShown(): boolean {
-            return this.dropdownDropdown.isDropdownShown();
+            return this.dropdownList.isDropdownShown();
         }
 
         showDropdown() {
@@ -151,10 +159,10 @@ module api.ui.selector.dropdown {
 
 
             this.doUpdateDropdownTopPositionAndWidth();
-            this.dropdownDropdown.showDropdown(this.getSelectedOption());
+            this.dropdownList.showDropdown([this.getSelectedOption()]);
             this.dropdownHandle.down();
 
-            this.dropdownDropdown.renderDropdownGrid();
+            this.dropdownList.renderDropdownGrid();
         }
 
         hideDropdown() {
@@ -170,39 +178,39 @@ module api.ui.selector.dropdown {
                 this.dropdownHandle.show();
             }
 
-            this.dropdownDropdown.hideDropdown();
+            this.dropdownList.hideDropdown();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.dropdownDropdown.setOptions(options);
+            this.dropdownList.setOptions(options);
         }
 
         removeAllOptions() {
-            this.dropdownDropdown.removeAllOptions();
+            this.dropdownList.removeAllOptions();
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
-            this.dropdownDropdown.addOption(option);
+            this.dropdownList.addOption(option);
         }
 
         hasOptions(): boolean {
-            return this.dropdownDropdown.hasOptions();
+            return this.dropdownList.hasOptions();
         }
 
         getOptionCount(): number {
-            return this.dropdownDropdown.getOptionCount();
+            return this.dropdownList.getOptionCount();
         }
 
         getOptions(): Option<OPTION_DISPLAY_VALUE>[] {
-            return this.dropdownDropdown.getOptions();
+            return this.dropdownList.getOptions();
         }
 
         getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
-            return this.dropdownDropdown.getOptionByValue(value);
+            return this.dropdownList.getOptionByValue(value);
         }
 
         getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
-            return this.dropdownDropdown.getOptionByRow(rowIndex);
+            return this.dropdownList.getOptionByRow(rowIndex);
         }
 
         setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
@@ -223,7 +231,7 @@ module api.ui.selector.dropdown {
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
-            this.dropdownDropdown.markSelections([option]);
+            this.dropdownList.markSelections([option]);
             if (!silent) {
                 this.notifyOptionSelected(option);
             }
@@ -263,7 +271,7 @@ module api.ui.selector.dropdown {
 
             this.dropdownHandle.onClicked((event: any) => {
 
-                this.dropdownDropdown.navigateToFirstRowIfNotActive();
+                this.dropdownList.navigateToFirstRowIfNotActive();
 
                 if (this.isDropdownShown()) {
                     this.hideDropdown();
@@ -278,16 +286,16 @@ module api.ui.selector.dropdown {
 
                 this.notifyOptionFilterInputValueChanged(event.getOldValue(), event.getNewValue());
 
-                this.dropdownDropdown.setFilterArgs({searchString: event.getNewValue()});
+                this.dropdownList.setFilterArgs({searchString: event.getNewValue()});
                 this.showDropdown();
 
-                this.dropdownDropdown.nagivateToFirstRow();
+                this.dropdownList.nagivateToFirstRow();
 
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
 
-                this.dropdownDropdown.navigateToFirstRowIfNotActive();
+                this.dropdownList.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -304,7 +312,7 @@ module api.ui.selector.dropdown {
                     return;
                 }
 
-                this.dropdownDropdown.navigateToFirstRowIfNotActive();
+                this.dropdownList.navigateToFirstRowIfNotActive();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
@@ -312,13 +320,13 @@ module api.ui.selector.dropdown {
                 }
 
                 if (event.which == 38) { // up
-                    this.dropdownDropdown.navigateToPreviousRow();
+                    this.dropdownList.navigateToPreviousRow();
                 }
                 else if (event.which == 40) { // down
-                    this.dropdownDropdown.navigateToNextRow();
+                    this.dropdownList.navigateToNextRow();
                 }
                 else if (event.which == 13) { // enter
-                    this.selectRow(this.dropdownDropdown.getActiveRow());
+                    this.selectRow(this.dropdownList.getActiveRow());
                     this.input.getEl().setValue("");
                     event.preventDefault();
                     event.stopPropagation();
@@ -393,7 +401,7 @@ module api.ui.selector.dropdown {
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
-                this.dropdownDropdown.getGrid().getElement());
+                this.dropdownList.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });

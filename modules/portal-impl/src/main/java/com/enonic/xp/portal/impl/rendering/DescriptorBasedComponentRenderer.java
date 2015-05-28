@@ -8,6 +8,7 @@ import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.Descriptor;
 import com.enonic.xp.content.page.region.DescriptorBasedComponent;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -47,9 +48,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = context.getComponent();
+        final ModuleKey previousModule = context.getModule();
         try
         {
             context.setComponent( component );
+            context.setModule( descriptor.getKey().getModuleKey() );
+
             controllerScript.execute( context );
             final PortalResponse response = context.getResponse();
 
@@ -70,6 +74,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         finally
         {
             context.setComponent( previousComponent );
+            context.setModule( previousModule );
         }
     }
 

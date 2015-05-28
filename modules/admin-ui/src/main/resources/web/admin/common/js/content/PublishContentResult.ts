@@ -6,6 +6,6 @@ module api.content {
 
         failures: {path:string; reason:string}[];
 
-        deleted: string[];
+        deleted: {id:string; name:string}[];
     }
 }

@@ -3,5 +3,6 @@
   "displayName": "user 1",
   "login": "user1",
   "email": "user1@enonic.com",
+  "password": "password",
   "memberships": []
 }
