@@ -10,6 +10,7 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -58,6 +59,7 @@ module api.form.inputtype.text {
 
                     setup: (editor) => {
                         editor.addCommand("initSelectors", this.initSelectors, this);
+                        editor.addCommand("openLinkDialog", this.openLinkDialog.bind(this.getEditor(textAreaEl.getId())), this);
                         editor.on('change', (e) => {
                             var value = this.newValue(this.getEditor(textAreaEl.getId()).getContent());
                             property.setValue(value);
@@ -263,6 +265,11 @@ module api.form.inputtype.text {
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
             wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
+        }
+
+        private openLinkDialog(editor: TinyMceEditor) {
+            var linkModalDialog = new LinkModalDialog(editor);
+            linkModalDialog.open();
         }
     }
 
