@@ -19,7 +19,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         //Checks the process for a null value
         final ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context );
+            portalRequest( this.portalRequest );
         String processedHtml = this.service.processHtml( params );
         assertEquals( "", processedHtml );
 
@@ -38,7 +38,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing a link to this content
         final ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
 
         //Checks that the page URL of the content is returned
@@ -71,7 +71,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing an inline link to this content
         ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<a href=\"media://inline/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
@@ -82,7 +82,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing a download link to this content
         params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<a href=\"media://download/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
@@ -117,7 +117,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing multiple links, on multiple lines, to this content as a media and as a content
         final ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<p>A content link:&nbsp;<a href=\"content://" + content.getId() + "\">FirstLink</a></p>\n" +
                        "<p>A second content link:&nbsp;<a href=\"content://" + content.getId() + "\">SecondLink</a>" +
                        "&nbsp;and a download link:&nbsp;<a href=\"media://download/" + content.getId() + "\">Download</a></p>\n" +
@@ -143,7 +143,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing a link to an unknown content
         final ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<a href=\"content://123\">Content</a>" );
 
         //Checks that the error 500 page is returned
@@ -157,7 +157,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Process an html text containing a link to an unknown media
         final ProcessHtmlParams params = new ProcessHtmlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             value( "<a href=\"media://inline/123\">Content</a>" );
 
         //Checks that the error 500 page is returned

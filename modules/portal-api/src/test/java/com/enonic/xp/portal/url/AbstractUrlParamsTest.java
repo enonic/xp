@@ -5,25 +5,25 @@ import org.junit.Before;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 public abstract class AbstractUrlParamsTest
 {
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
 
     @Before
     public void setup()
     {
-        this.context = new PortalContext();
-        this.context.setBranch( Branch.from( "draft" ) );
-        this.context.setModule( ModuleKey.from( "mymodule" ) );
-        this.context.setBaseUri( "/portal" );
-        this.context.setContentPath( ContentPath.from( "context/path" ) );
+        this.portalRequest = new PortalRequest();
+        this.portalRequest.setBranch( Branch.from( "draft" ) );
+        this.portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
     }
 
     protected final <T extends AbstractUrlParams> T configure( final T params )
     {
-        params.context( this.context );
+        params.portalRequest( this.portalRequest );
         return params;
     }
 }

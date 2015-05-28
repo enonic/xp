@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -49,9 +49,9 @@ public class ComponentResourceTest
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -99,10 +99,10 @@ public class ComponentResourceTest
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
-        assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsContext.getValue().getUri() );
+        assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );
     }
 }

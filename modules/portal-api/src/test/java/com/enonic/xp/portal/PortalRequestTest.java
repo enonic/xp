@@ -6,12 +6,12 @@ import com.enonic.xp.branch.Branch;
 
 import static org.junit.Assert.*;
 
-public class PortalContextTest
+public class PortalRequestTest
 {
     @Test
     public void setMethod()
     {
-        final PortalContext request = new PortalContext();
+        final PortalRequest request = new PortalRequest();
         assertNull( request.getMethod() );
 
         request.setMethod( "GET" );
@@ -21,7 +21,7 @@ public class PortalContextTest
     @Test
     public void setMode()
     {
-        final PortalContext request = new PortalContext();
+        final PortalRequest request = new PortalRequest();
         assertEquals( RenderMode.LIVE, request.getMode() );
 
         request.setMode( RenderMode.EDIT );
@@ -32,8 +32,8 @@ public class PortalContextTest
     public void setBranch()
         throws Exception
     {
-        final PortalContext request = new PortalContext();
-        assertEquals( PortalContext.DEFAULT_BRANCH, request.getBranch() );
+        final PortalRequest request = new PortalRequest();
+        assertEquals( PortalRequest.DEFAULT_BRANCH, request.getBranch() );
 
         request.setBranch( Branch.from( "another" ) );
         assertEquals( Branch.from( "another" ), request.getBranch() );
@@ -42,7 +42,7 @@ public class PortalContextTest
     @Test
     public void addParam()
     {
-        final PortalContext request = new PortalContext();
+        final PortalRequest request = new PortalRequest();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 

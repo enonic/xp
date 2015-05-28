@@ -13,7 +13,7 @@ public class ControllerScriptImpl_simpleTest
     @Test
     public void testExecute()
     {
-        this.context.setMethod( "GET" );
+        this.portalRequest.setMethod( "GET" );
         execute( "mymodule:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
     }
@@ -21,19 +21,19 @@ public class ControllerScriptImpl_simpleTest
     @Test
     public void testExecutePostProcess()
     {
-        this.context.setMethod( "GET" );
+        this.portalRequest.setMethod( "GET" );
         this.response.setPostProcess( true );
 
         execute( "mymodule:/controller/simple.js" );
 
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
-        Mockito.verify( this.postProcessor ).processResponse( this.context );
+        Mockito.verify( this.postProcessor ).processResponse( this.portalRequest );
     }
 
     @Test
     public void testMethodNotSupported()
     {
-        this.context.setMethod( "POST" );
+        this.portalRequest.setMethod( "POST" );
         execute( "mymodule:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }

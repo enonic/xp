@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.thymeleaf;
 
 import java.util.List;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
 
@@ -10,7 +10,7 @@ final class ThymeleafViewFunctions
 {
     protected ViewFunctionService viewFunctionService;
 
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
 
     public String assetUrl( final List<String> params )
     {
@@ -54,7 +54,7 @@ final class ThymeleafViewFunctions
 
     private Object execute( final String name, final List<String> args )
     {
-        final ViewFunctionParams params = new ViewFunctionParams().name( name ).args( args ).context( this.context );
+        final ViewFunctionParams params = new ViewFunctionParams().name( name ).args( args ).portalRequest( this.portalRequest );
         return this.viewFunctionService.execute( params );
     }
 }

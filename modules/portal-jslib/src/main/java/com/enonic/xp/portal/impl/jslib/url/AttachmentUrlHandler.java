@@ -21,7 +21,7 @@ public final class AttachmentUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final AttachmentUrlParams params = new AttachmentUrlParams().context( getContext() ).setAsMap( map );
+        final AttachmentUrlParams params = new AttachmentUrlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.attachmentUrl( params );
     }
 

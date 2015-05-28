@@ -13,7 +13,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     public void createUrl()
     {
         final ServiceUrlParams params = new ServiceUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             service( "myservice" ).
             param( "a", 3 );
 
@@ -25,7 +25,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     public void createUrl_withModule()
     {
         final ServiceUrlParams params = new ServiceUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             service( "myservice" ).
             module( "othermodule" );
 

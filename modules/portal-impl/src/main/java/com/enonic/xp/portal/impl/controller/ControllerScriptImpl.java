@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.controller;
 
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -25,38 +25,38 @@ final class ControllerScriptImpl
     }
 
     @Override
-    public void execute( final PortalContext context )
+    public void execute( final PortalRequest portalRequest )
     {
-        PortalContextAccessor.set( context );
+        PortalRequestAccessor.set( portalRequest );
 
         try
         {
-            doExecute( context );
-            this.postProcessor.processResponse( context );
+            doExecute( portalRequest );
+            this.postProcessor.processResponse( portalRequest );
         }
         finally
         {
-            PortalContextAccessor.remove();
+            PortalRequestAccessor.remove();
         }
     }
 
-    private void doExecute( final PortalContext context )
+    private void doExecute( final PortalRequest portalRequest )
     {
-        final String method = context.getMethod().toLowerCase();
+        final String method = portalRequest.getMethod().toLowerCase();
         final boolean isHead = "head".equals( method );
         final String runMethod = isHead ? "get" : method;
 
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            populateResponse( context.getResponse(), null );
+            populateResponse( portalRequest.getResponse(), null );
             return;
         }
 
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( context );
+        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
         final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
-        populateResponse( context.getResponse(), result );
+        populateResponse( portalRequest.getResponse(), result );
     }
 
     private void populateResponse( final PortalResponse response, final ScriptValue result )

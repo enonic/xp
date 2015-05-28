@@ -111,7 +111,7 @@ public final class PortalUrlServiceImpl
                 {
                     PageUrlParams pageUrlParams = new PageUrlParams().
                         id( id ).
-                        context( params.getContext() );
+                        portalRequest( params.getPortalRequest() );
 
                     final String pageUrl = pageUrl( pageUrlParams );
 
@@ -122,7 +122,7 @@ public final class PortalUrlServiceImpl
                     AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
                         id( id ).
                         download( DOWNLOAD_MODE.equals( mode ) ).
-                        context( params.getContext() );
+                        portalRequest( params.getPortalRequest() );
 
                     final String attachmentUrl = attachmentUrl( attachmentUrlParams );
 

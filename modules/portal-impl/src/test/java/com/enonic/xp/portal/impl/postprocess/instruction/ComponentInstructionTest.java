@@ -18,14 +18,14 @@ import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.rendering.Renderable;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.rendering.Renderable;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.content.page.PageRegions.newPageRegions;
 import static com.enonic.xp.content.page.region.PartComponent.newPartComponent;
@@ -50,14 +50,14 @@ public class ComponentInstructionTest
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
-        PortalContext context = new PortalContext();
-        context.setResponse( resp );
+        PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
-        context.setContent( content );
+        portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
-        context.setSite( site );
+        portalRequest.setSite( site );
 
-        String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/0" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -76,16 +76,16 @@ public class ComponentInstructionTest
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
-        PortalContext context = new PortalContext();
-        context.setResponse( resp );
+        PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
-        context.setContent( content );
+        portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
-        context.setSite( site );
+        portalRequest.setSite( site );
         PageTemplate pageTemplate = createPageTemplate();
-        context.setPageTemplate( pageTemplate );
+        portalRequest.setPageTemplate( pageTemplate );
 
-        String outputHtml = instruction.evaluate( context, "COMPONENT module:myPartComponent" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -170,7 +170,7 @@ public class ComponentInstructionTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalContext context )
+            public RenderResult render( final Renderable component, final PortalRequest portalRequest )
             {
                 return RenderResult.newRenderResult().entity( renderResult ).build();
             }

@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 import com.enonic.xp.portal.rendering.RenderResult;
 
@@ -62,26 +62,26 @@ public abstract class ControllerResource
     private Response doHandle()
         throws Exception
     {
-        final PortalContext context = new PortalContext();
-        context.setMode( this.mode );
-        context.setMethod( this.request.getMethod() );
-        context.setBaseUri( this.baseUri );
-        context.setBranch( this.branch );
-        context.getCookies().putAll( getCookieMap() );
-        context.setUri( this.uriInfo.getRequestUri().toString() );
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( this.mode );
+        portalRequest.setMethod( this.request.getMethod() );
+        portalRequest.setBaseUri( this.baseUri );
+        portalRequest.setBranch( this.branch );
+        portalRequest.getCookies().putAll( getCookieMap() );
+        portalRequest.setUri( this.uriInfo.getRequestUri().toString() );
 
-        final Multimap<String, String> contextHeaders = context.getHeaders();
+        final Multimap<String, String> contextHeaders = portalRequest.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );
-        setParams( context.getParams(), this.uriInfo.getQueryParameters() );
+        setParams( portalRequest.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
         {
-            setParams( context.getFormParams(), this.form.asMap() );
+            setParams( portalRequest.getFormParams(), this.form.asMap() );
         }
 
-        configure( context );
+        configure( portalRequest );
 
-        final RenderResult result = execute( context );
+        final RenderResult result = execute( portalRequest );
         return toResponse( result );
     }
 
@@ -93,9 +93,9 @@ public abstract class ControllerResource
         }
     }
 
-    protected abstract void configure( PortalContext context );
+    protected abstract void configure( PortalRequest portalRequest );
 
-    protected abstract RenderResult execute( PortalContext context )
+    protected abstract RenderResult execute( PortalRequest portalRequest )
         throws Exception;
 
     private Response toResponse( final RenderResult result )

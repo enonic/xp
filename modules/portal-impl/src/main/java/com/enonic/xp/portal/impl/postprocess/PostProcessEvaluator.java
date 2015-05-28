@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.postprocess;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.parser.HtmlBlock;
 import com.enonic.xp.portal.impl.parser.HtmlBlockParser;
 import com.enonic.xp.portal.impl.parser.HtmlBlocks;
@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.joining;
 
 final class PostProcessEvaluator
 {
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
 
     protected String input;
 
@@ -75,7 +75,7 @@ final class PostProcessEvaluator
     {
         for ( final PostProcessInstruction instruction : this.instructions )
         {
-            final String result = instruction.evaluate( this.context, content );
+            final String result = instruction.evaluate( this.portalRequest, content );
             if ( result != null )
             {
                 return new HtmlBlockParser().parse( result );
@@ -113,7 +113,7 @@ final class PostProcessEvaluator
         List<String> injections = null;
         for ( final PostProcessInjection injection : this.injections )
         {
-            final List<String> contributions = injection.inject( this.context, htmlTag );
+            final List<String> contributions = injection.inject( this.portalRequest, htmlTag );
             if ( contributions != null )
             {
                 if ( injections == null )

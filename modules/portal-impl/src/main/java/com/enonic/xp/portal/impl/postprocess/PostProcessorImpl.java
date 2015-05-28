@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
@@ -30,10 +30,10 @@ public final class PostProcessorImpl
     }
 
     @Override
-    public void processResponse( final PortalContext context )
+    public void processResponse( final PortalRequest portalRequest )
     {
-        final PortalResponse response = context.getResponse();
-        if ( !response.isPostProcess() || !"GET".equals( context.getMethod() ) )
+        final PortalResponse response = portalRequest.getResponse();
+        if ( !response.isPostProcess() || !"GET".equals( portalRequest.getMethod() ) )
         {
             return;
         }
@@ -44,18 +44,18 @@ public final class PostProcessorImpl
             return;
         }
 
-        doPostProcess( context, (String) body );
+        doPostProcess( portalRequest, (String) body );
     }
 
-    private void doPostProcess( final PortalContext context, final String body )
+    private void doPostProcess( final PortalRequest portalRequest, final String body )
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.context = context;
+        evaluator.portalRequest = portalRequest;
         evaluator.input = body;
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
 
-        context.getResponse().setBody( evaluator.evaluate() );
+        portalRequest.getResponse().setBody( evaluator.evaluate() );
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

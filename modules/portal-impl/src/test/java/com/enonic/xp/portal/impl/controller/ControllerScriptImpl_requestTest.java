@@ -15,7 +15,7 @@ public class ControllerScriptImpl_requestTest
     public void testSimple()
         throws Exception
     {
-        this.context.setMethod( "GET" );
+        this.portalRequest.setMethod( "GET" );
         execute( "mymodule:/controller/request.js" );
 
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
@@ -26,15 +26,15 @@ public class ControllerScriptImpl_requestTest
     public void testAll()
         throws Exception
     {
-        this.context.setMethod( "GET" );
-        this.context.setBranch( Branch.from( "master" ) );
-        this.context.setMode( RenderMode.EDIT );
-        this.context.setUri( "http://enonic.com/my/page" );
-        this.context.getParams().put( "debug", "true" );
-        this.context.getHeaders().put( "Language", "en" );
-        this.context.getHeaders().put( "Cookies", "mycookie=123; other=abc;" );
-        this.context.getCookies().put( "mycookie", "123" );
-        this.context.getCookies().put( "other", "abc" );
+        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setBranch( Branch.from( "master" ) );
+        this.portalRequest.setMode( RenderMode.EDIT );
+        this.portalRequest.setUri( "http://enonic.com/my/page" );
+        this.portalRequest.getParams().put( "debug", "true" );
+        this.portalRequest.getHeaders().put( "Language", "en" );
+        this.portalRequest.getHeaders().put( "Cookies", "mycookie=123; other=abc;" );
+        this.portalRequest.getCookies().put( "mycookie", "123" );
+        this.portalRequest.getCookies().put( "other", "abc" );
 
         execute( "mymodule:/controller/request.js" );
 
@@ -46,7 +46,7 @@ public class ControllerScriptImpl_requestTest
     public void testHead()
         throws Exception
     {
-        this.context.setMethod( "HEAD" );
+        this.portalRequest.setMethod( "HEAD" );
         execute( "mymodule:/controller/request.js" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
     }

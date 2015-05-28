@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
 import static java.util.stream.Collectors.joining;
@@ -29,11 +29,11 @@ public class PostProcessorImplTest
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalContext context = new PortalContext();
-        context.setResponse( resp );
-        context.setMethod( "GET" );
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setResponse( resp );
+        portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( context );
+        postProcessor.processResponse( portalRequest );
 
         final String outputHtml = resp.getBody().toString();
         final String expectedResult = readResource( "postProcessResult1.html" );
@@ -54,11 +54,11 @@ public class PostProcessorImplTest
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalContext context = new PortalContext();
-        context.setResponse( resp );
-        context.setMethod( "GET" );
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setResponse( resp );
+        portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( context );
+        postProcessor.processResponse( portalRequest );
 
         final String outputHtml = resp.getBody().toString();
         final String expectedResult = readResource( "postProcessResult2.html" );

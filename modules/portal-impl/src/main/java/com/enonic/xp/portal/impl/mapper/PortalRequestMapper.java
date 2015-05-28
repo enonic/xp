@@ -6,16 +6,16 @@ import java.util.Objects;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 
 public final class PortalRequestMapper
     implements MapSerializable
 {
-    private final PortalContext request;
+    private final PortalRequest request;
 
-    public PortalRequestMapper( final PortalContext request )
+    public PortalRequestMapper( final PortalRequest request )
     {
         this.request = request;
     }

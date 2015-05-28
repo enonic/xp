@@ -8,8 +8,8 @@ import javax.ws.rs.core.Context;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.portal.impl.resource.render.PageResource;
@@ -24,10 +24,10 @@ public final class RootResource
     @Path("{branch}")
     public PageResource rootPage( @PathParam("branch") final String branch )
     {
-        final PortalContext parentContext = findParentContext();
+        final PortalRequest parentPortalRequest = findParentPortalRequest();
 
-        this.mode = findRenderMode( parentContext );
-        this.baseUri = findBaseUri( parentContext );
+        this.mode = findRenderMode( parentPortalRequest );
+        this.baseUri = findBaseUri( parentPortalRequest );
         this.contentPath = ContentPath.from( "/" );
         this.branch = Branch.from( branch );
 
@@ -35,20 +35,20 @@ public final class RootResource
         return initResource( new PageResource() );
     }
 
-    private PortalContext findParentContext()
+    private PortalRequest findParentPortalRequest()
     {
-        return PortalContextAccessor.get( this.rawRequest );
+        return PortalRequestAccessor.get( this.rawRequest );
     }
 
-    private RenderMode findRenderMode( final PortalContext context )
+    private RenderMode findRenderMode( final PortalRequest portalRequest )
     {
-        final RenderMode mode = context != null ? context.getMode() : null;
+        final RenderMode mode = portalRequest != null ? portalRequest.getMode() : null;
         return mode != null ? mode : RenderMode.LIVE;
     }
 
-    private String findBaseUri( final PortalContext context )
+    private String findBaseUri( final PortalRequest portalRequest )
     {
-        final String uri = context != null ? context.getBaseUri() : null;
+        final String uri = portalRequest != null ? portalRequest.getBaseUri() : null;
         return uri != null ? uri : "/portal";
     }
 }

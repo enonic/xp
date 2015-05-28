@@ -1,17 +1,17 @@
 package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 final class ModuleResolver
 {
-    private PortalContext context;
+    private PortalRequest portalRequest;
 
     private String module;
 
-    public ModuleResolver context( final PortalContext context )
+    public ModuleResolver portalRequest( final PortalRequest portalRequest )
     {
-        this.context = context;
+        this.portalRequest = portalRequest;
         return this;
     }
 
@@ -28,6 +28,6 @@ final class ModuleResolver
             return ModuleKey.from( this.module );
         }
 
-        return this.context.getModule();
+        return this.portalRequest.getModule();
     }
 }

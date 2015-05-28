@@ -21,7 +21,7 @@ public final class ServiceUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final ServiceUrlParams params = new ServiceUrlParams().context( getContext() ).setAsMap( map );
+        final ServiceUrlParams params = new ServiceUrlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.serviceUrl( params );
     }
 

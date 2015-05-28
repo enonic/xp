@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.resource.service;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.site.Site;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
@@ -19,20 +19,20 @@ public final class ServiceControllerResource
     protected Site site;
 
     @Override
-    protected void configure( final PortalContext context )
+    protected void configure( final PortalRequest portalRequest )
     {
-        context.setContent( this.content );
-        context.setSite( this.site );
-        context.setModule( this.scriptDir.getModule() );
+        portalRequest.setContent( this.content );
+        portalRequest.setSite( this.site );
+        portalRequest.setModule( this.scriptDir.getModule() );
     }
 
     @Override
-    protected RenderResult execute( final PortalContext context )
+    protected RenderResult execute( final PortalRequest portalRequest )
         throws Exception
     {
         final ControllerScript controllerScript = this.services.getControllerScriptFactory().fromDir( this.scriptDir );
-        controllerScript.execute( context );
+        controllerScript.execute( portalRequest );
 
-        return new PortalResponseSerializer( context.getResponse() ).serialize();
+        return new PortalResponseSerializer( portalRequest.getResponse() ).serialize();
     }
 }

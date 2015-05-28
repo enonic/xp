@@ -8,7 +8,7 @@ import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.Descriptor;
 import com.enonic.xp.content.page.region.DescriptorBasedComponent;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
@@ -34,26 +34,26 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     protected ControllerScriptFactory controllerScriptFactory;
 
     @Override
-    public final RenderResult render( final R component, final PortalContext context )
+    public final RenderResult render( final R component, final PortalRequest portalRequest )
     {
         final Descriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
         {
-            return renderEmptyComponent( component, context );
+            return renderEmptyComponent( component, portalRequest );
         }
 
         // create controller
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( descriptor.getComponentPath() );
 
         // render
-        final Component previousComponent = context.getComponent();
+        final Component previousComponent = portalRequest.getComponent();
         try
         {
-            context.setComponent( component );
-            controllerScript.execute( context );
-            final PortalResponse response = context.getResponse();
+            portalRequest.setComponent( component );
+            controllerScript.execute( portalRequest );
+            final PortalResponse response = portalRequest.getResponse();
 
-            final RenderMode renderMode = getRenderingMode( context );
+            final RenderMode renderMode = getRenderingMode( portalRequest );
             final String contentType = response.getContentType();
             if ( renderMode == RenderMode.EDIT && contentType != null && contentType.startsWith( "text/html" ) )
             {
@@ -69,13 +69,13 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
         finally
         {
-            context.setComponent( previousComponent );
+            portalRequest.setComponent( previousComponent );
         }
     }
 
-    private RenderResult renderEmptyComponent( final DescriptorBasedComponent component, final PortalContext context )
+    private RenderResult renderEmptyComponent( final DescriptorBasedComponent component, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( context );
+        final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
         {
             case EDIT:
@@ -136,9 +136,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
-    private RenderMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
-        return context == null ? RenderMode.LIVE : context.getMode();
+        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 
     public void setControllerScriptFactory( final ControllerScriptFactory value )

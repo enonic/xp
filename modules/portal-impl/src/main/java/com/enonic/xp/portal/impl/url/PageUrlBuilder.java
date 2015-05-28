@@ -19,7 +19,7 @@ final class PageUrlBuilder
     private ContentPath resolvePath()
     {
         return new ContentPathResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).

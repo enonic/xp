@@ -5,12 +5,12 @@ import java.text.MessageFormat;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.content.page.region.TextComponent;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 
 import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
 
@@ -35,16 +35,16 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final PortalContext context )
+    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( context );
-        final PortalResponse response = context.getResponse();
+        final RenderMode renderMode = getRenderingMode( portalRequest );
+        final PortalResponse response = portalRequest.getResponse();
         response.setContentType( "text/html" );
         response.setPostProcess( false );
 
         if ( textComponent.getText() == null )
         {
-            renderEmptyTextComponent( textComponent, context );
+            renderEmptyTextComponent( textComponent, portalRequest );
         }
         else
         {
@@ -67,10 +67,10 @@ public final class TextRenderer
         return new PortalResponseSerializer( response ).serialize();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )
+    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest )
     {
-        final PortalResponse response = context.getResponse();
-        final RenderMode renderMode = getRenderingMode( context );
+        final PortalResponse response = portalRequest.getResponse();
+        final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
         {
             case EDIT:
@@ -87,8 +87,8 @@ public final class TextRenderer
         }
     }
 
-    private RenderMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
-        return context == null ? RenderMode.LIVE : context.getMode();
+        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 }

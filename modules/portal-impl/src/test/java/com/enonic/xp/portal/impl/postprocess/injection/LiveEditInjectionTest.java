@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -20,14 +20,14 @@ import static org.junit.Assert.*;
 
 public class LiveEditInjectionTest
 {
-    private PortalContext context;
+    private PortalRequest portalRequest;
 
     private LiveEditInjection injection;
 
     @Before
     public void setup()
     {
-        this.context = new PortalContext();
+        this.portalRequest = new PortalRequest();
         mockCurrentContextHttpRequest();
 
         this.injection = new LiveEditInjection();
@@ -36,17 +36,17 @@ public class LiveEditInjectionTest
     @Test
     public void testNoInjection()
     {
-        this.context.setMode( RenderMode.EDIT );
+        this.portalRequest.setMode( RenderMode.EDIT );
 
-        final List<String> result1 = this.injection.inject( this.context, HtmlTag.HEAD_BEGIN );
+        final List<String> result1 = this.injection.inject( this.portalRequest, HtmlTag.HEAD_BEGIN );
         assertNull( result1 );
 
-        final List<String> result2 = this.injection.inject( this.context, HtmlTag.BODY_BEGIN );
+        final List<String> result2 = this.injection.inject( this.portalRequest, HtmlTag.BODY_BEGIN );
         assertNull( result2 );
 
-        this.context.setMode( RenderMode.LIVE );
+        this.portalRequest.setMode( RenderMode.LIVE );
 
-        final List<String> result3 = this.injection.inject( this.context, HtmlTag.BODY_END );
+        final List<String> result3 = this.injection.inject( this.portalRequest, HtmlTag.BODY_END );
         assertNull( result3 );
     }
 
@@ -54,9 +54,9 @@ public class LiveEditInjectionTest
     public void testInjectHeadEnd()
         throws Exception
     {
-        this.context.setMode( RenderMode.EDIT );
+        this.portalRequest.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, HtmlTag.HEAD_END ).get( 0 );
+        final String result = this.injection.inject( this.portalRequest, HtmlTag.HEAD_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionHeadEnd.html" ).trim() + "\n", result );
     }
@@ -65,9 +65,9 @@ public class LiveEditInjectionTest
     public void testInjectBodyEnd()
         throws Exception
     {
-        this.context.setMode( RenderMode.EDIT );
+        this.portalRequest.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.context, HtmlTag.BODY_END ).get( 0 );
+        final String result = this.injection.inject( this.portalRequest, HtmlTag.BODY_END ).get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );
     }

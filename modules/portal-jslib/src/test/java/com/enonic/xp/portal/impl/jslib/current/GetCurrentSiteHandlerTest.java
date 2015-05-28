@@ -35,7 +35,7 @@ public class GetCurrentSiteHandlerTest
         throws Exception
     {
         final Site site = ContentFixtures.newSite();
-        context.setSite( site );
+        portalRequest.setSite( site );
 
         execute( "getCurrentSite" );
     }

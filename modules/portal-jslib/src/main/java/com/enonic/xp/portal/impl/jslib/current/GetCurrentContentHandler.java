@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.jslib.current;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
 
 @Component(immediate = true)
 public final class GetCurrentContentHandler
@@ -22,8 +22,8 @@ public final class GetCurrentContentHandler
     @Override
     public Object execute( final CommandRequest req )
     {
-        final PortalContext context = PortalContextAccessor.get();
-        final Content content = context.getContent();
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        final Content content = portalRequest.getContent();
         return content != null ? convert( content ) : null;
     }
 

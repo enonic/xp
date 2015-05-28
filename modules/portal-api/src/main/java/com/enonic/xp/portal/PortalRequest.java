@@ -21,7 +21,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
-public final class PortalContext
+public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
@@ -61,7 +61,7 @@ public final class PortalContext
 
     private PageDescriptor pageDescriptor;
 
-    public PortalContext()
+    public PortalRequest()
     {
         this.uri = "";
         this.baseUri = "";

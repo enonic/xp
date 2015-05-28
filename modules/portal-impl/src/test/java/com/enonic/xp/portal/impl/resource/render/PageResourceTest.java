@@ -10,8 +10,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
@@ -60,9 +60,9 @@ public class PageResourceTest
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
-        ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -85,11 +85,11 @@ public class PageResourceTest
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
-        ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
-        assertEquals( "http://localhost/portal/master/site/somepath/content", jsContext.getValue().getUri() );
+        assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUri() );
     }
 
     @Test
@@ -130,11 +130,11 @@ public class PageResourceTest
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
-        final PortalContext newContext = new PortalContext();
-        newContext.setMode( RenderMode.EDIT );
+        final PortalRequest newPortalRequest = new PortalRequest();
+        newPortalRequest.setMode( RenderMode.EDIT );
 
         final MockHttpServletRequest request = newGetRequest( "/master/id" );
-        PortalContextAccessor.set( request, newContext );
+        PortalRequestAccessor.set( request, newPortalRequest );
 
         final MockHttpServletResponse response = executeRequest( request );
 
