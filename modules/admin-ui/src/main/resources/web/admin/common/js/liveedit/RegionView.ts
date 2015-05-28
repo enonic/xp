@@ -61,6 +61,10 @@ module api.liveedit {
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
 
+        private componentAddedListener: (event: api.content.page.region.ComponentAddedEvent) => void;
+
+        private componentRemovedListener: (event: api.content.page.region.ComponentRemovedEvent) => void;
+
         public static debug: boolean;
 
         constructor(builder: RegionViewBuilder) {
@@ -99,6 +103,22 @@ module api.liveedit {
                 setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
 
             this.addClass('region-view');
+
+            this.componentAddedListener = (event: api.content.page.region.ComponentAddedEvent) => {
+                if (RegionView.debug) {
+                    console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString())
+                }
+
+                this.refreshEmptyState();
+            };
+            this.componentRemovedListener = (event: api.content.page.region.ComponentRemovedEvent) => {
+                if (RegionView.debug) {
+                    console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString())
+                }
+
+                this.refreshEmptyState();
+            };
+
             this.setRegion(builder.region);
 
             this.parseComponentViews();
@@ -137,24 +157,16 @@ module api.liveedit {
         }
 
         setRegion(region: Region) {
-            this.region = region;
             if (region) {
+                if (this.region) {
+                    this.region.unComponentAdded(this.componentAddedListener);
+                    this.region.unComponentRemoved(this.componentRemovedListener);
+                }
+                this.region = region;
                 this.setTooltipObject(region);
 
-                region.onComponentAdded((event: api.content.page.region.ComponentAddedEvent) => {
-                    if (RegionView.debug) {
-                        console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString())
-                    }
-
-                    this.refreshEmptyState();
-                });
-                region.onComponentRemoved((event: api.content.page.region.ComponentRemovedEvent) => {
-                    if (RegionView.debug) {
-                        console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString())
-                    }
-
-                    this.refreshEmptyState();
-                });
+                this.region.onComponentAdded(this.componentAddedListener);
+                this.region.onComponentRemoved(this.componentRemovedListener);
 
                 var components = region.getComponents();
                 var componentViews = this.getComponentViews();
@@ -213,7 +225,11 @@ module api.liveedit {
         }
 
         toString() {
-            return super.toString() + " : " + this.getRegionPath().toString();
+            var extra = "";
+            if (this.getRegionPath()) {
+                extra = " : " + this.getRegionPath().toString();
+            }
+            return super.toString() + extra;
         }
 
         registerComponentView(componentView: ComponentView<Component>, index: number) {
@@ -435,7 +451,18 @@ module api.liveedit {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isComponentView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, ComponentView);
+                if (isComponentView) {
+                    var component = region.getComponentByIndex(this.componentIndex++);
+                    if (component) {
+                        // reuse existing component view
+                        var componentView = <ComponentView<Component>> childElement;
+                        // update view's data
+                        componentView.setComponent(component);
+                        // register it again because we unregistered everything before parsing
+                        this.registerComponentView(componentView, this.componentIndex);
+                    }
+                } else if (itemType) {
                     api.util.assert(itemType.isComponentType(),
                         "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
                     // components may be nested on different levels so use region wide var for count
