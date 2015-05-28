@@ -1,13 +1,14 @@
 {
-    "failures": [
-        {
-            "path": "/one",
-            "reason": "Content with path [/one] was not found in branch [draft]"
-        },
-        {
-            "path": "/two",
-            "reason": "Not able to delete content with path [/two]: Some reason"
-        }
-    ],
-    "successes": [ ]
+  "failures": [
+    {
+      "name": "My Content",
+      "reason": "Content with path [/one] was not found in branch [draft]"
+    },
+    {
+      "name": "My Content",
+      "reason": "Not able to delete content with path [/two]: Some reason"
+    }
+  ],
+  "pendings": [],
+  "successes": []
 }

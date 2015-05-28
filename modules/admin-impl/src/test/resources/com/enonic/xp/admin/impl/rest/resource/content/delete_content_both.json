@@ -1,13 +1,14 @@
 {
-    "failures": [
-        {
-            "path": "/two",
-            "reason": "Not able to delete content with path [/two]: Some reason"
-        }
-    ],
-    "successes": [
-        {
-            "path": "/one"
-        }
-    ]
+  "failures": [
+    {
+      "name": "My Content",
+      "reason": "Not able to delete content with path [/two]: Some reason"
+    }
+  ],
+  "pendings": [],
+  "successes": [
+    {
+      "name": "one"
+    }
+  ]
 }
