@@ -22,7 +22,7 @@ module app.remove {
 
                 this.createDeleteRequest().sendAndParse().then((result: api.content.DeleteContentResult) => {
                     this.close();
-                    this.showDeleteResult(result);
+                    app.view.DeleteAction.showDeleteResult(result);
                 }).catch((reason: any) => {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);
@@ -117,22 +117,6 @@ module app.remove {
             }
 
             return deleteRequest;
-        }
-
-        private showDeleteResult(result: api.content.DeleteContentResult) {
-            var paths = [];
-
-            for (var i = 0; i < result.getDeleted().length; i++) {
-                var path = result.getDeleted()[i];
-                paths.push(path);
-            }
-
-            if (result.getDeleted().length > 0) {
-                api.notify.showFeedback('Content [' + paths.map((path)=>path.toString()).join(', ') + '] deleted!');
-            } else {
-                var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
-                api.notify.showWarning('Content could not be deleted. ' + reason);
-            }
         }
 
         private updateDeleteButtonCounter(count: number) {

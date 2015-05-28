@@ -250,7 +250,7 @@ module app.wizard {
                         this.setPersistedItem(newPersistedContent);
                         this.updateMetadataAndMetadataForms(newPersistedContent);
                         this.updateThumbnailWithContent(newPersistedContent);
-                        api.notify.showFeedback('Content was updated!');
+                        api.notify.showFeedback('\"' + newPersistedContent.getDisplayName() + '\" saved');
                     });
                 }
 
@@ -689,7 +689,7 @@ module app.wizard {
 
         persistNewItem(): wemQ.Promise<Content> {
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
-                api.notify.showFeedback('Content was created!');
+                api.notify.showFeedback('Content created');
                 return content;
             });
         }
@@ -739,7 +739,7 @@ module app.wizard {
                     if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
                         this.notifyContentNamed(content);
                     }
-                    api.notify.showFeedback('Content was updated!');
+                    api.notify.showFeedback('\"' + content.getDisplayName() + '\" saved');
                     new api.content.ContentUpdatedEvent(content.getContentId()).fire();
 
                     return content;
@@ -818,7 +818,7 @@ module app.wizard {
 
         private resolveContentNameForUpdateRequest(): ContentName {
             if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName())) {
-                if(this.getPersistedItem().getName().isUnnamed()) {
+                if (this.getPersistedItem().getName().isUnnamed()) {
                     return this.getPersistedItem().getName();
                 } else {
                     return ContentUnnamed.newUnnamed();

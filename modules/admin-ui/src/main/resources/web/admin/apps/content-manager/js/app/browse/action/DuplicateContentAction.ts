@@ -18,7 +18,7 @@ module app.browse.action {
             new api.content.DuplicateContentRequest(source.getContentId()).
                 sendAndParse().then((content: api.content.Content) => {
                     // TODO: Replace the returning content with an id
-                    api.notify.showFeedback('Content [' + source.getPath() + '] was duplicated!');
+                    api.notify.showFeedback('\"' + source.getDisplayName() + '\" duplicated');
                 })
         }
     }
