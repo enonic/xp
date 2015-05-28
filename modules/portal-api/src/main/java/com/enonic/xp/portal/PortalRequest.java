@@ -135,11 +135,13 @@ public final class PortalRequest
         return ServletRequestUrlHelper.rewriteUri( uri );
     }
 
+    @Deprecated
     public PortalResponse getResponse()
     {
         return this.response;
     }
 
+    @Deprecated
     public void setResponse( final PortalResponse response )
     {
         this.response = response;
