@@ -1,7 +1,5 @@
 package com.enonic.xp.web.servlet;
 
-import com.google.common.base.Preconditions;
-
 public class UriRewritingResult
 {
     private final String rewrittenUri;
