@@ -321,6 +321,13 @@ module api.liveedit {
             }
         }
 
+        hideContextMenu() {
+            if (this.lockedContextMenu) {
+                this.lockedContextMenu.hide();
+            }
+            return super.hideContextMenu();
+        }
+
         isLocked() {
             return this.hasClass('locked');
         }
@@ -331,6 +338,8 @@ module api.liveedit {
 
         setLocked(locked: boolean) {
             this.toggleClass('locked', locked);
+
+            this.hideContextMenu();
 
             if (locked) {
                 this.shade();
@@ -601,7 +610,18 @@ module api.liveedit {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                if (isRegionView) {
+                    var region = regions[this.regionIndex++];
+                    if (region) {
+                        // reuse existing region view
+                        var regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
+                } else if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         // regions may be nested on different levels so use page wide var for count
                         var region = regions[this.regionIndex++];
