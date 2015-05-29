@@ -42,6 +42,7 @@ public final class AuthResource
 
         if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
         {
+            helper.logout();
             return new LoginResultJson( AuthenticationInfo.unAuthenticated(), "Access Denied" );
         }
         if ( !authInfo.isAuthenticated() )

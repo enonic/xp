@@ -26,7 +26,7 @@ import com.enonic.xp.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class ExportResource
     implements AdminResource
