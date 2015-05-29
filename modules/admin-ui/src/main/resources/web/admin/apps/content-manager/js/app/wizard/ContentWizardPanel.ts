@@ -250,7 +250,9 @@ module app.wizard {
                         this.setPersistedItem(newPersistedContent);
                         this.updateMetadataAndMetadataForms(newPersistedContent);
                         this.updateThumbnailWithContent(newPersistedContent);
-                        api.notify.showFeedback('\"' + newPersistedContent.getDisplayName() + '\" saved');
+                        var contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
+                                               '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
+                        api.notify.showFeedback(contentToDisplay + ' saved');
                     });
                 }
 
@@ -739,7 +741,9 @@ module app.wizard {
                     if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
                         this.notifyContentNamed(content);
                     }
-                    api.notify.showFeedback('\"' + content.getDisplayName() + '\" saved');
+                    var contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
+                                           '\"' + content.getDisplayName() + '\"' : "Content";
+                    api.notify.showFeedback(contentToDisplay + ' saved');
                     new api.content.ContentUpdatedEvent(content.getContentId()).fire();
 
                     return content;
