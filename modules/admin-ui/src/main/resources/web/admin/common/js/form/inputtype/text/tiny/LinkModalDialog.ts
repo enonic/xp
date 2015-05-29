@@ -11,9 +11,18 @@ module api.form.inputtype.text.tiny {
         private linkTextFormItem: FormItem;
         private mainForm: Form;
         private dockedPanel: DockedPanel;
+        private editor: TinyMceEditor;
+
+        private static tabNames: any = {
+            content: "Content",
+            url: "URL",
+            download: "Download",
+            email: "Email"
+        };
 
         constructor(editor: TinyMceEditor) {
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert link"));
+            super(new api.ui.dialog.ModalDialogHeader("Insert link"));
+            this.editor = editor;
         }
 
         layout() {
@@ -28,51 +37,50 @@ module api.form.inputtype.text.tiny {
 
         private createContentPanel(): Panel {
             return this.createFormPanel([
-                <FormItem>this.createContentSelector("Target"),
-                this.createTargetCheckbox()
+                <FormItem>this.createContentSelector("contentId", "Target"),
+                this.createTargetCheckbox("contentTarget")
             ]);
         }
 
         private createDownloadPanel(): Panel {
             return this.createFormPanel([
-                <FormItem>this.createContentSelector("Target", api.schema.content.ContentTypeName.getMediaTypes())
+                <FormItem>this.createContentSelector("downloadId", "Target", api.schema.content.ContentTypeName.getMediaTypes())
             ]);
         }
 
         private createUrlPanel(): Panel {
             return this.createFormPanel([
-                this.createFormItem("Url", true),
-                this.createTargetCheckbox()
+                this.createFormItem("url", "Url", true),
+                this.createTargetCheckbox("urlTarget")
             ]);
         }
 
         private createEmailPanel(): Panel {
             return this.createFormPanel([
-                this.createFormItem("Email", true),
-                this.createFormItem("Subject", false)
+                this.createFormItem("email", "Email", true),
+                this.createFormItem("subject", "Subject", false)
             ]);
         }
 
-        private createTargetCheckbox(label?: string): FormItem {
+        private createTargetCheckbox(id: string): FormItem {
             var checkbox = new api.ui.Checkbox();
 
-            return this.createFormItem("Open in new window", false, checkbox);
+            return this.createFormItem(id, "Open in new window", false, checkbox);
         }
 
         private createMainForm(): Form {
             return this.createForm([
-                this.linkTextFormItem = this.createFormItem("Text", true),
-                this.createFormItem("Tooltip", false)
+                this.linkTextFormItem = this.createFormItem("linkText", "Text", true),
+                this.createFormItem("toolTip", "Tooltip", false)
             ]);
         }
 
         private createDockedPanel(): DockedPanel {
             var dockedPanel = new DockedPanel();
-
-            dockedPanel.addItem("Content", this.createContentPanel());
-            dockedPanel.addItem("URL", this.createUrlPanel());
-            dockedPanel.addItem("Download", this.createDownloadPanel());
-            dockedPanel.addItem("Email", this.createEmailPanel());
+            dockedPanel.addItem(LinkModalDialog.tabNames.content, this.createContentPanel());
+            dockedPanel.addItem(LinkModalDialog.tabNames.url, this.createUrlPanel());
+            dockedPanel.addItem(LinkModalDialog.tabNames.download, this.createDownloadPanel());
+            dockedPanel.addItem(LinkModalDialog.tabNames.email, this.createEmailPanel());
 
             return dockedPanel;
         }
@@ -81,6 +89,7 @@ module api.form.inputtype.text.tiny {
 
             this.addAction(new api.ui.Action(existingLink ? "Update" : "Insert").onExecuted(() => {
                 if (this.validate()) {
+                    this.createLink();
                     this.close();
                 }
             }));
@@ -88,7 +97,7 @@ module api.form.inputtype.text.tiny {
             super.initializeActions();
         }
 
-        private createContentSelector(label: string, contentTypeNames?: api.schema.content.ContentTypeName[]): FormItem {
+        private createContentSelector(id: string, label: string, contentTypeNames?: api.schema.content.ContentTypeName[]): FormItem {
             var loader = new api.content.ContentSummaryLoader(),
                 contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
 
@@ -96,12 +105,11 @@ module api.form.inputtype.text.tiny {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
 
-            return this.createFormItem(label, true, <api.dom.FormItemEl>contentSelector);
+            return this.createFormItem(id, label, true, <api.dom.FormItemEl>contentSelector);
         }
 
         private validateDockPanel(): boolean {
-            var selectedPanel = this.dockedPanel.getDeck().getPanelShown(),
-                form = <Form>selectedPanel.getFirstChild();
+            var form = <Form>this.dockedPanel.getDeck().getPanelShown().getFirstChild();
 
             return form.validate(true).isValid();
         }
@@ -111,6 +119,75 @@ module api.form.inputtype.text.tiny {
             var dockPanelValid = this.validateDockPanel();
 
             return mainFormValid && dockPanelValid;
+        }
+
+        private createContentLink(): api.dom.AEl {
+            var contentSelector = <api.content.ContentComboBox>this.getFieldById("contentId"),
+                targetCheckbox = <api.ui.Checkbox>this.getFieldById("contentTarget");
+
+            var linkEl = new api.dom.AEl();
+            linkEl.setUrl("content://" + contentSelector.getValue(), targetCheckbox.isChecked() ? "_blank" : null);
+
+            return linkEl;
+        }
+
+        private createDownloadLink(): api.dom.AEl {
+            var contentSelector = <api.content.ContentComboBox>this.getFieldById("downloadId");
+
+            var linkEl = new api.dom.AEl();
+            linkEl.setUrl("media://download/" + contentSelector.getValue());
+
+            return linkEl;
+        }
+
+        private createUrlLink(): api.dom.AEl {
+            var url = (<api.ui.text.TextInput>this.getFieldById("url")).getValue(),
+                targetCheckbox = <api.ui.Checkbox>this.getFieldById("urlTarget");
+
+            var linkEl = new api.dom.AEl();
+            linkEl.setUrl(url, targetCheckbox.isChecked() ? "_blank" : null);
+
+            return linkEl;
+        }
+
+        private createEmailLink(): api.dom.AEl {
+            var email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue(),
+                subject = (<api.ui.text.TextInput>this.getFieldById("subject")).getValue();
+
+            var linkEl = new api.dom.AEl();
+            linkEl.setUrl("mailto:" + email + (subject ? "?subject:" + encodeURI(subject) : ""));
+
+            return linkEl;
+        }
+
+        private createLink(): void {
+            var linkEl: api.dom.AEl,
+                deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck(),
+                selectedTab = <api.ui.tab.TabBarItem>deck.getSelectedNavigationItem(),
+                linkText: string = (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue(),
+                toolTip: string = (<api.ui.text.TextInput>this.getFieldById("toolTip")).getValue();
+
+            switch (selectedTab.getLabel()) {
+            case (LinkModalDialog.tabNames.content):
+                linkEl = this.createContentLink();
+                break;
+            case (LinkModalDialog.tabNames.url):
+                linkEl = this.createUrlLink();
+                break;
+            case (LinkModalDialog.tabNames.download):
+                linkEl = this.createContentLink();
+                break;
+            case (LinkModalDialog.tabNames.email):
+                linkEl = this.createEmailLink();
+                break;
+            }
+
+            linkEl.setHtml(linkText);
+            if (toolTip) {
+                linkEl.setTitle(toolTip);
+            }
+
+            this.editor.insertContent(linkEl.toString());
         }
 
     }

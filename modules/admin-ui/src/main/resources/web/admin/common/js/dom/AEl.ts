@@ -15,5 +15,11 @@ module api.dom {
             }
             return this;
         }
+
+
+        public setTitle(value: string): AEl {
+            this.getEl().setTitle(value);
+            return this;
+        }
     }
 }

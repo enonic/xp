@@ -9,14 +9,13 @@ module api.form.inputtype.text.tiny {
     import BaseDialog = api.ui.dialog.ModalDialog;
 
     export class ModalDialog extends BaseDialog {
-        private editor: TinyMceEditor;
+        private fields: { [id: string]: api.dom.FormItemEl } = {};
 
-        constructor(editor: TinyMceEditor, title: api.ui.dialog.ModalDialogHeader) {
+        constructor(title: api.ui.dialog.ModalDialogHeader) {
             super({
                 title: title
             });
 
-            this.editor = editor;
             this.getEl().addClass("tinymce-modal-dialog");
 
             this.layout();
@@ -87,8 +86,14 @@ module api.form.inputtype.text.tiny {
             return fieldSet;
         }
 
-        protected createFormItem(label: string, required: boolean, inputEl?: api.dom.FormItemEl): FormItem {
-            var formItemBuilder = new FormItemBuilder(inputEl || new api.ui.text.TextInput()).setLabel(label);
+        protected createFormItem(id: string, label: string, required: boolean, inputEl?: api.dom.FormItemEl): FormItem {
+            var formItemEl = inputEl || new api.ui.text.TextInput(),
+                formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label);
+
+            if (this.fields[id]) {
+                throw "Element with id " + id + " already exists";
+            }
+            this.fields[id] = formItemEl;
 
             if (required) {
                 formItemBuilder.setValidator(Validators.required);
@@ -99,6 +104,10 @@ module api.form.inputtype.text.tiny {
 
         protected initializeActions() {
             this.addCancelButtonToBottom();
+        }
+
+        protected getFieldById(id: string): api.dom.FormItemEl {
+            return this.fields[id];
         }
     }
 }

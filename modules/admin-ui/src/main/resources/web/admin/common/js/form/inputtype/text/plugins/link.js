@@ -3,7 +3,7 @@
 tinymce.PluginManager.add('link', function (editor) {
 
     function showDialog() {
-        editor.execCommand("openLinkDialog");
+        editor.execCommand("openLinkDialog", editor);
     }
 
     editor.addButton('link', {
