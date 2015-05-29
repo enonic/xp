@@ -34,7 +34,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     protected ControllerScriptFactory controllerScriptFactory;
 
     @Override
-    public final RenderResult render( final R component, final PortalRequest portalRequest )
+    public final RenderResult render( final R component, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final Descriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
@@ -50,22 +50,21 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         try
         {
             portalRequest.setComponent( component );
-            controllerScript.execute( portalRequest );
-            final PortalResponse response = portalRequest.getResponse();
+            controllerScript.execute( portalRequest, portalResponse );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
-            final String contentType = response.getContentType();
+            final String contentType = portalResponse.getContentType();
             if ( renderMode == RenderMode.EDIT && contentType != null && contentType.startsWith( "text/html" ) )
             {
-                final Object bodyObj = response.getBody();
+                final Object bodyObj = portalResponse.getBody();
                 if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )
                 {
                     return renderEmptyComponentPlaceHolder( component );
                 }
             }
 
-            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( response, component.getType() );
-            return new PortalResponseSerializer( response ).serialize();
+            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
+            return new PortalResponseSerializer( portalResponse ).serialize();
         }
         finally
         {

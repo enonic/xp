@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 import com.enonic.xp.portal.rendering.RenderResult;
 
@@ -62,6 +63,7 @@ public abstract class ControllerResource
     private Response doHandle()
         throws Exception
     {
+        final PortalResponse portalResponse = new PortalResponse();
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMode( this.mode );
         portalRequest.setMethod( this.request.getMethod() );
@@ -81,7 +83,7 @@ public abstract class ControllerResource
 
         configure( portalRequest );
 
-        final RenderResult result = execute( portalRequest );
+        final RenderResult result = execute( portalRequest, portalResponse );
         return toResponse( result );
     }
 
@@ -95,7 +97,7 @@ public abstract class ControllerResource
 
     protected abstract void configure( PortalRequest portalRequest );
 
-    protected abstract RenderResult execute( PortalRequest portalRequest )
+    protected abstract RenderResult execute( PortalRequest portalRequest, PortalResponse portalResponse )
         throws Exception;
 
     private Response toResponse( final RenderResult result )

@@ -35,54 +35,53 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest )
+    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
-        final PortalResponse response = portalRequest.getResponse();
-        response.setContentType( "text/html" );
-        response.setPostProcess( false );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setPostProcess( false );
 
         if ( textComponent.getText() == null )
         {
-            renderEmptyTextComponent( textComponent, portalRequest );
+            renderEmptyTextComponent( textComponent, portalRequest, portalResponse );
         }
         else
         {
             switch ( renderMode )
             {
                 case EDIT:
-                    response.setBody(
+                    portalResponse.setBody(
                         MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
                     break;
 
                 case LIVE:
                 case PREVIEW:
                 default:
-                    response.setBody(
+                    portalResponse.setBody(
                         MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
                     break;
             }
         }
 
-        return new PortalResponseSerializer( response ).serialize();
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest )
+    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest,
+                                           final PortalResponse portalResponse )
     {
-        final PortalResponse response = portalRequest.getResponse();
         final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
         {
             case EDIT:
-                response.setBody( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
+                portalResponse.setBody( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
             case PREVIEW:
-                response.setBody( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
+                portalResponse.setBody( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
             case LIVE:
-                response.setBody( "" );
+                portalResponse.setBody( "" );
                 break;
         }
     }

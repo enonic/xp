@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
@@ -55,14 +56,15 @@ public class PageResourceTest
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
+        ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -80,14 +82,15 @@ public class PageResourceTest
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
+        ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUri() );
     }
@@ -128,7 +131,7 @@ public class PageResourceTest
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         final PortalRequest newPortalRequest = new PortalRequest();
         newPortalRequest.setMode( RenderMode.EDIT );

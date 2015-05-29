@@ -15,6 +15,7 @@ import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
@@ -34,7 +35,7 @@ public final class LiveEditInjection
     }
 
     @Override
-    public List<String> inject( final PortalRequest portalRequest, final HtmlTag htmlTag )
+    public List<String> inject( final PortalRequest portalRequest, final PortalResponse portalResponse, final HtmlTag htmlTag )
     {
         if ( RenderMode.EDIT != portalRequest.getMode() )
         {

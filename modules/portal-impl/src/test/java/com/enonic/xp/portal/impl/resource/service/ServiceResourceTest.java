@@ -21,6 +21,7 @@ import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -64,7 +65,8 @@ public class ServiceResourceTest
         assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
         assertNotNull( portalRequest );
@@ -87,7 +89,8 @@ public class ServiceResourceTest
         assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
 
@@ -106,7 +109,8 @@ public class ServiceResourceTest
         assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
         assertNotNull( portalRequest.getModule() );

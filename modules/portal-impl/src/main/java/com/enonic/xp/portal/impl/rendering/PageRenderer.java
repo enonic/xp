@@ -30,24 +30,24 @@ public final class PageRenderer
     }
 
     @Override
-    public RenderResult render( final Content content, final PortalRequest portalRequest )
+    public RenderResult render( final Content content, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
 
         if ( pageDescriptor != null )
         {
             final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
-            controllerScript.execute( portalRequest );
+            controllerScript.execute( portalRequest, portalResponse );
         }
         else
         {
-            renderForNoPageDescriptor( portalRequest, content );
+            renderForNoPageDescriptor( portalRequest, portalResponse, content );
         }
 
-        return new PortalResponseSerializer( portalRequest.getResponse() ).serialize();
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private void renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
+    private void renderForNoPageDescriptor( final PortalRequest portalRequest, final PortalResponse portalResponse, final Content content )
     {
         String html = "<html>" +
             "<head>" +
@@ -64,13 +64,12 @@ public final class PageRenderer
         }
         html += "</html>";
 
-        final PortalResponse response = portalRequest.getResponse();
-        response.setContentType( "text/html" );
-        response.setStatus( 200 );
-        response.setBody( html );
-        response.setPostProcess( true );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setStatus( 200 );
+        portalResponse.setBody( html );
+        portalResponse.setPostProcess( true );
 
-        this.postProcessor.processResponse( portalRequest );
+        this.postProcessor.processResponse( portalRequest, portalResponse );
     }
 
     @Reference

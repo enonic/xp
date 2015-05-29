@@ -30,32 +30,33 @@ public final class PostProcessorImpl
     }
 
     @Override
-    public void processResponse( final PortalRequest portalRequest )
+    public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final PortalResponse response = portalRequest.getResponse();
-        if ( !response.isPostProcess() || !"GET".equals( portalRequest.getMethod() ) )
+        if ( !portalResponse.isPostProcess() || !"GET".equals( portalRequest.getMethod() ) )
         {
-            return;
+            return portalResponse;
         }
 
-        final Object body = response.getBody();
+        final Object body = portalResponse.getBody();
         if ( !( body instanceof String ) )
         {
-            return;
+            return portalResponse;
         }
 
-        doPostProcess( portalRequest, (String) body );
+        return doPostProcess( portalRequest, portalResponse );
     }
 
-    private void doPostProcess( final PortalRequest portalRequest, final String body )
+    private PortalResponse doPostProcess( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.portalRequest = portalRequest;
-        evaluator.input = body;
+        evaluator.portalResponse = portalResponse;
+        evaluator.input = (String) portalResponse.getBody();
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
 
-        portalRequest.getResponse().setBody( evaluator.evaluate() );
+        portalResponse.setBody( evaluator.evaluate() );
+        return portalResponse;
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

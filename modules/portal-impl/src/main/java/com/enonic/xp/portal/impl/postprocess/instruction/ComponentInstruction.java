@@ -16,6 +16,7 @@ import com.enonic.xp.content.page.region.ComponentPath;
 import com.enonic.xp.content.page.region.ComponentService;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.portal.rendering.RenderResult;
@@ -47,7 +48,7 @@ public final class ComponentInstruction
     }
 
     @Override
-    public String evaluate( final PortalRequest portalRequest, final String instruction )
+    public String evaluate( final PortalRequest portalRequest, final PortalResponse portalResponse, final String instruction )
     {
         if ( !instruction.startsWith( "COMPONENT " ) )
         {
@@ -61,10 +62,10 @@ public final class ComponentInstruction
         }
 
         final String path = list.get( 1 );
-        return renderComponent( portalRequest, path );
+        return renderComponent( portalRequest, portalResponse, path );
     }
 
-    private String renderComponent( final PortalRequest portalRequest, final String componentSelector )
+    private String renderComponent( final PortalRequest portalRequest, final PortalResponse portalResponse, final String componentSelector )
     {
         final Component component;
         if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
@@ -79,10 +80,10 @@ public final class ComponentInstruction
             final ModuleKey currentModule = portalRequest.getPageTemplate().getController().getModuleKey();
             component = componentService.getByName( currentModule, componentName );
         }
-        return renderComponent( portalRequest, component );
+        return renderComponent( portalRequest, portalResponse, component );
     }
 
-    private String renderComponent( final PortalRequest portalRequest, final Component component )
+    private String renderComponent( final PortalRequest portalRequest, final PortalResponse portalResponse, final Component component )
     {
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
@@ -90,7 +91,7 @@ public final class ComponentInstruction
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
 
-        final RenderResult result = renderer.render( component, portalRequest );
+        final RenderResult result = renderer.render( component, portalRequest, portalResponse );
         return result.getAsString();
     }
 

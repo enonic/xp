@@ -48,16 +48,15 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
+        PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
         PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
         portalRequest.setSite( site );
 
-        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" );
+        String outputHtml = instruction.evaluate( portalRequest, portalResponse, "COMPONENT myRegion/0" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -74,10 +73,9 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
+        PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
         PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
@@ -85,7 +83,7 @@ public class ComponentInstructionTest
         PageTemplate pageTemplate = createPageTemplate();
         portalRequest.setPageTemplate( pageTemplate );
 
-        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" );
+        String outputHtml = instruction.evaluate( portalRequest, portalResponse, "COMPONENT module:myPartComponent" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -170,7 +168,7 @@ public class ComponentInstructionTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalRequest portalRequest )
+            public RenderResult render( final Renderable component, final PortalRequest portalRequest, final PortalResponse portalResponse )
             {
                 return RenderResult.newRenderResult().entity( renderResult ).build();
             }

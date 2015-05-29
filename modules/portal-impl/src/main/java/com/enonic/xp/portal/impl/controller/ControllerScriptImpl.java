@@ -25,14 +25,14 @@ final class ControllerScriptImpl
     }
 
     @Override
-    public void execute( final PortalRequest portalRequest )
+    public void execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         PortalRequestAccessor.set( portalRequest );
 
         try
         {
-            doExecute( portalRequest );
-            this.postProcessor.processResponse( portalRequest );
+            doExecute( portalRequest, portalResponse );
+            this.postProcessor.processResponse( portalRequest, portalResponse );
         }
         finally
         {
@@ -40,7 +40,7 @@ final class ControllerScriptImpl
         }
     }
 
-    private void doExecute( final PortalRequest portalRequest )
+    private void doExecute( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final String method = portalRequest.getMethod().toLowerCase();
         final boolean isHead = "head".equals( method );
@@ -49,14 +49,14 @@ final class ControllerScriptImpl
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            populateResponse( portalRequest.getResponse(), null );
+            populateResponse( portalResponse, null );
             return;
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
         final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
-        populateResponse( portalRequest.getResponse(), result );
+        populateResponse( portalResponse, result );
     }
 
     private void populateResponse( final PortalResponse response, final ScriptValue result )

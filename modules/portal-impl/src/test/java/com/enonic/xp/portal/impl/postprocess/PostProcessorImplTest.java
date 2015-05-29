@@ -25,17 +25,16 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInstruction( new TestPostProcessInstruction() );
 
-        final PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
-        resp.setBody( html );
+        final PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
+        portalResponse.setBody( html );
 
         final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setResponse( resp );
         portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( portalRequest );
+        postProcessor.processResponse( portalRequest, portalResponse );
 
-        final String outputHtml = resp.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult1.html" );
 
         assertEqualsTrimmed( expectedResult, outputHtml );
@@ -50,17 +49,16 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInjection( new TestPostProcessInjection() );
 
-        final PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
-        resp.setBody( html );
+        final PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
+        portalResponse.setBody( html );
 
         final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setResponse( resp );
         portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( portalRequest );
+        postProcessor.processResponse( portalRequest, portalResponse );
 
-        final String outputHtml = resp.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult2.html" );
 
         assertEqualsTrimmed( expectedResult, outputHtml );

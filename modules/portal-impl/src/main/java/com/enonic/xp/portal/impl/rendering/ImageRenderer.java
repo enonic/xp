@@ -31,12 +31,11 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest )
+    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
-        final PortalResponse response = portalRequest.getResponse();
-        response.setContentType( "text/html" );
-        response.setPostProcess( false );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setPostProcess( false );
 
         final StringBuilder html = new StringBuilder();
 
@@ -58,8 +57,8 @@ public final class ImageRenderer
             html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
         }
 
-        response.setBody( html.toString() );
-        return new PortalResponseSerializer( response ).serialize();
+        portalResponse.setBody( html.toString() );
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
     private String buildUrl( final PortalRequest portalRequest, final ContentId id )

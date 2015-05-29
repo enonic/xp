@@ -18,7 +18,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setMethod( "GET" );
         execute( "mymodule:/controller/request.js" );
 
-        assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsString() );
     }
 
@@ -38,7 +38,7 @@ public class ControllerScriptImpl_requestTest
 
         execute( "mymodule:/controller/request.js" );
 
-        assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
         assertJson( "all", getResponseAsString() );
     }
 
@@ -48,7 +48,7 @@ public class ControllerScriptImpl_requestTest
     {
         this.portalRequest.setMethod( "HEAD" );
         execute( "mymodule:/controller/request.js" );
-        assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
     }
 }
 

@@ -32,7 +32,7 @@ public abstract class AbstractControllerTest
 
     protected PortalRequest portalRequest;
 
-    protected PortalResponse response;
+    protected PortalResponse portalResponse;
 
     private final ObjectMapper mapper;
 
@@ -51,7 +51,7 @@ public abstract class AbstractControllerTest
         ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
 
         this.portalRequest = new PortalRequest();
-        this.response = this.portalRequest.getResponse();
+        this.portalResponse = new PortalResponse();
 
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
@@ -75,12 +75,12 @@ public abstract class AbstractControllerTest
     protected final void execute( final String script )
     {
         final ControllerScript controllerScript = this.factory.fromScript( ResourceKey.from( script ) );
-        controllerScript.execute( this.portalRequest );
+        controllerScript.execute( this.portalRequest, this.portalResponse );
     }
 
     protected final String getResponseAsString()
     {
-        final PortalResponseSerializer serializer = new PortalResponseSerializer( response );
+        final PortalResponseSerializer serializer = new PortalResponseSerializer( portalResponse );
         final RenderResult result = serializer.serialize();
         return result.getAsString();
     }
