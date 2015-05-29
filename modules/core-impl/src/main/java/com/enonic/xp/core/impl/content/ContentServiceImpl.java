@@ -67,10 +67,8 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -379,7 +377,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents move( final MoveContentParams params )
+    public Content move( final MoveContentParams params )
     {
         final ContentPath destinationPath = params.getParentContentPath();
         if ( !destinationPath.isRoot() )
@@ -401,27 +399,24 @@ public class ContentServiceImpl
 
         try
         {
-            final NodeIds sourceNodesIds =
-                NodeIds.from( params.getContentIds().stream().map( ContentId::toString ).toArray( String[]::new ) );
-            final Nodes sourceNodes = nodeService.getByIds( sourceNodesIds );
-            if ( sourceNodes == null )
+            final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
+            final Node sourceNode = nodeService.getById( sourceNodeId );
+            if ( sourceNode == null )
             {
-                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentIds() ) );
+                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
             }
 
-            final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+            final Node movedNode = nodeService.move( sourceNodeId, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
                 params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
-            sourceNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( node.path() ) ) );
-            movedNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( node.path() ) ) );
+            builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) );
+            builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) );
 
             eventPublisher.publish( builder.build() );
 
-            return contentNodeTranslator.fromNodes( movedNodes );
+            return contentNodeTranslator.fromNode( movedNode );
         }
         catch ( MoveNodeException e )
         {
