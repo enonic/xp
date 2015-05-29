@@ -92,6 +92,8 @@ module app.wizard.page {
         private pageSkipReload: boolean;
         private frameContainer: Panel;
 
+        private lockPageAfterProxyLoad: boolean;
+
         private contextWindow: ContextWindow;
         private contextWindowController: ContextWindowController;
 
@@ -116,6 +118,7 @@ module app.wizard.page {
 
             this.pageLoading = false;
             this.pageSkipReload = false;
+            this.lockPageAfterProxyLoad = false;
 
             this.liveEditPageProxy = new LiveEditPageProxy();
 
@@ -228,6 +231,7 @@ module app.wizard.page {
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
                     if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
+                        this.lockPageAfterProxyLoad = true;
                         this.saveAndReloadPage(false);
                     }
                 }
@@ -284,7 +288,10 @@ module app.wizard.page {
                 this.liveEditPageProxy.load();
                 this.liveEditPageProxy.onLoaded(() => {
                     this.pageLoading = false;
-
+                    if (this.lockPageAfterProxyLoad) {
+                        this.pageView.setLocked(true);
+                        this.lockPageAfterProxyLoad = false;
+                    }
                 });
             }
         }
