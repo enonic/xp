@@ -36,7 +36,11 @@ module app.wizard.page.contextwindow.inspect.page {
             super();
         }
 
-        setModel(liveEditModel: LiveEditModel) {
+        setModel(liveEditModel: LiveEditModel, cleanChildren: boolean = false) {
+
+            if (cleanChildren) {
+                this.removeChildren();
+            }
 
             this.liveEditModel = liveEditModel;
             this.pageModel = liveEditModel.getPageModel();
