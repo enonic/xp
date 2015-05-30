@@ -230,10 +230,12 @@ module app.wizard.page {
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
-                    if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
-                        this.lockPageAfterProxyLoad = true;
-                        this.saveAndReloadPage(false);
-                    }
+                    //if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
+
+                    this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
+                    this.lockPageAfterProxyLoad = true;
+                    this.saveAndReloadPage(false);
+                    //}
                 }
             });
 
