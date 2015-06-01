@@ -21,7 +21,7 @@ public final class ComponentUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final ComponentUrlParams params = new ComponentUrlParams().context( getContext() ).setAsMap( map );
+        final ComponentUrlParams params = new ComponentUrlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.componentUrl( params );
     }
 

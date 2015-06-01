@@ -23,7 +23,7 @@ public final class ImageUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final ImageUrlParams urlParams = new ImageUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final ImageUrlParams urlParams = new ImageUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.imageUrl( urlParams );
     }
 

@@ -23,7 +23,7 @@ public final class AssetUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final AssetUrlParams urlParams = new AssetUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final AssetUrlParams urlParams = new AssetUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.assetUrl( urlParams );
     }
 

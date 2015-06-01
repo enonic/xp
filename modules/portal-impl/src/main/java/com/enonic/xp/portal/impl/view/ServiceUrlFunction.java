@@ -23,7 +23,7 @@ public final class ServiceUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final ServiceUrlParams urlParams = new ServiceUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final ServiceUrlParams urlParams = new ServiceUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.serviceUrl( urlParams );
     }
 

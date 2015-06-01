@@ -23,7 +23,7 @@ public class GetCurrentContentHandlerTest
         throws Exception
     {
         final Content content = ContentFixtures.newContent();
-        context.setContent( content );
+        portalRequest.setContent( content );
 
         execute( "getContent" );
     }
@@ -32,7 +32,7 @@ public class GetCurrentContentHandlerTest
     public void getContent_notFound()
         throws Exception
     {
-        context.setContent( null );
+        portalRequest.setContent( null );
         execute( "getContent_notFound" );
     }
 

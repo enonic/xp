@@ -5,15 +5,15 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
@@ -30,31 +30,31 @@ public final class PageRenderer
     }
 
     @Override
-    public RenderResult render( final Content content, final PortalContext context )
+    public RenderResult render( final Content content, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final PageDescriptor pageDescriptor = context.getPageDescriptor();
+        final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
 
         if ( pageDescriptor != null )
         {
             final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
-            controllerScript.execute( context );
+            controllerScript.execute( portalRequest, portalResponse );
         }
         else
         {
-            renderForNoPageDescriptor( context, content );
+            renderForNoPageDescriptor( portalRequest, portalResponse, content );
         }
 
-        return new PortalResponseSerializer( context.getResponse() ).serialize();
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private void renderForNoPageDescriptor( final PortalContext context, final Content content )
+    private void renderForNoPageDescriptor( final PortalRequest portalRequest, final PortalResponse portalResponse, final Content content )
     {
         String html = "<html>" +
             "<head>" +
             "<meta charset=\"utf-8\"/>" +
             "<title>" + content.getDisplayName() + "</title>" +
             "</head>";
-        if ( RenderMode.EDIT.equals( context.getMode() ) )
+        if ( RenderMode.EDIT.equals( portalRequest.getMode() ) )
         {
             html += "<body " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"page\"></body>";
         }
@@ -64,13 +64,12 @@ public final class PageRenderer
         }
         html += "</html>";
 
-        final PortalResponse response = context.getResponse();
-        response.setContentType( "text/html" );
-        response.setStatus( 200 );
-        response.setBody( html );
-        response.setPostProcess( true );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setStatus( 200 );
+        portalResponse.setBody( html );
+        portalResponse.setPostProcess( true );
 
-        this.postProcessor.processResponse( context );
+        this.postProcessor.processResponse( portalRequest, portalResponse );
     }
 
     @Reference

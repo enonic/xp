@@ -23,7 +23,7 @@ public class GetCurrentComponentHandlerTest
         throws Exception
     {
         final Component component = ContentFixtures.newLayoutComponent();
-        context.setComponent( component );
+        portalRequest.setComponent( component );
 
         execute( "getComponent" );
     }
@@ -32,7 +32,7 @@ public class GetCurrentComponentHandlerTest
     public void getComponent_notFound()
         throws Exception
     {
-        context.setComponent( null );
+        portalRequest.setComponent( null );
         execute( "getComponent_notFound" );
     }
 

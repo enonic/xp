@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
@@ -30,9 +30,9 @@ public abstract class AbstractControllerTest
 
     private ControllerScriptFactoryImpl factory;
 
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
 
-    protected PortalResponse response;
+    protected PortalResponse portalResponse;
 
     private final ObjectMapper mapper;
 
@@ -50,8 +50,8 @@ public abstract class AbstractControllerTest
     {
         ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
 
-        this.context = new PortalContext();
-        this.response = this.context.getResponse();
+        this.portalRequest = new PortalRequest();
+        this.portalResponse = new PortalResponse();
 
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
@@ -75,12 +75,12 @@ public abstract class AbstractControllerTest
     protected final void execute( final String script )
     {
         final ControllerScript controllerScript = this.factory.fromScript( ResourceKey.from( script ) );
-        controllerScript.execute( this.context );
+        controllerScript.execute( this.portalRequest, this.portalResponse );
     }
 
     protected final String getResponseAsString()
     {
-        final PortalResponseSerializer serializer = new PortalResponseSerializer( response );
+        final PortalResponseSerializer serializer = new PortalResponseSerializer( portalResponse );
         final RenderResult result = serializer.serialize();
         return result.getAsString();
     }

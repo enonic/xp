@@ -6,7 +6,8 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -44,14 +45,15 @@ public class ComponentResourceTest
             header( "some-heaer", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
+        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -94,15 +96,16 @@ public class ComponentResourceTest
             header( "some-heaer", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
+        final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
+        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
 
-        assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsContext.getValue().getUri() );
+        assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );
     }
 }

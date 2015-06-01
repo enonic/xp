@@ -5,12 +5,12 @@ import java.text.MessageFormat;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.content.page.region.TextComponent;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 
 import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
 
@@ -35,60 +35,59 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final PortalContext context )
+    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final RenderMode renderMode = getRenderingMode( context );
-        final PortalResponse response = context.getResponse();
-        response.setContentType( "text/html" );
-        response.setPostProcess( false );
+        final RenderMode renderMode = getRenderingMode( portalRequest );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setPostProcess( false );
 
         if ( textComponent.getText() == null )
         {
-            renderEmptyTextComponent( textComponent, context );
+            renderEmptyTextComponent( textComponent, portalRequest, portalResponse );
         }
         else
         {
             switch ( renderMode )
             {
                 case EDIT:
-                    response.setBody(
+                    portalResponse.setBody(
                         MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
                     break;
 
                 case LIVE:
                 case PREVIEW:
                 default:
-                    response.setBody(
+                    portalResponse.setBody(
                         MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
                     break;
             }
         }
 
-        return new PortalResponseSerializer( response ).serialize();
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )
+    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest,
+                                           final PortalResponse portalResponse )
     {
-        final PortalResponse response = context.getResponse();
-        final RenderMode renderMode = getRenderingMode( context );
+        final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
         {
             case EDIT:
-                response.setBody( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
+                portalResponse.setBody( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
             case PREVIEW:
-                response.setBody( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
+                portalResponse.setBody( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
             case LIVE:
-                response.setBody( "" );
+                portalResponse.setBody( "" );
                 break;
         }
     }
 
-    private RenderMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
-        return context == null ? RenderMode.LIVE : context.getMode();
+        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 }

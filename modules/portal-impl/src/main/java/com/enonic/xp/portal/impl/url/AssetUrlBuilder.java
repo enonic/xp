@@ -11,7 +11,7 @@ final class AssetUrlBuilder
     private ModuleKey getModule()
     {
         return new ModuleResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             module( this.params.getModule() ).
             resolve();
     }
@@ -20,7 +20,7 @@ final class AssetUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.context.getContentPath().toString() );
+        appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "asset" );
         appendPart( url, getModule().toString() );

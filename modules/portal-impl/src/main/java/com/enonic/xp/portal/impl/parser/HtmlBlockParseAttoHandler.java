@@ -7,7 +7,7 @@ import org.attoparser.markup.ElementMarkupParsingUtil;
 import org.attoparser.markup.IBasicElementHandling;
 import org.attoparser.markup.ICommentHandling;
 
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 
 final class HtmlBlockParseAttoHandler
     implements IAttoHandler, ICommentHandling, IBasicElementHandling
@@ -89,11 +89,11 @@ final class HtmlBlockParseAttoHandler
 
         if ( isHeadElement( buffer, contentOffset, contentLen ) )
         {
-            parser.addTagMarker( PostProcessInjection.Tag.HEAD_BEGIN );
+            parser.addTagMarker( HtmlTag.HEAD_BEGIN );
         }
         else if ( isBodyElement( buffer, contentOffset, contentLen ) )
         {
-            parser.addTagMarker( PostProcessInjection.Tag.BODY_BEGIN );
+            parser.addTagMarker( HtmlTag.BODY_BEGIN );
         }
     }
 
@@ -104,11 +104,11 @@ final class HtmlBlockParseAttoHandler
     {
         if ( isHeadElement( buffer, contentOffset, contentLen ) )
         {
-            parser.addTagMarker( PostProcessInjection.Tag.HEAD_END );
+            parser.addTagMarker( HtmlTag.HEAD_END );
         }
         else if ( isBodyElement( buffer, contentOffset, contentLen ) )
         {
-            parser.addTagMarker( PostProcessInjection.Tag.BODY_END );
+            parser.addTagMarker( HtmlTag.BODY_END );
         }
 
         parser.appendHtml( new String( buffer, outerOffset, outerLen ) );

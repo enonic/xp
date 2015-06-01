@@ -17,10 +17,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     public void createUrl_withoutNameAndLabel()
     {
-        this.context.setContent( createContent() );
+        this.portalRequest.setContent( createContent() );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             param( "a", 3 );
 
         final String url = this.service.attachmentUrl( params );
@@ -30,10 +30,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     public void createUrl_withDownload()
     {
-        this.context.setContent( createContent() );
+        this.portalRequest.setContent( createContent() );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             download( true );
 
         final String url = this.service.attachmentUrl( params );
@@ -43,10 +43,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     public void createUrl_withName()
     {
-        this.context.setContent( createContent() );
+        this.portalRequest.setContent( createContent() );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             name( "myfile.pdf" );
 
         final String url = this.service.attachmentUrl( params );
@@ -56,10 +56,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     public void createUrl_withLabel()
     {
-        this.context.setContent( createContent() );
+        this.portalRequest.setContent( createContent() );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             label( "thumb" );
 
         final String url = this.service.attachmentUrl( params );
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         final AttachmentUrlParams params = new AttachmentUrlParams().
             id( "123456" ).
             name( "myfile.pdf" ).
-            context( this.context );
+            portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
@@ -88,7 +88,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         final AttachmentUrlParams params = new AttachmentUrlParams().
             path( "/a/b/mycontent" ).
             name( "myfile.pdf" ).
-            context( this.context );
+            portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );

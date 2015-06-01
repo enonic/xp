@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.impl.resource.render;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.PortalContext;
 
 public final class PageControllerResource
     extends RendererControllerResource
@@ -11,9 +12,9 @@ public final class PageControllerResource
     protected Renderer<Content> renderer;
 
     @Override
-    protected RenderResult execute( final PortalContext context )
+    protected RenderResult execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
         throws Exception
     {
-        return this.renderer.render( this.content, context );
+        return this.renderer.render( this.content, portalRequest, portalResponse );
     }
 }

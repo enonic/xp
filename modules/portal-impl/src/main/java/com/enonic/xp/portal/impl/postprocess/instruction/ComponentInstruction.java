@@ -15,12 +15,13 @@ import com.enonic.xp.content.page.region.ComponentName;
 import com.enonic.xp.content.page.region.ComponentPath;
 import com.enonic.xp.content.page.region.ComponentService;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -47,7 +48,7 @@ public final class ComponentInstruction
     }
 
     @Override
-    public String evaluate( final PortalContext context, final String instruction )
+    public String evaluate( final PortalRequest portalRequest, final PortalResponse portalResponse, final String instruction )
     {
         if ( !instruction.startsWith( "COMPONENT " ) )
         {
@@ -61,28 +62,28 @@ public final class ComponentInstruction
         }
 
         final String path = list.get( 1 );
-        return renderComponent( context, path );
+        return renderComponent( portalRequest, portalResponse, path );
     }
 
-    private String renderComponent( final PortalContext context, final String componentSelector )
+    private String renderComponent( final PortalRequest portalRequest, final PortalResponse portalResponse, final String componentSelector )
     {
         final Component component;
         if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
-            component = resolveComponent( context, componentPath );
+            component = resolveComponent( portalRequest, componentPath );
         }
         else
         {
             final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
             final ComponentName componentName = name != null ? new ComponentName( name ) : null;
-            final ModuleKey currentModule = context.getPageTemplate().getController().getModuleKey();
+            final ModuleKey currentModule = portalRequest.getPageTemplate().getController().getModuleKey();
             component = componentService.getByName( currentModule, componentName );
         }
-        return renderComponent( context, component );
+        return renderComponent( portalRequest, portalResponse, component );
     }
 
-    private String renderComponent( final PortalContext context, final Component component )
+    private String renderComponent( final PortalRequest portalRequest, final PortalResponse portalResponse, final Component component )
     {
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
@@ -90,13 +91,13 @@ public final class ComponentInstruction
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
 
-        final RenderResult result = renderer.render( component, context );
+        final RenderResult result = renderer.render( component, portalRequest, portalResponse );
         return result.getAsString();
     }
 
-    private Component resolveComponent( final PortalContext context, final ComponentPath path )
+    private Component resolveComponent( final PortalRequest portalRequest, final ComponentPath path )
     {
-        final Content content = context.getContent();
+        final Content content = portalRequest.getContent();
         if ( content == null )
         {
             return null;
@@ -108,7 +109,7 @@ public final class ComponentInstruction
         if ( component == null )
         {
             // TODO: Hack: See if component still exist in page template
-            component = context.getPageTemplate().getRegions().getComponent( path );
+            component = portalRequest.getPageTemplate().getRegions().getComponent( path );
             if ( component == null )
             {
                 throw new RenderException( "Component not found: [{0}]", path );

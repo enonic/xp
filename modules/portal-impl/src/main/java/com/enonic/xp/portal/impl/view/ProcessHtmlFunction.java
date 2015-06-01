@@ -23,7 +23,8 @@ public final class ProcessHtmlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final ProcessHtmlParams processHtmlParams =
+            new ProcessHtmlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.processHtml( processHtmlParams );
     }
 

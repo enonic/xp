@@ -5,10 +5,10 @@ import java.util.Map;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 public abstract class AbstractUrlHandler
@@ -29,9 +29,9 @@ public abstract class AbstractUrlHandler
         return "portal." + this.name;
     }
 
-    protected final PortalContext getContext()
+    protected final PortalRequest getPortalRequest()
     {
-        return PortalContextAccessor.get();
+        return PortalRequestAccessor.get();
     }
 
     protected abstract String buildUrl( final Multimap<String, String> map );

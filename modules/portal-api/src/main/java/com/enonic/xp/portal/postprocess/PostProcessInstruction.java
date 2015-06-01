@@ -2,10 +2,11 @@ package com.enonic.xp.portal.postprocess;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 
 @Beta
 public interface PostProcessInstruction
 {
-    String evaluate( PortalContext context, String instruction );
+    String evaluate( PortalRequest portalRequest, PortalResponse portalResponse, String instruction );
 }

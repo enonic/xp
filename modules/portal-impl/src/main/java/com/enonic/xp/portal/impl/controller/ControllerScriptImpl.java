@@ -2,19 +2,14 @@ package com.enonic.xp.portal.impl.controller;
 
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
-
-import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_BEGIN;
-import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.BODY_END;
-import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_BEGIN;
-import static com.enonic.xp.portal.postprocess.PostProcessInjection.Tag.HEAD_END;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -30,38 +25,38 @@ final class ControllerScriptImpl
     }
 
     @Override
-    public void execute( final PortalContext context )
+    public void execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        PortalContextAccessor.set( context );
+        PortalRequestAccessor.set( portalRequest );
 
         try
         {
-            doExecute( context );
-            this.postProcessor.processResponse( context );
+            doExecute( portalRequest, portalResponse );
+            this.postProcessor.processResponse( portalRequest, portalResponse );
         }
         finally
         {
-            PortalContextAccessor.remove();
+            PortalRequestAccessor.remove();
         }
     }
 
-    private void doExecute( final PortalContext context )
+    private void doExecute( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final String method = context.getMethod().toLowerCase();
+        final String method = portalRequest.getMethod().toLowerCase();
         final boolean isHead = "head".equals( method );
         final String runMethod = isHead ? "get" : method;
 
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            populateResponse( context.getResponse(), null );
+            populateResponse( portalResponse, null );
             return;
         }
 
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( context );
+        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
         final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
-        populateResponse( context.getResponse(), result );
+        populateResponse( portalResponse, result );
     }
 
     private void populateResponse( final PortalResponse response, final ScriptValue result )
@@ -162,24 +157,24 @@ final class ControllerScriptImpl
         {
             if ( "headBegin".equals( key ) )
             {
-                addContribution( response, HEAD_BEGIN, value.getMember( key ) );
+                addContribution( response, HtmlTag.HEAD_BEGIN, value.getMember( key ) );
             }
             else if ( "headEnd".equals( key ) )
             {
-                addContribution( response, HEAD_END, value.getMember( key ) );
+                addContribution( response, HtmlTag.HEAD_END, value.getMember( key ) );
             }
             else if ( "bodyBegin".equals( key ) )
             {
-                addContribution( response, BODY_BEGIN, value.getMember( key ) );
+                addContribution( response, HtmlTag.BODY_BEGIN, value.getMember( key ) );
             }
             else if ( "bodyEnd".equals( key ) )
             {
-                addContribution( response, BODY_END, value.getMember( key ) );
+                addContribution( response, HtmlTag.BODY_END, value.getMember( key ) );
             }
         }
     }
 
-    private void addContribution( final PortalResponse response, final PostProcessInjection.Tag tag, final ScriptValue value )
+    private void addContribution( final PortalResponse response, final HtmlTag htmlTag, final ScriptValue value )
     {
         if ( value == null )
         {
@@ -193,7 +188,7 @@ final class ControllerScriptImpl
                 final String strValue = arrayValue.getValue( String.class );
                 if ( strValue != null )
                 {
-                    response.addContribution( tag, strValue );
+                    response.addContribution( htmlTag, strValue );
                 }
             }
         }
@@ -202,7 +197,7 @@ final class ControllerScriptImpl
             final String strValue = value.getValue( String.class );
             if ( strValue != null )
             {
-                response.addContribution( tag, strValue );
+                response.addContribution( htmlTag, strValue );
             }
         }
     }

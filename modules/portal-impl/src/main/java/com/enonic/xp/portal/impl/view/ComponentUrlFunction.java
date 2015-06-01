@@ -23,7 +23,8 @@ public final class ComponentUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final ComponentUrlParams urlParams = new ComponentUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final ComponentUrlParams urlParams =
+            new ComponentUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.componentUrl( urlParams );
     }
 

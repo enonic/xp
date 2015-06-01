@@ -4,11 +4,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 final class ContentIdResolver
 {
-    private PortalContext context;
+    private PortalRequest portalRequest;
 
     private ContentId id;
 
@@ -16,9 +16,9 @@ final class ContentIdResolver
 
     private ContentService contentService;
 
-    public ContentIdResolver context( final PortalContext context )
+    public ContentIdResolver portalRequest( final PortalRequest portalRequest )
     {
-        this.context = context;
+        this.portalRequest = portalRequest;
         return this;
     }
 
@@ -62,7 +62,7 @@ final class ContentIdResolver
             return path;
         }
 
-        return ContentPath.from( this.context.getContentPath(), path );
+        return ContentPath.from( this.portalRequest.getContentPath(), path );
     }
 
     private ContentId resolveId( final ContentPath path )

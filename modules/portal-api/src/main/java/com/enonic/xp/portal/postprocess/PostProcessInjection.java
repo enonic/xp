@@ -4,18 +4,12 @@ import java.util.List;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+
 
 @Beta
 public interface PostProcessInjection
 {
-    enum Tag
-    {
-        HEAD_BEGIN,
-        HEAD_END,
-        BODY_BEGIN,
-        BODY_END
-    }
-
-    List<String> inject( PortalContext context, Tag tag );
+    List<String> inject( PortalRequest portalRequest, PortalResponse portalResponse, HtmlTag htmlTag );
 }

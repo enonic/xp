@@ -13,7 +13,7 @@ final class ImageUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.context.getContentPath().toString() );
+        appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "image" );
 
@@ -56,7 +56,7 @@ final class ImageUrlBuilder
     private ContentId resolveId()
     {
         return new ContentIdResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).

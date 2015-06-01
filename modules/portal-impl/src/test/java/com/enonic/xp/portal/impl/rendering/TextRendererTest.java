@@ -4,15 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.content.page.region.TextComponent;
-import com.enonic.xp.portal.rendering.RenderResult;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.rendering.RenderResult;
 
 import static org.junit.Assert.*;
 
 public class TextRendererTest
 {
-    private PortalContext context;
+    private PortalRequest portalRequest;
+
+    private PortalResponse portalResponse;
 
     private TextComponent textComponent;
 
@@ -21,8 +24,9 @@ public class TextRendererTest
     @Before
     public void before()
     {
-        context = new PortalContext();
-        context.setMode( RenderMode.LIVE );
+        portalRequest = new PortalRequest();
+        portalResponse = new PortalResponse();
+        portalRequest.setMode( RenderMode.LIVE );
     }
 
     @Test
@@ -33,7 +37,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, context );
+        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
 
         // verify
         assertEquals( "", result.getAsString() );
@@ -43,12 +47,12 @@ public class TextRendererTest
     public void textComponentWithNoTextAndRenderModeEdit()
     {
         // setup
-        context.setMode( RenderMode.EDIT );
+        portalRequest.setMode( RenderMode.EDIT );
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, context );
+        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
 
         // verify
         assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", result.getAsString() );
@@ -58,12 +62,12 @@ public class TextRendererTest
     public void textComponentWithNoTextAndRenderModePreview()
     {
         // setup
-        context.setMode( RenderMode.PREVIEW );
+        portalRequest.setMode( RenderMode.PREVIEW );
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, context );
+        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
 
         // verify
         assertEquals( "<section data-portal-component-type=\"text\"></section>", result.getAsString() );
@@ -79,7 +83,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, context );
+        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
 
         // verify
         assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", result.getAsString() );
@@ -89,13 +93,13 @@ public class TextRendererTest
     public void textComponentWithSomeTextAndRenderModeEdit()
     {
         // setup
-        context.setMode( RenderMode.EDIT );
+        portalRequest.setMode( RenderMode.EDIT );
         String text = "<h2>hello</h2><p>How are you?</p>";
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).text( text ).build();
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, context );
+        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
 
         // verify
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );

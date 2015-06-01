@@ -18,7 +18,7 @@ public class PortalUrlServiceImpl_pageUrlTest
     public void createUrl_toMe()
     {
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
@@ -29,7 +29,7 @@ public class PortalUrlServiceImpl_pageUrlTest
     public void createUrl_withRelativePath()
     {
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             path( "a/b" ).
             param( "a", 3 );
 
@@ -41,7 +41,7 @@ public class PortalUrlServiceImpl_pageUrlTest
     public void createUrl_withAbsolutePath()
     {
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
@@ -55,7 +55,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
@@ -69,7 +69,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             id( "123456" ).
             path( "/a/b" );
 
@@ -85,7 +85,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
 
         final PageUrlParams params = new PageUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             id( "123456" );
 
         final String url = this.service.pageUrl( params );

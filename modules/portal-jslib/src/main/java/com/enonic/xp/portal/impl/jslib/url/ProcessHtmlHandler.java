@@ -21,7 +21,7 @@ public final class ProcessHtmlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final ProcessHtmlParams params = new ProcessHtmlParams().context( getContext() ).setAsMap( map );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.processHtml( params );
     }
 

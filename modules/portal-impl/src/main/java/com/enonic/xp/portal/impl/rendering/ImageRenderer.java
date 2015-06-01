@@ -7,7 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.page.region.ImageComponent;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
@@ -31,19 +31,18 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final PortalContext context )
+    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final RenderMode renderMode = getRenderingMode( context );
-        final PortalResponse response = context.getResponse();
-        response.setContentType( "text/html" );
-        response.setPostProcess( false );
+        final RenderMode renderMode = getRenderingMode( portalRequest );
+        portalResponse.setContentType( "text/html" );
+        portalResponse.setPostProcess( false );
 
         final StringBuilder html = new StringBuilder();
 
         final String type = component.getType().toString();
         if ( component.getImage() != null )
         {
-            final String imageUrl = buildUrl( context, component.getImage() );
+            final String imageUrl = buildUrl( portalRequest, component.getImage() );
             html.append( "<figure " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"" + type + "\">" );
             html.append( "<img style=\"width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
             if ( component.hasCaption() )
@@ -58,21 +57,21 @@ public final class ImageRenderer
             html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
         }
 
-        response.setBody( html.toString() );
-        return new PortalResponseSerializer( response ).serialize();
+        portalResponse.setBody( html.toString() );
+        return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private String buildUrl( final PortalContext context, final ContentId id )
+    private String buildUrl( final PortalRequest portalRequest, final ContentId id )
     {
-        final ImageUrlParams params = new ImageUrlParams().context( context );
+        final ImageUrlParams params = new ImageUrlParams().portalRequest( portalRequest );
         params.id( id.toString() );
         params.scale( "width(500)" );
         return this.urlService.imageUrl( params );
     }
 
-    private RenderMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
-        return context == null ? RenderMode.LIVE : context.getMode();
+        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 
     @Reference

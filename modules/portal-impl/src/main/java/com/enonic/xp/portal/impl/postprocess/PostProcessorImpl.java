@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
@@ -30,32 +30,33 @@ public final class PostProcessorImpl
     }
 
     @Override
-    public void processResponse( final PortalContext context )
+    public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final PortalResponse response = context.getResponse();
-        if ( !response.isPostProcess() || !"GET".equals( context.getMethod() ) )
+        if ( !portalResponse.isPostProcess() || !"GET".equals( portalRequest.getMethod() ) )
         {
-            return;
+            return portalResponse;
         }
 
-        final Object body = response.getBody();
+        final Object body = portalResponse.getBody();
         if ( !( body instanceof String ) )
         {
-            return;
+            return portalResponse;
         }
 
-        doPostProcess( context, (String) body );
+        return doPostProcess( portalRequest, portalResponse );
     }
 
-    private void doPostProcess( final PortalContext context, final String body )
+    private PortalResponse doPostProcess( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.context = context;
-        evaluator.input = body;
+        evaluator.portalRequest = portalRequest;
+        evaluator.portalResponse = portalResponse;
+        evaluator.input = (String) portalResponse.getBody();
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
 
-        context.getResponse().setBody( evaluator.evaluate() );
+        portalResponse.setBody( evaluator.evaluate() );
+        return portalResponse;
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

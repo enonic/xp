@@ -9,14 +9,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.convert.Converters;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 @Beta
 public final class ViewFunctionParams
 {
     private String name;
 
-    private PortalContext context;
+    private PortalRequest portalRequest;
 
     private Multimap<String, String> args;
 
@@ -25,9 +25,9 @@ public final class ViewFunctionParams
         return this.name;
     }
 
-    public PortalContext getContext()
+    public PortalRequest getPortalRequest()
     {
-        return this.context;
+        return this.portalRequest;
     }
 
     public Multimap<String, String> getArgs()
@@ -41,9 +41,9 @@ public final class ViewFunctionParams
         return this;
     }
 
-    public ViewFunctionParams context( final PortalContext context )
+    public ViewFunctionParams portalRequest( final PortalRequest portalRequest )
     {
-        this.context = context;
+        this.portalRequest = portalRequest;
         return this;
     }
 

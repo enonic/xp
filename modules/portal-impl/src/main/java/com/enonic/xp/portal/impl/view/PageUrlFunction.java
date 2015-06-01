@@ -23,7 +23,7 @@ public final class PageUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final PageUrlParams urlParams = new PageUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final PageUrlParams urlParams = new PageUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.pageUrl( urlParams );
     }
 
