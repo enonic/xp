@@ -27,7 +27,7 @@ import com.enonic.xp.snapshot.SnapshotResults;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class SnapshotResource
     implements AdminResource
@@ -55,7 +55,6 @@ public class SnapshotResource
 
     @POST
     @Path("restore")
-    @RolesAllowed(RoleKeys.ADMIN_ID)
     public RestoreResultJson restore( final RestoreRequestJson params )
         throws Exception
     {
@@ -70,7 +69,6 @@ public class SnapshotResource
 
     @POST
     @Path("delete")
-    @RolesAllowed(RoleKeys.ADMIN_ID)
     public DeleteSnapshotsResultJson delete( final DeleteSnapshotRequestJson params )
         throws Exception
     {
