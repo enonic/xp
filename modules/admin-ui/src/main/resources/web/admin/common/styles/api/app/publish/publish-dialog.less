@@ -8,22 +8,8 @@
 
   .item-list {
     padding: 0px;
-    max-height: 400px;
+    max-height: 380px;
     overflow-y: auto;
-
-    @media screen and (max-height: 720px) {
-      max-height: 350px;
-      min-height: 200px;
-    }
-
-    @media screen and (max-height: 540px) {
-      max-height: 170px;
-    }
-
-    @media screen and (max-height: 360px) {
-      max-height: 82%;
-    }
-
   }
 
   .dependencies-toggle-label {
@@ -94,6 +80,23 @@
 
     &.item-list {
       padding-bottom: 10px;
+
+      min-height: 150px;
+
+      @media screen and (max-height: 720px) {
+        max-height: 350px;
+        min-height: 100px;
+      }
+
+      @media screen and (max-height: 540px) {
+        max-height: 170px;
+        min-height: 80px;
+      }
+
+      @media screen and (max-height: 360px) {
+        max-height: 80px;
+        min-height: 40px;
+      }
     }
 
     .browse-selection-publish-item {
@@ -107,7 +110,7 @@
       }
 
       .status {
-        right: 32px;
+        margin-right: 5px;
         margin-top: -33px;
         display: inline-block;
         float: right;
@@ -181,6 +184,18 @@
 
     &.item-list {
       padding-top: 10px;
+    }
+
+    @media screen and (max-height: 720px) {
+      max-height: 160px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 80px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 40px;
     }
 
     .browse-selection-publish-item {

@@ -77,7 +77,9 @@ module app.publish {
         }
 
         initAndOpen() {
-            this.resolvePublishRequestedContentsAndUpdateView();
+            this.resolvePublishRequestedContentsAndUpdateView().then(() => {
+                this.centerMyself();
+            }).done();
             this.open();
         }
 
@@ -114,7 +116,6 @@ module app.publish {
                     this.initialItemsView.appendChild(item);
                 }
             });
-            this.centerMyself();
         }
 
         private initIncludeChildrenCheckbox() {
@@ -253,7 +254,7 @@ module app.publish {
         /**
          * Perform request to resolve publish items, init and render results.
          */
-        private resolvePublishRequestedContentsAndUpdateView() {
+        private resolvePublishRequestedContentsAndUpdateView(): wemQ.Promise<void> {
 
             this.showLoadingSpinner();
 
@@ -261,13 +262,13 @@ module app.publish {
                 return new api.content.ContentId(el.getId());
             }), this.includeChildItemsCheck.isChecked());
 
-            resolvePublishDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
+            return resolvePublishDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
                 this.initResolvedPublishItems(jsonResponse.getResult());
                 this.renderResolvedPublishItems();
                 this.countItemsToPublishAndUpdateCounterElements();
             }).finally(() => {
                 this.hideLoadingSpinner();
-            }).done();
+            });
         }
 
         /**
@@ -286,8 +287,6 @@ module app.publish {
                     this.initResolvedDependantItems(jsonResponse.getResult());
                     this.renderResolvedDependantItems();
                 }).done();
-
-                this.centerMyself();
             } else {
                 this.renderResolvedDependantItems();
             }
@@ -315,7 +314,6 @@ module app.publish {
                     this.dependantItemsView.appendDependant(dependantView);
                 });
             }
-            this.centerMyself();
         }
 
         /**
@@ -344,7 +342,6 @@ module app.publish {
             } else {
                 selectionItem.hideDependants();
             }
-            this.centerMyself();
         }
 
         /**
