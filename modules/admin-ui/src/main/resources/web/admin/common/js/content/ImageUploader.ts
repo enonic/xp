@@ -47,6 +47,12 @@ module api.content {
             var focalEditor = new api.ui.image.FocalEditor(imgUrl);
             focalEditor.onEditModeChanged((edit, position) => {
                 this.setResetVisible(!edit);
+                var shader = api.liveedit.Shader.get();
+                if (edit) {
+                    shader.shade(focalEditor);
+                } else {
+                    shader.hide();
+                }
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
             var image = focalEditor.getImage();
