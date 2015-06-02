@@ -4,10 +4,6 @@
   margin: 10px 10px 0 10px;
   overflow: hidden;
 
-  .viewer {
-    float: left;
-  }
-
   .remove {
     height: 32px;
     margin: 0 5px 0 0;
@@ -28,75 +24,3 @@
   }
 }
 
-.browse-selection-publish-item {
-  padding: 10px 10px 10px 5px;
-  margin: 10px 10px 0 10px;
-  overflow: hidden;
-
-  .publish {
-    display: inline;
-    height: 15px;
-    margin: 12px 5px 0 0;
-    float: left;
-    cursor: pointer;
-    clear: right;
-    font-weight: bold;
-  }
-
-  .viewer {
-    overflow: hidden;
-    display: inline;
-  }
-
-  .status {
-    right: 32px;
-    margin-top: -38px;
-    display: inline-block;
-    float: right;
-  }
-
-  &.disabled {
-    .checkbox {
-
-      label {
-        &:before {
-          background: url("../images/admin-unchecked.gif") -1px -2px no-repeat;
-        }
-      }
-
-      input[type="checkbox"] {
-
-        &:checked + label {
-          color: #333 !important;
-
-          &:before {
-            background: url("../images/link.png") -1px -2px no-repeat;
-          }
-        }
-      }
-    }
-  }
-
-  .toggle {
-    &.collapse {
-      .icon-arrow-down2();
-    }
-    &.expand {
-      .icon-arrow-right3();
-    }
-    display: inline;
-    float: left;
-    padding: 5px;
-    margin-top: 7px;
-    cursor: pointer;
-  }
-
-}
-
-.content-resolved-publish-viewer {
-  &.pending-delete .names-and-icon-view .names-view {
-    .main-name, .sub-name {
-      text-decoration: line-through;
-    }
-  }
-}

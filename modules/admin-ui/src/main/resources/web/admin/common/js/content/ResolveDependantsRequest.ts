@@ -2,20 +2,22 @@ module api.content {
 
     export class ResolveDependantsRequest extends ContentResourceRequest<api.content.json.ResolveDependantsResultJson, any> {
 
-        private id: string;
+        private ids: ContentId[] = [];
 
         private includeChildren: boolean;
 
-        constructor(contentId: string, includeChildren: boolean) {
+        constructor(contentIds: ContentId[], includeChildren: boolean) {
             super();
             super.setMethod("POST");
-            this.id = contentId;
+            this.ids = contentIds;
             this.includeChildren = includeChildren;
         }
 
         getParams(): Object {
             return {
-                id: this.id,
+                ids: this.ids.map((el) => {
+                    return el.toString();
+                }),
                 includeChildren: this.includeChildren
             };
         }

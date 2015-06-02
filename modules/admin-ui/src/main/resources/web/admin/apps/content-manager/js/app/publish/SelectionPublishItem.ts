@@ -15,6 +15,8 @@ module app.publish {
 
         private hidden: boolean;
 
+        private isCheckboxHidden: boolean;
+
         private childrenSwitch: api.dom.SpanEl;
 
         private childrenDiv: DependantsItemList = new DependantsItemList();
@@ -23,28 +25,44 @@ module app.publish {
 
         private expandable: boolean;
 
+        private removable: boolean;
+
+        private showStatus: boolean;
+
+        private removeEl: api.dom.DivEl;
+
         constructor(viewer: api.ui.Viewer<M>,
                     item: BrowseItem<M>,
                     status: CompareStatus,
+                    isCheckboxHidden: boolean,
+                    showStatus: boolean,
                     changeCallback?: () => void,
                     toggleCallback?: (isExpand: boolean) => void,
                     isCheckBoxEnabled: boolean = true,
                     isHidden: boolean = false,
                     isChecked: boolean = true,
-                    expandable: boolean = false) {
+                    expandable: boolean = false,
+                    removable: boolean = false,
+                    removeCallback?: () => void) {
             super("browse-selection-publish-item");
             this.viewer = viewer;
             this.item = item;
             this.hidden = isHidden;
+            this.isCheckboxHidden = isCheckboxHidden;
             this.expandable = expandable;
+            this.removable = removable;
+            this.showStatus = showStatus;
             this.initStatusDiv(status);
             this.initCheckBox(isCheckBoxEnabled, isChecked, changeCallback);
             this.initChildrenSwitch(expandable, toggleCallback);
+            this.initRemoveButton(removeCallback);
         }
 
         private initStatusDiv(status: CompareStatus) {
-            this.statusDiv = new api.dom.DivEl("status");
-            this.statusDiv.setHtml(this.formatStatus(status));
+            if (this.showStatus) {
+                this.statusDiv = new api.dom.DivEl("status");
+                this.statusDiv.setHtml(this.formatStatus(status));
+            }
         }
 
         private initChildrenSwitch(expandable: boolean, toggleCallback?: (isExpand: boolean) => void) {
@@ -60,14 +78,27 @@ module app.publish {
         }
 
         private initCheckBox(isCheckBoxEnabled: boolean, isChecked: boolean, callback?: () => void) {
-            this.checkBox = new api.ui.Checkbox();
-            this.checkBox.addClass("checkbox publish")
-            this.checkBox.setChecked(isChecked);
-            if (!isCheckBoxEnabled) {
-                this.checkBox.setDisabled(true);
-                this.addClass("disabled");
-            } else {
-                this.checkBox.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            if (!this.isCheckboxHidden) {
+                this.checkBox = new api.ui.Checkbox();
+                this.checkBox.addClass("checkbox")
+                this.checkBox.setChecked(isChecked);
+                if (!isCheckBoxEnabled) {
+                    this.checkBox.setDisabled(true);
+                    this.checkBox.addClass("disabled");
+                } else {
+                    this.checkBox.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                        if (callback) {
+                            callback();
+                        }
+                    });
+                }
+            }
+        }
+
+        private initRemoveButton(callback?: () => void) {
+            if (this.removable) {
+                this.removeEl = new api.dom.DivEl("icon remove");
+                this.removeEl.onClicked((event: MouseEvent) => {
                     if (callback) {
                         callback();
                     }
@@ -174,9 +205,16 @@ module app.publish {
             if (this.expandable) {
                 this.appendChild(this.childrenSwitch);
             }
-            this.appendChild(this.checkBox);
+            if (this.removable) {
+                this.appendChild(this.removeEl);
+            }
+            if (!this.isCheckboxHidden) {
+                this.appendChild(this.checkBox);
+            }
             this.appendChild(this.viewer);
-            this.appendChild(this.statusDiv);
+            if (this.showStatus) {
+                this.appendChild(this.statusDiv);
+            }
             if (this.expandable) {
                 this.appendChild(this.childrenDiv);
             }
@@ -189,6 +227,7 @@ module app.publish {
         constructor() {
             super();
             this.getEl().addClass("item-list");
+            this.getEl().addClass("dependant-items");
         }
 
         clear() {
@@ -203,10 +242,14 @@ module app.publish {
         content: M;
         changeCallback: () => void;
         toggleCallback: (isExpand: boolean) => void;
+        removeCallback: () => void;
         isCheckBoxEnabled: boolean = true;
         isHidden: boolean = false;
+        isCheckboxHidden: boolean = false;
         isChecked: boolean = true;
         expandable: boolean = false;
+        removable: boolean = false;
+        showStatus: boolean = true;
 
         setViewer(viewer: api.ui.Viewer<M>): SelectionPublishItemBuilder<M> {
             this.viewer = viewer;
@@ -223,12 +266,17 @@ module app.publish {
             return this;
         }
 
-        setChangeCallback(changeCallback: () => void): SelectionPublishItemBuilder<M> {
+        setChangeCallback(changeCallback?: () => void): SelectionPublishItemBuilder<M> {
             this.changeCallback = changeCallback;
             return this;
         }
 
-        setToggleCallback(toggleCallback: (isExpand: boolean) => void): SelectionPublishItemBuilder<M> {
+        setRemoveCallback(removeCallback?: () => void): SelectionPublishItemBuilder<M> {
+            this.removeCallback = removeCallback;
+            return this;
+        }
+
+        setToggleCallback(toggleCallback?: (isExpand: boolean) => void): SelectionPublishItemBuilder<M> {
             this.toggleCallback = toggleCallback;
             return this;
         }
@@ -243,6 +291,16 @@ module app.publish {
             return this;
         }
 
+        setShowStatus(showStatus: boolean): SelectionPublishItemBuilder<M> {
+            this.showStatus = showStatus;
+            return this;
+        }
+
+        setIsCheckboxHidden(isCheckboxHidden: boolean): SelectionPublishItemBuilder<M> {
+            this.isCheckboxHidden = isCheckboxHidden;
+            return this;
+        }
+
         setIsChecked(isChecked: boolean): SelectionPublishItemBuilder<M> {
             this.isChecked = isChecked;
             return this;
@@ -253,12 +311,16 @@ module app.publish {
             return this;
         }
 
+        setRemovable(removable: boolean): SelectionPublishItemBuilder<M> {
+            this.removable = removable;
+            return this;
+        }
+
         create(): SelectionPublishItemBuilder<M> {
             return new SelectionPublishItemBuilder<M>();
         }
 
         build(): SelectionPublishItem<M> {
-            this.viewer = new app.publish.ResolvedPublishContentViewer<M>();
             this.viewer.setObject(this.content);
 
             this.browseItem = new BrowseItem<M>(this.content).
@@ -267,9 +329,9 @@ module app.publish {
                 setPath(this.content.getPath().toString()).
                 setIconUrl(this.content.getIconUrl());
 
-            return new SelectionPublishItem<M>(this.viewer, this.browseItem, this.content.getCompareStatus(), this.changeCallback,
-                this.toggleCallback,
-                this.isCheckBoxEnabled, this.isHidden, this.isChecked, this.expandable);
+            return new SelectionPublishItem<M>(this.viewer, this.browseItem, this.content.getCompareStatus(), this.isCheckboxHidden,
+                this.showStatus, this.changeCallback, this.toggleCallback, this.isCheckBoxEnabled,
+                this.isHidden, this.isChecked, this.expandable, this.removable, this.removeCallback);
         }
     }
 

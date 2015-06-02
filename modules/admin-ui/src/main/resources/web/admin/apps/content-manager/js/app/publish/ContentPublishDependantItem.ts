@@ -22,7 +22,7 @@ module app.publish {
             this.dependsOnContentId = builder.dependsOnContentId;
         }
 
-        getChildrenCount(): string {
+        getDependsOnContentId(): string {
             return this.dependsOnContentId;
         }
 

@@ -172,7 +172,7 @@ module app.publish {
 
             this.name = ContentName.fromString(json.name);
             this.type = new ContentTypeName(json.type);
-            this.valid = json.isValid;
+            this.valid = json.valid;
 
             return this;
         }

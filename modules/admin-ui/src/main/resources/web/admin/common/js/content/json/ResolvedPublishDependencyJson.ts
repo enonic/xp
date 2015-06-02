@@ -16,7 +16,7 @@ module api.content.json {
 
         type: string;
 
-        isValid: boolean;
+        valid: boolean;
 
     }
 }
