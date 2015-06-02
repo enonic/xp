@@ -182,14 +182,17 @@ module app.publish {
                     setIsCheckBoxEnabled(false).
                     setRemovable(true).
                     setRemoveCallback(() => {
-                        this.removeSelectionItem(item);
+                        if (this.selectionItems.length == 1) { // this is the last item in the dialog
+                            this.close();
+                            return;
+                        }
                         this.removeFromInitialSelection(item);
-                        this.dependantItemsView.removeDependantItems(item);
-                        this.initialContentsResolvedWithChildren.removeItemWithId(item.getBrowseItem().getId());
-                        this.initialContentsResolvedWithoutChildren.removeItemWithId(item.getBrowseItem().getId());
-                        this.dependantContentsResolvedWithChildren.removeItemsThatDependOnId(item.getBrowseItem().getId());
-                        this.dependantContentsResolvedWithoutChildren.removeItemsThatDependOnId(item.getBrowseItem().getId());
-                        this.countItemsToPublishAndUpdateCounterElements();
+                        this.initialContentsResolvedWithChildren.setAlreadyResolved(false);
+                        this.initialContentsResolvedWithoutChildren.setAlreadyResolved(false);
+                        this.dependantContentsResolvedWithChildren.setAlreadyResolved(false);
+                        this.dependantContentsResolvedWithoutChildren.setAlreadyResolved(false);
+                        this.resolvePublishRequestedContentsAndUpdateView();
+                        this.resolveAllDependantsIfNeededAndUpdateView();
                     }).
                     build();
                 this.selectionItems.push(item);
@@ -359,10 +362,6 @@ module app.publish {
                     setIsHidden(false).
                     setIsChecked(true).
                     setExpandable(false).
-                    setChangeCallback(() => {
-                    }).
-                    setToggleCallback(() => {
-                    }).
                     build();
 
                 selectionItem.appendDependant(dependantView);
@@ -538,6 +537,10 @@ module app.publish {
             return this.alreadyResolved;
         }
 
+        setAlreadyResolved(value: boolean) {
+            this.alreadyResolved = value;
+        }
+
         setContentsResolved(contentsResolvedWithChildren: M[]) {
             this.contentsResolved = contentsResolvedWithChildren;
             this.alreadyResolved = true;
@@ -561,9 +564,11 @@ module app.publish {
         removeItemsThatDependOnId(id: String) {
             if (this.alreadyResolved) {
                 for (var i = 0; i < this.contentsResolved.length; i++) {
-                    if (id == (<ContentPublishDependantItem>this.contentsResolved[i]).getDependsOnContentId()) {
-                        this.contentsResolved.splice(i, 1);
-                        i = -1;
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(this.contentsResolved[i], ContentPublishDependantItem)) {
+                        if (id == (<any>this.contentsResolved[i]).getDependsOnContentId()) {
+                            this.contentsResolved.splice(i, 1);
+                            i = -1;
+                        }
                     }
                 }
             }
