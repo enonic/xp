@@ -40,7 +40,7 @@ module app.publish {
             return object.getPath().toString();
         }
 
-        resolveIconUrl(object: M): string {
+        resolveIconUrl(object: any): string {
             return new ContentIconUrlResolver().setContent(object).resolve();
         }
     }
@@ -84,7 +84,7 @@ module app.publish {
             return object.getType() ? object.getType().getLocalName() : "";
         }
 
-        resolveIconUrl(object: M): string {
+        resolveIconUrl(object: any): string {
             return new ContentIconUrlResolver().setContent(object).resolve();
         }
 
