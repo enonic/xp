@@ -74,42 +74,6 @@ public class ModuleResourceTest
         Mockito.verify( this.moduleService ).stopModule( ModuleKey.from( "testmodule" ) );
     }
 
-    @Test
-    public void update_module()
-        throws Exception
-    {
-        request().
-            path( "module/update" ).
-            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            post();
-
-        Mockito.verify( this.moduleService ).updateModule( ModuleKey.from( "testmodule" ) );
-    }
-
-    @Test
-    public void uninstall_module()
-        throws Exception
-    {
-        request().
-            path( "module/uninstall" ).
-            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            post();
-
-        Mockito.verify( this.moduleService ).uninstallModule( ModuleKey.from( "testmodule" ) );
-    }
-
-    @Test
-    public void install_module()
-        throws Exception
-    {
-        request().
-            path( "module/install" ).
-            entity( "{\"url\":\"http://some.host/some.path\"}", MediaType.APPLICATION_JSON_TYPE ).
-            post();
-
-        Mockito.verify( this.moduleService ).installModule( "http://some.host/some.path" );
-    }
-
     private Module createModule()
     {
         final Form config = Form.newForm().
