@@ -3,7 +3,13 @@
 tinymce.PluginManager.add('link', function (editor) {
 
     function showDialog() {
-        editor.execCommand("openLinkDialog", editor);
+        var selectedElm = editor.selection.getNode();
+        var anchorElm = editor.dom.getParent(selectedElm, 'a[href]');
+
+        editor.execCommand("openLinkDialog", {
+            editor: editor,
+            link: anchorElm
+        });
     }
 
     editor.addButton('link', {

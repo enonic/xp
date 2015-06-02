@@ -16,10 +16,25 @@ module api.dom {
             return this;
         }
 
-
         public setTitle(value: string): AEl {
             this.getEl().setTitle(value);
             return this;
+        }
+
+        public getTitle(): string {
+            return this.getEl().getTitle();
+        }
+
+        public getHref(): string {
+            return this.getEl().getAttribute('href');
+        }
+
+        public getTarget(): string {
+            return this.getEl().getAttribute('target');
+        }
+
+        public getText(): string {
+            return this.getEl().getText();
         }
     }
 }

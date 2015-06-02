@@ -212,10 +212,15 @@ module api.form.inputtype.text {
             wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
         }
 
-        private openLinkDialog(editor: TinyMceEditor) {
-            var linkModalDialog = new LinkModalDialog(editor);
+        private openLinkDialog(linkConfig: LinkConfig) {
+            var linkModalDialog = new LinkModalDialog(linkConfig.editor, linkConfig.link);
             linkModalDialog.open();
         }
+    }
+
+    interface LinkConfig {
+        editor: TinyMceEditor
+        link: HTMLElement
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));

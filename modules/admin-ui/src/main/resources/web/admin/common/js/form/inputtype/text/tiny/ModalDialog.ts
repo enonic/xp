@@ -5,11 +5,11 @@ module api.form.inputtype.text.tiny {
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
-    import Validators = api.ui.form.Validators;
     import BaseDialog = api.ui.dialog.ModalDialog;
 
     export class ModalDialog extends BaseDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
+        private validated = false;
 
         constructor(title: api.ui.dialog.ModalDialogHeader) {
             super({
@@ -20,6 +20,10 @@ module api.form.inputtype.text.tiny {
 
             this.layout();
             this.initializeActions();
+        }
+
+        setValidated() {
+            this.validated = true;
         }
 
         layout() {
@@ -55,15 +59,6 @@ module api.form.inputtype.text.tiny {
             return panel;
         }
 
-        private getMandatoryValidationRecording(name: string): ValidationRecording {
-            var recording = new ValidationRecording(),
-                validationRecordingPath = new ValidationRecordingPath(null, name, 1, 1);
-
-            recording.breaksMinimumOccurrences(validationRecordingPath);
-
-            return recording;
-        }
-
         private createFieldSet(formItem: FormItem): Fieldset {
             var fieldSet = new Fieldset();
 
@@ -75,31 +70,54 @@ module api.form.inputtype.text.tiny {
 
                 fieldSet.appendChild(validationRecordingViewer);
                 fieldSet.onValidityChanged((event: ValidityChangedEvent) => {
-                    var validationRecording = event.isValid() ?
-                                              new ValidationRecording() :
-                                              this.getMandatoryValidationRecording(formItem.getLabel().getValue());
-
-                    validationRecordingViewer.setObject(validationRecording);
+                    validationRecordingViewer.setError(formItem.getError());
                 });
             }
 
             return fieldSet;
         }
 
-        protected createFormItem(id: string, label: string, required: boolean, inputEl?: api.dom.FormItemEl): FormItem {
+        onValidatedFieldValueChanged(formItem: FormItem) {
+            if (this.validated) {
+                formItem.validate(new api.ui.form.ValidationResult(), true);
+            }
+        }
+
+        protected createFormItem(id: string, label: string, validator?: (input: api.dom.FormInputEl) => string, value?: string,
+                                 inputEl?: api.dom.FormItemEl): FormItem {
             var formItemEl = inputEl || new api.ui.text.TextInput(),
-                formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label);
+                formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
+                formItem;
 
             if (this.fields[id]) {
                 throw "Element with id " + id + " already exists";
             }
-            this.fields[id] = formItemEl;
 
-            if (required) {
-                formItemBuilder.setValidator(Validators.required);
+            if (value) {
+                (<api.dom.InputEl>formItemEl).setValue(value);
             }
 
-            return formItemBuilder.build();
+            this.fields[id] = formItemEl;
+
+            if (validator) {
+                formItemBuilder.setValidator(validator);
+            }
+
+            formItem = formItemBuilder.build();
+
+            if (validator) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(formItemEl, api.ui.text.TextInput)) {
+                    (<api.ui.text.TextInput>formItemEl).onValueChanged(this.onValidatedFieldValueChanged.bind(this, formItem));
+                }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(formItemEl, api.ui.selector.combobox.RichComboBox)) {
+                    (<api.ui.selector.combobox.RichComboBox<any>>formItemEl).onOptionSelected(this.onValidatedFieldValueChanged.bind(this,
+                        formItem));
+                    (<api.ui.selector.combobox.RichComboBox<any>>formItemEl).onOptionDeselected(this.onValidatedFieldValueChanged.bind(this,
+                        formItem));
+                }
+            }
+
+            return formItem;
         }
 
         protected initializeActions() {
