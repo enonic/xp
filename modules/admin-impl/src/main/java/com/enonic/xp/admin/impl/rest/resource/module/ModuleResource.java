@@ -69,36 +69,6 @@ public final class ModuleResource
         return new ModuleSuccessJson();
     }
 
-    @POST
-    @Path("update")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson update( final ModuleListParams params )
-        throws Exception
-    {
-        params.getModuleKeys().forEach( this.moduleService::updateModule );
-        return new ModuleSuccessJson();
-    }
-
-    @POST
-    @Path("uninstall")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson uninstall( final ModuleListParams params )
-        throws Exception
-    {
-        params.getModuleKeys().forEach( this.moduleService::uninstallModule );
-        return new ModuleSuccessJson();
-    }
-
-    @POST
-    @Path("install")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson install( final ModuleInstallParams params )
-        throws Exception
-    {
-        this.moduleService.installModule( params.getUrl() );
-        return new ModuleSuccessJson();
-    }
-
     @Reference
     public void setModuleService( final ModuleService moduleService )
     {
