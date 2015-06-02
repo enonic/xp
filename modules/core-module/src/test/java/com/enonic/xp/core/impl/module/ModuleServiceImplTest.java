@@ -100,36 +100,6 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void testInstallModule()
-        throws Exception
-    {
-        this.service.installModule( "http://some.host/some.path" );
-        Mockito.verify( this.bundleContext ).installBundle( "http://some.host/some.path" );
-    }
-
-    @Test
-    public void testUninstallModule()
-        throws Exception
-    {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
-
-        this.service.uninstallModule( module.getKey() );
-        Mockito.verify( module.getBundle() ).uninstall();
-    }
-
-    @Test
-    public void testUpdateModule()
-        throws Exception
-    {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
-
-        this.service.updateModule( module.getKey() );
-        Mockito.verify( module.getBundle() ).update();
-    }
-
-    @Test
     public void testStartModule()
         throws Exception
     {

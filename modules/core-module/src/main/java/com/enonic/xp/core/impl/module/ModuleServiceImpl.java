@@ -64,19 +64,6 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public void installModule( final String url )
-    {
-        try
-        {
-            this.bundleContext.installBundle( url );
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    @Override
     public void startModule( final ModuleKey key )
     {
         startModule( getModule( key ) );
@@ -87,18 +74,6 @@ public final class ModuleServiceImpl
     public void stopModule( final ModuleKey key )
     {
         stopModule( getModule( key ) );
-    }
-
-    @Override
-    public void updateModule( final ModuleKey key )
-    {
-        updateModule( getModule( key ) );
-    }
-
-    @Override
-    public void uninstallModule( final ModuleKey key )
-    {
-        uninstallModule( getModule( key ) );
     }
 
     private void startModule( final Module module )
@@ -118,30 +93,6 @@ public final class ModuleServiceImpl
         try
         {
             module.getBundle().stop();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private void updateModule( final Module module )
-    {
-        try
-        {
-            module.getBundle().update();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private void uninstallModule( final Module module )
-    {
-        try
-        {
-            module.getBundle().uninstall();
         }
         catch ( final Exception e )
         {
