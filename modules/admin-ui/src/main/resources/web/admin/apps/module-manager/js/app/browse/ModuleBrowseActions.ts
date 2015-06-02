@@ -6,11 +6,8 @@ module app.browse {
 
     export class ModuleBrowseActions implements TreeGridActions<Module>  {
 
-        public INSTALL_MODULE: api.ui.Action;
-        public UNINSTALL_MODULE: api.ui.Action;
         public START_MODULE: api.ui.Action;
         public STOP_MODULE: api.ui.Action;
-        public UPDATE_MODULE: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
@@ -27,13 +24,10 @@ module app.browse {
 
         constructor(moduleTreeGrid: ModuleTreeGrid) {
 
-            this.INSTALL_MODULE = new InstallModuleAction();
-            this.UNINSTALL_MODULE = new UninstallModuleAction(moduleTreeGrid);
             this.START_MODULE = new StartModuleAction(moduleTreeGrid);
             this.STOP_MODULE = new StopModuleAction(moduleTreeGrid);
-            this.UPDATE_MODULE = new UpdateModuleAction(moduleTreeGrid);
 
-            this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE);
+            this.allActions.push(this.START_MODULE, this.STOP_MODULE);
 
             ModuleBrowseActions.INSTANCE = this;
         }
@@ -56,11 +50,8 @@ module app.browse {
                 }
             });
 
-            this.INSTALL_MODULE.setEnabled(true);
-            this.UNINSTALL_MODULE.setEnabled(anyStopped);
             this.START_MODULE.setEnabled(anyStopped);
             this.STOP_MODULE.setEnabled(anyStarted);
-            this.UPDATE_MODULE.setEnabled(anyStarted);
 
             var deferred = wemQ.defer<BrowseItem<Module>[]>();
             deferred.resolve(moduleBrowseItems);

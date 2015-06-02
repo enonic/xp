@@ -78,22 +78,6 @@ module app.browse {
                     .then(() => {
                     }).done();
             });
-            UpdateModuleEvent.on((event: UpdateModuleEvent) => {
-                var moduleKeys = ModuleKey.fromModules(event.getModules());
-                new UpdateModuleRequest(moduleKeys).sendAndParse().done();
-            });
-            UninstallModuleEvent.on((event: UninstallModuleEvent) => {
-                var moduleKeys = ModuleKey.fromModules(event.getModules());
-                new UninstallModuleRequest(moduleKeys).sendAndParse()
-                    .then(() => {
-                        this.moduleTreeGrid.reload();
-                    }).done();
-            });
-
-            var installModuleDialog = new InstallModuleDialog(this.moduleTreeGrid);
-            InstallModuleEvent.on((event: InstallModuleEvent) => {
-                installModuleDialog.open();
-            });
 
             api.module.ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
                 if (ModuleUpdatedEventType.INSTALLED == event.getEventType()) {
