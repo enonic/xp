@@ -4,11 +4,8 @@ module app.browse {
 
         constructor(actions:ModuleBrowseActions) {
             super();
-            super.addAction(actions.INSTALL_MODULE);
-            super.addAction(actions.UNINSTALL_MODULE);
             super.addAction(actions.START_MODULE);
             super.addAction(actions.STOP_MODULE);
-            super.addAction(actions.UPDATE_MODULE);
         }
     }
 }
