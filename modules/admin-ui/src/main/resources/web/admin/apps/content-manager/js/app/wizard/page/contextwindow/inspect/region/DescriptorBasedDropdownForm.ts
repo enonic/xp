@@ -7,12 +7,18 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private templateSelector: Dropdown<api.content.page.Descriptor>;
 
-        constructor(templateSelector: Dropdown<api.content.page.Descriptor>) {
+        constructor(templateSelector: Dropdown<api.content.page.Descriptor>, title?: string) {
             super('descriptor-based-dropdown-form');
             this.templateSelector = templateSelector;
 
             var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).build());
+            if (!api.util.StringHelper.isBlank(title)) {
+                fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel(title).build());
+            }
+            else {
+                fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).build());
+            }
+
             this.add(fieldSet);
         }
 

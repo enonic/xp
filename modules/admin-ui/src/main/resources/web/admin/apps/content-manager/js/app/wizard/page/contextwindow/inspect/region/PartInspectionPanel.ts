@@ -44,7 +44,7 @@ module app.wizard.page.contextwindow.inspect.region {
             var loader = new PartDescriptorLoader(descriptorsRequest);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.partSelector = new PartDescriptorDropdown("", {loader: loader});
-            this.partForm = new DescriptorBasedDropdownForm(this.partSelector);
+            this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
             loader.load();
 
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
