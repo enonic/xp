@@ -2,8 +2,6 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -44,8 +42,6 @@ public final class PortalRequest
     private ContentPath contentPath;
 
     private String baseUri;
-
-    private HttpServletRequest rawRequest;
 
     private Site site;
 
@@ -212,11 +208,6 @@ public final class PortalRequest
         return ( this.content != null ) ? this.content.getPath() : this.contentPath;
     }
 
-    public HttpServletRequest getRawRequest()
-    {
-        return this.rawRequest;
-    }
-
     public String getBaseUri()
     {
         return this.baseUri;
@@ -230,11 +221,6 @@ public final class PortalRequest
     public void setBaseUri( final String baseUri )
     {
         this.baseUri = baseUri;
-    }
-
-    public void setRawRequest( final HttpServletRequest rawRequest )
-    {
-        this.rawRequest = rawRequest;
     }
 
     public Map<String, String> getCookies()
