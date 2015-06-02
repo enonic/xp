@@ -6,10 +6,10 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.wem.repo.internal.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.NGramFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldName;
+import com.enonic.xp.query.expr.FunctionExpr;
 
 public class FunctionQueryBuilderFactory
 {
@@ -39,7 +39,7 @@ public class FunctionQueryBuilderFactory
         }
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() );
+            defaultOperator( arguments.getOperator() ).analyzer( arguments.getAnalyzer() );
 
         appendQueryFieldNames( arguments, builder );
 
@@ -51,7 +51,7 @@ public class FunctionQueryBuilderFactory
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() );
+            defaultOperator( arguments.getOperator() ).analyzer( arguments.getAnalyzer() );
 
         appendQueryFieldNames( arguments, builder );
 
