@@ -187,12 +187,8 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
-        }
 
-        remove(): PageView {
-            super.remove();
-            this.unregisterPageModel(this.pageModel);
-            return this;
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
         }
 
         private setIgnorePropertyChanges(value: boolean) {
