@@ -136,7 +136,6 @@ module api.form.inputtype.text.tiny {
         }
 
         private static validationRequiredEmail(input: api.dom.FormInputEl): string {
-            debugger;
             var isValid;
 
             if (!(isValid = Validators.required(input))) {
