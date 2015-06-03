@@ -18,26 +18,22 @@ public final class PortalResponse
 
     public final static int STATUS_METHOD_NOT_ALLOWED = 405;
 
-    private int status;
+    private int status = STATUS_OK;
 
-    private String contentType;
+    private String contentType = "text/plain; charset=utf-8";
 
     private Object body;
 
     private final Map<String, String> headers;
 
-    private boolean postProcess;
+    private boolean postProcess = true;
 
     private final ListMultimap<HtmlTag, String> contributions;
 
-    public PortalResponse( Builder builder )
+    public PortalResponse()
     {
-        this.status = builder.status;
-        this.contentType = builder.contentType;
-        this.body = builder.body;
-        this.headers = builder.headers;
-        this.postProcess = builder.postProcess;
-        this.contributions = builder.contributions;
+        this.headers = Maps.newHashMap();
+        this.contributions = ArrayListMultimap.create();
     }
 
     public int getStatus()
@@ -45,9 +41,26 @@ public final class PortalResponse
         return this.status;
     }
 
+    public void setStatus( final int status )
+    {
+        this.status = status;
+    }
+
     public String getContentType()
     {
         return this.contentType;
+    }
+
+    public void setContentType( String contentType )
+    {
+        if ( contentType != null )
+        {
+            if ( contentType.indexOf( "charset" ) < 1 && contentType.startsWith( "text/html" ) )
+            {
+                contentType += "; charset=utf-8";
+            }
+        }
+        this.contentType = contentType;
     }
 
     public Object getBody()
@@ -55,9 +68,19 @@ public final class PortalResponse
         return this.body;
     }
 
+    public void setBody( final Object body )
+    {
+        this.body = body;
+    }
+
     public Map<String, String> getHeaders()
     {
         return this.headers;
+    }
+
+    public void addHeader( final String name, final String value )
+    {
+        this.headers.put( name, value );
     }
 
     public boolean isPostProcess()
@@ -65,125 +88,18 @@ public final class PortalResponse
         return postProcess;
     }
 
-    public List<String> getContributions( final HtmlTag tag )
+    public void setPostProcess( final boolean postProcess )
     {
-        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : Collections.emptyList();
+        this.postProcess = postProcess;
     }
 
-    public static Builder create()
+    public void addContribution( final HtmlTag htmlTag, final String value )
     {
-        return new Builder();
+        this.contributions.put( htmlTag, value );
     }
 
-    public static Builder create( PortalResponse source )
+    public List<String> getContributions( final HtmlTag htmlTag )
     {
-        return new Builder().
-            body( source.body ).
-            headers( source.headers ).
-            contentType( source.contentType ).
-            postProcess( source.postProcess ).
-            contributions( source.contributions ).
-            status( source.status );
-    }
-
-    public static class Builder
-    {
-        private Object body;
-
-        private Map<String, String> headers;
-
-        private String contentType = "text/plain; charset=utf-8";
-
-        private boolean postProcess = true;
-
-        private ListMultimap<HtmlTag, String> contributions;
-
-        private int status = STATUS_OK;
-
-        {
-            clearHeaders();
-            clearContributions();
-        }
-
-
-        public Builder body( final Object body )
-        {
-            this.body = body;
-            return this;
-        }
-
-        public Builder headers( final Map<String, String> headers )
-        {
-            this.headers = headers;
-            return this;
-        }
-
-        public Builder header( final String key, final String value )
-        {
-            if ( headers == null )
-            {
-                clearHeaders();
-            }
-            this.headers.put( key, value );
-            return this;
-        }
-
-        public Builder clearHeaders()
-        {
-            headers = Maps.newHashMap();
-            return this;
-        }
-
-        public Builder contentType( String contentType )
-        {
-            if ( contentType != null )
-            {
-                if ( contentType.indexOf( "charset" ) < 1 && contentType.startsWith( "text/html" ) )
-                {
-                    contentType += "; charset=utf-8";
-                }
-            }
-            this.contentType = contentType;
-            return this;
-        }
-
-        public Builder postProcess( final boolean postProcess )
-        {
-            this.postProcess = postProcess;
-            return this;
-        }
-
-        public Builder contributions( final ListMultimap<HtmlTag, String> contributions )
-        {
-            this.contributions = contributions;
-            return this;
-        }
-
-        public Builder contribution( final HtmlTag tag, final String value )
-        {
-            if ( this.contributions == null )
-            {
-                clearContributions();
-            }
-            this.contributions.put( tag, value );
-            return this;
-        }
-
-        public Builder clearContributions()
-        {
-            this.contributions = ArrayListMultimap.create();
-            return this;
-        }
-
-        public Builder status( final int status )
-        {
-            this.status = status;
-            return this;
-        }
-
-        public PortalResponse build()
-        {
-            return new PortalResponse( this );
-        }
+        return this.contributions.containsKey( htmlTag ) ? this.contributions.get( htmlTag ) : Collections.emptyList();
     }
 }

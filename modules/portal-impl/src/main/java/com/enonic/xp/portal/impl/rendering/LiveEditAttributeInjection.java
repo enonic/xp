@@ -9,12 +9,12 @@ final class LiveEditAttributeInjection
     {
     }
 
-    public PortalResponse injectLiveEditAttribute( final PortalResponse response, final ComponentType componentType )
+    public void injectLiveEditAttribute( final PortalResponse response, final ComponentType componentType )
     {
         final Object bodyObj = response.getBody();
         if ( !( bodyObj instanceof String ) )
         {
-            return response;
+            return;
         }
 
         final String responseHtml = (String) bodyObj;
@@ -34,7 +34,7 @@ final class LiveEditAttributeInjection
         }
         if ( ch != '<' )
         {
-            return response; // no opening tag found, live edit attribute cannot be injected
+            return; // no opening tag found, live edit attribute cannot be injected
         }
 
         int startAttrPos = 0;
@@ -53,9 +53,8 @@ final class LiveEditAttributeInjection
         {
             final String liveEditAttribute = " " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"" + componentType.toString() + "\"";
             final String injectedHtml = new StringBuilder( responseHtml ).insert( startAttrPos, liveEditAttribute ).toString();
-            return PortalResponse.create( response ).body( injectedHtml ).build();
+            response.setBody( injectedHtml );
         }
-        return response;
     }
 
     private int skipXmlDeclaration( final String responseHtml, final int initialPosition )

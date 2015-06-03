@@ -25,7 +25,7 @@ public class TextRendererTest
     public void before()
     {
         portalRequest = new PortalRequest();
-        portalResponse = PortalResponse.create().build();
+        portalResponse = new PortalResponse();
         portalRequest.setMode( RenderMode.LIVE );
     }
 

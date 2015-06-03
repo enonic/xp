@@ -66,7 +66,7 @@ public class ServiceResourceTest
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
         assertNotNull( portalRequest );
@@ -90,7 +90,7 @@ public class ServiceResourceTest
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
 
@@ -110,7 +110,7 @@ public class ServiceResourceTest
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
-        Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
+        Mockito.verify( this.controllerScript ).execute( jsRequest.capture(), jsResponse.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
         assertNotNull( portalRequest.getModule() );

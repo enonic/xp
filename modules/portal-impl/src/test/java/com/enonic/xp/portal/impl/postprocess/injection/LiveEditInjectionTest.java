@@ -31,7 +31,7 @@ public class LiveEditInjectionTest
     public void setup()
     {
         this.portalRequest = new PortalRequest();
-        this.portalResponse = PortalResponse.create().build();
+        this.portalResponse = new PortalResponse();
         mockCurrentContextHttpRequest();
 
         this.injection = new LiveEditInjection();

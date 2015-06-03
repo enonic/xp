@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.controller;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalResponse;
 
@@ -17,6 +18,17 @@ public class ControllerScriptImpl_simpleTest
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
     }
 
+    @Test
+    public void testExecutePostProcess()
+    {
+        this.portalRequest.setMethod( "GET" );
+        this.portalResponse.setPostProcess( true );
+
+        execute( "mymodule:/controller/simple.js" );
+
+        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        Mockito.verify( this.postProcessor ).processResponse( this.portalRequest, this.portalResponse );
+    }
 
     @Test
     public void testMethodNotSupported()

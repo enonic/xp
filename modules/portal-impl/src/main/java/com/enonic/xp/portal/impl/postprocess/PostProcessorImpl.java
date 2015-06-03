@@ -55,7 +55,8 @@ public final class PostProcessorImpl
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
 
-        return PortalResponse.create( portalResponse ).body( evaluator.evaluate() ).build();
+        portalResponse.setBody( evaluator.evaluate() );
+        return portalResponse;
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

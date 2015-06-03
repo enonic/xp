@@ -5,5 +5,5 @@ import com.enonic.xp.portal.PortalResponse;
 
 public interface ControllerScript
 {
-    public PortalResponse execute( PortalRequest portalRequest );
+    public void execute( PortalRequest portalRequest, PortalResponse portalResponse );
 }

@@ -25,12 +25,14 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInstruction( new TestPostProcessInstruction() );
 
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+        final PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
+        portalResponse.setBody( html );
 
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( "GET" );
 
-        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+        postProcessor.processResponse( portalRequest, portalResponse );
 
         final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult1.html" );
@@ -47,12 +49,14 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInjection( new TestPostProcessInjection() );
 
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+        final PortalResponse portalResponse = new PortalResponse();
+        portalResponse.setPostProcess( true );
+        portalResponse.setBody( html );
 
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( "GET" );
 
-        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+        postProcessor.processResponse( portalRequest, portalResponse );
 
         final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult2.html" );
