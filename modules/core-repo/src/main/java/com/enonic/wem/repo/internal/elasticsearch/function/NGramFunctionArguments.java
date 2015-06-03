@@ -9,8 +9,6 @@ import com.enonic.xp.query.expr.ValueExpr;
 public class NGramFunctionArguments
     extends AbstractSimpleQueryStringFunction
 {
-    private static final String NGRAM_ANALYZER = "ngram_search";
-
     @Override
     public String getFunctionName()
     {
@@ -26,11 +24,5 @@ public class NGramFunctionArguments
     public String resolveQueryFieldName( final String baseFieldName )
     {
         return IndexQueryFieldNameResolver.resolveNGramFieldName( baseFieldName );
-    }
-
-    @Override
-    public String getAnalyzer()
-    {
-        return NGRAM_ANALYZER;
     }
 }

@@ -90,9 +90,4 @@ public abstract class AbstractSimpleQueryStringFunction
     }
 
     public abstract String resolveQueryFieldName( final String baseFieldName );
-
-    public String getAnalyzer()
-    {
-        return null;
-    }
 }

@@ -39,7 +39,7 @@ public class FunctionQueryBuilderFactory
         }
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() ).analyzer( arguments.getAnalyzer() );
+            defaultOperator( arguments.getOperator() );
 
         appendQueryFieldNames( arguments, builder );
 
@@ -51,7 +51,7 @@ public class FunctionQueryBuilderFactory
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
-            defaultOperator( arguments.getOperator() ).analyzer( arguments.getAnalyzer() );
+            defaultOperator( arguments.getOperator() );
 
         appendQueryFieldNames( arguments, builder );
 
