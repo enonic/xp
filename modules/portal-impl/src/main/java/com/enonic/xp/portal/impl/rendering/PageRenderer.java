@@ -30,9 +30,10 @@ public final class PageRenderer
     }
 
     @Override
-    public RenderResult render( final Content content, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public RenderResult render( final Content content, final PortalRequest portalRequest )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
+        final PortalResponse portalResponse = new PortalResponse();
 
         if ( pageDescriptor != null )
         {

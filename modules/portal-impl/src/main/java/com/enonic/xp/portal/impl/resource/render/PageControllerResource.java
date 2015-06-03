@@ -15,6 +15,6 @@ public final class PageControllerResource
     protected RenderResult execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
         throws Exception
     {
-        return this.renderer.render( this.content, portalRequest, portalResponse );
+        return this.renderer.render( this.content, portalRequest );
     }
 }

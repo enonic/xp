@@ -34,7 +34,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     protected ControllerScriptFactory controllerScriptFactory;
 
     @Override
-    public final RenderResult render( final R component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public final RenderResult render( final R component, final PortalRequest portalRequest )
     {
         final Descriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
@@ -47,6 +47,8 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
+        final PortalResponse portalResponse = new PortalResponse();
+
         try
         {
             portalRequest.setComponent( component );

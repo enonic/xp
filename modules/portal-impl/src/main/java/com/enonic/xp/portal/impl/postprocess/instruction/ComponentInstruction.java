@@ -91,7 +91,7 @@ public final class ComponentInstruction
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
 
-        final RenderResult result = renderer.render( component, portalRequest, portalResponse );
+        final RenderResult result = renderer.render( component, portalRequest );
         return result.getAsString();
     }
 

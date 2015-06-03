@@ -35,9 +35,11 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
+        final PortalResponse portalResponse = new PortalResponse();
+
         portalResponse.setContentType( "text/html" );
         portalResponse.setPostProcess( false );
 

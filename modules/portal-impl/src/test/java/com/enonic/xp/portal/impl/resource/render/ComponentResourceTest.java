@@ -45,15 +45,14 @@ public class ComponentResourceTest
             header( "some-heaer", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -96,15 +95,14 @@ public class ComponentResourceTest
             header( "some-heaer", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
         final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        final ArgumentCaptor<PortalResponse> jsResponse = ArgumentCaptor.forClass( PortalResponse.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
-        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture(), jsResponse.capture() );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );
     }

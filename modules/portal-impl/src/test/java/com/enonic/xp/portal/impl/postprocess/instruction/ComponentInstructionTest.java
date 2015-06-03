@@ -168,7 +168,7 @@ public class ComponentInstructionTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+            public RenderResult render( final Renderable component, final PortalRequest portalRequest )
             {
                 return RenderResult.newRenderResult().entity( renderResult ).build();
             }

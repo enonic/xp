@@ -15,6 +15,6 @@ public final class ComponentControllerResource
     protected RenderResult execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
         throws Exception
     {
-        return this.renderer.render( this.component, portalRequest, portalResponse );
+        return this.renderer.render( this.component, portalRequest );
     }
 }

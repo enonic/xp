@@ -74,7 +74,7 @@ public class RendererFactoryImplTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+            public RenderResult render( final Renderable component, final PortalRequest portalRequest )
             {
                 return null;
             }

@@ -31,9 +31,11 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
+        final PortalResponse portalResponse = new PortalResponse();
+
         portalResponse.setContentType( "text/html" );
         portalResponse.setPostProcess( false );
 
