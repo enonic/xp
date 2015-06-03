@@ -14,16 +14,18 @@ module api.ui.button {
             this.appendChild(this.labelEl);
         }
 
-        setEnabled(value: boolean) {
+        setEnabled(value: boolean): Button {
             this.getEl().setDisabled(!value);
+            return this;
         }
 
         isEnabled() {
             return !this.getEl().isDisabled();
         }
 
-        setLabel(label: string) {
+        setLabel(label: string): Button {
             this.labelEl.getEl().setInnerHtml(label);
+            return this;
         }
 
         getLabel(): string {

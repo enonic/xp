@@ -234,12 +234,13 @@ module api.dom {
             this.notifyHidden(this);
         }
 
-        setVisible(value: boolean) {
+        setVisible(value: boolean): Element {
             if (value) {
                 this.show();
             } else {
                 this.hide();
             }
+            return this;
         }
 
         isVisible() {
