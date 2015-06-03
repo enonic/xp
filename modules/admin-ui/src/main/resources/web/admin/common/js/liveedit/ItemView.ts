@@ -234,7 +234,7 @@ module api.liveedit {
         }
 
         shade() {
-            Shader.get().shadeItemView(this);
+            Shader.get().shade(this);
         }
 
         unshade() {
