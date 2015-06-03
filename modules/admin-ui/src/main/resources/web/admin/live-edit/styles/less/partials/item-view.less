@@ -52,9 +52,23 @@
   text-align: center;
   .box-sizing(border-box);
 
+  .display-name {
+    display: none;
+    color: #224E83;
+    margin: 0;
+    line-height: 37px;
+    position: relative; // set the position to appear on top of the absolutely positioned :before
+
+    .ellipsis();
+  }
+
   [data-portal-placeholder=true] & {
     background-color: white;
     border: 1px solid @admin-medium-gray-border;
+
+    .display-name {
+      display: block;
+    }
 
     &:hover {
       border-color: transparent;

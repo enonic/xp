@@ -3,16 +3,22 @@ module api.content {
 
     export class DeleteContentResult {
 
-        private deleteSuccess: ContentPath[];
+        private deleteSuccess: string[];
+        private deletePending: string[];
         private deleteFailures: DeleteContentResultFailure[];
 
-        constructor(success: ContentPath[], failures: DeleteContentResultFailure[]) {
-            this.deleteSuccess = success;
-            this.deleteFailures = failures;
+        constructor(success: string[], pending: string[], failures: DeleteContentResultFailure[]) {
+            this.deleteSuccess = !!success ? success : [];
+            this.deleteFailures = !!failures ? failures : [];
+            this.deletePending = !!pending ? pending : [];
         }
 
-        getDeleted(): ContentPath[] {
+        getDeleted(): string[] {
             return this.deleteSuccess;
+        }
+
+        getPendings(): string[] {
+            return this.deletePending;
         }
 
         getDeleteFailures(): DeleteContentResultFailure[] {
@@ -20,26 +26,33 @@ module api.content {
         }
 
         static fromJson(json: DeleteContentResultJson): DeleteContentResult {
-            var success: ContentPath[] = json.successes.map((success) => ContentPath.fromString(success.path));
-            var failure: DeleteContentResultFailure[] = json.failures.
-                map((success) => new DeleteContentResultFailure(ContentPath.fromString(success.path), success.reason));
-            return new DeleteContentResult(success, failure);
+            if (json.successes) {
+                var success: string[] = json.successes.map((success) => success.name);
+            }
+            if (json.pendings) {
+                var pending: string[] = json.pendings.map((pending) => pending.name);
+            }
+            if (json.failures) {
+                var failure: DeleteContentResultFailure[] = json.failures.
+                    map((failure) => new DeleteContentResultFailure(failure.name, failure.reason));
+            }
+            return new DeleteContentResult(success, pending, failure);
         }
 
     }
 
     export class DeleteContentResultFailure {
 
-        private path: ContentPath;
+        private name: string;
         private reason: string;
 
-        constructor(path: ContentPath, reason: string) {
-            this.path = path;
+        constructor(name: string, reason: string) {
+            this.name = name;
             this.reason = reason;
         }
 
-        getPath(): ContentPath {
-            return this.path;
+        getPath(): string {
+            return this.name;
         }
 
         getReason(): string {

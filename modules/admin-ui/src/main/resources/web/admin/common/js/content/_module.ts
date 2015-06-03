@@ -91,3 +91,5 @@
 ///<reference path='ImageUploader.ts' />
 ///<reference path='ThumbnailUploader.ts' />
 
+///<reference path='EditContentEvent.ts' />
+

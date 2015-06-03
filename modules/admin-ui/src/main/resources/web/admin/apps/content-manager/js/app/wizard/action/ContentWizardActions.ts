@@ -46,7 +46,7 @@ module app.wizard.action {
         enableActionsForNew() {
             this.save.setEnabled(true);
             this.duplicate.setEnabled(false);
-            this.delete.setEnabled(false)
+            this.delete.setEnabled(true)
         }
 
         enableActionsForExisting(existing: api.content.Content) {

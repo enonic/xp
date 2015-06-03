@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.awt.image.BufferedImage;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -50,7 +51,8 @@ public final class ContentImageResource
 
     @GET
     @Path("{contentId}")
-    public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size )
+    public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size,
+                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -69,7 +71,7 @@ public final class ContentImageResource
 
         if ( content instanceof Media )
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size );
+            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth );
             if ( resolvedImage.isOK() )
             {
                 final CacheControl cacheControl = new CacheControl();
@@ -90,7 +92,7 @@ public final class ContentImageResource
     }
 
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size )
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -99,7 +101,11 @@ public final class ContentImageResource
             if ( binary != null )
             {
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                final ImageParams imageParams = ImageParams.newImageParams().size( size ).orientation( imageOrientation ).build();
+                final ImageParams imageParams = ImageParams.newImageParams().
+                    size( size ).
+                    orientation( imageOrientation ).
+                    scaleWidth( scaleWidth ).
+                    build();
 
                 final BufferedImage contentImage = helper.readAndRotateImage( binary, imageParams );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );

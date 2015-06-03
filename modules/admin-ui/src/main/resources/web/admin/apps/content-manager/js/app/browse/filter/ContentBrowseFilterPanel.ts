@@ -65,17 +65,31 @@ module app.browse.filter {
 
             var isClean = !this.hasFilterSet();
             if (isClean) {
-                if (event instanceof RefreshEvent) {
-                    this.resetFacets(true, true).then(() => {
-                        new ContentBrowseRefreshEvent().fire();
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
-                } else { // it's SearchEvent, usual reset with grid reload
-                    this.reset();
-                }
+                this.handleEmptyFilterInput(event);
                 return;
             }
+
+            var contentQuery: ContentQuery = this.createContentQuery(event);
+            var searchString: string = event.getSearchInputValues().getTextSearchFieldValue();
+
+            this.searchDataAndHandleResponse(contentQuery, searchString);
+        }
+
+        private handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
+            if (event instanceof RefreshEvent) {
+
+                this.resetFacets(true, true).then(() => {
+                    new ContentBrowseRefreshEvent().fire();
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
+
+            } else { // it's SearchEvent, usual reset with grid reload
+                this.reset();
+            }
+        }
+
+        private createContentQuery(event: api.app.browse.filter.SearchEvent): ContentQuery {
             var contentQuery: ContentQuery = new ContentQuery();
             this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
             this.appendContentTypeFilter(event.getSearchInputValues(), contentQuery);
@@ -90,11 +104,14 @@ module app.browse.filter {
             this.appendContentTypesAggregationQuery(contentQuery);
             this.appendLastModifiedAggregationQuery(contentQuery);
 
+            return contentQuery;
+        }
+
+        private searchDataAndHandleResponse(contentQuery: ContentQuery, searchString: string) {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                    var searchStrValue: string = event.getSearchInputValues().getTextSearchFieldValue();
-                    if (searchStrValue != null && searchStrValue.length > 0) {
+                    if (!api.util.StringHelper.isEmpty(searchString)) {
                         this.updateAggregations(contentQueryResult.getAggregations(), true);
                         new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
 

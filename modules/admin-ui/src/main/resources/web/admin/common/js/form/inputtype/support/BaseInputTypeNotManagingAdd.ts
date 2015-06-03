@@ -35,11 +35,12 @@ module api.form.inputtype.support {
                 handle: '.drag-control',
                 tolerance: 'pointer',
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                stop: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStop(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
         }
 
-        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+        handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
             var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
@@ -47,7 +48,11 @@ module api.form.inputtype.support {
             ui.placeholder.html("Drop form item set here");
         }
 
-        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+        handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
+            //override in child classes if needed
+        }
+
+        handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
                 var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);

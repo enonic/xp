@@ -76,10 +76,6 @@ module api.liveedit {
             this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
                 // don't parse on regions change during reset, because it'll be done when page is loaded later
                 if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
-                    this.regionViews.forEach((regionView)=> {
-                        this.unregisterRegionView(regionView)
-                    });
-
                     this.parseItemViews();
                 }
                 this.refreshEmptyState();
@@ -87,7 +83,10 @@ module api.liveedit {
             pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
+                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                if (PageView.debug) {
+                    console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
+                }
                 resetAction.setEnabled(resetEnabled);
             };
             pageModel.onPageModeChanged(this.pageModeChangedListener);
@@ -185,12 +184,8 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
-        }
 
-        remove(): PageView {
-            super.remove();
-            this.unregisterPageModel(this.pageModel);
-            return this;
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
         }
 
         private setIgnorePropertyChanges(value: boolean) {
@@ -277,13 +272,32 @@ module api.liveedit {
             return [unlockAction];
         }
 
+        selectLocked(pos: Position) {
+            this.setLockVisible(true);
+            this.lockedContextMenu.showAt(pos.x, pos.y);
+
+            new ItemViewSelectedEvent(this, pos).fire();
+            new PageSelectedEvent(this).fire();
+        }
+
+        deselectLocked() {
+            this.setLockVisible(false);
+            this.lockedContextMenu.hide();
+
+            new ItemViewDeselectEvent(this).fire();
+        }
+
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
-
-                this.lockedContextMenu.showAt(event.pageX, event.pageY);
+                if (this.lockedContextMenu.isVisible()) {
+                    this.deselectLocked();
+                }
+                else {
+                    this.selectLocked({x: event.pageX, y: event.pageY});
+                }
             }
             else if (this.isSelected()) {
                 this.deselect();
@@ -300,12 +314,25 @@ module api.liveedit {
             }
         }
 
+        hideContextMenu() {
+            if (this.lockedContextMenu) {
+                this.lockedContextMenu.hide();
+            }
+            return super.hideContextMenu();
+        }
+
         isLocked() {
             return this.hasClass('locked');
         }
 
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
+        }
+
         setLocked(locked: boolean) {
             this.toggleClass('locked', locked);
+
+            this.hideContextMenu();
 
             if (locked) {
                 this.shade();
@@ -541,6 +568,18 @@ module api.liveedit {
         }
 
         private parseItemViews() {
+            // unregister existing views
+            for (var itemView in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(itemView)) {
+                    this.unregisterItemView(this.viewsById[itemView]);
+                }
+            }
+
+            // unregister existing regions
+            this.regionViews.forEach((regionView: RegionView)=> {
+                this.unregisterRegionView(regionView)
+            });
+
             this.regionViews = [];
             this.viewsById = {};
 
@@ -562,7 +601,18 @@ module api.liveedit {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                if (isRegionView) {
+                    var region = regions[this.regionIndex++];
+                    if (region) {
+                        // reuse existing region view
+                        var regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
+                } else if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         var regionName = RegionItemType.getRegionName(childElement);
                         var region = pageRegions.getRegionByName(regionName);

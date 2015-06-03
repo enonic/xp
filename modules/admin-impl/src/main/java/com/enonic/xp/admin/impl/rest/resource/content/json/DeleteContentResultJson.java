@@ -4,11 +4,11 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.content.ContentPath;
-
 public class DeleteContentResultJson
 {
     private List<Success> successes = new ArrayList<>();
+
+    private List<Pending> pendings = new ArrayList<>();
 
     private List<Failure> failures = new ArrayList<>();
 
@@ -17,34 +17,60 @@ public class DeleteContentResultJson
         return successes;
     }
 
+    public List<Pending> getPendings()
+    {
+        return pendings;
+    }
+
     public List<Failure> getFailures()
     {
         return failures;
     }
 
-    public void addSuccess( final ContentPath contentPath )
+    public void addSuccess( final String contentName )
     {
-        successes.add( new Success( contentPath ) );
+        successes.add( new Success( contentName ) );
     }
 
-    public void addFailure( final ContentPath contentPath, final String reason )
+    public void addPending( final String contentName )
     {
-        failures.add( new Failure( contentPath, reason ) );
+        pendings.add( new Pending( contentName ) );
+    }
+
+    public void addFailure( final String contentName, final String reason )
+    {
+        failures.add( new Failure( contentName, reason ) );
     }
 
     public class Success
     {
 
-        private String path;
+        private String name;
 
-        public Success( final ContentPath contentPath )
+        public Success( final String contentName )
         {
-            this.path = contentPath.toString();
+            this.name = contentName;
         }
 
-        public String getPath()
+        public String getName()
         {
-            return path;
+            return name;
+        }
+    }
+
+    public class Pending
+    {
+
+        private String name;
+
+        public Pending( final String contentName )
+        {
+            this.name = contentName;
+        }
+
+        public String getName()
+        {
+            return name;
         }
     }
 
@@ -54,9 +80,9 @@ public class DeleteContentResultJson
 
         private String reason;
 
-        public Failure( final ContentPath contentPath, final String reason )
+        public Failure( final String contentName, final String reason )
         {
-            super( contentPath );
+            super( contentName );
             this.reason = reason;
         }
 

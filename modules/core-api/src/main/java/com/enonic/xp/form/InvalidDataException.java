@@ -32,7 +32,7 @@ public class InvalidDataException
     {
         StringBuilder s = new StringBuilder();
         s.append( "Invalid data: " ).append( property );
-        if( message != null )
+        if ( message != null )
         {
             s.append( ": " ).append( message );
         }

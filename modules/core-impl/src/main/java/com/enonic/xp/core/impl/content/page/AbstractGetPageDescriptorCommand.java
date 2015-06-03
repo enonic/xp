@@ -7,6 +7,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescriptorCommand>
@@ -21,7 +22,15 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
         final String descriptorXml = resource.readString();
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
-        parseXml( resourceKey.getModule(), builder, descriptorXml );
+        try
+        {
+            parseXml( resourceKey.getModule(), builder, descriptorXml );
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e, "Could not load page descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+        }
+
         builder.key( key );
 
         final PageDescriptor pageDescriptor = builder.build();

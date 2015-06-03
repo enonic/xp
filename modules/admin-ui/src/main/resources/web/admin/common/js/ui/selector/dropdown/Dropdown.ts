@@ -99,6 +99,13 @@ module api.ui.selector.dropdown {
             });
         }
 
+        reset() {
+            this.input.show();
+            this.selectedOptionView.hide();
+            this.selectedOptionView.resetOption();
+            this.dropdownHandle.show();
+        }
+
         private defaultFilter(option: Option<OPTION_DISPLAY_VALUE>, args: any) {
 
             if (!args.searchString || api.util.StringHelper.isEmpty(args.searchString)) {

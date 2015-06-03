@@ -4,3 +4,4 @@
 ///<reference path='PartInspectionPanel.ts' />
 ///<reference path='LayoutInspectionPanel.ts' />
 ///<reference path='RegionInspectionPanel.ts' />
+///<reference path='DescriptorBasedDropdownForm.ts' />
