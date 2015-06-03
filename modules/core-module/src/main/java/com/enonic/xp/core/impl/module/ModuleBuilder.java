@@ -24,7 +24,7 @@ final class ModuleBuilder
 
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
-    private static final String MODULE_XML = "module.xml";
+    private static final String MODULE_XML = "site.xml";
 
     private Bundle bundle;
 
@@ -72,7 +72,7 @@ final class ModuleBuilder
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Invalid module.xml file", e );
+            throw new RuntimeException( "Invalid site.xml file", e );
         }
     }
 

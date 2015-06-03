@@ -27,7 +27,7 @@ public class XmlModuleParserTest
     @Test
     public void testModuleXmlDeserialization()
     {
-        final String xml = loadTestXml( "serialized-module.xml" );
+        final String xml = loadTestXml( "serialized-site.xml" );
 
         final ModuleImpl module = new ModuleImpl();
         module.moduleKey = ModuleKey.from( "mymodule" );
