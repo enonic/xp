@@ -60,6 +60,7 @@ module api.form.inputtype.text {
                 selector:          'textarea.' + id.replace(/\./g, '_'),
                 document_base_url: baseUrl + '/common/lib/tinymce/',
                 skin_url:          baseUrl + '/common/lib/tinymce/skins/lightgray',
+                content_css: baseUrl + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
                 theme_url: 'modern',
 
                 toolbar: [
