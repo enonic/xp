@@ -18,10 +18,6 @@ module app.publish {
 
         private dependantsCount: number;
 
-        private dependantsResolved: ContentPublishDependantItem[] = [];
-
-        private dependantsResolvedCheck: boolean = false;
-
         constructor(builder: ContentPublishRequestedItemBuilder) {
             super(builder);
 
@@ -35,19 +31,6 @@ module app.publish {
 
         getDependantsCount(): number {
             return this.dependantsCount;
-        }
-
-        setDependantsResolved(dependantsResolved: ContentPublishDependantItem[]): void {
-            this.dependantsResolved = dependantsResolved;
-            this.dependantsResolvedCheck = true;
-        }
-
-        getDependantsResolved(): ContentPublishDependantItem[] {
-            return this.dependantsResolved;
-        }
-
-        isDependantsResolved(): boolean {
-            return this.dependantsResolvedCheck;
         }
 
         equals(o: api.Equitable): boolean {
@@ -76,9 +59,9 @@ module app.publish {
          * Builds array of ContentPublishItem[] from contents that were returned as initially requsted to publish.
          * Returned array should correspond to contents with ids used for ResolvePublishDependenciesRequest.
          */
-        static getPushRequestedContents(json: ResolvePublishDependenciesResultJson): ContentPublishRequestedItem[] {
+        static getPushRequestedContents(jsonItems: ResolvedPublishRequestedContentJson[]): ContentPublishRequestedItem[] {
             var array: ContentPublishRequestedItem[] = [];
-            json.pushRequestedContents.forEach((obj: ResolvedPublishRequestedContentJson) => {
+            jsonItems.forEach((obj: ResolvedPublishRequestedContentJson) => {
                 array.push(new ContentPublishRequestedItemBuilder().fromJson(obj).build());
             });
             return array;

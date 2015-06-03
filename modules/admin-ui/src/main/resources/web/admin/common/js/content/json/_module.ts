@@ -22,7 +22,6 @@
 ///<reference path='ResolvedPublishDependencyJson.ts' />
 ///<reference path='ResolveDependantsResultJson.ts' />
 ///<reference path='ResolvedPublishRequestedContentJson.ts' />
-///<reference path='ResolvedDependantContentJson.ts' />
 
 
 

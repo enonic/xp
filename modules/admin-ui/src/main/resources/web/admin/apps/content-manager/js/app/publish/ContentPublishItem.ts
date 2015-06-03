@@ -118,12 +118,11 @@ module app.publish {
         }
 
         /**
-         * Builds array of ContentPublishItem[] from contents that were returned as initially requsted to publish.
-         * Returned array should correspond to contents with ids used for ResolvePublishDependenciesRequest.
+         * Builds array of ContentPublishItem[] from resolved contents.
          */
-        static getPushRequestedContents(json: ResolvePublishDependenciesResultJson): ContentPublishItem[] {
+        static getResolvedContents(jsonItems: ResolvedPublishDependencyJson[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            json.pushRequestedContents.forEach((obj: ResolvedPublishDependencyJson) => {
+            jsonItems.forEach((obj: ResolvedPublishDependencyJson) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;
