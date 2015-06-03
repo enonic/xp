@@ -152,7 +152,7 @@ module api.form.inputtype.text.tiny {
         private createTargetCheckbox(id: string, isTabSelected: boolean): FormItem {
             var checkbox = new api.ui.Checkbox().setChecked(this.getTarget(isTabSelected));
 
-            return this.createFormItem(id, "Open in new window", null, null, checkbox);
+            return this.createFormItem(id, "Open new window", null, null, checkbox);
         }
 
         private createMainForm(): Form {
@@ -197,7 +197,19 @@ module api.form.inputtype.text.tiny {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
 
+            contentSelector.getComboBox().onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+                this.adjustSelectorDropDown(contentSelector.getComboBox().getInput(), event.getDropdownElement().getEl());
+            });
+
             return this.createFormItem(id, label, Validators.required, value, <api.dom.FormItemEl>contentSelector);
+        }
+
+        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
+            var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
+
+            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder());
+            dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
+            dropDownElement.setLeftPx(inputPosition.left);
         }
 
         private validateDockPanel(): boolean {

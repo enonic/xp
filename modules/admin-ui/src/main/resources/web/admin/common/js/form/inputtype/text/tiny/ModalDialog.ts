@@ -87,6 +87,8 @@ module api.form.inputtype.text.tiny {
                                  inputEl?: api.dom.FormItemEl): FormItem {
             var formItemEl = inputEl || new api.ui.text.TextInput(),
                 formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
+                required: boolean = false,
+                inputWrapper = new api.dom.DivEl("input-wrapper"),
                 formItem;
 
             if (this.fields[id]) {
@@ -101,9 +103,12 @@ module api.form.inputtype.text.tiny {
 
             if (validator) {
                 formItemBuilder.setValidator(validator);
+                required = true;
             }
 
             formItem = formItemBuilder.build();
+
+            formItem.getInput().wrapWithElement(inputWrapper);
 
             if (validator) {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(formItemEl, api.ui.text.TextInput)) {

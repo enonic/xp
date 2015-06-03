@@ -2,8 +2,23 @@
 @tinymce-input-width: 380px;
 
 .tinymce-modal-dialog {
+  max-width: 600px;
   @media screen and (max-height: 360px) {
     min-height: 220px;
+  }
+
+  &._540-720 {
+    .form-view .input-view {
+      label {
+        float: left;
+        max-width: @form-label-width - 10px;
+      }
+
+      label + .form-input,
+      label + .input-wrapper, {
+        margin-left: @form-label-width;
+      }
+    }
   }
 
   &.animated {
@@ -17,6 +32,7 @@
     }
 
     max-height: 480px;
+
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -40,19 +56,34 @@
 
     .panel {
       position: inherit;
-      //overflow: inherit;
     }
 
     .docked-panel {
       width: auto;
       box-shadow: none;
       position: inherit !important;
+
+      .tab-bar {
+        width: 70%;
+        border-bottom: none;
+      }
+
+      .deck-panel {
+        border-top: 1px solid @admin-medium-gray-border;
+      }
+
+      .options-container {
+        position: fixed !important;
+      }
     }
 
-    .input-view {
+    .combobox {
       .form-input {
-        margin-top: 6px;
+        margin-top: 0;
       }
+    }
+    .checkbox.form-input {
+      margin-top: 3px;
     }
 
     .input-view.invalid:not(:last-child) {
@@ -61,7 +92,8 @@
 
     div.input-view.invalid + div.validation-viewer {
       background-color: @input-light-red;
-      padding: 10px;
+      padding-bottom: 10px;
+      padding-left: @form-label-width + 10;
     }
 
     .form-view {
