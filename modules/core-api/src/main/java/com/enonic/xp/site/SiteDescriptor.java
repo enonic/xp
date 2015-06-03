@@ -1,4 +1,4 @@
-package com.enonic.xp.content.site;
+package com.enonic.xp.site;
 
 
 import com.google.common.annotations.Beta;
@@ -34,22 +34,11 @@ public final class SiteDescriptor
         return new Builder();
     }
 
-    public static Builder copyOf( final SiteDescriptor pageDescriptor )
-    {
-        return new Builder( pageDescriptor );
-    }
-
     public static class Builder
     {
         private Form form;
 
         private MixinNames metaSteps;
-
-        private Builder( final SiteDescriptor siteDescriptor )
-        {
-            this.form = siteDescriptor.getForm();
-            this.metaSteps = siteDescriptor.getMetaSteps();
-        }
 
         private Builder()
         {
