@@ -1,12 +1,16 @@
-package com.enonic.xp.module;
+package com.enonic.xp.schema;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
+import com.enonic.xp.module.ModuleKey;
+
 @Beta
-public abstract class ModuleBasedName
+public abstract class BaseSchemaName
 {
-    protected final static String SEPARATOR = ":";
+    private final static String SEPARATOR = ":";
 
     private final String refString;
 
@@ -14,7 +18,14 @@ public abstract class ModuleBasedName
 
     private final String localName;
 
-    protected ModuleBasedName( final ModuleKey moduleKey, final String localName )
+    protected BaseSchemaName( final String name )
+    {
+        this.moduleKey = ModuleKey.from( StringUtils.substringBefore( name, SEPARATOR ) );
+        this.localName = StringUtils.substringAfter( name, SEPARATOR );
+        this.refString = Joiner.on( SEPARATOR ).join( this.moduleKey.toString(), this.localName );
+    }
+
+    protected BaseSchemaName( final ModuleKey moduleKey, final String localName )
     {
         this.moduleKey = moduleKey;
         this.localName = localName;
@@ -43,7 +54,7 @@ public abstract class ModuleBasedName
             return false;
         }
 
-        final ModuleBasedName moduleBasedName = (ModuleBasedName) o;
+        final BaseSchemaName moduleBasedName = (BaseSchemaName) o;
 
         return refString.equals( moduleBasedName.refString );
     }
@@ -59,5 +70,4 @@ public abstract class ModuleBasedName
     {
         return refString;
     }
-
 }

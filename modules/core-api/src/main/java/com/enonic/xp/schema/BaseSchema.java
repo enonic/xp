@@ -7,11 +7,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.security.PrincipalKey;
 
 @Beta
-public abstract class BaseSchema<T extends ModuleBasedName>
+public abstract class BaseSchema<T extends BaseSchemaName>
 {
     final T name;
 
@@ -81,7 +80,7 @@ public abstract class BaseSchema<T extends ModuleBasedName>
         return icon;
     }
 
-    public static class Builder<T extends Builder, SCHEMA_NAME extends ModuleBasedName>
+    public static class Builder<T extends Builder, SCHEMA_NAME extends BaseSchemaName>
     {
         protected SCHEMA_NAME name;
 
