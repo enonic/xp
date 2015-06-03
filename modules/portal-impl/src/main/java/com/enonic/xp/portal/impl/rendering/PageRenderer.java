@@ -33,22 +33,21 @@ public final class PageRenderer
     public RenderResult render( final Content content, final PortalRequest portalRequest )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
-        final PortalResponse portalResponse = new PortalResponse();
-
+        PortalResponse portalResponse;
         if ( pageDescriptor != null )
         {
             final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
-            controllerScript.execute( portalRequest, portalResponse );
+            portalResponse = controllerScript.execute( portalRequest );
         }
         else
         {
-            renderForNoPageDescriptor( portalRequest, portalResponse, content );
+            portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
 
         return new PortalResponseSerializer( portalResponse ).serialize();
     }
 
-    private void renderForNoPageDescriptor( final PortalRequest portalRequest, final PortalResponse portalResponse, final Content content )
+    private PortalResponse renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
     {
         String html = "<html>" +
             "<head>" +
@@ -65,12 +64,13 @@ public final class PageRenderer
         }
         html += "</html>";
 
-        portalResponse.setContentType( "text/html" );
-        portalResponse.setStatus( 200 );
-        portalResponse.setBody( html );
-        portalResponse.setPostProcess( true );
+        PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
+            contentType( "text/html" ).
+            status( 200 ).
+            body( html ).
+            postProcess( true );
 
-        this.postProcessor.processResponse( portalRequest, portalResponse );
+        return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
     }
 
     @Reference

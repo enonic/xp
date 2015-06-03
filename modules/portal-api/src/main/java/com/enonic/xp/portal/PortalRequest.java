@@ -68,7 +68,7 @@ public final class PortalRequest
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
         this.cookies = Maps.newHashMap();
-        this.response = new PortalResponse();
+        this.response = PortalResponse.create().build();
     }
 
     public String getUri()

@@ -48,8 +48,8 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        PortalResponse portalResponse = new PortalResponse();
-        portalResponse.setPostProcess( true );
+        final PortalResponse portalResponse = PortalResponse.create().postProcess( true ).build();
+
         PortalRequest portalRequest = new PortalRequest();
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
@@ -73,8 +73,8 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        PortalResponse portalResponse = new PortalResponse();
-        portalResponse.setPostProcess( true );
+        final PortalResponse portalResponse = PortalResponse.create().postProcess( true ).build();
+
         PortalRequest portalRequest = new PortalRequest();
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
