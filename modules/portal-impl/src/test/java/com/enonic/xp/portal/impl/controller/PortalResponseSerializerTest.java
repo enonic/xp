@@ -16,21 +16,21 @@ import static org.junit.Assert.*;
 
 public class PortalResponseSerializerTest
 {
-    private PortalResponse response;
+    private PortalResponse.Builder responseBuilder;
 
     private PortalResponseSerializer serializer;
 
     @Before
     public void setup()
     {
-        this.response = new PortalResponse();
-        this.serializer = new PortalResponseSerializer( this.response );
+        this.responseBuilder = PortalResponse.create();
     }
 
     @Test
     public void testError()
     {
-        this.response.setStatus( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
+        this.responseBuilder.status( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
+        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
@@ -41,8 +41,8 @@ public class PortalResponseSerializerTest
     @Test
     public void testJsonResult()
     {
-        this.response.setContentType( "application/json" );
-        this.response.setBody( ImmutableMap.of( "key", "value" ) );
+        this.responseBuilder.contentType( "application/json" ).body( ImmutableMap.of( "key", "value" ) );
+        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
@@ -54,8 +54,8 @@ public class PortalResponseSerializerTest
     @Test
     public void testStringResult()
     {
-        this.response.setContentType( "text/plain" );
-        this.response.setBody( "Hello world!" );
+        this.responseBuilder.contentType( "text/plain" ).body( "Hello world!" );
+        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
@@ -68,8 +68,8 @@ public class PortalResponseSerializerTest
     public void testBytesResult()
     {
         final byte[] bytes = "bytes".getBytes();
-        this.response.setContentType( "application/octet-stream" );
-        this.response.setBody( bytes );
+        this.responseBuilder.contentType( "application/octet-stream" ).body( bytes );
+        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
@@ -81,8 +81,7 @@ public class PortalResponseSerializerTest
     @Test
     public void testObjectResult()
     {
-        this.response.setContentType( "text/plain" );
-        this.response.setBody( 11 );
+        this.responseBuilder.contentType( "text/plain" ).body( 11 );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
@@ -94,9 +93,7 @@ public class PortalResponseSerializerTest
     @Test
     public void testHeadersWithResult()
     {
-        this.response.setContentType( "text/plain" );
-        this.response.setBody( "With headers" );
-        this.response.addHeader( "X-myheader", "Value" );
+        this.responseBuilder.contentType( "text/plain" ).body( "With headers" ).header( "X-myheader", "Value" );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
