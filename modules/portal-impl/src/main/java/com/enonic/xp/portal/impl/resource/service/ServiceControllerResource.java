@@ -28,11 +28,11 @@ public final class ServiceControllerResource
     }
 
     @Override
-    protected RenderResult execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    protected RenderResult execute( final PortalRequest portalRequest )
         throws Exception
     {
         final ControllerScript controllerScript = this.services.getControllerScriptFactory().fromDir( this.scriptDir );
-        controllerScript.execute( portalRequest, portalResponse );
+        final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
         return new PortalResponseSerializer( portalResponse ).serialize();
     }

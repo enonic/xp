@@ -47,12 +47,11 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
-        final PortalResponse portalResponse = new PortalResponse();
 
         try
         {
             portalRequest.setComponent( component );
-            controllerScript.execute( portalRequest, portalResponse );
+            final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
             final String contentType = portalResponse.getContentType();
@@ -65,8 +64,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 }
             }
 
-            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
-            return new PortalResponseSerializer( portalResponse ).serialize();
+            final PortalResponse injectedResponse =
+                LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
+            return new PortalResponseSerializer( injectedResponse ).serialize();
         }
         finally
         {
