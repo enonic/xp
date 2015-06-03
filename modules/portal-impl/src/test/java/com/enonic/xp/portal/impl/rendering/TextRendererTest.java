@@ -37,7 +37,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
+        RenderResult result = renderer.render( textComponent, portalRequest );
 
         // verify
         assertEquals( "", result.getAsString() );
@@ -52,7 +52,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
+        RenderResult result = renderer.render( textComponent, portalRequest );
 
         // verify
         assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", result.getAsString() );
@@ -67,7 +67,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
+        RenderResult result = renderer.render( textComponent, portalRequest );
 
         // verify
         assertEquals( "<section data-portal-component-type=\"text\"></section>", result.getAsString() );
@@ -83,7 +83,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
+        RenderResult result = renderer.render( textComponent, portalRequest );
 
         // verify
         assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", result.getAsString() );
@@ -99,7 +99,7 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest, portalResponse );
+        RenderResult result = renderer.render( textComponent, portalRequest );
 
         // verify
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );
