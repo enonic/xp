@@ -1,15 +1,17 @@
 package com.enonic.xp.schema.relationship;
 
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RelationshipTypeTest
 {
@@ -86,5 +88,34 @@ public class RelationshipTypeTest
         {
             Assert.assertTrue( e instanceof UnsupportedOperationException );
         }
+    }
+
+    @Test
+    public void add_array()
+    {
+        RelationshipTypes relationshipTypes = RelationshipTypes.empty();
+
+        RelationshipType[] relationshipTypesArray = {RelationshipType.newRelationshipType().name( "mymodule:like" ).build(),
+            RelationshipType.newRelationshipType().name( "mymodule:person" ).build()};
+
+        RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesArray );
+
+        assertEquals( 0, relationshipTypes.getSize() );
+        assertEquals( 2, newRelationshipTypes.getSize() );
+    }
+
+    @Test
+    public void add_iterable()
+    {
+        RelationshipTypes relationshipTypes = RelationshipTypes.empty();
+
+        List<RelationshipType> relationshipTypesList =
+            Lists.newArrayList( RelationshipType.newRelationshipType().name( "mymodule:like" ).build(),
+                                RelationshipType.newRelationshipType().name( "mymodule:person" ).build() );
+
+        RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesList );
+
+        assertEquals( 0, relationshipTypes.getSize() );
+        assertEquals( 2, newRelationshipTypes.getSize() );
     }
 }
