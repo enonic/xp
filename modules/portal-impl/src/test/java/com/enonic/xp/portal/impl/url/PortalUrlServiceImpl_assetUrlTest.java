@@ -42,7 +42,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     public void createUrl_withVirtualHost()
     {
         final AssetUrlParams params = new AssetUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             path( "css/my.css" );
 
         //Mocks a virtual host and the HTTP request

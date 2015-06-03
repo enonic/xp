@@ -69,7 +69,7 @@ final class AssetUrlBuilder
         final StringBuilder regexp = new StringBuilder();
 
         //For each element of the content path, opens a non recorded group
-        final ContentPath contentPath = this.context.getContentPath();
+        final ContentPath contentPath = this.portalRequest.getContentPath();
         for ( int i = 0; i < contentPath.elementCount(); i++ )
         {
             regexp.append( "(?:" );

@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 public class LocalizeParams
 {
@@ -23,11 +23,11 @@ public class LocalizeParams
 
     private final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
 
-    private final PortalContext context;
+    private final PortalRequest request;
 
-    public LocalizeParams( final PortalContext context )
+    public LocalizeParams( final PortalRequest request )
     {
-        this.context = context;
+        this.request = request;
     }
 
     private void key( final String key )
@@ -37,7 +37,7 @@ public class LocalizeParams
 
     public ModuleKey getModuleKey()
     {
-        return this.context.getModule();
+        return this.request.getModule();
     }
 
     private void locale( final String locale )
@@ -47,9 +47,9 @@ public class LocalizeParams
 
     private Locale resolveLocale()
     {
-        if ( context.getSite().getLanguage() != null )
+        if ( request.getSite().getLanguage() != null )
         {
-            return context.getSite().getLanguage();
+            return request.getSite().getLanguage();
         }
 
         return null;
@@ -137,9 +137,9 @@ public class LocalizeParams
         return locale;
     }
 
-    private PortalContext getContext()
+    private PortalRequest getRequest()
     {
-        return context;
+        return request;
     }
 
     public Object[] getParams()

@@ -66,7 +66,6 @@ final class ModuleBuilder
             parser.module( module );
             parser.source( xml );
             parser.parse();
-            ;
         }
         catch ( final Exception e )
         {

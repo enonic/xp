@@ -15,8 +15,8 @@ import com.enonic.xp.content.site.Site;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.locale.LocalizeHandler;
 import com.enonic.xp.portal.script.command.CommandHandler;
@@ -36,14 +36,14 @@ public class LocalizeHandlerTest
     public void setUp()
         throws Exception
     {
-        final PortalContext context = new PortalContext();
+        final PortalRequest context = new PortalRequest();
         context.setSite( Site.newSite().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( DEFAULT_LOCALE ).
             build() );
 
-        PortalContextAccessor.set( context );
+        PortalRequestAccessor.set( context );
     }
 
     @Override

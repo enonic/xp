@@ -11,8 +11,8 @@ import junit.framework.TestCase;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.site.Site;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 
 public class LocalizeParamsTest
@@ -20,30 +20,31 @@ public class LocalizeParamsTest
 {
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
-    private PortalContext context;
+    private PortalRequest request;
 
     @Before
     public void setUp()
         throws Exception
     {
-        context = new PortalContext();
-        context.setSite( Site.newSite().
+        request = new PortalRequest();
+        request.setSite( Site.newSite().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( DEFAULT_LOCALE ).
             build() );
 
-        PortalContextAccessor.set( context );
+        PortalRequestAccessor.set( request );
     }
 
     public void testName()
         throws Exception
     {
-        final ViewFunctionParams viewParams =
-            new ViewFunctionParams().name( "test" ).args( Lists.newArrayList( "_key=fisk", "_values={'a',2,'b'}" ) ).context(
-                this.context );
+        final ViewFunctionParams viewParams = new ViewFunctionParams().
+            name( "test" ).
+            args( Lists.newArrayList( "_key=fisk", "_values={'a',2,'b'}" ) ).
+            portalRequest( this.request );
 
-        LocalizeParams params = new LocalizeParams( this.context ).setAsMap( viewParams.getArgs() );
+        LocalizeParams params = new LocalizeParams( this.request ).setAsMap( viewParams.getArgs() );
 
         params.getModuleKey();
 

@@ -12,8 +12,8 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.i18n.LocalizeParams;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
@@ -35,8 +35,8 @@ public final class LocalizeHandler
     @Override
     public Object execute( final CommandRequest req )
     {
-        final PortalContext context = PortalContextAccessor.get();
-        final LocalizeParams params = new LocalizeParams( context ).setAsMap( toMap( req ) );
+        final PortalRequest request = PortalRequestAccessor.get();
+        final LocalizeParams params = new LocalizeParams( request ).setAsMap( toMap( req ) );
 
         final MessageBundle bundle = localeService.getBundle( params.getModuleKey(), params.getLocale() );
         return bundle.localize( params.getKey(), params.getParams() );
