@@ -171,13 +171,13 @@ module app.wizard.page.contextwindow.inspect.page {
 
 
             pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
 
                     this.pageControllerForm.show();
 
                     this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
                 }
-                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
+                else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
 
                     this.pageControllerForm.show();
 
@@ -248,7 +248,7 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.refreshConfigForm(controller, pageModel.getConfig());
                     }
                 }
-                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
+                else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
 
                     this.pageTemplateForm.show();
 

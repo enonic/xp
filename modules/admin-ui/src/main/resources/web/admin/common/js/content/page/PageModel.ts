@@ -72,6 +72,10 @@ module api.content.page {
 
         public static PROPERTY_TEMPLATE = 'template';
 
+        public static PROPERTY_CONTROLLER = 'controller';
+
+        public static PROPERTY_CONFIG = 'config';
+
         private liveEditModel: api.liveedit.LiveEditModel;
 
         private defaultTemplate: PageTemplate;
@@ -212,7 +216,7 @@ module api.content.page {
             var newControllerKey = this.controller ? this.controller.getKey() : null;
             if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
                 this.setIgnorePropertyChanges(true);
-                this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, setController.eventSource);
+                this.notifyPropertyChanged(PageModel.PROPERTY_CONTROLLER, oldControllerKey, newControllerKey, setController.eventSource);
                 this.setIgnorePropertyChanges(false);
             }
 
@@ -302,7 +306,7 @@ module api.content.page {
             this.config.onChanged(this.configPropertyChangedHandler);
 
             this.setIgnorePropertyChanges(true);
-            this.notifyPropertyChanged("config", oldValue, value, eventOrigin);
+            this.notifyPropertyChanged(PageModel.PROPERTY_CONFIG, oldValue, value, eventOrigin);
             this.setIgnorePropertyChanges(false);
             return this;
         }
