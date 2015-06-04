@@ -9,7 +9,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 
 import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
@@ -35,7 +34,7 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final PortalRequest portalRequest )
+    public PortalResponse render( final TextComponent textComponent, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();

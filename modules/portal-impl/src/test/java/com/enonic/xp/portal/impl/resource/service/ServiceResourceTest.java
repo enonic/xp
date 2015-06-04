@@ -50,6 +50,9 @@ public class ServiceResourceTest
         this.controllerScript = Mockito.mock( ControllerScript.class );
         Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
 
+        final PortalResponse portalResponse = PortalResponse.create().build();
+        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+
         this.contentService = Mockito.mock( ContentService.class );
         this.services.setContentService( this.contentService );
     }

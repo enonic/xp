@@ -12,7 +12,6 @@ import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 
 @Component(immediate = true, service = Renderer.class)
@@ -30,7 +29,7 @@ public final class PageRenderer
     }
 
     @Override
-    public RenderResult render( final Content content, final PortalRequest portalRequest )
+    public PortalResponse render( final Content content, final PortalRequest portalRequest )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
         PortalResponse portalResponse;

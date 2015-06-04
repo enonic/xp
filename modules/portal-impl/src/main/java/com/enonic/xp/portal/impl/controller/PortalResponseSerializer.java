@@ -5,7 +5,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.PortalResponse;
 
 public final class PortalResponseSerializer
@@ -17,14 +16,11 @@ public final class PortalResponseSerializer
         this.from = from;
     }
 
-    public RenderResult serialize()
+    public PortalResponse serialize()
     {
-        return RenderResult.newRenderResult().
-            status( this.from.getStatus() ).
-            type( this.from.getContentType() ).
-            headers( this.from.getHeaders() ).
+        return PortalResponse.create( from ).
             header( HttpHeaders.CONTENT_TYPE, this.from.getContentType() ).
-            entity( serializeBody() ).
+            body( serializeBody() ).
             build();
     }
 

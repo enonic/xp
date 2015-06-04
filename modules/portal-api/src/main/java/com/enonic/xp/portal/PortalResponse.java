@@ -3,11 +3,11 @@ package com.enonic.xp.portal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
 
@@ -75,6 +75,11 @@ public final class PortalResponse
         return new Builder();
     }
 
+    public String getAsString()
+    {
+        return ( this.body != null ) ? this.body.toString() : null;
+    }
+
     public static Builder create( PortalResponse source )
     {
         return new Builder().
@@ -130,7 +135,7 @@ public final class PortalResponse
 
         public Builder clearHeaders()
         {
-            headers = Maps.newHashMap();
+            headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
             return this;
         }
 

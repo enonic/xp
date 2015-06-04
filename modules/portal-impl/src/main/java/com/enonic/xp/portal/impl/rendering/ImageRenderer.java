@@ -11,7 +11,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -31,7 +30,7 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest )
+    public PortalResponse render( final ImageComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
