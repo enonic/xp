@@ -137,14 +137,14 @@ public final class LayoutComponent
 
         public Builder descriptor( String value )
         {
-            this.descrpitor = DescriptorKey.from( value );
+            this.descriptor = DescriptorKey.from( value );
             return this;
         }
 
         @Override
         public Builder descriptor( DescriptorKey value )
         {
-            this.descrpitor = value;
+            this.descriptor = value;
             return this;
         }
 

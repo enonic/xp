@@ -8,6 +8,7 @@ import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.Descriptor;
 import com.enonic.xp.content.page.region.DescriptorBasedComponent;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -47,9 +48,11 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
+        final ModuleKey previousModule = portalRequest.getModule();
         try
         {
             portalRequest.setComponent( component );
+            portalRequest.setModule( descriptor.getKey().getModuleKey() );
             controllerScript.execute( portalRequest, portalResponse );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
@@ -69,6 +72,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         finally
         {
             portalRequest.setComponent( previousComponent );
+            portalRequest.setModule( previousModule );
         }
     }
 

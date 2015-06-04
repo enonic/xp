@@ -92,6 +92,8 @@ module app.wizard.page {
         private pageSkipReload: boolean;
         private frameContainer: Panel;
 
+        private lockPageAfterProxyLoad: boolean;
+
         private contextWindow: ContextWindow;
         private contextWindowController: ContextWindowController;
 
@@ -116,6 +118,7 @@ module app.wizard.page {
 
             this.pageLoading = false;
             this.pageSkipReload = false;
+            this.lockPageAfterProxyLoad = false;
 
             this.liveEditPageProxy = new LiveEditPageProxy();
 
@@ -227,9 +230,12 @@ module app.wizard.page {
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
-                    if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
-                        this.saveAndReloadPage(true);
-                    }
+                    //if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
+
+                    this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
+                    this.lockPageAfterProxyLoad = true;
+                    this.saveAndReloadPage(false);
+                    //}
                 }
             });
 
@@ -284,7 +290,10 @@ module app.wizard.page {
                 this.liveEditPageProxy.load();
                 this.liveEditPageProxy.onLoaded(() => {
                     this.pageLoading = false;
-
+                    if (this.lockPageAfterProxyLoad) {
+                        this.pageView.setLocked(true);
+                        this.lockPageAfterProxyLoad = false;
+                    }
                 });
             }
         }
@@ -372,12 +381,14 @@ module app.wizard.page {
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
-                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
+                        this.contextWindow.isShownOrAboutToBeShown()) {
                         this.contextWindow.slideOut();
                     }
                 }
                 else {
-                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && !this.contextWindow.isShown()) {
+                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
+                        !this.contextWindow.isShownOrAboutToBeShown()) {
                         this.contextWindow.slideIn();
                     }
                 }
@@ -389,9 +400,9 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if (!toggler.isActive() && this.contextWindow.isShown()) {
+                if (!toggler.isActive() && this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideOut();
-                } else if (toggler.isActive() && !this.contextWindow.isShown()) {
+                } else if (toggler.isActive() && !this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideIn();
                 }
                 this.contextWindow.clearSelection();

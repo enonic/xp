@@ -22,7 +22,7 @@ public abstract class AbstractPartDescriptorServiceTest
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "cms/parts/" + key.getName() + "/part.xml" );
+        return ResourceKey.from( key.getModuleKey(), "parts/" + key.getName() + "/part.xml" );
     }
 
     @Override

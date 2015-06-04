@@ -22,7 +22,8 @@ module api.content.form.inputtype.upload {
                 operation: api.content.MediaUploaderOperation.update,
                 name: input.getName(),
                 skipWizardEvents: false,
-                maximumOccurrences: 1
+                maximumOccurrences: 1,
+                scaleWidth: true
             });
 
             this.appendChild(this.imageUploader);
@@ -94,7 +95,11 @@ module api.content.form.inputtype.upload {
                 this.validate(false);
                 if (!edit && position) {
                     var tree;
-                    if (ValueTypes.STRING.equals(property.getType())) {
+                    switch (property.getType()) {
+                    case ValueTypes.DATA:
+                        tree = property.getPropertySet();
+                        break;
+                    case ValueTypes.STRING:
                         // save in new format always no matter what was the format originally
                         tree = new api.data.PropertyTree();
                         tree.setString('attachment', 0, property.getString());
@@ -103,9 +108,11 @@ module api.content.form.inputtype.upload {
                         // remove old string property and set the new property set
                         propertyParent.removeProperty(propertyName, 0);
                         propertyParent.setPropertySet(propertyName, 0, tree.getRoot());
-                    } else if (ValueTypes.DATA.equals(property.getType())) {
-                        tree = property.getPropertySet();
+                        // update local property reference
+                        property = propertyParent.getProperty(propertyName);
+                        break;
                     }
+
                     tree.setDoubleByPath('focalPoint.x', position.x);
                     tree.setDoubleByPath('focalPoint.y', position.y);
                 }

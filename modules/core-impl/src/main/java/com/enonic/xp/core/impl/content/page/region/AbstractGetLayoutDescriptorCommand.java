@@ -18,11 +18,12 @@ import com.enonic.xp.module.Modules;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "cms/layouts/([^/]+)/layout.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "layouts/([^/]+)/layout.xml" );
 
     protected ModuleService moduleService;
 
@@ -36,7 +37,14 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final String descriptorXml = resource.readString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
 
-        parseXml( resourceKey.getModule(), builder, descriptorXml );
+        try
+        {
+            parseXml( resourceKey.getModule(), builder, descriptorXml );
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e, "Could not load layout descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+        }
 
         builder.name( key.getName() ).key( key );
         final LayoutDescriptor layoutDescriptor = builder.build();

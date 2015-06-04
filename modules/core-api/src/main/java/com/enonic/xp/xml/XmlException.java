@@ -10,7 +10,7 @@ public final class XmlException
 {
     public XmlException( final Throwable cause )
     {
-        super( cause.getMessage(), cause );
+        super( cause, cause != null ? cause.getMessage() : null );
     }
 
     public XmlException( final String message )

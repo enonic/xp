@@ -76,7 +76,7 @@ public class InputValidatorTest
         data.addString( "xml", "<xml><car><color>blue</color></car></xml>" );
 
         //Validates the correct data
-        inputValidator.validate( data.getRoot() );
+        inputValidator.validate( data );
     }
 
     @Test
@@ -221,33 +221,7 @@ public class InputValidatorTest
         boolean invalidDataExceptionThrown = false;
         try
         {
-            inputValidator.validate( invalidData.getRoot() );
-        }
-        catch ( InvalidDataException e )
-        {
-            invalidDataExceptionThrown = true;
-        }
-        assertTrue( invalidDataExceptionThrown );
-    }
-
-    @Test
-    public void validate_unmapped_properties()
-    {
-        //Validates, with the default validator, data with an unmapped property
-        PropertyTree invalidData = new PropertyTree();
-        invalidData.addString( "unmappedProperty", "aValue" );
-        inputValidator.validate( invalidData.getRoot() );
-
-        //Validates, with a validator failing on unmapped properties, data with an unmapped property
-        inputValidator = InputValidator.
-            create().
-            contentType( contentType ).
-            requireMappedProperties( true ).
-            build();
-        boolean invalidDataExceptionThrown = false;
-        try
-        {
-            inputValidator.validate( invalidData.getRoot() );
+            inputValidator.validate( invalidData );
         }
         catch ( InvalidDataException e )
         {

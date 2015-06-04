@@ -175,12 +175,12 @@ final class UpdateContentCommand
             InputValidator.
                 create().
                 contentType( contentType ).
-                requireMappedProperties( params.isRequireMappedProperties() ).
                 build().
-                validate( editedContent.getData().getRoot() );
-        } catch ( InvalidDataException e ) {
-            throw new IllegalArgumentException(
-                "Incorrect property for content: " + editedContent.getPath(), e );
+                validate( editedContent.getData() );
+        }
+        catch ( InvalidDataException e )
+        {
+            throw new IllegalArgumentException( "Incorrect property for content: " + editedContent.getPath(), e );
         }
     }
 

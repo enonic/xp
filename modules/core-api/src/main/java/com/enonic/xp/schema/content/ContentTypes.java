@@ -46,12 +46,7 @@ public final class ContentTypes
         return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
     }
 
-    public static ContentTypes from( final Iterable<? extends ContentType> contentTypes )
-    {
-        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
-    }
-
-    public static ContentTypes from( final Collection<? extends ContentType> contentTypes )
+    public static ContentTypes from( final Iterable<ContentType> contentTypes )
     {
         return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
     }

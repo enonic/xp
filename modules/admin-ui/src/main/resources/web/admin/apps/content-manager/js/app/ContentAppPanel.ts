@@ -55,7 +55,7 @@ module app {
                 if (id) {
                     new api.content.GetContentByIdRequest(new ContentId(id)).sendAndParse().
                         done((content: Content) => {
-                            new app.browse.EditContentEvent([content]).fire();
+                            new api.content.EditContentEvent([content]).fire();
                         });
                 }
                 break;
@@ -83,7 +83,7 @@ module app {
                 this.handleView(event);
             });
 
-            app.browse.EditContentEvent.on((event) => {
+            api.content.EditContentEvent.on((event) => {
                 this.handleEdit(event);
             });
 
@@ -166,7 +166,7 @@ module app {
         }
 
 
-        private handleEdit(event: app.browse.EditContentEvent) {
+        private handleEdit(event: api.content.EditContentEvent) {
 
             var contents: ContentSummary[] = event.getModels();
             contents.forEach((content: ContentSummary) => {

@@ -31,7 +31,7 @@ module app.wizard.page {
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-    import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
+    import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
 
@@ -210,11 +210,10 @@ module app.wizard.page {
                 type: 'GET',
                 success: (htmlAsString: string) => {
                     var newElement = api.dom.Element.fromString(htmlAsString);
-                    var repeatNextItemViewIdProducer = new RepeatNextItemViewIdProducer(componentView.getItemId(),
-                        componentView.getItemViewIdProducer());
+                    var itemViewIdProducer = componentView.getItemViewIdProducer();
 
                     var createViewConfig = new CreateItemViewConfig<RegionView,Component>().
-                        setItemViewProducer(repeatNextItemViewIdProducer).
+                        setItemViewProducer(itemViewIdProducer).
                         setParentView(componentView.getParentItemView()).
                         setData(componentView.getComponent()).
                         setElement(newElement);

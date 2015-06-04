@@ -47,12 +47,7 @@ public final class Mixins
         return new Mixins( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Iterable<? extends Mixin> mixins )
-    {
-        return new Mixins( ImmutableList.copyOf( mixins ) );
-    }
-
-    public static Mixins from( final Collection<? extends Mixin> mixins )
+    public static Mixins from( final Iterable<Mixin> mixins )
     {
         return new Mixins( ImmutableList.copyOf( mixins ) );
     }

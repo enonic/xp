@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
+import com.enonic.xp.xml.XmlException;
 
 final class ModuleBuilder
 {
@@ -70,10 +71,16 @@ final class ModuleBuilder
         {
             return Resources.toString( siteXmlURL, Charsets.UTF_8 );
         }
-        catch ( IOException e )
+        catch ( final Exception e )
         {
             throw new RuntimeException( "Invalid site.xml file", e );
         }
+    }
+
+    private static String parseModuleXml( final URL moduleResource )
+        throws IOException
+    {
+       return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )

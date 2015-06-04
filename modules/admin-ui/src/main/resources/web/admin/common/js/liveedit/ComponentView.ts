@@ -135,6 +135,7 @@ module api.liveedit {
             };
 
             this.setComponent(builder.component);
+            this.onRemoved(event => this.unregisterComponentListeners(this.component));
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.setDraggable(true);
@@ -192,13 +193,14 @@ module api.liveedit {
 
         remove(): ComponentView<Component> {
             this.unregisterComponentListeners(this.component);
+
             var parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
-            } else {
-                super.remove();
             }
-            this.unregisterComponentListeners(this.component);
+
+            super.remove();
+
             return this;
         }
 
@@ -324,7 +326,10 @@ module api.liveedit {
             }
 
             // Unregister from previous region...
-            this.remove();
+            var parentView = this.getParentItemView();
+            if (parentView) {
+                parentView.removeComponentView(this);
+            }
 
             // Register with new region...
             toRegionView.addComponentView(this, toIndex);

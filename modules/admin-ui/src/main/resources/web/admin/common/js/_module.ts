@@ -47,6 +47,9 @@
 
 ///<reference path='icon/_module.ts' />
 
+///<reference path='site/json/_module.ts' />
+///<reference path='site/_module.ts' />
+
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
 ///<reference path='security/auth/_module.ts' />
