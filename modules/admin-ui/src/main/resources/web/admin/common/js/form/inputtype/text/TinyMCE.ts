@@ -10,6 +10,7 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -78,7 +79,7 @@ module api.form.inputtype.text {
                 height: 100,
 
                 setup: (editor) => {
-                    editor.addCommand("initSelectors", this.initSelectors, this);
+                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
                     editor.on('change', (e) => {
                         var value = this.newValue(this.getEditor(id).getContent());
                         property.setValue(value);
@@ -224,58 +225,13 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private createContentSelector(contentTypeNames?: api.schema.content.ContentTypeName[]): api.content.ContentComboBox {
-            var loader = new api.content.ContentSummaryLoader(),
-                contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                focusedSelectorCls = "mce-content-selector-focused";
-
-            if (contentTypeNames) {
-                loader.setAllowedContentTypeNames(contentTypeNames);
-            }
-
-            contentSelector.addClass("mce-abs-layout-item mce-content-selector");
-
-            contentSelector.onFocus((e) => {
-                contentSelector.addClass(focusedSelectorCls);
-            });
-
-            contentSelector.onBlur((e) => {
-                contentSelector.removeClass(focusedSelectorCls);
-            });
-
-            return contentSelector;
+        private removeTooltipFromEditorArea(inputOccurence: Element) {
+            wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
         }
 
-        private addContentSelector(dialogEl: HTMLElement, placeholderCls: string, contentTypeNames?: api.schema.content.ContentTypeName[]) {
-            var placeholder = wemjq(dialogEl).find(placeholderCls),
-                contentSelector = this.createContentSelector(contentTypeNames);
-
-            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
-                placeholder.val(event.getOption().value);
-            });
-
-            contentSelector.onOptionDeselected(() => {
-                placeholder.val("");
-            });
-
-            wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
-
-            placeholder.hide();
-
-            if (placeholder.val()) {
-                contentSelector.setValue(placeholder.val());
-            }
-        }
-
-        private initSelectors(ui: boolean, dialogEl: HTMLElement) {
-            var focusEl = wemjq(dialogEl).find(".mce-link-text");
-
-            this.addContentSelector(dialogEl, ".mce-link-tab-content-placeholder");
-            this.addContentSelector(dialogEl, ".mce-link-tab-media-placeholder", api.schema.content.ContentTypeName.getMediaTypes());
-
-            if (focusEl) {
-                focusEl.focus();
-            }
+        private openLinkDialog(linkConfig: LinkConfig) {
+            var linkModalDialog = new LinkModalDialog(linkConfig.editor, linkConfig.link);
+            linkModalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
@@ -327,6 +283,11 @@ module api.form.inputtype.text {
         id: string;
         textAreaWrapper: Element;
         property: Property;
+    }
+    
+    interface LinkConfig {
+        editor: TinyMceEditor
+        link: HTMLElement
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
