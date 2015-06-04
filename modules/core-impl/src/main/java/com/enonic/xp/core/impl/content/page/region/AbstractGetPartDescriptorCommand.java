@@ -23,7 +23,7 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "cms/parts/([^/]+)/part.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "parts/([^/]+)/part.xml" );
 
     protected ModuleService moduleService;
 

@@ -34,7 +34,7 @@ public class ModuleImplTest
     public void setup()
         throws Exception
     {
-        this.bundle = mockBundle( "site.xml", "cms/parts/mypart/part.xml", "cms/pages/mypage/page.xml" );
+        this.bundle = mockBundle( "site.xml", "parts/mypart/part.xml", "pages/mypage/page.xml" );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ModuleImplTest
         module.bundle = this.bundle;
 
         assertNotNull( module.getResource( "site.xml" ) );
-        assertNotNull( module.getResource( "cms/parts/mypart/part.xml" ) );
+        assertNotNull( module.getResource( "parts/mypart/part.xml" ) );
         assertNull( module.getResource( "part" ) );
         assertNull( module.getResource( "not/found.txt" ) );
     }
@@ -86,7 +86,7 @@ public class ModuleImplTest
         final Set<String> set = module.getResourcePaths();
         assertNotNull( set );
         assertEquals( 3, set.size() );
-        assertTrue( set.contains( "cms/parts/mypart/part.xml" ) );
+        assertTrue( set.contains( "parts/mypart/part.xml" ) );
     }
 
     private Bundle mockBundle( final String... resourcePaths )
