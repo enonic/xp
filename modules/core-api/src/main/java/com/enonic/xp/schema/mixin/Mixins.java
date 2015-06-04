@@ -1,6 +1,7 @@
 package com.enonic.xp.schema.mixin;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -9,6 +10,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -23,6 +25,25 @@ public final class Mixins
     {
         super( list );
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+    }
+
+    public Mixins add( final Mixin... mixins )
+    {
+        return add( ImmutableList.copyOf( mixins ) );
+    }
+
+    public Mixins add( final Iterable<Mixin> mixins )
+    {
+        return add( ImmutableList.copyOf( mixins ) );
+    }
+
+    private Mixins add( final ImmutableList<Mixin> mixins )
+    {
+        final List<Mixin> tmp = Lists.newArrayList();
+        tmp.addAll( this.list );
+        tmp.addAll( mixins );
+
+        return new Mixins( ImmutableList.copyOf( tmp ) );
     }
 
     public Set<MixinName> getNames()
