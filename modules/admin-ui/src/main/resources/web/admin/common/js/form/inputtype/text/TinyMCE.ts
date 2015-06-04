@@ -225,10 +225,6 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private removeTooltipFromEditorArea(inputOccurence: Element) {
-            wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
-        }
-
         private openLinkDialog(linkConfig: LinkConfig) {
             var linkModalDialog = new LinkModalDialog(linkConfig.editor, linkConfig.link);
             linkModalDialog.open();
