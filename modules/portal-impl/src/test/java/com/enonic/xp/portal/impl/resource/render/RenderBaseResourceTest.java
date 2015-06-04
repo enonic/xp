@@ -182,10 +182,10 @@ public abstract class RenderBaseResourceTest
         final DescriptorKey key = DescriptorKey.from( module, name );
 
         final String xml = "<?xml version=\"1.0\"?>\n" +
-            "<page-component>\n" +
+            "<page>\n" +
             "  <display-name>Landing page</display-name>\n" +
             "  <config/>\n" +
-            "</page-component>";
+            "</page>";
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
         parseXml( module, builder, xml );

@@ -25,6 +25,6 @@ public abstract class AbstractPageDescriptorServiceTest
     @Override
     protected final String toDescriptorXml( final DescriptorKey key )
     {
-        return "<page-component><display-name>" + key.getName() + "</display-name></page-component>";
+        return "<page><display-name>" + key.getName() + "</display-name></page>";
     }
 }
