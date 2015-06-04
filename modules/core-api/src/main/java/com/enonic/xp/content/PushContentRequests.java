@@ -66,31 +66,6 @@ public class PushContentRequests
         return pushedBecauseParentOfPusheds;
     }
 
-    public ImmutableSet<PushedBecauseChildOfPushed> getPushedBecauseChildOfPusheds()
-    {
-        return pushedBecauseChildOfPusheds;
-    }
-
-    public ImmutableSet<DeleteBecauseRequested> getDeleteBecauseRequested()
-    {
-        return deleteBecauseRequested;
-    }
-
-    public ImmutableSet<DeletedBecauseReferredTo> getDeletedBecauseReferredTos()
-    {
-        return deletedBecauseReferredTos;
-    }
-
-    public ImmutableSet<DeletedBecauseParentOfPushed> getDeletedBecauseParentOfPusheds()
-    {
-        return deletedBecauseParentOfPusheds;
-    }
-
-    public ImmutableSet<DeletedBecauseChildOfPushed> getDeletedBecauseChildOfPusheds()
-    {
-        return deletedBecauseChildOfPusheds;
-    }
-
     public ContentId findContentIdThatInitiallyTriggeredPublish( ContentId id )
     {
         return mapWithInitialReasonContentIds.get( id );
@@ -134,7 +109,7 @@ public class PushContentRequests
         }
     }
 
-    private ContentIds getResolvedContentIds( boolean filterRequestedToPublishContentIds, PUSH_TYPE... pushTypes )
+    private ContentIds getResolvedContentIds( boolean filterRequestedToPublishContentIds, final  PUSH_TYPE... pushTypes )
     {
         Set<ContentId> ids = new HashSet<>();
         for ( PUSH_TYPE pushType : pushTypes )

@@ -51,7 +51,7 @@ public class ResolveDependantsResultJsonFactory
             Content resolvedContent = resolvedContents.getContentById( dependantContentId );
 
             list.add( ResolvedContent.create().
-                resolvedContent( resolvedContent ).
+                content( resolvedContent ).
                 compareStatus( fetchStatus( dependantContentId, compareContentResults ) ).
                 iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
                 build() );

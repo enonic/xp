@@ -5,7 +5,6 @@ import com.google.common.annotations.Beta;
 @Beta
 public class ResolvePublishDependenciesResult
 {
-
     private final PushContentRequests pushContentRequests;
 
     private ResolvePublishDependenciesResult( final Builder builder )
@@ -26,8 +25,6 @@ public class ResolvePublishDependenciesResult
     public static final class Builder
     {
         private PushContentRequests pushContentRequests;
-
-        private Contents resolvedContent = Contents.empty();
 
         private Builder()
         {

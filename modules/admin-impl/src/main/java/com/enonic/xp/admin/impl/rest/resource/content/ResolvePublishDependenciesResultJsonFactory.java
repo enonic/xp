@@ -10,6 +10,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.PushContentRequests;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 
 public class ResolvePublishDependenciesResultJsonFactory
@@ -25,7 +26,6 @@ public class ResolvePublishDependenciesResultJsonFactory
 
     private ResolvePublishDependenciesResultJsonFactory( final Builder builder )
     {
-
         this.resolvedPublishDependencies = builder.resolvedPublishDependencies;
         this.resolvedContents = builder.resolvedContents;
         this.compareContentResults = builder.compareContentResults;
@@ -34,39 +34,53 @@ public class ResolvePublishDependenciesResultJsonFactory
 
     public ResolvePublishDependenciesResultJson createJson()
     {
+        final List<ResolvedContent.ResolvedRequestedContent> resolvedRequestedContents = populateResultList();
 
-        final List<ResolvedContent.ResolvedRequestedContent> pushRequestedContents = new ArrayList<>();
+        sortResults( resolvedRequestedContents );
 
-        populateResultList( pushRequestedContents );
-
-        sortResults( pushRequestedContents );
-
-        return new ResolvePublishDependenciesResultJson( pushRequestedContents );
+        return new ResolvePublishDependenciesResultJson( resolvedRequestedContents );
     }
 
-    private void populateResultList( final List<ResolvedContent.ResolvedRequestedContent> list )
+    private List<ResolvedContent.ResolvedRequestedContent> populateResultList()
     {
+        final List<ResolvedContent.ResolvedRequestedContent> resolvedContentList = new ArrayList<>();
 
-        for ( final ContentId resolvedPublishContentId : resolvedPublishDependencies.getPushContentRequests().getPushedBecauseRequestedContentIds(
-            true ) )
+        final PushContentRequests pushContentRequests = resolvedPublishDependencies.getPushContentRequests();
+
+        final ContentIds requestedContentIds = pushContentRequests.getPushedBecauseRequestedContentIds( true );
+
+        for ( final ContentId requestedContentId : requestedContentIds )
         {
-            int children = countTriggeredContents( resolvedPublishContentId,
-                                                   resolvedPublishDependencies.getPushContentRequests().getPushedBecauseChildOfContentIds(
-                                                       true, true ) );
-            int dependants = countTriggeredContents( resolvedPublishContentId,
-                                                     resolvedPublishDependencies.getPushContentRequests().getDependantsContentIds( true,
-                                                                                                                                   true ) );
+            int numberOfChildren = getNumberOfChildren( pushContentRequests, requestedContentId );
 
-            Content resolvedContent = resolvedContents.getContentById( resolvedPublishContentId );
+            int dependants = getNumberOfDependants( pushContentRequests, requestedContentId );
 
-            list.add( ResolvedContent.ResolvedRequestedContent.create().
-                childrenCount( children ).
+            final Content content = resolvedContents.getContentById( requestedContentId );
+
+            resolvedContentList.add( ResolvedContent.ResolvedRequestedContent.create().
+                childrenCount( numberOfChildren ).
                 dependantsCount( dependants ).
-                resolvedContent( resolvedContent ).
-                compareStatus( fetchStatus( resolvedPublishContentId, compareContentResults ) ).
-                iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
+                content( content ).
+                compareStatus( getCompareStatus( requestedContentId ) ).
+                iconUrl( iconUrlResolver.resolve( content ) ).
                 build() );
         }
+
+        return resolvedContentList;
+    }
+
+    private int getNumberOfDependants( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
+    {
+        final ContentIds dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
+
+        return countTriggeredContents( resolvedPublishContentId, dependantsContentIds );
+    }
+
+    private int getNumberOfChildren( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
+    {
+        final ContentIds pushedBecauseChildOfContentIds = pushContentRequests.getPushedBecauseChildOfContentIds( true, true );
+
+        return countTriggeredContents( resolvedPublishContentId, pushedBecauseChildOfContentIds );
     }
 
     /**
@@ -95,9 +109,9 @@ public class ResolvePublishDependenciesResultJsonFactory
         listToSort.sort( ( o1, o2 ) -> o1.getPath().compareTo( o2.getPath() ) );
     }
 
-    private String fetchStatus( ContentId id, CompareContentResults compareContentResults )
+    private String getCompareStatus( final ContentId id )
     {
-        CompareContentResult compareResult = compareContentResults.getCompareContentResultsMap().get( id );
+        CompareContentResult compareResult = this.compareContentResults.getCompareContentResultsMap().get( id );
         if ( compareResult != null )
         {
             return compareResult.getCompareStatus().name();
