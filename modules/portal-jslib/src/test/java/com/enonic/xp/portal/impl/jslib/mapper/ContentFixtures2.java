@@ -18,9 +18,9 @@ import com.enonic.xp.content.page.region.LayoutComponent;
 import com.enonic.xp.content.page.region.LayoutRegions;
 import com.enonic.xp.content.page.region.PartComponent;
 import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfig;
+import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -200,17 +200,17 @@ public final class ContentFixtures2
 
     public static Site newSite()
     {
-        final PropertyTree moduleConfigConfig = new PropertyTree();
-        moduleConfigConfig.setLong( "Field", 42l );
+        final PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "Field", 42l );
 
-        final ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        final SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
-            config( moduleConfigConfig ).
+            config( siteConfigConfig ).
             build();
 
         final Site.Builder site = Site.newSite();
         site.id( ContentId.from( "100123" ) );
-        site.moduleConfigs( ModuleConfigs.from( moduleConfig ) );
+        site.siteConfigs( SiteConfigs.from( siteConfig ) );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();

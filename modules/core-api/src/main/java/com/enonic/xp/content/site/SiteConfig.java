@@ -10,13 +10,13 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 
 @Beta
-public final class ModuleConfig
+public final class SiteConfig
 {
     private final ModuleKey module;
 
     private final PropertyTree config;
 
-    public ModuleConfig( final Builder builder )
+    public SiteConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.module, "module cannot be null" );
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
@@ -46,7 +46,7 @@ public final class ModuleConfig
             return false;
         }
 
-        final ModuleConfig that = (ModuleConfig) o;
+        final SiteConfig that = (SiteConfig) o;
 
         return Objects.equals( this.module, that.module ) && Objects.equals( this.config, that.config );
     }
@@ -57,7 +57,7 @@ public final class ModuleConfig
         return Objects.hash( module, config );
     }
 
-    public static Builder newModuleConfig()
+    public static Builder newSiteConfig()
     {
         return new Builder();
     }
@@ -80,9 +80,9 @@ public final class ModuleConfig
             return this;
         }
 
-        public ModuleConfig build()
+        public SiteConfig build()
         {
-            return new ModuleConfig( this );
+            return new SiteConfig( this );
         }
     }
 }

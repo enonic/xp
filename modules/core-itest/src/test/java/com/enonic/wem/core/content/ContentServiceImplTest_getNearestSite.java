@@ -2,21 +2,13 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.CreateContentParams;
-
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfigs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_getNearestSite extends AbstractContentServiceTest
 {
@@ -88,7 +80,7 @@ public class ContentServiceImplTest_getNearestSite extends AbstractContentServic
             createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My mock site" ).
             description( "This is my mock site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+                siteConfigs( SiteConfigs.empty() );
 
         return this.contentService.create( createSiteParams );
     }

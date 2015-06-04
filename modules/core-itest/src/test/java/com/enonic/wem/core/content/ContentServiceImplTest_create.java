@@ -13,7 +13,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
+import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -122,7 +122,7 @@ public class ContentServiceImplTest_create
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My site" ).
             description( "This is my site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+            siteConfigs( SiteConfigs.empty() );
 
         final Content content = this.contentService.create( createSiteParams );
 

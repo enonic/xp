@@ -54,8 +54,8 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -97,7 +97,7 @@ public class ContentServiceImpl
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
-    private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private ContentTypeService contentTypeService;
 
@@ -136,7 +136,7 @@ public class ContentServiceImpl
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
-        MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
+        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             type( ContentTypeName.site() ).
