@@ -52,6 +52,16 @@
         "type": "custom",
         "tokenizer": "standard"
       },
+      "ngram_search": {
+        "type": "custom",
+        "filter": [
+          "standard",
+          "lowercase",
+          "asciifolding"
+        ],
+        "type": "custom",
+        "tokenizer": "standard"
+      },
       "content_default": {
         "type": "custom",
         "filter": [
