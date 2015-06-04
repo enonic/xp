@@ -35,7 +35,7 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
-        private shown: boolean = false;
+        private contextWindowState: ContextWindowState = ContextWindowState.HIDDEN;
 
         private splitter: api.dom.DivEl;
 
@@ -135,8 +135,12 @@ module app.wizard.page.contextwindow {
             this.removeChild(this.ghostDragger);
         }
 
-        isShown() {
-            return this.shown;
+        isShown(): boolean {
+            return this.contextWindowState == ContextWindowState.SHOWN;
+        }
+
+        isShownOrAboutToBeShown(): boolean {
+            return this.contextWindowState == ContextWindowState.SHOWN || this.contextWindowState == ContextWindowState.SLIDING_IN;
         }
 
         slideOut() {
@@ -145,9 +149,10 @@ module app.wizard.page.contextwindow {
             if (this.animationTimer) {
                 clearTimeout(this.animationTimer);
             }
+            this.contextWindowState = ContextWindowState.SLIDING_OUT;
             this.animationTimer = setTimeout(() => {
                 this.getEl().addClass('hidden');
-                this.shown = false;
+                this.contextWindowState = ContextWindowState.HIDDEN;
                 this.updateFrameSize();
                 this.animationTimer = null;
             }, 100);
@@ -159,8 +164,9 @@ module app.wizard.page.contextwindow {
             if (this.animationTimer) {
                 clearTimeout(this.animationTimer);
             }
+            this.contextWindowState = ContextWindowState.SLIDING_IN;
             this.animationTimer = setTimeout(() => {
-                this.shown = true;
+                this.contextWindowState = ContextWindowState.SHOWN;
                 this.updateFrameSize();
                 this.animationTimer = null
             }, 100);
@@ -190,7 +196,7 @@ module app.wizard.page.contextwindow {
                 displayModeChanged = this.hasClass('floating') && !isFloating,
                 contextWindowWidth = this.actualWidth || this.getEl().getWidth();
 
-            this.liveFormPanel.updateFrameContainerSize(!isFloating && this.shown, contextWindowWidth);
+            this.liveFormPanel.updateFrameContainerSize(!isFloating && this.isShown(), contextWindowWidth);
 
             this.toggleClass("floating", isFloating);
 
@@ -219,5 +225,9 @@ module app.wizard.page.contextwindow {
             });
         }
 
+    }
+
+    enum ContextWindowState {
+        SHOWN, HIDDEN, SLIDING_IN, SLIDING_OUT
     }
 }

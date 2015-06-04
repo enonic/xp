@@ -552,6 +552,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
@@ -602,6 +603,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).

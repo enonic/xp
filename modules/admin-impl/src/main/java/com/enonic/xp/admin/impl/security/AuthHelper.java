@@ -33,12 +33,6 @@ public final class AuthHelper
 
         if ( info.isAuthenticated() )
         {
-            if ( !info.hasRole( RoleKeys.ADMIN_LOGIN ) )
-            {
-                logout();
-                return info;
-            }
-
             final Session session = ContextAccessor.current().getLocalScope().getSession();
             if ( session != null )
             {

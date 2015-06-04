@@ -50,7 +50,7 @@ module app.wizard.page.contextwindow.inspect.region {
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             loader.setComparator(new DescriptorByDisplayNameComparator());
             this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
-            this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector);
+            this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
             loader.load();
 
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {

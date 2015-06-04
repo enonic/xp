@@ -42,7 +42,17 @@ public class LocalizeParams
 
     private void locale( final String locale )
     {
-        this.locale = Strings.isNullOrEmpty( locale ) ? null : Locale.forLanguageTag( locale );
+        this.locale = Strings.isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
+    }
+
+    private Locale resolveLocale()
+    {
+        if ( context.getSite().getLanguage() != null )
+        {
+            return context.getSite().getLanguage();
+        }
+
+        return null;
     }
 
     private void values( final Collection<String> values )
@@ -121,9 +131,10 @@ public class LocalizeParams
         return key;
     }
 
+
     public Locale getLocale()
     {
-        return this.locale != null ? this.locale : this.getContext().getSite().getLanguage();
+        return locale;
     }
 
     private PortalContext getContext()

@@ -18,7 +18,7 @@ import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class IndexResource
     implements AdminResource

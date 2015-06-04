@@ -2,7 +2,7 @@
   "deleted": [],
   "failures": [
     {
-      "path": "/content",
+      "name": "My Content",
       "reason": "Parent content does not exist"
     }
   ],

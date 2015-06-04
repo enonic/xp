@@ -187,12 +187,8 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
-        }
 
-        remove(): PageView {
-            super.remove();
-            this.unregisterPageModel(this.pageModel);
-            return this;
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
         }
 
         private setIgnorePropertyChanges(value: boolean) {
@@ -279,44 +275,31 @@ module api.liveedit {
             return [unlockAction];
         }
 
-        selectLocked(itemView: ItemView, pos: Position) {
+        selectLocked(pos: Position) {
             this.setLockVisible(true);
-
-            if (itemView) {
-                new ItemViewSelectedEvent(itemView, pos).fire();
-            }
-
-            if (!itemView || itemView == this) {
-                new PageSelectedEvent(this).fire();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
-                new RegionSelectedEvent(<RegionView>itemView).fire();
-            }
-
             this.lockedContextMenu.showAt(pos.x, pos.y);
+
+            new ItemViewSelectedEvent(this, pos).fire();
+            new PageSelectedEvent(this).fire();
         }
 
-        deselectLocked(itemView: ItemView) {
+        deselectLocked() {
             this.setLockVisible(false);
             this.lockedContextMenu.hide();
 
-            if (itemView) {
-                new ItemViewDeselectEvent(itemView).fire();
-            }
+            new ItemViewDeselectEvent(this).fire();
         }
 
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
-                var itemView = this.getItemViewByCoordinates(event.pageX, event.pageY);
-
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
                 if (this.lockedContextMenu.isVisible()) {
-                    this.deselectLocked(itemView);
+                    this.deselectLocked();
                 }
                 else {
-                    this.selectLocked(itemView, {x: event.pageX, y: event.pageY});
+                    this.selectLocked({x: event.pageX, y: event.pageY});
                 }
             }
             else if (this.isSelected()) {
@@ -334,6 +317,13 @@ module api.liveedit {
             }
         }
 
+        hideContextMenu() {
+            if (this.lockedContextMenu) {
+                this.lockedContextMenu.hide();
+            }
+            return super.hideContextMenu();
+        }
+
         isLocked() {
             return this.hasClass('locked');
         }
@@ -344,6 +334,8 @@ module api.liveedit {
 
         setLocked(locked: boolean) {
             this.toggleClass('locked', locked);
+
+            this.hideContextMenu();
 
             if (locked) {
                 this.shade();
@@ -614,7 +606,18 @@ module api.liveedit {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                if (isRegionView) {
+                    var region = regions[this.regionIndex++];
+                    if (region) {
+                        // reuse existing region view
+                        var regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
+                } else if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         // regions may be nested on different levels so use page wide var for count
                         var region = regions[this.regionIndex++];
@@ -660,24 +663,6 @@ module api.liveedit {
         private notifyItemViewRemoved(itemView: ItemView) {
             var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
-        }
-
-
-        private getItemViewByCoordinates(x: number, y: number): ItemView {
-            var view: ItemView;
-            for (var key in this.viewsById) {
-                if (this.viewsById.hasOwnProperty(key)) {
-                    var itemView = this.viewsById[key],
-                        elementDimensions = itemView.getElementDimensions();
-
-                    if (y >= elementDimensions.top && y <= elementDimensions.top + elementDimensions.height &&
-                        x >= elementDimensions.left && x <= elementDimensions.left + elementDimensions.width) {
-                        view = itemView;
-                    }
-                }
-            }
-
-            return view;
         }
     }
 }

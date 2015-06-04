@@ -2,15 +2,15 @@ module api.content {
 
     export class MoveContentResult {
 
-        private moveSuccess: ContentId[];
+        private moveSuccess: string[];
         private moveFailures: MoveContentResultFailure[];
 
-        constructor(success: ContentId[], failures: MoveContentResultFailure[]) {
+        constructor(success: string[], failures: MoveContentResultFailure[]) {
             this.moveSuccess = success;
             this.moveFailures = failures;
         }
 
-        getMoved(): ContentId[] {
+        getMoved(): string[] {
             return this.moveSuccess;
         }
 
@@ -19,9 +19,9 @@ module api.content {
         }
 
         static fromJson(json: MoveContentResultJson): MoveContentResult {
-            var success: ContentId[] = json.successes.map((success) => new ContentId(success.contentId));
+            var success: string[] = json.successes.map((success) => success.name);
             var failure: MoveContentResultFailure[] = json.failures.
-                map((failure) => new MoveContentResultFailure(new ContentId(failure.contentId), failure.reason));
+                map((failure) => new MoveContentResultFailure(failure.name, failure.reason));
             return new MoveContentResult(success, failure);
         }
 
@@ -29,16 +29,16 @@ module api.content {
 
     export class MoveContentResultFailure {
 
-        private contentId: ContentId;
+        private name: string;
         private reason: string;
 
-        constructor(contentId: ContentId, reason: string) {
-            this.contentId = contentId;
+        constructor(name: string, reason: string) {
+            this.name = name;
             this.reason = reason;
         }
 
-        getPath(): ContentId {
-            return this.contentId;
+        getName(): string {
+            return this.name;
         }
 
         getReason(): string {

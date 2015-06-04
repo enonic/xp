@@ -39,7 +39,13 @@ public final class LocaleServiceImpl
 
     private MessageBundle createMessageBundle( final ModuleKey module, final Locale locale )
     {
-        Properties props = new Properties();
+        final Properties props = new Properties();
+
+        if ( locale == null )
+        {
+            props.putAll( loadBundle( module, "" ) );
+            return new MessageBundleImpl( props );
+        }
 
         String lang = locale.getLanguage();
         String country = locale.getCountry();

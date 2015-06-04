@@ -32,6 +32,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private pageControllerSelector: PageControllerSelector;
 
+        private inspectionHandler: BaseInspectionHandler;
+
         constructor() {
             super();
         }
@@ -54,7 +56,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
             if (this.pageModel.isPageTemplate()) {
 
-                new PageTemplateInspectionHandler().
+                this.inspectionHandler = new PageTemplateInspectionHandler();
+                this.inspectionHandler.
                     setPageModel(this.pageModel).
                     setPageInspectionPanel(this).
                     setPageControllerForm(this.pageControllerForm).
@@ -62,7 +65,8 @@ module app.wizard.page.contextwindow.inspect.page {
                     setModel(liveEditModel);
             }
             else {
-                new ContentInspectionHandler().
+                this.inspectionHandler = new ContentInspectionHandler();
+                this.inspectionHandler.
                     setPageModel(this.pageModel).
                     setPageInspectionPanel(this).
                     setPageControllerForm(this.pageControllerForm).
@@ -71,20 +75,25 @@ module app.wizard.page.contextwindow.inspect.page {
             }
 
             this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
-                if (pageTemplate) {
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
-                        then((pageDescriptor: PageDescriptor) => {
-                            var setTemplate = new SetTemplate(this).
-                                setTemplate(pageTemplate, pageDescriptor);
-                            this.pageModel.setTemplate(setTemplate, true);
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).done();
+                    if (pageTemplate) {
+                        new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
+                            then((pageDescriptor: PageDescriptor) => {
+                                var setTemplate = new SetTemplate(this).
+                                    setTemplate(pageTemplate, pageDescriptor);
+                                this.pageModel.setTemplate(setTemplate, true);
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason);
+                            }).done();
+                    }
+                    else {
+                        this.pageModel.setAutomaticTemplate(this, true);
+                    }
                 }
-                else {
-                    this.pageModel.setAutomaticTemplate(this, true);
-                }
-            });
+            );
+        }
+
+        refreshInspectionHandler(liveEditModel: LiveEditModel) {
+            this.inspectionHandler.refreshConfigView(liveEditModel);
         }
     }
 
@@ -125,7 +134,6 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
-
             if (this.configForm) {
                 this.configForm.remove();
                 this.configForm = null;
@@ -144,6 +152,9 @@ module app.wizard.page.contextwindow.inspect.page {
                 this.pageModel.setIgnorePropertyChanges(false);
             }).
                 done();
+        }
+
+        refreshConfigView(liveEditModel: LiveEditModel) {
         }
     }
 
@@ -181,30 +192,53 @@ module app.wizard.page.contextwindow.inspect.page {
 
     class ContentInspectionHandler extends BaseInspectionHandler {
 
+        private propertyChangedListener: (event: PropertyChangedEvent) => void;
+
+        refreshConfigView(liveEditModel: LiveEditModel) {
+            var pageModel = liveEditModel.getPageModel();
+            var pageMode = pageModel.getMode();
+
+            if (pageMode == PageMode.FORCED_TEMPLATE) {
+                this.showPageConfig(pageModel);
+            }
+            else if (pageMode == PageMode.AUTOMATIC) {
+                this.showDefaultPageTemplateConfig(pageModel);
+            }
+            else {
+                throw new Error("Unsupported PageMode: " + pageMode);
+            }
+        }
+
         setModel(liveEditModel: LiveEditModel) {
 
             var pageModel = liveEditModel.getPageModel();
 
+            if (this.propertyChangedListener) {
+                pageModel.unPropertyChanged(this.propertyChangedListener);
+            }
+
+            this.initListener(pageModel);
+
             var pageMode = pageModel.getMode();
+
+            this.pageTemplateForm.getSelector().setModel(liveEditModel);
+            this.pageTemplateForm.show();
+
             if (pageMode == PageMode.FORCED_TEMPLATE) {
-
-                this.pageTemplateForm.getSelector().setModel(liveEditModel);
-                this.pageTemplateForm.show();
-
                 this.showPageConfig(pageModel);
             }
             else if (pageMode == PageMode.AUTOMATIC) {
-
-                this.pageTemplateForm.getSelector().setModel(liveEditModel);
-                this.pageTemplateForm.show();
-
                 this.showDefaultPageTemplateConfig(pageModel);
             }
             else {
                 throw new Error("Unsupported PageMode: " + pageMode);
             }
 
-            pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+            pageModel.onPropertyChanged(this.propertyChangedListener);
+        }
+
+        private initListener(pageModel: PageModel) {
+            this.propertyChangedListener = (event: PropertyChangedEvent) => {
                 if (event.getPropertyName() == "controller" && this !== event.getSource()) {
 
                     this.pageControllerForm.show();
@@ -225,7 +259,7 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.showPageConfig(pageModel);
                     }
                 }
-            });
+            };
         }
 
         private showPageConfig(pageModel: PageModel) {
