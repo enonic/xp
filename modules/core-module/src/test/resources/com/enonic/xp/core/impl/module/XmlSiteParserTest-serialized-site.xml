@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module>
-  <display-name>module display name</display-name>
-  <url>http://enonic.net</url>
-  <vendor>
-    <name>Enonic</name>
-    <url>https://www.enonic.com</url>
-  </vendor>
+<site>
   <x-data mixin="system:menu-item"/>
   <x-data mixin="mymodule:my-meta-mixin"/>
   <config>
@@ -18,4 +12,4 @@
       <occurrences minimum="0" maximum="1"/>
     </input>
   </config>
-</module>
+</site>

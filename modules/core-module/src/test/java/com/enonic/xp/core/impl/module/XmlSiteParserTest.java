@@ -7,16 +7,16 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 import com.enonic.xp.support.SerializingTestHelper;
 
-public class XmlModuleParserTest
+public class XmlSiteParserTest
 {
     private final SerializingTestHelper serializingTestHelper;
 
-    private final XmlModuleParser parser;
+    private final XmlSiteParser parser;
 
-    public XmlModuleParserTest()
+    public XmlSiteParserTest()
     {
         this.serializingTestHelper = new SerializingTestHelper( this, true );
-        this.parser = new XmlModuleParser();
+        this.parser = new XmlSiteParser();
     }
 
     private String loadTestXml( final String fileName )
@@ -25,7 +25,7 @@ public class XmlModuleParserTest
     }
 
     @Test
-    public void testModuleXmlDeserialization()
+    public void testSiteXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-site.xml" );
 
@@ -37,7 +37,24 @@ public class XmlModuleParserTest
         this.parser.module( module );
         this.parser.parse();
 
-        Assert.assertNotNull( module.config );
-        Assert.assertNotNull( module.metaSteps );
+        Assert.assertEquals( 1, module.config.getFormItems().size() );
+        Assert.assertEquals( 2, module.metaSteps.getSize() );
+    }
+
+    @Test
+    public void testEmptySiteXmlDeserialization()
+    {
+        final String xml = loadTestXml( "empty-site.xml" );
+
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( "mymodule" );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
+
+        this.parser.source( xml );
+        this.parser.module( module );
+        this.parser.parse();
+
+        Assert.assertEquals( 0, module.config.getFormItems().size() );
+        Assert.assertEquals( 0, module.metaSteps.getSize() );
     }
 }
