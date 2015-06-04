@@ -153,21 +153,6 @@ public class ContentTypeTest
     }
 
     @Test
-    public void contentTypes()
-    {
-        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form(
-            ContentTypeForms.PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
-            "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
-            Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
-        ContentType contentType = builder.build();
-        ContentTypes contentTypes = ContentTypes.newContentTypes().add( contentType ).build();
-        assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );
-        assertTrue( ContentTypes.empty().getSize() == 0 );
-        assertTrue( ContentTypes.from( contentType ).getSize() == 1 );
-        assertNotNull( contentTypes.getContentType( contentType.getName() ) );
-    }
-
-    @Test
     public void getAllContentTypesParams()
     {
         GetAllContentTypesParams params = new GetAllContentTypesParams();
