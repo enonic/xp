@@ -26,11 +26,11 @@ final class MixinLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( MixinLoader.class );
 
-    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/cms/mixins/([^/]+)/mixin\\.xml" );
+    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/mixins/([^/]+)/mixin\\.xml" );
 
     private final static String MIXIN_FILE = "mixin.xml";
 
-    private final static String MIXIN_DIRECTORY = "cms/mixins";
+    private final static String MIXIN_DIRECTORY = "mixins";
 
     private final Bundle bundle;
 

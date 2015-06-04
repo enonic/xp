@@ -22,7 +22,7 @@ public final class LocaleServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
 
-    private static final String PHRASE_FOLDER = "cms/i18n/phrases";
+    private static final String PHRASE_FOLDER = "i18n/phrases";
 
     private static final String DELIMITER = "_";
 
