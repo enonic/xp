@@ -9,7 +9,7 @@
   <xs:element name="mixin" type="mixin"/>
   <xs:element name="module" type="module"/>
   <xs:element name="page-component" type="pageDescriptor"/>
-  <xs:element name="part-component" type="partDescriptor"/>
+  <xs:element name="part" type="partDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
 
   <xs:complexType name="module">
