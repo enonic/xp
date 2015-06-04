@@ -40,11 +40,25 @@ module api.content.page.region {
             });
         }
 
-        setDescriptor(key: DescriptorKey) {
-            var option = this.getOptionByValue(key.toString());
-            if (option) {
-                this.selectOption(option, true);
+        setDescriptor(descriptor: Descriptor) {
+            if (descriptor) {
+                var option = this.getOptionByValue(descriptor.getKey().toString());
+                if (option) {
+                    this.selectOption(option, true);
+                }
+            } else {
+                this.reset();
             }
+        }
+
+        getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
+            if (descriptorKey) {
+                var option = this.getOptionByValue(descriptorKey.toString());
+                if (option) {
+                    return option.displayValue;
+                }
+            }
+            return null;
         }
     }
 }

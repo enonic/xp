@@ -107,6 +107,10 @@ module api.liveedit.layout {
         }
 
         private parseRegions() {
+            this.regionViews.forEach((regionView) => {
+                this.unregisterRegionView(regionView);
+            });
+
             this.regionViews = [];
 
             return this.doParseRegions();
@@ -123,24 +127,35 @@ module api.liveedit.layout {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
-                    if (RegionItemType.get().equals(itemType)) {
-                        var regionName = RegionItemType.getRegionName(childElement);
-                        var region = layoutRegions.getRegionByName(regionName);
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                var region, regionName, regionView;
 
-                        if (region) {
-                            var regionView = new RegionView(new RegionViewBuilder().
-                                setParentView(this).
-                                setParentElement(parentElement ? parentElement : this).
-                                setRegion(region).
-                                setElement(childElement));
+                if (isRegionView) {
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = layoutRegions.getRegionByName(regionName);
+                    if (region) {
+                        // reuse existing region view
+                        regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
 
-                            this.registerRegionView(regionView);
-                        }
+                } else if (itemType && RegionItemType.get().equals(itemType)) {
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = layoutRegions.getRegionByName(regionName);
+
+                    if (region) {
+                        regionView = new RegionView(new RegionViewBuilder().
+                            setParentView(this).
+                            setParentElement(parentElement ? parentElement : this).
+                            setRegion(region).
+                            setElement(childElement));
+
+                        this.registerRegionView(regionView);
                     }
-                    else {
-                        this.doParseRegions(childElement);
-                    }
+
                 } else {
                     this.doParseRegions(childElement);
                 }

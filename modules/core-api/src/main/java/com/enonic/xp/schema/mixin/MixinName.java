@@ -1,19 +1,19 @@
 package com.enonic.xp.schema.mixin;
 
-
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.BaseSchemaName;
 
 @Beta
 public final class MixinName
-    extends ModuleBasedName
+    extends BaseSchemaName
     implements Comparable<MixinName>
 {
-    public final static String SEPARATOR = ModuleBasedName.SEPARATOR;
+    private MixinName( final String name )
+    {
+        super( name );
+    }
 
     private MixinName( final ModuleKey moduleKey, final String localName )
     {
@@ -27,9 +27,7 @@ public final class MixinName
 
     public static MixinName from( final String mixinName )
     {
-        final String moduleKey = StringUtils.substringBefore( mixinName, SEPARATOR );
-        final String localName = StringUtils.substringAfter( mixinName, SEPARATOR );
-        return new MixinName( ModuleKey.from( moduleKey ), localName );
+        return new MixinName( mixinName );
     }
 
     @Override
@@ -37,5 +35,4 @@ public final class MixinName
     {
         return this.toString().compareTo( that.toString() );
     }
-
 }

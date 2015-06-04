@@ -18,7 +18,7 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Module module = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-part-descr" );
 
-        mockResourcePaths( module, "cms/parts/foomodule-part-descr/part.xml" );
+        mockResourcePaths( module, "parts/foomodule-part-descr/part.xml" );
         final PartDescriptors result = this.service.getByModule( module.getKey() );
 
         Assert.assertNotNull( result );
@@ -32,8 +32,8 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResourcePaths( modules.getModule( ModuleKey.from( "foomodule" ) ), "cms/parts/foomodule-part-descr/part.xml" );
-        mockResourcePaths( modules.getModule( ModuleKey.from( "barmodule" ) ), "cms/parts/barmodule-part-descr/part.xml" );
+        mockResourcePaths( modules.getModule( ModuleKey.from( "foomodule" ) ), "parts/foomodule-part-descr/part.xml" );
+        mockResourcePaths( modules.getModule( ModuleKey.from( "barmodule" ) ), "parts/barmodule-part-descr/part.xml" );
 
         final PartDescriptors result = this.service.getByModules( modules.getModuleKeys() );
 

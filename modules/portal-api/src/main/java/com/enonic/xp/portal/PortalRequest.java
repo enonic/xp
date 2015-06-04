@@ -128,7 +128,7 @@ public final class PortalRequest
 
     public String rewriteUri( final String uri )
     {
-        return ServletRequestUrlHelper.rewriteUri( uri );
+        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
     }
 
     @Deprecated

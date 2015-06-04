@@ -79,6 +79,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -275,12 +276,20 @@ public final class ContentResource
         {
             try
             {
-                contentService.move( new MoveContentParams( ContentIds.from( contentId ), params.getParentContentPath() ) );
-                resultJson.addSuccess( contentId );
+                final Content movedContent = contentService.move( new MoveContentParams( contentId, params.getParentContentPath() ) );
+                resultJson.addSuccess( movedContent != null ? movedContent.getDisplayName() : contentId.toString() );
             }
             catch ( MoveContentException e )
             {
-                resultJson.addFailure( contentId, e.getMessage() );
+                try
+                {
+                    final Content failedContent = contentService.getById( contentId );
+                    resultJson.addFailure( failedContent != null ? failedContent.getDisplayName() : contentId.toString(), e.getMessage() );
+                }
+                catch ( ContentNotFoundException cnEx )
+                {
+                    resultJson.addFailure( contentId.toString(), e.getMessage() );
+                }
             }
         }
 
@@ -326,12 +335,35 @@ public final class ContentResource
 
             try
             {
-                contentService.delete( deleteContent );
-                jsonResult.addSuccess( contentToDelete );
+                Contents contents = contentService.delete( deleteContent );
+                contents.forEach( ( content ) -> {
+                    if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
+                    {
+                        jsonResult.addPending( content.getDisplayName() );
+                    }
+                    else
+                    {
+                        jsonResult.addSuccess( content.getDisplayName() );
+                    }
+
+                } );
+
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
             {
-                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+                try
+                {
+                    Content content = contentService.getByPath( contentToDelete );
+                    if ( content != null )
+                    {
+                        jsonResult.addFailure( content.getDisplayName(), e.getMessage() );
+                    }
+                }
+                catch ( ContentNotFoundException | ContentAccessException ex )
+                {
+                    jsonResult.addFailure( deleteContent.getContentPath().toString(), e.getMessage() );
+                }
+
             }
         }
 

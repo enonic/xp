@@ -81,13 +81,13 @@ public final class PartComponent
         @Override
         public Builder descriptor( DescriptorKey value )
         {
-            this.descrpitor = value;
+            this.descriptor = value;
             return this;
         }
 
         public Builder descriptor( String value )
         {
-            this.descrpitor = DescriptorKey.from( value );
+            this.descriptor = DescriptorKey.from( value );
             return this;
         }
 

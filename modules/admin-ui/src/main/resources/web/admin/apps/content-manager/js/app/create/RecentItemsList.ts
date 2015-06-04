@@ -3,7 +3,7 @@ module app.create {
     export class RecentItemsList extends NewContentDialogList {
 
         constructor() {
-            super();
+            super("recent-content-types-list");
         }
 
         setItems(items: NewContentDialogListItem[]) {

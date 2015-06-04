@@ -3,27 +3,29 @@ package com.enonic.xp.schema.content.validator;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyVisitor;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.schema.content.ContentType;
 
 
 public final class InputValidator
 {
-    private final PropertyValidationVisitor propertyValidationVisitor;
+    private final Form form;
 
-    private InputValidator( final ContentType contentType, final boolean requireMappedProperties )
+    private InputValidator( final ContentType contentType )
     {
-        this.propertyValidationVisitor = new PropertyValidationVisitor( contentType.form(), requireMappedProperties );
+        form = contentType.form();
     }
 
-    public final void validate( final PropertySet dataSet )
+    public final void validate( final PropertyTree propertyTree )
     {
-        propertyValidationVisitor.traverse( dataSet );
+        if ( form != null )
+        {
+            final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree );
+            inputValidationVisitor.traverse( form );
+        }
     }
 
     public static Builder create()
@@ -35,17 +37,9 @@ public final class InputValidator
     {
         private ContentType contentType;
 
-        private boolean requireMappedProperties;
-
         public Builder contentType( final ContentType contentType )
         {
             this.contentType = contentType;
-            return this;
-        }
-
-        public Builder requireMappedProperties( final boolean requireMappedProperties )
-        {
-            this.requireMappedProperties = requireMappedProperties;
             return this;
         }
 
@@ -57,45 +51,29 @@ public final class InputValidator
         public InputValidator build()
         {
             this.validate();
-            return new InputValidator( this.contentType, this.requireMappedProperties );
+            return new InputValidator( this.contentType );
         }
     }
 
-    private class PropertyValidationVisitor
-        extends PropertyVisitor
+    private class InputValidationVisitor
+        extends InputVisitor
     {
-        private final Form form;
+        private PropertyTree propertyTree;
 
-        private final boolean requireMappedProperties;
-
-        public PropertyValidationVisitor( final Form form, final boolean requireMappedProperties )
+        public InputValidationVisitor( final PropertyTree propertyTree )
         {
-            this.form = form;
-            this.requireMappedProperties = requireMappedProperties;
+            this.propertyTree = propertyTree;
         }
 
         @Override
-        public void visit( final Property property )
+        public void visit( final Input input )
         {
-            FormItem formItem = form.getFormItem( property.getPath().toString() );
 
-            if ( formItem == null )
+            final Property property = propertyTree.getProperty( input.getPath().toString() );
+
+            if ( property != null )
             {
-                if ( requireMappedProperties )
-                {
-                    throw new InvalidDataException( property, "No FormItem found for this property" );
-                }
-            }
-            else
-            {
-                if ( formItem instanceof Input )
-                {
-                    ( (Input) formItem ).checkValidity( property );
-                }
-                else
-                {
-                    throw new InvalidDataException( property, "The FormItem found for this property is not an Input" );
-                }
+                input.checkValidity( property );
             }
         }
     }

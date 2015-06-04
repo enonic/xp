@@ -1,6 +1,7 @@
 package com.enonic.xp.schema.content;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -8,6 +9,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -22,6 +24,25 @@ public final class ContentTypes
     {
         super( list );
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+    }
+
+    public ContentTypes add( final ContentType... contentTypes )
+    {
+        return add( ImmutableList.copyOf( contentTypes ) );
+    }
+
+    public ContentTypes add( final Iterable<ContentType> contentTypes )
+    {
+        return add( ImmutableList.copyOf( contentTypes ) );
+    }
+
+    private ContentTypes add( final ImmutableList<ContentType> contentTypes )
+    {
+        final List<ContentType> tmp = Lists.newArrayList();
+        tmp.addAll( this.list );
+        tmp.addAll( contentTypes );
+
+        return new ContentTypes( ImmutableList.copyOf( tmp ) );
     }
 
     public ImmutableSet<ContentTypeName> getNames()

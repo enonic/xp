@@ -40,7 +40,7 @@ public final class ServletRequestUrlHelper
             str.append( "/" );
         }
 
-        return rewriteUri( req, str.toString() );
+        return rewriteUri( req, str.toString() ).getRewrittenUri();
     }
 
     public static String createUriWithHost( final String path )
@@ -73,32 +73,40 @@ public final class ServletRequestUrlHelper
         return !( isHttp || isHttps );
     }
 
-    public static String rewriteUri( final String uri )
+    public static UriRewritingResult rewriteUri( final String uri )
     {
         return rewriteUri( ServletRequestHolder.getRequest(), uri );
     }
 
-    private static String rewriteUri( final HttpServletRequest req, final String uri )
+    private static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
     {
+        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create().
+            rewrittenUri( uri );
         if ( req == null )
         {
-            return uri;
+            return resultBuilder.build();
         }
 
         final VirtualHost vhost = VirtualHostHelper.getVirtualHost( req );
         if ( vhost == null )
         {
-            return uri;
+            return resultBuilder.build();
         }
 
         final String targetPath = vhost.getTarget();
         if ( uri.startsWith( targetPath ) )
         {
             final String result = uri.substring( targetPath.length() );
-            return normalizePath( vhost.getSource() + "/" + result );
+            final String newUri = normalizePath( vhost.getSource() + "/" + result );
+            return resultBuilder.rewrittenUri( newUri ).
+                deletedUriPrefix( targetPath ).
+                newUriPrefix( normalizePath( vhost.getSource() ) ).
+                build();
         }
 
-        return normalizePath( uri );
+        return resultBuilder.
+            rewrittenUri( normalizePath( uri ) ).
+            build();
     }
 
     private static String normalizePath( final String value )
@@ -111,4 +119,5 @@ public final class ServletRequestUrlHelper
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
         return "/" + Joiner.on( '/' ).join( parts );
     }
+
 }

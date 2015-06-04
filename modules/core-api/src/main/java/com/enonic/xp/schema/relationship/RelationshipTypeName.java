@@ -1,29 +1,26 @@
 package com.enonic.xp.schema.relationship;
 
-
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.BaseSchemaName;
 
 @Beta
 public final class RelationshipTypeName
-    extends ModuleBasedName
+    extends BaseSchemaName
 {
-    public static final RelationshipTypeName REFERENCE = new RelationshipTypeName( "reference" );
+    public static final RelationshipTypeName REFERENCE = new RelationshipTypeName( ModuleKey.SYSTEM, "reference" );
 
-    public static final RelationshipTypeName PARENT = new RelationshipTypeName( "parent" );
+    public static final RelationshipTypeName PARENT = new RelationshipTypeName( ModuleKey.SYSTEM, "parent" );
+
+    private RelationshipTypeName( final String name )
+    {
+        super( name );
+    }
 
     private RelationshipTypeName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );
-    }
-
-    private RelationshipTypeName( final String localName )
-    {
-        super( ModuleKey.SYSTEM, localName );
     }
 
     public static RelationshipTypeName from( final ModuleKey moduleKey, final String localName )
@@ -33,8 +30,6 @@ public final class RelationshipTypeName
 
     public static RelationshipTypeName from( final String relationshipTypeName )
     {
-        final String moduleKey = StringUtils.substringBefore( relationshipTypeName, SEPARATOR );
-        final String localName = StringUtils.substringAfter( relationshipTypeName, SEPARATOR );
-        return new RelationshipTypeName( ModuleKey.from( moduleKey ), localName );
+        return new RelationshipTypeName( relationshipTypeName );
     }
 }

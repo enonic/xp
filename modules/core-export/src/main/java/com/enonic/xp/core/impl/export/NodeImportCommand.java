@@ -30,6 +30,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
+import com.enonic.xp.xml.XmlException;
 
 public class NodeImportCommand
 {
@@ -160,7 +161,7 @@ public class NodeImportCommand
         }
         catch ( Exception e )
         {
-            result.addError( "Could not import node in folder " + nodeFolder.getPath().getPath(), e );
+            result.addError( "Could not import node in folder [" + nodeFolder.getPath().getPath() + "]: " + e.getMessage(), e );
         }
 
 
@@ -171,10 +172,17 @@ public class NodeImportCommand
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
         final Node.Builder newNodeBuilder = Node.newNode();
-        final XmlNodeParser parser = new XmlNodeParser();
-        parser.builder( newNodeBuilder );
-        parser.source( nodeSource.getCharSource() );
-        parser.parse();
+        try
+        {
+            final XmlNodeParser parser = new XmlNodeParser();
+            parser.builder( newNodeBuilder );
+            parser.source( nodeSource.getCharSource() );
+            parser.parse();
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e, "Could not load source node [" + nodeSource.getUrl() + "]: " + e.getMessage() );
+        }
 
         final Node newNode = newNodeBuilder.build();
 

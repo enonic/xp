@@ -1,16 +1,13 @@
 package com.enonic.xp.schema.content;
 
-
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.BaseSchemaName;
 
 @Beta
 public final class ContentTypeName
-    extends ModuleBasedName
+    extends BaseSchemaName
     implements Comparable<ContentTypeName>
 {
     // base:
@@ -63,6 +60,11 @@ public final class ContentTypeName
     private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( MEDIA_MOD, "executable" );
 
     private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( MEDIA_MOD, "unknown" );
+
+    private ContentTypeName( final String name )
+    {
+        super( name );
+    }
 
     private ContentTypeName( final ModuleKey moduleKey, final String localName )
     {
@@ -309,9 +311,6 @@ public final class ContentTypeName
 
     public static ContentTypeName from( final String contentTypeName )
     {
-        final String moduleKey = StringUtils.substringBefore( contentTypeName, SEPARATOR );
-        final String localName = StringUtils.substringAfter( contentTypeName, SEPARATOR );
-
-        return new ContentTypeName( ModuleKey.from( moduleKey ), localName );
+        return new ContentTypeName( contentTypeName );
     }
 }

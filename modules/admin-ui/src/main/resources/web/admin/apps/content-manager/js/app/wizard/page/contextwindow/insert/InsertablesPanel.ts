@@ -27,7 +27,7 @@ module app.wizard.page.contextwindow.insert {
 
         private contextWindowDraggable: JQuery;
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
@@ -104,7 +104,7 @@ module app.wizard.page.contextwindow.insert {
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             var over = this.isOverIFrame(event);
-            if (/*!this.pageView.isLocked() && */this.overIFrame != over) {
+            if (this.overIFrame != over) {
                 if (over) {
                     this.onEnterIFrame(event, ui);
                 } else {

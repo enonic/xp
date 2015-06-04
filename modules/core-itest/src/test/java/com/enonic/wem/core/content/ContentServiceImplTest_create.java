@@ -141,7 +141,7 @@ public class ContentServiceImplTest_create
         contentData.addString( "target", "aStringValue" );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( contentData).
+            contentData( contentData ).
             displayName( "This is my shortcut" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.shortcut() ).
@@ -149,34 +149,5 @@ public class ContentServiceImplTest_create
 
         exception.expect( IllegalArgumentException.class );
         this.contentService.create( createContentParams );
-    }
-
-    @Test
-    public void create_content_with_unmapped_property()
-        throws Exception
-    {
-        final PropertyTree contentData = new PropertyTree();
-        contentData.addString( "unmappedPropertyName", "aValue" );
-
-        CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( contentData ).
-            displayName( "Folder1" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        this.contentService.create( createContentParams );
-
-        createContentParams = CreateContentParams.create().
-            contentData( contentData ).
-            displayName( "Folder2" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            requireMappedProperties( true ).
-            build();
-
-        exception.expect( IllegalArgumentException.class );
-        this.contentService.create( createContentParams );
-
     }
 }

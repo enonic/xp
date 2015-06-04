@@ -100,6 +100,9 @@
 ///<reference path='form/inputtype/double/_module.ts' />
 ///<reference path='form/inputtype/time/_module.ts' />
 
+///<reference path='site/json/_module.ts' />
+///<reference path='site/_module.ts' />
+
 ///<reference path='item/_module.ts' />
 
 ///<reference path='query/expr/_module.ts' />

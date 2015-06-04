@@ -2,6 +2,7 @@ module api.ui.image {
 
     import ImgEl = api.dom.ImgEl;
     import DivEl = api.dom.DivEl;
+    import Button = api.ui.button.Button;
 
     export class FocalEditor extends api.dom.DivEl {
 
@@ -21,11 +22,11 @@ module api.ui.image {
         private mouseUpListener;
         private mouseMoveListener;
 
-        private focalPointButton: api.ui.button.Button;
-        private setFocusButton: api.ui.button.Button;
-        private cancelButton: api.ui.button.Button;
+        private focalPointButton: Button;
+        private editButtonsToolbar: DivEl;
 
         private positionChangedListeners: {(position: {x: number; y: number}): void}[] = [];
+        private autoPositionChangedListeners: {(autoPositioned: boolean): void}[] = [];
         private radiusChangedListeners: {(r: number): void}[] = [];
         private editModeListeners: {(edit: boolean, position: {x: number; y:number}): void}[] = [];
 
@@ -63,8 +64,7 @@ module api.ui.image {
             this.toggleClass('edit', edit);
 
             this.focalPointButton.setVisible(!edit);
-            this.setFocusButton.setVisible(edit);
-            this.cancelButton.setVisible(edit);
+            this.editButtonsToolbar.setVisible(edit);
 
             if (edit) {
                 this.revertToPosition = this.getPositionPx();
@@ -241,8 +241,12 @@ module api.ui.image {
         }
 
         private setAutoPositioned(auto: boolean) {
+            var autoPositionedChanged = this.autoPositioned != auto;
             this.autoPositioned = auto;
             this.toggleClass('auto', auto);
+            if (autoPositionedChanged) {
+                this.notifyAutoPositionChanged(auto);
+            }
         }
 
         private restrainWidth(x: number) {
@@ -303,10 +307,6 @@ module api.ui.image {
             }
         }
 
-        private getPositionFromEvent(event: MouseEvent): {x: number; y: number} {
-            return
-        }
-
         private bindMouseListeners() {
             var mouseDown: boolean = false;
             var lastPos: {x: number; y: number};
@@ -352,29 +352,27 @@ module api.ui.image {
         private createToolbar(): api.dom.DivEl {
             var toolbar = new api.dom.DivEl('focal-toolbar');
 
-            this.focalPointButton = new api.ui.button.Button();
-            this.focalPointButton.addClass('no-bg icon-center-focus-strong');
-            this.focalPointButton.onClicked((event: MouseEvent) => {
-                this.setEditMode(true);
-            });
-            toolbar.appendChild(this.focalPointButton);
+            this.focalPointButton = new Button();
+            this.focalPointButton.addClass('no-bg icon-center-focus-strong').onClicked((event: MouseEvent) => this.setEditMode(true));
 
-            this.setFocusButton = new api.ui.button.Button('Set Focus');
-            this.setFocusButton.addClass('blue');
-            this.setFocusButton.setVisible(false);
-            this.setFocusButton.onClicked((event: MouseEvent) => {
-                this.setEditMode(false);
-            });
-            this.cancelButton = new api.ui.button.Button('Cancel');
-            this.cancelButton.setVisible(false);
-            this.cancelButton.onClicked((event: MouseEvent) => {
-                this.setEditMode(false, false);
-            });
+            var setFocusButton = new Button('Set Focus');
+            setFocusButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => this.setEditMode(false));
 
-            var pullRight = new api.dom.DivEl('pull-right');
-            pullRight.appendChild(this.setFocusButton);
-            pullRight.appendChild(this.cancelButton);
-            toolbar.appendChild(pullRight);
+            var resetButton = new Button('Reset');
+            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => this.resetPosition());
+
+            var cancelButton = new Button('Cancel');
+            cancelButton.onClicked((event: MouseEvent) => this.setEditMode(false, false));
+
+            this.editButtonsToolbar = new api.dom.DivEl('edit-buttons-toolbar');
+            this.editButtonsToolbar.setVisible(false).appendChildren(setFocusButton, resetButton, cancelButton);
+
+            toolbar.appendChildren(this.focalPointButton, this.editButtonsToolbar);
+
+            this.onAutoPositionChanged((autoPositioned) => {
+                resetButton.setEnabled(!autoPositioned);
+                setFocusButton.setEnabled(!autoPositioned);
+            });
 
             return toolbar;
         }
@@ -409,6 +407,22 @@ module api.ui.image {
             }
             this.editModeListeners.forEach((listener) => {
                 listener(edit, normalizedPosition);
+            })
+        }
+
+        onAutoPositionChanged(listener: (autoPositioned: boolean) => void) {
+            this.autoPositionChangedListeners.push(listener);
+        }
+
+        unAutoPositionChanged(listener: (autoPositioned: boolean) => void) {
+            this.autoPositionChangedListeners = this.autoPositionChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyAutoPositionChanged(autoPositioned: boolean) {
+            this.autoPositionChangedListeners.forEach((listener) => {
+                listener(autoPositioned);
             })
         }
 

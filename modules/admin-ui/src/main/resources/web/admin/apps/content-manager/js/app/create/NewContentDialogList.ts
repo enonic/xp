@@ -6,8 +6,8 @@ module app.create {
 
         private selectedListeners: {(event: NewContentDialogItemSelectedEvent):void}[] = [];
 
-        constructor() {
-            super('content-types-list');
+        constructor(className = 'content-types-list') {
+            super(className);
         }
 
         onSelected(listener: (event: NewContentDialogItemSelectedEvent)=>void) {
@@ -20,7 +20,7 @@ module app.create {
             });
         }
 
-        private notifySelected(listItem: NewContentDialogListItem) {
+        protected notifySelected(listItem: NewContentDialogListItem) {
             this.selectedListeners.forEach((listener: (event: NewContentDialogItemSelectedEvent)=>void) => {
                 listener.call(this, new NewContentDialogItemSelectedEvent(listItem));
             });

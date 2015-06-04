@@ -33,7 +33,8 @@ module api.content.form.inputtype.image {
                 showCancel: false,
                 showReset: false,
                 showResult: false,
-                allowMultiSelection: allowMultiSelection
+                allowMultiSelection: allowMultiSelection,
+                scaleWidth: false
             });
 
             this.imageUploader.onUploadCompleted(() => {

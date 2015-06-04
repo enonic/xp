@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ListContentByPathRequest<T> extends ContentResourceRequest<ListContentResult<T>, any> {
+    export class ListContentByPathRequest<T> extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentPath:ContentPath;
 
@@ -43,5 +43,16 @@ module api.content {
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list", "bypath");
         }
+
+        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
+
+            return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
+                return new ContentResponse(
+                    ContentSummary.fromJsonArray(response.getResult().contents, this.propertyIdProvider),
+                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
+                );
+            });
+        }
+
     }
 }

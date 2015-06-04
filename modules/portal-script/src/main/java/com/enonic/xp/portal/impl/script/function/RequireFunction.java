@@ -57,6 +57,6 @@ public final class RequireFunction
             return resolved;
         }
 
-        return this.script.resolve( "/cms/lib/" + name );
+        return this.script.resolve( "/lib/" + name );
     }
 }

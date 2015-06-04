@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
+import com.enonic.xp.xml.XmlException;
 
 final class ModuleBuilder
 {
@@ -24,7 +25,7 @@ final class ModuleBuilder
 
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
-    private static final String MODULE_XML = "module.xml";
+    private static final String SITE_XML = "site.xml";
 
     private Bundle bundle;
 
@@ -55,30 +56,36 @@ final class ModuleBuilder
 
     private static void readXmlDescriptor( final ModuleImpl module )
     {
-        final URL url = module.bundle.getResource( MODULE_XML );
-        final String xml = parseModuleXml( url );
+        final URL url = module.bundle.getResource( SITE_XML );
+        final String xml = parseSiteXml( url );
 
-        final XmlModuleParser parser = new XmlModuleParser();
+        final XmlSiteParser parser = new XmlSiteParser();
         parser.module( module );
         parser.source( xml );
         parser.parse();
     }
 
-    private static String parseModuleXml( final URL moduleResource )
+    private static String parseSiteXml( final URL siteXmlURL )
     {
         try
         {
-            return Resources.toString( moduleResource, Charsets.UTF_8 );
+            return Resources.toString( siteXmlURL, Charsets.UTF_8 );
         }
-        catch ( IOException e )
+        catch ( final Exception e )
         {
-            throw new RuntimeException( "Invalid module.xml file", e );
+            throw new RuntimeException( "Invalid site.xml file", e );
         }
+    }
+
+    private static String parseModuleXml( final URL moduleResource )
+        throws IOException
+    {
+       return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )
     {
-        return ( bundle.getEntry( MODULE_XML ) != null );
+        return ( bundle.getEntry( SITE_XML ) != null );
     }
 
     private static String getHeader( final Bundle bundle, final String name, final String defValue )

@@ -31,6 +31,7 @@
 ///<reference path='PartComponentJson.ts' />
 ///<reference path='PartDescriptorsJson.ts' />
 ///<reference path='PartDescriptor.ts' />
+///<reference path='PartDescriptorDropdown.ts' />
 ///<reference path='PartComponent.ts' />
 ///<reference path='PartComponentType.ts' />
 ///<reference path='PartDescriptorViewer.ts' />

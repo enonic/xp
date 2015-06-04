@@ -165,7 +165,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
 
-                var validationRecording = view.getFormView().validate(silent);
+                var validationRecording = view.getFormView().validate(true);
                 if (!validationRecording.isMinimumOccurrencesValid()) {
                     recording.setBreaksMinimumOccurrences(true);
                 }
