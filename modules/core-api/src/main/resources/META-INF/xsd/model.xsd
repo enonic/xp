@@ -41,7 +41,7 @@
         <xs:element name="input" type="input"/>
         <xs:element name="inline" type="inline"/>
         <xs:element name="field-set" type="fieldSet"/>
-        <xs:element name="form-item-set" type="formItemSet"/>
+        <xs:element name="item-set" type="itemSet"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -95,7 +95,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="formItemSet">
+  <xs:complexType name="itemSet">
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:sequence>

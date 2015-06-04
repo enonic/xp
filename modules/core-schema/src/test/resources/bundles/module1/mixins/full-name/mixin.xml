@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mixin>
+<mixin xmlns="urn:enonic:xp:model:1.0">
   <display-name>Full Name</display-name>
   <items>
-    <form-item-set name="name">
+    <item-set name="name">
       <label>Full Name</label>
       <immutable>false</immutable>
       <custom-text/>
@@ -26,6 +26,6 @@
           <occurrences minimum="1" maximum="1"/>
         </input>
       </items>
-    </form-item-set>
+    </item-set>
   </items>
 </mixin>

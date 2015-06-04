@@ -9,7 +9,7 @@
   <allow-child-content>true</allow-child-content>
   <x-data mixin="mymodule:metadata"/>
   <form>
-    <form-item-set name="mySet">
+    <item-set name="mySet">
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
       <items>
@@ -24,6 +24,6 @@
           </items>
         </field-set>
       </items>
-    </form-item-set>
+    </item-set>
   </form>
 </content-type>
