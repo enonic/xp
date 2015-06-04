@@ -37,7 +37,6 @@
             "store": "no",
             "index": "analyzed",
             "index_analyzer": "ngram",
-            "search_analyzer": "ngram_search",
             "include_in_all": false
           }
         }
