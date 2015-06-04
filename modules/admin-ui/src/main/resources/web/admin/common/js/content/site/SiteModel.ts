@@ -4,11 +4,11 @@ module api.content.site {
 
     export class SiteModel {
 
-        public static PROPERTY_NAME_MODULE_CONFIGS = "moduleConfigs";
+        public static PROPERTY_NAME_SITE_CONFIGS = "siteConfigs";
 
         private site: api.content.site.Site;
 
-        private moduleConfigs: ModuleConfig[];
+        private siteConfigs: SiteConfig[];
 
         private moduleAddedListeners: {(event: ModuleAddedEvent):void}[] = [];
 
@@ -18,27 +18,27 @@ module api.content.site {
 
         constructor(site: Site) {
             this.site = site;
-            this.moduleConfigs = site.getModuleConfigs();
+            this.siteConfigs = site.getSiteConfigs();
 
             this.site.getContentData().onPropertyAdded((event: api.data.PropertyAddedEvent) => {
                 var property: api.data.Property = event.getProperty();
                 // TODO:? property.getPath().startsWith(PropertyPath.fromString(".moduleConfig")) &&  property.getName( )=="config")
-                if (property.getPath().toString().indexOf(".moduleConfig") == 0 && property.getName() == "config") {
-                    var moduleConfig: ModuleConfig = api.content.site.ModuleConfig.create().fromData(property.getParent()).build();
-                    if(!this.moduleConfigs) {
-                        this.moduleConfigs = [];
+                if (property.getPath().toString().indexOf(".siteConfig") == 0 && property.getName() == "config") {
+                    var siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
+                    if (!this.siteConfigs) {
+                        this.siteConfigs = [];
                     }
-                    this.moduleConfigs.push(moduleConfig);
-                    this.notifyModuleAdded(moduleConfig);
+                    this.siteConfigs.push(siteConfig);
+                    this.notifyModuleAdded(siteConfig);
                 }
             });
 
             this.site.getContentData().onPropertyRemoved((event: api.data.PropertyRemovedEvent) => {
                 var property: api.data.Property = event.getProperty();
-                if (property.getName()=="moduleConfig") {
+                if (property.getName() == "siteConfig") {
                     var moduleKey = ModuleKey.fromString(property.getPropertySet().getString("moduleKey"));
-                    this.moduleConfigs = this.moduleConfigs.filter((moduleConfig: ModuleConfig) =>
-                        !moduleConfig.getModuleKey().equals(moduleKey)
+                    this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
+                            !siteConfig.getModuleKey().equals(moduleKey)
                     );
                     this.notifyModuleRemoved(moduleKey);
                 }
@@ -57,7 +57,7 @@ module api.content.site {
         }
 
         getModuleKeys(): ModuleKey[] {
-            return this.moduleConfigs.map((mc: ModuleConfig) => mc.getModuleKey());
+            return this.siteConfigs.map((sc: SiteConfig) => sc.getModuleKey());
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
@@ -89,8 +89,8 @@ module api.content.site {
                 });
         }
 
-        private notifyModuleAdded(moduleConfig: ModuleConfig) {
-            var event = new ModuleAddedEvent(moduleConfig);
+        private notifyModuleAdded(siteConfig: SiteConfig) {
+            var event = new ModuleAddedEvent(siteConfig);
             this.moduleAddedListeners.forEach((listener: (event: ModuleAddedEvent)=>void) => {
                 listener(event);
             })

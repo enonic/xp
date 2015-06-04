@@ -19,22 +19,22 @@ module api.content.site {
             return this.getContentData().getString("description");
         }
 
-        getModuleConfigs(): ModuleConfig[] {
+        getSiteConfigs(): SiteConfig[] {
 
-            var moduleConfigs: ModuleConfig[] = [];
-            this.getContentData().forEachProperty("moduleConfig", (moduleProperty: Property) => {
-                var moduleConfigData = moduleProperty.getPropertySet();
-                if (moduleConfigData) {
-                    var moduleConfig = ModuleConfig.create().fromData(moduleConfigData).build();
-                    moduleConfigs.push(moduleConfig);
+            var siteConfigs: SiteConfig[] = [];
+            this.getContentData().forEachProperty("siteConfig", (moduleProperty: Property) => {
+                var siteConfigData = moduleProperty.getPropertySet();
+                if (siteConfigData) {
+                    var siteConfig = SiteConfig.create().fromData(siteConfigData).build();
+                    siteConfigs.push(siteConfig);
                 }
             });
 
-            return moduleConfigs;
+            return siteConfigs;
         }
 
         getModuleKeys(): ModuleKey[] {
-            return this.getModuleConfigs().map((config: ModuleConfig) => config.getModuleKey());
+            return this.getSiteConfigs().map((config: SiteConfig) => config.getModuleKey());
         }
 
         equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
