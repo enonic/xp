@@ -602,33 +602,34 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                var region, regionName, regionView;
+
                 if (isRegionView) {
-                    var region = regions[this.regionIndex++];
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = pageRegions.getRegionByName(regionName);
                     if (region) {
                         // reuse existing region view
-                        var regionView = <RegionView> childElement;
+                        regionView = <RegionView> childElement;
                         // update view's data
                         regionView.setRegion(region);
                         // register it again because we unregistered everything before parsing
                         this.registerRegionView(regionView);
                     }
-                } else if (itemType) {
-                    if (RegionItemType.get().equals(itemType)) {
-                        var regionName = RegionItemType.getRegionName(childElement);
-                        var region = pageRegions.getRegionByName(regionName);
 
-                        if (region) {
-                            var regionView = new RegionView(new RegionViewBuilder().
-                                setLiveEditModel(this.liveEditModel).
-                                setParentView(this).
-                                setRegion(region).
-                                setElement(childElement));
+                } else if (itemType && RegionItemType.get().equals(itemType)) {
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = pageRegions.getRegionByName(regionName);
 
-                            this.registerRegionView(regionView);
-                        }
-                    } else {
-                        this.doParseItemViews(childElement);
+                    if (region) {
+                        regionView = new RegionView(new RegionViewBuilder().
+                            setLiveEditModel(this.liveEditModel).
+                            setParentView(this).
+                            setRegion(region).
+                            setElement(childElement));
+
+                        this.registerRegionView(regionView);
                     }
+
                 } else {
                     this.doParseItemViews(childElement);
                 }

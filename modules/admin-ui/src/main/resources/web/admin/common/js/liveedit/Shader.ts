@@ -175,10 +175,14 @@ module api.liveedit {
             this.notifyClicked(event);
         }
 
-        private showShaderIfNecessary(shader: Element) {
-            // show only shaders having both width and height
+        private showShaderIfNecessary(shader: Element, x, y, width, height) {
             var shaderEl = shader.getEl();
-            shader.setVisible(shaderEl.getWidth() > 0 && shaderEl.getHeight() > 0);
+            shaderEl.setTopPx(y).
+                setLeftPx(x).
+                setWidthPx(width).
+                setHeightPx(height);
+            // show only shaders having both width and height
+            shader.setVisible(width > 0 && height > 0);
         }
 
         private resizeToPage(): void {
@@ -210,33 +214,10 @@ module api.liveedit {
                 console.log('Shader.resizeToElement(' + x1 + ', ' + y1 + ', ' + x2 + ', ' + y2 + ')', element);
             }
 
-            this.northShader.getEl().
-                setTopPx(0).
-                setLeftPx(0).
-                setWidthPx(documentWidth).
-                setHeightPx(y1);
-            this.showShaderIfNecessary(this.northShader);
-
-            this.eastShader.getEl().
-                setTopPx(y1).
-                setLeftPx(x2).
-                setWidthPx(documentWidth - x2).
-                setHeightPx(y2 - y1);
-            this.showShaderIfNecessary(this.eastShader);
-
-            this.southShader.getEl().
-                setTopPx(y2).
-                setLeftPx(0).
-                setWidthPx(documentWidth).
-                setHeightPx(documentHeight - y2);
-            this.showShaderIfNecessary(this.southShader);
-
-            this.westShader.getEl().
-                setTopPx(y1).
-                setLeftPx(0).
-                setWidthPx(x1).
-                setHeightPx(y2 - y1);
-            this.showShaderIfNecessary(this.westShader);
+            this.showShaderIfNecessary(this.northShader, 0, 0, documentWidth, y1);
+            this.showShaderIfNecessary(this.eastShader, x2, y1, documentWidth - x2, y2 - y1);
+            this.showShaderIfNecessary(this.southShader, 0, y2, documentWidth, documentHeight - y2);
+            this.showShaderIfNecessary(this.westShader, 0, y1, x1, y2 - y1);
         }
     }
 }
