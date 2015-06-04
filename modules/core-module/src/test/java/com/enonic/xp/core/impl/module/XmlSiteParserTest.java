@@ -7,16 +7,16 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 import com.enonic.xp.support.SerializingTestHelper;
 
-public class XmlModuleParserTest
+public class XmlSiteParserTest
 {
     private final SerializingTestHelper serializingTestHelper;
 
-    private final XmlModuleParser parser;
+    private final XmlSiteParser parser;
 
-    public XmlModuleParserTest()
+    public XmlSiteParserTest()
     {
         this.serializingTestHelper = new SerializingTestHelper( this, true );
-        this.parser = new XmlModuleParser();
+        this.parser = new XmlSiteParser();
     }
 
     private String loadTestXml( final String fileName )
@@ -25,7 +25,7 @@ public class XmlModuleParserTest
     }
 
     @Test
-    public void testModuleXmlDeserialization()
+    public void testSiteXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-site.xml" );
 
@@ -42,7 +42,7 @@ public class XmlModuleParserTest
     }
 
     @Test
-    public void testEmptyModuleXmlDeserialization()
+    public void testEmptySiteXmlDeserialization()
     {
         final String xml = loadTestXml( "empty-site.xml" );
 

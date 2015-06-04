@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-  <content>
-    <meta-step mixin="system:menu-item"/>
-    <meta-step mixin="mymodule:my-meta-mixin"/>
-  </content>
+  <x-data mixin="system:menu-item"/>
+  <x-data mixin="mymodule:my-meta-mixin"/>
   <config>
     <input type="TextLine" name="some-name">
       <label/>

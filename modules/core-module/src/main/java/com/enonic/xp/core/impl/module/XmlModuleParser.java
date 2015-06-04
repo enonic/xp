@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.module;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,22 +10,20 @@ import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlFormMapper;
 import com.enonic.xp.xml.parser.XmlObjectParser;
 
-final class XmlModuleParser
-    extends XmlObjectParser<XmlModuleParser>
+final class XmlSiteParser
+    extends XmlObjectParser<XmlSiteParser>
 {
     private static final String ROOT_TAG_NAME = "site";
 
     private static final String CONFIG_TAG_NAME = "config";
 
-    private static final String CONTENT_TAG_NAME = "content";
-
-    private static final String META_STEP_TAG_NAME = "meta-step";
+    private static final String META_STEP_TAG_NAME = "x-data";
 
     private static final String MIXIN_ATTRIBUTE_NAME = "mixin";
 
     private ModuleImpl module;
 
-    public XmlModuleParser module( final ModuleImpl module )
+    public XmlSiteParser module( final ModuleImpl module )
     {
         this.module = module;
         return this;
@@ -46,17 +43,7 @@ final class XmlModuleParser
 
     private List<MixinName> parseMetaSteps( final DomElement root )
     {
-        final DomElement content = root.getChild( CONTENT_TAG_NAME );
-
-        if ( content == null )
-        {
-            return Collections.emptyList();
-        }
-        else
-        {
-            return content.getChildren( META_STEP_TAG_NAME ).stream().map( this::toMixinName ).collect( Collectors.toList() );
-        }
-
+        return root.getChildren( META_STEP_TAG_NAME ).stream().map( this::toMixinName ).collect( Collectors.toList() );
     }
 
     private MixinName toMixinName( final DomElement metaStep )
