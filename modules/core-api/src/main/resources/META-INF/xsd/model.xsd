@@ -5,7 +5,7 @@
 
   <xs:element name="content-type" type="contentType"/>
   <xs:element name="image-component" type="imageDescriptor"/>
-  <xs:element name="layout-component" type="layoutDescriptor"/>
+  <xs:element name="layout" type="layoutDescriptor"/>
   <xs:element name="mixin" type="mixin"/>
   <xs:element name="module" type="module"/>
   <xs:element name="page-component" type="pageDescriptor"/>
