@@ -17,15 +17,11 @@ import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ResolvePublishDependenciesResultJsonFactoryTest
 {
-
     private ContentTypeService contentTypeService;
-
 
     @Before
     public void before()
@@ -51,20 +47,9 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
         final ResolvePublishDependenciesResult resolvedDependencies =
             ResolvePublishDependenciesResult.create().pushContentRequests( pushRequests ).build();
 
-        final ResolvePublishDependenciesResultJson result =
-            createPublishDependenciesResultJson( resolvedDependencies, resolved, compareResults );
+        final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 1, result.getPushRequestedContents().size() );
-        assertEquals( 2, result.getPushRequestedContents().get( 0 ).getChildrenCount() );
-        assertEquals( 0, result.getPushRequestedContents().get( 0 ).getDependantsCount() );
-
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getId() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getPath() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getType() );
+        assertEquals( 0, result.getDependantContents().size() );
     }
 
     @Test
@@ -84,20 +69,57 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
         final ResolvePublishDependenciesResult resolvedDependencies =
             ResolvePublishDependenciesResult.create().pushContentRequests( pushRequests ).build();
 
-        final ResolvePublishDependenciesResultJson result =
-            createPublishDependenciesResultJson( resolvedDependencies, resolved, compareResults );
+        final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 1, result.getPushRequestedContents().size() );
-        assertEquals( 0, result.getPushRequestedContents().get( 0 ).getChildrenCount() );
-        assertEquals( 2, result.getPushRequestedContents().get( 0 ).getDependantsCount() );
+        assertEquals( 2, result.getDependantContents().size() );
 
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getId() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getPath() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getType() );
+        assertNotNull( result.getDependantContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependantContents().get( 0 ).getName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependantContents().get( 0 ).getId() );
+        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependantContents().get( 0 ).getType() );
+    }
+
+    @Test
+    public void testGeneratedJsonOrderedByPath()
+    {
+
+        final Content content1 = createContent( "s1", "s1Name", ContentPath.from( "b" ), true );
+        final Content content2 = createContent( "s2", "s1Name", ContentPath.from( "a" ), true );
+        final Content content3 = createContent( "s3", "s1Name", ContentPath.from( "c" ), true );
+        final Content content4 = createContent( "s4", "s1Name", ContentPath.from( "s4" ), true );
+
+        final Contents resolved = Contents.from( content1, content2, content3, content4 );
+
+        final CompareContentResults compareResults = createCompareContentResults();
+
+        final PushContentRequests pushRequests = PushContentRequests.create().
+            addParentOf( ContentId.from( "s1" ), ContentId.from( "s2" ), ContentId.from( "s4" ) ).
+            addParentOf( ContentId.from( "s2" ), ContentId.from( "s3" ), ContentId.from( "s4" ) ).
+            addParentOf( ContentId.from( "s3" ), ContentId.from( "s4" ), ContentId.from( "s4" ) ).
+            addRequested( ContentId.from( "s4" ), ContentId.from( "s4" ) ).
+            build();
+
+        final ResolvePublishDependenciesResult resolvedDependencies =
+            ResolvePublishDependenciesResult.create().pushContentRequests( pushRequests ).build();
+
+        final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
+
+        assertEquals( 3, result.getDependantContents().size() );
+
+        assertEquals( result.getDependantContents().get( 0 ).getId(), "s2" );
+        assertEquals( result.getDependantContents().get( 1 ).getId(), "s1" );
+        assertEquals( result.getDependantContents().get( 2 ).getId(), "s3" );
+
+        assertNotNull( result.getDependantContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependantContents().get( 0 ).getName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependantContents().get( 0 ).getId() );
+        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependantContents().get( 0 ).getType() );
     }
 
     @Test
@@ -117,20 +139,17 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
         final ResolvePublishDependenciesResult resolvedDependencies =
             ResolvePublishDependenciesResult.create().pushContentRequests( pushRequests ).build();
 
-        final ResolvePublishDependenciesResultJson result =
-            createPublishDependenciesResultJson( resolvedDependencies, resolved, compareResults );
+        final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 1, result.getPushRequestedContents().size() );
-        assertEquals( 0, result.getPushRequestedContents().get( 0 ).getChildrenCount() );
-        assertEquals( 2, result.getPushRequestedContents().get( 0 ).getDependantsCount() );
+        assertEquals( 2, result.getDependantContents().size() );
 
-        assertNull( result.getPushRequestedContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getId() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getPath() );
-        assertNotNull( result.getPushRequestedContents().get( 0 ).getType() );
+        assertNull( result.getDependantContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependantContents().get( 0 ).getName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependantContents().get( 0 ).getId() );
+        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependantContents().get( 0 ).getType() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -150,11 +169,12 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
         final ResolvePublishDependenciesResult resolvedDependencies =
             ResolvePublishDependenciesResult.create().pushContentRequests( pushRequests ).build();
 
-        createPublishDependenciesResultJson( resolvedDependencies, resolved, compareResults );
+        createDependantsResultJson( resolvedDependencies, resolved, compareResults );
     }
 
-    private ResolvePublishDependenciesResultJson createPublishDependenciesResultJson(
-        final ResolvePublishDependenciesResult resolvedDependencies, final Contents resolved, final CompareContentResults compareResults )
+    private ResolvePublishDependenciesResultJson createDependantsResultJson( final ResolvePublishDependenciesResult resolvedDependencies,
+                                                                             final Contents resolved,
+                                                                             final CompareContentResults compareResults )
     {
         return ResolvePublishDependenciesResultJsonFactory.create().
             resolvedPublishDependencies( resolvedDependencies ).

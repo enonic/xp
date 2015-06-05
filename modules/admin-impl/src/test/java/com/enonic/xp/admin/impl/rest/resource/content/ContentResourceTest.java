@@ -770,21 +770,6 @@ public class ContentResourceTest
     public void resolve_publish_dependencies()
         throws Exception
     {
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
-                id( ContentId.from( "my-content" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My Content" ).
-                build() ) ).
-            addFailed( newContent().
-                id( ContentId.from( "my-content2" ) ).
-                parentPath( ContentPath.ROOT ).
-                name( "content" ).
-                displayName( "My Content" ).
-                build(), PushContentsResult.FailedReason.PARENT_NOT_EXISTS ).
-            build() );
-
         Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
             ResolvePublishDependenciesResult.create().
                 pushContentRequests( PushContentRequests.create().
