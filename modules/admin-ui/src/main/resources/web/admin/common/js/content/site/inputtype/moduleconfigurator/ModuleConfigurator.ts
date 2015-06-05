@@ -16,7 +16,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
-    import ModuleConfig = api.content.site.ModuleConfig
+    import SiteConfig = api.content.site.SiteConfig
     import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -28,7 +28,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private propertyArray: PropertyArray;
 
-        private comboBox: ModuleConfiguratorComboBox;
+        private comboBox: SiteConfiguratorComboBox;
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
@@ -56,8 +56,8 @@ module api.content.site.inputtype.moduleconfigurator {
             this.input = input;
             this.propertyArray = propertyArray;
 
-            var moduleConfigProvider = new ModuleConfigProvider(propertyArray);
-            this.comboBox = this.createComboBox(input, moduleConfigProvider);
+            var siteConfigProvider = new SiteConfigProvider(propertyArray);
+            this.comboBox = this.createComboBox(input, siteConfigProvider);
 
             this.appendChild(this.comboBox);
 
@@ -76,8 +76,8 @@ module api.content.site.inputtype.moduleconfigurator {
                     }
 
                     var selectedOption = this.comboBox.getSelectedOption(event.getOption());
-                    var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
-                    var moduleConfig = selectedOptionView.getModuleConfig();
+                    var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
+                    var siteConfig = selectedOptionView.getSiteConfig();
 
 
                     //var moduleConfigAsData = moduleConfig.toPropertySet(this.propertyArray.newSet());
@@ -100,7 +100,7 @@ module api.content.site.inputtype.moduleconfigurator {
         private doLoadModules(propertyArray: PropertyArray): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            var moduleConfigFormsToDisplay: string[] = [];
+            var siteConfigFormsToDisplay: string[] = [];
 
             if (propertyArray.getSize() == 0) {
                 deferred.resolve(null);
@@ -108,18 +108,18 @@ module api.content.site.inputtype.moduleconfigurator {
                 propertyArray.forEach((property: Property) => {
 
                     if (property.hasNonNullValue()) {
-                        var moduleConfig = ModuleConfig.create().fromData(property.getPropertySet()).build();
-                        moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
+                        var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
+                        siteConfigFormsToDisplay.push(siteConfig.getModuleKey().toString());
 
-                        new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().
+                        new GetModuleRequest(siteConfig.getModuleKey()).sendAndParse().
                             then((requestedModule: Module) => {
 
-                                this.comboBox.onModuleConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
-                                    var indexToRemove = moduleConfigFormsToDisplay.indexOf(moduleKey.toString());
+                                this.comboBox.onSiteConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
+                                    var indexToRemove = siteConfigFormsToDisplay.indexOf(moduleKey.toString());
                                     if (indexToRemove != -1) {
-                                        moduleConfigFormsToDisplay.splice(indexToRemove, 1);
+                                        siteConfigFormsToDisplay.splice(indexToRemove, 1);
                                     }
-                                    if (moduleConfigFormsToDisplay.length == 0) {
+                                    if (siteConfigFormsToDisplay.length == 0) {
                                         deferred.resolve(null);
                                     }
 
@@ -135,9 +135,9 @@ module api.content.site.inputtype.moduleconfigurator {
             return deferred.promise;
         }
 
-        private createComboBox(input: api.form.Input, moduleConfigProvider: ModuleConfigProvider): ModuleConfiguratorComboBox {
+        private createComboBox(input: api.form.Input, siteConfigProvider: SiteConfigProvider): SiteConfiguratorComboBox {
 
-            return new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider, this.formContext);
+            return new SiteConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, siteConfigProvider, this.formContext);
         }
 
         availableSizeChanged() {
@@ -145,7 +145,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         displayValidationErrors(value: boolean) {
             this._displayValidationErrors = value;
-            this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
+            this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
                 view.getFormView().displayValidationErrors(value);
             });
         }
@@ -163,7 +163,7 @@ module api.content.site.inputtype.moduleconfigurator {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
-            this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
+            this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
 
                 var validationRecording = view.getFormView().validate(true);
                 if (!validationRecording.isMinimumOccurrencesValid()) {
