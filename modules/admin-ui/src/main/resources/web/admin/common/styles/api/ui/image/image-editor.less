@@ -1,34 +1,28 @@
-.focal-editor {
+.image-editor {
   .notSelectable();
   display: inline-block;
 
-  &.edit {
-    .focal-canvas {
-      .focal-image {
+  &.edit-focus {
+    .image-canvas {
+      .image-image {
         .opacity(.7);
       }
 
-      .focal-clip {
+      .image-clip {
         display: block;
       }
     }
   }
 
-  &.auto {
-    .focal-toolbar button.icon-center-focus-strong {
-      .button-foreground(@admin-font-gray2);
-    }
-  }
-
-  .focal-canvas {
+  .image-canvas {
     position: relative;
     background-color: #000;
 
-    .focal-image {
+    .image-image {
       vertical-align: top; // to remove padding below the image
     }
 
-    .focal-clip {
+    .image-clip {
       display: none;
       position: absolute;
       top: 0;
@@ -42,31 +36,39 @@
     }
   }
 
-  .focal-toolbar {
+  .image-toolbar {
     padding: 10px;
     .clearfix();
 
-    button {
-      span {
-        line-height: 30px;
-      }
+    .buttons-container {
 
-      &.icon-center-focus-strong {
+      button {
         font-size: 32px;
         padding: 0;
-        .button-foreground(@admin-blue);
+        .button-foreground(@admin-font-gray2);
+
+        &.manual {
+          .button-foreground(@admin-blue);
+        }
 
         span {
           display: none;
         }
+
       }
+
     }
 
-    .edit-buttons-toolbar {
+    .edit-container {
       text-align: center;
 
       button {
         margin-left: 10px;
+
+        span {
+          // make text buttons equal height with icon ones
+          line-height: 30px;
+        }
       }
     }
 
