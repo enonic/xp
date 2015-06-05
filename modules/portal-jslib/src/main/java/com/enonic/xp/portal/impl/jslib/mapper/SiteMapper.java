@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfig;
+import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 
@@ -22,24 +22,24 @@ public final class SiteMapper
         new ContentMapper( this.site ).serialize( gen );
 
         gen.value( "description", this.site.getDescription() );
-        final ModuleConfigs moduleConfigs = this.site.getModuleConfigs();
-        serializeModuleConfigs( gen, moduleConfigs != null ? moduleConfigs : ModuleConfigs.empty() );
+        final SiteConfigs siteConfigs = this.site.getSiteConfigs();
+        serializeSiteConfigs( gen, siteConfigs != null ? siteConfigs : SiteConfigs.empty() );
     }
 
-    private void serializeModuleConfigs( final MapGenerator gen, final ModuleConfigs moduleConfigs )
+    private void serializeSiteConfigs( final MapGenerator gen, final SiteConfigs siteConfigs )
     {
         gen.map( "moduleConfigs" );
-        for ( ModuleConfig moduleConfig : moduleConfigs )
+        for ( SiteConfig siteConfig : siteConfigs )
         {
-            serializeModuleConfig( gen, moduleConfig );
+            serializeSiteConfig( gen, siteConfig );
         }
         gen.end();
     }
 
-    private void serializeModuleConfig( final MapGenerator gen, final ModuleConfig moduleConfig )
+    private void serializeSiteConfig( final MapGenerator gen, final SiteConfig siteConfig )
     {
-        gen.map( moduleConfig.getModule().toString() );
-        new PropertyTreeMapper( moduleConfig.getConfig() ).serialize( gen );
+        gen.map( siteConfig.getModule().toString() );
+        new PropertyTreeMapper( siteConfig.getConfig() ).serialize( gen );
         gen.end();
     }
 }

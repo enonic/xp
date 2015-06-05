@@ -53,6 +53,7 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -94,6 +95,8 @@ public class ContentServiceImpl
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
+
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private ContentTypeService contentTypeService;
 

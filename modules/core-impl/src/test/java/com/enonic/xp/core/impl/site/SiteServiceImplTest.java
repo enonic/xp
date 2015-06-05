@@ -10,8 +10,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -105,7 +105,7 @@ public class SiteServiceImplTest
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My site" ).
             description( "This is my site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+            siteConfigs( SiteConfigs.empty() );
 
         final Content content = this.siteService.create( createSiteParams );
         assertEquals( site, content );

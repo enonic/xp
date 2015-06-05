@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 
@@ -81,7 +81,7 @@ public class SiteServiceImplTest_getNearestSite
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My mock site" ).
             description( "This is my mock site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+            siteConfigs( SiteConfigs.empty() );
 
         return this.siteService.create( createSiteParams );
     }
