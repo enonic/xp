@@ -25,5 +25,6 @@ module api.content {
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishDependencies");
         }
+
     }
 }

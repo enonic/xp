@@ -84,8 +84,21 @@ public class PushContentRequests
         }
     }
 
-    public ContentIds getPushedBecauseChildOfContentIds( boolean filterRequestedToPublishContentIds,
-                                                                                boolean includeDeleted )
+    public ContentIds getDependenciesContentIds( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
+    {
+        if ( includeDeleted )
+        {
+            return getResolvedContentIds( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF,
+                                          PUSH_TYPE.DELETE_PARENT, PUSH_TYPE.DELETE_REF, PUSH_TYPE.PUSH_CHILD, PUSH_TYPE.DELETE_CHILD );
+        }
+        else
+        {
+            return getResolvedContentIds( filterRequestedToPublishContentIds, PUSH_TYPE.PUSH_PARENT, PUSH_TYPE.PUSH_REF,
+                                          PUSH_TYPE.PUSH_CHILD );
+        }
+    }
+
+    public ContentIds getChildrenContentIds( boolean filterRequestedToPublishContentIds, boolean includeDeleted )
     {
         if ( includeDeleted )
         {
@@ -97,7 +110,7 @@ public class PushContentRequests
         }
     }
 
-    public ContentIds getPushedBecauseRequestedContentIds( boolean includeDeleted )
+    public ContentIds getRequestedContentIds( boolean includeDeleted )
     {
         if ( includeDeleted )
         {
@@ -171,7 +184,7 @@ public class PushContentRequests
 
         if ( filterRequestedToPublishContentIds )
         {
-            ids.removeAll( getPushedBecauseRequestedContentIds( true ).getSet() );
+            ids.removeAll( getRequestedContentIds( true ).getSet() );
         }
 
         return ContentIds.from( ids );
