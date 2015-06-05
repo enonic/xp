@@ -18,6 +18,15 @@
     }
   }
 
+  .image-preview {
+    label {
+      display: none;
+    }
+    .input-wrapper {
+      margin-left: 0 !important;
+    }
+  }
+
   &.animated {
     .transition(margin-top 0.2s);
   }
@@ -69,15 +78,15 @@
         border-top: 1px solid @admin-medium-gray-border;
         padding-top: 10px;
       }
-
-      .options-container {
-        position: fixed !important;
-      }
     }
 
     .combobox {
       .form-input {
         margin-top: 0;
+      }
+
+      + .selected-options .selected-option {
+        padding-left: 0;
       }
     }
     .checkbox.form-input {
@@ -96,7 +105,11 @@
 
     .form-view {
       margin-bottom: 0;
-      padding: 10px 0 !important;
+      padding: 10px !important;
+
+      .options-container {
+        position: fixed !important;
+      }
 
       fieldset:not(:last-child) {
         margin-bottom: 5px;
@@ -105,6 +118,20 @@
         margin-top: 5px;
       }
     }
+
+    .content-item-preview-panel > img {
+      margin-top: 15px;
+      display: block;
+    }
+
+    .names-and-icon-view .names-view {
+      margin-left: 0;
+    }
+
+    .selected-option .wrapper {
+      display: none;
+    }
+
   }
 
   .dialog-buttons {

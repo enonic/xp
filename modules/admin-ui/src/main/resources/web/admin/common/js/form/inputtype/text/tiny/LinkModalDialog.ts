@@ -7,8 +7,6 @@ module api.form.inputtype.text.tiny {
     import Validators = api.ui.form.Validators;
 
     export class LinkModalDialog extends ModalDialog {
-
-        private linkTextFormItem: FormItem;
         private dockedPanel: DockedPanel;
         private link: HTMLElement;
 
@@ -88,14 +86,9 @@ module api.form.inputtype.text.tiny {
             return decodeURI(emailArr[1].replace(LinkModalDialog.subjectPrefix, api.util.StringHelper.EMPTY_STRING));
         }
 
-        layout() {
+        protected layout() {
             super.layout();
             this.appendChildToContentPanel(this.dockedPanel = this.createDockedPanel());
-        }
-
-        show() {
-            super.show();
-            this.linkTextFormItem.getInput().giveFocus();
         }
 
         private createContentPanel(): Panel {
@@ -152,8 +145,11 @@ module api.form.inputtype.text.tiny {
         }
 
         protected getMainFormItems(): FormItem [] {
+            var linkTextFormItem = this.createFormItem("linkText", "Text", Validators.required, this.getLinkText());
+            this.setFirstFocusField(linkTextFormItem.getInput());
+
             return [
-                this.linkTextFormItem = this.createFormItem("linkText", "Text", Validators.required, this.getLinkText()),
+                linkTextFormItem,
                 this.createFormItem("toolTip", "Tooltip", null, this.getToolTip())
             ];
         }

@@ -12,6 +12,7 @@ module api.form.inputtype.text.tiny {
         private validated = false;
         private editor: TinyMceEditor;
         private mainForm: Form;
+        private firstFocusField: api.dom.Element;
 
         constructor(editor: TinyMceEditor, title: api.ui.dialog.ModalDialogHeader) {
             super({
@@ -30,11 +31,19 @@ module api.form.inputtype.text.tiny {
             return this.editor;
         }
 
-        setValidated() {
+        protected setValidated() {
             this.validated = true;
         }
 
-        layout() {
+        protected setFirstFocusField(field: api.dom.Element) {
+            this.firstFocusField = field;
+        }
+
+        private focusFirstField() {
+            this.firstFocusField.giveFocus();
+        }
+
+        protected layout() {
             this.appendChildToContentPanel(<api.dom.Element>this.createMainForm());
         }
 
@@ -55,6 +64,7 @@ module api.form.inputtype.text.tiny {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
+            this.focusFirstField();
         }
 
         protected createForm(formItems: FormItem[]): Form {

@@ -73,7 +73,7 @@ module api.form.inputtype.text {
                 paste_as_text: true,
                 plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
                 external_plugins: {
-                    "link":  baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
+                    "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
                     "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js"
                 },
                 autoresize_min_height: 100,
