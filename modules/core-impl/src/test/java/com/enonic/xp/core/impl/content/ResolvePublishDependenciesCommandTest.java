@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -12,18 +11,14 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -82,7 +77,7 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getRequestedContentIds( true ).getSize() );
         assertEquals( 1, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
@@ -118,7 +113,7 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getRequestedContentIds( true ).getSize() );
         assertEquals( 1, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
@@ -158,7 +153,7 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getRequestedContentIds( true ).getSize() );
         assertEquals( 2, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
@@ -199,7 +194,7 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getRequestedContentIds( true ).getSize() );
         assertEquals( 0, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
