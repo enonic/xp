@@ -53,8 +53,6 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -97,8 +95,6 @@ public class ContentServiceImpl
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
-    private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
-
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
@@ -128,48 +124,6 @@ public class ContentServiceImpl
     public void initialize()
     {
         new ContentInitializer( this.nodeService ).initialize();
-    }
-
-    @Override
-    public Site create( final CreateSiteParams params )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.setString( "description", params.getDescription() );
-
-        MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            type( ContentTypeName.site() ).
-            parent( params.getParentContentPath() ).
-            name( params.getName() ).
-            displayName( params.getDisplayName() ).
-            contentData( data ).
-            requireValid( params.isRequireValid() ).
-            build();
-
-        final Site site = (Site) CreateContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
-            eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
-            mixinService( this.mixinService ).
-            params( createContentParams ).
-            build().
-            execute();
-
-        this.create( CreateContentParams.create().
-            owner( site.getOwner() ).
-            displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
-            name( TEMPLATES_FOLDER_NAME ).
-            inheritPermissions( true ).
-            parent( site.getPath() ).
-            type( ContentTypeName.templateFolder() ).
-            requireValid( true ).
-            contentData( new PropertyTree() ).
-            build() );
-
-        return site;
     }
 
     @Override
@@ -292,16 +246,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Site getNearestSite( final ContentId contentId )
-    {
-        return GetNearestSiteCommand.create().
-            contentService( this ).
-            contentId( contentId ).
             build().
             execute();
     }
