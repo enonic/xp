@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.resource.render;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.rendering.RenderResult;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.url.PageUrlParams;
 
 import static javax.ws.rs.core.Response.Status.TEMPORARY_REDIRECT;
@@ -18,7 +18,7 @@ public final class ShortcutControllerResource
     }
 
     @Override
-    protected RenderResult execute( final PortalRequest portalRequest )
+    protected PortalResponse execute( final PortalRequest portalRequest )
         throws Exception
     {
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( portalRequest );
@@ -26,6 +26,6 @@ public final class ShortcutControllerResource
 
         final String targetUrl = this.services.getPortalUrlService().pageUrl( pageUrlParams );
 
-        return RenderResult.newRenderResult().status( TEMPORARY_REDIRECT.getStatusCode() ).header( "location", targetUrl ).build();
+        return PortalResponse.create().status( TEMPORARY_REDIRECT.getStatusCode() ).header( "location", targetUrl ).build();
     }
 }

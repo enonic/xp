@@ -14,7 +14,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
@@ -51,12 +50,12 @@ public class PageResourceTest
         setupContentAndSite();
         setupTemplates();
 
-        final RenderResult result = RenderResult.newRenderResult().
-            entity( "content rendered" ).
+        final PortalResponse portalResponse = PortalResponse.create().
+            body( "content rendered" ).
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
@@ -66,7 +65,7 @@ public class PageResourceTest
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
-        assertEquals( "text/plain", response.getContentType() );
+        assertEquals( "text/plain; charset=utf-8", response.getContentType() );
     }
 
     @Test
@@ -76,12 +75,12 @@ public class PageResourceTest
         setupContentAndSite();
         setupTemplates();
 
-        final RenderResult result = RenderResult.newRenderResult().
-            entity( "content rendered" ).
+        final PortalResponse portalResponse = PortalResponse.create().
+            body( "content rendered" ).
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
@@ -124,12 +123,12 @@ public class PageResourceTest
         setupContentAndSite();
         setupTemplates();
 
-        final RenderResult result = RenderResult.newRenderResult().
-            entity( "content rendered" ).
+        final PortalResponse portalResponse = PortalResponse.create().
+            body( "content rendered" ).
             header( "some-header", "some-value" ).
             status( 200 ).
             build();
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         final PortalRequest newPortalRequest = new PortalRequest();
         newPortalRequest.setMode( RenderMode.EDIT );

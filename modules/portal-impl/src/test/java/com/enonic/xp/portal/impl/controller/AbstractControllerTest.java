@@ -20,7 +20,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -82,8 +81,7 @@ public abstract class AbstractControllerTest
     protected final String getResponseAsString()
     {
         final PortalResponseSerializer serializer = new PortalResponseSerializer( portalResponse );
-        final RenderResult result = serializer.serialize();
-        return result.getAsString();
+        return serializer.serialize().getAsString();
     }
 
     protected final void assertJson( final String name, final String actual )

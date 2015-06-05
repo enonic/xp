@@ -20,7 +20,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.rendering.Renderable;
@@ -48,15 +47,13 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        final PortalResponse portalResponse = PortalResponse.create().postProcess( true ).build();
-
         PortalRequest portalRequest = new PortalRequest();
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
         portalRequest.setSite( site );
 
-        String outputHtml = instruction.evaluate( portalRequest, portalResponse, "COMPONENT myRegion/0" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -73,8 +70,6 @@ public class ComponentInstructionTest
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
 
-        final PortalResponse portalResponse = PortalResponse.create().postProcess( true ).build();
-
         PortalRequest portalRequest = new PortalRequest();
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         portalRequest.setContent( content );
@@ -83,7 +78,7 @@ public class ComponentInstructionTest
         PageTemplate pageTemplate = createPageTemplate();
         portalRequest.setPageTemplate( pageTemplate );
 
-        String outputHtml = instruction.evaluate( portalRequest, portalResponse, "COMPONENT module:myPartComponent" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -168,9 +163,9 @@ public class ComponentInstructionTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalRequest portalRequest )
+            public PortalResponse render( final Renderable component, final PortalRequest portalRequest )
             {
-                return RenderResult.newRenderResult().entity( renderResult ).build();
+                return PortalResponse.create().body( renderResult ).build();
             }
         };
 

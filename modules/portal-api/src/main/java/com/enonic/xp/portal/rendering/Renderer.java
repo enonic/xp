@@ -11,5 +11,5 @@ public interface Renderer<R extends Renderable>
 {
     Class<R> getType();
 
-    RenderResult render( R component, PortalRequest portalRequest );
+    PortalResponse render( R component, PortalRequest portalRequest );
 }

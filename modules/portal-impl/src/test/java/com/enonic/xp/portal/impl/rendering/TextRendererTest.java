@@ -7,7 +7,6 @@ import com.enonic.xp.content.page.region.TextComponent;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.rendering.RenderResult;
 
 import static org.junit.Assert.*;
 
@@ -37,10 +36,10 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest );
+        portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "", result.getAsString() );
+        assertEquals( "", portalResponse.getAsString() );
     }
 
     @Test
@@ -52,10 +51,9 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest );
-
+        portalResponse = renderer.render( textComponent, portalRequest );
         // verify
-        assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", portalResponse.getAsString() );
     }
 
     @Test
@@ -67,10 +65,10 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest );
+        portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\"></section>", result.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
     }
 
 
@@ -83,10 +81,10 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest );
+        portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", result.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getAsString() );
     }
 
     @Test
@@ -99,9 +97,9 @@ public class TextRendererTest
         renderer = new TextRenderer();
 
         // exercise
-        RenderResult result = renderer.render( textComponent, portalRequest );
+        portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
     }
 }

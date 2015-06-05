@@ -142,14 +142,14 @@ public class PostProcessEvaluatorTest
     public void testEvaluateInstructions()
         throws Exception
     {
-        final PostProcessInstruction uppercaseInstruction = ( portalRequest, portalResponse, instruction ) -> {
+        final PostProcessInstruction uppercaseInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "UPPERCASE" ) )
             {
                 return StringUtils.substringAfter( instruction, "UPPERCASE " ).toUpperCase();
             }
             return null;
         };
-        final PostProcessInstruction expandInstruction = ( portalRequest, portalResponse, instruction ) -> {
+        final PostProcessInstruction expandInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "EXPAND" ) )
             {
                 return "<!--#UPPERCASE " + StringUtils.substringAfter( instruction, "EXPAND " ) + "-->";
