@@ -50,7 +50,7 @@ module app.wizard.page.contextwindow.inspect.page {
                     });
 
                     this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                        if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                        if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
                             var pageTemplateKey = <PageTemplateKey>event.getNewValue();
                             if (pageTemplateKey) {
                                 this.selectTemplate(pageTemplateKey);

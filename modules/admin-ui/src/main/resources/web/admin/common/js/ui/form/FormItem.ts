@@ -55,18 +55,29 @@ module api.ui.form {
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
                 var validationMessage = this.validator(this.input);
+
                 if(validationMessage) {
                     validationResult.addError(new ValidationError(this, validationMessage));
                 }
                 if (markInvalid) {
+                    var validityChanged = false;
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
+                        validityChanged = (validationMessage !== this.getError());
                     } else {
                         this.removeClass(this.invalidClass);
+                        validityChanged = !api.util.StringHelper.isBlank(this.getError());
                     }
-                    this.error.setHtml(validationMessage || "");
+                    this.error.setHtml(validationMessage || api.util.StringHelper.EMPTY_STRING);
+                    if (validityChanged) {
+                        this.notifyValidityChanged(api.util.StringHelper.isBlank(validationMessage));
+                    }
                 }
             }
+        }
+
+        getError(): string {
+            return this.error.getHtml();
         }
 
         onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {

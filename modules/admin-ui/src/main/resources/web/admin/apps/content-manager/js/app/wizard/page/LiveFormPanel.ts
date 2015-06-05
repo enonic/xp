@@ -225,17 +225,18 @@ module app.wizard.page {
 
                 // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
                     this.saveAndReloadPage(true);
                 }
-                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
-                    //if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
+                    // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
+                    if (!(this.pageModel.getTemplate() == this.pageModel.getDefaultPageTemplate() && !event.getOldValue())) {
 
-                    this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
-                    this.lockPageAfterProxyLoad = true;
-                    this.saveAndReloadPage(false);
-                    //}
+                        this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
+                        this.lockPageAfterProxyLoad = true;
+                        this.saveAndReloadPage(false);
+                    }
                 }
             });
 

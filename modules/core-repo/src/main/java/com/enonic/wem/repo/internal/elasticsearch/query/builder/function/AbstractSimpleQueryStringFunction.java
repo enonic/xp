@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.elasticsearch.function.AbstractFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.FunctionQueryBuilderException;
 import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldNames;
+import com.enonic.xp.query.expr.ValueExpr;
 
 public abstract class AbstractSimpleQueryStringFunction
     extends AbstractFunctionArguments
