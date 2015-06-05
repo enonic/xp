@@ -11,6 +11,7 @@ module api.form.inputtype.text {
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
+    import ImageModalDialog = api.form.inputtype.text.tiny.ImageModalDialog;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -65,14 +66,15 @@ module api.form.inputtype.text {
                 theme_url: 'modern',
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap link unlink | table | code"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap image link unlink | table | code"
                 ],
                 menubar: false,
                 statusbar: false,
                 paste_as_text: true,
                 plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
                 external_plugins: {
-                    "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js"
+                    "link":  baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
+                    "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js"
                 },
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
@@ -80,6 +82,7 @@ module api.form.inputtype.text {
 
                 setup: (editor) => {
                     editor.addCommand("openLinkDialog", this.openLinkDialog, this);
+                    editor.addCommand("openImageDialog", this.openImageDialog, this);
                     editor.on('change', (e) => {
                         var value = this.newValue(this.getEditor(id).getContent());
                         property.setValue(value);
@@ -225,9 +228,14 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private openLinkDialog(linkConfig: LinkConfig) {
-            var linkModalDialog = new LinkModalDialog(linkConfig.editor, linkConfig.link);
+        private openLinkDialog(config: ElementConfig) {
+            var linkModalDialog = new LinkModalDialog(config.editor, config.element);
             linkModalDialog.open();
+        }
+
+        private openImageDialog(config: ElementConfig) {
+            var imageModalDialog = new ImageModalDialog(config.editor);
+            imageModalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
@@ -280,10 +288,10 @@ module api.form.inputtype.text {
         textAreaWrapper: Element;
         property: Property;
     }
-    
-    interface LinkConfig {
+
+    interface ElementConfig {
         editor: TinyMceEditor
-        link: HTMLElement
+        element: HTMLElement
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
