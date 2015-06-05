@@ -4,7 +4,7 @@
            elementFormDefault="qualified">
 
   <xs:element name="content-type" type="contentType"/>
-  <xs:element name="image-component" type="imageDescriptor"/>
+  <xs:element name="image" type="imageDescriptor"/>
   <xs:element name="layout" type="layoutDescriptor"/>
   <xs:element name="mixin" type="mixin"/>
   <xs:element name="module" type="module"/>
