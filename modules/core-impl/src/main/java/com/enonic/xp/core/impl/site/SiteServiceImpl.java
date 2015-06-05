@@ -7,8 +7,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
 import com.enonic.xp.content.site.Site;
+import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -21,7 +21,7 @@ import com.enonic.xp.site.SiteService;
 public class SiteServiceImpl
     implements SiteService
 {
-    private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private ModuleService moduleService;
 
@@ -48,7 +48,7 @@ public class SiteServiceImpl
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
-        MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
+        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             type( ContentTypeName.site() ).
