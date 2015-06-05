@@ -68,7 +68,7 @@ public class ResolvePublishRequestedContentsResultJsonFactoryTest
     }
 
     @Test
-    public void testGeneratedJsonWithDependants()
+    public void testGeneratedJsonWithDependents()
     {
 
         final Contents resolved = createContents();
@@ -177,8 +177,8 @@ public class ResolvePublishRequestedContentsResultJsonFactoryTest
     private Contents createContents()
     {
         final Content content1 = createContent( "s1", "s1Name", ContentPath.ROOT, true );
-        final Content content2 = createContent( "s2", "s1Name", content1.getPath(), true );
-        final Content content3 = createContent( "s3", "s1Name", content2.getPath(), true );
+        final Content content2 = createContent( "s2", "s2Name", content1.getPath(), true );
+        final Content content3 = createContent( "s3", "s3Name", content2.getPath(), true );
 
         return Contents.from( content1, content2, content3 );
     }
