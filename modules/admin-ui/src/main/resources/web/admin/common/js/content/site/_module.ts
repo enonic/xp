@@ -1,4 +1,4 @@
-///<reference path='ModuleConfig.ts' />
+///<reference path='SiteConfig.ts' />
 ///<reference path='Site.ts' />
 ///<reference path='SiteModel.ts' />
 ///<reference path='ModuleAddedEvent.ts' />

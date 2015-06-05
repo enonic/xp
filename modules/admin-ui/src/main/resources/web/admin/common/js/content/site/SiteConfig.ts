@@ -5,13 +5,13 @@ module api.content.site {
     import PropertyTree = api.data.PropertyTree;
     import ModuleKey = api.module.ModuleKey;
 
-    export class ModuleConfig implements api.Equitable, api.Cloneable {
+    export class SiteConfig implements api.Equitable, api.Cloneable {
 
         private moduleKey: ModuleKey;
 
         private config: PropertySet;
 
-        constructor(builder: ModuleConfigBuilder) {
+        constructor(builder: SiteConfigBuilder) {
             this.moduleKey = builder.moduleKey;
             this.config = builder.config;
         }
@@ -33,11 +33,11 @@ module api.content.site {
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ModuleConfig)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, SiteConfig)) {
                 return false;
             }
 
-            var other = <ModuleConfig>o;
+            var other = <SiteConfig>o;
 
             if (!api.ObjectHelper.equals(this.moduleKey, other.moduleKey)) {
                 return false;
@@ -51,29 +51,29 @@ module api.content.site {
         }
 
         toPropertySet(parent: PropertySet): PropertySet {
-            var moduleConfigSet = parent.addPropertySet("moduleConfig");
-            moduleConfigSet.addString("moduleKey", this.moduleKey.getName());
-            moduleConfigSet.addPropertySet("config", this.config.copy(parent.getTree()));
-            return moduleConfigSet;
+            var siteConfigSet = parent.addPropertySet("siteConfig");
+            siteConfigSet.addString("moduleKey", this.moduleKey.getName());
+            siteConfigSet.addPropertySet("config", this.config.copy(parent.getTree()));
+            return siteConfigSet;
         }
 
-        clone(): ModuleConfig {
+        clone(): SiteConfig {
 
-            return new ModuleConfigBuilder(this).build();
+            return new SiteConfigBuilder(this).build();
         }
 
-        static create(): ModuleConfigBuilder {
-            return new ModuleConfigBuilder();
+        static create(): SiteConfigBuilder {
+            return new SiteConfigBuilder();
         }
     }
 
-    export class ModuleConfigBuilder {
+    export class SiteConfigBuilder {
 
         moduleKey: ModuleKey;
 
         config: PropertySet;
 
-        constructor(source?: ModuleConfig) {
+        constructor(source?: SiteConfig) {
             if (source) {
                 this.moduleKey = source.getModuleKey();
                 if (source.getConfig()) {
@@ -83,27 +83,27 @@ module api.content.site {
             }
         }
 
-        fromData(propertySet: PropertySet): ModuleConfigBuilder {
+        fromData(propertySet: PropertySet): SiteConfigBuilder {
             api.util.assertNotNull(propertySet, "data cannot be null");
             var moduleKey = ModuleKey.fromString(propertySet.getString("moduleKey"));
-            var moduleConfig = propertySet.getPropertySet("config");
+            var siteConfig = propertySet.getPropertySet("config");
             this.setModuleKey(moduleKey);
-            this.setConfig(moduleConfig);
+            this.setConfig(siteConfig);
             return this;
         }
 
-        setModuleKey(value: api.module.ModuleKey): ModuleConfigBuilder {
+        setModuleKey(value: api.module.ModuleKey): SiteConfigBuilder {
             this.moduleKey = value;
             return this;
         }
 
-        setConfig(value: PropertySet): ModuleConfigBuilder {
+        setConfig(value: PropertySet): SiteConfigBuilder {
             this.config = value;
             return this;
         }
 
-        build(): ModuleConfig {
-            return new ModuleConfig(this);
+        build(): SiteConfig {
+            return new SiteConfig(this);
         }
     }
 

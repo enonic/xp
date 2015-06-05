@@ -52,7 +52,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.load();
 
             this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
                     this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
                     this.load();
                 }
