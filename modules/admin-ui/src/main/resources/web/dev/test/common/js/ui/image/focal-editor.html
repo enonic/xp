@@ -74,13 +74,13 @@
         currValue.setHtml('x: ' + curX + ', y: ' + curY + ', r: ' + curR);
     }
 
-    var focalEditor = new api.ui.image.FocalEditor('green_railway_683x1024.jpg');
-    focalEditor.onPositionChanged(function (position) {
+    var focalEditor = new api.ui.image.ImageEditor('green_railway_683x1024.jpg');
+    focalEditor.onFocusPositionChanged(function (position) {
         curX = position.x;
         curY = position.y;
         renderCurrent();
     });
-    focalEditor.onRadiusChanged(function (r) {
+    focalEditor.onFocusRadiusChanged(function (r) {
         curR = r;
         renderCurrent();
     });
@@ -99,7 +99,7 @@
     var newButton = new ButtonEl();
     newButton.setHtml('OK');
     newButton.onClicked(function () {
-        focalEditor.setPosition(parseFloat(newX.getValue()), parseFloat(newY.getValue()));
+        focalEditor.setFocusPosition(parseFloat(newX.getValue()), parseFloat(newY.getValue()));
     });
     newValue.appendChildren(newX, newY, newButton);
     newRow.appendChildren(newLabel, newValue);
@@ -110,22 +110,22 @@
     var yesButton = new ButtonEl();
     yesButton.setHtml('Yes');
     yesButton.onClicked(function () {
-        focalEditor.setEditMode(true);
+        focalEditor.setFocusEditMode(true);
     });
     var saveButton = new ButtonEl();
     saveButton.setHtml('Save');
     saveButton.onClicked(function () {
-        focalEditor.setEditMode(false);
+        focalEditor.setFocusEditMode(false);
     });
     var cancelButton = new ButtonEl();
     cancelButton.setHtml('Cancel');
     cancelButton.onClicked(function () {
-        focalEditor.setEditMode(false, false);
+        focalEditor.setFocusEditMode(false, false);
     });
     var resetButton = new ButtonEl();
     resetButton.setHtml('Reset');
     resetButton.onClicked(function () {
-        focalEditor.resetPosition();
+        focalEditor.resetFocusPosition();
     });
     actValue.appendChildren(yesButton, saveButton, cancelButton, resetButton);
     actRow.appendChildren(actLabel, actValue);

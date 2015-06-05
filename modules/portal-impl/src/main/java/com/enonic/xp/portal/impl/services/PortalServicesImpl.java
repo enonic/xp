@@ -12,6 +12,7 @@ import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.site.SiteService;
 
 @Component
 public final class PortalServicesImpl
@@ -34,6 +35,8 @@ public final class PortalServicesImpl
     private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
     private PortalUrlService portalUrlService;
+
+    private SiteService siteService;
 
     @Override
     public ModuleService getModuleService()
@@ -78,12 +81,23 @@ public final class PortalServicesImpl
     }
 
     @Override
-    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder() { return this.imageScaleFunctionBuilder; };
+    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder()
+    {
+        return this.imageScaleFunctionBuilder;
+    }
+
+    ;
 
     @Override
     public PortalUrlService getPortalUrlService()
     {
         return this.portalUrlService;
+    }
+
+    @Override
+    public SiteService getSiteService()
+    {
+        return this.siteService;
     }
 
     @Reference
@@ -138,5 +152,11 @@ public final class PortalServicesImpl
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
         this.portalUrlService = portalUrlService;
+    }
+
+    @Reference
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
     }
 }

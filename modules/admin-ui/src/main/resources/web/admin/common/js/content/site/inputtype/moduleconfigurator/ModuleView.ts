@@ -8,7 +8,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import FormContextBuilder = api.form.FormContextBuilder;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
-    import ModuleConfig = api.content.site.ModuleConfig;
+    import SiteConfig = api.content.site.SiteConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -18,22 +18,22 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private formView: FormView;
 
-        private moduleConfig: ModuleConfig;
+        private siteConfig: SiteConfig;
 
         private removeClickedListeners: {(event: MouseEvent): void;}[];
 
         private collapseClickedListeners: {(event: MouseEvent): void;}[];
 
-        private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
+        private siteConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
 
-        constructor(mod: Module, moduleConfig: ModuleConfig, formContext: api.content.form.ContentFormContext) {
+        constructor(mod: Module, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             super("module-view");
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
 
             this.module = mod;
-            this.moduleConfig = moduleConfig;
+            this.siteConfig = siteConfig;
 
             var header = new api.dom.DivEl('header');
 
@@ -69,11 +69,11 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.appendChild(header);
 
-            this.formView = new FormView(formContext, this.module.getForm(), this.moduleConfig.getConfig());
+            this.formView = new FormView(formContext, this.module.getForm(), this.siteConfig.getConfig());
             this.formView.addClass("module-form");
             this.appendChild(this.formView);
             this.formView.layout().then(() => {
-                this.notifyModuleConfigFormDisplayed(this.module.getModuleKey());
+                this.notifySiteConfigFormDisplayed(this.module.getModuleKey());
                 this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
                     new api.content.EditContentEvent([content]).fire();
                 });
@@ -86,8 +86,8 @@ module api.content.site.inputtype.moduleconfigurator {
             return this.module;
         }
 
-        getModuleConfig(): ModuleConfig {
-            return this.moduleConfig;
+        getSiteConfig(): SiteConfig {
+            return this.siteConfig;
         }
 
         getFormView(): FormView {
@@ -126,17 +126,17 @@ module api.content.site.inputtype.moduleconfigurator {
             })
         }
 
-        onModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
-            this.moduleConfigFormDisplayedListeners.push(listener);
+        onSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
+            this.siteConfigFormDisplayedListeners.push(listener);
         }
 
-        unModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
-            this.moduleConfigFormDisplayedListeners =
-            this.moduleConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+        unSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
+            this.siteConfigFormDisplayedListeners =
+            this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyModuleConfigFormDisplayed(moduleKey: ModuleKey) {
-            this.moduleConfigFormDisplayedListeners.forEach((listener) => listener(moduleKey));
+        private notifySiteConfigFormDisplayed(moduleKey: ModuleKey) {
+            this.siteConfigFormDisplayedListeners.forEach((listener) => listener(moduleKey));
         }
     }
 }
