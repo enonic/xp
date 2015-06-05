@@ -28,6 +28,7 @@ import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.SiteService;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +36,8 @@ public class ServiceResourceTest
     extends ModuleBaseResourceTest
 {
     protected ContentService contentService;
+
+    protected SiteService siteService;
 
     private ControllerScript controllerScript;
 
@@ -51,7 +54,9 @@ public class ServiceResourceTest
         Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
 
         this.contentService = Mockito.mock( ContentService.class );
+        this.siteService = Mockito.mock( SiteService.class );
         this.services.setContentService( this.contentService );
+        this.services.setSiteService( this.siteService );
     }
 
     @Test
@@ -126,7 +131,7 @@ public class ServiceResourceTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).

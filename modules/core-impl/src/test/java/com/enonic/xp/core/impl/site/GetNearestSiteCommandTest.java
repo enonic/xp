@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.site;
 
 import org.junit.Before;
 import org.junit.Test;

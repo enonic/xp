@@ -26,6 +26,7 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 public abstract class RenderBaseResourceTest
@@ -41,6 +42,8 @@ public abstract class RenderBaseResourceTest
 
     protected PortalUrlService portalUrlService;
 
+    protected SiteService siteService;
+
     @Override
     protected void configure()
         throws Exception
@@ -50,12 +53,14 @@ public abstract class RenderBaseResourceTest
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.moduleService = Mockito.mock( ModuleService.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
+        this.siteService = Mockito.mock( SiteService.class );
 
         this.services.setContentService( this.contentService );
         this.services.setPageTemplateService( this.pageTemplateService );
         this.services.setPageDescriptorService( this.pageDescriptorService );
         this.services.setModuleService( this.moduleService );
         this.services.setPortalUrlService( this.portalUrlService );
+        this.services.setSiteService( this.siteService );
     }
 
     protected final void setupContentAndSite()
@@ -66,7 +71,7 @@ public abstract class RenderBaseResourceTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).
@@ -79,7 +84,7 @@ public abstract class RenderBaseResourceTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
