@@ -21,7 +21,7 @@ public final class XmlPartDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "part-component" );
+        assertTagName( root, "part" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );

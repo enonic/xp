@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<layout-component xmlns="urn:enonic:xp:model:1.0">
+<layout xmlns="urn:enonic:xp:model:1.0">
   <display-name>My Layout</display-name>
   <config>
     <input type="Double" name="pause">
@@ -8,7 +8,7 @@
       <indexed>false</indexed>
       <occurrences minimum="0" maximum="1"/>
     </input>
-    <form-item-set name="myFormItemSet">
+    <item-set name="myFormItemSet">
       <label>My form item set</label>
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
@@ -37,11 +37,11 @@
           </items>
         </field-set>
       </items>
-    </form-item-set>
+    </item-set>
   </config>
   <regions>
     <region name="header"/>
     <region name="main"/>
     <region name="footer"/>
   </regions>
-</layout-component>
+</layout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<content-type>
+<content-type xmlns="urn:enonic:xp:model:1.0">
     <display-name>All the Base Types</display-name>
     <description>description</description>
     <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
@@ -8,7 +8,7 @@
     <is-final>true</is-final>
     <allow-child-content>true</allow-child-content>
     <form>
-        <form-item-set name="mySet">
+        <item-set name="mySet">
             <items>
                 <field-set name="myFieldSet">
                     <label>My field set</label>
@@ -23,6 +23,6 @@
             </items>
             <immutable>false</immutable>
           <occurrences minimum="0" maximum="1"/>
-        </form-item-set>
+        </item-set>
     </form>
 </content-type>

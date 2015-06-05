@@ -21,7 +21,7 @@ public final class XmlLayoutDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "layout-component" );
+        assertTagName( root, "layout" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentModule );
