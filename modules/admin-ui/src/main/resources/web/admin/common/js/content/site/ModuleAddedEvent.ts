@@ -1,17 +1,17 @@
 module api.content.site {
     export class ModuleAddedEvent {
 
-        private moduleConfig: ModuleConfig;
+        private siteConfig: SiteConfig;
 
-        constructor(moduleConfig: ModuleConfig) {
-            this.moduleConfig = moduleConfig;
+        constructor(siteConfig: SiteConfig) {
+            this.siteConfig = siteConfig;
         }
         getModuleKey() : api.module.ModuleKey {
-            return this.moduleConfig.getModuleKey();
+            return this.siteConfig.getModuleKey();
         }
 
-        getModuleConfig(): ModuleConfig {
-            return this.moduleConfig;
+        getSiteConfig(): SiteConfig {
+            return this.siteConfig;
         }
     }
 }

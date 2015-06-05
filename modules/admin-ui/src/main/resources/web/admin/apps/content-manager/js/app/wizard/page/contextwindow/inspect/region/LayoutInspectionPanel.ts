@@ -68,7 +68,7 @@ module app.wizard.page.contextwindow.inspect.region {
             this.appendChild(this.layoutForm);
 
             liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
                     descriptorsRequest.setModuleKeys(liveEditModel.getSiteModel().getModuleKeys());
                     loader.load();
                 }

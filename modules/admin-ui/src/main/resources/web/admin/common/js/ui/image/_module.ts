@@ -1,2 +1,2 @@
 ///<reference path='ImageCanvas.ts' />
-///<reference path='FocalEditor.ts' />
+///<reference path='ImageEditor.ts' />

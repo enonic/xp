@@ -9,6 +9,7 @@ import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.site.SiteService;
 
 public interface PortalServices
 {
@@ -27,6 +28,8 @@ public interface PortalServices
     PageDescriptorService getPageDescriptorService();
 
     PortalUrlService getPortalUrlService();
+
+    SiteService getSiteService();
 
     ImageScaleFunctionBuilder getImageScaleFunctionBuilder();
 }

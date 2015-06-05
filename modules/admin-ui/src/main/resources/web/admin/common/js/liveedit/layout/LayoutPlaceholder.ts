@@ -36,7 +36,7 @@ module api.liveedit.layout {
             });
 
             layoutView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
                     request.setModuleKeys(layoutView.liveEditModel.getSiteModel().getModuleKeys());
                     loader.load();
                 }

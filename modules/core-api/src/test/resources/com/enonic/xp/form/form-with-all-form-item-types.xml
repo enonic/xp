@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <form-item-set name="mySet">
+    <item-set name="mySet">
         <items>
             <field-set name="myFieldSet">
                 <label>My field set</label>
@@ -16,6 +16,6 @@
         </items>
         <immutable>false</immutable>
         <occurrences minimum="0" maximum="1"/>
-    </form-item-set>
+    </item-set>
 </form>
 

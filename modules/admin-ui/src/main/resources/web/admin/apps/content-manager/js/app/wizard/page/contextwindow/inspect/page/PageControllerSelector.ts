@@ -52,14 +52,14 @@ module app.wizard.page.contextwindow.inspect.page {
             this.load();
 
             this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
                     this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
                     this.load();
                 }
             });
 
             this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
                     var descriptorKey = <DescriptorKey>event.getNewValue();
                     if (descriptorKey) {
                         this.selectController(descriptorKey);

@@ -10,7 +10,7 @@ module api.content {
     export class ImageUploader extends MediaUploader {
 
         private images: api.dom.ImgEl[];
-        private focalEditors: api.ui.image.FocalEditor[];
+        private imageEditors: api.ui.image.ImageEditor[];
         private focalEditModeListeners: {(edit: boolean, position: {x: number; y: number}): void}[];
 
         private initialWidth: number;
@@ -21,7 +21,7 @@ module api.content {
             super(config);
 
             this.images = [];
-            this.focalEditors = [];
+            this.imageEditors = [];
             this.focalEditModeListeners = [];
 
             if (config.scaleWidth != undefined) {
@@ -55,18 +55,12 @@ module api.content {
                 setScaleWidth(this.scaleWidth).
                 resolve();
 
-            var focalEditor = new api.ui.image.FocalEditor(imgUrl);
-            focalEditor.onEditModeChanged((edit, position) => {
+            var imageEditor = new api.ui.image.ImageEditor(imgUrl);
+            imageEditor.onFocusEditModeChanged((edit, position) => {
                 this.setResetVisible(!edit);
-                var shader = api.liveedit.Shader.get();
-                if (edit) {
-                    shader.shade(focalEditor);
-                } else {
-                    shader.hide();
-                }
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
-            var image = focalEditor.getImage();
+            var image = imageEditor.getImage();
 
             this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
 
@@ -77,33 +71,33 @@ module api.content {
                 this.getEl().setMaxWidthPx(this.initialWidth);
             });
 
-            focalEditor.onClicked((event: MouseEvent) => {
-                focalEditor.toggleClass('selected');
+            imageEditor.onClicked((event: MouseEvent) => {
+                imageEditor.toggleClass('selected');
 
                 event.stopPropagation();
                 event.preventDefault();
             });
 
-            this.focalEditors.push(focalEditor);
+            this.imageEditors.push(imageEditor);
 
             api.dom.Body.get().onClicked((event: MouseEvent) => {
-                this.focalEditors.forEach((editor) => {
+                this.imageEditors.forEach((editor) => {
                     editor.removeClass('selected');
                 });
             });
 
-            return focalEditor;
+            return imageEditor;
         }
 
         setFocalPoint(x: number, y: number) {
-            this.focalEditors.forEach((editor: api.ui.image.FocalEditor) => {
-                editor.setPosition(x, y);
+            this.imageEditors.forEach((editor: api.ui.image.ImageEditor) => {
+                editor.setFocusPosition(x, y);
             })
         }
 
         isFocalPointEditMode(): boolean {
-            return this.focalEditors.some((editor: api.ui.image.FocalEditor) => {
-                return editor.isEditMode();
+            return this.imageEditors.some((editor: api.ui.image.ImageEditor) => {
+                return editor.isFocusEditMode();
             });
         }
 

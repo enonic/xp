@@ -80,6 +80,6 @@ public final class ServiceResource
 
     private Site getSite( final Content content )
     {
-        return this.services.getContentService().getNearestSite( content.getId() );
+        return this.services.getSiteService().getNearestSite( content.getId() );
     }
 }

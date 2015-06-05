@@ -3,7 +3,7 @@
   <display-name>display name</display-name>
   <description>description</description>
   <items>
-    <form-item-set name="mySet">
+    <item-set name="mySet">
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
       <items>
@@ -18,6 +18,6 @@
           </items>
         </field-set>
       </items>
-    </form-item-set>
+    </item-set>
   </items>
 </mixin>

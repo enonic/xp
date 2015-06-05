@@ -76,7 +76,7 @@ public final class XmlFormMapper
             return buildInlineItem( root );
         }
 
-        if ( "form-item-set".equals( tagName ) )
+        if ( "item-set".equals( tagName ) )
         {
             return buildFormItemSetItem( root );
         }
