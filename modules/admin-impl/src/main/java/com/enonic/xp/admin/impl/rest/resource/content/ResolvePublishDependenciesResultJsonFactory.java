@@ -55,7 +55,7 @@ public class ResolvePublishDependenciesResultJsonFactory
 
             int dependants = getNumberOfDependants( pushContentRequests, requestedContentId );
 
-            final Content content = resolvedContents.getContentById( requestedContentId );
+            final Content content = getResolvedContent( requestedContentId );
 
             resolvedContentList.add( ResolvedContent.ResolvedRequestedContent.create().
                 childrenCount( numberOfChildren ).
@@ -67,6 +67,18 @@ public class ResolvePublishDependenciesResultJsonFactory
         }
 
         return resolvedContentList;
+    }
+
+    private Content getResolvedContent( final ContentId contentId )
+    {
+        final Content content = resolvedContents.getContentById( contentId );
+
+        if ( content == null )
+        {
+            throw new IllegalArgumentException( "Content was not resolved for id " + contentId );
+        }
+
+        return content;
     }
 
     private int getNumberOfDependants( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )

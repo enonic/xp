@@ -48,7 +48,7 @@ public class ResolveDependantsResultJsonFactory
     {
         for ( final ContentId dependantContentId : dependantsContentIds )
         {
-            Content resolvedContent = resolvedContents.getContentById( dependantContentId );
+            Content resolvedContent = getResolvedContent( dependantContentId );
 
             list.add( ResolvedContent.create().
                 content( resolvedContent ).
@@ -56,6 +56,18 @@ public class ResolveDependantsResultJsonFactory
                 iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
                 build() );
         }
+    }
+
+    private Content getResolvedContent( final ContentId contentId )
+    {
+        final Content content = resolvedContents.getContentById( contentId );
+
+        if ( content == null )
+        {
+            throw new IllegalArgumentException( "Content was not resolved for id " + contentId );
+        }
+
+        return content;
     }
 
     private void sortResults( final List<ResolvedContent> dependantContents )

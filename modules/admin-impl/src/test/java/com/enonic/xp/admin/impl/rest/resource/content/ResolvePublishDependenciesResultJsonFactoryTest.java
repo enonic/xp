@@ -133,7 +133,7 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
         assertNotNull( result.getPushRequestedContents().get( 0 ).getType() );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testGeneratedJsonWithMissingResolvedContent()
     {
 
