@@ -13,7 +13,6 @@ import com.google.common.io.Resources;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
-import com.enonic.xp.xml.XmlException;
 
 final class ModuleBuilder
 {
@@ -25,7 +24,7 @@ final class ModuleBuilder
 
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
-    private static final String SITE_XML = "site.xml";
+    private static final String SITE_XML = "app/site.xml";
 
     private Bundle bundle;
 
@@ -80,7 +79,7 @@ final class ModuleBuilder
     private static String parseModuleXml( final URL moduleResource )
         throws IOException
     {
-       return Resources.toString( moduleResource, Charsets.UTF_8 );
+        return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )

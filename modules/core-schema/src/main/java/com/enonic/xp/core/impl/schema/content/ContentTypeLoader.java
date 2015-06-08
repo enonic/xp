@@ -25,11 +25,11 @@ final class ContentTypeLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentTypeLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( ".*/content-types/([^/]+)/content-type\\.xml" );
+    private final static Pattern PATTERN = Pattern.compile( ".*/app/content-types/([^/]+)/content-type\\.xml" );
 
     private final static String FILE = "content-type.xml";
 
-    private final static String DIRECTORY = "content-types";
+    private final static String DIRECTORY = "app/content-types";
 
     private final Bundle bundle;
 

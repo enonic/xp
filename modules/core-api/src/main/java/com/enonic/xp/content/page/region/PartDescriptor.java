@@ -19,12 +19,12 @@ public class PartDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getModuleKey(), "parts/" + key.getName() );
+        return ResourceKey.from( key.getModuleKey(), "app/parts/" + key.getName() );
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "parts/" + key.getName() + "/part.xml" );
+        return ResourceKey.from( key.getModuleKey(), "app/parts/" + key.getName() + "/part.xml" );
     }
 
     public static PartDescriptor.Builder create()

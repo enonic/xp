@@ -19,7 +19,7 @@ public abstract class AbstractPageDescriptorServiceTest
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "pages/" + key.getName() + "/page.xml" );
+        return ResourceKey.from( key.getModuleKey(), "app/pages/" + key.getName() + "/page.xml" );
     }
 
     @Override
