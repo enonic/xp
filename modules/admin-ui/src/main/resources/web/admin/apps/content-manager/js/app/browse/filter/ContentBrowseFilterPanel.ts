@@ -72,7 +72,8 @@ module app.browse.filter {
             var contentQuery: ContentQuery = this.createContentQuery(event);
             var searchString: string = event.getSearchInputValues().getTextSearchFieldValue();
 
-            this.searchDataAndHandleResponse(contentQuery, searchString);
+            var refreshWithoutReload: boolean = event instanceof RefreshEvent;
+            this.searchDataAndHandleResponse(contentQuery, searchString, refreshWithoutReload);
         }
 
         private handleEmptyFilterInput(event: api.app.browse.filter.SearchEvent) {
@@ -107,7 +108,7 @@ module app.browse.filter {
             return contentQuery;
         }
 
-        private searchDataAndHandleResponse(contentQuery: ContentQuery, searchString: string) {
+        private searchDataAndHandleResponse(contentQuery: ContentQuery, searchString: string, refreshWithoutReload: boolean) {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
@@ -116,7 +117,7 @@ module app.browse.filter {
                         new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
 
                     } else {
-                        if (event instanceof RefreshEvent) {// refresh without grid reload
+                        if (refreshWithoutReload) { // refresh without grid reload
                             this.resetFacets(true, true);
                             new ContentBrowseRefreshEvent().fire();
                         } else {// in other cases - reset with grid reload
