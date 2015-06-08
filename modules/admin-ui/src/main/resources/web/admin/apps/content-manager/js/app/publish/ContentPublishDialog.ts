@@ -42,9 +42,9 @@ module app.publish {
 
         private initialContentsResolvedWithoutChildren: ContentsResolved<ContentPublishRequestedItem> = new ContentsResolved<ContentPublishRequestedItem>();
 
-        private dependantContentsResolvedWithChildren: ContentsResolved<ContentPublishDependantItem> = new ContentsResolved<ContentPublishDependantItem>();
+        private dependantContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
-        private dependantContentsResolvedWithoutChildren: ContentsResolved<ContentPublishDependantItem> = new ContentsResolved<ContentPublishDependantItem>();
+        private dependantContentsResolvedWithoutChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
         private dependenciesLabel: api.dom.LabelEl;
 
@@ -182,14 +182,17 @@ module app.publish {
                     setIsCheckBoxEnabled(false).
                     setRemovable(true).
                     setRemoveCallback(() => {
-                        this.removeSelectionItem(item);
+                        if (this.selectionItems.length == 1) { // this is the last item in the dialog
+                            this.close();
+                            return;
+                        }
                         this.removeFromInitialSelection(item);
-                        this.dependantItemsView.removeDependantItems(item);
-                        this.initialContentsResolvedWithChildren.removeItemWithId(item.getBrowseItem().getId());
-                        this.initialContentsResolvedWithoutChildren.removeItemWithId(item.getBrowseItem().getId());
-                        this.dependantContentsResolvedWithChildren.removeItemsThatDependOnId(item.getBrowseItem().getId());
-                        this.dependantContentsResolvedWithoutChildren.removeItemsThatDependOnId(item.getBrowseItem().getId());
-                        this.countItemsToPublishAndUpdateCounterElements();
+                        this.initialContentsResolvedWithChildren.setAlreadyResolved(false);
+                        this.initialContentsResolvedWithoutChildren.setAlreadyResolved(false);
+                        this.dependantContentsResolvedWithChildren.setAlreadyResolved(false);
+                        this.dependantContentsResolvedWithoutChildren.setAlreadyResolved(false);
+                        this.resolvePublishRequestedContentsAndUpdateView();
+                        this.resolveAllDependantsIfNeededAndUpdateView();
                     }).
                     build();
                 this.selectionItems.push(item);
@@ -297,14 +300,14 @@ module app.publish {
             this.dependantItemsView.clear();
 
             if (this.dependenciesExpanded()) {
-                var dependantItems: ContentsResolved<ContentPublishDependantItem> = this.dependantContentsResolvedWithoutChildren;
+                var dependantItems: ContentsResolved<ContentPublishItem> = this.dependantContentsResolvedWithoutChildren;
                 if (this.includeChildItemsCheck.isChecked()) {
                     dependantItems = this.dependantContentsResolvedWithChildren;
                 }
 
-                dependantItems.getContentsResolved().forEach((dependant: ContentPublishDependantItem)  => {
-                    var dependantView: SelectionPublishItem<ContentPublishDependantItem> = new SelectionPublishItemBuilder<ContentPublishDependantItem>().create().
-                        setViewer(new app.publish.ResolvedDependantContentViewer<ContentPublishDependantItem>()).
+                dependantItems.getContentsResolved().forEach((dependant: ContentPublishItem)  => {
+                    var dependantView: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
+                        setViewer(new app.publish.ResolvedDependantContentViewer<ContentPublishItem>()).
                         setContent(dependant).
                         setIsCheckBoxEnabled(false).
                         setIsCheckboxHidden(true).
@@ -317,67 +320,14 @@ module app.publish {
         }
 
         /**
-         * Perform request to resolve dependants of passed item and update view.
-         * Use it when you have toggle enabled per each initially selected item.
-         */
-        private resolveDependantsOfSingleItemAndUpdateView(selectionItem: SelectionPublishItem<ContentPublishRequestedItem>,
-                                                           showDependants: boolean) {
-
-            var contentPublishRequestedItem: ContentPublishRequestedItem = <ContentPublishRequestedItem>selectionItem.getBrowseItem().getModel();
-            if (showDependants) {
-                if (!contentPublishRequestedItem.isDependantsResolved()) {
-                    var getDependantsRequest = new api.content.ResolveDependantsRequest([new api.content.ContentId(contentPublishRequestedItem.getId())],
-                        this.includeChildItemsCheck.isChecked());
-                    getDependantsRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
-                        contentPublishRequestedItem.setDependantsResolved(ContentPublishDependantItem.getDependantsResolved(jsonResponse.getResult()));
-                        this.initExpandableDependantsView(selectionItem);
-                        selectionItem.showDependants();
-                    }).done();
-                } else {
-                    if (!selectionItem.hasDependants()) {
-                        this.initExpandableDependantsView(selectionItem);
-                    }
-                    selectionItem.showDependants();
-                }
-            } else {
-                selectionItem.hideDependants();
-            }
-        }
-
-        /**
-         * Creates SelectionPublishItem from resolved dependants and appends them as children to SelectionPublishItem of initial object.
-         * @param selectionItem
-         */
-        private initExpandableDependantsView(selectionItem: SelectionPublishItem<ContentPublishRequestedItem>): void {
-
-            var contentPublishRequestedItem: ContentPublishRequestedItem = <ContentPublishRequestedItem>selectionItem.getBrowseItem().getModel();
-
-            contentPublishRequestedItem.getDependantsResolved().forEach((dependant: ContentPublishDependantItem)  => {
-                var dependantView: SelectionPublishItem<ContentPublishDependantItem> = new SelectionPublishItemBuilder<ContentPublishDependantItem>().create().
-                    setContent(dependant).
-                    setIsCheckBoxEnabled(false).
-                    setIsHidden(false).
-                    setIsChecked(true).
-                    setExpandable(false).
-                    setChangeCallback(() => {
-                    }).
-                    setToggleCallback(() => {
-                    }).
-                    build();
-
-                selectionItem.appendDependant(dependantView);
-            });
-        }
-
-        /**
          * Inits arrays of properties that store results of performing resolve request.
          */
         private initResolvedPublishItems(json: ResolvePublishDependenciesResultJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json));
+                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.pushRequestedContents));
             } else {
-                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json));
+                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.pushRequestedContents));
             }
         }
 
@@ -387,9 +337,9 @@ module app.publish {
         private initResolvedDependantItems(json: GetDependantsResultJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.dependantContentsResolvedWithChildren.setContentsResolved(ContentPublishDependantItem.getDependantsResolved(json));
+                this.dependantContentsResolvedWithChildren.setContentsResolved(ContentPublishItem.getResolvedContents(json.dependantContents));
             } else {
-                this.dependantContentsResolvedWithoutChildren.setContentsResolved(ContentPublishDependantItem.getDependantsResolved(json));
+                this.dependantContentsResolvedWithoutChildren.setContentsResolved(ContentPublishItem.getResolvedContents(json.dependantContents));
             }
         }
 
@@ -488,7 +438,7 @@ module app.publish {
 
     export class PublishDialogDependantsItemList extends api.dom.DivEl {
 
-        private selectionDependantItems: SelectionPublishItem<ContentPublishDependantItem>[] = [];
+        private selectionDependantItems: SelectionPublishItem<ContentPublishItem>[] = [];
 
         constructor() {
             super();
@@ -496,23 +446,13 @@ module app.publish {
             this.getEl().addClass("dependant-items");
         }
 
-        appendDependant(dependantView: SelectionPublishItem<ContentPublishDependantItem>) {
+        appendDependant(dependantView: SelectionPublishItem<ContentPublishItem>) {
             this.appendChild(dependantView);
             this.selectionDependantItems.push(dependantView);
         }
 
-        getDependantsItemList(): SelectionPublishItem<ContentPublishDependantItem>[] {
+        getDependantsItemList(): SelectionPublishItem<ContentPublishItem>[] {
             return this.selectionDependantItems;
-        }
-
-        removeDependantItems(item: SelectionPublishItem<ContentPublishRequestedItem>) {
-            for (var i = 0; i < this.selectionDependantItems.length; i++) {
-                if (item.getBrowseItem().getId() == this.selectionDependantItems[i].getBrowseItem().getModel().getDependsOnContentId()) {
-                    this.selectionDependantItems[i].remove();
-                    this.selectionDependantItems.splice(i, 1);
-                    i = -1;
-                }
-            }
         }
 
         clear() {
@@ -538,6 +478,10 @@ module app.publish {
             return this.alreadyResolved;
         }
 
+        setAlreadyResolved(value: boolean) {
+            this.alreadyResolved = value;
+        }
+
         setContentsResolved(contentsResolvedWithChildren: M[]) {
             this.contentsResolved = contentsResolvedWithChildren;
             this.alreadyResolved = true;
@@ -553,17 +497,6 @@ module app.publish {
                     if (id == this.contentsResolved[i].getId()) {
                         this.contentsResolved.splice(i, 1);
                         break;
-                    }
-                }
-            }
-        }
-
-        removeItemsThatDependOnId(id: String) {
-            if (this.alreadyResolved) {
-                for (var i = 0; i < this.contentsResolved.length; i++) {
-                    if (id == (<ContentPublishDependantItem>this.contentsResolved[i]).getDependsOnContentId()) {
-                        this.contentsResolved.splice(i, 1);
-                        i = -1;
                     }
                 }
             }

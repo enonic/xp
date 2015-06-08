@@ -46,7 +46,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
-        assertTrue( result.getResolvedContent().contains( content ) );
+        assertTrue( result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).contains( content.getId() ) );
     }
 
     @Test
@@ -55,8 +55,8 @@ public class ContentServiceImplTest_resolvePublishDependencies
     {
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, false, false, true, true );
 
-        assertEquals( 3, result.getDependantsContentIds().getSize() );
-        assertEquals( 0, result.getChildrenContentsIds().getSize() );
+        assertEquals( 3, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
+        assertEquals( 0, result.getPushContentRequests().getPushedBecauseChildOfContentIds( true, true ).getSize() );
     }
 
     @Test
@@ -65,8 +65,8 @@ public class ContentServiceImplTest_resolvePublishDependencies
     {
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, false, false, false, true );
 
-        assertEquals( 1, result.getChildrenContentsIds().getSize() );
-        assertEquals( 0, result.getDependantsContentIds().getSize() );
+        assertEquals( 0, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseChildOfContentIds( true, true ).getSize() );
     }
 
     @Test
@@ -75,8 +75,8 @@ public class ContentServiceImplTest_resolvePublishDependencies
     {
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( false, true, false, false, true );
 
-        assertEquals( 1, result.getChildrenContentsIds().getSize() );
-        assertEquals( 2, result.getDependantsContentIds().getSize() );
+        assertEquals( 2, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseChildOfContentIds( true, true ).getSize() );
     }
 
     @Test
@@ -85,9 +85,9 @@ public class ContentServiceImplTest_resolvePublishDependencies
     {
         final ResolvePublishDependenciesResult result = doResolveWithDependencies( true, true, false, false, false );
 
-        assertEquals( 0, result.getChildrenContentsIds().getSize() );
-        assertEquals( 0, result.getDependantsContentIds().getSize() );
-        assertEquals( 2, result.getPushRequestedIds().getSize() );
+        assertEquals( 0, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
+        assertEquals( 0, result.getPushContentRequests().getPushedBecauseChildOfContentIds( true, true ).getSize() );
+        assertEquals( 2, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
     }
 
     private ResolvePublishDependenciesResult doResolveWithDependencies( boolean isCont1, boolean isCont2, boolean isChild1,

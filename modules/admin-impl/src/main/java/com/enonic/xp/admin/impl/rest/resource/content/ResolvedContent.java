@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 
 public class ResolvedContent
 {
@@ -101,15 +100,15 @@ public class ResolvedContent
 
         protected boolean isValid;
 
-        protected Content resolvedContent;
+        protected Content content;
 
         protected String compareStatus;
 
         protected String iconUrl;
 
-        public Builder resolvedContent( final Content resolvedContent )
+        public Builder content( final Content resolvedContent )
         {
-            this.resolvedContent = resolvedContent;
+            this.content = resolvedContent;
             return this;
         }
 
@@ -127,12 +126,12 @@ public class ResolvedContent
 
         public ResolvedContent build()
         {
-            this.id = resolvedContent.getId().toString();
-            this.path = resolvedContent.getPath().toString();
-            this.displayName = resolvedContent.getDisplayName();
-            this.name = resolvedContent.getName().toString();
-            this.type = resolvedContent.getType().toString();
-            this.isValid = resolvedContent.isValid();
+            this.id = content.getId().toString();
+            this.path = content.getPath().toString();
+            this.displayName = content.getDisplayName();
+            this.name = content.getName().toString();
+            this.type = content.getType().toString();
+            this.isValid = content.isValid();
 
             return new ResolvedContent( this );
         }
@@ -173,7 +172,6 @@ public class ResolvedContent
         public static final class Builder
             extends ResolvedContent.Builder
         {
-
             private int childrenCount;
 
             private int dependantsCount;
@@ -190,9 +188,9 @@ public class ResolvedContent
                 return this;
             }
 
-            public Builder resolvedContent( final Content resolvedContent )
+            public Builder content( final Content content )
             {
-                this.resolvedContent = resolvedContent;
+                this.content = content;
                 return this;
             }
 
@@ -210,84 +208,14 @@ public class ResolvedContent
 
             public ResolvedRequestedContent build()
             {
-                this.id = resolvedContent.getId().toString();
-                this.path = resolvedContent.getPath().toString();
-                this.displayName = resolvedContent.getDisplayName();
-                this.name = resolvedContent.getName().toString();
-                this.type = resolvedContent.getType().toString();
-                this.isValid = resolvedContent.isValid();
+                this.id = content.getId().toString();
+                this.path = content.getPath().toString();
+                this.displayName = content.getDisplayName();
+                this.name = content.getName().toString();
+                this.type = content.getType().toString();
+                this.isValid = content.isValid();
 
                 return new ResolvedRequestedContent( this );
-            }
-        }
-    }
-
-    public static class ResolvedDependantContent
-        extends ResolvedContent
-    {
-
-        private final String dependsOnContentId;
-
-        public ResolvedDependantContent( Builder builder )
-        {
-            super( builder );
-            this.dependsOnContentId = builder.dependsOnContentId;
-        }
-
-        public static Builder create()
-        {
-            return new Builder();
-        }
-
-        @SuppressWarnings("unused")
-        public String getDependsOnContentId()
-        {
-            return dependsOnContentId;
-        }
-
-        public static final class Builder
-            extends ResolvedContent.Builder
-        {
-
-            private String dependsOnContentId;
-
-            public Builder dependsOnContentId( final ContentId dependsOnContentId )
-            {
-                if ( dependsOnContentId != null )
-                {
-                    this.dependsOnContentId = dependsOnContentId.toString();
-                }
-                return this;
-            }
-
-            public Builder resolvedContent( final Content resolvedContent )
-            {
-                this.resolvedContent = resolvedContent;
-                return this;
-            }
-
-            public Builder compareStatus( final String compareStatus )
-            {
-                this.compareStatus = compareStatus;
-                return this;
-            }
-
-            public Builder iconUrl( final String iconUrl )
-            {
-                this.iconUrl = iconUrl;
-                return this;
-            }
-
-            public ResolvedDependantContent build()
-            {
-                this.id = resolvedContent.getId().toString();
-                this.path = resolvedContent.getPath().toString();
-                this.displayName = resolvedContent.getDisplayName();
-                this.name = resolvedContent.getName().toString();
-                this.type = resolvedContent.getType().toString();
-                this.isValid = resolvedContent.isValid();
-
-                return new ResolvedDependantContent( this );
             }
         }
     }

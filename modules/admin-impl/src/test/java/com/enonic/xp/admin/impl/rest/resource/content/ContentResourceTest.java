@@ -22,6 +22,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -791,15 +792,34 @@ public class ContentResourceTest
                     addChildOf( ContentId.from( "node1_1_1" ), ContentId.from( "node1_1" ), ContentId.from( "node1_1" ) ).
                     addParentOf( ContentId.from( "node1" ), ContentId.from( "node1_1" ), ContentId.from( "node1_1" ) ).
                     build() ).
-                compareContentResults( CompareContentResults.create().
-                    add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1_1" ) ) ).
-                    add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1" ) ) ).
-                    add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "node1_1_1" ) ) ).
-                    build() ).
-                resolvedContent( Contents.builder().
-                    add( createContent( "node1", "node1_content", "mymodule:my_type" ) ).
-                    add( createContent( "node1_1", "node1_1_content", "mymodule:my_type" ) ).
-                    add( createContent( "node1_1_1", "node1_1_1_content", "mymodule:my_type" ) ).build() ).build() );
+                build() );
+
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.builder().
+                                                                                                              add( createContent( "node1",
+                                                                                                                                  "node1_content",
+                                                                                                                                  "mymodule:my_type" ) ).
+                                                                                                              add( createContent( "node1_1",
+                                                                                                                                  "node1_1_content",
+                                                                                                                                  "mymodule:my_type" ) ).
+                                                                                                              add( createContent(
+                                                                                                                  "node1_1_1",
+                                                                                                                  "node1_1_1_content",
+                                                                                                                  "mymodule:my_type" ) ).build() );
+
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( CompareContentResults.create().
+                                                                                                             add( new CompareContentResult(
+                                                                                                                 CompareStatus.NEW,
+                                                                                                                 ContentId.from(
+                                                                                                                     "node1_1" ) ) ).
+                                                                                                             add( new CompareContentResult(
+                                                                                                                 CompareStatus.NEW,
+                                                                                                                 ContentId.from(
+                                                                                                                     "node1" ) ) ).
+                                                                                                             add( new CompareContentResult(
+                                                                                                                 CompareStatus.NEW,
+                                                                                                                 ContentId.from(
+                                                                                                                     "node1_1_1" ) ) ).
+                                                                                                             build() );
 
         String jsonString = request().path( "content/resolvePublishDependencies" ).
             entity( readFromFile( "resolve_publish_dependencies_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

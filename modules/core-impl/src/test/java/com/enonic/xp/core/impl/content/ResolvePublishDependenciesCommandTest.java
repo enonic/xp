@@ -82,8 +82,8 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 1, result.getDependantsContentIds().getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
     @Test
@@ -118,8 +118,8 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 1, result.getDependantsContentIds().getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 1, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
     @Test
@@ -158,8 +158,8 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 2, result.getDependantsContentIds().getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 2, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
 
@@ -199,8 +199,8 @@ public class ResolvePublishDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getPushRequestedIds().getSize() );
-        assertEquals( 0, result.getDependantsContentIds().getSize() );
+        assertEquals( 1, result.getPushContentRequests().getPushedBecauseRequestedContentIds( true ).getSize() );
+        assertEquals( 0, result.getPushContentRequests().getDependantsContentIds( true, true ).getSize() );
     }
 
     private Content createContent( final String id, final String name, final ContentPath path, boolean valid )

@@ -74,32 +74,6 @@ public class ResolvePublishDependenciesCommand
     {
         PushContentRequests pushContentRequests = PushContentRequestsFactory.create( syncWorkResults );
         this.resultBuilder.pushContentRequests( pushContentRequests );
-
-        ContentIds pushRequestedAndDependantContentIds =
-            pushContentRequests.getRequstedAndDependantContentIds( true ).getPushedContentIds();
-        this.resultBuilder.resolvedContent( getContentByIds( new GetContentByIdsParams( pushRequestedAndDependantContentIds ) ) );
-        this.resultBuilder.compareContentResults( getCompareStatuses( pushRequestedAndDependantContentIds ) );
-    }
-
-    private Contents getContentByIds( final GetContentByIdsParams getContentParams )
-    {
-        return GetContentByIdsCommand.create( getContentParams ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    private CompareContentResults getCompareStatuses( final ContentIds ids )
-    {
-        return CompareContentsCommand.create().
-            nodeService( this.nodeService ).
-            contentIds( ids ).
-            target( this.target ).
-            build().
-            execute();
     }
 
     public static Builder create()
