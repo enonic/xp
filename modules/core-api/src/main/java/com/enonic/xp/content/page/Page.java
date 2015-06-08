@@ -10,10 +10,11 @@ import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.ComponentPath;
 import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.rendering.Renderable;
 
 @Beta
 public final class Page
-    implements com.enonic.xp.rendering.Component
+    implements Renderable
 {
     private final DescriptorKey controller;
 
