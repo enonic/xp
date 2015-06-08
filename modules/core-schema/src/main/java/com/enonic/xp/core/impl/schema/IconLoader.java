@@ -3,6 +3,8 @@ package com.enonic.xp.core.impl.schema;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.framework.Bundle;
 
@@ -13,7 +15,9 @@ import com.enonic.xp.icon.Icon;
 
 public final class IconLoader
 {
-    private static final String ICON_FILE_NAME = "thumb";
+    private static final String EXTENSION = ".png";
+
+    private final static Pattern PATH_PATTERN = Pattern.compile( "relationship-types/([^/]+)" );
 
     private final Bundle bundle;
 
@@ -44,7 +48,13 @@ public final class IconLoader
 
     private URL findIconUrl( final String parentPath )
     {
-        final String path = parentPath + "/" + ICON_FILE_NAME + ".png";
+        final String path = parentPath + "/" + getIconFileNameFromPath( parentPath ) + EXTENSION;
         return this.bundle.getEntry( path );
+    }
+
+    private String getIconFileNameFromPath( final String path )
+    {
+        final Matcher matcher = PATH_PATTERN.matcher( path );
+        return matcher.matches() ? matcher.group( 1 ) : null;
     }
 }
