@@ -280,7 +280,7 @@ module api.form.inputtype.text {
         textAreaWrapper: Element;
         property: Property;
     }
-    
+
     interface LinkConfig {
         editor: TinyMceEditor
         link: HTMLElement

@@ -215,15 +215,13 @@ public class PushContentCommand
     {
         final Context currentContext = ContextAccessor.current();
 
-        final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( result.getDelete() ) ) );
-
         final List<ContentPath> deletedContents = new ArrayList<>();
         deletedContents.addAll( deleteNodesInContext( result, currentContext ) );
 
         deletedContents.addAll( deleteNodesInContext( result, ContextBuilder.from( currentContext ).
             branch( target ).
             build() ) );
-        
+
         for ( final NodePublishRequest publishRequest : result.getNodeDeleteRequests() )
         {
             this.resultBuilder.addDeleted( ContentId.from( publishRequest.getNodeId().toString() ) );

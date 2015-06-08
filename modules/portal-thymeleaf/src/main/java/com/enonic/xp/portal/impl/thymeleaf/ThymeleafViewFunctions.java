@@ -51,7 +51,7 @@ final class ThymeleafViewFunctions
     {
         return execute( "processHtml", params ).toString();
     }
-    
+
     public String localize( final List<String> params )
     {
         return execute( "i18n.localize", params ).toString();

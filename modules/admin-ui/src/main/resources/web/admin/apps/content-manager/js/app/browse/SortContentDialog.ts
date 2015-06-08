@@ -174,7 +174,8 @@ module app.browse {
                 sendAndParse();
         }
 
-        private setManualReorder(order: ChildOrder, movements: OrderChildMovements, silent: boolean = false): wemQ.Promise<api.content.Content> {
+        private setManualReorder(order: ChildOrder, movements: OrderChildMovements,
+                                 silent: boolean = false): wemQ.Promise<api.content.Content> {
             return new api.content.OrderChildContentRequest().
                 setSilent(silent).
                 setManualOrder(true).

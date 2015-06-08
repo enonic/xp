@@ -78,7 +78,7 @@ final class ModuleBuilder
     private static String parseModuleXml( final URL moduleResource )
         throws IOException
     {
-       return Resources.toString( moduleResource, Charsets.UTF_8 );
+        return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )

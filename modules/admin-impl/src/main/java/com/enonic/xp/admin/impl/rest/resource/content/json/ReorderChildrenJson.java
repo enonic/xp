@@ -27,7 +27,7 @@ public class ReorderChildrenJson
         this.silent = silent;
         this.manualOrder = manualOrder;
         this.contentId = contentId;
-        this.childOrder= childOrder;
+        this.childOrder = childOrder;
         this.orderChildren = orderChildren;
     }
 

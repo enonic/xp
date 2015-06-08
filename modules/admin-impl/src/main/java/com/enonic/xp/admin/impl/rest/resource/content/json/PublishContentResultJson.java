@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.PushContentsResult;
 
 public class PublishContentResultJson
@@ -14,7 +15,7 @@ public class PublishContentResultJson
 
     private final List<Failure> failures = new ArrayList<>();
 
-    private final List<Success> deleted = new ArrayList<>();
+    private final List<String> deleted = new ArrayList<>();
 
     public List<Success> getSuccesses()
     {
@@ -26,7 +27,7 @@ public class PublishContentResultJson
         return failures;
     }
 
-    public List<Success> getDeleted()
+    public List<String> getDeleted()
     {
         return deleted;
     }
@@ -46,12 +47,12 @@ public class PublishContentResultJson
 
         for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
         {
-            json.failures.add( new Failure( failed.getContent().getDisplayName(), failed.getFailedReason().getMessage() ) );
+            json.failures.add( new Failure( failed.getContent().getPath(), failed.getFailedReason().getMessage() ) );
         }
 
-        for ( final Content content : pushContentsResult.getDeleted() )
+        for ( final ContentId deleted : pushContentsResult.getDeleted() )
         {
-            json.deleted.add( new Success( content.getId(), content.getDisplayName() ) );
+            json.deleted.add( deleted.toString() );
         }
 
         return json;
@@ -82,19 +83,19 @@ public class PublishContentResultJson
 
     public static class Failure
     {
-        private final String name;
+        private final String path;
 
         private final String reason;
 
-        public Failure( final String contentName, final String reason )
+        public Failure( final ContentPath contentPath, final String reason )
         {
-            this.name = contentName.toString();
+            this.path = contentPath.toString();
             this.reason = reason;
         }
 
-        public String getName()
+        public String getPath()
         {
-            return name;
+            return path;
         }
 
         public String getReason()

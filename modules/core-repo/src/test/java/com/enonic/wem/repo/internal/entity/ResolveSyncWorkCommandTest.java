@@ -982,7 +982,9 @@ public class ResolveSyncWorkCommandTest
 
         final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id(), false );
+        final Node a1d = getNodeByPath( NodePath.newPath( "/s1-copy/a1" ).build() );
+        final Node a2d = getNodeByPath( NodePath.newPath( "/s1-copy/a2" ).build() );
+        final Node a2_1d = getNodeByPath( NodePath.newPath( "/s1-copy/a2/a2_1" ).build() );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( s1d.id(), true );
 

@@ -502,7 +502,6 @@ public final class ContentResource
             }
         }
 
-
         //Applies the manual movements
         final ReorderChildContentsParams.Builder builder =
             ReorderChildContentsParams.create().contentId( ContentId.from( params.getContentId() ) ).silent( params.isSilent() );

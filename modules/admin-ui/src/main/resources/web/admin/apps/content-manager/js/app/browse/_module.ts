@@ -1,6 +1,7 @@
 ///<reference path='BaseContentModelEvent.ts' />
 ///<reference path='CloseContentEvent.ts' />
 ///<reference path='ContentDeletePromptEvent.ts' />
+///<reference path='ContentPublishPromptEvent.ts' />
 ///<reference path='GridSelectionChangedEvent.ts' />
 ///<reference path='MoveContentEvent.ts' />
 ///<reference path='ShowContextMenuEvent.ts' />
