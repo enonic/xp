@@ -31,7 +31,7 @@ module app.wizard.page {
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-    import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
+    import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
 
@@ -201,7 +201,6 @@ module app.wizard.page {
         }
 
         public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
-
             var deferred = wemQ.defer<string>();
             api.util.assertNotNull(componentView, "componentView cannot be null");
             api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
@@ -210,13 +209,11 @@ module app.wizard.page {
                 url: componentUrl,
                 type: 'GET',
                 success: (htmlAsString: string) => {
-
                     var newElement = api.dom.Element.fromString(htmlAsString);
-                    var repeatNextItemViewIdProducer = new RepeatNextItemViewIdProducer(componentView.getItemId(),
-                        componentView.getItemViewIdProducer());
+                    var itemViewIdProducer = componentView.getItemViewIdProducer();
 
                     var createViewConfig = new CreateItemViewConfig<RegionView,Component>().
-                        setItemViewProducer(repeatNextItemViewIdProducer).
+                        setItemViewProducer(itemViewIdProducer).
                         setParentView(componentView.getParentItemView()).
                         setData(componentView.getComponent()).
                         setElement(newElement);

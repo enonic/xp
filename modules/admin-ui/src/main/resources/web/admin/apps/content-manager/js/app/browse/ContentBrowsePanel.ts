@@ -17,6 +17,7 @@ module app.browse {
     import BatchContentRequest = api.content.BatchContentRequest;
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
     import ContentChangeResult = api.content.ContentChangeResult;
+    import ContentId = api.content.ContentId;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
@@ -273,10 +274,14 @@ module app.browse {
 
                     var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
+                    var ids: ContentId[] = [];
+                    updateResult.forEach((el) => {
+                        ids = ids.concat(el.getNodes().map((node) => {
+                            return node.getData().getContentId();
+                        }));
+                    });
                     return ContentSummaryAndCompareStatusFetcher.
-                        fetchByPaths(updateResult.map((el) => {
-                            return el.getPath();
-                        })).
+                        fetchByIds(ids).
                         then((data: ContentSummaryAndCompareStatus[]) => {
                             var results = [];
                             data.forEach((el) => {

@@ -3,7 +3,9 @@ package com.enonic.xp.form.inputtype;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.util.Reference;
 
 final class ImageSelector
@@ -11,7 +13,7 @@ final class ImageSelector
 {
     ImageSelector()
     {
-        super( ImageSelectorConfig.class, true );
+        super( ImageSelectorConfig.class, false );
     }
 
     @Override
@@ -34,15 +36,19 @@ final class ImageSelector
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newReference( Reference.from( value ) );
+        if ( !ValueTypes.REFERENCE.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.REFERENCE );
+        }
     }
 
     @Override
     public InputTypeConfig getDefaultConfig()
     {
-        return null;
+        return ImageSelectorConfig.newImageSelectorConfig().build();
     }
 
     @Override

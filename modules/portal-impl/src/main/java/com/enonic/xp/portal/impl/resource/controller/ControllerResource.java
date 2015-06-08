@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
@@ -50,6 +51,14 @@ public abstract class ControllerResource
         return doHandle();
     }
 
+    @HEAD
+    public Response handleHead()
+        throws Exception
+    {
+        final Response response = handleGet();
+        return Response.fromResponse( response ).entity( null ).build();
+    }
+
     private Response doHandle()
         throws Exception
     {
@@ -59,6 +68,7 @@ public abstract class ControllerResource
         context.setBaseUri( this.baseUri );
         context.setBranch( this.branch );
         context.getCookies().putAll( getCookieMap() );
+        context.setUri( this.uriInfo.getRequestUri().toString() );
 
         final Multimap<String, String> contextHeaders = context.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );

@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
@@ -26,6 +27,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.DataValidationError;
 import com.enonic.xp.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.schema.content.validator.InputValidator;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -80,7 +82,8 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        final boolean validated = validateEditedContent( editedContent );
+        validateBlockingChecks( editedContent );
+        final boolean validated = validateNonBlockingChecks( editedContent );
 
         editedContent = Content.newContent( editedContent ).
             valid( validated ).
@@ -158,7 +161,30 @@ final class UpdateContentCommand
             build();
     }
 
-    private boolean validateEditedContent( final Content edited )
+    private void validateBlockingChecks( final Content editedContent )
+    {
+        validatePropertyTree( editedContent );
+    }
+
+    private void validatePropertyTree( final Content editedContent )
+    {
+        final ContentType contentType =
+            contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
+        try
+        {
+            InputValidator.
+                create().
+                contentType( contentType ).
+                build().
+                validate( editedContent.getData() );
+        }
+        catch ( InvalidDataException e )
+        {
+            throw new IllegalArgumentException( "Incorrect property for content: " + editedContent.getPath(), e );
+        }
+    }
+
+    private boolean validateNonBlockingChecks( final Content edited )
     {
         final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
             contentData( edited.getData() ).

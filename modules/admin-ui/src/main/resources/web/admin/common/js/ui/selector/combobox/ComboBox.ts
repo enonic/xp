@@ -64,6 +64,9 @@ module api.ui.selector.combobox {
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
+        private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
+
+
         /**
          * Indicates if combobox is currently has focus
          * @type {boolean}
@@ -118,7 +121,7 @@ module api.ui.selector.combobox {
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
-            this.appendChild(this.comboBoxDropdown.getGrid().getElement());
+            this.appendChild(this.comboBoxDropdown.getDropdownGrid().getElement());
 
             this.setupListeners();
 
@@ -150,6 +153,7 @@ module api.ui.selector.combobox {
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
+            this.notifyExpanded(true);
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
             this.dropdownHandle.down();
 
@@ -260,8 +264,8 @@ module api.ui.selector.combobox {
                     filteredOption.push(selectedOptions[k].value);
                 }
             }
-            this.comboBoxDropdown.getGrid().getElement().getSelectedRows().forEach((row: number) => {
-                gridOptions.push(this.comboBoxDropdown.getGrid().getOptionByRow(row).value);
+            this.comboBoxDropdown.getDropdownGrid().getElement().getSelectedRows().forEach((row: number) => {
+                gridOptions.push(this.comboBoxDropdown.getDropdownGrid().getOptionByRow(row).value);
             });
 
             return (filteredOption.length !== gridOptions.length) ||
@@ -445,6 +449,10 @@ module api.ui.selector.combobox {
             this.icon.getEl().setSrc(iconUrl);
         }
 
+        getInput(): ComboBoxOptionFilterInput {
+            return this.input;
+        }
+
         private setupListeners() {
 
             this.onClicked((event: MouseEvent) => {
@@ -533,6 +541,7 @@ module api.ui.selector.combobox {
                     this.preservedInputValueChangedEvent.getNewValue());
 
                 this.comboBoxDropdown.resetActiveSelection();
+                this.showDropdown();
 
                 this.input.setReadOnly(false);
             }
@@ -712,8 +721,19 @@ module api.ui.selector.combobox {
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
-                this.comboBoxDropdown.getGrid().getElement());
+                this.comboBoxDropdown.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                listener(event);
+            });
+        }
+
+        onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {
+            this.expandedListeners.push(listener);
+        }
+
+        private notifyExpanded(expanded: boolean) {
+            var event = new api.ui.selector.DropdownExpandedEvent(this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
+            this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });
         }

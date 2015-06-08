@@ -7,6 +7,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 final class Date
     extends InputType
@@ -28,6 +29,16 @@ final class Date
     }
 
     @Override
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
+    {
+        if ( !ValueTypes.LOCAL_DATE.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.LOCAL_DATE );
+        }
+    }
+
+    @Override
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return DateConfigJsonSerializer.DEFAULT;
@@ -37,18 +48,6 @@ final class Date
     public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return DateConfigXmlSerializer.DEFAULT;
-    }
-
-    @Override
-    public Value newValue( final String value )
-    {
-        return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
     }
 
     @Override

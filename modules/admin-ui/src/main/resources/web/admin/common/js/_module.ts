@@ -94,6 +94,7 @@
 ///<reference path='form/inputtype/support/_module.ts' />
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/singleselector/_module.ts' />
+///<reference path='form/inputtype/text/tiny/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/inputtype/checkbox/_module.ts' />
 ///<reference path='form/inputtype/long/_module.ts' />

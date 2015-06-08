@@ -60,6 +60,9 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
     import Panel = api.ui.panel.Panel;
 
@@ -89,6 +92,8 @@ module app.wizard.page {
         private pageSkipReload: boolean;
         private frameContainer: Panel;
 
+        private lockPageAfterProxyLoad: boolean;
+
         private contextWindow: ContextWindow;
         private contextWindowController: ContextWindowController;
 
@@ -113,6 +118,7 @@ module app.wizard.page {
 
             this.pageLoading = false;
             this.pageSkipReload = false;
+            this.lockPageAfterProxyLoad = false;
 
             this.liveEditPageProxy = new LiveEditPageProxy();
 
@@ -132,12 +138,10 @@ module app.wizard.page {
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
                 var itemView = this.pageView.getSelectedView();
-                if (itemView) {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                        this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
-                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
-                        this.saveAndReloadPage();
-                    }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
+                } else if (this.pageView.isLocked() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
+                    this.saveAndReloadPage();
                 }
             });
 
@@ -180,6 +184,13 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler()
             );
 
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                var forced = item.isInRangeOrSmaller(ResponsiveRanges._540_720) || item.isInRangeOrBigger(ResponsiveRanges._1380_1620);
+                this.contentWizardPanel.getContextWindowToggler().setForced(forced);
+
+                this.contextWindowController.resizeHandler();
+            });
+
             this.liveEditListen();
         }
 
@@ -214,13 +225,17 @@ module app.wizard.page {
 
                 // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
-                    this.saveAndReloadPage();
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
+                    this.saveAndReloadPage(true);
                 }
-                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
-                    if ((this.pageModel.getMode() == PageMode.AUTOMATIC) || event.getOldValue()) {
-                        this.saveAndReloadPage();
+                    // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
+                    if (!(this.pageModel.getTemplate() == this.pageModel.getDefaultPageTemplate() && !event.getOldValue())) {
+
+                        this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
+                        this.lockPageAfterProxyLoad = true;
+                        this.saveAndReloadPage(false);
                     }
                 }
             });
@@ -276,16 +291,22 @@ module app.wizard.page {
                 this.liveEditPageProxy.load();
                 this.liveEditPageProxy.onLoaded(() => {
                     this.pageLoading = false;
-
+                    if (this.lockPageAfterProxyLoad) {
+                        this.pageView.setLocked(true);
+                        this.lockPageAfterProxyLoad = false;
+                    }
                 });
             }
         }
 
-        saveAndReloadPage() {
+        saveAndReloadPage(clearInspection: boolean = false) {
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 then(() => {
                     this.pageSkipReload = false;
+                    if (clearInspection) {
+                        this.contextWindow.clearSelection();
+                    }
                     this.liveEditPageProxy.load();
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
@@ -332,12 +353,16 @@ module app.wizard.page {
                 this.inspectPage();
             });
 
+            this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
+                this.contextWindow.clearSelection();
+            });
+
             this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
                 this.contentWizardPanel.close();
             });
 
             this.liveEditPageProxy.onPageTextModeStarted((event: api.liveedit.PageTextModeStartedEvent) => {
-                if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
                 }
             });
@@ -355,16 +380,16 @@ module app.wizard.page {
             });
 
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
-
                 var itemView = event.getItemView();
-
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
-                    if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
+                        this.contextWindow.isShownOrAboutToBeShown()) {
                         this.contextWindow.slideOut();
                     }
                 }
                 else {
-                    if (this.contextWindow.isFloating() && !this.contextWindow.isShown()) {
+                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
+                        !this.contextWindow.isShownOrAboutToBeShown()) {
                         this.contextWindow.slideIn();
                     }
                 }
@@ -376,9 +401,9 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if (!toggler.isActive() && this.contextWindow.isShown()) {
+                if (!toggler.isActive() && this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideOut();
-                } else if (toggler.isActive() && !this.contextWindow.isShown()) {
+                } else if (toggler.isActive() && !this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideIn();
                 }
                 this.contextWindow.clearSelection();
@@ -391,7 +416,8 @@ module app.wizard.page {
             this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if ((this.contextWindow.isFloating() || toggler.isActive()) && !this.contextWindow.isShown()) {
+                if (this.contextWindow.canAutoSlide() && (this.contextWindow.isFloating() || toggler.isActive()) &&
+                    !this.contextWindow.isShown()) {
                     this.contextWindow.slideIn();
                 }
 
@@ -404,7 +430,7 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onComponentViewDragStarted((event: ComponentViewDragStartedEvent) => {
 
-                if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
                 }
             });
@@ -414,7 +440,8 @@ module app.wizard.page {
                 var componentView = event.getComponentView();
                 if (!componentView.isEmpty()) {
                     var toggler = this.contentWizardPanel.getContextWindowToggler();
-                    if (this.contextWindow.isFloating() && !this.contextWindow.isShown() && toggler.isActive()) {
+                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && !this.contextWindow.isShown() &&
+                        toggler.isActive()) {
                         this.contextWindow.slideIn();
                     }
                     this.inspectComponent(componentView);
@@ -423,7 +450,8 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onComponentViewDragCanceled((event: ComponentViewDragCanceledEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if (this.contextWindow.isFloating() && !this.contextWindow.isShown() && toggler.isActive()) {
+                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && !this.contextWindow.isShown() &&
+                    toggler.isActive()) {
                     this.contextWindow.slideIn();
                 }
             });
@@ -440,7 +468,7 @@ module app.wizard.page {
             });
 
             this.insertablesPanel.onHideContextWindowRequest(() => {
-                if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
                 }
             });

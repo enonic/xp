@@ -4,6 +4,7 @@ module app.wizard {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Content = api.content.Content;
+    import ContentSummary = api.content.ContentSummary;
     import Attachment = api.content.attachment.Attachment;
     import Site = api.content.site.Site;
     import ContentType = api.schema.content.ContentType;
@@ -33,7 +34,7 @@ module app.wizard {
 
         private defaultModels: DefaultModels;
 
-        setContentToEdit(value: ContentId): ContentWizardPanelFactory {
+        setContentIdToEdit(value: ContentId): ContentWizardPanelFactory {
             this.contentId = value;
             return this;
         }
@@ -85,18 +86,13 @@ module app.wizard {
             });
         }
 
-        createForEdit(): wemQ.Promise<ContentWizardPanel> {
+        createForEdit(content: ContentSummary): wemQ.Promise<ContentWizardPanel> {
 
             this.creatingForNew = false;
 
-            return this.loadContentToEdit().then((loadedContentToEdit: Content) => {
+            return this.getContentToEdit(content).then((contentType: ContentType) => {
 
-                this.contentToEdit = loadedContentToEdit;
-                return this.loadContentType(this.contentToEdit.getType());
-
-            }).then((loadedContentType: ContentType) => {
-
-                this.contentType = loadedContentType;
+                this.contentType = contentType;
                 return this.loadParentContent();
 
             }).then((loadedParentContent: Content) => {
@@ -121,6 +117,20 @@ module app.wizard {
 
         private loadContentToEdit(): wemQ.Promise<Content> {
             return new api.content.GetContentByIdRequest(this.contentId).sendAndParse();
+        }
+
+        private getContentToEdit(content: ContentSummary): wemQ.Promise<ContentType> {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(content, Content)) {
+                this.contentToEdit = <Content>content;
+                return this.loadContentType(this.contentToEdit.getType());
+            }
+            else {
+                return this.loadContentToEdit().then((loadedContentToEdit: Content) => {
+                    this.contentToEdit = loadedContentToEdit;
+                    return this.loadContentType(this.contentToEdit.getType());
+
+                });
+            }
         }
 
         private loadContentType(name: ContentTypeName): wemQ.Promise<ContentType> {

@@ -43,6 +43,73 @@
 
   }
 
+  .image-uploader {
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-width: initial !important;
+
+    .dropzone-container {
+      display: block !important;
+
+      .dropzone {
+        min-height: 37px;
+        height: 37px;
+        line-height: 30px;
+        font-size: 14px;
+        background-color: @admin-white;
+        border: 1px solid @admin-medium-gray-border;
+        z-index: @z-index-wizard-filed-element;
+
+        .box-sizing(border-box);
+        .input-border();
+        .input-glow();
+      }
+    }
+
+    .progress-bar {
+      display: none !important;
+      height: 37px;
+      margin: 0;
+    }
+
+    &:focus {
+      .dropzone {
+        .box-shadow(0px 0px 5px @admin-input-blue);
+        border: 1px solid @admin-input-blue;
+      }
+    }
+
+    &:not(.minimized) {
+      .dropzone {
+        overflow: visible;
+        &:before {
+          .dropcircle(40px);
+          padding: 20px 5px 0;
+          line-height: 20px;
+        }
+      }
+    }
+
+    &.minimized {
+      .dropzone-container {
+        position: absolute;
+        display: block !important;
+        right: 0;
+        .dropzone {
+          width: 37px;
+          &:before {
+            display: inline-block;
+            content: "";
+            width: 31px;
+            height: 35px;
+            background: url("../images/upload.png") no-repeat center;
+          }
+        }
+      }
+    }
+  }
+
   .selected-options {
     .clearfix();
     margin-right: -6%;
@@ -93,6 +160,7 @@
       }
 
       > .error {
+        margin-left: 0px;
         text-align: center;
         color: @admin-white;
         font-weight: bold;
@@ -163,28 +231,6 @@
           background-color: #7a7a7a;
         }
       }
-    }
-  }
-
-  .upload-button {
-    .button(@admin-font-gray2, @admin-white, @admin-font-gray3, @admin-white);
-    .box-sizing(content-box);
-    .input-border();
-    .input-glow();
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 35px;
-    width: 35px;
-    padding: 0;
-    margin: 0;
-    vertical-align: top;
-    background-image: url("../images/upload.png");
-    background-repeat: no-repeat;
-    background-position: center;
-
-    &:hover, &:focus {
-      z-index: @z-index-wizard-filed-element; // show shadow over the input
     }
   }
 

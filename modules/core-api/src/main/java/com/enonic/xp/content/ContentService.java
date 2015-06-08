@@ -39,7 +39,7 @@ public interface ContentService
 
     Content duplicate( DuplicateContentParams params );
 
-    Contents move( MoveContentParams params );
+    Content move( MoveContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 
@@ -55,7 +55,7 @@ public interface ContentService
 
     Content getByPath( ContentPath path );
 
-    AccessControlList getPermissionsByPath( ContentPath path );
+    AccessControlList getPermissionsById( ContentId contentId );
 
     Contents getByPaths( ContentPaths paths );
 

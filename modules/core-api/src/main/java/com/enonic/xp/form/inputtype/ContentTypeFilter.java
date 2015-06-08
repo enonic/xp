@@ -6,7 +6,9 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 public class ContentTypeFilter
@@ -23,15 +25,13 @@ public class ContentTypeFilter
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
+        if ( !ValueTypes.STRING.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.STRING );
+        }
     }
 
     @Override

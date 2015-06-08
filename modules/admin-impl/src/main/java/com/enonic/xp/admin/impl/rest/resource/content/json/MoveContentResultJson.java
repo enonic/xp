@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.content.ContentId;
-
 public class MoveContentResultJson
 {
     private List<Success> successes = new ArrayList<>();
@@ -21,29 +19,29 @@ public class MoveContentResultJson
         return failures;
     }
 
-    public void addSuccess( final ContentId contentId )
+    public void addSuccess( final String name )
     {
-        successes.add( new Success( contentId ) );
+        successes.add( new Success( name ) );
     }
 
-    public void addFailure( final ContentId contentId, final String reason )
+    public void addFailure( final String name, final String reason )
     {
-        failures.add( new Failure( contentId, reason ) );
+        failures.add( new Failure( name, reason ) );
     }
 
     public class Success
     {
 
-        private String contentId;
+        private String name;
 
-        public Success( final ContentId contentId )
+        public Success( final String name )
         {
-            this.contentId = contentId.toString();
+            this.name = name;
         }
 
-        public String getContentId()
+        public String getName()
         {
-            return contentId;
+            return name;
         }
     }
 
@@ -53,9 +51,9 @@ public class MoveContentResultJson
 
         private String reason;
 
-        public Failure( final ContentId contentId, final String reason )
+        public Failure( final String name, final String reason )
         {
-            super( contentId );
+            super( name );
             this.reason = reason;
         }
 

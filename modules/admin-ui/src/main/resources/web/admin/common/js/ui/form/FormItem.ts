@@ -13,7 +13,7 @@ module api.ui.form {
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
         constructor(builder: FormItemBuilder) {
-            super("form-item");
+            super("input-view");
             this.error = new api.dom.SpanEl("error");
             this.appendChild(this.error);
 
@@ -29,7 +29,7 @@ module api.ui.form {
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
                 if(Validators.required == builder.getValidator()) {
-                    this.label.setClass("required");
+                    this.label.addClass("required");
                 }
                 this.appendChild(this.label);
             }
@@ -55,18 +55,29 @@ module api.ui.form {
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
                 var validationMessage = this.validator(this.input);
+
                 if(validationMessage) {
                     validationResult.addError(new ValidationError(this, validationMessage));
                 }
                 if (markInvalid) {
+                    var validityChanged = false;
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
+                        validityChanged = (validationMessage !== this.getError());
                     } else {
                         this.removeClass(this.invalidClass);
+                        validityChanged = !api.util.StringHelper.isBlank(this.getError());
                     }
-                    this.error.setHtml(validationMessage || "");
+                    this.error.setHtml(validationMessage || api.util.StringHelper.EMPTY_STRING);
+                    if (validityChanged) {
+                        this.notifyValidityChanged(api.util.StringHelper.isBlank(validationMessage));
+                    }
                 }
             }
+        }
+
+        getError(): string {
+            return this.error.getHtml();
         }
 
         onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {

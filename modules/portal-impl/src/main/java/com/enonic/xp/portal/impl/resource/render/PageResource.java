@@ -4,6 +4,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.page.Page;
@@ -32,6 +33,11 @@ public final class PageResource
     public RendererControllerResource page( @PathParam("path") final String path )
     {
         this.contentPath = ContentPath.from( "/" + path );
+
+        if ( ContentConstants.CONTENT_ROOT_PARENT.toString().equals( this.contentPath.toString() ) )
+        {
+            throw notFound( "Page [%s] not found", this.contentPath.toString() );
+        }
 
         final PageControllerResource resource = initResource( new PageControllerResource() );
 

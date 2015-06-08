@@ -10,7 +10,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
-public abstract class InputType<C extends InputTypeConfig>
+public abstract class InputType
 {
     private final InputTypeName inputTypeName;
 
@@ -70,6 +70,8 @@ public abstract class InputType<C extends InputTypeConfig>
 
     public abstract void checkBreaksRequiredContract( final Property property );
 
+    public abstract void checkTypeValidity( final Property property );
+
     @Override
     public boolean equals( final Object o )
     {
@@ -101,9 +103,6 @@ public abstract class InputType<C extends InputTypeConfig>
         return this.inputTypeName.toString();
     }
 
-    // TODO: Remove when doing task?: CMS-2256 Validate occurrences before save when user clicks Publish
-    public abstract Value newValue( final String value );
-
     private String resolveName()
     {
         return this.getClass().getSimpleName();
@@ -114,7 +113,10 @@ public abstract class InputType<C extends InputTypeConfig>
         return !( this instanceof InputTypeExtension );
     }
 
-    public abstract InputTypeConfig getDefaultConfig();
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
 
     /**
      * Override this method to validate what type of Occurrences is allowed for this type.

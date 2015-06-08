@@ -3,9 +3,9 @@ module api.form {
     export class ValidationRecordingViewer extends api.ui.Viewer<ValidationRecording> {
 
         private list: api.dom.UlEl;
-        private minText: string = "Min {0} occurrence{1} required";
-        private maxTextPlural: string = "Max {0} occurrence{1} are allowed";
-        private maxTextSingle: string = "Max {0} occurrence{1} is allowed";
+        private minText: string = "Min {0} occurrences required";
+        private minTextSingle: string = "This field is required";
+        private maxText: string = "Max {0} occurrence{1} allowed";
 
         constructor() {
             super('validation-viewer');
@@ -23,15 +23,24 @@ module api.form {
             })
         }
 
+        setError(text: string) {
+            this.list.removeChildren();
+            if (text) {
+                this.list.appendChild(new api.dom.LiEl().setHtml(text));
+            }
+        }
+
         private createItemView(path: ValidationRecordingPath, breaksMin: boolean): api.dom.LiEl {
-            var showPlural = breaksMin && path.getMin() > 1 || !breaksMin && path.getMax() > 1;
-            var text = api.util.StringHelper.format(breaksMin ? this.minText : this.resolveMaxText(path),
-                breaksMin ? path.getMin() : path.getMax(), showPlural ? 's' : '');
+            var text = breaksMin ? this.resolveMinText(path) : this.resolveMaxText(path);
             return new api.dom.LiEl().setHtml(text);
         }
 
+        private resolveMinText(path: ValidationRecordingPath): string {
+            return path.getMin() > 1 ? api.util.StringHelper.format(this.minText, path.getMin()) : this.minTextSingle;
+        }
+
         private resolveMaxText(path: ValidationRecordingPath): string {
-            return path.getMax() > 1 ? this.maxTextPlural : this.maxTextSingle;
+            return api.util.StringHelper.format(this.maxText, path.getMax(), path.getMax() > 1 ? 's' : '');
         }
 
     }

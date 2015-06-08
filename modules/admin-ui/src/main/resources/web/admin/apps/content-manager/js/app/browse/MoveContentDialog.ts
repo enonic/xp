@@ -45,7 +45,7 @@ module app.browse {
 
                 this.movedContentSummaries = event.getContentSummaries();
 
-                if(event.getContentSummaries().length == 1) {
+                if (event.getContentSummaries().length == 1) {
                     var contentToMove = event.getContentSummaries()[0];
 
                     new GetContentTypeByNameRequest(contentToMove.getType()).sendAndParse().then((contentType: ContentType) => {
@@ -96,8 +96,12 @@ module app.browse {
                     this.contentMoveMask.hide();
 
                     if (response.getMoved().length > 0) {
-                        new api.content.ContentMovedEvent(ContentIds.from(response.getMoved())).fire();
-                        api.notify.showFeedback('Content was moved!');
+                        new api.content.ContentMovedEvent(response.getMoved()).fire();
+                        if (response.getMoved().length > 1) {
+                            api.notify.showFeedback(response.getMoved().length + ' items moved');
+                        } else {
+                            api.notify.showFeedback("\"" + response.getMoved()[0] + '\" moved');
+                        }
                     }
 
                     response.getMoveFailures().forEach((failure: MoveContentResultFailure) => {

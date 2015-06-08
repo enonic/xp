@@ -14,6 +14,7 @@ import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.UriRewritingResult;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -119,7 +120,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendParams( str, params.entries() );
 
         final String uri = str.toString();
-        return ServletRequestUrlHelper.rewriteUri( uri );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( uri );
+        return postUriRewriting( rewritingResult );
     }
 
     @SuppressWarnings("unchecked")
@@ -127,6 +129,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
         appendPart( url, getBranch().toString() );
+    }
+
+    protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
+    {
+        return uriRewritingResult.getRewrittenUri();
     }
 
     protected String buildErrorUrl( final Exception e )
@@ -160,7 +167,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         appendParams( str, params.entries() );
         final String uri = str.toString();
-        return ServletRequestUrlHelper.rewriteUri( uri );
+        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
     }
 
     @Override

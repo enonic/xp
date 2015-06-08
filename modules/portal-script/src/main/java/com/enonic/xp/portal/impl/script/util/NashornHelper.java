@@ -11,10 +11,16 @@ import jdk.nashorn.internal.runtime.Undefined;
 
 public final class NashornHelper
 {
+    private final static NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
+
     public static ScriptEngine getScriptEngine( final String... args )
     {
-        final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-        return factory.getScriptEngine( args );
+        return FACTORY.getScriptEngine( args );
+    }
+
+    public static ScriptEngine getScriptEngine( final ClassLoader loader, final String... args )
+    {
+        return FACTORY.getScriptEngine( args, loader );
     }
 
     public static Object newNativeObject()

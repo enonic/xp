@@ -15,7 +15,6 @@ module app.wizard.page.contextwindow.inspect.region {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
-    import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
     import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
     import LayoutDescriptorDropdownConfig = api.content.page.region.LayoutDescriptorDropdownConfig;
     import Option = api.ui.selector.Option;
@@ -29,7 +28,9 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private layoutComponent: LayoutComponent;
 
-        private layoutSelector: LayoutDescriptorComboBox;
+        private layoutSelector: LayoutDescriptorDropdown;
+
+        private layoutForm: DescriptorBasedDropdownForm;
 
         private handleSelectorEvents: boolean = true;
 
@@ -48,7 +49,8 @@ module app.wizard.page.contextwindow.inspect.region {
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             loader.setComparator(new DescriptorByDisplayNameComparator());
-            this.layoutSelector = new LayoutDescriptorComboBox(loader);
+            this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
+            this.layoutForm = new DescriptorBasedDropdownForm(this.layoutSelector, "Layout");
             loader.load();
 
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
@@ -63,7 +65,7 @@ module app.wizard.page.contextwindow.inspect.region {
             };
 
             this.initSelectorListeners();
-            this.appendChild(this.layoutSelector);
+            this.appendChild(this.layoutForm);
 
             liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
@@ -84,9 +86,7 @@ module app.wizard.page.contextwindow.inspect.region {
         setComponent(component: LayoutComponent, descriptor?: LayoutDescriptor) {
 
             super.setComponent(component);
-            if (descriptor) {
-                this.layoutSelector.setDescriptor(descriptor);
-            }
+            this.layoutSelector.setDescriptor(descriptor);
         }
 
         setLayoutComponent(layoutView: LayoutComponentView) {
@@ -136,13 +136,6 @@ module app.wizard.page.contextwindow.inspect.region {
                     var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                     this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
                 }
-            });
-
-            this.layoutSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
-                if (this.handleSelectorEvents) {
-                    this.layoutComponent.setDescriptor(null, null);
-                }
-
             });
         }
     }

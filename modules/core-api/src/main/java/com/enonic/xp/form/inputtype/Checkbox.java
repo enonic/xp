@@ -7,6 +7,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
@@ -26,15 +27,13 @@ public class Checkbox
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
+        if ( !ValueTypes.BOOLEAN.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.BOOLEAN );
+        }
     }
 
     @Override

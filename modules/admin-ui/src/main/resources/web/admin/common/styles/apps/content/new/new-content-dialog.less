@@ -24,7 +24,7 @@
 
     .dialog-content {
       .column {
-        .content-types-list {
+        .content-types-list, .most-popular-content-types-list, .recent-content-types-list {
           .transition(none);
         }
       }
@@ -50,9 +50,27 @@
   &.hidden {
     .dialog-content {
       .column {
-        .content-types-list {
+        .content-types-list, .most-popular-content-types-list, .recent-content-types-list {
           max-height: 0px;
         }
+      }
+    }
+  }
+
+  .most-popular-content-types-container {
+    border: 1px solid #cccccc;
+    background-color: #F0F8FF;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    h2 {
+      font-size: 18px;
+      padding-left: 5px;
+    }
+
+    @media screen and (max-height: 540px) {
+      li:nth-child(2) {
+        display: none;
       }
     }
   }
@@ -64,12 +82,11 @@
       height: 65%;
     }
 
-
     .column {
       height: 100%;
       float: left;
 
-      .content-types-list {
+      .content-types-content, .recent-content-types-list {
         max-height: 480px;
         overflow-y: auto;
         overflow-x: hidden;
@@ -87,38 +104,38 @@
         @media screen and (max-height: 360px) {
           max-height: 78%;
         }
+      }
 
-        .content-types-list-item {
-          position: relative;
-          cursor: pointer;
-          padding: 5px;
-          &:focus {
-            background-color: @admin-blue !important;
-            h6, p {
-              color: white;
-            }
-          }
-
-          * {
-            // force same cursor on every child
-            cursor: pointer;
-          }
-
-          .icon-label {
-            left: 23px;
-            padding: 0 5px;
-            line-height: 16px;
-            border-radius: 10px;
-            background: @admin-blue;
+      .content-types-list-item {
+        position: relative;
+        cursor: pointer;
+        padding: 5px;
+        &:focus {
+          background-color: @admin-blue !important;
+          h6, p {
             color: white;
-            font-size: 14px;
-            font-family: @admin-font-family;
-
           }
+        }
 
-          &:hover {
-            background-color: #ebebeb;
-          }
+        * {
+          // force same cursor on every child
+          cursor: pointer;
+        }
+
+        .icon-label {
+          left: 23px;
+          padding: 0 5px;
+          line-height: 16px;
+          border-radius: 10px;
+          background: @admin-blue;
+          color: white;
+          font-size: 14px;
+          font-family: @admin-font-family;
+
+        }
+
+        &:hover {
+          background-color: #ebebeb;
         }
       }
     }
@@ -232,24 +249,7 @@
           background-color: transparent;
 
           &:before {
-            position: absolute;
-            display: block;
-            margin: 0 auto;
-            top: 50%;
-            left: 50%;
-            margin-top: -200px;
-            margin-left: -200px;
-            background-color: @admin-blue;
-            width: 400px;
-            height: 400px;
-            line-height: 400px;
-            color: #fff;
-            content: 'Drop files to upload!';
-            font-weight: normal;
-
-            .border-radius(200px);
-            .box-shadow(0 0 10px @admin-shadow-gray);
-            .animation(pulsate, 4s);
+            .dropcircle();
           }
         }
       }

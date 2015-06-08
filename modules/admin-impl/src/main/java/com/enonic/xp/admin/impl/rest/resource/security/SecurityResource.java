@@ -252,12 +252,15 @@ public final class SecurityResource
     @Path("principals/createUser")
     public UserJson createUser( final CreateUserJson params )
     {
+        if ( StringUtils.isBlank( params.getPassword() ) )
+        {
+            throw new WebApplicationException( "Password has not been set." );
+        }
+
         final User user = securityService.createUser( params.getCreateUserParams() );
         final PrincipalKey userKey = user.getKey();
-        if ( params.getPassword() != null )
-        {
-            securityService.setPassword( userKey, params.getPassword() );
-        }
+
+        securityService.setPassword( userKey, params.getPassword() );
 
         for ( PrincipalKey membershipToAdd : params.getMemberships() )
         {
@@ -325,7 +328,7 @@ public final class SecurityResource
     {
         final PrincipalKey userKey = params.getUserKey();
 
-        if ( params.getPassword() != null )
+        if ( StringUtils.isNotBlank( params.getPassword() ) )
         {
             final User user = securityService.setPassword( userKey, params.getPassword() );
             return new UserJson( user );

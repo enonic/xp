@@ -171,7 +171,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_content_permissions_by_path()
+    public void get_content_permissions_by_id()
         throws Exception
     {
         final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
@@ -183,10 +183,10 @@ public class ContentResourceTest
 
         final AccessControlList permissions = getTestPermissions();
 
-        Mockito.when( contentService.getPermissionsByPath( Mockito.isA( ContentPath.class ) ) ).
+        Mockito.when( contentService.getPermissionsById( Mockito.isA( ContentId.class ) ) ).
             thenReturn( permissions );
 
-        String jsonString = request().path( "content/contentPermissions" ).queryParam( "path", "/my_a_content" ).get().getAsString();
+        String jsonString = request().path( "content/contentPermissions" ).queryParam( "id", "/my_a_content" ).get().getAsString();
 
         assertJson( "get_content_permissions_success.json", jsonString );
     }
@@ -560,6 +560,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
@@ -610,6 +611,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
@@ -749,6 +751,8 @@ public class ContentResourceTest
     public void publish_content_deleted()
         throws Exception
     {
+        Contents deleted = Contents.from( Arrays.asList( createContent( "content-id", "content-name", "mymodule:content-type" ) ) );
+
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
             setPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
@@ -756,7 +760,7 @@ public class ContentResourceTest
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addDeleted( ContentId.from( "myContentId" ) ).
+            setDeleted( deleted ).
             build() );
 
         String jsonString = request().path( "content/publish" ).
@@ -949,6 +953,37 @@ public class ContentResourceTest
             post().getAsString();
 
         Mockito.verify( contentService, Mockito.times( 1 ) ).setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) );
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).reorderChildren( Mockito.isA( ReorderChildContentsParams.class ) );
+
+        assertJson( "reorder_children_success.json", jsonString );
+    }
+
+    @Test
+    public void resortReorderChildrenContents()
+        throws Exception
+    {
+        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
+
+        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
+        content = Content.newContent( content ).childOrder( ChildOrder.defaultOrder() ).build();
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
+
+        final ReorderChildContentsParams reorderChildren = ReorderChildContentsParams.create().
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-1" ) ).contentToMoveBefore(
+                ContentId.from( "content-id-2" ) ).build() ).
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-3" ) ).build() ).
+            build();
+        final ReorderChildContentsResult result = new ReorderChildContentsResult( 2 );
+        Mockito.when( contentService.reorderChildren( Mockito.eq( reorderChildren ) ) ).thenReturn( result );
+
+        String jsonString = request().path( "content/reorderChildren" ).
+            entity( readFromFile( "resort_reorder_children_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 2 ) ).setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) );
 
         Mockito.verify( contentService, Mockito.times( 1 ) ).reorderChildren( Mockito.isA( ReorderChildContentsParams.class ) );
 

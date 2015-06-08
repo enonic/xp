@@ -40,7 +40,6 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-    import ContentWizardImageUploadedEvent = api.app.wizard.ContentWizardImageUploadedEvent;
 
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
@@ -245,7 +244,17 @@ module app.wizard {
                     responsiveItem.update();
                 });
 
-                this.handleImageUpload(this);
+                if (this.thumbnailUploader) {
+                    this.thumbnailUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                        var newPersistedContent: Content = event.getUploadItem().getModel();
+                        this.setPersistedItem(newPersistedContent);
+                        this.updateMetadataAndMetadataForms(newPersistedContent);
+                        this.updateThumbnailWithContent(newPersistedContent);
+                        var contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
+                                               '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
+                        api.notify.showFeedback(contentToDisplay + ' saved');
+                    });
+                }
 
                 this.constructing = false;
 
@@ -396,7 +405,7 @@ module app.wizard {
             this.updateThumbnailWithContent(persistedContent);
             this.notifyValidityChanged(persistedContent.isValid());
 
-            api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
+            api.content.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
@@ -682,7 +691,7 @@ module app.wizard {
 
         persistNewItem(): wemQ.Promise<Content> {
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
-                api.notify.showFeedback('Content was created!');
+                api.notify.showFeedback('Content created');
                 return content;
             });
         }
@@ -732,7 +741,9 @@ module app.wizard {
                     if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
                         this.notifyContentNamed(content);
                     }
-                    api.notify.showFeedback('Content was updated!');
+                    var contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
+                                           '\"' + content.getDisplayName() + '\"' : "Content";
+                    api.notify.showFeedback(contentToDisplay + ' saved');
                     new api.content.ContentUpdatedEvent(content.getContentId()).fire();
 
                     return content;
@@ -811,7 +822,7 @@ module app.wizard {
 
         private resolveContentNameForUpdateRequest(): ContentName {
             if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName())) {
-                if(this.getPersistedItem().getName().isUnnamed()) {
+                if (this.getPersistedItem().getName().isUnnamed()) {
                     return this.getPersistedItem().getName();
                 } else {
                     return ContentUnnamed.newUnnamed();
@@ -972,43 +983,21 @@ module app.wizard {
         }
 
         /**
-         * Sets listener for image upload event.
-         * In case of this event - only content extraData requires handling.
-         * In case of image upload event was generated with ImageUploader used in this wizard -
-         * we update: thumbnail icon, persisted item and extraData step forms.
-         * Image upload event is triggered after media/content back-end update, so there is no need to explicitly call save on this event.
-         */
-        private handleImageUpload(wizard: ContentWizardPanel) {
-            var imageUploadHandler = (event: ContentWizardImageUploadedEvent) => {
-                if (wizard.getEl().contains(event.getImageUploader().getEl().getHTMLElement())) {
-                    var newPersistedContent: Content = event.getContent();
-                    wizard.setPersistedItem(newPersistedContent);
-                    wizard.updateMetadataAndMetadataForms(wizard, newPersistedContent);
-                    wizard.updateThumbnailWithContent(newPersistedContent);
-                    api.notify.showFeedback('Content was updated!');
-                }
-            };
-            ContentWizardImageUploadedEvent.on(imageUploadHandler);
-            this.onRemoved((event: api.dom.ElementRemovedEvent) => ContentWizardImageUploadedEvent.un(imageUploadHandler));
-        }
-
-        /**
          * Synchronizes wizard's extraData step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
-         * @param wizard - content wizard to update. Passed explicitly to avoid mess with 'this' for global events.
          * @param content
          */
-        private updateMetadataAndMetadataForms(wizard: ContentWizardPanel, content: Content) {
+        private updateMetadataAndMetadataForms(content: Content) {
             var formContext = this.createFormContext(content);
-            for (var key in wizard.metadataStepFormByName) {
-                if (wizard.metadataStepFormByName.hasOwnProperty(key)) {
-                    wizard.metadataStepFormByName[key].removeChildren();
+            for (var key in this.metadataStepFormByName) {
+                if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                    this.metadataStepFormByName[key].removeChildren();
                     var mixinName = new MixinName(key);
                     var extraData = content.getExtraData(mixinName);
                     if (!extraData) { // ensure ExtraData object corresponds to each step form
                         extraData = new ExtraData(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
                         content.getAllExtraData().push(extraData);
                     }
-                    wizard.metadataStepFormByName[key].layout(formContext, extraData.getData(), wizard.metadataStepFormByName[key].getForm());
+                    this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
                 }
             }
         }

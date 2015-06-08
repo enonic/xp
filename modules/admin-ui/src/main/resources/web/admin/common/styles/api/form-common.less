@@ -12,3 +12,63 @@
     margin-bottom: @size;
   }
 }
+
+.form-view {
+  font-size: 12px;
+  position: relative;
+  overflow: visible;
+
+  padding: 10px 10px 10px !important;
+
+  .validation-viewer {
+    display: none;
+    color: @input-red-text;
+  }
+
+  &.display-validation-errors {
+    .validation-viewer {
+      display: block;
+    }
+  }
+
+  .form-element-spacing(@form-field-set-spacing);
+
+  .field-set-view, .form-item-set-view {
+    .form-element-spacing(@form-field-set-spacing);
+  }
+
+  fieldset {
+    min-width: 100%;
+    .form-element-spacing(@form-field-set-spacing);
+
+    legend {
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid @admin-medium-gray-border;
+    }
+  }
+
+  .CodeMirror {
+    float: left;
+  }
+}
+
+.context-window, ._0-240, ._240-360, ._360-540, ._540-720 {
+  .form-fieldset-vertical();
+}
+
+.form-fieldset-vertical() {
+  .form-view .input-view {
+    label {
+      float: none;
+      max-width: 100%;
+      margin: 0 0 3px 0;
+    }
+
+    label + .form-input,
+    label + .input-wrapper, {
+      margin-left: 0;
+    }
+  }
+}

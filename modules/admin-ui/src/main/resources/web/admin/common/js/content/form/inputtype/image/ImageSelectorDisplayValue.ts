@@ -40,7 +40,7 @@ module api.content.form.inputtype.image {
         }
 
         getId(): string {
-            return this.uploadItem ? this.uploadItem.getId() : this.content.getId();
+            return this.content ? this.content.getId() : this.uploadItem.getId();
         }
 
         getContentId(): api.content.ContentId {

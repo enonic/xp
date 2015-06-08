@@ -33,13 +33,16 @@ public class ValueTest
         assertEquals( "2012-01-01T12:00:00", Value.newLocalDateTime( LocalDateTime.of( 2012, 1, 1, 12, 0, 0 ) ).toString() );
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void tostring_PropertySet()
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        tree.addSet( "myEmptySet" );
         PropertySet mySet = tree.addSet( "mySet" );
         mySet.addStrings( "strings", "a", "b", "c" );
-        tree.getValue( "mySet" ).toString();
+
+        assertEquals( "\n", tree.getValue( "myEmptySet" ).toString() );
+        assertEquals( "\n        strings: [a, b, c]", tree.getValue( "mySet" ).toString() );
     }
 
     @Test

@@ -5,7 +5,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 final class ComboBox
     extends InputType
@@ -38,23 +40,21 @@ final class ComboBox
         }
     }
 
+    @Override
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
+    {
+        if ( !ValueTypes.STRING.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.STRING );
+        }
+    }
+
     // TODO: This should probably consider config
     @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
-    }
-
-    @Override
-    public Value newValue( final String value )
-    {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
     }
 
 }

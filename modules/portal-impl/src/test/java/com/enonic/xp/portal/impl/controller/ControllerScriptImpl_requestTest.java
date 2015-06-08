@@ -41,4 +41,14 @@ public class ControllerScriptImpl_requestTest
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
         assertJson( "all", getResponseAsString() );
     }
+
+    @Test
+    public void testHead()
+        throws Exception
+    {
+        this.context.setMethod( "HEAD" );
+        execute( "mymodule:/controller/request.js" );
+        assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
+    }
 }
+

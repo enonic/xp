@@ -13,6 +13,7 @@ import com.enonic.xp.form.FormItemSetJson;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputJson;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.NullConfig;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
@@ -69,7 +70,7 @@ public class FormItemJsonTest
             helpText( "Help text" ).
             occurrences( 1, 3 ).
             inputType( InputTypes.TEXT_AREA ).
-            inputTypeConfig( InputTypes.TEXT_AREA.getDefaultConfig() ).
+            inputTypeConfig( NullConfig.create() ).
             build() );
 
         // serialize from object

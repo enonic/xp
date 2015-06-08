@@ -109,6 +109,12 @@ module api.liveedit.layout {
         }
 
         private parseRegions() {
+            this.regionViews.forEach((regionView) => {
+                this.unregisterRegionView(regionView);
+            });
+
+            this.regionViews = [];
+            this.regionIndex = 0;
 
             return this.doParseRegions();
         }
@@ -125,7 +131,18 @@ module api.liveedit.layout {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                if (isRegionView) {
+                    var region = regions[this.regionIndex++];
+                    if (region) {
+                        // reuse existing region view
+                        var regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
+                } else if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         // regions may be nested on different levels so use layout wide var for count
                         var region = regions[this.regionIndex++];

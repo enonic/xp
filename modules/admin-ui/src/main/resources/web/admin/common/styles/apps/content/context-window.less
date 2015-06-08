@@ -39,7 +39,8 @@
   }
   & > .deck-panel {
     left: 5px;
-    right: 0px;
+    right: 0;
+    top: 43px;
     width: auto;
   }
   .slick-viewport {
@@ -139,12 +140,18 @@
   .inspection-panel {
     font-size: 12px;
     overflow-y: scroll;
-    padding: 10px;
     width: 100% !important;
 
     .form-view {
       .form-element-spacing(@form-field-spacing);
-      margin: -10px;
+
+      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form {
+        margin-top: 0px;
+
+        label {
+          display: inline-block;
+        }
+      }
 
       form {
         margin: 0;
@@ -156,7 +163,7 @@
     //    }
 
     & > .names-and-icon-view {
-      margin-bottom: 20px;
+      padding: 10px;
       .main-name {
         font-size: 18px;
         line-height: 20px;
@@ -328,6 +335,10 @@
   }
 
   //  .image-selector-small();
+
+  .page-controller-form, .descriptor-based-dropdown-form, .page-template-form {
+    background-color: @admin-context-bg-grey-opal;
+  }
 
 }
 

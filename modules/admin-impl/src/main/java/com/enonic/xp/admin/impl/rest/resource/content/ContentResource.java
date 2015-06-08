@@ -83,6 +83,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -258,12 +259,20 @@ public final class ContentResource
         {
             try
             {
-                contentService.move( new MoveContentParams( ContentIds.from( contentId ), params.getParentContentPath() ) );
-                resultJson.addSuccess( contentId );
+                final Content movedContent = contentService.move( new MoveContentParams( contentId, params.getParentContentPath() ) );
+                resultJson.addSuccess( movedContent != null ? movedContent.getDisplayName() : contentId.toString() );
             }
             catch ( MoveContentException e )
             {
-                resultJson.addFailure( contentId, e.getMessage() );
+                try
+                {
+                    final Content failedContent = contentService.getById( contentId );
+                    resultJson.addFailure( failedContent != null ? failedContent.getDisplayName() : contentId.toString(), e.getMessage() );
+                }
+                catch ( ContentNotFoundException cnEx )
+                {
+                    resultJson.addFailure( contentId.toString(), e.getMessage() );
+                }
             }
         }
 
@@ -309,12 +318,35 @@ public final class ContentResource
 
             try
             {
-                contentService.delete( deleteContent );
-                jsonResult.addSuccess( contentToDelete );
+                Contents contents = contentService.delete( deleteContent );
+                contents.forEach( ( content ) -> {
+                    if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
+                    {
+                        jsonResult.addPending( content.getDisplayName() );
+                    }
+                    else
+                    {
+                        jsonResult.addSuccess( content.getDisplayName() );
+                    }
+
+                } );
+
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
             {
-                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+                try
+                {
+                    Content content = contentService.getByPath( contentToDelete );
+                    if ( content != null )
+                    {
+                        jsonResult.addFailure( content.getDisplayName(), e.getMessage() );
+                    }
+                }
+                catch ( ContentNotFoundException | ContentAccessException ex )
+                {
+                    jsonResult.addFailure( deleteContent.getContentPath().toString(), e.getMessage() );
+                }
+
             }
         }
 
@@ -440,11 +472,23 @@ public final class ContentResource
     {
         Content content = this.contentService.getById( ContentId.from( params.getContentId() ) );
 
+        //If a initial sort is required before the manual reordering
+        if ( params.getChildOrder() != null && !params.getChildOrder().getChildOrder().equals( content.getChildOrder() ) )
+        {
+            content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+                childOrder( params.getChildOrder().getChildOrder() ).
+                contentId( ContentId.from( params.getContentId() ) ).
+                silent( true ).
+                build() );
+        }
+
+        //If the content is not already manually ordered, sets it to manually ordered
         if ( !content.getChildOrder().isManualOrder() )
         {
             if ( params.isManualOrder() )
             {
-                final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+
+                content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
                     childOrder( ChildOrder.manualOrder() ).
                     contentId( ContentId.from( params.getContentId() ) ).
                     silent( true ).
@@ -458,6 +502,8 @@ public final class ContentResource
             }
         }
 
+
+        //Applies the manual movements
         final ReorderChildContentsParams.Builder builder =
             ReorderChildContentsParams.create().contentId( ContentId.from( params.getContentId() ) ).silent( params.isSilent() );
 
@@ -528,9 +574,9 @@ public final class ContentResource
 
     @GET
     @Path("contentPermissions")
-    public RootPermissionsJson getPermissionsByPath( @QueryParam("path") final String pathParam )
+    public RootPermissionsJson getPermissionsById( @QueryParam("id") final String contentId )
     {
-        final AccessControlList permissions = contentService.getPermissionsByPath( ContentPath.from( pathParam ) );
+        final AccessControlList permissions = contentService.getPermissionsById( ContentId.from( contentId ) );
         return new RootPermissionsJson( permissions, principalsResolver );
     }
 

@@ -138,6 +138,14 @@ public final class Input
         return inputTypeConfig;
     }
 
+    public void checkValidityAccordingToInputType( final Property property )
+    {
+        if ( type != null )
+        {
+            type.checkTypeValidity( property );
+        }
+    }
+
     public void checkValidityAccordingToInputTypeConfig( final Property property )
     {
         if ( inputTypeConfig != null )
@@ -169,6 +177,7 @@ public final class Input
                 return;
             }
 
+            checkValidityAccordingToInputType( property );
             checkValidityAccordingToInputTypeConfig( property );
         }
         catch ( Exception e )

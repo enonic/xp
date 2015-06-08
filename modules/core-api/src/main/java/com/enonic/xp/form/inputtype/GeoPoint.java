@@ -2,7 +2,9 @@ package com.enonic.xp.form.inputtype;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 final class GeoPoint
     extends InputType
@@ -23,15 +25,13 @@ final class GeoPoint
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
+        if ( !ValueTypes.GEO_POINT.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.GEO_POINT );
+        }
     }
 
     @Override

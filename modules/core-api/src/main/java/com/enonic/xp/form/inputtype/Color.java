@@ -9,7 +9,9 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 final class Color
     extends InputType
@@ -30,15 +32,13 @@ final class Color
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newString( value );
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
+        if ( !ValueTypes.STRING.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.STRING );
+        }
     }
 
     private static ValueHolder parse( final String str )

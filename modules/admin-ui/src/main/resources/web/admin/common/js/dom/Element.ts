@@ -183,6 +183,15 @@ module api.dom {
             return this;
         }
 
+
+        public findChildById(id: string): Element {
+            var result: Element[] = this.children.filter((child: Element) => {
+                return child.getId() == id;
+            });
+
+            return result.length > 0 ? result[0] : null;
+        }
+
         init() {
             this.children.forEach((child: Element) => {
                 child.init();
@@ -586,30 +595,51 @@ module api.dom {
         /*
          *      Event listeners
          */
+        private mouseEnterByHandler = {};
 
-        onMouseEnter(handler: (e: MouseEvent)=>any) {
+        onMouseEnter(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
                 this.getEl().addEventListener('mouseenter', handler);
             } else {
-                this.getEl().addEventListener('mouseover', (e: MouseEvent) => {
+                this.mouseEnterByHandler[<any> handler] = (e: MouseEvent) => {
                     // execute handler only if mouse came from outside
                     if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.fromElement))) {
                         handler(e);
                     }
-                });
+                };
+                this.getEl().addEventListener('mouseover', this.mouseEnterByHandler[<any> handler]);
             }
         }
 
-        onMouseLeave(handler: (e: MouseEvent)=>any) {
+        unMouseEnter(handler: (e: MouseEvent) => any) {
+            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+                this.getEl().removeEventListener('mouseenter', handler);
+            } else {
+                this.getEl().removeEventListener('mouseover', this.mouseEnterByHandler[<any> handler]);
+            }
+        }
+
+        private mouseLeaveByHandler = {};
+
+        onMouseLeave(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseleave != "undefined") {
                 this.getEl().addEventListener('mouseleave', handler);
             } else {
-                this.getEl().addEventListener('mouseout', (e: MouseEvent) => {
+                this.mouseLeaveByHandler[<any> handler] = (e: MouseEvent) => {
                     // execute handler only if mouse moves outside
                     if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.toElement))) {
                         handler(e);
                     }
-                });
+                };
+                this.getEl().addEventListener('mouseout', this.mouseLeaveByHandler[<any> handler]);
+            }
+        }
+
+        unMouseLeave(handler: (e: MouseEvent) => any) {
+            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+                this.getEl().removeEventListener('mouseleave', handler);
+            } else {
+                this.getEl().removeEventListener('mouseout', this.mouseLeaveByHandler[<any> handler]);
             }
         }
 

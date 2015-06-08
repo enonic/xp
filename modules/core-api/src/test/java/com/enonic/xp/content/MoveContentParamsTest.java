@@ -15,16 +15,15 @@ public class MoveContentParamsTest
         final ContentId contentId = ContentId.from( "a" );
 
         final ContentPath parentPath = ContentPath.ROOT;
-        final ContentIds contentIds = ContentIds.from( contentId );
 
-        MoveContentParams params = new MoveContentParams( contentIds, parentPath );
+        MoveContentParams params = new MoveContentParams( contentId, parentPath );
         params.creator( PrincipalKey.ofAnonymous() );
 
-        assertEquals( contentIds, params.getContentIds() );
+        assertEquals( contentId, params.getContentId() );
         assertEquals( parentPath, params.getParentContentPath() );
         assertEquals( PrincipalKey.ofAnonymous(), params.getCreator() );
 
-        MoveContentParams params2 = new MoveContentParams( params.getContentIds(), params.getParentContentPath() );
+        MoveContentParams params2 = new MoveContentParams( params.getContentId(), params.getParentContentPath() );
 
         assertEquals( params, params2 );
         assertEquals( params.hashCode(), params2.hashCode() );

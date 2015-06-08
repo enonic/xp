@@ -115,6 +115,11 @@ module api.ui.text {
             htmlEl.focus();
         }
 
+        disableAutocomplete(): TextInput {
+            this.getEl().setAttribute('autocomplete', 'off');
+            return this;
+        }
+
         moveCaretTo(pos) {
             this.selectText(pos, pos);
         }

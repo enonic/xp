@@ -32,7 +32,8 @@ module api.content.form.inputtype.image {
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,
-                allowMultiSelection: allowMultiSelection
+                allowMultiSelection: allowMultiSelection,
+                scaleWidth: false
             });
 
             this.imageUploader.onUploadCompleted(() => {

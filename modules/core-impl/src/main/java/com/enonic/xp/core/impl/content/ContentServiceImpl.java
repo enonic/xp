@@ -25,7 +25,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
@@ -64,17 +63,14 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.SystemException;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -181,15 +177,6 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
-        if ( params.getType().isTemplateFolder() )
-        {
-            validateCreateTemplateFolder( params );
-        }
-        else if ( params.getType().isPageTemplate() )
-        {
-            validateCreatePageTemplate( params );
-        }
-
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -362,9 +349,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public AccessControlList getPermissionsByPath( ContentPath path )
+    public AccessControlList getPermissionsById( ContentId contentId )
     {
-        Content content = getByPath( path );
+        Content content = getById( contentId );
         if ( content != null && content.getPermissions() != null )
         {
             return content.getPermissions();
@@ -396,46 +383,6 @@ public class ContentServiceImpl
             execute();
     }
 
-    private void validateCreateTemplateFolder( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParent() );
-            if ( !parent.getType().isSite() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new SystemException( "A template folder can only be created below a content of type 'site'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
-                                           path );
-        }
-    }
-
-    private void validateCreatePageTemplate( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParent() );
-            if ( !parent.getType().isTemplateFolder() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new SystemException( "A page template can only be created below a content of type 'template-folder'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
-                                           path );
-        }
-    }
-
     @Override
     public Content duplicate( final DuplicateContentParams params )
     {
@@ -448,7 +395,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents move( final MoveContentParams params )
+    public Content move( final MoveContentParams params )
     {
         final ContentPath destinationPath = params.getParentContentPath();
         if ( !destinationPath.isRoot() )
@@ -470,27 +417,24 @@ public class ContentServiceImpl
 
         try
         {
-            final NodeIds sourceNodesIds =
-                NodeIds.from( params.getContentIds().stream().map( ContentId::toString ).toArray( String[]::new ) );
-            final Nodes sourceNodes = nodeService.getByIds( sourceNodesIds );
-            if ( sourceNodes == null )
+            final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
+            final Node sourceNode = nodeService.getById( sourceNodeId );
+            if ( sourceNode == null )
             {
-                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentIds() ) );
+                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
             }
 
-            final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+            final Node movedNode = nodeService.move( sourceNodeId, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
                 params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
-            sourceNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( node.path() ) ) );
-            movedNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( node.path() ) ) );
+            builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) );
+            builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) );
 
             eventPublisher.publish( builder.build() );
 
-            return contentNodeTranslator.fromNodes( movedNodes );
+            return contentNodeTranslator.fromNode( movedNode );
         }
         catch ( MoveNodeException e )
         {

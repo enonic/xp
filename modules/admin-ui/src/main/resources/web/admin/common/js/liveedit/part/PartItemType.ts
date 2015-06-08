@@ -33,6 +33,7 @@ module api.liveedit.part {
         }
 
         createView(config: CreateItemViewConfig<RegionView,PartComponent>): PartComponentView {
+
             return new PartComponentView(new PartComponentViewBuilder().
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).

@@ -3,7 +3,9 @@ package com.acme;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypeExtension;
 
@@ -19,15 +21,13 @@ public class DummyCustomInputType2
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return null;
-    }
-
-    @Override
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
+        if ( !ValueTypes.STRING.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.STRING );
+        }
     }
 
     @Override

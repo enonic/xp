@@ -7,3 +7,5 @@
 ///<reference path='DropdownGridMultipleSelectionEvent.ts' />
 ///<reference path='DefaultOptionDisplayValueViewer.ts' />
 ///<reference path='DropdownGrid.ts' />
+///<reference path='DropdownList.ts' />
+///<reference path='DropdownExpandedEvent.ts' />

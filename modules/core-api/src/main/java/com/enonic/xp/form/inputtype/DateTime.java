@@ -8,6 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 public class DateTime
@@ -43,9 +44,13 @@ public class DateTime
     }
 
     @Override
-    public Value newValue( final String value )
+    public void checkTypeValidity( final Property property )
+        throws InvalidTypeException
     {
-        return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
+        if ( !ValueTypes.DATE_TIME.equals( property.getType() ) && !ValueTypes.LOCAL_DATE_TIME.equals( property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.DATE_TIME );
+        }
     }
 
     @Override

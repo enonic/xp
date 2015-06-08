@@ -51,6 +51,8 @@ module api.liveedit {
 
         private viewsById: {[s:number] : ItemView;};
 
+        private ignorePropertyChanges: boolean;
+
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
@@ -63,32 +65,72 @@ module api.liveedit {
 
         public static debug;
 
-        constructor(builder: PageViewBuilder) {
+        private propertyChangedListener: (event: api.PropertyChangedEvent) => void;
 
+        private pageModeChangedListener: (event: PageModeChangedEvent) => void;
+
+        private lockedContextMenu: api.liveedit.ItemViewContextMenu;
+
+        private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
+            if (PageView.debug) {
+                console.log('PageView.registerPageModel', pageModel);
+            }
+            this.propertyChangedListener = (event: api.PropertyChangedEvent) => {
+                // don't parse on regions change during reset, because it'll be done when page is loaded later
+                if (event.getPropertyName() === PageModel.PROPERTY_REGIONS && !this.ignorePropertyChanges) {
+                    this.parseItemViews();
+                }
+                this.refreshEmptyState();
+            };
+            pageModel.onPropertyChanged(this.propertyChangedListener);
+
+            this.pageModeChangedListener = (event: PageModeChangedEvent) => {
+                var resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                if (PageView.debug) {
+                    console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
+                }
+                resetAction.setEnabled(resetEnabled);
+            };
+            pageModel.onPageModeChanged(this.pageModeChangedListener);
+        }
+
+        private unregisterPageModel(pageModel: PageModel) {
+            if (PageView.debug) {
+                console.log('PageView.unregisterPageModel', pageModel);
+            }
+            pageModel.unPropertyChanged(this.propertyChangedListener);
+            pageModel.unPageModeChanged(this.pageModeChangedListener);
+        }
+
+        constructor(builder: PageViewBuilder) {
+// move super() call here?!
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
-            this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
+
             this.regionViews = [];
             this.regionIndex = 0;
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.ignorePropertyChanges = false;
             PageView.debug = true;
 
-
             var resetAction = new api.ui.Action('Reset');
+            resetAction.onExecuted(() => {
+                if (PageView.debug) {
+                    console.log('PageView.reset');
+                }
+                this.setIgnorePropertyChanges(true);
+                this.pageModel.reset(this);
+                this.setIgnorePropertyChanges(false);
+            });
+            this.unlockedScreenActions = [resetAction];
+
             if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
                 resetAction.setEnabled(false);
             }
-            resetAction.onExecuted(() => {
-                this.pageModel.reset(this);
-                this.setLocked(true);
-            });
-            this.pageModel.onPageModeChanged((event: PageModeChangedEvent) => {
-                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
-                resetAction.setEnabled(resetEnabled);
-            });
-            this.unlockedScreenActions = [resetAction];
+
+            this.registerPageModel(this.pageModel, resetAction);
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
@@ -145,6 +187,12 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
+
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
+        }
+
+        private setIgnorePropertyChanges(value: boolean) {
+            this.ignorePropertyChanges = value;
         }
 
         private isPageModified(pageModel: PageModel): boolean {
@@ -178,12 +226,6 @@ module api.liveedit {
             }
         }
 
-        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            if (!this.isLocked()) {
-                super.showContextMenu(clickPosition, menuPosition);
-            }
-        }
-
         unshade() {
             if (!this.isLocked()) {
                 super.unshade();
@@ -196,6 +238,15 @@ module api.liveedit {
                     this.setLocked(false);
                 }
             })
+
+            this.onMouseOverView(() => {
+                var isDragging = DragAndDrop.get().isDragging();
+                if (isDragging && this.lockedContextMenu) {
+                    if (this.lockedContextMenu.isVisible()) {
+                        this.lockedContextMenu.hide();
+                    }
+                }
+            });
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
@@ -204,9 +255,54 @@ module api.liveedit {
             new PageSelectedEvent(this).fire();
         }
 
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (!this.isLocked()) {
+                super.showContextMenu(clickPosition, menuPosition);
+            }
+        }
+
+        createLockedContextMenu() {
+            return new api.liveedit.ItemViewContextMenu(this.getContextMenuTitle(), this.getLockedMenuActions());
+        }
+
+        getLockedMenuActions(): api.ui.Action[] {
+            var unlockAction = new api.ui.Action("Customize");
+
+            unlockAction.onExecuted(() => {
+                this.setLocked(false);
+            });
+
+            return [unlockAction];
+        }
+
+        selectLocked(pos: Position) {
+            this.setLockVisible(true);
+            this.lockedContextMenu.showAt(pos.x, pos.y);
+
+            new ItemViewSelectedEvent(this, pos).fire();
+            new PageSelectedEvent(this).fire();
+        }
+
+        deselectLocked() {
+            this.setLockVisible(false);
+            this.lockedContextMenu.hide();
+
+            new ItemViewDeselectEvent(this).fire();
+        }
 
         handleShaderClick(event: MouseEvent) {
-            if (!this.isLocked() && this.isSelected()) {
+            if (this.isLocked()) {
+                if (!this.lockedContextMenu) {
+                    this.lockedContextMenu = this.createLockedContextMenu();
+                }
+                if (this.lockedContextMenu.isVisible()) {
+                    this.deselectLocked();
+                }
+                else {
+                    this.selectLocked({x: event.pageX, y: event.pageY});
+                }
+            }
+            else if (this.isSelected()) {
                 this.deselect();
             }
         }
@@ -221,16 +317,25 @@ module api.liveedit {
             }
         }
 
-        setLockVisible(visible: boolean) {
-            this.toggleClass('force-locked', visible);
+        hideContextMenu() {
+            if (this.lockedContextMenu) {
+                this.lockedContextMenu.hide();
+            }
+            return super.hideContextMenu();
         }
 
         isLocked() {
             return this.hasClass('locked');
         }
 
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
+        }
+
         setLocked(locked: boolean) {
             this.toggleClass('locked', locked);
+
+            this.hideContextMenu();
 
             if (locked) {
                 this.shade();
@@ -466,6 +571,22 @@ module api.liveedit {
         }
 
         private parseItemViews() {
+            // unregister existing views
+            for (var itemView in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(itemView)) {
+                    this.unregisterItemView(this.viewsById[itemView]);
+                }
+            }
+
+            // unregister existing regions
+            this.regionViews.forEach((regionView: RegionView)=> {
+                this.unregisterRegionView(regionView)
+            });
+
+            this.regionViews = [];
+            this.regionIndex = 0;
+            this.viewsById = {};
+
             this.doParseItemViews();
 
             // register everything that was parsed
@@ -485,7 +606,18 @@ module api.liveedit {
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                if (isRegionView) {
+                    var region = regions[this.regionIndex++];
+                    if (region) {
+                        // reuse existing region view
+                        var regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
+                    }
+                } else if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         // regions may be nested on different levels so use page wide var for count
                         var region = regions[this.regionIndex++];

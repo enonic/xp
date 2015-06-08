@@ -75,7 +75,7 @@ public class ServletRequestUrlHelperTest
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
 
-        final String uri = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final String uri = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/path/to/page", uri );
     }
 
@@ -88,17 +88,17 @@ public class ServletRequestUrlHelperTest
         Mockito.when( vhost.getTarget() ).thenReturn( "/" );
         Mockito.when( vhost.getSource() ).thenReturn( "/admin" );
 
-        final String uri1 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final String uri1 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/admin/path/to/page", uri1 );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
 
-        final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/path/to/page", uri2 );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
 
-        final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/admin/page", uri3 );
     }
 }

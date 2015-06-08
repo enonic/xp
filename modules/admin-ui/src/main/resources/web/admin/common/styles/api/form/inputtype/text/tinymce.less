@@ -1,3 +1,127 @@
+.tinymce-modal-dialog {
+  max-width: 600px;
+  @media screen and (max-height: 360px) {
+    min-height: 220px;
+  }
+
+  &._540-720 {
+    .form-view .input-view {
+      label {
+        float: left;
+        max-width: @form-label-width - 10px;
+      }
+
+      label + .form-input,
+      label + .input-wrapper, {
+        margin-left: @form-label-width;
+      }
+    }
+  }
+
+  &.animated {
+    .transition(margin-top 0.2s);
+  }
+
+  .dialog-content {
+
+    @media screen and (max-height: 360px) {
+      height: 65%;
+    }
+
+    max-height: 480px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .transition(max-height 0.2s);
+
+    @media screen and (max-height: 720px) {
+      max-height: 346px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 145px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 78%;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    .panel {
+      position: inherit;
+    }
+
+    .docked-panel {
+      width: auto;
+      box-shadow: none;
+      position: inherit !important;
+
+      .tab-bar {
+        width: 63%;
+        border-bottom: none;
+      }
+
+      .deck-panel {
+        border-top: 1px solid @admin-medium-gray-border;
+        padding-top: 10px;
+      }
+
+      .options-container {
+        position: fixed !important;
+      }
+    }
+
+    .combobox {
+      .form-input {
+        margin-top: 0;
+      }
+    }
+    .checkbox.form-input {
+      margin-top: 3px;
+    }
+
+    .input-view.invalid:not(:last-child) {
+      margin-bottom: 0;
+    }
+
+    div.input-view.invalid + div.validation-viewer {
+      background-color: @input-light-red;
+      padding-bottom: 10px;
+      padding-left: @form-label-width + 10;
+    }
+
+    .form-view {
+      margin-bottom: 0;
+      padding: 10px 0 !important;
+
+      fieldset:not(:last-child) {
+        margin-bottom: 5px;
+      }
+      fieldset:not(:first-child) {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .dialog-buttons {
+
+    &:before {
+      position: absolute;
+      width: 100%;
+      line-height: 34px;
+
+      @media screen and (max-height: 360px) {
+        line-height: 70px;
+      }
+    }
+
+  }
+}
+
 .tinymce-editor {
   .mce-btn {
     background-image: none;
@@ -12,6 +136,28 @@
     &:hover {
       background-image: none;
     }
+
+    i {
+      text-shadow: none;
+    }
+
+    &.mce-active {
+      background-image: none;
+      background-color: @admin-toolbar-toggle-button;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+
+      .mce-ico {
+        color: @admin-white;
+      }
+
+      &:hover {
+        background-image: none;
+        box-shadow: none;
+        background-color: @admin-toolbar-toggle-button;
+      }
+    }
   }
 
   .mce-tinymce {
@@ -22,13 +168,7 @@
     background-image: none;
   }
 
-  .tinymce-editor-focused .mce-tinymce {
-    .box-shadow(0px 0px 5px @admin-input-blue);
-    border: 1px solid @admin-input-blue;
-  }
-
   .mce-btn-group {
-
     .mce-first, .mce-last, .mce-first.mce-last {
       border-radius: 0;
       border: none;
@@ -50,6 +190,10 @@
   }
 
   .tinymce-editor-focused {
+    .mce-tinymce {
+      .box-shadow(0px 0px 5px @admin-input-blue);
+      .input-border(@admin-input-blue);
+    }
 
     .mce-toolbar-grp {
       display: block;
@@ -58,6 +202,15 @@
 
     .mce-edit-area {
       border-top: 1px;
+    }
+  }
+
+  .sticky-toolbar {
+    .mce-toolbar-grp {
+      position: fixed;
+      .box-shadow(0px 3px 6px 0 @admin-toolbar-shadow);
+      z-index: 1000;
+      border-top: 1px solid @admin-medium-gray-border;
     }
   }
 
