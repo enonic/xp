@@ -4,7 +4,9 @@ module api.form.inputtype.text.tiny {
     import Validators = api.ui.form.Validators;
 
     export class ImageModalDialog extends ModalDialog {
-        private imageContainer: api.dom.DivEl;
+
+        private imagePreviewContainer: api.dom.DivEl;
+        private uploader: api.content.ImageUploader;
 
         constructor(editor: TinyMceEditor) {
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
@@ -13,32 +15,34 @@ module api.form.inputtype.text.tiny {
         private createImageSelector(id: string, imageId: string): FormItem {
             var loader = new api.content.ContentSummaryLoader(),
                 imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                selectorComboBox = imageSelector.getComboBox(),
                 formItem = this.createFormItem(id, "Image", Validators.required, imageId, <api.dom.FormItemEl>imageSelector),
-                imageContainer = new api.dom.DivEl("content-item-preview-panel");
+                imageSelectorComboBox = imageSelector.getComboBox();
+
+            formItem.addClass("image-selector");
 
             loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
 
-            selectorComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
+            imageSelectorComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
                 var contentId = event.getOption().displayValue.getContentId();
                 if (!contentId) {
                     return;
                 }
 
                 formItem.addClass("image-preview");
-                this.previewImage(imageContainer, contentId.toString(), selectorComboBox.getEl().getWidth());
+                this.previewImage(contentId.toString());
+                this.uploader.hide();
             });
 
-            selectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustSelectorDropDown(selectorComboBox.getInput(), event.getDropdownElement().getEl());
+            imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+                this.adjustSelectorDropDown(imageSelectorComboBox.getInput(), event.getDropdownElement().getEl());
             });
 
-            selectorComboBox.onOptionDeselected(() => {
+            imageSelectorComboBox.onOptionDeselected(() => {
                 formItem.removeClass("image-preview");
-                this.removePreview(imageContainer);
+                this.removePreview();
+                this.uploader.show();
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
-
-            imageContainer.insertAfterEl(formItem.getInput());
 
             return formItem;
         }
@@ -46,42 +50,75 @@ module api.form.inputtype.text.tiny {
         private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
             var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
 
-            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder());
+            dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder() - 2);
             dropDownElement.setTopPx(inputPosition.top + inputElement.getEl().getHeightWithBorder() - 1);
             dropDownElement.setLeftPx(inputPosition.left);
         }
 
-        private previewImage(imageContainer: api.dom.DivEl, contentId: string, width: number) {
+        private previewImage(contentId: string) {
             var imgUrl = new api.content.ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(contentId)).
                 setScaleWidth(true).
-                setSize(width).
+                setSize(640).
                 resolve();
 
             var image = new api.dom.ImgEl(imgUrl);
-            imageContainer.appendChild(image);
+            image.onLoaded(() => {
+                api.ui.responsive.ResponsiveManager.fireResizeEvent();
+            });
+            this.imagePreviewContainer.appendChild(image);
         }
 
-        private removePreview(imageContainer: api.dom.DivEl) {
-            imageContainer.removeChildren();
+        private removePreview() {
+            this.imagePreviewContainer.removeChildren();
         }
 
         private getImageId(): string {
             return api.util.StringHelper.EMPTY_STRING;
         }
 
-        private getCaption(): string {
-            return api.util.StringHelper.EMPTY_STRING;
+        protected show() {
+            super.show();
+
+            this.uploader.show();
         }
 
         protected getMainFormItems(): FormItem[] {
             var imageSelector = this.createImageSelector("imageId", this.getImageId());
+            this.addUploaderAndPreviewControls(imageSelector);
             this.setFirstFocusField(imageSelector.getInput());
 
             return [
-                imageSelector,
-                this.createFormItem("caption", "Caption", Validators.required, this.getCaption())
+                imageSelector
             ];
+        }
+
+        private addUploaderAndPreviewControls(imageSelector: FormItem) {
+            var imageSelectorContainer = imageSelector.getInput().getParentElement();
+
+            imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
+
+            this.imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
+            wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
+
+        }
+
+        private createImageUploader(): api.content.ImageUploader {
+            var uploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+                operation: api.content.MediaUploaderOperation.create,
+                name: 'image-selector-upload-dialog',
+                showButtons: false,
+                showResult: false,
+                maximumOccurrences: 1,
+                allowMultiSelection: false,
+                scaleWidth: false,
+                deferred: true
+            });
+
+            uploader.addClass("minimized");
+            uploader.hide();
+
+            return uploader;
         }
 
         protected initializeActions() {

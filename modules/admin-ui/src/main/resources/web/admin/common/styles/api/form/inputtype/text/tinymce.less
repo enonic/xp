@@ -105,7 +105,7 @@
 
     .form-view {
       margin-bottom: 0;
-      padding: 10px !important;
+      padding: 0 !important;
 
       .options-container {
         position: fixed !important;
@@ -119,19 +119,36 @@
       }
     }
 
-    .content-item-preview-panel > img {
-      margin-top: 15px;
-      display: block;
-    }
+    .image-selector {
+      margin-bottom: 0;
+      .selected-options .selected-option {
+        margin: 0;
+        width: 100%;
+        border: none;
+        .wrapper {
+          display: none;
+        }
+      }
 
-    .names-and-icon-view .names-view {
-      margin-left: 0;
-    }
+      .input-wrapper {
+        overflow-y: hidden;
+        .rich-combobox {
+          width: 93%;
+        }
+      }
 
-    .selected-option .wrapper {
-      display: none;
-    }
+      &.image-preview .input-wrapper {
+        overflow-y: visible;
+      }
 
+      .content-item-preview-panel > img {
+        display: block;
+      }
+
+      .names-and-icon-view .names-view {
+        margin-left: 0;
+      }
+    }
   }
 
   .dialog-buttons {
