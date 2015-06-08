@@ -1,4 +1,4 @@
-module api.content.site.inputtype.moduleconfigurator {
+module api.content.site.inputtype.siteconfigurator {
 
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
@@ -93,7 +93,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
     }
 
-    export class SiteConfiguratorSelectedOptionView extends ModuleView implements SelectedOptionView<Module> {
+    export class SiteConfiguratorSelectedOptionView extends SiteView implements SelectedOptionView<Module> {
 
         private option: Option<Module>;
 

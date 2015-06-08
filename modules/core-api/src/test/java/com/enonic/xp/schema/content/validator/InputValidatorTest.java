@@ -63,7 +63,7 @@ public class InputValidatorTest
         data.addString( "tag", "myTag" );
         data.addReference( "contentSelector", new Reference( new NodeId() ) );
         data.addString( "contentTypeFilter", "article" );
-        data.addString( "moduleConfigurator", "my config here" );
+        data.addString( "siteConfigurator", "my config here" );
         data.addDouble( "double", 1.1d );
         data.addLong( "long", 12345678910l );
         data.addStrings( "stringArray", "a", "b", "c" );
@@ -161,7 +161,7 @@ public class InputValidatorTest
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
-        //TODO ModuleConfigurator should check the input type
+        //TODO SiteConfigurator should check the input type
 //        invalidData = new PropertyTree();
 //        invalidData.addDouble( "moduleConfigurator", 1.0d );
 //        validateIncorrectInputType( invalidData );
@@ -304,8 +304,8 @@ public class InputValidatorTest
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
-                name( "moduleConfigurator" ).
-                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                name( "siteConfigurator" ).
+                inputType( InputTypes.SITE_CONFIGURATOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).

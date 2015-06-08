@@ -129,7 +129,7 @@
 ///<reference path='content/page/region/_module.ts' />
 ///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
-///<reference path='content/site/inputtype/moduleconfigurator/_module.ts' />
+///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/_module.ts' />
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/upload/_module.ts' />

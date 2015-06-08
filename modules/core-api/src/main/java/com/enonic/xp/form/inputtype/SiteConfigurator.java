@@ -10,7 +10,7 @@ import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
-public class ModuleConfigurator
+public class SiteConfigurator
     extends InputType
 {
     @Override

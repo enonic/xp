@@ -1,21 +1,21 @@
-module api.content.site.inputtype.moduleconfigurator {
+module api.content.site.inputtype.siteconfigurator {
 
     import FormView = api.form.FormView;
     import Module = api.module.Module;
 
-    export class ModuleSelectedEvent {
+    export class ModuleDeselectedEvent {
 
-        private selectedModule: Module;
+        private deselectedModule: Module;
 
         private formView: FormView;
 
         constructor(selectedModule: Module, formView: FormView) {
-            this.selectedModule = selectedModule;
+            this.deselectedModule = selectedModule;
             this.formView = formView;
         }
 
-        getSelectedModule(): Module {
-            return this.selectedModule;
+        getDeselectedModule(): Module {
+            return this.deselectedModule;
         }
 
         getFormView(): FormView {

@@ -8,7 +8,7 @@
   "tag": "myTag",
   "contentSelector": "1234abc",
   "contentTypeFilter": "article",
-  "moduleConfigurator": "my config here",
+  "siteConfigurator": "my config here",
   "double": 1.1,
   "long": 12345678910,
   "stringArray": [
