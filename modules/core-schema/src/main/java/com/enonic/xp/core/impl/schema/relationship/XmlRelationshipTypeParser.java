@@ -1,4 +1,4 @@
-package com.enonic.xp.xml.parser;
+package com.enonic.xp.core.impl.schema.relationship;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +10,7 @@ import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.parser.XmlModelParser;
 
 @Beta
 public final class XmlRelationshipTypeParser
