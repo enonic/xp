@@ -16,53 +16,56 @@ import com.enonic.xp.content.ResolvePublishDependenciesResult;
 public class ResolvePublishDependenciesResultJsonFactory
 {
 
-    private final Contents resolvedContents;
-
-    private final CompareContentResults compareContentResults;
-
     private final ResolvePublishDependenciesResult resolvedPublishDependencies;
 
     private final ContentIconUrlResolver iconUrlResolver;
 
+    private final CompareContentResults compareContentResults;
+
+    private final Contents resolvedContents;
+
     private ResolvePublishDependenciesResultJsonFactory( final Builder builder )
     {
+
         this.resolvedPublishDependencies = builder.resolvedPublishDependencies;
+        this.iconUrlResolver = builder.iconUrlResolver;
         this.resolvedContents = builder.resolvedContents;
         this.compareContentResults = builder.compareContentResults;
-        this.iconUrlResolver = builder.iconUrlResolver;
     }
 
     public ResolvePublishDependenciesResultJson createJson()
     {
-        final List<ResolvedContent.ResolvedRequestedContent> resolvedRequestedContents = populateResultList();
-
-        sortResults( resolvedRequestedContents );
-
-        return new ResolvePublishDependenciesResultJson( resolvedRequestedContents );
-    }
-
-    private List<ResolvedContent.ResolvedRequestedContent> populateResultList()
-    {
-        final List<ResolvedContent.ResolvedRequestedContent> resolvedContentList = new ArrayList<>();
 
         final PushContentRequests pushContentRequests = resolvedPublishDependencies.getPushContentRequests();
 
-        final ContentIds requestedContentIds = pushContentRequests.getPushedBecauseRequestedContentIds( true );
+        final ContentIds dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
 
-        for ( final ContentId requestedContentId : requestedContentIds )
+        final ContentIds childrenContentIds = pushContentRequests.getChildrenContentIds( true, true );
+
+        final List<ResolvedContent> dependantContents = populateResultList( dependantsContentIds );
+
+        final List<ResolvedContent> childrenContents = populateResultList( childrenContentIds );
+
+        sortResults( dependantContents );
+
+        sortResults( childrenContents );
+
+        return new ResolvePublishDependenciesResultJson( dependantContents, childrenContents );
+    }
+
+    private List<ResolvedContent> populateResultList( final ContentIds contentIds )
+    {
+
+        final List<ResolvedContent> resolvedContentList = new ArrayList<>();
+
+        for ( final ContentId dependantContentId : contentIds )
         {
-            int numberOfChildren = getNumberOfChildren( pushContentRequests, requestedContentId );
+            Content resolvedContent = getResolvedContent( dependantContentId );
 
-            int dependants = getNumberOfDependants( pushContentRequests, requestedContentId );
-
-            final Content content = getResolvedContent( requestedContentId );
-
-            resolvedContentList.add( ResolvedContent.ResolvedRequestedContent.create().
-                childrenCount( numberOfChildren ).
-                dependantsCount( dependants ).
-                content( content ).
-                compareStatus( getCompareStatus( requestedContentId ) ).
-                iconUrl( iconUrlResolver.resolve( content ) ).
+            resolvedContentList.add( ResolvedContent.create().
+                content( resolvedContent ).
+                compareStatus( fetchStatus( dependantContentId, compareContentResults ) ).
+                iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
                 build() );
         }
 
@@ -81,49 +84,14 @@ public class ResolvePublishDependenciesResultJsonFactory
         return content;
     }
 
-    private int getNumberOfDependants( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
+    private void sortResults( final List<ResolvedContent> dependantContents )
     {
-        final ContentIds dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
-
-        return countTriggeredContents( resolvedPublishContentId, dependantsContentIds );
+        dependantContents.sort( ( o1, o2 ) -> o1.getPath().compareTo( o2.getPath() ) );
     }
 
-    private int getNumberOfChildren( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
+    private String fetchStatus( final ContentId id, final CompareContentResults compareContentResults )
     {
-        final ContentIds pushedBecauseChildOfContentIds = pushContentRequests.getPushedBecauseChildOfContentIds( true, true );
-
-        return countTriggeredContents( resolvedPublishContentId, pushedBecauseChildOfContentIds );
-    }
-
-    /**
-     * Count number of contents that were resolved due to given initial contentId.
-     *
-     * @param initialContentId
-     * @param resolvedDependantsOrChildren
-     * @return
-     */
-    private int countTriggeredContents( final ContentId initialContentId, final ContentIds resolvedDependantsOrChildren )
-    {
-        int result = 0;
-        for ( final ContentId contentIdWithReason : resolvedDependantsOrChildren )
-        {
-            if ( initialContentId.equals(
-                resolvedPublishDependencies.getPushContentRequests().findContentIdThatInitiallyTriggeredPublish( contentIdWithReason ) ) )
-            {
-                result++;
-            }
-        }
-        return result;
-    }
-
-    private void sortResults( final List<ResolvedContent.ResolvedRequestedContent> listToSort )
-    {
-        listToSort.sort( ( o1, o2 ) -> o1.getPath().compareTo( o2.getPath() ) );
-    }
-
-    private String getCompareStatus( final ContentId id )
-    {
-        CompareContentResult compareResult = this.compareContentResults.getCompareContentResultsMap().get( id );
+        CompareContentResult compareResult = compareContentResults.getCompareContentResultsMap().get( id );
         if ( compareResult != null )
         {
             return compareResult.getCompareStatus().name();
@@ -177,6 +145,7 @@ public class ResolvePublishDependenciesResultJsonFactory
 
         public ResolvePublishDependenciesResultJsonFactory build()
         {
+
             return new ResolvePublishDependenciesResultJsonFactory( this );
         }
     }
