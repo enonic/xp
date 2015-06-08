@@ -76,7 +76,7 @@ final class CreateMediaCommand
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).
             mediaInfo( mediaInfo ).
             params( createContentParams ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build();
 

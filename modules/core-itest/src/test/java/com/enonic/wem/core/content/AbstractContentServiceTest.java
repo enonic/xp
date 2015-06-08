@@ -43,10 +43,10 @@ import com.enonic.xp.core.impl.content.ContentNodeTranslator;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
-import com.enonic.xp.core.impl.module.ModuleRegistry;
-import com.enonic.xp.core.impl.module.ModuleServiceImpl;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
+import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
@@ -173,9 +173,9 @@ public class AbstractContentServiceTest
         mediaInfoService.setDetector( new DefaultDetector() );
         mediaInfoService.setParser( new DefaultParser() );
 
-        final ModuleRegistry moduleRegistry = Mockito.mock( ModuleRegistry.class );
-        final ModuleServiceImpl moduleService = new ModuleServiceImpl();
-        moduleService.setRegistry( moduleRegistry );
+        final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
+        final SiteServiceImpl siteService = new SiteServiceImpl();
+        siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
 
         final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
@@ -184,7 +184,7 @@ public class AbstractContentServiceTest
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
-        this.contentService.setModuleService( moduleService );
+        this.contentService.setSiteService( siteService );
         this.contentService.setContentNodeTranslator( this.contentNodeTranslator );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
@@ -249,8 +249,9 @@ public class AbstractContentServiceTest
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected Content createContent(ContentPath parentPath)
-        throws Exception {
+    protected Content createContent( ContentPath parentPath )
+        throws Exception
+    {
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).

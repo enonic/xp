@@ -9,6 +9,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.form.FormJson;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.site.SiteDescriptor;
 
 public class ModuleJson
     implements ItemJson
@@ -19,14 +20,14 @@ public class ModuleJson
 
     private final ImmutableList<String> metaStepMixinNames;
 
-    public ModuleJson( final Module module )
+    public ModuleJson( final Module module, final SiteDescriptor siteDescriptor )
     {
         this.module = module;
-        this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
+        this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
-        if ( this.module.getMetaSteps() != null )
+        if ( siteDescriptor != null && siteDescriptor.getMetaSteps() != null )
         {
-            for ( MixinName mixinName : this.module.getMetaSteps() )
+            for ( MixinName mixinName : siteDescriptor.getMetaSteps() )
             {
                 mixinNamesBuilder.add( mixinName.toString() );
             }

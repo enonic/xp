@@ -60,7 +60,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -81,6 +80,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -109,7 +109,7 @@ public class ContentServiceImpl
 
     private MixinService mixinService;
 
-    private ModuleService moduleService;
+    private SiteService siteService;
 
     public ContentServiceImpl()
     {
@@ -134,7 +134,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             params( params ).
             build().
@@ -167,7 +167,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -181,7 +181,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -196,7 +196,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -656,8 +656,8 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setSiteService( final SiteService siteService )
     {
-        this.moduleService = moduleService;
+        this.siteService = siteService;
     }
 }

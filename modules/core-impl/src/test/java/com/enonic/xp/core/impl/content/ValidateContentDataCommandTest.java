@@ -9,13 +9,13 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.DataValidationErrors;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.content.Content.newContent;
 import static com.enonic.xp.form.FieldSet.newFieldSet;
@@ -28,7 +28,7 @@ public class ValidateContentDataCommandTest
 
     private MixinService mixinService;
 
-    private ModuleService moduleService;
+    private SiteService siteService;
 
     @Before
     public void setUp()
@@ -36,7 +36,7 @@ public class ValidateContentDataCommandTest
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.mixinService = Mockito.mock( MixinService.class );
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.siteService = Mockito.mock( SiteService.class );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ValidateContentDataCommandTest
             contentType( contentType.getName() ).
             contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             build().
             execute();
 
@@ -103,7 +103,7 @@ public class ValidateContentDataCommandTest
             contentType( contentType.getName() ).
             contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             build().
             execute();
 

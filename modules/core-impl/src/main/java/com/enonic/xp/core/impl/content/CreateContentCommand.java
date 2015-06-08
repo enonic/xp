@@ -331,7 +331,7 @@ final class CreateContentCommand
             contentType( contentParams.getType() ).
             extradatas( contentParams.getExtraDatas() != null ? ExtraDatas.from( contentParams.getExtraDatas() ) : ExtraDatas.empty() ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().
             execute();

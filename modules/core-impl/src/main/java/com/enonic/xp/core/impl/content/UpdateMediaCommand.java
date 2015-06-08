@@ -78,7 +78,7 @@ final class UpdateMediaCommand
             params( updateParams ).
             mediaInfo( mediaInfo ).
             contentTypeService( this.contentTypeService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
