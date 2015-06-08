@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 
@@ -26,18 +25,18 @@ public final class RendererFactoryImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R extends Renderable> Renderer<R> getRenderer( final R renderable )
+    public <R> Renderer<R> getRenderer( final R renderable )
     {
         return getRenderer( (Class<R>) renderable.getClass() );
     }
 
-    private <R extends Renderable> Renderer<R> getRenderer( final Class<R> renderableType )
+    private <R> Renderer<R> getRenderer( final Class<R> renderableType )
     {
         return findRenderer( renderableType );
     }
 
     @SuppressWarnings("unchecked")
-    private <R extends Renderable> Renderer<R> findRenderer( final Class<R> type )
+    private <R> Renderer<R> findRenderer( final Class<R> type )
     {
         final Renderer renderer = doResolveRenderer( type );
         if ( renderer == null )

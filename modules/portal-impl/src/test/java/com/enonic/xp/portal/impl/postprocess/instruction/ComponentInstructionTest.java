@@ -22,7 +22,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -154,22 +153,22 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         RendererFactory rendererFactory = mock( RendererFactory.class );
-        Renderer<Renderable> renderer = new Renderer<Renderable>()
+        Renderer<Component> renderer = new Renderer<Component>()
         {
             @Override
-            public Class<Renderable> getType()
+            public Class<Component> getType()
             {
-                return Renderable.class;
+                return Component.class;
             }
 
             @Override
-            public PortalResponse render( final Renderable component, final PortalRequest portalRequest )
+            public PortalResponse render( final Component component, final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body( renderResult ).build();
             }
         };
 
-        when( rendererFactory.getRenderer( isA( Renderable.class ) ) ).thenReturn( renderer );
+        when( rendererFactory.getRenderer( isA( Component.class ) ) ).thenReturn( renderer );
         return rendererFactory;
     }
 }
