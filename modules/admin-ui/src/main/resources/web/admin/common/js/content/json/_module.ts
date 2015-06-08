@@ -18,9 +18,9 @@
 ///<reference path='OrderExprWrapperJson.ts' />
 ///<reference path='SetOrderUpdateJson.ts' />
 ///<reference path='SetChildOrderAndReorderJson.ts' />
-///<reference path='ResolvePublishDependenciesResultJson.ts' />
+///<reference path='ResolvePublishRequestedContentsResultJson.ts' />
 ///<reference path='ResolvedPublishDependencyJson.ts' />
-///<reference path='ResolveDependantsResultJson.ts' />
+///<reference path='ResolvePublishDependenciesResultJson.ts' />
 ///<reference path='ResolvedPublishRequestedContentJson.ts' />
 
 

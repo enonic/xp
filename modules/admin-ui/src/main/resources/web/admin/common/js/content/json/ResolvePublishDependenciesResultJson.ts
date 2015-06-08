@@ -2,6 +2,8 @@ module api.content.json {
 
     export interface ResolvePublishDependenciesResultJson {
 
-        pushRequestedContents: ResolvedPublishRequestedContentJson[];
+        dependantContents: ResolvedPublishDependencyJson[];
+
+        childrenContents: ResolvedPublishDependencyJson[];
     }
 }
