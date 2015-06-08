@@ -370,6 +370,11 @@ public class PushContentRequests
             return this;
         }
 
+        public Map<ContentId, ContentId> getMapWithInitialReasonContentIds()
+        {
+            return mapWithInitialReasonContentIds;
+        }
+
         public PushContentRequests build()
         {
             return new PushContentRequests( this );

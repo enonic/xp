@@ -10,20 +10,43 @@ import com.enonic.xp.node.ResolveSyncWorkResults;
 
 class PushContentRequestsFactory
 {
-    public static PushContentRequests create( final ResolveSyncWorkResults syncWorkResults )
+
+    private final ResolveSyncWorkResults syncWorkResults;
+
+    private final boolean forceInitialReasonInclusion;
+
+    private PushContentRequestsFactory( final Builder builder )
+    {
+        this.forceInitialReasonInclusion = builder.forceInitialReasonInclusion;
+        this.syncWorkResults = builder.syncWorkResults;
+    }
+
+    public PushContentRequests createRequests()
     {
         final PushContentRequests.Builder builder = PushContentRequests.create();
 
-        for ( final ResolveSyncWorkResult syncWorkResult : syncWorkResults )
+        for ( final ResolveSyncWorkResult syncWorkResult : this.syncWorkResults )
         {
             doCreate( builder, syncWorkResult.getNodePublishRequests(), syncWorkResult.getInitialReasonNodeId() );
             doCreateDeleted( builder, syncWorkResult.getNodeDeleteRequests(), syncWorkResult.getInitialReasonNodeId() );
+            if ( this.forceInitialReasonInclusion )
+            {
+                ensureInitialNodeIncluded( builder, syncWorkResult.getInitialReasonNodeId() );
+            }
         }
 
         return builder.build();
     }
 
-    private static void doCreate( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
+    private void ensureInitialNodeIncluded( final PushContentRequests.Builder builder, final NodeId initialReasonNodeId )
+    {
+        if ( !builder.getMapWithInitialReasonContentIds().containsKey( initialReasonNodeId ) )
+        {
+            builder.addRequested( ContentId.from( initialReasonNodeId.toString() ), ContentId.from( initialReasonNodeId.toString() ) );
+        }
+    }
+
+    private void doCreate( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
                                   final NodeId initialReasonNodeId )
     {
         for ( final NodePublishRequest parentOf : nodePublishRequests.getPublishAsParentFor() )
@@ -53,7 +76,7 @@ class PushContentRequestsFactory
         }
     }
 
-    private static void doCreateDeleted( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
+    private void doCreateDeleted( final PushContentRequests.Builder builder, final NodePublishRequests nodePublishRequests,
                                          final NodeId initialReasonNodeId )
     {
         for ( final NodePublishRequest parentOf : nodePublishRequests.getPublishAsParentFor() )
@@ -83,4 +106,35 @@ class PushContentRequestsFactory
                                              ContentId.from( initialReasonNodeId.toString() ) );
         }
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+
+        private ResolveSyncWorkResults syncWorkResults;
+
+        private boolean forceInitialReasonInclusion;
+
+        public Builder syncWorkResults( final ResolveSyncWorkResults syncWorkResults )
+        {
+            this.syncWorkResults = syncWorkResults;
+            return this;
+        }
+
+        public Builder forceInitialReasonInclusion( final boolean forceInitialReasonInclusion )
+        {
+            this.forceInitialReasonInclusion = forceInitialReasonInclusion;
+            return this;
+        }
+
+        public PushContentRequestsFactory build()
+        {
+            return new PushContentRequestsFactory( this );
+        }
+    }
+
 }

@@ -393,7 +393,7 @@ module app.publish {
 
         private countItemsToPublishAndUpdateCounterElements() {
 
-            var checkedRequested = this.getSelectedItemsCount(),
+            var checkedRequested = this.getSelectedItemsEligibleForPublishCount(),
                 dependantsEligibleForPublish = this.getDependantsEligibleForPublishCount(),
                 childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
 
@@ -402,7 +402,7 @@ module app.publish {
 
             // publish button
             this.cleanPublishButtonText();
-            this.updatePublishButtonCounter(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
+            this.updatePublishButton(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
 
             // dependencies label
             this.updateDependenciesLabel();
@@ -429,22 +429,27 @@ module app.publish {
             return result;
         }
 
-        private getCheckedItemsCount(): number {
+        private getSelectedItemsCount(): number {
+            return this.selectionItems.length;
+        }
+
+        private getSelectedItemsEligibleForPublishCount(): number {
             var result = 0;
             this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
-                if (item.isChecked()) {
+                if (item.getBrowseItem().getModel().getCompareStatus() != api.content.CompareStatus.EQUAL) {
                     result++;
                 }
             });
             return result;
         }
 
-        private getSelectedItemsCount(): number {
-            return this.selectionItems.length;
-        }
-
-        private updatePublishButtonCounter(count: number) {
+        private updatePublishButton(count: number) {
             this.publishButton.setLabel("Publish Now (" + count + ")");
+            if (count > 0) {
+                this.publishButton.setEnabled(true);
+            } else {
+                this.publishButton.setEnabled(false);
+            }
         }
 
         private showLoadingSpinner() {
