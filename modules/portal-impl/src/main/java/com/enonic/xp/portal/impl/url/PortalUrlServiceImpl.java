@@ -38,13 +38,20 @@ public final class PortalUrlServiceImpl
 
     private static final String MEDIA_TYPE = "media";
 
+    private static final String IMAGE_TYPE = "image";
+
     private static final String DOWNLOAD_MODE = "download";
 
     private static final String INLINE_MODE = "inline";
 
-    private final static Pattern CONTENT_PATTERN = Pattern.compile(
-        "(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\")",
-        Pattern.MULTILINE | Pattern.UNIX_LINES );
+    private final static Pattern CONTENT_PATTERN =
+        Pattern.compile( "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE +
+                             ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\")",
+                         Pattern.MULTILINE | Pattern.UNIX_LINES );
+
+    private static final String IMAGE_FILTER = "scalewidth(768)";
+
+    private static final String IMAGE_FORMAT = "jpeg";
 
 
     private ContentService contentService;
@@ -116,6 +123,18 @@ public final class PortalUrlServiceImpl
                     final String pageUrl = pageUrl( pageUrlParams );
 
                     processedHtml = processedHtml.replaceFirst( match, "\"" + pageUrl + "\"" );
+                }
+                else if ( IMAGE_TYPE.equals( type ) )
+                {
+                    ImageUrlParams imageUrlParams = new ImageUrlParams().
+                        id( id ).
+                        filter( IMAGE_FILTER ).
+                        format( IMAGE_FORMAT ).
+                        context( params.getContext() );
+
+                    final String imageUrl = imageUrl( imageUrlParams );
+
+                    processedHtml = processedHtml.replaceFirst( match, "\"" + imageUrl + "\"" );
                 }
                 else
                 {

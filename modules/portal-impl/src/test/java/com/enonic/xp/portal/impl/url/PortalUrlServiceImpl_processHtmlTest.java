@@ -47,6 +47,24 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    public void process_single_image()
+    {
+        //Creates a content
+        final Content content = ContentFixtures.newContent();
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            context( this.context ).
+            value( "<a href=\"image://" + content.getId() + "\">Image</a>" );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + content.getId() + "/" + content.getName() +
+                          ".jpeg?filter=scalewidth%28768%29\">Image</a>", processedHtml );
+    }
+
+    @Test
     public void process_single_media()
     {
         //Creates a content with attachments
@@ -90,6 +108,18 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals(
             "<a href=\"/portal/draft/context/path/_/attachment/download/" + content.getId() + "/" + source.getName() + "\">Media</a>",
             processedHtml );
+
+        //Process an html text containing an inline link to this content in a img tag
+        params = new ProcessHtmlParams().
+            context( this.context ).
+            value( "<img src=\"media://inline/" + content.getId() + "\">Media</a>" );
+
+        //Checks that the URL of the source attachment of the content is returned
+        processedHtml = this.service.processHtml( params );
+        assertEquals(
+            "<img src=\"/portal/draft/context/path/_/attachment/inline/" + content.getId() + "/" + source.getName() + "\">Media</a>",
+            processedHtml );
+
     }
 
     @Test
@@ -121,7 +151,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             value( "<p>A content link:&nbsp;<a href=\"content://" + content.getId() + "\">FirstLink</a></p>\n" +
                        "<p>A second content link:&nbsp;<a href=\"content://" + content.getId() + "\">SecondLink</a>" +
                        "&nbsp;and a download link:&nbsp;<a href=\"media://download/" + content.getId() + "\">Download</a></p>\n" +
-                       "<p>A external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
+                       "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
                        "<p>&nbsp;</p>\n" +
                        "<a href=\"media://inline/" + content.getId() + "\">Inline</a>" );
 
@@ -131,7 +161,7 @@ public class PortalUrlServiceImpl_processHtmlTest
                           "<p>A second content link:&nbsp;<a href=\"/portal/draft" + content.getPath() + "\">SecondLink</a>" +
                           "&nbsp;and a download link:&nbsp;<a href=\"/portal/draft/context/path/_/attachment/download/" +
                           content.getId() + "/" + source.getName() + "\">Download</a></p>\n" +
-                          "<p>A external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
+                          "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
                           "<p>&nbsp;</p>\n" +
                           "<a href=\"/portal/draft/context/path/_/attachment/inline/" +
                           content.getId() + "/" + source.getName() + "\">Inline</a>", processedHtml );
@@ -158,11 +188,25 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Process an html text containing a link to an unknown media
         final ProcessHtmlParams params = new ProcessHtmlParams().
             context( this.context ).
-            value( "<a href=\"media://inline/123\">Content</a>" );
+            value( "<a href=\"media://inline/123\">Media</a>" );
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/portal/draft/context/path/_/error/500\">Content</a>", processedHtml );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/error/500\">Media</a>", processedHtml );
+    }
+
+    @Test
+    public void process_unknown_image()
+    {
+
+        //Process an html text containing a link to an unknown media
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            context( this.context ).
+            value( "<a href=\"image://123\">Image</a>" );
+
+        //Checks that the error 500 page is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/error/500\">Image</a>", processedHtml );
     }
 
 }
