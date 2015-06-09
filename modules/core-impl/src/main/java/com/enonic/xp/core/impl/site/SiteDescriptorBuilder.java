@@ -11,7 +11,7 @@ import com.enonic.xp.site.SiteDescriptor;
 
 final class SiteDescriptorBuilder
 {
-    private static final String SITE_DESCRIPTOR_FILENAME = "site.xml";
+    private static final String SITE_DESCRIPTOR_FILENAME = "app/site.xml";
 
     private Bundle bundle;
 
