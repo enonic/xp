@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.content.query.ContentQuery;
-
 @Beta
 public class FindContentByQueryParams
 {
