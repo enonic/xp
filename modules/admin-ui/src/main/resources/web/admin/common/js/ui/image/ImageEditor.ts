@@ -4,6 +4,16 @@ module api.ui.image {
     import DivEl = api.dom.DivEl;
     import Button = api.ui.button.Button;
 
+    export interface Point {
+        x: number;
+        y: number;
+    }
+
+    export interface Rect extends Point {
+        w: number;
+        h: number;
+    }
+
     export class ImageEditor extends api.dom.DivEl {
 
         private canvas: DivEl;
@@ -40,14 +50,14 @@ module api.ui.image {
         private focalPointButton: Button;
         private cropButton: Button;
 
-        private focusPositionChangedListeners: {(position: {x: number; y: number}): void}[] = [];
+        private focusPositionChangedListeners: {(position: Point): void}[] = [];
         private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
         private focusRadiusChangedListeners: {(r: number): void}[] = [];
-        private focusEditModeListeners: {(edit: boolean, position: {x: number; y:number}): void}[] = [];
+        private focusEditModeListeners: {(edit: boolean, position: Point): void}[] = [];
 
-        private cropPositionChangedListeners: {(position: {x: number; y: number; w: number; h: number}): void}[] = [];
+        private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private cropEditModeListeners: {(edit: boolean, position: {x: number; y:number; w: number; h: number}): void}[] = [];
+        private cropEditModeListeners: {(edit: boolean, position: Rect): void}[] = [];
 
         constructor(src?: string) {
             super('image-editor');
@@ -121,10 +131,10 @@ module api.ui.image {
 
         /**
          * Converts point from px to %
-         * @param point
-         * @returns {{x: number, y: number}}
+         * @param point point object to normalize
+         * @returns {Point} normalized to 0-1 point
          */
-        private normalizePoint(point: {x: number; y: number}): {x: number; y: number} {
+        private normalizePoint(point: Point): Point {
             return {
                 x: point.x / this.imgW,
                 y: point.y / this.imgH
@@ -135,9 +145,9 @@ module api.ui.image {
          * Converts point from % to px
          * @param x
          * @param y
-         * @returns {{x: number, y: number}}
+         * @returns {Point} denormalized point
          */
-        private denormalizePoint(x: number, y: number): {x: number; y: number} {
+        private denormalizePoint(x: number, y: number): Point {
             return {
                 x: x * this.imgW,
                 y: y * this.imgH
@@ -146,13 +156,10 @@ module api.ui.image {
 
         /**
          * Converts rectangle from px to %
-         * @param x
-         * @param y
-         * @param w
-         * @param h
-         * @returns {{x: number, y: number, w: number, h: number}}
+         * @param rect rectangle object to normalize
+         * @returns {Rect} normalized to 0-1 rectangle
          */
-        private normalizeRect(rect: {x: number; y: number; w: number; h: number}): {x: number; y: number; w: number; h: number} {
+        private normalizeRect(rect: Rect): Rect {
             return {
                 x: rect.x / this.imgW,
                 y: rect.y / this.imgH,
@@ -167,9 +174,9 @@ module api.ui.image {
          * @param y
          * @param w
          * @param h
-         * @returns {{x: number, y: number, w: number, h: number}}
+         * @returns {Rect} denormalized rectangle
          */
-        private denormalizeRect(x: number, y: number, w: number, h: number): {x: number; y: number; w: number; h: number} {
+        private denormalizeRect(x: number, y: number, w: number, h: number): Rect {
             return {
                 x: x * this.imgW,
                 y: y * this.imgH,
@@ -181,7 +188,7 @@ module api.ui.image {
         /**
          * Converts radius from px to % of the smallest dimension
          * @param r
-         * @returns {number}
+         * @returns {number} normalized to 0-1 radius
          */
         private normalizeRadius(r: number): number {
             return r / Math.min(this.imgW, this.imgH);
@@ -190,7 +197,7 @@ module api.ui.image {
         /**
          * Converts radius from % of the smallest dimension to px
          * @param r
-         * @returns {number}
+         * @returns {number} denormalized radius
          */
         private denormalizeRadius(r: number): number {
             return r * Math.min(this.imgW, this.imgH);
@@ -349,7 +356,7 @@ module api.ui.image {
             }
         }
 
-        private setFocusPositionPx(position: {x: number; y: number}) {
+        private setFocusPositionPx(position: Point) {
             var oldX = this.focusData.x,
                 oldY = this.focusData.y;
 
@@ -370,11 +377,11 @@ module api.ui.image {
          * Returns the center of the focal point as 0-1 values
          * @returns {{x, y}|{x: number, y: number}}
          */
-        getFocusPosition(): {x: number; y: number} {
+        getFocusPosition(): Point {
             return this.normalizePoint(this.getFocusPositionPx());
         }
 
-        private getFocusPositionPx(): {x: number; y: number} {
+        private getFocusPositionPx(): Point {
             return {
                 x: this.focusData.x,
                 y: this.focusData.y
@@ -427,7 +434,7 @@ module api.ui.image {
 
         private bindFocusMouseListeners() {
             var mouseDown: boolean = false;
-            var lastPos: {x: number; y: number};
+            var lastPos: Point;
 
             this.clip.onMouseDown((event: MouseEvent) => {
                 mouseDown = true;
@@ -545,8 +552,10 @@ module api.ui.image {
 
         /**
          * Sets the center of the focal point
-         * @param x horizontal value in 0-1 interval
-         * @param y vertical value in 0-1 interval
+         * @param x top left edge x value in 0-1 interval
+         * @param y top left edge y value in 0-1 interval
+         * @param w width value in 0-1 interval
+         * @param h height value in 0-1 interval
          * @returns {undefined}
          */
         setCropPosition(x: number, y: number, w: number, h: number) {
@@ -564,7 +573,7 @@ module api.ui.image {
             }
         }
 
-        private setCropPositionPx(crop: {x: number; y: number; w: number; h: number}) {
+        private setCropPositionPx(crop: Rect) {
             var oldX = this.cropData.x,
                 oldY = this.cropData.y,
                 oldW = this.cropData.w,
@@ -593,11 +602,11 @@ module api.ui.image {
          * Returns the center of the focal point as 0-1 values
          * @returns {{x, y}|{x: number, y: number}}
          */
-        getCropPosition(): {x: number; y: number; w: number; h: number} {
+        getCropPosition(): Rect {
             return this.normalizeRect(this.getCropPositionPx());
         }
 
-        private getCropPositionPx(): {x: number; y: number; w: number; h: number} {
+        private getCropPositionPx(): Rect {
             return {
                 x: this.cropData.x,
                 y: this.cropData.y,
@@ -658,7 +667,7 @@ module api.ui.image {
 
         private bindCropMouseListeners() {
             var mouseDown: boolean = false;
-            var lastPos: {x: number; y: number};
+            var lastPos: Point;
 
             var dragHandle = this.clip.findChildById('drag-handle', true);
 
@@ -722,7 +731,7 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        onFocusModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        onFocusModeChanged(listener: (edit: boolean, position: Point) => void) {
             this.focusEditModeListeners.push(listener);
         }
 
@@ -732,13 +741,13 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        unFocusModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        unFocusModeChanged(listener: (edit: boolean, position: Point) => void) {
             this.focusEditModeListeners = this.focusEditModeListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
 
-        private notifyFocusModeChanged(edit: boolean, position: {x: number; y: number}) {
+        private notifyFocusModeChanged(edit: boolean, position: Point) {
             var normalizedPosition;
             if (position) {
                 // position can be undefined when auto positioned
@@ -765,17 +774,17 @@ module api.ui.image {
             })
         }
 
-        onFocusPositionChanged(listener: (position: {x: number; y: number}) => void) {
+        onFocusPositionChanged(listener: (position: Point) => void) {
             this.focusPositionChangedListeners.push(listener);
         }
 
-        unFocusPositionChanged(listener: (position: {x: number; y: number}) => void) {
+        unFocusPositionChanged(listener: (position: Point) => void) {
             this.focusPositionChangedListeners = this.focusPositionChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyFocusPositionChanged(position: {x: number; y: number}) {
+        private notifyFocusPositionChanged(position: Point) {
             var normalizedPosition = this.normalizePoint(position);
             this.focusPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
@@ -809,7 +818,7 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        onCropModeChanged(listener: (edit: boolean, position: {x: number; y: number; w: number; h: number}) => void) {
+        onCropModeChanged(listener: (edit: boolean, position: Rect) => void) {
             this.cropEditModeListeners.push(listener);
         }
 
@@ -819,13 +828,13 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        unCropModeChanged(listener: (edit: boolean, position: {x: number; y: number; w: number; h: number}) => void) {
+        unCropModeChanged(listener: (edit: boolean, position: Rect) => void) {
             this.cropEditModeListeners = this.cropEditModeListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
 
-        private notifyCropModeChanged(edit: boolean, position: {x: number; y: number; w: number; h: number}) {
+        private notifyCropModeChanged(edit: boolean, position: Rect) {
             var normalizedPosition;
             if (position) {
                 // position can be undefined when auto positioned
@@ -852,17 +861,17 @@ module api.ui.image {
             })
         }
 
-        onCropPositionChanged(listener: (position: {x: number; y: number; w: number; h: number}) => void) {
+        onCropPositionChanged(listener: (position: Rect) => void) {
             this.cropPositionChangedListeners.push(listener);
         }
 
-        unCropPositionChanged(listener: (position: {x: number; y: number; w: number; h: number}) => void) {
+        unCropPositionChanged(listener: (position: Rect) => void) {
             this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyCropPositionChanged(position: {x: number; y: number; w: number; h: number}) {
+        private notifyCropPositionChanged(position: Rect) {
             var normalizedPosition = this.normalizeRect(position);
             this.cropPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);

@@ -3,6 +3,8 @@ module api.content {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
 
+    import Point = api.ui.image.Point;
+
     export interface ImageUploaderConfig extends MediaUploaderConfig {
         scaleWidth: boolean;
     }
@@ -11,7 +13,7 @@ module api.content {
 
         private images: api.dom.ImgEl[];
         private imageEditors: api.ui.image.ImageEditor[];
-        private focalEditModeListeners: {(edit: boolean, position: {x: number; y: number}): void}[];
+        private focalEditModeListeners: {(edit: boolean, position: Point): void}[];
 
         private initialWidth: number;
 
@@ -56,7 +58,7 @@ module api.content {
                 resolve();
 
             var imageEditor = new api.ui.image.ImageEditor(imgUrl);
-            imageEditor.onFocusModeChanged((edit, position) => {
+            imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
                 this.setResetVisible(!edit);
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
@@ -104,17 +106,17 @@ module api.content {
             });
         }
 
-        onFocalPointEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        onFocalPointEditModeChanged(listener: (edit: boolean, position: Point) => void) {
             this.focalEditModeListeners.push(listener);
         }
 
-        unFocalPointEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        unFocalPointEditModeChanged(listener: (edit: boolean, position: Point) => void) {
             this.focalEditModeListeners = this.focalEditModeListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyFocalPointEditModeChanged(edit: boolean, position: {x: number; y: number}) {
+        private notifyFocalPointEditModeChanged(edit: boolean, position: Point) {
             this.focalEditModeListeners.forEach((listener) => {
                 listener(edit, position);
             })
