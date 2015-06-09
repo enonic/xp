@@ -164,10 +164,10 @@ module api.form.inputtype.text.tiny {
 
         private createDockedPanel(): DockedPanel {
             var dockedPanel = new DockedPanel();
-            dockedPanel.addItem(LinkModalDialog.tabNames.content, this.createContentPanel());
-            dockedPanel.addItem(LinkModalDialog.tabNames.url, this.createUrlPanel(), this.isUrl());
-            dockedPanel.addItem(LinkModalDialog.tabNames.download, this.createDownloadPanel(), this.isDownloadLink());
-            dockedPanel.addItem(LinkModalDialog.tabNames.email, this.createEmailPanel(), this.isEmail());
+            dockedPanel.addItem(LinkModalDialog.tabNames.content, true, this.createContentPanel());
+            dockedPanel.addItem(LinkModalDialog.tabNames.url, true, this.createUrlPanel(), this.isUrl());
+            dockedPanel.addItem(LinkModalDialog.tabNames.download, true, this.createDownloadPanel(), this.isDownloadLink());
+            dockedPanel.addItem(LinkModalDialog.tabNames.email, true, this.createEmailPanel(), this.isEmail());
 
             return dockedPanel;
         }

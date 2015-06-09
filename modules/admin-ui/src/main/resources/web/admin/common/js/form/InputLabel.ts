@@ -12,7 +12,6 @@ module api.form {
             var wrapper = new api.dom.DivEl("wrapper");
             var label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(input.getLabel());
-            label.getEl().setAttribute('title', input.getLabel());
             wrapper.getEl().appendChild(label.getHTMLElement());
 
             if( input.getOccurrences().required() ) {
