@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;

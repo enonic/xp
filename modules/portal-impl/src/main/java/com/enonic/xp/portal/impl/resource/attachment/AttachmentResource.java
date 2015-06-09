@@ -7,10 +7,10 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 
 public final class AttachmentResource

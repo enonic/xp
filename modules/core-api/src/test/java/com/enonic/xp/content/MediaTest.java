@@ -4,9 +4,9 @@ import java.time.Instant;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
-import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.image.ImageAttachmentScale;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;

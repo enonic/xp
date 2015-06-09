@@ -7,12 +7,12 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
