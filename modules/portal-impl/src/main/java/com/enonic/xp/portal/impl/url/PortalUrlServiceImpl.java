@@ -130,7 +130,7 @@ public final class PortalUrlServiceImpl
                         id( id ).
                         filter( IMAGE_FILTER ).
                         format( IMAGE_FORMAT ).
-                        context( params.getContext() );
+                        portalRequest( params.getPortalRequest() );
 
                     final String imageUrl = imageUrl( imageUrlParams );
 

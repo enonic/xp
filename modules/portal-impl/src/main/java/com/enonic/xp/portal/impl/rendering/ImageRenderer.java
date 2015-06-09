@@ -41,7 +41,8 @@ public final class ImageRenderer
         if ( component.getImage() != null )
         {
             final String imageUrl = buildUrl( portalRequest, component.getImage() );
-            html.append( "<figure " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"" + type + "\">" );
+            html.append( "<figure " ).append( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE ).append( "=\"" ).append( type ).append(
+                "\">" );
             html.append( "<img style=\"width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
             if ( component.hasCaption() )
             {
