@@ -83,6 +83,8 @@
 
       min-height: 150px;
 
+      .transition(max-height 2s);
+
       @media screen and (max-height: 720px) {
         max-height: 350px;
         min-height: 100px;
@@ -185,6 +187,8 @@
   }
 
   .dependant-items {
+
+    .transition(max-height 2s, height 2s);
 
     &.item-list {
       padding-top: 10px;
