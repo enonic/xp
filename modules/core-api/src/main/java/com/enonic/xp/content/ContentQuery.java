@@ -1,4 +1,4 @@
-package com.enonic.xp.content.query;
+package com.enonic.xp.content;
 
 import java.util.Set;
 
