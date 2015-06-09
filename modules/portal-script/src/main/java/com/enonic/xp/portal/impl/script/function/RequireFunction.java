@@ -43,7 +43,7 @@ public final class RequireFunction
 
         if ( name.startsWith( "/" ) )
         {
-            return this.script.resolve( name );
+            return this.script.resolve( "/app" + name );
         }
 
         if ( name.startsWith( "./" ) )
