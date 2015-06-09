@@ -4,6 +4,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -13,8 +15,6 @@ import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;

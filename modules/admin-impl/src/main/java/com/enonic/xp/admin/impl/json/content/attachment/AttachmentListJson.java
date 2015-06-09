@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 
 public class AttachmentListJson
 {

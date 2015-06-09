@@ -3,8 +3,8 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;

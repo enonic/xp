@@ -1,4 +1,4 @@
-package com.enonic.xp.content.attachment.image;
+package com.enonic.xp.attachment;
 
 import com.google.common.annotations.Beta;
 
