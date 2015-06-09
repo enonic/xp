@@ -4,11 +4,8 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.rendering.Renderable;
-
 @Beta
 public abstract class Component
-    implements Renderable
 {
     private ComponentName name;
 

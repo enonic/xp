@@ -6,18 +6,18 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
-import com.enonic.xp.rendering.Renderable;
 
 import static org.junit.Assert.*;
 
 public class ComponentResourceTest
     extends RenderBaseResourceTest
 {
-    private Renderer<Renderable> renderer;
+    private Renderer renderer;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -28,7 +28,7 @@ public class ComponentResourceTest
         this.services.setRendererFactory( rendererFactory );
 
         this.renderer = Mockito.mock( Renderer.class );
-        Mockito.when( rendererFactory.getRenderer( Mockito.any( Renderable.class ) ) ).thenReturn( this.renderer );
+        Mockito.when( rendererFactory.getRenderer( Mockito.any( Object.class ) ) ).thenReturn( this.renderer );
 
         super.configure();
     }
@@ -50,7 +50,7 @@ public class ComponentResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        final ArgumentCaptor<Object> renderable = ArgumentCaptor.forClass( Object.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
@@ -100,7 +100,7 @@ public class ComponentResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         final ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        final ArgumentCaptor<Component> renderable = ArgumentCaptor.forClass( Component.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );

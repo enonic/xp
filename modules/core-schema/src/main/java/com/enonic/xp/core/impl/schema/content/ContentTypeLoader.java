@@ -25,11 +25,13 @@ final class ContentTypeLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentTypeLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( ".*/app/content-types/([^/]+)/content-type\\.xml" );
+    private final static Pattern PATTERN = Pattern.compile( ".*/app/content-types/([^/]+)/([^/]+)\\.xml" );
 
-    private final static String FILE = "content-type.xml";
+    private final static String FILES = "*.xml";
 
-    private final static String DIRECTORY = "app/content-types";
+    private final static String EXTENSION = ".xml";
+
+    private final static String DIRECTORY = "content-types";
 
     private final Bundle bundle;
 
@@ -76,7 +78,7 @@ final class ContentTypeLoader
     {
         final String localName = name.getLocalName();
         final String basePath = DIRECTORY + "/" + localName;
-        final URL url = this.bundle.getEntry( basePath + "/" + FILE );
+        final URL url = this.bundle.getEntry( basePath + "/" + localName + EXTENSION );
 
         if ( url == null )
         {
@@ -110,7 +112,7 @@ final class ContentTypeLoader
 
     private List<ContentTypeName> findNames()
     {
-        final Enumeration<URL> urls = this.bundle.findEntries( DIRECTORY, FILE, true );
+        final Enumeration<URL> urls = this.bundle.findEntries( DIRECTORY, FILES, true );
         if ( urls == null )
         {
             return Lists.newArrayList();
