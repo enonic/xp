@@ -11,9 +11,11 @@ module api.ui.tab {
             this.appendChild(this.labelEl);
         }
 
-        setLabel(value: string) {
+        setLabel(value: string, addTitle: boolean = true) {
             this.labelEl.setHtml(value, true);
-            this.labelEl.getEl().setAttribute('title', value);
+            if (addTitle) {
+                this.labelEl.getEl().setAttribute('title', value);
+            }
         }
     }
 }
