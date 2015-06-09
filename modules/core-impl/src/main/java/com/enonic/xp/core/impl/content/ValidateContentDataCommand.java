@@ -94,10 +94,17 @@ final class ValidateContentDataCommand
                 {
                     final ModuleKey moduleKey = moduleConfig.getModule();
 
-                    final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
+                    if ( siteService != null )
+                    {
+                        final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
 
-                    this.resultBuilder.addAll(
-                        new OccurrenceValidator( siteDescriptor.getForm() ).validate( moduleConfig.getConfig().getRoot() ) );
+                        if ( siteDescriptor != null )
+                        {
+                            this.resultBuilder.addAll(
+                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( moduleConfig.getConfig().getRoot() ) );
+                        }
+
+                    }
                 }
             }
         }

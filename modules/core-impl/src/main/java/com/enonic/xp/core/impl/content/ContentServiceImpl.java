@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -655,7 +657,7 @@ public class ContentServiceImpl
         this.mixinService = mixinService;
     }
 
-    @Reference
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
