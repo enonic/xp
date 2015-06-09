@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import com.enonic.xp.content.page.ComponentDataSerializer;
-import com.enonic.xp.content.page.region.ComponentType;
-import com.enonic.xp.content.page.region.ImageComponentType;
-import com.enonic.xp.content.page.region.LayoutComponentType;
-import com.enonic.xp.content.page.region.PartComponentType;
-import com.enonic.xp.content.page.region.TextComponentType;
+import com.enonic.xp.page.ComponentDataSerializer;
+import com.enonic.xp.page.region.ComponentType;
+import com.enonic.xp.page.region.ImageComponentType;
+import com.enonic.xp.page.region.LayoutComponentType;
+import com.enonic.xp.page.region.PartComponentType;
+import com.enonic.xp.page.region.TextComponentType;
 
 class ComponentDataSerializerProvider
 {

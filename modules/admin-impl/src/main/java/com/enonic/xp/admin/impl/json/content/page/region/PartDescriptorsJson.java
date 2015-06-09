@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.content.page.region.PartDescriptor;
-import com.enonic.xp.content.page.region.PartDescriptors;
+import com.enonic.xp.page.region.PartDescriptor;
+import com.enonic.xp.page.region.PartDescriptors;
 
 
 @SuppressWarnings("UnusedDeclaration")

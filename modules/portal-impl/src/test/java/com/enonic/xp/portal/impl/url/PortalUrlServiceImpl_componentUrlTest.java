@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
+import com.enonic.xp.page.region.PartComponent;
+import com.enonic.xp.page.region.Region;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 

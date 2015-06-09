@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.content.page.region.TextComponent;
+import com.enonic.xp.page.region.TextComponent;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;

@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.LayoutRegions;
-import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.region.LayoutComponent;
+import com.enonic.xp.page.region.LayoutRegions;
+import com.enonic.xp.page.region.Region;
 
 public class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent, LayoutComponent>

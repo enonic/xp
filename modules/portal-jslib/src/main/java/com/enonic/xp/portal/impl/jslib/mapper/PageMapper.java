@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.region.Region;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.region.Region;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

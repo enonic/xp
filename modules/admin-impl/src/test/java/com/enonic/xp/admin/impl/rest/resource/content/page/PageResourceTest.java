@@ -10,27 +10,27 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.icon.Icon;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.page.CreatePageParams;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageService;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.UpdatePageParams;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.page.CreatePageParams;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageService;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.UpdatePageParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.branch.Branch;
 
-import static com.enonic.xp.content.page.PageRegions.newPageRegions;
+import static com.enonic.xp.page.PageRegions.newPageRegions;
 
 public class PageResourceTest
     extends AbstractResourceTest

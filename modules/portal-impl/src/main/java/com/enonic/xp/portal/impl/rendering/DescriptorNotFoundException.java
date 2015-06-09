@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
 
-import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 
 public class DescriptorNotFoundException
     extends RuntimeException

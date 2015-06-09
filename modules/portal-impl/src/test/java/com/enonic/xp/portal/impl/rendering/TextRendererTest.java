@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.rendering;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.content.page.region.TextComponent;
+import com.enonic.xp.page.region.TextComponent;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;

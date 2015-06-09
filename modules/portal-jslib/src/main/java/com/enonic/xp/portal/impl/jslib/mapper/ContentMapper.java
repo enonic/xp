@@ -7,9 +7,9 @@ import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

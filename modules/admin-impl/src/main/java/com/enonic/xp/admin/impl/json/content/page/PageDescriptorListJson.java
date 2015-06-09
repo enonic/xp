@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.json.content.page;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.content.page.PageDescriptor;
-import com.enonic.xp.content.page.PageDescriptors;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptors;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PageDescriptorListJson

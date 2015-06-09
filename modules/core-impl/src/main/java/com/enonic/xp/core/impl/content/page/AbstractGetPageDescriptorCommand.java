@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.PageDescriptor;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;

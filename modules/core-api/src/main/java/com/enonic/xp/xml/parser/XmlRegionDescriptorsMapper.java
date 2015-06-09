@@ -1,7 +1,7 @@
 package com.enonic.xp.xml.parser;
 
-import com.enonic.xp.content.page.region.RegionDescriptor;
-import com.enonic.xp.content.page.region.RegionDescriptors;
+import com.enonic.xp.page.region.RegionDescriptor;
+import com.enonic.xp.page.region.RegionDescriptors;
 import com.enonic.xp.xml.DomElement;
 
 final class XmlRegionDescriptorsMapper

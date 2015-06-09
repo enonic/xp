@@ -6,11 +6,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.page.EditablePage;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageNotFoundException;
-import com.enonic.xp.content.page.UpdatePageParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.EditablePage;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageNotFoundException;
+import com.enonic.xp.page.UpdatePageParams;
 
 final class UpdatePageCommand
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.jslib.current;
 
-import com.enonic.xp.content.page.region.Component;
+import com.enonic.xp.page.region.Component;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.jslib.mapper.ComponentMapper;

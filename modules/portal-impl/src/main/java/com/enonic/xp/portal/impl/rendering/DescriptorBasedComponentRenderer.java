@@ -4,11 +4,11 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.content.page.region.Descriptor;
-import com.enonic.xp.content.page.region.DescriptorBasedComponent;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.region.Component;
+import com.enonic.xp.page.region.Descriptor;
+import com.enonic.xp.page.region.DescriptorBasedComponent;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;

@@ -1,18 +1,18 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.content.page.region.ComponentName;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.LayoutDescriptor;
-import com.enonic.xp.content.page.region.LayoutDescriptorNotFoundException;
-import com.enonic.xp.content.page.region.LayoutDescriptorService;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.PartDescriptor;
-import com.enonic.xp.content.page.region.PartDescriptorNotFoundException;
-import com.enonic.xp.content.page.region.PartDescriptorService;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.region.Component;
+import com.enonic.xp.page.region.ComponentName;
+import com.enonic.xp.page.region.LayoutComponent;
+import com.enonic.xp.page.region.LayoutDescriptor;
+import com.enonic.xp.page.region.LayoutDescriptorNotFoundException;
+import com.enonic.xp.page.region.LayoutDescriptorService;
+import com.enonic.xp.page.region.PartComponent;
+import com.enonic.xp.page.region.PartDescriptor;
+import com.enonic.xp.page.region.PartDescriptorNotFoundException;
+import com.enonic.xp.page.region.PartDescriptorService;
 
 class GetComponentByNameCommand
 {
