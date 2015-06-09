@@ -58,6 +58,11 @@ module api.ui.security.acl {
             return this;
         }
 
+        setButtonLabel(value: string): AccessSelector {
+            this.getTabMenuButtonEl().setLabel(value, false);
+            return this;
+        }
+
         private findOptionByValue(value: Access): AccessSelectorOption {
             for (var i = 0; i < AccessSelector.OPTIONS.length; i++) {
                 var option = AccessSelector.OPTIONS[i];
