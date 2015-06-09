@@ -25,13 +25,13 @@ final class RelationshipTypeLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( RelationshipTypeLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( ".*/relationship-types/([^/]+)/([^/]+)\\.xml" );
+    private final static Pattern PATTERN = Pattern.compile( ".*/app/relationship-types/([^/]+)/([^/]+)\\.xml" );
 
     private final static String FILES = "*.xml";
 
     private final static String EXTENSION = ".xml";
 
-    private final static String DIRECTORY = "relationship-types";
+    private final static String DIRECTORY = "app/relationship-types";
 
     private final Bundle bundle;
 

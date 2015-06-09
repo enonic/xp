@@ -35,7 +35,7 @@ public final class SchemaActivator
 
     private boolean isModule( final Bundle bundle )
     {
-        return bundle.getEntry( "site.xml" ) != null;
+        return bundle.getEntry( "app/site.xml" ) != null;
     }
 
     @Override
