@@ -184,12 +184,19 @@ module api.dom {
         }
 
 
-        public findChildById(id: string): Element {
-            var result: Element[] = this.children.filter((child: Element) => {
-                return child.getId() == id;
-            });
-
-            return result.length > 0 ? result[0] : null;
+        public findChildById(id: string, deep: boolean = false): Element {
+            for (var i = 0; i < this.children.length; i++) {
+                var child = this.children[i];
+                if (child.getId() == id) {
+                    return child;
+                } else if (deep) {
+                    var found = child.findChildById(id, deep);
+                    if (found) {
+                        return found;
+                    }
+                }
+            }
+            return null;
         }
 
         init() {
