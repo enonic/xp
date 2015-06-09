@@ -13,7 +13,7 @@ import com.enonic.xp.query.expr.FunctionExpr;
 
 public class FunctionQueryBuilderFactory
 {
-    private static final String NGRAM_SEARCH_ANALYSER_NAME = "ngram_search";
+    private static final String NGRAM_SEARCH_ANALYSER_NAME = "content_default";
 
     public static QueryBuilder create( final FunctionExpr function )
     {
