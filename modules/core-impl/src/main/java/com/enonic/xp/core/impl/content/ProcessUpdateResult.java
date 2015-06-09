@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.attachment.CreateAttachments;
 
 
 class ProcessUpdateResult

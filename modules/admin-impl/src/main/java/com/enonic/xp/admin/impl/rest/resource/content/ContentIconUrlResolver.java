@@ -2,9 +2,9 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 

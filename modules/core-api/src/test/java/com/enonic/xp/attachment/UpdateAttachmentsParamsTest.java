@@ -1,4 +1,4 @@
-package com.enonic.xp.content.attachment;
+package com.enonic.xp.attachment;
 
 import org.junit.Test;
 

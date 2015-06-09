@@ -10,14 +10,14 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
-import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
