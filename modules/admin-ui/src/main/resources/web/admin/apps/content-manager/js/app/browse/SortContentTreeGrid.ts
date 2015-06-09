@@ -111,7 +111,11 @@ module app.browse {
 
         private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
-            wrapper.getEl().setTitle(value);
+
+            if (!api.util.StringHelper.isBlank(value)) {
+                wrapper.getEl().setTitle(value);
+            }
+
             var icon = new api.dom.DivEl("icon-menu3 drag-icon");
             wrapper.getEl().setInnerHtml(icon.toString());
             return wrapper.toString();
