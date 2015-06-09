@@ -1,14 +1,9 @@
 package com.enonic.xp.core.impl.module;
 
-import java.io.IOException;
-import java.net.URL;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -48,38 +43,7 @@ final class ModuleBuilder
         module.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
         module.classLoader = new BundleClassLoader( this.bundle );
 
-        readXmlDescriptor( module );
-
         return module;
-    }
-
-    private static void readXmlDescriptor( final ModuleImpl module )
-    {
-        final URL url = module.bundle.getResource( SITE_XML );
-        final String xml = parseSiteXml( url );
-
-        final XmlSiteParser parser = new XmlSiteParser();
-        parser.module( module );
-        parser.source( xml );
-        parser.parse();
-    }
-
-    private static String parseSiteXml( final URL siteXmlURL )
-    {
-        try
-        {
-            return Resources.toString( siteXmlURL, Charsets.UTF_8 );
-        }
-        catch ( final Exception e )
-        {
-            throw new RuntimeException( "Invalid site.xml file", e );
-        }
-    }
-
-    private static String parseModuleXml( final URL moduleResource )
-        throws IOException
-    {
-        return Resources.toString( moduleResource, Charsets.UTF_8 );
     }
 
     public static boolean isModule( final Bundle bundle )

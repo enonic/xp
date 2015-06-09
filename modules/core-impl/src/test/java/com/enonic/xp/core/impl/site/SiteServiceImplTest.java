@@ -15,8 +15,6 @@ import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.module.ModuleService;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.Assert.*;
@@ -32,9 +30,7 @@ public class SiteServiceImplTest
 
     private ModuleKey moduleKey;
 
-    private Form form;
-
-    private MixinNames metaSteps;
+    private SiteDescriptor mockedSiteDescriptor;
 
     private Site site;
 
@@ -45,19 +41,12 @@ public class SiteServiceImplTest
     {
         moduleKey = ModuleKey.from( MODULE_NAME );
 
-        //Creates SiteDescriptor sub objects
-        form = Form.newForm().
-            build();
-        metaSteps = MixinNames.empty();
+        //Creates a mocked SiteDescriptor
+        mockedSiteDescriptor = SiteDescriptor.create().build();
 
-        //Creates a mocked Module
-        Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getConfig() ).thenReturn( form );
-        Mockito.when( module.getMetaSteps() ).thenReturn( metaSteps );
-
-        //Creates a mocked ModuleService
-        ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( moduleKey ) ).thenReturn( module );
+        //Creates a mocked SiteDescriptorRegistry
+        SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
+        Mockito.when( siteDescriptorRegistry.get( moduleKey ) ).thenReturn( mockedSiteDescriptor );
 
         //Creates a mocked ContentService
         ContentService contentService = Mockito.mock( ContentService.class );
@@ -70,7 +59,7 @@ public class SiteServiceImplTest
 
         //Creates the service to test
         siteService = new SiteServiceImpl();
-        siteService.setModuleService( moduleService );
+        siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
         siteService.setContentService( contentService );
     }
 
@@ -78,8 +67,7 @@ public class SiteServiceImplTest
     public void get_descriptor()
     {
         final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
-        assertEquals( form, siteDescriptor.getForm() );
-        assertEquals( metaSteps, siteDescriptor.getMetaSteps() );
+        assertEquals( mockedSiteDescriptor, siteDescriptor );
     }
 
     @Test

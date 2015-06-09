@@ -12,9 +12,7 @@ import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -24,6 +22,8 @@ import com.enonic.xp.schema.content.validator.OccurrenceValidator;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 
 final class ValidateContentDataCommand
 {
@@ -33,7 +33,7 @@ final class ValidateContentDataCommand
 
     private final MixinService mixinService;
 
-    private final ModuleService moduleService;
+    private final SiteService siteService;
 
     private final PropertyTree contentData;
 
@@ -47,7 +47,7 @@ final class ValidateContentDataCommand
     {
         contentTypeService = builder.contentTypeService;
         mixinService = builder.mixinService;
-        moduleService = builder.moduleService;
+        siteService = builder.siteService;
         contentData = builder.contentData;
         extraDatas = builder.extraDatas;
         contentType = builder.contentType;
@@ -94,9 +94,17 @@ final class ValidateContentDataCommand
                 {
                     final ModuleKey moduleKey = siteConfig.getModule();
 
-                    final Module module = moduleService.getModule( moduleKey );
+                    if ( siteService != null )
+                    {
+                        final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
 
-                    this.resultBuilder.addAll( new OccurrenceValidator( module.getConfig() ).validate( siteConfig.getConfig().getRoot() ) );
+                        if ( siteDescriptor != null )
+                        {
+                            this.resultBuilder.addAll(
+                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
+                        }
+
+                    }
                 }
             }
         }
@@ -139,7 +147,7 @@ final class ValidateContentDataCommand
 
         private MixinService mixinService;
 
-        private ModuleService moduleService;
+        private SiteService siteService;
 
         private PropertyTree contentData;
 
@@ -163,9 +171,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder moduleService( ModuleService moduleService )
+        public Builder siteService( SiteService siteService )
         {
-            this.moduleService = moduleService;
+            this.siteService = siteService;
             return this;
         }
 

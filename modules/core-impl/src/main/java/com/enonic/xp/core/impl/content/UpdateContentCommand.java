@@ -191,7 +191,7 @@ final class UpdateContentCommand
             contentType( edited.getType() ).
             extradatas( edited.getAllExtraData() ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().
             execute();

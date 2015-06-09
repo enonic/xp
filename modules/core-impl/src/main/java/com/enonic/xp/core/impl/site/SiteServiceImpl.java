@@ -10,9 +10,7 @@ import com.enonic.xp.content.site.CreateSiteParams;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -23,23 +21,19 @@ public class SiteServiceImpl
 {
     private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
-    private ModuleService moduleService;
+    private SiteDescriptorRegistry siteDescriptorRegistry;
 
     private ContentService contentService;
 
     @Override
     public SiteDescriptor getDescriptor( final ModuleKey moduleKey )
     {
-        final Module module = this.moduleService.getModule( moduleKey );
-        if ( module == null )
+        final SiteDescriptor siteDescriptor = this.siteDescriptorRegistry.get( moduleKey );
+        if ( siteDescriptor == null )
         {
             return null;
         }
-
-        return SiteDescriptor.create().
-            form( module.getConfig() ).
-            metaSteps( module.getMetaSteps() ).
-            build();
+        return siteDescriptor;
     }
 
     @Override
@@ -73,14 +67,14 @@ public class SiteServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
-    {
-        this.moduleService = moduleService;
-    }
-
-    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setSiteDescriptorRegistry( final SiteDescriptorRegistry siteDescriptorRegistry )
+    {
+        this.siteDescriptorRegistry = siteDescriptorRegistry;
     }
 }

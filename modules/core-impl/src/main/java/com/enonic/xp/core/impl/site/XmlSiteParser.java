@@ -1,11 +1,13 @@
-package com.enonic.xp.core.impl.module;
+package com.enonic.xp.core.impl.site;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlFormMapper;
 import com.enonic.xp.xml.parser.XmlObjectParser;
@@ -21,11 +23,19 @@ final class XmlSiteParser
 
     private static final String MIXIN_ATTRIBUTE_NAME = "mixin";
 
-    private ModuleImpl module;
+    private ModuleKey moduleKey;
 
-    public XmlSiteParser module( final ModuleImpl module )
+    private SiteDescriptor.Builder siteDescriptorBuilder;
+
+    public XmlSiteParser moduleKey( final ModuleKey moduleKey )
     {
-        this.module = module;
+        this.moduleKey = moduleKey;
+        return this;
+    }
+
+    public XmlSiteParser siteDescriptorBuilder( final SiteDescriptor.Builder siteDescriptorBuilder )
+    {
+        this.siteDescriptorBuilder = siteDescriptorBuilder;
         return this;
     }
 
@@ -35,10 +45,9 @@ final class XmlSiteParser
     {
         assertTagName( root, ROOT_TAG_NAME );
 
-        final XmlFormMapper formMapper = new XmlFormMapper( this.module.moduleKey );
-        this.module.config = formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) );
-
-        this.module.metaSteps = MixinNames.from( parseMetaSteps( root ) );
+        final XmlFormMapper formMapper = new XmlFormMapper( moduleKey );
+        this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) ) );
+        this.siteDescriptorBuilder.metaSteps( MixinNames.from( parseMetaSteps( root ) ) );
     }
 
     private List<MixinName> parseMetaSteps( final DomElement root )
@@ -48,7 +57,7 @@ final class XmlSiteParser
 
     private MixinName toMixinName( final DomElement metaStep )
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( this.module.getKey() );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( moduleKey );
         final String name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         return resolver.toMixinName( name );
     }

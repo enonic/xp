@@ -10,11 +10,9 @@ import org.osgi.framework.Bundle;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.form.Form;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
-import com.enonic.xp.schema.mixin.MixinNames;
 
 final class ModuleImpl
     implements Module
@@ -33,11 +31,7 @@ final class ModuleImpl
 
     protected String systemVersion;
 
-    protected Form config;
-
     protected Bundle bundle;
-
-    protected MixinNames metaSteps;
 
     protected ClassLoader classLoader;
 
@@ -98,21 +92,9 @@ final class ModuleImpl
     }
 
     @Override
-    public Form getConfig()
-    {
-        return config;
-    }
-
-    @Override
     public Bundle getBundle()
     {
         return this.bundle;
-    }
-
-    @Override
-    public MixinNames getMetaSteps()
-    {
-        return metaSteps;
     }
 
     @Override
@@ -178,8 +160,6 @@ final class ModuleImpl
             add( "url", url ).
             add( "vendorName", vendorName ).
             add( "vendorUrl", vendorUrl ).
-            add( "metaSteps", metaSteps ).
-            add( "config", config ).
             omitNullValues().
             toString();
     }
