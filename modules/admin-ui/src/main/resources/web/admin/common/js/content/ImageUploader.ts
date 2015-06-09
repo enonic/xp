@@ -56,9 +56,12 @@ module api.content {
                 resolve();
 
             var imageEditor = new api.ui.image.ImageEditor(imgUrl);
-            imageEditor.onFocusEditModeChanged((edit, position) => {
+            imageEditor.onFocusModeChanged((edit, position) => {
                 this.setResetVisible(!edit);
                 this.notifyFocalPointEditModeChanged(edit, position);
+            });
+            imageEditor.onCropModeChanged((edit, crop) => {
+                this.setResetVisible(!edit);
             });
             var image = imageEditor.getImage();
 

@@ -10,14 +10,25 @@ module api.ui.image {
         private image: ImgEl;
         private clip: api.dom.Element;
 
-        private position: {x: number; y: number} = {x: 0, y: 0};
-        private revertToPosition: {x: number; y: number};
-        private autoPositioned: boolean;
-        private revertAutoPositioned: boolean;
+        private focusData: {x: number; y: number; r: number; auto: boolean} = {
+            x: 0,
+            y: 0,
+            r: 0,
+            auto: true
+        };
+        private revertFocusData: {x: number; y: number; r: number; auto: boolean};
+
+        private cropData: {x: number; y: number; w: number; h: number; auto: boolean} = {
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0,
+            auto: true
+        };
+        private revertCropData: {x: number; y: number; w: number; h: number; auto: boolean};
 
         private imgW: number;
         private imgH: number;
-        private imgR: number;
 
         private mouseUpListener;
         private mouseMoveListener;
@@ -29,28 +40,47 @@ module api.ui.image {
         private focalPointButton: Button;
         private cropButton: Button;
 
-        private positionChangedListeners: {(position: {x: number; y: number}): void}[] = [];
-        private autoPositionedChangedListeners: {(autoPositioned: boolean): void}[] = [];
-        private radiusChangedListeners: {(r: number): void}[] = [];
+        private focusPositionChangedListeners: {(position: {x: number; y: number}): void}[] = [];
+        private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
+        private focusRadiusChangedListeners: {(r: number): void}[] = [];
         private focusEditModeListeners: {(edit: boolean, position: {x: number; y:number}): void}[] = [];
+
+        private cropPositionChangedListeners: {(position: {x: number; y: number; w: number; h: number}): void}[] = [];
+        private autoCropChangedListeners: {(auto: boolean): void}[] = [];
+        private cropEditModeListeners: {(edit: boolean, position: {x: number; y:number; w: number; h: number}): void}[] = [];
 
         constructor(src?: string) {
             super('image-editor');
 
             this.canvas = new DivEl('image-canvas');
 
-            this.image = new ImgEl(null, 'image-image');
+            this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => this.updateImageDimensions());
 
-            var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="image-clip">' +
-                           '    <clipPath id="clipPath">' +
-                           '        <circle cx="50" cy="50" r="50" class="clip-circle"/>' +
-                           '    </clipPath>' +
-                           '    <image width="100" height="100" xlink:href="' + ImgEl.PLACEHOLDER + '" clip-path="url(#clipPath)"/>' +
-                           '    <circle cx="50" cy="50" r="50" stroke="red" fill-opacity="0" stroke-width="4" class="stroke-circle"/>' +
+            var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
+                           '    <image width="100" height="100" xlink:href="' + ImgEl.PLACEHOLDER + '"/>' +
+                           '    <g class="edit-group focus-group">' +
+                           '        <clipPath id="focalClipPath">' +
+                           '            <circle cx="0" cy="0" r="0" class="clip-circle"/>' +
+                           '        </clipPath>' +
+                           '        <circle cx="0" cy="0" r="0" stroke="red" fill-opacity="0" stroke-width="4" class="stroke-circle"/>' +
+                           '    </g>' +
+                           '    <g class="edit-group crop-group">' +
+                           '        <clipPath id="cropClipPath">' +
+                           '            <rect x="0" y="0" width="0" height="0"/>' +
+                           '        </clipPath>' +
+                           '        <svg id="drag-handle">' +
+                           '            <defs>' +
+                           '                <polygon id="drag-triangle" class="drag-triangle" points="8,0,16,8,0,8"/>' +
+                           '            </defs>' +
+                           '            <circle cx="16" cy="16" r="16"/>' +
+                           '            <use xlink:href="#drag-triangle" x="8" y="6"/>' +
+                           '            <use xlink:href="#drag-triangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
+                           '        </svg>' +
+                           '    </g>' +
                            '</svg>';
 
-            this.clip = api.dom.Element.fromString(clipHtml, false);
+            this.clip = api.dom.Element.fromString(clipHtml);
             this.canvas.appendChildren(this.image, this.clip);
 
             this.appendChildren(this.canvas, this.createToolbar());
@@ -84,28 +114,67 @@ module api.ui.image {
             return this.image.getSrc();
         }
 
+        private setImageClipPath(path: string) {
+            var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
+            image.setAttribute('clip-path', 'url(#' + path + ')');
+        }
+
         /**
-         * Converts position from px to %
-         * @param position
+         * Converts point from px to %
+         * @param point
          * @returns {{x: number, y: number}}
          */
-        private normalizePosition(position: {x: number; y: number}): {x: number; y: number} {
+        private normalizePoint(point: {x: number; y: number}): {x: number; y: number} {
             return {
-                x: position.x / this.imgW,
-                y: position.y / this.imgH
+                x: point.x / this.imgW,
+                y: point.y / this.imgH
             }
         }
 
         /**
-         * Converts position from % to px
+         * Converts point from % to px
          * @param x
          * @param y
          * @returns {{x: number, y: number}}
          */
-        private denormalizePosition(x: number, y: number): {x: number; y: number} {
+        private denormalizePoint(x: number, y: number): {x: number; y: number} {
             return {
                 x: x * this.imgW,
                 y: y * this.imgH
+            }
+        }
+
+        /**
+         * Converts rectangle from px to %
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @returns {{x: number, y: number, w: number, h: number}}
+         */
+        private normalizeRect(rect: {x: number; y: number; w: number; h: number}): {x: number; y: number; w: number; h: number} {
+            return {
+                x: rect.x / this.imgW,
+                y: rect.y / this.imgH,
+                w: rect.w / this.imgW,
+                h: rect.h / this.imgH
+            }
+        }
+
+        /**
+         * Converts rectangle from % to px
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @returns {{x: number, y: number, w: number, h: number}}
+         */
+        private denormalizeRect(x: number, y: number, w: number, h: number): {x: number; y: number; w: number; h: number} {
+            return {
+                x: x * this.imgW,
+                y: y * this.imgH,
+                w: w * this.imgW,
+                h: h * this.imgH
             }
         }
 
@@ -135,6 +204,10 @@ module api.ui.image {
             return Math.max(0, Math.min(this.imgH, y));
         }
 
+        private restrainRadius(r: number) {
+            return Math.max(0, Math.min(this.imgH, this.imgW, r));
+        }
+
         private getOffsetX(e: MouseEvent): number {
             return e.clientX - this.getEl().getOffset().left;
         }
@@ -155,17 +228,25 @@ module api.ui.image {
                         imgEl.getPaddingTop() + imgEl.getPaddingBottom();
 
             // calculate radius first as it will be needed when setting position
-            var autoPositioned = this.autoPositioned;
+            var autoPositioned = this.focusData.auto;
             this.setFocusRadius(0.25);
             this.setFocusAutoPositioned(autoPositioned);
 
-            if (this.isImageLoaded() && this.revertToPosition) {
-                // position was set while image was not yet loaded
-                this.setFocusPosition(this.revertToPosition.x, this.revertToPosition.y);
-                this.revertToPosition = undefined;
-            } else if (this.autoPositioned) {
+            if (this.isImageLoaded() && this.revertFocusData) {
+                // position was set while image was not yet loaded ( saved in 0-1 format )
+                this.setFocusPosition(this.revertFocusData.x, this.revertFocusData.y);
+                this.revertFocusData = undefined;
+            } else if (this.focusData.auto) {
                 // set position to center by default
                 this.resetFocusPosition();
+            }
+
+            if (this.isImageLoaded() && this.revertCropData) {
+                // crop was set while images was not yet loaded ( saved in 0-1 format );
+                this.setCropPosition(this.revertCropData.x, this.revertCropData.y, this.revertCropData.w, this.revertCropData.h);
+                this.revertCropData = undefined;
+            } else if (this.cropData.auto) {
+                this.resetCropPosition();
             }
 
             var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
@@ -173,19 +254,8 @@ module api.ui.image {
             image.setAttribute('height', this.imgH.toString());
 
             if (this.image.isLoaded()) {
-                this.updateMaskPosition();
-            }
-        }
-
-        private updateMaskPosition() {
-            var clipEl = this.clip.getHTMLElement(),
-                circles = clipEl.getElementsByTagName('circle');
-
-            for (var i = 0; i < circles.length; i++) {
-                var circle = <Element> circles[i];
-                circle.setAttribute('r', this.imgR.toString());
-                circle.setAttribute('cx', this.position.x.toString());
-                circle.setAttribute('cy', this.position.y.toString());
+                this.updateFocusMaskPosition();
+                this.updateCropMaskPosition();
             }
         }
 
@@ -224,7 +294,8 @@ module api.ui.image {
          */
 
         setFocusEditMode(edit: boolean, applyChanges: boolean = true) {
-            this.toggleClass('edit-focus', edit);
+            this.toggleClass('edit-mode edit-focus', edit);
+            this.setImageClipPath('focalClipPath');
             this.setShaderVisible(edit);
 
             this.buttonsContainer.setVisible(!edit);
@@ -232,21 +303,26 @@ module api.ui.image {
 
             if (edit) {
                 this.bindFocusMouseListeners();
-                this.revertToPosition = this.getFocusPositionPx();
-                this.revertAutoPositioned = this.autoPositioned;
+                var focusPosition = this.getFocusPositionPx();
+                this.revertFocusData = {
+                    x: focusPosition.x,
+                    y: focusPosition.y,
+                    r: this.getFocusRadiusPx(),
+                    auto: this.focusData.auto
+                };
                 // update mask position in case it was updated during stand by
-                this.updateMaskPosition();
+                this.updateFocusMaskPosition();
             } else {
                 this.unbindFocusMouseListeners();
                 if (!applyChanges) {
-                    this.setFocusPositionPx(this.revertToPosition);
-                    this.setFocusAutoPositioned(this.revertAutoPositioned);
+                    this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y});
+                    this.setFocusRadiusPx(this.revertFocusData.r);
+                    this.setFocusAutoPositioned(this.revertFocusData.auto);
                 }
-                this.revertToPosition = undefined;
-                this.revertAutoPositioned = undefined;
+                this.revertFocusData = undefined;
             }
             // notify position updated in case we exit edit mode and apply changes
-            this.notifyFocusEditModeChanged(edit, !edit && applyChanges ? this.position : undefined);
+            this.notifyFocusModeChanged(edit, !edit && applyChanges ? this.getFocusPosition() : undefined);
         }
 
         isFocusEditMode(): boolean {
@@ -261,30 +337,31 @@ module api.ui.image {
          */
         setFocusPosition(x: number, y: number) {
             if (this.isImageLoaded()) {
-                // placeholder image is 1x1 so don't count it
-                this.setFocusPositionPx(this.denormalizePosition(x, y));
+                this.setFocusPositionPx(this.denormalizePoint(x, y));
             } else {
                 // use revert position to temporary save values until the image is loaded
-                this.revertToPosition = {
+                this.revertFocusData = {
                     x: x,
-                    y: y
+                    y: y,
+                    r: this.focusData.r,
+                    auto: this.focusData.auto
                 }
             }
         }
 
         private setFocusPositionPx(position: {x: number; y: number}) {
-            var oldX = this.position.x,
-                oldY = this.position.y;
+            var oldX = this.focusData.x,
+                oldY = this.focusData.y;
 
-            this.position.x = this.restrainWidth(position.x);
-            this.position.y = this.restrainHeight(position.y);
+            this.focusData.x = this.restrainWidth(position.x);
+            this.focusData.y = this.restrainHeight(position.y);
             this.setFocusAutoPositioned(false);
 
-            if (oldX != this.position.x || oldY != this.position.y) {
-                this.notifyFocusPositionChanged(this.position);
+            if (oldX != this.focusData.x || oldY != this.focusData.y) {
+                this.notifyFocusPositionChanged(this.focusData);
 
-                if (this.image.isLoaded()) {
-                    this.updateMaskPosition();
+                if (this.image.isLoaded() && this.isFocusEditMode()) {
+                    this.updateFocusMaskPosition();
                 }
             }
         }
@@ -294,13 +371,13 @@ module api.ui.image {
          * @returns {{x, y}|{x: number, y: number}}
          */
         getFocusPosition(): {x: number; y: number} {
-            return this.normalizePosition(this.getFocusPositionPx());
+            return this.normalizePoint(this.getFocusPositionPx());
         }
 
         private getFocusPositionPx(): {x: number; y: number} {
             return {
-                x: this.position.x,
-                y: this.position.y
+                x: this.focusData.x,
+                y: this.focusData.y
             }
         }
 
@@ -314,15 +391,15 @@ module api.ui.image {
         }
 
         private setFocusRadiusPx(r: number) {
-            var oldR = this.imgR;
-            this.imgR = r;
+            var oldR = this.focusData.r;
+            this.focusData.r = this.restrainRadius(r);
             this.setFocusAutoPositioned(false);
 
-            if (oldR != this.imgR) {
-                this.notifyFocusRadiusChanged(this.imgR);
+            if (oldR != this.focusData.r) {
+                this.notifyFocusRadiusChanged(this.focusData.r);
 
-                if (this.image.isLoaded()) {
-                    this.updateMaskPosition();
+                if (this.image.isLoaded() && this.isFocusEditMode()) {
+                    this.updateFocusMaskPosition();
                 }
             }
         }
@@ -336,14 +413,14 @@ module api.ui.image {
         }
 
         private getFocusRadiusPx(): number {
-            return this.imgR;
+            return this.focusData.r;
         }
 
         private setFocusAutoPositioned(auto: boolean) {
-            var autoPositionedChanged = this.autoPositioned != auto;
-            this.autoPositioned = auto;
+            var autoChanged = this.focusData.auto != auto;
+            this.focusData.auto = auto;
             this.focalPointButton.toggleClass('manual', !auto);
-            if (autoPositionedChanged) {
+            if (autoChanged) {
                 this.notifyFocusAutoPositionedChanged(auto);
             }
         }
@@ -354,14 +431,17 @@ module api.ui.image {
 
             this.clip.onMouseDown((event: MouseEvent) => {
                 mouseDown = true;
-                lastPos = {x: this.getOffsetX(event), y: this.getOffsetY(event)};
+                lastPos = {
+                    x: this.getOffsetX(event),
+                    y: this.getOffsetY(event)
+                };
             });
 
             this.mouseMoveListener = (event: MouseEvent) => {
                 if (mouseDown) {
                     var restrainedPos = {
-                        x: this.restrainWidth(this.position.x + this.getOffsetX(event) - lastPos.x),
-                        y: this.restrainHeight(this.position.y + this.getOffsetY(event) - lastPos.y)
+                        x: this.restrainWidth(this.focusData.x + this.getOffsetX(event) - lastPos.x),
+                        y: this.restrainHeight(this.focusData.y + this.getOffsetY(event) - lastPos.y)
                     };
                     this.setFocusPositionPx(restrainedPos);
 
@@ -400,9 +480,9 @@ module api.ui.image {
             var cancelButton = new Button('Cancel');
             cancelButton.onClicked((event: MouseEvent) => this.setFocusEditMode(false, false));
 
-            this.onFocusAutoPositionedChanged((autoPositioned) => {
-                resetButton.setEnabled(!autoPositioned);
-                setFocusButton.setEnabled(!autoPositioned);
+            this.onFocusAutoPositionedChanged((auto) => {
+                resetButton.setEnabled(!auto);
+                setFocusButton.setEnabled(!auto);
             });
 
             var focalButtonsContainer = new DivEl('edit-container');
@@ -411,20 +491,133 @@ module api.ui.image {
             return focalButtonsContainer;
         }
 
+        private updateFocusMaskPosition() {
+            var focusGroup = <Element> this.clip.getHTMLElement().getElementsByClassName('focus-group')[0],
+                circles = focusGroup.getElementsByTagName('circle');
+
+            for (var i = 0; i < circles.length; i++) {
+                var circle = <Element> circles[i];
+                circle.setAttribute('r', this.focusData.r.toString());
+                circle.setAttribute('cx', this.focusData.x.toString());
+                circle.setAttribute('cy', this.focusData.y.toString());
+            }
+        }
+
         /*
          *  Crop related methods
          */
 
         setCropEditMode(edit: boolean, applyChanges: boolean = true) {
-            this.toggleClass('edit-crop', edit);
+            this.toggleClass('edit-mode edit-crop', edit);
+            this.setImageClipPath('cropClipPath');
             this.setShaderVisible(edit);
 
             this.buttonsContainer.setVisible(!edit);
             this.cropButtonsContainer.setVisible(edit);
+
+            if (edit) {
+                this.bindCropMouseListeners();
+                var cropPosition = this.getCropPositionPx();
+                this.revertCropData = {
+                    x: cropPosition.x,
+                    y: cropPosition.y,
+                    w: cropPosition.w,
+                    h: cropPosition.h,
+                    auto: this.cropData.auto
+                };
+                // update mask position in case it was updated during stand by
+                this.updateCropMaskPosition();
+            } else {
+                this.unbindCropMouseListeners();
+                if (!applyChanges) {
+                    this.setCropPositionPx(this.revertCropData);
+                    this.setCropAutoPositioned(this.revertCropData.auto);
+                }
+                this.revertCropData = undefined;
+            }
+            // notify position updated in case we exit edit mode and apply changes
+            this.notifyCropModeChanged(edit, !edit && applyChanges ? this.getCropPosition() : undefined);
         }
 
         isCropEditMode(): boolean {
             return this.hasClass('edit-crop');
+        }
+
+        /**
+         * Sets the center of the focal point
+         * @param x horizontal value in 0-1 interval
+         * @param y vertical value in 0-1 interval
+         * @returns {undefined}
+         */
+        setCropPosition(x: number, y: number, w: number, h: number) {
+            if (this.isImageLoaded()) {
+                this.setCropPositionPx(this.denormalizeRect(x, y, w, h));
+            } else {
+                // use revert position to temporary save values until the image is loaded
+                this.revertCropData = {
+                    x: x,
+                    y: y,
+                    w: w,
+                    h: h,
+                    auto: this.cropData.auto
+                }
+            }
+        }
+
+        private setCropPositionPx(crop: {x: number; y: number; w: number; h: number}) {
+            var oldX = this.cropData.x,
+                oldY = this.cropData.y,
+                oldW = this.cropData.w,
+                oldH = this.cropData.h;
+
+            this.cropData.x = this.restrainWidth(crop.x);
+            this.cropData.y = this.restrainHeight(crop.y);
+            this.cropData.w = this.restrainWidth(crop.w);
+            this.cropData.h = this.restrainHeight(crop.h);
+            this.setCropAutoPositioned(false);
+
+            if (oldX != this.cropData.x ||
+                oldY != this.cropData.y ||
+                oldW != this.cropData.w ||
+                oldH != this.cropData.h) {
+
+                this.notifyCropPositionChanged(this.cropData);
+
+                if (this.image.isLoaded() && this.isCropEditMode()) {
+                    this.updateCropMaskPosition();
+                }
+            }
+        }
+
+        /**
+         * Returns the center of the focal point as 0-1 values
+         * @returns {{x, y}|{x: number, y: number}}
+         */
+        getCropPosition(): {x: number; y: number; w: number; h: number} {
+            return this.normalizeRect(this.getCropPositionPx());
+        }
+
+        private getCropPositionPx(): {x: number; y: number; w: number; h: number} {
+            return {
+                x: this.cropData.x,
+                y: this.cropData.y,
+                w: this.cropData.w,
+                h: this.cropData.h
+            }
+        }
+
+        resetCropPosition() {
+            this.setCropPosition(0, 0, 1, 1);
+            this.setCropAutoPositioned(true);
+        }
+
+        private setCropAutoPositioned(auto: boolean) {
+            var autoChanged = this.cropData.auto != auto;
+            this.cropData.auto = auto;
+            this.cropButton.toggleClass('manual', !auto);
+            if (autoChanged) {
+                this.notifyCropAutoPositionedChanged(auto);
+            }
         }
 
         private createCropButtonsContainer(): DivEl {
@@ -432,22 +625,91 @@ module api.ui.image {
             cropButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => this.setCropEditMode(false));
 
             var resetButton = new Button('Reset');
-            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
-                console.log('crop reset');
-            });
+            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => this.resetCropPosition());
 
             var cancelButton = new Button('Cancel');
             cancelButton.onClicked((event: MouseEvent) => this.setCropEditMode(false, false));
 
-            this.onFocusAutoPositionedChanged((autoPositioned) => {
-                resetButton.setEnabled(!autoPositioned);
-                cropButton.setEnabled(!autoPositioned);
+            this.onCropAutoPositionedChanged((auto) => {
+                resetButton.setEnabled(!auto);
+                cropButton.setEnabled(!auto);
             });
 
             var cropButtonsContainer = new DivEl('edit-container');
             cropButtonsContainer.setVisible(false).appendChildren(cropButton, resetButton, cancelButton);
             return cropButtonsContainer;
 
+        }
+
+        private updateCropMaskPosition() {
+            var cropGroup = <Element> this.clip.getHTMLElement().getElementsByClassName('crop-group')[0],
+                rect = <Element> cropGroup.getElementsByTagName('rect')[0],
+                drag = <Element> cropGroup.getElementsByTagName('svg')[0];
+
+            rect.setAttribute('x', this.cropData.x.toString());
+            rect.setAttribute('y', this.cropData.y.toString());
+            rect.setAttribute('width', this.cropData.w.toString());
+            rect.setAttribute('height', this.cropData.h.toString());
+
+            // 16 is the half-size of drag
+            drag.setAttribute('x', (this.cropData.x + this.cropData.w / 2 - 16).toString());
+            drag.setAttribute('y', (this.cropData.y + this.cropData.h - 16).toString());
+        }
+
+        private bindCropMouseListeners() {
+            var mouseDown: boolean = false;
+            var lastPos: {x: number; y: number};
+
+            var dragHandle = this.clip.findChildById('drag-handle', true);
+
+            dragHandle.onMouseDown((event: MouseEvent) => {
+                mouseDown = true;
+                lastPos = {
+                    x: this.getOffsetX(event),
+                    y: this.getOffsetY(event)
+                };
+                dragHandle.addClass('active');
+            });
+
+            this.mouseMoveListener = (event: MouseEvent) => {
+                if (mouseDown) {
+                    var deltaY = this.getOffsetY(event) - lastPos.y,
+                        deltaX = this.imgW * deltaY / this.imgH,        // scale x proportionally
+                        newW = this.cropData.w + deltaX * 2,
+                        newH = this.cropData.h + deltaY * 2,
+                        newX = this.cropData.x - deltaX,
+                        newY = this.cropData.y - deltaY;
+
+                    if (newW > 0 && newH > 0) {
+
+                        this.setCropPositionPx({
+                            x: this.restrainWidth(newX),
+                            y: this.restrainHeight(newY),
+                            w: this.restrainWidth(newW),
+                            h: this.restrainHeight(newH)
+                        });
+
+                        lastPos = {
+                            x: this.getOffsetX(event),
+                            y: this.getOffsetY(event)
+                        };
+                    }
+                }
+            };
+            api.dom.Body.get().onMouseMove(this.mouseMoveListener);
+
+            this.mouseUpListener = (event: MouseEvent) => {
+                if (mouseDown) {
+                    mouseDown = false;
+                    dragHandle.removeClass('active');
+                }
+            };
+            api.dom.Body.get().onMouseUp(this.mouseUpListener);
+        }
+
+        private unbindCropMouseListeners() {
+            api.dom.Body.get().unMouseMove(this.mouseMoveListener);
+            api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
 
         /*
@@ -460,7 +722,7 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        onFocusEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        onFocusModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.focusEditModeListeners.push(listener);
         }
 
@@ -470,72 +732,143 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        unFocusEditModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
+        unFocusModeChanged(listener: (edit: boolean, position: {x: number; y: number}) => void) {
             this.focusEditModeListeners = this.focusEditModeListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
 
-        private notifyFocusEditModeChanged(edit: boolean, position: {x: number; y: number}) {
+        private notifyFocusModeChanged(edit: boolean, position: {x: number; y: number}) {
             var normalizedPosition;
             if (position) {
                 // position can be undefined when auto positioned
-                normalizedPosition = this.normalizePosition(position);
+                normalizedPosition = this.normalizePoint(position);
             }
             this.focusEditModeListeners.forEach((listener) => {
                 listener(edit, normalizedPosition);
             })
         }
 
-        onFocusAutoPositionedChanged(listener: (autoPositioned: boolean) => void) {
-            this.autoPositionedChangedListeners.push(listener);
+        onFocusAutoPositionedChanged(listener: (auto: boolean) => void) {
+            this.autoFocusChangedListeners.push(listener);
         }
 
-        unFocusAutoPositionedChanged(listener: (autoPositioned: boolean) => void) {
-            this.autoPositionedChangedListeners = this.autoPositionedChangedListeners.filter((curr) => {
+        unFocusAutoPositionedChanged(listener: (auto: boolean) => void) {
+            this.autoFocusChangedListeners = this.autoFocusChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyFocusAutoPositionedChanged(autoPositioned: boolean) {
-            this.autoPositionedChangedListeners.forEach((listener) => {
-                listener(autoPositioned);
+        private notifyFocusAutoPositionedChanged(auto: boolean) {
+            this.autoFocusChangedListeners.forEach((listener) => {
+                listener(auto);
             })
         }
 
         onFocusPositionChanged(listener: (position: {x: number; y: number}) => void) {
-            this.positionChangedListeners.push(listener);
+            this.focusPositionChangedListeners.push(listener);
         }
 
         unFocusPositionChanged(listener: (position: {x: number; y: number}) => void) {
-            this.positionChangedListeners = this.positionChangedListeners.filter((curr) => {
+            this.focusPositionChangedListeners = this.focusPositionChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
         private notifyFocusPositionChanged(position: {x: number; y: number}) {
-            var normalizedPosition = this.normalizePosition(position);
-            this.positionChangedListeners.forEach((listener) => {
+            var normalizedPosition = this.normalizePoint(position);
+            this.focusPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
             })
         }
 
         onFocusRadiusChanged(listener: (r: number) => void) {
-            this.radiusChangedListeners.push(listener);
+            this.focusRadiusChangedListeners.push(listener);
         }
 
         unFocusRadiusChanged(listener: (r: number) => void) {
-            this.radiusChangedListeners = this.radiusChangedListeners.filter((curr) => {
+            this.focusRadiusChangedListeners = this.focusRadiusChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
         private notifyFocusRadiusChanged(r: number) {
             var normalizedRadius = this.normalizeRadius(r);
-            this.radiusChangedListeners.forEach((listener) => {
+            this.focusRadiusChangedListeners.forEach((listener) => {
                 listener(normalizedRadius);
             })
         }
+
+        /*
+         *   Crop related listeners
+         */
+
+        /**
+         * Bind listener to focus edit mode change
+         * @param listener has following params:
+         *  - edit - tells if we enter or exit edit mode
+         *  - position - will be supplied if we exit edit mode and apply changes
+         */
+        onCropModeChanged(listener: (edit: boolean, position: {x: number; y: number; w: number; h: number}) => void) {
+            this.cropEditModeListeners.push(listener);
+        }
+
+        /**
+         * Unbind listener from crop edit mode change
+         * @param listener has following params:
+         *  - edit - tells if we enter or exit edit mode
+         *  - position - will be supplied if we exit edit mode and apply changes
+         */
+        unCropModeChanged(listener: (edit: boolean, position: {x: number; y: number; w: number; h: number}) => void) {
+            this.cropEditModeListeners = this.cropEditModeListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyCropModeChanged(edit: boolean, position: {x: number; y: number; w: number; h: number}) {
+            var normalizedPosition;
+            if (position) {
+                // position can be undefined when auto positioned
+                normalizedPosition = this.normalizeRect(position);
+            }
+            this.cropEditModeListeners.forEach((listener) => {
+                listener(edit, normalizedPosition);
+            })
+        }
+
+        onCropAutoPositionedChanged(listener: (auto: boolean) => void) {
+            this.autoCropChangedListeners.push(listener);
+        }
+
+        unCropAutoPositionedChanged(listener: (auto: boolean) => void) {
+            this.autoCropChangedListeners = this.autoCropChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyCropAutoPositionedChanged(auto: boolean) {
+            this.autoCropChangedListeners.forEach((listener) => {
+                listener(auto);
+            })
+        }
+
+        onCropPositionChanged(listener: (position: {x: number; y: number; w: number; h: number}) => void) {
+            this.cropPositionChangedListeners.push(listener);
+        }
+
+        unCropPositionChanged(listener: (position: {x: number; y: number; w: number; h: number}) => void) {
+            this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyCropPositionChanged(position: {x: number; y: number; w: number; h: number}) {
+            var normalizedPosition = this.normalizeRect(position);
+            this.cropPositionChangedListeners.forEach((listener) => {
+                listener(normalizedPosition);
+            })
+        }
+
     }
 
 }
