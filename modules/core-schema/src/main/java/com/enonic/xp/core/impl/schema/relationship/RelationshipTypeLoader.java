@@ -31,7 +31,7 @@ final class RelationshipTypeLoader
 
     private final static String EXTENSION = ".xml";
 
-    private final static String DIRECTORY = "relationship-types";
+    private final static String DIRECTORY = "app/relationship-types";
 
     private final Bundle bundle;
 

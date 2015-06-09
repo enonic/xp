@@ -31,7 +31,7 @@ final class MixinLoader
 
     private final static String EXTENSION = ".xml";
 
-    private final static String MIXIN_DIRECTORY = "mixins";
+    private final static String MIXIN_DIRECTORY = "app/mixins";
 
     private final Bundle bundle;
 

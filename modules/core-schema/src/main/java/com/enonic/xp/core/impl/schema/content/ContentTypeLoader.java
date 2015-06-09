@@ -31,7 +31,7 @@ final class ContentTypeLoader
 
     private final static String EXTENSION = ".xml";
 
-    private final static String DIRECTORY = "content-types";
+    private final static String DIRECTORY = "app/content-types";
 
     private final Bundle bundle;
 
