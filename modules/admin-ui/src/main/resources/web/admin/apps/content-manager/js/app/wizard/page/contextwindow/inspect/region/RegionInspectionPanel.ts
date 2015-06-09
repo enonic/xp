@@ -12,7 +12,7 @@ module app.wizard.page.contextwindow.inspect.region {
             super();
 
             this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.medium)).
+                setSize(api.app.NamesAndIconViewSize.medium).setAddTitleAttribute(false)).
                 setIconClass("live-edit-font-icon-region icon-xlarge");
 
             this.appendChild(this.namesAndIcon);

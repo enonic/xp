@@ -3,7 +3,7 @@ module api.content.page {
     export class PageTemplateViewer extends api.ui.NamesAndIconViewer<PageTemplate> {
 
         constructor() {
-            super();
+            super("", false);
         }
 
         resolveDisplayName(object: PageTemplate): string {

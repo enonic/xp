@@ -3,7 +3,7 @@ module api.content.page.region {
     export class PartDescriptorViewer extends api.ui.NamesAndIconViewer<PartDescriptor> {
 
         constructor() {
-            super();
+            super("", false);
         }
 
         resolveDisplayName(object: PartDescriptor): string {

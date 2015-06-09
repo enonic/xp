@@ -10,9 +10,10 @@ module api.ui {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
-        constructor(className?: string, size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
+        constructor(className?: string, addTitleAttribute: boolean = true,
+                    size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
             super(className);
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(size).build();
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(size).setAddTitleAttribute(addTitleAttribute).build();
         }
 
         setObject(object: OBJECT, relativePath: boolean = false) {
