@@ -7,12 +7,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.page.region.ImageComponent;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.rendering.RenderResult;
-import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
+import com.enonic.xp.portal.rendering.RenderResult;
+import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 
@@ -66,7 +66,7 @@ public final class ImageRenderer
     {
         final ImageUrlParams params = new ImageUrlParams().context( context );
         params.id( id.toString() );
-        params.filter( "scalewidth(500)" );
+        params.filter( "scalewidth(768)" );
         return this.urlService.imageUrl( params );
     }
 
