@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -17,7 +18,6 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
-import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class PageResourceTest
     extends RenderBaseResourceTest
 {
-    private Renderer<Renderable> renderer;
+    private Renderer<Page> renderer;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -38,7 +38,7 @@ public class PageResourceTest
         this.services.setRendererFactory( rendererFactory );
 
         this.renderer = Mockito.mock( Renderer.class );
-        Mockito.when( rendererFactory.getRenderer( Mockito.any( Renderable.class ) ) ).thenReturn( this.renderer );
+        Mockito.when( rendererFactory.getRenderer( Mockito.any( Page.class ) ) ).thenReturn( this.renderer );
 
         super.configure();
     }
@@ -61,7 +61,7 @@ public class PageResourceTest
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        ArgumentCaptor<Page> renderable = ArgumentCaptor.forClass( Page.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( 200, response.getStatus() );
@@ -86,7 +86,7 @@ public class PageResourceTest
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
-        ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        ArgumentCaptor<Page> renderable = ArgumentCaptor.forClass( Page.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUri() );

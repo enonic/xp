@@ -17,7 +17,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
@@ -26,7 +25,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class Content
-    implements Renderable
 {
     private final boolean valid;
 
