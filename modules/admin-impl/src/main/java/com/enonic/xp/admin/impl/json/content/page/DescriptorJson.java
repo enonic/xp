@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.form.FormJson;
-import com.enonic.xp.page.region.Descriptor;
+import com.enonic.xp.region.Descriptor;
 
 
 public abstract class DescriptorJson

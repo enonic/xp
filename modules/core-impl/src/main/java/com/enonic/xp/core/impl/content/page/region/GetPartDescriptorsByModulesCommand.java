@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.Modules;
-import com.enonic.xp.page.region.PartDescriptors;
+import com.enonic.xp.region.PartDescriptors;
 
 final class GetPartDescriptorsByModulesCommand
     extends AbstractGetPartDescriptorCommand<GetPartDescriptorsByModulesCommand>

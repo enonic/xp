@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptor;
 
 public class LayoutDescriptorServiceImpl_getByKeyTest
     extends AbstractLayoutDescriptorServiceTest

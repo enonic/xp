@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.page.region.ComponentName;
-import com.enonic.xp.page.region.ImageComponent;
+import com.enonic.xp.region.ComponentName;
+import com.enonic.xp.region.ImageComponent;
 
-import static com.enonic.xp.page.region.ImageComponent.newImageComponent;
+import static com.enonic.xp.region.ImageComponent.newImageComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ImageComponentJson

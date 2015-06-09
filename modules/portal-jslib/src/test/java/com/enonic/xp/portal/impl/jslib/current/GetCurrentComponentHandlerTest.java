@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.jslib.current;
 
 import org.junit.Test;
 
-import com.enonic.xp.page.region.Component;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.region.Component;
 
 public class GetCurrentComponentHandlerTest
     extends AbstractHandlerTest

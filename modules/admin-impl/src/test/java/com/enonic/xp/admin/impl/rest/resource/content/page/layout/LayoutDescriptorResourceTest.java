@@ -11,12 +11,12 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.LayoutDescriptorService;
-import com.enonic.xp.page.region.LayoutDescriptors;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutDescriptors;
 
-import static com.enonic.xp.page.region.RegionDescriptor.newRegionDescriptor;
-import static com.enonic.xp.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 
 public class LayoutDescriptorResourceTest
     extends AbstractResourceTest

@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.LayoutDescriptorNotFoundException;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorNotFoundException;
 import com.enonic.xp.resource.ResourceNotFoundException;
 
 final class GetLayoutDescriptorCommand

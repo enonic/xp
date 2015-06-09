@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.ComponentType;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.support.serializer.AbstractDataListSerializer;
 
 public class ComponentsDataSerializer

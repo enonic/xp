@@ -7,8 +7,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
-import com.enonic.xp.page.region.PartComponent;
-import com.enonic.xp.page.region.Region;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 
 import static org.junit.Assert.*;
 

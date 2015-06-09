@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.Modules;
-import com.enonic.xp.page.region.PartDescriptors;
+import com.enonic.xp.region.PartDescriptors;
 
 public class PartDescriptorServiceImpl_getByModulesTest
     extends AbstractPartDescriptorServiceTest

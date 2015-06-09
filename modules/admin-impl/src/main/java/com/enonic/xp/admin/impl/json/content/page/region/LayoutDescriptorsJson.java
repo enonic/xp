@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.LayoutDescriptors;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptors;
 
 
 @SuppressWarnings("UnusedDeclaration")

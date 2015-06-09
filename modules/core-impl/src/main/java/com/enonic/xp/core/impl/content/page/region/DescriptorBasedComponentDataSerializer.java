@@ -4,7 +4,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.ComponentDataSerializer;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.DescriptorBasedComponent;
+import com.enonic.xp.region.DescriptorBasedComponent;
 
 public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT extends DescriptorBasedComponent, FROM_DATA_OUTPUT extends DescriptorBasedComponent>
     extends ComponentDataSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>

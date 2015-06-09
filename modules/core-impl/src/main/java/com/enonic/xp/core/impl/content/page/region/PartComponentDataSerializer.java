@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.PartComponent;
+import com.enonic.xp.region.PartComponent;
 
 public class PartComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<PartComponent, PartComponent>

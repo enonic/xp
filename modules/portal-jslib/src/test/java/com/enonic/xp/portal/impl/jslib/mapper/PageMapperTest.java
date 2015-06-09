@@ -6,8 +6,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.region.Region;
 import com.enonic.xp.portal.impl.script.AbstractMapSerializableTest;
+import com.enonic.xp.region.Region;
 
 public class PageMapperTest
     extends AbstractMapSerializableTest

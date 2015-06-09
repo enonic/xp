@@ -4,8 +4,8 @@ package com.enonic.xp.page;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.ComponentName;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.support.serializer.AbstractDataSetSerializer;
 
 @Beta

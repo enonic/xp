@@ -8,7 +8,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 
-import static com.enonic.xp.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 import static org.junit.Assert.*;
 
 public class PageDescriptorsTest

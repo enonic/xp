@@ -7,18 +7,18 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.ComponentName;
-import com.enonic.xp.page.region.ComponentPath;
-import com.enonic.xp.page.region.LayoutComponent;
-import com.enonic.xp.page.region.LayoutRegions;
-import com.enonic.xp.page.region.Region;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentName;
+import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.Region;
 
 import static com.enonic.xp.page.PageRegions.newPageRegions;
-import static com.enonic.xp.page.region.LayoutComponent.newLayoutComponent;
-import static com.enonic.xp.page.region.LayoutRegions.newLayoutRegions;
-import static com.enonic.xp.page.region.PartComponent.newPartComponent;
-import static com.enonic.xp.page.region.Region.newRegion;
+import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
+import static com.enonic.xp.region.LayoutRegions.newLayoutRegions;
+import static com.enonic.xp.region.PartComponent.newPartComponent;
+import static com.enonic.xp.region.Region.newRegion;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;

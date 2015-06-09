@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.RegionDescriptors;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;

@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.ImageComponent;
-import com.enonic.xp.page.region.LayoutComponent;
-import com.enonic.xp.page.region.PartComponent;
-import com.enonic.xp.page.region.TextComponent;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ImageComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.TextComponent;
 
 public final class ComponentJsonSerializer
 {

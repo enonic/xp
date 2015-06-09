@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.region.TextComponent;
+import com.enonic.xp.region.TextComponent;
 
 import static org.junit.Assert.*;
 

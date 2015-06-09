@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.region.Region;
+import com.enonic.xp.region.Region;
 
 import static com.enonic.xp.page.PageRegions.newPageRegions;
 

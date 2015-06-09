@@ -19,16 +19,16 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.LayoutComponent;
-import com.enonic.xp.page.region.LayoutRegions;
-import com.enonic.xp.page.region.PartComponent;
-import com.enonic.xp.page.region.Region;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.page.region.RegionDescriptor.newRegionDescriptor;
-import static com.enonic.xp.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 
 public final class ContentFixtures
 {

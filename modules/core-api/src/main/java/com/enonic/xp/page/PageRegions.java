@@ -3,7 +3,7 @@ package com.enonic.xp.page;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.page.region.AbstractRegions;
+import com.enonic.xp.region.AbstractRegions;
 
 @Beta
 public final class PageRegions

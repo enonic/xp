@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.region.ImageComponent;
-import com.enonic.xp.page.region.LayoutComponent;
-import com.enonic.xp.page.region.PartComponent;
-import com.enonic.xp.page.region.Region;
+import com.enonic.xp.region.ImageComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 
 import static org.junit.Assert.*;
 

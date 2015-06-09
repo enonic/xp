@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 
 import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
 import static junit.framework.Assert.assertEquals;

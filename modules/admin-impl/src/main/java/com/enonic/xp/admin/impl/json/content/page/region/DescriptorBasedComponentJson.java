@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.page.region.DescriptorBasedComponent;
+import com.enonic.xp.region.DescriptorBasedComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorBasedComponent>

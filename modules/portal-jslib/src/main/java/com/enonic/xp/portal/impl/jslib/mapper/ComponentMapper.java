@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.DescriptorBasedComponent;
-import com.enonic.xp.page.region.LayoutComponent;
-import com.enonic.xp.page.region.Region;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.Region;
 
 public final class ComponentMapper
     implements MapSerializable

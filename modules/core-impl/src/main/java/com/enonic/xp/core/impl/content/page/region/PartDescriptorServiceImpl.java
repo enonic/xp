@@ -7,9 +7,9 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.PartDescriptor;
-import com.enonic.xp.page.region.PartDescriptorService;
-import com.enonic.xp.page.region.PartDescriptors;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component

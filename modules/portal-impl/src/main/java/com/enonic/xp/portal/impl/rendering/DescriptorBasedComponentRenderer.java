@@ -6,9 +6,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.region.Component;
-import com.enonic.xp.page.region.Descriptor;
-import com.enonic.xp.page.region.DescriptorBasedComponent;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -16,6 +13,9 @@ import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.Descriptor;
+import com.enonic.xp.region.DescriptorBasedComponent;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>

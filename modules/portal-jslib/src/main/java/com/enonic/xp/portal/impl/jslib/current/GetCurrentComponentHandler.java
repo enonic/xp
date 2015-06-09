@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.jslib.current;
 
-import com.enonic.xp.page.region.Component;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.jslib.mapper.ComponentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
+import com.enonic.xp.region.Component;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class GetCurrentComponentHandler

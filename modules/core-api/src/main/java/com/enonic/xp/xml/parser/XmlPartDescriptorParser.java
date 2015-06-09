@@ -2,7 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.page.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.xml.DomElement;
 
 @Beta

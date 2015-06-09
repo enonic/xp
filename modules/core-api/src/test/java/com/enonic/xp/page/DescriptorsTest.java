@@ -5,10 +5,10 @@ import org.junit.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.PartDescriptor;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 
-import static com.enonic.xp.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 import static org.junit.Assert.*;
 
 public class DescriptorsTest

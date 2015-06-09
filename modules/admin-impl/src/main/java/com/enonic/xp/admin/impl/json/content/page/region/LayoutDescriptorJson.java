@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.admin.impl.json.content.page.DescriptorJson;
-import com.enonic.xp.page.region.LayoutDescriptor;
-import com.enonic.xp.page.region.RegionDescriptor;
-import com.enonic.xp.page.region.RegionDescriptors;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.RegionDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 
 
 public class LayoutDescriptorJson
