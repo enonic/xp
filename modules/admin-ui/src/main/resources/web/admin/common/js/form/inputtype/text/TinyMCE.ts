@@ -16,6 +16,8 @@ module api.form.inputtype.text {
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
         private editors: TinyEditorOccurenceInfo[];
+        static imagePrefix = "image://";
+        static maxImageWidth = 640;
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
@@ -84,8 +86,7 @@ module api.form.inputtype.text {
                     editor.addCommand("openLinkDialog", this.openLinkDialog, this);
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
                     editor.on('change', (e) => {
-                        var value = this.newValue(this.getEditor(id).getContent());
-                        property.setValue(value);
+                        this.setPropertyValue(id, property);
                     });
                     editor.on('focus', (e) => {
                         this.resetInputHeight();
@@ -98,8 +99,8 @@ module api.form.inputtype.text {
                     editor.on('keydown', (e) => {
                         if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
                             e.preventDefault();
-                            var value = this.newValue(this.getEditor(id).getContent());
-                            property.setValue(value); // ensure that entered value is stored
+
+                            this.setPropertyValue(id, property);
 
                             wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
                                 bubbles: e.bubbles,
@@ -210,8 +211,12 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(property.getString());
+                this.getEditor(editorId).setContent(this.propertyValue2Content(property.getString()));
             }
+        }
+
+        private setPropertyValue(id: string, property: Property) {
+            property.setValue(this.editorContent2PropertyValue(id));
         }
 
         private newValue(s: string): Value {
@@ -234,7 +239,7 @@ module api.form.inputtype.text {
         }
 
         private openImageDialog(config: ElementConfig) {
-            var imageModalDialog = new ImageModalDialog(config.editor);
+            var imageModalDialog = new ImageModalDialog(config.editor, <HTMLImageElement>config.element);
             imageModalDialog.open();
         }
 
@@ -281,6 +286,54 @@ module api.form.inputtype.text {
 
             return result;
         }
+
+        private getConvertedImageSrc(imgSrc: string): string {
+            var contentId = imgSrc.replace(TinyMCE.imagePrefix, api.util.StringHelper.EMPTY_STRING),
+                imageUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(new api.content.ContentId(contentId)).
+                    setScaleWidth(true).
+                    setSize(TinyMCE.maxImageWidth).
+                    resolve();
+
+            return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
+        }
+
+        private propertyValue2Content(propertyValue: string) {
+            var content = propertyValue,
+                processedContent = propertyValue,
+                regex = /<img.*?src="(.*?)"/g,
+                imgSrcs, imgSrc;
+
+            while ((imgSrcs = regex.exec(content)) != null) {
+                imgSrc = imgSrcs[1];
+                if (imgSrc.indexOf(TinyMCE.imagePrefix) === 0) {
+                    processedContent = processedContent.replace("src=\"" + imgSrc + "\"", this.getConvertedImageSrc(imgSrc));
+                }
+            }
+
+            return processedContent;
+        }
+
+        private editorContent2PropertyValue(editorId: string): Value {
+            var content = this.getEditor(editorId).getContent(),
+                processedContent = this.getEditor(editorId).getContent(),
+                regex = /<img.*?data-src="(.*?)".*?>/g,
+                imgTags, imgTag;
+
+            while ((imgTags = regex.exec(content)) != null) {
+                imgTag = imgTags[0];
+                if (imgTag.indexOf("<img ") === 0 && imgTag.indexOf(TinyMCE.imagePrefix) > 0) {
+                    var dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1],
+                        src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
+
+                    var convertedImg = imgTag.replace(src, dataSrc).replace(" data-src=\"" + dataSrc + "\"",
+                        api.util.StringHelper.EMPTY_STRING);
+                    processedContent = processedContent.replace(imgTag, convertedImg);
+                }
+            }
+
+            return this.newValue(processedContent);
+        }
     }
 
     export interface TinyEditorOccurenceInfo {
@@ -294,5 +347,9 @@ module api.form.inputtype.text {
         element: HTMLElement
     }
 
+    interface ImageTag {
+        src: string
+        imageId: string
+    }
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
 }

@@ -7,29 +7,53 @@ module api.form.inputtype.text.tiny {
 
         private imagePreviewContainer: api.dom.DivEl;
         private uploader: api.content.ImageUploader;
+        private imageElement: HTMLImageElement;
 
-        constructor(editor: TinyMceEditor) {
+        constructor(editor: TinyMceEditor, imageElement: HTMLImageElement) {
+            this.imageElement = imageElement;
+
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
 
-        private createImageSelector(id: string, imageId: string): FormItem {
+        private getImageId(images: api.content.ContentSummary[]): string {
+            var filteredImages = images.filter((image: api.content.ContentSummary) => {
+                return this.imageElement.src.indexOf(image.getId()) > 0;
+            });
+
+            return filteredImages.length > 0 ? filteredImages[0].getId() : api.util.StringHelper.EMPTY_STRING;
+        }
+
+        private createImageSelector(id: string): FormItem {
             var loader = new api.content.ContentSummaryLoader(),
                 imageSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                formItem = this.createFormItem(id, "Image", Validators.required, imageId, <api.dom.FormItemEl>imageSelector),
+                formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
+                    <api.dom.FormItemEl>imageSelector),
                 imageSelectorComboBox = imageSelector.getComboBox();
 
             formItem.addClass("image-selector");
 
             loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE]);
 
+            if (this.imageElement) {
+                var singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
+                    var imageId = this.getImageId(event.getData());
+                    if (imageId) {
+                        imageSelector.setValue(imageId);
+                    }
+                    loader.unLoadedData(singleLoadListener);
+                };
+                loader.onLoadedData(singleLoadListener);
+                loader.load();
+            }
+
             imageSelectorComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
-                var contentId = event.getOption().displayValue.getContentId();
-                if (!contentId) {
+                var imageContent = event.getOption().displayValue;
+                if (!imageContent.getContentId()) {
                     return;
                 }
 
                 formItem.addClass("image-preview");
-                this.previewImage(contentId.toString());
+                this.previewImage(imageContent);
                 this.uploader.hide();
             });
 
@@ -55,14 +79,25 @@ module api.form.inputtype.text.tiny {
             dropDownElement.setLeftPx(inputPosition.left);
         }
 
-        private previewImage(contentId: string) {
-            var imgUrl = new api.content.ContentImageUrlResolver().
-                setContentId(new api.content.ContentId(contentId)).
-                setScaleWidth(true).
-                setSize(640).
-                resolve();
+        private createImgEl(src: string, alt: string, contentId: string): api.dom.ImgEl {
+            var imageEl = new api.dom.ImgEl(src);
+            imageEl.getEl().setAttribute("alt", alt);
+            imageEl.getEl().setAttribute("style", "width: 100%;");
+            imageEl.getEl().setAttribute("data-src", TinyMCE.imagePrefix + contentId);
 
-            var image = new api.dom.ImgEl(imgUrl);
+            return imageEl;
+        }
+
+        private previewImage(imageContent: api.content.ContentSummary) {
+            var contentId = imageContent.getContentId().toString(),
+                imgUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(new api.content.ContentId(contentId)).
+                    setScaleWidth(true).
+                    setSize(TinyMCE.maxImageWidth).
+                    resolve();
+
+            var image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
+
             image.onLoaded(() => {
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -73,18 +108,15 @@ module api.form.inputtype.text.tiny {
             this.imagePreviewContainer.removeChildren();
         }
 
-        private getImageId(): string {
-            return api.util.StringHelper.EMPTY_STRING;
-        }
-
-        protected show() {
+        show() {
             super.show();
 
             this.uploader.show();
         }
 
         protected getMainFormItems(): FormItem[] {
-            var imageSelector = this.createImageSelector("imageId", this.getImageId());
+            var imageSelector = this.createImageSelector("imageId");
+
             this.addUploaderAndPreviewControls(imageSelector);
             this.setFirstFocusField(imageSelector.getInput());
 
@@ -100,7 +132,6 @@ module api.form.inputtype.text.tiny {
 
             this.imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
-
         }
 
         private createImageUploader(): api.content.ImageUploader {
@@ -122,13 +153,25 @@ module api.form.inputtype.text.tiny {
         }
 
         protected initializeActions() {
-            this.addAction(new api.ui.Action("Insert").onExecuted(() => {
+            this.addAction(new api.ui.Action(this.imageElement ? "Update" : "Insert").onExecuted(() => {
                 if (this.validate()) {
+                    this.createImageTag();
                     this.close();
                 }
             }));
 
             super.initializeActions();
+        }
+
+        private createImageTag(): void {
+            var imageEl = <api.dom.ImgEl>this.imagePreviewContainer.getFirstChild();
+
+            if (this.imageElement) {
+                this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
+            }
+            else {
+                this.getEditor().insertContent("<figure>" + imageEl.toString() + "<figcaption></figcaption></figure>");
+            }
         }
     }
 }

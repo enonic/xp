@@ -3,9 +3,11 @@
 tinymce.PluginManager.add('image', function (editor) {
 
     function showDialog() {
+        var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null;
+
         editor.execCommand("openImageDialog", {
             editor: editor,
-            element: editor.selection.getNode()
+            element: imgEl
         });
     }
 
