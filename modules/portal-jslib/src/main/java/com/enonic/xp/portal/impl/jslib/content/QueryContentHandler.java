@@ -7,10 +7,10 @@ import java.util.Set;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
-import com.enonic.xp.content.query.ContentQuery;
 import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentsResultMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
