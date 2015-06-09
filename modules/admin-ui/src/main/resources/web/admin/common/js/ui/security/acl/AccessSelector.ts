@@ -32,7 +32,7 @@ module api.ui.security.acl {
             super("access-selector");
 
             AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
-                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
+                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(false)).build();
                 this.addNavigationItem(menuItem);
             });
 
@@ -55,6 +55,11 @@ module api.ui.security.acl {
                 }
                 this.value = value;
             }
+            return this;
+        }
+
+        setButtonLabel(value: string): AccessSelector {
+            this.getTabMenuButtonEl().setLabel(value, false);
             return this;
         }
 
