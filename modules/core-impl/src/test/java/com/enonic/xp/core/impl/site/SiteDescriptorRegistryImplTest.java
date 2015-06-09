@@ -23,7 +23,9 @@ public class SiteDescriptorRegistryImplTest
 
     private static final String BUNDLE_SYMBOLIC_NAME = "bundle";
 
-    private static final String SITE_DESCRIPTOR_FILENAME = "site.xml";
+    private static final String TEST_SITE_DESCRIPTOR_FILENAME = "site.xml";
+
+    private static final String SITE_DESCRIPTOR_FILENAME = "app/site.xml";
 
     private ResourceTestHelper resourceTestHelper;
 
@@ -39,7 +41,7 @@ public class SiteDescriptorRegistryImplTest
 
         Bundle existingSiteBundle = Mockito.mock( Bundle.class );
         Mockito.when( existingSiteBundle.getSymbolicName() ).thenReturn( EXISTING_SITE_BUNDLE_SYMBOLIC_NAME );
-        final URL resource = resourceTestHelper.getTestResource( SITE_DESCRIPTOR_FILENAME );
+        final URL resource = resourceTestHelper.getTestResource( TEST_SITE_DESCRIPTOR_FILENAME );
         Mockito.when( existingSiteBundle.getResource( SITE_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( existingSiteBundle.getEntry( SITE_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( existingSiteBundle.getState() ).thenReturn( Bundle.ACTIVE );
@@ -75,7 +77,7 @@ public class SiteDescriptorRegistryImplTest
     {
         Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( BUNDLE_SYMBOLIC_NAME );
-        final URL resource = resourceTestHelper.getTestResource( SITE_DESCRIPTOR_FILENAME );
+        final URL resource = resourceTestHelper.getTestResource( TEST_SITE_DESCRIPTOR_FILENAME );
         Mockito.when( bundle.getResource( SITE_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getEntry( SITE_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );

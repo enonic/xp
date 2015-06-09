@@ -7,6 +7,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.site.SiteDescriptor;
 
 final class SiteDescriptorBuilder
@@ -27,9 +28,10 @@ final class SiteDescriptorBuilder
         final String xml = parseSiteXml( url );
 
         SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
-        final XmlSiteParser parser = new XmlSiteParser();
-        parser.siteDescriptorBuilder( siteDescriptorBuilder );
-        parser.source( xml );
+        final XmlSiteParser parser = new XmlSiteParser().
+            moduleKey( ModuleKey.from( bundle ) ).
+            siteDescriptorBuilder( siteDescriptorBuilder ).
+            source( xml );
         parser.parse();
 
         return siteDescriptorBuilder.build();
