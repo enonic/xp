@@ -53,12 +53,15 @@ module app.publish {
 
         private includeChildrenCheckedListener: () => void;
 
+        private publishableItemsCounter: number = 0;
+
         constructor() {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Publishing Wizard")
             });
 
             this.modelName = "item";
+            this.subheaderMessage.setHtml("Your changes are ready for publishing");
 
             this.initDependenciesLabel();
             this.initIncludeChildrenCheckbox();
@@ -147,6 +150,7 @@ module app.publish {
             this.includeChildItemsCheck.setChecked(true);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
+            this.includeChildItemsCheck.setLabel('Include child items');
         }
 
         private initDependenciesLabel() {
@@ -393,22 +397,19 @@ module app.publish {
 
         private countItemsToPublishAndUpdateCounterElements() {
 
-            var checkedRequested = this.getSelectedItemsEligibleForPublishCount(),
-                dependantsEligibleForPublish = this.getDependantsEligibleForPublishCount(),
-                childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
+            var publishableItemsCount = this.getTotalPublishableItems();
 
-            //subheader
-            this.subheaderMessage.setHtml("Your changes are ready for publishing");
+            this.updatePublishButton(publishableItemsCount, this.publishableItemsCounter);
 
-            // publish button
-            this.cleanPublishButtonText();
-            this.updatePublishButton(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
-
-            // dependencies label
             this.updateDependenciesLabel();
 
-            // includeChildren link
-            this.includeChildItemsCheck.setLabel('Include child items');
+            this.publishableItemsCounter = publishableItemsCount;
+        }
+
+        private getTotalPublishableItems() {
+            return this.getSelectedItemsEligibleForPublishCount() +
+                   this.getDependantsEligibleForPublishCount() +
+                   this.getChildrenEligibleForPublishCount();
         }
 
         // counts number of children that can be published with given selections upon pressing publish button
@@ -443,9 +444,11 @@ module app.publish {
             return result;
         }
 
-        private updatePublishButton(count: number) {
-            this.publishButton.setLabel("Publish Now (" + count + ")");
-            if (count > 0) {
+        private updatePublishButton(newCountValue: number, oldCountValue: number) {
+
+            new PublishButtonCountUpdater(this.publishButton, newCountValue, oldCountValue).updatePublishButtonCounterSmoothly();
+
+            if (newCountValue > 0) {
                 this.publishButton.setEnabled(true);
             } else {
                 this.publishButton.setEnabled(false);
@@ -460,8 +463,62 @@ module app.publish {
             this.publishButton.removeClass("spinner");
         }
 
-        private cleanPublishButtonText() {
-            this.publishButton.setLabel("Publish Now");
+    }
+
+    class PublishButtonCountUpdater {
+
+        private publishButton: DialogButton;
+        private newCountValue: number;
+        private oldCountValue: number;
+        private durationSecs: number = 2;
+        private nextValue: number;
+        private tickCallbackValueIncrement: () => void;
+        private tickCallbackValueDecrement: () => void;
+        private tick: number;
+
+        constructor(publishButton: DialogButton, newCountValue: number, oldCountValue: number) {
+            this.publishButton = publishButton;
+            this.newCountValue = newCountValue;
+            this.oldCountValue = oldCountValue;
+            this.tick = this.calculateTick();
+            this.initTickCallbacks();
+        }
+
+        updatePublishButtonCounterSmoothly() {
+
+            var newCountValueBigger = this.newCountValue > this.oldCountValue ? true : false;
+
+            if (newCountValueBigger) {
+                this.nextValue = this.oldCountValue;
+                setTimeout(this.tickCallbackValueIncrement, this.tick);
+            } else {
+                this.nextValue = this.oldCountValue;
+                setTimeout(this.tickCallbackValueDecrement, this.tick);
+            }
+        }
+
+        private initTickCallbacks() {
+
+            this.tickCallbackValueIncrement = () => {
+                this.nextValue = this.nextValue + 1;
+                this.publishButton.setLabel("Publish Now (" + this.nextValue + ")");
+                if (this.nextValue != this.newCountValue) {
+                    setTimeout(this.tickCallbackValueIncrement, this.tick);
+                }
+            };
+
+            this.tickCallbackValueDecrement = () => {
+                this.nextValue = this.nextValue - 1;
+                this.publishButton.setLabel("Publish Now (" + this.nextValue + ")");
+                if (this.nextValue != this.newCountValue) {
+                    setTimeout(this.tickCallbackValueDecrement, this.tick);
+                }
+            };
+        }
+
+        private calculateTick(): number {
+            var range = Math.abs(this.newCountValue - this.oldCountValue);
+            return this.durationSecs * 1000 / range;
         }
     }
 
