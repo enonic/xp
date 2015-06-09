@@ -3,7 +3,7 @@ module api.content.page {
     export class PageDescriptorViewer extends api.ui.NamesAndIconViewer<PageDescriptor> {
 
         constructor() {
-            super();
+            super("", false);
         }
 
         resolveDisplayName(object: PageDescriptor): string {

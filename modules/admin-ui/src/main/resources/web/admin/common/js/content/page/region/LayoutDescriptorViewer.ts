@@ -3,7 +3,7 @@ module api.content.page.region {
     export class LayoutDescriptorViewer extends api.ui.NamesAndIconViewer<LayoutDescriptor> {
 
         constructor() {
-            super();
+            super("", false);
         }
 
         resolveDisplayName(object: LayoutDescriptor): string {

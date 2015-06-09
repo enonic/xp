@@ -149,7 +149,6 @@ module api.app.wizard {
 
         setPath(value: string) {
             this.pathEl.getEl().setText(value);
-            this.pathEl.getEl().setAttribute('title', value);
             if (value) {
                 this.pathEl.show();
             } else {
