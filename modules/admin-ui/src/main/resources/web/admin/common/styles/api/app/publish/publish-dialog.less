@@ -8,7 +8,7 @@
 
   .item-list {
     padding: 0px;
-    max-height: 380px;
+    max-height: 280px;
     overflow-y: auto;
   }
 
@@ -63,7 +63,7 @@
 
   .content-resolved-publish-viewer, .content-resolved-dependant-viewer {
     &.pending-delete .names-and-icon-view .names-view {
-      .main-name, .sub-name {
+      .main-name, .sub-name, .name-span {
         text-decoration: line-through;
       }
     }
@@ -114,6 +114,10 @@
         margin-top: -33px;
         display: inline-block;
         float: right;
+
+        &.equal {
+          color: @admin-green;
+        }
       }
 
       .disabled.checkbox {
@@ -202,6 +206,12 @@
 
       .content-resolved-dependant-viewer {
         padding: 4px 0px 4px 0px;
+
+        &.pending-delete .names-and-icon-view {
+          .name-span {
+            text-decoration: line-through;
+          }
+        }
       }
 
       .viewer {

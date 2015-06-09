@@ -268,7 +268,11 @@ public class PushContentCommand
 
     private void appendSyncWorkResultsToResult( final ResolveSyncWorkResults syncWorkResults )
     {
-        this.resultBuilder.pushContentRequests( PushContentRequestsFactory.create( syncWorkResults ) );
+        this.resultBuilder.pushContentRequests( PushContentRequestsFactory.create().
+            syncWorkResults( syncWorkResults ).
+            forceInitialReasonInclusion( false ).
+            build().
+            createRequests() );
     }
 
     private void appendPushNodesResult( final PushNodesResult pushNodesResult )

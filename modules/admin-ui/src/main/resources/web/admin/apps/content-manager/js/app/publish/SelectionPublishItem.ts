@@ -62,6 +62,8 @@ module app.publish {
             if (this.showStatus) {
                 this.statusDiv = new api.dom.DivEl("status");
                 this.statusDiv.setHtml(this.formatStatus(status));
+                var statusClass = "" + CompareStatus[status];
+                this.statusDiv.addClass(statusClass.toLowerCase());
             }
         }
 

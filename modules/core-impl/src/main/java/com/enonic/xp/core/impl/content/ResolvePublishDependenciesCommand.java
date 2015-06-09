@@ -72,8 +72,11 @@ public class ResolvePublishDependenciesCommand
 
     private void populateResults( final ResolveSyncWorkResults syncWorkResults )
     {
-        PushContentRequests pushContentRequests = PushContentRequestsFactory.create( syncWorkResults );
-        this.resultBuilder.pushContentRequests( pushContentRequests );
+        this.resultBuilder.pushContentRequests( PushContentRequestsFactory.create().
+            syncWorkResults( syncWorkResults ).
+            forceInitialReasonInclusion( true ).
+            build().
+            createRequests() );
     }
 
     public static Builder create()
