@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
+import com.enonic.xp.content.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 
@@ -20,7 +20,7 @@ public class SiteServiceImplTest_create
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My site" ).
             description( "This is my site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+            siteConfigs( SiteConfigs.empty() );
 
         final Content content = this.siteService.create( createSiteParams );
 

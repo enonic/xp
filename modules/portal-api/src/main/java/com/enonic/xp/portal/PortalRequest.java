@@ -53,8 +53,6 @@ public final class PortalRequest
 
     private ModuleKey module;
 
-    private PortalResponse response;
-
     private PageDescriptor pageDescriptor;
 
     public PortalRequest()
@@ -68,7 +66,6 @@ public final class PortalRequest
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
         this.cookies = Maps.newHashMap();
-        this.response = new PortalResponse();
     }
 
     public String getUri()
@@ -129,18 +126,6 @@ public final class PortalRequest
     public String rewriteUri( final String uri )
     {
         return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
-    }
-
-    @Deprecated
-    public PortalResponse getResponse()
-    {
-        return this.response;
-    }
-
-    @Deprecated
-    public void setResponse( final PortalResponse response )
-    {
-        this.response = response;
     }
 
     public Site getSite()

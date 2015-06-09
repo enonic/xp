@@ -20,17 +20,18 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.xml.parser.XmlRelationshipTypeParser;
 
 final class RelationshipTypeLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( RelationshipTypeLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( ".*/relationship-types/([^/]+)/relationship-type\\.xml" );
+    private final static Pattern PATTERN = Pattern.compile( ".*/app/relationship-types/([^/]+)/([^/]+)\\.xml" );
 
-    private final static String FILE = "relationship-type.xml";
+    private final static String FILES = "*.xml";
 
-    private final static String DIRECTORY = "relationship-types";
+    private final static String EXTENSION = ".xml";
+
+    private final static String DIRECTORY = "app/relationship-types";
 
     private final Bundle bundle;
 
@@ -77,7 +78,7 @@ final class RelationshipTypeLoader
     {
         final String localName = name.getLocalName();
         final String basePath = DIRECTORY + "/" + localName;
-        final URL url = this.bundle.getEntry( basePath + "/" + FILE );
+        final URL url = this.bundle.getEntry( basePath + "/" + localName + EXTENSION );
 
         if ( url == null )
         {
@@ -111,7 +112,7 @@ final class RelationshipTypeLoader
 
     private List<RelationshipTypeName> findNames()
     {
-        final Enumeration<URL> urls = this.bundle.findEntries( DIRECTORY, FILE, true );
+        final Enumeration<URL> urls = this.bundle.findEntries( DIRECTORY, FILES, true );
         if ( urls == null )
         {
             return Lists.newArrayList();

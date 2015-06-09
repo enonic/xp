@@ -45,10 +45,10 @@ public class LocaleServiceImplTest
 
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
 
-        writeFile( modulesDir, "mymodule/i18n/phrases_en_US_1.properties", "d = phrases_en_US_1.properties" );
-        writeFile( modulesDir, "mymodule/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
-        writeFile( modulesDir, "mymodule/i18n/phrases_en.properties", "a = phrases_en.properties" );
-        writeFile( modulesDir, "mymodule/i18n/phrases.properties", "c = phrases.properties" );
+        writeFile( modulesDir, "mymodule/app/i18n/phrases_en_US_1.properties", "d = phrases_en_US_1.properties" );
+        writeFile( modulesDir, "mymodule/app/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
+        writeFile( modulesDir, "mymodule/app/i18n/phrases_en.properties", "a = phrases_en.properties" );
+        writeFile( modulesDir, "mymodule/app/i18n/phrases.properties", "c = phrases.properties" );
 
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );

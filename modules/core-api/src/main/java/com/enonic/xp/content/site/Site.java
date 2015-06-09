@@ -20,19 +20,19 @@ public final class Site
         return this.getData().getString( "description" );
     }
 
-    public PropertyTree getModuleConfig( final ModuleKey moduleKey )
+    public PropertyTree getSiteConfig( final ModuleKey moduleKey )
     {
-        final ModuleConfig moduleConfig = this.getModuleConfigs().get( moduleKey );
-        if ( moduleConfig == null )
+        final SiteConfig siteConfig = this.getSiteConfigs().get( moduleKey );
+        if ( siteConfig == null )
         {
             return null;
         }
-        return moduleConfig.getConfig();
+        return siteConfig.getConfig();
     }
 
-    public ModuleConfigs getModuleConfigs()
+    public SiteConfigs getSiteConfigs()
     {
-        return new ModuleConfigsDataSerializer().fromProperties( this.getData().getRoot() ).build();
+        return new SiteConfigsDataSerializer().fromProperties( this.getData().getRoot() ).build();
     }
 
     @Override
@@ -63,7 +63,7 @@ public final class Site
     public static class Builder
         extends Content.Builder<Builder, Site>
     {
-        private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+        private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
         public Builder( final Site source )
         {
@@ -86,24 +86,24 @@ public final class Site
             return this;
         }
 
-        public Builder addModuleConfig( final ModuleConfig moduleConfig )
+        public Builder addSiteConfig( final SiteConfig siteConfig )
         {
             if ( data == null )
             {
                 data = new PropertyTree();
             }
-            MODULE_CONFIGS_DATA_SERIALIZER.toProperties( moduleConfig, data.getRoot() );
+            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfig, data.getRoot() );
 
             return this;
         }
 
-        public Builder moduleConfigs( final ModuleConfigs moduleConfigs )
+        public Builder siteConfigs( final SiteConfigs siteConfigs )
         {
             if ( data == null )
             {
                 data = new PropertyTree();
             }
-            MODULE_CONFIGS_DATA_SERIALIZER.toProperties( moduleConfigs, data.getRoot() );
+            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfigs, data.getRoot() );
             return this;
         }
 

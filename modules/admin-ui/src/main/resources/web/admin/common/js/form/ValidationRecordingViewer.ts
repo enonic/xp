@@ -23,6 +23,13 @@ module api.form {
             })
         }
 
+        setError(text: string) {
+            this.list.removeChildren();
+            if (text) {
+                this.list.appendChild(new api.dom.LiEl().setHtml(text));
+            }
+        }
+
         private createItemView(path: ValidationRecordingPath, breaksMin: boolean): api.dom.LiEl {
             var text = breaksMin ? this.resolveMinText(path) : this.resolveMaxText(path);
             return new api.dom.LiEl().setHtml(text);

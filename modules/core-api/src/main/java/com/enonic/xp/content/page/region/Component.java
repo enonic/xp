@@ -6,7 +6,6 @@ import com.google.common.annotations.Beta;
 
 @Beta
 public abstract class Component
-    implements com.enonic.xp.rendering.Component
 {
     private ComponentName name;
 

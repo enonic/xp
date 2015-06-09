@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
-import com.enonic.xp.portal.rendering.RenderResult;
 
 public abstract class ControllerResource
     extends BaseResource
@@ -63,7 +62,6 @@ public abstract class ControllerResource
     private Response doHandle()
         throws Exception
     {
-        final PortalResponse portalResponse = new PortalResponse();
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMode( this.mode );
         portalRequest.setMethod( this.request.getMethod() );
@@ -83,8 +81,8 @@ public abstract class ControllerResource
 
         configure( portalRequest );
 
-        final RenderResult result = execute( portalRequest, portalResponse );
-        return toResponse( result );
+        final PortalResponse response = execute( portalRequest );
+        return toResponse( response );
     }
 
     private void setParams( final Multimap<String, String> to, final MultivaluedMap<String, String> from )
@@ -97,22 +95,22 @@ public abstract class ControllerResource
 
     protected abstract void configure( PortalRequest portalRequest );
 
-    protected abstract RenderResult execute( PortalRequest portalRequest, PortalResponse portalResponse )
+    protected abstract PortalResponse execute( PortalRequest portalRequest )
         throws Exception;
 
-    private Response toResponse( final RenderResult result )
+    private Response toResponse( final PortalResponse result )
     {
         final Response.ResponseBuilder builder = Response.status( result.getStatus() );
-        builder.type( result.getType() );
+        builder.type( result.getContentType() );
 
         for ( final Map.Entry<String, String> header : result.getHeaders().entrySet() )
         {
             builder.header( header.getKey(), header.getValue() );
         }
 
-        if ( result.getEntity() instanceof byte[] )
+        if ( result.getBody() instanceof byte[] )
         {
-            builder.entity( result.getEntity() );
+            builder.entity( result.getBody() );
         }
         else
         {

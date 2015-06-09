@@ -18,7 +18,7 @@ public final class CreateSiteParams
 
     private String description;
 
-    private ModuleConfigs moduleConfigs;
+    private SiteConfigs siteConfigs;
 
     private boolean requireValid = false;
 
@@ -53,9 +53,9 @@ public final class CreateSiteParams
         return this;
     }
 
-    public CreateSiteParams moduleConfigs( final ModuleConfigs value )
+    public CreateSiteParams siteConfigs( final SiteConfigs value )
     {
-        this.moduleConfigs = value;
+        this.siteConfigs = value;
         return this;
     }
 
@@ -85,9 +85,9 @@ public final class CreateSiteParams
         return description;
     }
 
-    public ModuleConfigs getModuleConfigs()
+    public SiteConfigs getSiteConfigs()
     {
-        return moduleConfigs;
+        return siteConfigs;
     }
 
     public boolean isRequireValid()

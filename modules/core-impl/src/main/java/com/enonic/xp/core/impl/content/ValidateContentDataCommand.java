@@ -7,9 +7,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
+import com.enonic.xp.content.site.SiteConfig;
+import com.enonic.xp.content.site.SiteConfigs;
+import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.ModuleKey;
@@ -75,12 +75,12 @@ final class ValidateContentDataCommand
 
         validateContentTypeForm( contentData, contentType );
         validateMetadata();
-        validateSiteModuleConfigs( contentType );
+        validateSiteConfigs( contentType );
 
         return this.resultBuilder.build();
     }
 
-    private void validateSiteModuleConfigs( final ContentType contentType )
+    private void validateSiteConfigs( final ContentType contentType )
     {
         if ( contentType != null )
         {
@@ -88,11 +88,11 @@ final class ValidateContentDataCommand
             if ( contentType.getName().isSite() )
             {
 
-                final ModuleConfigs moduleConfigs = new ModuleConfigsDataSerializer().fromProperties( this.contentData.getRoot() ).build();
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( this.contentData.getRoot() ).build();
 
-                for ( final ModuleConfig moduleConfig : moduleConfigs )
+                for ( final SiteConfig siteConfig : siteConfigs )
                 {
-                    final ModuleKey moduleKey = moduleConfig.getModule();
+                    final ModuleKey moduleKey = siteConfig.getModule();
 
                     if ( siteService != null )
                     {
@@ -101,7 +101,7 @@ final class ValidateContentDataCommand
                         if ( siteDescriptor != null )
                         {
                             this.resultBuilder.addAll(
-                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( moduleConfig.getConfig().getRoot() ) );
+                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
                         }
 
                     }

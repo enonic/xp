@@ -7,7 +7,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class ServiceControllerResource
@@ -28,11 +27,11 @@ public final class ServiceControllerResource
     }
 
     @Override
-    protected RenderResult execute( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    protected PortalResponse execute( final PortalRequest portalRequest )
         throws Exception
     {
         final ControllerScript controllerScript = this.services.getControllerScriptFactory().fromDir( this.scriptDir );
-        controllerScript.execute( portalRequest, portalResponse );
+        final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
         return new PortalResponseSerializer( portalResponse ).serialize();
     }

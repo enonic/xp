@@ -59,7 +59,7 @@ module app.wizard.page.contextwindow.inspect.page {
             });
 
             this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
                     var descriptorKey = <DescriptorKey>event.getNewValue();
                     if (descriptorKey) {
                         this.selectController(descriptorKey);

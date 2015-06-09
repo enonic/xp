@@ -45,12 +45,12 @@ public class SiteTest
     @Test
     public void builder()
     {
-        ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.newSite().
-            addModuleConfig( moduleConfig ).
+            addSiteConfig( siteConfig ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
             build();
@@ -61,42 +61,42 @@ public class SiteTest
     }
 
     @Test
-    public void moduleConfigs()
+    public void siteConfigs()
     {
-        ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.newSite().
-            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).
+            siteConfigs( SiteConfigs.from( siteConfig ) ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
             build();
 
-        ModuleConfigs moduleConfigs = site.getModuleConfigs();
-        assertNotNull( moduleConfigs );
-        assertEquals( 1, moduleConfigs.getSize() );
-        assertEquals( moduleConfigs.get( 0 ).getConfig(), site.getModuleConfig( ModuleKey.from( "mymodule" ) ) );
-        assertNotNull( moduleConfigs.get( "mymodule" ) );
-        assertTrue( ModuleConfigs.empty().getSize() == 0 );
-        assertTrue( ModuleConfigs.from( moduleConfig ).getSize() == 1 );
+        SiteConfigs siteConfigs = site.getSiteConfigs();
+        assertNotNull( siteConfigs );
+        assertEquals( 1, siteConfigs.getSize() );
+        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ModuleKey.from( "mymodule" ) ) );
+        assertNotNull( siteConfigs.get( "mymodule" ) );
+        assertTrue( SiteConfigs.empty().getSize() == 0 );
+        assertTrue( SiteConfigs.from( siteConfig ).getSize() == 1 );
     }
 
     @Test
-    public void moduleConfigEquals()
+    public void siteConfigEquals()
     {
-        ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
-        ModuleConfig moduleConfig1 = ModuleConfig.newModuleConfig().
+        SiteConfig siteConfig1 = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
 
-        assertEquals( moduleConfig, moduleConfig );
-        assertEquals( moduleConfig, moduleConfig1 );
-        assertNotEquals( moduleConfig, null );
+        assertEquals( siteConfig, siteConfig );
+        assertEquals( siteConfig, siteConfig1 );
+        assertNotEquals( siteConfig, null );
     }
 
     @Test
@@ -107,7 +107,7 @@ public class SiteTest
         params.name( ContentName.from( "siteName" ) );
         params.displayName( "displayName" );
         params.description( "description" );
-        params.moduleConfigs( ModuleConfigs.empty() );
+        params.siteConfigs( SiteConfigs.empty() );
         params.requireValid();
 
         assertEquals( params.getParentContentPath(), ContentPath.ROOT );
@@ -115,7 +115,7 @@ public class SiteTest
         assertEquals( params.getDisplayName(), "displayName" );
         assertEquals( params.getDescription(), "description" );
         assertEquals( params.isRequireValid(), true );
-        assertNotNull( params.getModuleConfigs() );
-        assertTrue( params.getModuleConfigs().getSize() == 0 );
+        assertNotNull( params.getSiteConfigs() );
+        assertTrue( params.getSiteConfigs().getSize() == 0 );
     }
 }

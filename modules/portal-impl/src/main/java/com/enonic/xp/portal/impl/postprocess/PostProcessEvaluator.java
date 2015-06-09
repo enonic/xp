@@ -78,7 +78,7 @@ final class PostProcessEvaluator
     {
         for ( final PostProcessInstruction instruction : this.instructions )
         {
-            final String result = instruction.evaluate( this.portalRequest, this.portalResponse, content );
+            final String result = instruction.evaluate( this.portalRequest, content );
             if ( result != null )
             {
                 return new HtmlBlockParser().parse( result );

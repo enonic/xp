@@ -7,9 +7,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.rendering.Renderable;
 
 import static org.junit.Assert.*;
 
@@ -74,7 +72,7 @@ public class RendererFactoryImplTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+            public PortalResponse render( final Object component, final PortalRequest portalRequest )
             {
                 return null;
             }

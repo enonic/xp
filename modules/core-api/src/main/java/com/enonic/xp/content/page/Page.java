@@ -13,7 +13,6 @@ import com.enonic.xp.data.PropertyTree;
 
 @Beta
 public final class Page
-    implements com.enonic.xp.rendering.Component
 {
     private final DescriptorKey controller;
 

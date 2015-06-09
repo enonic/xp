@@ -11,7 +11,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -31,11 +30,10 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public PortalResponse render( final ImageComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
-        portalResponse.setContentType( "text/html" );
-        portalResponse.setPostProcess( false );
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
 
         final StringBuilder html = new StringBuilder();
 
@@ -57,8 +55,8 @@ public final class ImageRenderer
             html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
         }
 
-        portalResponse.setBody( html.toString() );
-        return new PortalResponseSerializer( portalResponse ).serialize();
+        portalResponseBuilder.body( html.toString() ).contentType( "text/html" ).postProcess( false );
+        return new PortalResponseSerializer( portalResponseBuilder.build() ).serialize();
     }
 
     private String buildUrl( final PortalRequest portalRequest, final ContentId id )

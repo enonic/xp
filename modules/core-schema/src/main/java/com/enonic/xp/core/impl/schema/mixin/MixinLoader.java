@@ -20,17 +20,18 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.xml.parser.XmlMixinParser;
 
 final class MixinLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( MixinLoader.class );
 
-    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/mixins/([^/]+)/mixin\\.xml" );
+    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/app/mixins/([^/]+)/([^/]+)\\.xml" );
 
-    private final static String MIXIN_FILE = "mixin.xml";
+    private final static String MIXIN_FILES = "*.xml";
 
-    private final static String MIXIN_DIRECTORY = "mixins";
+    private final static String EXTENSION = ".xml";
+
+    private final static String MIXIN_DIRECTORY = "app/mixins";
 
     private final Bundle bundle;
 
@@ -77,7 +78,7 @@ final class MixinLoader
     {
         final String localName = name.getLocalName();
         final String basePath = MIXIN_DIRECTORY + "/" + localName;
-        final URL url = this.bundle.getEntry( basePath + "/" + MIXIN_FILE );
+        final URL url = this.bundle.getEntry( basePath + "/" + localName + EXTENSION );
 
         if ( url == null )
         {
@@ -111,7 +112,7 @@ final class MixinLoader
 
     private List<MixinName> findMixinNames()
     {
-        final Enumeration<URL> urls = this.bundle.findEntries( MIXIN_DIRECTORY, MIXIN_FILE, true );
+        final Enumeration<URL> urls = this.bundle.findEntries( MIXIN_DIRECTORY, MIXIN_FILES, true );
         if ( urls == null )
         {
             return Lists.newArrayList();

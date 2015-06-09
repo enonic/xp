@@ -15,7 +15,6 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
@@ -35,7 +34,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     protected ControllerScriptFactory controllerScriptFactory;
 
     @Override
-    public final RenderResult render( final R component, final PortalRequest portalRequest, final PortalResponse portalResponse )
+    public final PortalResponse render( final R component, final PortalRequest portalRequest )
     {
         final Descriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
@@ -49,11 +48,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         // render
         final Component previousComponent = portalRequest.getComponent();
         final ModuleKey previousModule = portalRequest.getModule();
+
         try
         {
             portalRequest.setComponent( component );
             portalRequest.setModule( descriptor.getKey().getModuleKey() );
-            controllerScript.execute( portalRequest, portalResponse );
+            final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
             final String contentType = portalResponse.getContentType();
@@ -66,8 +66,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 }
             }
 
-            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
-            return new PortalResponseSerializer( portalResponse ).serialize();
+            final PortalResponse injectedResponse =
+                LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
+            return new PortalResponseSerializer( injectedResponse ).serialize();
         }
         finally
         {
@@ -76,7 +77,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
     }
 
-    private RenderResult renderEmptyComponent( final DescriptorBasedComponent component, final PortalRequest portalRequest )
+    private PortalResponse renderEmptyComponent( final DescriptorBasedComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
@@ -95,39 +96,39 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
     }
 
-    private RenderResult renderEmptyComponentEditMode( final DescriptorBasedComponent component )
+    private PortalResponse renderEmptyComponentEditMode( final DescriptorBasedComponent component )
     {
         final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, component.getType().toString() );
 
-        return RenderResult.newRenderResult().
-            type( "text/html" ).
-            entity( html ).
+        return PortalResponse.create().
+            contentType( "text/html" ).
+            body( html ).
             build();
     }
 
-    private RenderResult renderEmptyComponentPreviewMode()
+    private PortalResponse renderEmptyComponentPreviewMode()
     {
         final String html = EMPTY_COMPONENT_PREVIEW_MODE_HTML;
 
-        return RenderResult.newRenderResult().
-            type( "text/html" ).
-            entity( html ).
+        return PortalResponse.create().
+            contentType( "text/html" ).
+            body( html ).
             build();
     }
 
-    private RenderResult renderEmptyComponentLiveMode()
+    private PortalResponse renderEmptyComponentLiveMode()
     {
         // TODO: Should probably be different than preview.
         return renderEmptyComponentPreviewMode();
     }
 
-    private RenderResult renderEmptyComponentPlaceHolder( final DescriptorBasedComponent component )
+    private PortalResponse renderEmptyComponentPlaceHolder( final DescriptorBasedComponent component )
     {
         final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_HTML, component.getType().toString() );
 
-        return RenderResult.newRenderResult().
-            type( "text/html" ).
-            entity( html ).
+        return PortalResponse.create().
+            contentType( "text/html" ).
+            body( html ).
             build();
     }
 

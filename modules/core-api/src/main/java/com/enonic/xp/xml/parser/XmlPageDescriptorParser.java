@@ -21,7 +21,7 @@ public final class XmlPageDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "page-component" );
+        assertTagName( root, "page" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentModule );

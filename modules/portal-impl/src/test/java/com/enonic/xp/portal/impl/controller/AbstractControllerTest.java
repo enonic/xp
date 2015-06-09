@@ -17,9 +17,9 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -51,7 +51,7 @@ public abstract class AbstractControllerTest
         ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
 
         this.portalRequest = new PortalRequest();
-        this.portalResponse = new PortalResponse();
+        this.portalResponse = PortalResponse.create().build();
 
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
@@ -65,7 +65,7 @@ public abstract class AbstractControllerTest
         this.factory = new ControllerScriptFactoryImpl();
         this.factory.setScriptService( scriptService );
 
-        this.postProcessor = Mockito.mock( PostProcessor.class );
+        this.postProcessor = new PostProcessorImpl();
         this.factory.setPostProcessor( this.postProcessor );
 
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
@@ -75,14 +75,13 @@ public abstract class AbstractControllerTest
     protected final void execute( final String script )
     {
         final ControllerScript controllerScript = this.factory.fromScript( ResourceKey.from( script ) );
-        controllerScript.execute( this.portalRequest, this.portalResponse );
+        this.portalResponse = controllerScript.execute( this.portalRequest );
     }
 
     protected final String getResponseAsString()
     {
         final PortalResponseSerializer serializer = new PortalResponseSerializer( portalResponse );
-        final RenderResult result = serializer.serialize();
-        return result.getAsString();
+        return serializer.serialize().getAsString();
     }
 
     protected final void assertJson( final String name, final String actual )
