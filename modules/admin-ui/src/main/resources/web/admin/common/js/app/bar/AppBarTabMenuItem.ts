@@ -9,6 +9,7 @@ module api.app.bar {
         private editing: boolean;
 
         constructor(builder : AppBarTabMenuItemBuilder) {
+            builder.setAddLabelTitleAttribute(false);
             super(builder);
 
             this.addClass("appbar-tab-menu-item");
