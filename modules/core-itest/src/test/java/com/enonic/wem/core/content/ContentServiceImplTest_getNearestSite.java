@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.Site;
-import com.enonic.xp.content.site.SiteConfigs;
+import com.enonic.xp.site.CreateSiteParams;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 

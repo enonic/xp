@@ -17,7 +17,6 @@ import com.enonic.xp.content.page.PageTemplateService;
 import com.enonic.xp.content.page.region.ComponentName;
 import com.enonic.xp.content.page.region.PartComponent;
 import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
@@ -26,6 +25,7 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 public abstract class RenderBaseResourceTest

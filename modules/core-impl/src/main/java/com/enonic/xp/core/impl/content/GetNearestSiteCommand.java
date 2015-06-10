@@ -4,7 +4,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.site.Site;
+import com.enonic.xp.site.Site;
 
 final class GetNearestSiteCommand
 {

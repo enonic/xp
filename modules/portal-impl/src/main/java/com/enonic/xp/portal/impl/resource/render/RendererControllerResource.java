@@ -4,10 +4,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.page.PageDescriptor;
 import com.enonic.xp.content.page.PageTemplate;
 import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
+import com.enonic.xp.site.Site;
 
 public abstract class RendererControllerResource
     extends ControllerResource
