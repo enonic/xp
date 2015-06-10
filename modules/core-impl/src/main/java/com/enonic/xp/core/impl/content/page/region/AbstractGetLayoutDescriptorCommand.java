@@ -23,7 +23,7 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "app/layouts/([^/]+)/layout.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "app/layouts/([^/]+)/\\1.xml" );
 
     protected ModuleService moduleService;
 
