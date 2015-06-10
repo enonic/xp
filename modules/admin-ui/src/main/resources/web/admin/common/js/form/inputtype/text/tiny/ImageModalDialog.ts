@@ -2,15 +2,28 @@ module api.form.inputtype.text.tiny {
 
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
+    import UploadItem = api.ui.uploader.UploadItem;
+    import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
+    import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
+    import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
+    import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+    import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
+    import Content = api.content.Content;
 
     export class ImageModalDialog extends ModalDialog {
 
         private imagePreviewContainer: api.dom.DivEl;
         private uploader: api.content.ImageUploader;
         private imageElement: HTMLImageElement;
+        private contentId: api.content.ContentId;
+        private imageSelector: api.content.ContentComboBox;
+        private progress: api.ui.ProgressBar;
+        private error: api.dom.DivEl;
+        private image: api.dom.ImgEl;
 
-        constructor(editor: TinyMceEditor, imageElement: HTMLImageElement) {
+        constructor(editor: TinyMceEditor, imageElement: HTMLImageElement, contentId: api.content.ContentId) {
             this.imageElement = imageElement;
+            this.contentId = contentId;
 
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
@@ -29,6 +42,8 @@ module api.form.inputtype.text.tiny {
                 formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector),
                 imageSelectorComboBox = imageSelector.getComboBox();
+
+            this.imageSelector = imageSelector;
 
             formItem.addClass("image-selector");
 
@@ -96,16 +111,19 @@ module api.form.inputtype.text.tiny {
                     setSize(TinyMCE.maxImageWidth).
                     resolve();
 
-            var image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
+            this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);
 
-            image.onLoaded(() => {
+            this.image.onLoaded(() => {
+                this.imagePreviewContainer.removeClass("upload");
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
-            this.imagePreviewContainer.appendChild(image);
+
+            this.hideUploadMasks();
+            this.imagePreviewContainer.insertChild(this.image, 0);
         }
 
         private removePreview() {
-            this.imagePreviewContainer.removeChildren();
+            this.imagePreviewContainer.removeChild(this.image);
         }
 
         show() {
@@ -125,17 +143,33 @@ module api.form.inputtype.text.tiny {
             ];
         }
 
+        private getImagePreviewContainer() {
+            var imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
+
+            this.progress = new api.ui.ProgressBar();
+            imagePreviewContainer.appendChild(this.progress);
+
+            this.error = new api.dom.DivEl("error");
+            imagePreviewContainer.appendChild(this.error);
+
+            return imagePreviewContainer;
+        }
+
         private addUploaderAndPreviewControls(imageSelector: FormItem) {
             var imageSelectorContainer = imageSelector.getInput().getParentElement();
 
             imageSelectorContainer.appendChild(this.uploader = this.createImageUploader());
 
-            this.imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
+            this.imagePreviewContainer = this.getImagePreviewContainer();
+
             wemjq(this.imagePreviewContainer.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
         }
 
         private createImageUploader(): api.content.ImageUploader {
             var uploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
+                params: {
+                    parent: this.contentId.toString()
+                },
                 operation: api.content.MediaUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
@@ -149,7 +183,51 @@ module api.form.inputtype.text.tiny {
             uploader.addClass("minimized");
             uploader.hide();
 
+            uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+                this.hideUploadMasks();
+                this.imagePreviewContainer.addClass("upload");
+                this.showProgress();
+            });
+
+            uploader.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
+                var item = event.getUploadItem();
+
+                this.setProgress(item.getProgress());
+            });
+
+            uploader.onFileUploaded((event: FileUploadedEvent<Content>) => {
+                var item = event.getUploadItem();
+                var createdContent = item.getModel();
+
+                new api.content.ContentUpdatedEvent(this.contentId).fire();
+                this.imageSelector.setContent(createdContent);
+            });
+
+            uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
+                this.showError("Upload failed")
+            });
+
             return uploader;
+        }
+
+        private setProgress(value: number) {
+            this.progress.setValue(value);
+        }
+
+        private showProgress() {
+            this.progress.show();
+        }
+
+
+        private hideUploadMasks() {
+            this.progress.hide();
+            this.error.hide();
+        }
+
+        private showError(text: string) {
+            this.progress.hide();
+            this.error.setHtml(text).show();
+            this.error.show();
         }
 
         protected initializeActions() {
@@ -164,7 +242,7 @@ module api.form.inputtype.text.tiny {
         }
 
         private createImageTag(): void {
-            var imageEl = <api.dom.ImgEl>this.imagePreviewContainer.getFirstChild();
+            var imageEl = <api.dom.ImgEl>this.image;
 
             if (this.imageElement) {
                 this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
@@ -173,5 +251,6 @@ module api.form.inputtype.text.tiny {
                 this.getEditor().insertContent("<figure>" + imageEl.toString() + "<figcaption></figcaption></figure>");
             }
         }
+
     }
 }

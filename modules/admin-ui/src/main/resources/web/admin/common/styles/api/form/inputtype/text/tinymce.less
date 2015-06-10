@@ -142,8 +142,31 @@
         overflow-y: visible;
       }
 
-      .content-item-preview-panel > img {
-        display: block;
+      .content-item-preview-panel {
+        > .progress-bar {
+          display: none;
+        }
+        &.upload {
+          margin-left: @form-label-width;
+          margin-top: 10px;
+
+          > .progress-bar,
+          > .error {
+            width: 100%;
+          }
+
+          > .error {
+            margin-left: 0px;
+            text-align: center;
+            color: @admin-white;
+            font-weight: bold;
+            background-color: @admin-input-red;
+          }
+        }
+
+        > img {
+          display: block;
+        }
       }
 
       .names-and-icon-view .names-view {

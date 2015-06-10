@@ -16,13 +16,17 @@ module api.form.inputtype.text {
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
         private editors: TinyEditorOccurenceInfo[];
+        private contentId: api.content.ContentId;
+
         static imagePrefix = "image://";
         static maxImageWidth = 640;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super(config);
+
             this.addClass("tinymce-editor");
             this.editors = [];
+            this.contentId = config.contentId;
         }
 
         getValueType(): ValueType {
@@ -239,7 +243,7 @@ module api.form.inputtype.text {
         }
 
         private openImageDialog(config: ElementConfig) {
-            var imageModalDialog = new ImageModalDialog(config.editor, <HTMLImageElement>config.element);
+            var imageModalDialog = new ImageModalDialog(config.editor, <HTMLImageElement>config.element, this.contentId);
             imageModalDialog.open();
         }
 
