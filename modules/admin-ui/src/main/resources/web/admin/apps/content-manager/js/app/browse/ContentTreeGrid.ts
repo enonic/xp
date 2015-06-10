@@ -168,9 +168,9 @@ module app.browse {
                 if (!childOrder.isDefault()) {
                     if (!childOrder.isManual()) {
                         if (childOrder.isDesc()) {
-                            icon = new api.dom.DivEl("icon-arrow-up4");
+                            icon = new api.dom.DivEl("icon-arrow-up4 sort-dialog-trigger");
                         } else {
-                            icon = new api.dom.DivEl("icon-arrow-down4");
+                            icon = new api.dom.DivEl("icon-arrow-down4 sort-dialog-trigger");
                         }
                     } else {
                         icon = new api.dom.DivEl("icon-menu3");
@@ -179,6 +179,22 @@ module app.browse {
                 }
             }
             return wrapper.toString();
+        }
+
+        protected manageRowClick(elem: ElementHelper, args: any) {
+            if (elem.hasClass("sort-dialog-trigger")) {
+                this.sortIconClickCallback();
+            }
+        }
+
+        private sortIconClickCallback() {
+            new app.browse.SortContentEvent(this.getSelectedContentsSummaries()).fire();
+        }
+
+        private getSelectedContentsSummaries(): api.content.ContentSummary[] {
+            return this.getSelectedDataList().map((elem) => {
+                return elem.getContentSummary();
+            });
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
