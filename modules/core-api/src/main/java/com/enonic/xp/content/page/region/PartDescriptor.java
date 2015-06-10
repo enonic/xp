@@ -24,7 +24,7 @@ public class PartDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "app/parts/" + key.getName() + "/part.xml" );
+        return ResourceKey.from( key.getModuleKey(), "app/parts/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static PartDescriptor.Builder create()
