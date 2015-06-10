@@ -1,4 +1,4 @@
-module api.content.site.inputtype.moduleconfigurator {
+module api.content.site.inputtype.siteconfigurator {
 
     import AEl = api.dom.AEl;
     import PropertyTree = api.data.PropertyTree;
@@ -12,7 +12,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-    export class ModuleView extends api.dom.DivEl {
+    export class SiteView extends api.dom.DivEl {
 
         private module: Module;
 
@@ -27,7 +27,7 @@ module api.content.site.inputtype.moduleconfigurator {
         private siteConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
 
         constructor(mod: Module, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
-            super("module-view");
+            super("site-view");
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
@@ -70,7 +70,7 @@ module api.content.site.inputtype.moduleconfigurator {
             this.appendChild(header);
 
             this.formView = new FormView(formContext, this.module.getForm(), this.siteConfig.getConfig());
-            this.formView.addClass("module-form");
+            this.formView.addClass("site-form");
             this.appendChild(this.formView);
             this.formView.layout().then(() => {
                 this.notifySiteConfigFormDisplayed(this.module.getModuleKey());

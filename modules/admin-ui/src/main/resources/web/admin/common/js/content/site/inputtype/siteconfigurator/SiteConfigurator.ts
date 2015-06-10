@@ -1,4 +1,4 @@
-module api.content.site.inputtype.moduleconfigurator {
+module api.content.site.inputtype.siteconfigurator {
 
     import PropertyTree = api.data.PropertyTree;
     import Property = api.data.Property;
@@ -20,7 +20,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-    export class ModuleConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<ModuleView> {
+    export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<SiteView> {
 
         private context: api.form.inputtype.InputTypeViewContext<any>;
 
@@ -37,7 +37,7 @@ module api.content.site.inputtype.moduleconfigurator {
         private formContext: api.content.form.ContentFormContext;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
-            super("module-configurator");
+            super("site-configurator");
             this._displayValidationErrors = false;
             this.context = config;
             this.formContext = config.formContext;
@@ -180,5 +180,5 @@ module api.content.site.inputtype.moduleconfigurator {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ModuleConfigurator", ModuleConfigurator));
+    api.form.inputtype.InputTypeManager.register(new api.Class("SiteConfigurator", SiteConfigurator));
 }

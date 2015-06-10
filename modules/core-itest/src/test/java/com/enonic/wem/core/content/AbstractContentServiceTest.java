@@ -294,7 +294,7 @@ public class AbstractContentServiceTest
         data.addString( "tag", "tag" );
         data.addReference( "contentSelector", reference );
         data.addString( "contentTypeFilter", "stringValue" );
-        data.addString( "moduleConfigurator", "com.enonic.xp.modules.features" );
+        data.addString( "siteConfigurator", "com.enonic.xp.modules.features" );
         data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
         data.addLocalTime( "time", LocalTime.NOON );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
@@ -383,8 +383,8 @@ public class AbstractContentServiceTest
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
-                name( "moduleConfigurator" ).
-                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                name( "siteConfigurator" ).
+                inputType( InputTypes.SITE_CONFIGURATOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).
