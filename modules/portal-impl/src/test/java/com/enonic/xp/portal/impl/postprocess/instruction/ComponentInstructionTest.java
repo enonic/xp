@@ -15,7 +15,6 @@ import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.ComponentName;
 import com.enonic.xp.content.page.region.ComponentService;
 import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -24,6 +23,7 @@ import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
 
 import static com.enonic.xp.content.page.PageRegions.newPageRegions;
 import static com.enonic.xp.content.page.region.PartComponent.newPartComponent;

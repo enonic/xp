@@ -1,10 +1,10 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.content.site.Site;
-import com.enonic.xp.content.site.SiteConfig;
-import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 public final class SiteMapper
     implements MapSerializable

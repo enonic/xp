@@ -10,10 +10,10 @@ import junit.framework.TestCase;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.view.ViewFunctionParams;
+import com.enonic.xp.site.Site;
 
 public class LocalizeParamsTest
     extends TestCase

@@ -18,9 +18,6 @@ import com.enonic.xp.content.page.region.LayoutComponent;
 import com.enonic.xp.content.page.region.LayoutRegions;
 import com.enonic.xp.content.page.region.PartComponent;
 import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.Site;
-import com.enonic.xp.content.site.SiteConfig;
-import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -29,6 +26,9 @@ import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -118,7 +118,6 @@ public final class ContentFixtures2
         tree.addInstant( "instant", Instant.MAX );
         tree.addLocalDate( "localDate", LocalDate.of( 2014, 1, 31 ) );
         tree.addLocalDateTime( "localDateTime", LocalDateTime.of( 2014, 1, 31, 10, 30, 5 ) );
-
 
         final PropertySet set1 = tree.addSet( "c" );
         set1.setBoolean( "d", true );

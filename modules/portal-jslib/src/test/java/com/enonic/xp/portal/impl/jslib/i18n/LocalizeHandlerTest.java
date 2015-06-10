@@ -11,7 +11,6 @@ import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.module.ModuleKey;
@@ -20,6 +19,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.locale.LocalizeHandler;
 import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.site.Site;
 
 
 public class LocalizeHandlerTest

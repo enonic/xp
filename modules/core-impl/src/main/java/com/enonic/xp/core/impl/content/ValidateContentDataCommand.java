@@ -7,9 +7,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.site.SiteConfig;
-import com.enonic.xp.content.site.SiteConfigs;
-import com.enonic.xp.content.site.SiteConfigsDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.ModuleKey;
@@ -22,6 +19,9 @@ import com.enonic.xp.schema.content.validator.OccurrenceValidator;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 

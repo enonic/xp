@@ -1,4 +1,4 @@
-package com.enonic.xp.content.site;
+package com.enonic.xp.site;
 
 
 import java.util.Objects;

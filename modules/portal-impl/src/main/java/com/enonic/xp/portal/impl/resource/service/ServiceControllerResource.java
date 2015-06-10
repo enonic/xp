@@ -1,13 +1,13 @@
 package com.enonic.xp.portal.impl.resource.service;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.site.Site;
 
 public final class ServiceControllerResource
     extends ControllerResource
