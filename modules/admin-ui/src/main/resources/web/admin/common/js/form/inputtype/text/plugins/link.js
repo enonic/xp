@@ -8,7 +8,7 @@ tinymce.PluginManager.add('link', function (editor) {
 
         editor.execCommand("openLinkDialog", {
             editor: editor,
-            link: anchorElm
+            element: anchorElm
         });
     }
 
