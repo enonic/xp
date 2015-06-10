@@ -34,7 +34,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.site.SiteService;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,8 +45,6 @@ public final class PageTemplateResource
     protected PageTemplateService pageTemplateService;
 
     private ContentService contentService;
-
-    private SiteService siteService;
 
     private ContentTypeService contentTypeService;
 
@@ -122,8 +119,8 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = contentService.getById( contentId );
-            final Content nearestSite = this.siteService.getNearestSite( contentId );
+            final Content content = this.contentService.getById( contentId );
+            final Content nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )
             {
@@ -166,12 +163,6 @@ public final class PageTemplateResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
     }
 
     @Reference

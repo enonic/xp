@@ -12,6 +12,8 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.attachment.Attachments;
+import com.enonic.xp.content.site.CreateSiteParams;
+import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -110,6 +112,25 @@ public class ContentServiceImplTest_create
 
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 4, attachments.getSize() ); // original, small, medium, large
+    }
+
+    @Test
+    public void create_site()
+        throws Exception
+    {
+        final CreateSiteParams createSiteParams = new CreateSiteParams();
+        createSiteParams.parent( ContentPath.ROOT ).
+            displayName( "My site" ).
+            description( "This is my site" ).
+            siteConfigs( SiteConfigs.empty() );
+
+        final Content content = this.contentService.create( createSiteParams );
+
+        assertNotNull( content.getName() );
+        assertNotNull( content.getCreatedTime() );
+        assertNotNull( content.getCreator() );
+        assertNotNull( content.getModifiedTime() );
+        assertNotNull( content.getModifier() );
     }
 
     @Test

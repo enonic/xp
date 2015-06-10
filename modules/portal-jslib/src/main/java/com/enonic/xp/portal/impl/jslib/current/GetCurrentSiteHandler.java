@@ -14,15 +14,12 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.jslib.mapper.SiteMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.site.SiteService;
 
 @Component(immediate = true)
 public final class GetCurrentSiteHandler
     implements CommandHandler
 {
     private ContentService contentService;
-
-    private SiteService siteService;
 
     @Override
     public String getName()
@@ -67,7 +64,7 @@ public final class GetCurrentSiteHandler
     {
         try
         {
-            return convert( this.siteService.getNearestSite( key ) );
+            return convert( this.contentService.getNearestSite( key ) );
         }
         catch ( final ContentNotFoundException e )
         {
@@ -86,9 +83,4 @@ public final class GetCurrentSiteHandler
         this.contentService = contentService;
     }
 
-    @Reference
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
-    }
 }

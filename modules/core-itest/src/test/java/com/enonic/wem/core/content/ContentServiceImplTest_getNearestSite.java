@@ -1,4 +1,4 @@
-package com.enonic.wem.core.site;
+package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
@@ -10,8 +10,8 @@ import com.enonic.xp.content.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 
-public class SiteServiceImplTest_getNearestSite
-    extends AbstractSiteServiceTest
+public class ContentServiceImplTest_getNearestSite
+    extends AbstractContentServiceTest
 {
     @Override
     public void setUp()
@@ -28,7 +28,7 @@ public class SiteServiceImplTest_getNearestSite
 
         final Content child = createContent( site.getPath() );
 
-        final Site fetchedSite = this.siteService.getNearestSite( child.getId() );
+        final Site fetchedSite = this.contentService.getNearestSite( child.getId() );
 
         assertNotNull( fetchedSite );
         assertEquals( site.getId(), fetchedSite.getId() );
@@ -41,7 +41,7 @@ public class SiteServiceImplTest_getNearestSite
     {
         final Content site = createSite();
 
-        final Site fetchedSite = this.siteService.getNearestSite( site.getId() );
+        final Site fetchedSite = this.contentService.getNearestSite( site.getId() );
 
         assertNotNull( fetchedSite );
         assertEquals( site.getId(), fetchedSite.getId() );
@@ -54,7 +54,7 @@ public class SiteServiceImplTest_getNearestSite
     {
         final Content content = createContent( ContentPath.ROOT );
 
-        final Site fetchedSite = this.siteService.getNearestSite( content.getId() );
+        final Site fetchedSite = this.contentService.getNearestSite( content.getId() );
         assertNull( fetchedSite );
     }
 
@@ -68,7 +68,7 @@ public class SiteServiceImplTest_getNearestSite
         final Content childLevel2 = createContent( childLevel1.getPath() );
         final Content childLevel3 = createContent( childLevel2.getPath() );
 
-        final Site fetchedSite = this.siteService.getNearestSite( childLevel3.getId() );
+        final Site fetchedSite = this.contentService.getNearestSite( childLevel3.getId() );
 
         assertNotNull( fetchedSite );
         assertEquals( site.getId(), fetchedSite.getId() );
@@ -83,6 +83,7 @@ public class SiteServiceImplTest_getNearestSite
             description( "This is my mock site" ).
             siteConfigs( SiteConfigs.empty() );
 
-        return this.siteService.create( createSiteParams );
+        return this.contentService.create( createSiteParams );
     }
+
 }

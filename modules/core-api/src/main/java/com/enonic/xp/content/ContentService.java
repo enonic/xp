@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.content.site.CreateSiteParams;
+import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -15,6 +17,9 @@ import com.enonic.xp.util.BinaryReference;
 @Beta
 public interface ContentService
 {
+
+    Site create( CreateSiteParams params );
+
     Content create( CreateContentParams params );
 
     Content create( CreateMediaParams params );
@@ -42,6 +47,8 @@ public interface ContentService
     CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
     Content getById( ContentId contentId );
+
+    Site getNearestSite( ContentId contentId );
 
     Contents getByIds( GetContentByIdsParams params );
 
