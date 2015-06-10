@@ -4,7 +4,7 @@ module api.app {
 
         size: NamesAndIconViewSize;
 
-        addTitleAttribute: boolean = true;
+        addTitleAttribute: boolean = false;
 
         appendIcon: boolean = true;
 

@@ -29,7 +29,7 @@ module api.ui.tab {
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
 
-            this.setLabel(builder.label, builder.markUnnamed);
+            this.setLabel(builder.label, builder.markUnnamed, builder.addLabelTitleAttribute);
 
             this.markInvalid(builder.markInvalid);
 
@@ -65,7 +65,7 @@ module api.ui.tab {
             return this.index;
         }
 
-        setLabel(newValue: string, markUnnamed: boolean = false) {
+        setLabel(newValue: string, markUnnamed: boolean = false, addLabelTitleAttribute: boolean = true) {
             if (this.label == newValue) {
                 return;
             }
@@ -73,7 +73,11 @@ module api.ui.tab {
             var oldValue = this.label;
             this.label = newValue;
             this.labelEl.setHtml(newValue, true);
-            this.labelEl.getEl().setAttribute('title', newValue);
+
+            if (addLabelTitleAttribute) {
+                this.labelEl.getEl().setAttribute('title', newValue);
+            }
+
             this.labelEl.toggleClass("unnamed", markUnnamed);
 
             this.notifyLabelChangedListeners(newValue, oldValue);
@@ -163,6 +167,8 @@ module api.ui.tab {
 
         label: string;
 
+        addLabelTitleAttribute: boolean = true;
+
         closeAction: api.ui.Action;
 
         closeButtonEnabled: boolean;
@@ -193,6 +199,11 @@ module api.ui.tab {
 
         setMarkInvalid(markInvalid: boolean): TabItemBuilder {
             this.markInvalid = markInvalid;
+            return this;
+        }
+
+        setAddLabelTitleAttribute(addLabelTitleAttribute: boolean): TabItemBuilder {
+            this.addLabelTitleAttribute = addLabelTitleAttribute;
             return this;
         }
 

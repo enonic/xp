@@ -73,9 +73,9 @@ module app.wizard.page.contextwindow {
             });
 
             this.appendChild(this.splitter);
-            this.addItem("Insert", this.insertablesPanel);
-            this.addItem("Inspect", this.inspectionsPanel);
-            this.addItem("Emulator", this.emulatorPanel);
+            this.addItem("Insert", false, this.insertablesPanel);
+            this.addItem("Inspect", false, this.inspectionsPanel);
+            this.addItem("Emulator", false, this.emulatorPanel);
 
             this.onRendered(() => this.onRenderedHandler());
 

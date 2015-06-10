@@ -161,7 +161,11 @@ module app.browse {
 
         private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
-            wrapper.getEl().setTitle(value);
+
+            if (!api.util.StringHelper.isBlank(value)) {
+                wrapper.getEl().setTitle(value);
+            }
+
             if (node.getData().getContentSummary()) {
                 var childOrder = node.getData().getContentSummary().getChildOrder();
                 var icon;
