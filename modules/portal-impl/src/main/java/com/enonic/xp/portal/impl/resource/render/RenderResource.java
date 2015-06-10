@@ -19,7 +19,7 @@ public abstract class RenderResource
 {
     protected final Site getSite( final Content content )
     {
-        final Site site = this.services.getSiteService().getNearestSite( content.getId() );
+        final Site site = this.services.getContentService().getNearestSite( content.getId() );
 
         if ( site == null )
         {

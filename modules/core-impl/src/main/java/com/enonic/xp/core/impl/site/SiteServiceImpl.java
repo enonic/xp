@@ -3,15 +3,7 @@ package com.enonic.xp.core.impl.site;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.Site;
-import com.enonic.xp.content.site.SiteConfigsDataSerializer;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -19,11 +11,7 @@ import com.enonic.xp.site.SiteService;
 public class SiteServiceImpl
     implements SiteService
 {
-    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
-
     private SiteDescriptorRegistry siteDescriptorRegistry;
-
-    private ContentService contentService;
 
     @Override
     public SiteDescriptor getDescriptor( final ModuleKey moduleKey )
@@ -34,42 +22,6 @@ public class SiteServiceImpl
             return null;
         }
         return siteDescriptor;
-    }
-
-    @Override
-    public Site create( final CreateSiteParams params )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.setString( "description", params.getDescription() );
-
-        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            type( ContentTypeName.site() ).
-            parent( params.getParentContentPath() ).
-            name( params.getName() ).
-            displayName( params.getDisplayName() ).
-            contentData( data ).
-            requireValid( params.isRequireValid() ).
-            build();
-
-        return (Site) contentService.create( createContentParams );
-    }
-
-    @Override
-    public Site getNearestSite( final ContentId contentId )
-    {
-        return GetNearestSiteCommand.create().
-            contentService( contentService ).
-            contentId( contentId ).
-            build().
-            execute();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 
     @Reference

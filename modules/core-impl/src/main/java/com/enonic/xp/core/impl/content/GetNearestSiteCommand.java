@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.site;
+package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;

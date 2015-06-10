@@ -125,7 +125,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteService;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -151,8 +150,6 @@ public final class ContentResource
     private final static String EXPAND_NONE = "none";
 
     private ContentService contentService;
-
-    private SiteService siteService;
 
     private ContentTypeService contentTypeService;
 
@@ -549,7 +546,7 @@ public final class ContentResource
     public ContentJson getNearest( final GetNearestSiteJson params )
     {
         final ContentId contentId = params.getGetNearestSiteByContentId();
-        final Content nearestSite = this.siteService.getNearestSite( contentId );
+        final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
             return new ContentJson( nearestSite, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
@@ -836,12 +833,6 @@ public final class ContentResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
     }
 
     @Reference
