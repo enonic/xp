@@ -675,15 +675,46 @@ module api.ui.image {
             zoom.setAttribute('y', ((this.imgH - 200) / 2 ).toString());
         }
 
+        private zoomByDelta(zoomLineEl, zoomKnobEl, delta: number) {
+            debugger;
+
+            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
+                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
+                sliderLength = sliderEnd - sliderStart,
+                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
+                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + delta));
+
+            if (knobNewY != knobY) {
+                zoomKnobEl.setAttribute('cy', knobNewY.toString());
+
+                var knobDeltaPct = (knobNewY - knobY) / sliderLength,
+                    newW = this.restrainWidth(this.cropData.w + this.imgW * knobDeltaPct),
+                    newH = this.restrainHeight(this.cropData.h + this.imgH * knobDeltaPct),
+                    newX = this.cropData.x - (newW - this.cropData.w) / 2,
+                    newY = this.cropData.y - (newH - this.cropData.h) / 2;
+
+                this.setCropPositionPx({
+                    x: this.restrainWidth(newX, newW),
+                    y: this.restrainHeight(newY, newH),
+                    w: newW,
+                    h: newH
+                });
+            }
+        }
+
         private bindCropMouseListeners() {
             var dragMouseDown = false,
-                zoomMouseDown = false;
+                zoomMouseDown = false,
+                panMouseDown = false;
             var lastPos: Point;
 
-            var dragHandle = this.clip.findChildById('dragHandle', true);
-            var zoomSlider = this.clip.findChildById('zoomSlider', true),
+            var dragHandle = this.clip.findChildById('dragHandle', true),
+                zoomSlider = this.clip.findChildById('zoomSlider', true),
                 zoomLine = zoomSlider.findChildById('zoomLine'),
                 zoomKnob = zoomSlider.findChildById('zoomKnob');
+
+            var zoomLineEl = zoomLine.getHTMLElement(),
+                zoomKnobEl = zoomKnob.getHTMLElement();
 
             dragHandle.onMouseDown((event: MouseEvent) => {
                 dragMouseDown = true;
@@ -702,39 +733,36 @@ module api.ui.image {
                 };
                 zoomSlider.addClass('active');
             });
+            this.clip.onMouseWheel((event: WheelEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                var delta;
+                switch (event.deltaMode) {
+                case WheelEvent.DOM_DELTA_PIXEL:
+                    delta = event.deltaY / 10;
+                    break;
+                case WheelEvent.DOM_DELTA_LINE:
+                    delta = event.deltaY * 10 / 3;
+                    break;
+                case WheelEvent.DOM_DELTA_PAGE:
+                    delta = event.deltaY * 100; //approximate value, change if needed
+                    break;
+                }
+
+                this.zoomByDelta(zoomLineEl, zoomKnobEl, delta);
+            });
 
             this.mouseMoveListener = (event: MouseEvent) => {
 
+                var currPos = {
+                    x: this.getOffsetX(event),
+                    y: this.getOffsetY(event)
+                };
+
                 if (zoomMouseDown) {
 
-                    var sliderStart = parseInt(zoomLine.getHTMLElement().getAttribute('y1')),
-                        sliderEnd = parseInt(zoomLine.getHTMLElement().getAttribute('y2')),
-                        sliderLength = sliderEnd - sliderStart,
-                        knobY = parseInt(zoomKnob.getHTMLElement().getAttribute('cy')),
-                        knobDelta = this.getOffsetY(event) - lastPos.y,
-                        knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + knobDelta));
-
-                    if (knobNewY != knobY) {
-                        zoomKnob.getHTMLElement().setAttribute('cy', knobNewY.toString());
-
-                        var knobDeltaPct = (knobNewY - knobY) / sliderLength,
-                            newW = this.restrainWidth(this.cropData.w + this.imgW * knobDeltaPct),
-                            newH = this.restrainHeight(this.cropData.h + this.imgH * knobDeltaPct),
-                            newX = this.cropData.x - (newW - this.cropData.w) / 2,
-                            newY = this.cropData.y - (newH - this.cropData.h) / 2;
-
-                        this.setCropPositionPx({
-                            x: this.restrainWidth(newX, newW),
-                            y: this.restrainHeight(newY, newH),
-                            w: newW,
-                            h: newH
-                        });
-
-                        lastPos = {
-                            x: this.getOffsetX(event),
-                            y: this.getOffsetY(event)
-                        };
-                    }
+                    this.zoomByDelta(zoomLineEl, zoomKnobEl, this.getOffsetY(event) - lastPos.y);
 
                 } else if (dragMouseDown) {
 
@@ -749,13 +777,19 @@ module api.ui.image {
                             w: this.cropData.w,
                             h: this.restrainHeight(newH, this.cropData.y)
                         });
-
-                        lastPos = {
-                            x: this.getOffsetX(event),
-                            y: this.getOffsetY(event)
-                        };
                     }
+                } else if (panMouseDown) {
+
+                    this.setCropPositionPx({
+                        x: this.restrainWidth(this.cropData.x + currPos.x - lastPos.x, this.cropData.w),
+                        y: this.restrainHeight(this.cropData.y + currPos.y - lastPos.y, this.cropData.h),
+                        w: this.cropData.w,
+                        h: this.cropData.h
+                    });
+
                 }
+
+                lastPos = currPos;
             };
             api.dom.Body.get().onMouseMove(this.mouseMoveListener);
 
@@ -766,6 +800,8 @@ module api.ui.image {
                 } else if (zoomMouseDown) {
                     zoomMouseDown = false;
                     zoomSlider.removeClass('active');
+                } else if (panMouseDown) {
+                    panMouseDown = false;
                 }
             };
             api.dom.Body.get().onMouseUp(this.mouseUpListener);
