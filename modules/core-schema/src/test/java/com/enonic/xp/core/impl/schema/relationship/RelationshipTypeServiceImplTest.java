@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
+import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.module.Module;
@@ -42,7 +43,7 @@ public class RelationshipTypeServiceImplTest
     {
         super.setup();
 
-        //Mocks two modules
+        //Mocks a module
         startBundles( newBundle( "module2" ) );
         myBundle = findBundle( "module2" );
         myModuleKey = ModuleKey.from( myBundle );
@@ -55,9 +56,16 @@ public class RelationshipTypeServiceImplTest
         moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
 
+        //Mocks the ComponentContext
+        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
+        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.serviceRegistry.getBundleContext() );
+
         //Creates the service to test
         relationshipTypeService = new RelationshipTypeServiceImpl();
         relationshipTypeService.setModuleService( moduleService );
+
+        //Starts the service
+        relationshipTypeService.start( componentContext );
     }
 
     @Test
@@ -95,7 +103,7 @@ public class RelationshipTypeServiceImplTest
 
         Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
         Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( null );
-        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
+        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();
     }
@@ -116,6 +124,12 @@ public class RelationshipTypeServiceImplTest
 
         relationshipType = relationshipTypeService.getByName( RelationshipTypeName.REFERENCE );
         assertNotNull( relationshipType );
+    }
+
+    @Test
+    public void test_stop()
+    {
+        relationshipTypeService.stop();
     }
 
     private RelationshipType createType( final String name )

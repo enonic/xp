@@ -3,9 +3,13 @@ package com.enonic.xp.core.impl.schema.relationship;
 import java.util.Map;
 import java.util.Set;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Maps;
@@ -28,9 +32,24 @@ public final class RelationshipTypeServiceImpl
 
     private ModuleService moduleService;
 
+    private BundleContext context;
+
     public RelationshipTypeServiceImpl()
     {
         this.relationshipTypesMap = Maps.newConcurrentMap();
+    }
+
+    @Activate
+    public void start( final ComponentContext context )
+    {
+        this.context = context.getBundleContext();
+        this.context.addBundleListener( this );
+    }
+
+    @Deactivate
+    public void stop()
+    {
+        this.context.removeBundleListener( this );
     }
 
     @Override
@@ -50,7 +69,7 @@ public final class RelationshipTypeServiceImpl
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
         //Gets for each module the RelationshipTypes
-        for ( Module module : moduleService.getAllModules() )
+        for ( Module module : this.moduleService.getAllModules() )
         {
             final RelationshipTypes relationshipTypes = getByModule( module.getKey() );
             relationshipTypeList.addAll( relationshipTypes.getList() );
@@ -75,7 +94,7 @@ public final class RelationshipTypeServiceImpl
             else
             {
                 //Else, creates a provider with the corresponding bundle
-                final Module module = moduleService.getModule( moduleKeyParam );
+                final Module module = this.moduleService.getModule( moduleKeyParam );
                 if ( module != null )
                 {
                     relationshipTypeProvider = BundleRelationshipTypeProvider.create( module.getBundle() );
@@ -105,6 +124,9 @@ public final class RelationshipTypeServiceImpl
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        relationshipTypesMap.remove( ModuleKey.from( event.getBundle() ) );
+        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
+        {
+            this.relationshipTypesMap.remove( ModuleKey.from( event.getBundle() ) );
+        }
     }
 }
