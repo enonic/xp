@@ -177,7 +177,7 @@ module app.browse {
                             icon = new api.dom.DivEl("icon-arrow-down4 sort-dialog-trigger");
                         }
                     } else {
-                        icon = new api.dom.DivEl("icon-menu3");
+                        icon = new api.dom.DivEl("icon-menu3 sort-dialog-trigger");
                     }
                     wrapper.getEl().setInnerHtml(icon.toString());
                 }
