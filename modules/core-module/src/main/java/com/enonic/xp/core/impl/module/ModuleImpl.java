@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleNotStartedException;
 import com.enonic.xp.module.ModuleVersion;
 
 final class ModuleImpl
@@ -149,6 +150,17 @@ final class ModuleImpl
             final URL path = paths.nextElement();
             set.add( path.getPath().replaceFirst( "^/", "" ) );
         }
+    }
+
+    @Override
+    public void checkIfStarted()
+    {
+        if ( isStarted() )
+        {
+            return;
+        }
+
+        throw new ModuleNotStartedException( this.moduleKey );
     }
 
     @Override

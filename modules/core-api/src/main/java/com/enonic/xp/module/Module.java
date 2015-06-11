@@ -40,4 +40,6 @@ public interface Module
     boolean isStarted();
 
     ClassLoader getClassLoader();
+
+    void checkIfStarted();
 }
