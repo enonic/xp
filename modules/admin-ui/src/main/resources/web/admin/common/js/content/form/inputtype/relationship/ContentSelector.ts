@@ -26,6 +26,8 @@ module api.content.form.inputtype.relationship {
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
+        private draggingIndex: number;
+
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>) {
             super("relationship");
             this.addClass("input-type-view");
@@ -91,15 +93,19 @@ module api.content.form.inputtype.relationship {
                                     this.propertyArray.add(value);
                                 }
 
+                                this.refreshSortable();
+                                this.updateSelectedOptionStyle();
                                 this.validate(false);
                             });
 
                             this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
                                 this.propertyArray.remove(removed.getIndex());
+                                this.updateSelectedOptionStyle();
                                 this.validate(false);
                             });
 
+                            this.setupSortable();
                         });
                 });
         }
@@ -120,6 +126,51 @@ module api.content.form.inputtype.relationship {
                     return result;
                 });
 
+        }
+
+        private setupSortable() {
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
+                axis: "y",
+                containment: 'parent',
+                handle: '.drag-control',
+                tolerance: 'pointer',
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+            });
+
+            this.updateSelectedOptionStyle();
+        }
+
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
+            ui.placeholder.html("Drop form item set here");
+        }
+
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                var draggedToIndex = draggedElement.getSiblingIndex();
+                this.propertyArray.move(this.draggingIndex, draggedToIndex);
+            }
+
+            this.draggingIndex = -1;
+        }
+
+        private updateSelectedOptionStyle() {
+            if (this.propertyArray.getSize() > 1) {
+                this.addClass("multiple-occurrence").removeClass("single-occurrence");
+            }
+            else {
+                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+            }
+        }
+
+        private refreshSortable() {
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

@@ -7,11 +7,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.site.Site;
 
 public final class ServiceResource
     extends BaseSubResource
@@ -80,6 +80,6 @@ public final class ServiceResource
 
     private Site getSite( final Content content )
     {
-        return this.services.getSiteService().getNearestSite( content.getId() );
+        return this.services.getContentService().getNearestSite( content.getId() );
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.content.site;
+package com.enonic.xp.site;
 
 
 import org.junit.Test;
@@ -55,7 +55,7 @@ public class SiteTest
             parentPath( ContentPath.ROOT ).
             build();
 
-        Site site1 = Site.newSite(site).build();
+        Site site1 = Site.newSite( site ).build();
 
         assertEquals( site, site1 );
     }

@@ -43,7 +43,7 @@ public class LayoutDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "app/layouts/" + key.getName() + "/layout.xml" );
+        return ResourceKey.from( key.getModuleKey(), "app/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static class Builder

@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +53,6 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.site.SiteConfigsDataSerializer;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -83,6 +79,9 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CreateSiteParams;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
 
@@ -129,6 +128,48 @@ public class ContentServiceImpl
     public void initialize()
     {
         new ContentInitializer( this.nodeService ).initialize();
+    }
+
+    @Override
+    public Site create( final CreateSiteParams params )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "description", params.getDescription() );
+
+        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            type( ContentTypeName.site() ).
+            parent( params.getParentContentPath() ).
+            name( params.getName() ).
+            displayName( params.getDisplayName() ).
+            contentData( data ).
+            requireValid( params.isRequireValid() ).
+            build();
+
+        final Site site = (Site) CreateContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            siteService( this.siteService ).
+            mixinService( this.mixinService ).
+            params( createContentParams ).
+            build().
+            execute();
+
+        this.create( CreateContentParams.create().
+            owner( site.getOwner() ).
+            displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
+            name( TEMPLATES_FOLDER_NAME ).
+            inheritPermissions( true ).
+            parent( site.getPath() ).
+            type( ContentTypeName.templateFolder() ).
+            requireValid( true ).
+            contentData( new PropertyTree() ).
+            build() );
+
+        return site;
     }
 
     @Override
@@ -251,6 +292,16 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Site getNearestSite( final ContentId contentId )
+    {
+        return GetNearestSiteCommand.create().
+            contentService( this ).
+            contentId( contentId ).
             build().
             execute();
     }
@@ -660,7 +711,7 @@ public class ContentServiceImpl
         this.mixinService = mixinService;
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    @Reference
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;

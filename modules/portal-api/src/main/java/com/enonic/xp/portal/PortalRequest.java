@@ -11,11 +11,11 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta

@@ -8,18 +8,15 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.Site;
 
 public class GetCurrentSiteHandlerTest
     extends AbstractHandlerTest
 {
     private ContentService contentService;
-
-    private SiteService siteService;
 
     @Override
     protected CommandHandler createHandler()
@@ -27,11 +24,8 @@ public class GetCurrentSiteHandlerTest
     {
         this.contentService = Mockito.mock( ContentService.class );
 
-        this.siteService = Mockito.mock( SiteService.class );
-
         final GetCurrentSiteHandler handler = new GetCurrentSiteHandler();
         handler.setContentService( this.contentService );
-        handler.setSiteService( this.siteService );
 
         return handler;
     }
@@ -51,7 +45,7 @@ public class GetCurrentSiteHandlerTest
         throws Exception
     {
         final Site site = ContentFixtures.newSite();
-        Mockito.when( siteService.getNearestSite( site.getId() ) ).thenReturn( site );
+        Mockito.when( contentService.getNearestSite( site.getId() ) ).thenReturn( site );
 
         execute( "getById" );
     }
@@ -64,7 +58,7 @@ public class GetCurrentSiteHandlerTest
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         final Site site = ContentFixtures.newSite();
-        Mockito.when( siteService.getNearestSite( content.getId() ) ).thenReturn( site );
+        Mockito.when( contentService.getNearestSite( content.getId() ) ).thenReturn( site );
 
         execute( "getByPath" );
     }

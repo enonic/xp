@@ -34,7 +34,7 @@ module app {
                 if (event.getPropertyName() === "displayName") {
                     var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
                         name = <string>event.getNewValue() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
-                    tabMenuItem.setLabel(name, !<string>event.getNewValue());
+                    tabMenuItem.setLabel(name, !<string>event.getNewValue(), false);
                 }
             });
 

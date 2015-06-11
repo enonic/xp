@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
@@ -24,6 +23,7 @@ import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
 
 import static com.enonic.xp.page.PageRegions.newPageRegions;
 import static com.enonic.xp.region.PartComponent.newPartComponent;

@@ -8,10 +8,10 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.site.Site;
 
 import static org.junit.Assert.*;
 

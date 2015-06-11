@@ -62,7 +62,7 @@ public final class PageDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "app/pages/" + key.getName() + "/page.xml" );
+        return ResourceKey.from( key.getModuleKey(), "app/pages/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static PageDescriptor.Builder create()

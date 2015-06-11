@@ -46,9 +46,6 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.site.Site;
-import com.enonic.xp.content.site.SiteConfig;
-import com.enonic.xp.content.site.SiteConfigs;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -73,10 +70,13 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static com.enonic.xp.content.Content.newContent;
-import static com.enonic.xp.content.site.Site.newSite;
 import static com.enonic.xp.security.acl.Permission.READ;
+import static com.enonic.xp.site.Site.newSite;
 
 public class ContentResourceTest
     extends AbstractResourceTest

@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Thumbnail;
@@ -21,6 +20,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.Site;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")

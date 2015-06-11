@@ -16,7 +16,7 @@ import com.enonic.xp.page.PageDescriptors;
 final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "app/pages/([^/]+)/page.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "app/pages/([^/]+)/\\1.xml" );
 
     private ModuleKey moduleKey;
 
