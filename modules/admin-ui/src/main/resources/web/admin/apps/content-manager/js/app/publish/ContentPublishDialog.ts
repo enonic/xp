@@ -64,9 +64,10 @@ module app.publish {
             this.initIncludeChildrenCheckbox();
 
             this.getEl().addClass("publish-dialog");
+
             this.appendChildToContentPanel(this.initialItemsView);
-            this.appendChildToContentPanel(this.dependenciesLabel);
             this.appendChildToContentPanel(this.dependenciesItemsView);
+            this.renderDependenciesLabel();
 
             this.subheaderMessage.addClass("publish-dialog-subheader");
             this.appendChildToTitle(this.subheaderMessage);
@@ -93,6 +94,10 @@ module app.publish {
                 this.centerMyself();
             }).done();
             this.open();
+        }
+
+        renderDependenciesLabel() {
+            this.initialItemsView.appendChild(this.dependenciesLabel);
         }
 
         show() {
@@ -128,6 +133,8 @@ module app.publish {
                     this.initialItemsView.appendChild(item);
                 }
             });
+
+            this.renderDependenciesLabel()
         }
 
         private initIncludeChildrenCheckbox() {
