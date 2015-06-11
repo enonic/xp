@@ -4,4 +4,36 @@
   .rich-combobox .selected-options {
     margin-left: 0px;
   }
+
+  .drag-control {
+    .order(1);
+
+    display: none;
+    float: left;
+    background: url("../images/nail-plate.png") no-repeat;
+    width: 5px;
+    height: 30px;
+    cursor: move;
+  }
+
+  &.single-occurrence {
+
+    .drag-control {
+      display: none;
+    }
+
+  }
+
+  &.multiple-occurrence {
+
+    .drag-control {
+      display: block;
+      padding-right: 3px;
+    }
+
+    .selected-option {
+      padding-left: 0px;
+    }
+
+  }
 }

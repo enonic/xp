@@ -51,6 +51,7 @@ module api.ui.selector.combobox {
                 return false;
             });
 
+            this.appendChild(new api.dom.DivEl("drag-control"));
             this.appendChild(removeButton);
             this.appendChild(namesAndIconView);
         }
