@@ -141,6 +141,8 @@ module api.ui.treegrid {
                         this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
                     }
+
+                    this.manageRowClick(elem, data);
                 }
                 if (this.contextMenu) {
                     this.contextMenu.hide();
@@ -279,6 +281,9 @@ module api.ui.treegrid {
                     this.toolbar.refresh();
                 });
             }*/
+        }
+
+        protected manageRowClick(elem: ElementHelper, args: any) {
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
