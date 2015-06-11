@@ -79,13 +79,18 @@ module api.ui.image {
                            '        <clipPath id="cropClipPath">' +
                            '            <rect x="0" y="0" width="0" height="0"/>' +
                            '        </clipPath>' +
-                           '        <svg id="drag-handle">' +
+                           '        <svg id="dragHandle" class="drag-handle">' +
                            '            <defs>' +
                            '                <polygon id="drag-triangle" class="drag-triangle" points="8,0,16,8,0,8"/>' +
                            '            </defs>' +
                            '            <circle cx="16" cy="16" r="16"/>' +
                            '            <use xlink:href="#drag-triangle" x="8" y="6"/>' +
                            '            <use xlink:href="#drag-triangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
+                           '        </svg>' +
+                           '        <svg id="zoomSlider" class="zoom-slider">' +
+                           '            <rect x="0" y="0" width="40" height="200" rx="20" ry="20"/>' +
+                           '            <line id="zoomLine" x1="20" y1="20" x2="20" y2="180"/>' +
+                           '            <circle id="zoomKnob" cx="20" cy="180" r="8"/>' +
                            '        </svg>' +
                            '    </g>' +
                            '</svg>';
@@ -116,7 +121,7 @@ module api.ui.image {
 
         setSrc(src: string) {
             this.image.setSrc(src);
-            var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
+            var image = this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
@@ -125,7 +130,7 @@ module api.ui.image {
         }
 
         private setImageClipPath(path: string) {
-            var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
+            var image = this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('clip-path', 'url(#' + path + ')');
         }
 
@@ -203,12 +208,12 @@ module api.ui.image {
             return r * Math.min(this.imgW, this.imgH);
         }
 
-        private restrainWidth(x: number) {
-            return Math.max(0, Math.min(this.imgW, x));
+        private restrainWidth(x: number, width: number = 0) {
+            return Math.max(0, Math.min(this.imgW - width, x));
         }
 
-        private restrainHeight(y: number) {
-            return Math.max(0, Math.min(this.imgH, y));
+        private restrainHeight(y: number, height: number = 0) {
+            return Math.max(0, Math.min(this.imgH - height, y));
         }
 
         private restrainRadius(r: number) {
@@ -256,7 +261,7 @@ module api.ui.image {
                 this.resetCropPosition();
             }
 
-            var image = <Element> this.clip.getHTMLElement().getElementsByTagName('image')[0];
+            var image = this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('width', this.imgW.toString());
             image.setAttribute('height', this.imgH.toString());
 
@@ -499,8 +504,7 @@ module api.ui.image {
         }
 
         private updateFocusMaskPosition() {
-            var focusGroup = <Element> this.clip.getHTMLElement().getElementsByClassName('focus-group')[0],
-                circles = focusGroup.getElementsByTagName('circle');
+            var circles = this.clip.getHTMLElement().querySelectorAll('.focus-group circle');
 
             for (var i = 0; i < circles.length; i++) {
                 var circle = <Element> circles[i];
@@ -651,9 +655,10 @@ module api.ui.image {
         }
 
         private updateCropMaskPosition() {
-            var cropGroup = <Element> this.clip.getHTMLElement().getElementsByClassName('crop-group')[0],
-                rect = <Element> cropGroup.getElementsByTagName('rect')[0],
-                drag = <Element> cropGroup.getElementsByTagName('svg')[0];
+            var clipEl = this.clip.getHTMLElement(),
+                rect = clipEl.querySelector('#cropClipPath rect'),
+                drag = clipEl.querySelector('#dragHandle'),
+                zoom = clipEl.querySelector('#zoomSlider');
 
             rect.setAttribute('x', this.cropData.x.toString());
             rect.setAttribute('y', this.cropData.y.toString());
@@ -663,16 +668,25 @@ module api.ui.image {
             // 16 is the half-size of drag
             drag.setAttribute('x', (this.cropData.x + this.cropData.w / 2 - 16).toString());
             drag.setAttribute('y', (this.cropData.y + this.cropData.h - 16).toString());
+
+            // 40px is the width of zoom control + 20px to the edge of the canvas
+            zoom.setAttribute('x', (this.imgW - 20 - 40).toString());
+            // 200px is the height of the zoom control
+            zoom.setAttribute('y', ((this.imgH - 200) / 2 ).toString());
         }
 
         private bindCropMouseListeners() {
-            var mouseDown: boolean = false;
+            var dragMouseDown = false,
+                zoomMouseDown = false;
             var lastPos: Point;
 
-            var dragHandle = this.clip.findChildById('drag-handle', true);
+            var dragHandle = this.clip.findChildById('dragHandle', true);
+            var zoomSlider = this.clip.findChildById('zoomSlider', true),
+                zoomLine = zoomSlider.findChildById('zoomLine'),
+                zoomKnob = zoomSlider.findChildById('zoomKnob');
 
             dragHandle.onMouseDown((event: MouseEvent) => {
-                mouseDown = true;
+                dragMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
@@ -680,22 +694,60 @@ module api.ui.image {
                 dragHandle.addClass('active');
             });
 
-            this.mouseMoveListener = (event: MouseEvent) => {
-                if (mouseDown) {
-                    var deltaY = this.getOffsetY(event) - lastPos.y,
-                        deltaX = this.imgW * deltaY / this.imgH,        // scale x proportionally
-                        newW = this.cropData.w + deltaX * 2,
-                        newH = this.cropData.h + deltaY * 2,
-                        newX = this.cropData.x - deltaX,
-                        newY = this.cropData.y - deltaY;
+            zoomKnob.onMouseDown((event: MouseEvent) => {
+                zoomMouseDown = true;
+                lastPos = {
+                    x: this.getOffsetX(event),
+                    y: this.getOffsetY(event)
+                };
+                zoomSlider.addClass('active');
+            });
 
-                    if (newW > 0 && newH > 0) {
+            this.mouseMoveListener = (event: MouseEvent) => {
+
+                if (zoomMouseDown) {
+
+                    var sliderStart = parseInt(zoomLine.getHTMLElement().getAttribute('y1')),
+                        sliderEnd = parseInt(zoomLine.getHTMLElement().getAttribute('y2')),
+                        sliderLength = sliderEnd - sliderStart,
+                        knobY = parseInt(zoomKnob.getHTMLElement().getAttribute('cy')),
+                        knobDelta = this.getOffsetY(event) - lastPos.y,
+                        knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + knobDelta));
+
+                    if (knobNewY != knobY) {
+                        zoomKnob.getHTMLElement().setAttribute('cy', knobNewY.toString());
+
+                        var knobDeltaPct = (knobNewY - knobY) / sliderLength,
+                            newW = this.restrainWidth(this.cropData.w + this.imgW * knobDeltaPct),
+                            newH = this.restrainHeight(this.cropData.h + this.imgH * knobDeltaPct),
+                            newX = this.cropData.x - (newW - this.cropData.w) / 2,
+                            newY = this.cropData.y - (newH - this.cropData.h) / 2;
 
                         this.setCropPositionPx({
-                            x: this.restrainWidth(newX),
-                            y: this.restrainHeight(newY),
-                            w: this.restrainWidth(newW),
-                            h: this.restrainHeight(newH)
+                            x: this.restrainWidth(newX, newW),
+                            y: this.restrainHeight(newY, newH),
+                            w: newW,
+                            h: newH
+                        });
+
+                        lastPos = {
+                            x: this.getOffsetX(event),
+                            y: this.getOffsetY(event)
+                        };
+                    }
+
+                } else if (dragMouseDown) {
+
+                    var deltaY = this.getOffsetY(event) - lastPos.y,
+                        newH = this.cropData.h + deltaY;
+
+                    if (newH > 0) {
+
+                        this.setCropPositionPx({
+                            x: this.cropData.x,
+                            y: this.cropData.y,
+                            w: this.cropData.w,
+                            h: this.restrainHeight(newH, this.cropData.y)
                         });
 
                         lastPos = {
@@ -708,9 +760,12 @@ module api.ui.image {
             api.dom.Body.get().onMouseMove(this.mouseMoveListener);
 
             this.mouseUpListener = (event: MouseEvent) => {
-                if (mouseDown) {
-                    mouseDown = false;
+                if (dragMouseDown) {
+                    dragMouseDown = false;
                     dragHandle.removeClass('active');
+                } else if (zoomMouseDown) {
+                    zoomMouseDown = false;
+                    zoomSlider.removeClass('active');
                 }
             };
             api.dom.Body.get().onMouseUp(this.mouseUpListener);

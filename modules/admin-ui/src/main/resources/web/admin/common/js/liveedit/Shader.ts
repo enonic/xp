@@ -26,7 +26,7 @@ module api.liveedit {
 
         private static INSTANCE: Shader;
 
-        private static debug: boolean = true;
+        private static debug: boolean = false;
 
         constructor() {
             this.pageShader = new DivEl(Shader.CLS_NAME + " page");
