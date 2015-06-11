@@ -60,7 +60,3 @@ subprojects {
         compile "com.enonic.xp:portal-api:${version}"
     }
 }
-
-wrapper {
-    jarFile = "${project.projectDir}/../gradle/wrapper/gradle-wrapper.jar"
-}
