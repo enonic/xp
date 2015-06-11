@@ -1,0 +1,4 @@
+dependencies {
+    compile gradleApi()
+    compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
+}

@@ -1,0 +1,60 @@
+apply plugin: 'java-base'
+
+allprojects {
+    group = 'com.enonic.xp.tools'
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url 'http://repo.enonic.com/public'
+        }
+    }
+
+    buildDir = 'target'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    def defaultEncoding = 'UTF-8'
+
+    compileJava {
+        options.encoding = defaultEncoding
+        options.compilerArgs = ['-Xlint:-options']
+    }
+
+    compileTestJava {
+        options.encoding = defaultEncoding
+    }
+
+    task sourceJar( type: Jar ) {
+        classifier 'sources'
+        from sourceSets.main.allJava
+    }
+
+    artifacts {
+        archives sourceJar
+    }
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = sourceCompatibility
+
+    test {
+        systemProperty 'java.awt.headless', 'true'
+        jvmArgs '-Xmx2048m'
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository( url: 'http://repo.enonic.net/artifactory/public' )
+            }
+        }
+    }
+}
+
+wrapper {
+    jarFile = "${project.projectDir}/../gradle/wrapper/gradle-wrapper.jar"
+}
