@@ -54,7 +54,3 @@ subprojects {
         }
     }
 }
-
-wrapper {
-    jarFile = "${project.projectDir}/../gradle/wrapper/gradle-wrapper.jar"
-}
