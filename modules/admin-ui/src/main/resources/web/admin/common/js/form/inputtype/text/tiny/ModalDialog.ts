@@ -10,11 +10,16 @@ module api.form.inputtype.text.tiny {
     export class ModalDialog extends BaseDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated = false;
+        private editor: TinyMceEditor;
+        private mainForm: Form;
+        private firstFocusField: api.dom.Element;
 
-        constructor(title: api.ui.dialog.ModalDialogHeader) {
+        constructor(editor: TinyMceEditor, title: api.ui.dialog.ModalDialogHeader) {
             super({
                 title: title
             });
+
+            this.editor = editor;
 
             this.getEl().addClass("tinymce-modal-dialog");
 
@@ -22,17 +27,44 @@ module api.form.inputtype.text.tiny {
             this.initializeActions();
         }
 
-        setValidated() {
+        protected getEditor(): TinyMceEditor {
+            return this.editor;
+        }
+
+        protected setValidated() {
             this.validated = true;
         }
 
-        layout() {
-            throw new Error("Must be implemented by inheritors");
+        protected setFirstFocusField(field: api.dom.Element) {
+            this.firstFocusField = field;
+        }
+
+        private focusFirstField() {
+            this.firstFocusField.giveFocus();
+        }
+
+        protected layout() {
+            this.appendChildToContentPanel(<api.dom.Element>this.createMainForm());
+        }
+
+        protected getMainFormItems(): FormItem[] {
+            return [];
+        }
+
+        protected createMainForm(): Form {
+            return this.mainForm = this.createForm(this.getMainFormItems());
+        }
+
+        protected validate(): boolean {
+            this.setValidated();
+
+            return this.mainForm.validate(true).isValid();
         }
 
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
+            this.focusFirstField();
         }
 
         protected createForm(formItems: FormItem[]): Form {
@@ -131,6 +163,12 @@ module api.form.inputtype.text.tiny {
 
         protected getFieldById(id: string): api.dom.FormItemEl {
             return this.fields[id];
+        }
+
+
+        close() {
+            super.close();
+            this.editor.focus();
         }
     }
 }
