@@ -20,12 +20,16 @@ module api.form.inputtype.text.tiny {
         private progress: api.ui.ProgressBar;
         private error: api.dom.DivEl;
         private image: api.dom.ImgEl;
+        private elementContainer: HTMLElement;
+        private callback: Function;
 
-        constructor(editor: TinyMceEditor, imageElement: HTMLImageElement, contentId: api.content.ContentId) {
-            this.imageElement = imageElement;
+        constructor(config: api.form.inputtype.text.TinyMCEImage, contentId: api.content.ContentId) {
+            this.imageElement = <HTMLImageElement>config.element;
+            this.elementContainer = config.container;
             this.contentId = contentId;
+            this.callback = config.callback;
 
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
 
         private getImageId(images: api.content.ContentSummary[]): string {
@@ -242,13 +246,36 @@ module api.form.inputtype.text.tiny {
         }
 
         private createImageTag(): void {
-            var imageEl = <api.dom.ImgEl>this.image;
+            var imageEl = <api.dom.ImgEl>this.image,
+                container = this.elementContainer,
+                isProperContainer = function () {
+                    return container.nodeName !== "FIGURE" && container.nodeName !== "FIGCAPTION"
+                };
 
             if (this.imageElement) {
                 this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
             }
             else {
-                this.getEditor().insertContent("<figure>" + imageEl.toString() + "<figcaption></figcaption></figure>");
+                var figure = api.dom.ElementHelper.fromName("figure");
+                var figCaption = api.dom.ElementHelper.fromName("figcaption");
+                figure.appendChildren([imageEl.getEl().getHTMLElement(), figCaption.getHTMLElement()]);
+
+                if (!isProperContainer()) {
+                    if (container.nodeName === "FIGCAPTION") {
+                        container = container.parentElement;
+                    }
+                    if (container.nodeName === "FIGURE") {
+                        figure.insertAfterEl(new api.dom.ElementHelper(container));
+                    }
+
+                    this.getEditor().nodeChanged();
+                }
+                else {
+                    this.getEditor().insertContent(figure.getHTMLElement().outerHTML);
+                }
+
+                this.callback(figCaption.getHTMLElement());
+                figCaption.scrollIntoView();
             }
         }
 

@@ -3,11 +3,20 @@
 tinymce.PluginManager.add('image', function (editor) {
 
     function showDialog() {
-        var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null;
+        var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null,
+            rng = editor.selection.getRng();
+
+        function setCursorToFigCaption(figCaptionEl) {
+            if (figCaptionEl.offsetTop > 0) {
+                editor.selection.placeCaretAt(0, figCaptionEl.offsetTop);
+            }
+        }
 
         editor.execCommand("openImageDialog", {
             editor: editor,
-            element: imgEl
+            element: imgEl,
+            container: rng.endContainer,
+            callback: setCursorToFigCaption
         });
     }
 

@@ -3,12 +3,39 @@
 tinymce.PluginManager.add('link', function (editor) {
 
     function showDialog() {
+        function isOnlyTextSelected(anchorElm) {
+            var html = editor.selection.getContent();
+
+            // Partial html and not a fully selected anchor element
+            if (/</.test(html) && (!/^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') == -1)) {
+                return false;
+            }
+
+            if (anchorElm) {
+                var nodes = anchorElm.childNodes, i;
+
+                if (nodes.length === 0) {
+                    return false;
+                }
+
+                for (i = nodes.length - 1; i >= 0; i--) {
+                    if (nodes[i].nodeType != 3) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         var selectedElm = editor.selection.getNode();
         var anchorElm = editor.dom.getParent(selectedElm, 'a[href]');
+        var linkText = isOnlyTextSelected(anchorElm) ? editor.selection.getContent() : "";
 
         editor.execCommand("openLinkDialog", {
             editor: editor,
-            element: anchorElm
+            element: anchorElm,
+            text: linkText
         });
     }
 
