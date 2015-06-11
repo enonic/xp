@@ -25,6 +25,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.grid-item-icon {
+  line-height: 37px;
+}
+
 .icon-xsmall {
   &:before {
     font-size: 10px;
@@ -230,6 +234,14 @@
   }
 }
 
+.icon-menu3 {
+  &:extend(.icon);
+  &:extend(.grid-item-icon);
+  &:before {
+    content: "\e2ac";
+  }
+}
+
 .icon-earth {
   &:extend(.icon);
   &:before {
@@ -344,6 +356,7 @@
 
 .icon-arrow-down4 {
   &:extend(.icon);
+  &:extend(.grid-item-icon);
   &:before {
     content: "\e412";
   }
@@ -351,6 +364,7 @@
 
 .icon-arrow-up4 {
   &:extend(.icon);
+  &:extend(.grid-item-icon);
   &:before {
     content: "\e410";
   }
