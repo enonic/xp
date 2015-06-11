@@ -2,76 +2,120 @@ package com.enonic.xp.core.impl.schema.relationship;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
 
+import com.enonic.xp.core.impl.schema.AbstractBundleTest;
+import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.relationship.RelationshipType;
-import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 
 public class RelationshipTypeServiceImplTest
+    extends AbstractBundleTest
 {
-    private RelationshipTypeServiceImpl service;
 
-    private RelationshipTypeProvider provider;
+    private static int DEFAULT_RELATIONSHIP_TYPES_NUMBER = 2;
 
-    private RelationshipType type1;
+    private Bundle myBundle;
 
-    private RelationshipType type2;
+    private ModuleKey myModuleKey;
+
+    private RelationshipType myModuleType;
+
+    private Module myModule;
+
+    private ModuleService moduleService;
+
+    private RelationshipTypeServiceImpl relationshipTypeService;
 
     @Before
+    @Override
     public void setup()
+        throws Exception
     {
-        this.service = new RelationshipTypeServiceImpl();
-        this.type1 = createType( "mymodule:test" );
-        this.type2 = createType( "othermodule:test" );
-        this.provider = () -> RelationshipTypes.from( this.type1, this.type2 );
+        super.setup();
+
+        //Mocks two modules
+        startBundles( newBundle( "module2" ) );
+        myBundle = findBundle( "module2" );
+        myModuleKey = ModuleKey.from( myBundle );
+        myModuleType = createType( myModuleKey + ":member" );
+        myModule = Mockito.mock( Module.class );
+        Mockito.when( myModule.getKey() ).thenReturn( myModuleKey );
+        Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
+
+        //Mocks the module service
+        moduleService = Mockito.mock( ModuleService.class );
+        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+
+        //Creates the service to test
+        relationshipTypeService = new RelationshipTypeServiceImpl();
+        relationshipTypeService.setModuleService( moduleService );
     }
 
     @Test
-    public void testEmpty()
+    public void test_empty()
     {
-        final RelationshipTypes result = this.service.getAll();
-        assertNotNull( result );
-        assertEquals( 0, result.getSize() );
+        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
+        assertNotNull( relationshipTypes );
+        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
+
+        relationshipTypes = relationshipTypeService.getByModule( myModuleKey );
+        assertNotNull( relationshipTypes );
+        assertEquals( 0, relationshipTypes.getSize() );
+
+        RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
+        assertEquals( null, relationshipType );
     }
 
     @Test
-    public void testGetByName()
+    public void test_add_removal_module()
     {
-        this.service.addProvider( this.provider );
+        Modules modules = Modules.from( myModule );
+        Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
+        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
 
-        final RelationshipType result1 = this.service.getByName( this.type1.getName() );
-        assertNotNull( result1 );
+        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
+        assertNotNull( relationshipTypes );
+        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER + 1, relationshipTypes.getSize() );
 
-        this.service.removeProvider( this.provider );
+        relationshipTypes = relationshipTypeService.getByModule( myModuleKey );
+        assertNotNull( relationshipTypes );
+        assertEquals( 1, relationshipTypes.getSize() );
 
-        final RelationshipType result2 = this.service.getByName( this.type1.getName() );
-        assertNull( result2 );
+        RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
+        assertNotNull( relationshipType );
+
+        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( null );
+        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
+
+        test_empty();
     }
 
     @Test
-    public void testGetAll()
+    public void test_get_system_module()
     {
-        this.service.addProvider( this.provider );
+        RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
+        assertNotNull( relationshipTypes );
+        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-        final RelationshipTypes result = this.service.getAll();
-        assertNotNull( result );
-        assertEquals( 2, result.getSize() );
-        assertSame( this.type1, result.get( 1 ) );
-        assertSame( this.type2, result.get( 0 ) );
-    }
+        relationshipTypes = relationshipTypeService.getByModule( ModuleKey.SYSTEM );
+        assertNotNull( relationshipTypes );
+        assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-    @Test
-    public void testGetByModule()
-    {
-        this.service.addProvider( this.provider );
+        RelationshipType relationshipType = relationshipTypeService.getByName( RelationshipTypeName.PARENT );
+        assertNotNull( relationshipType );
 
-        final RelationshipTypes result = this.service.getByModule( ModuleKey.from( "mymodule" ) );
-        assertNotNull( result );
-        assertEquals( 1, result.getSize() );
-        assertSame( this.type1, result.get( 0 ) );
+        relationshipType = relationshipTypeService.getByName( RelationshipTypeName.REFERENCE );
+        assertNotNull( relationshipType );
     }
 
     private RelationshipType createType( final String name )
