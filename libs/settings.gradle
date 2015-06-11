@@ -1,0 +1,5 @@
+include ':system'
+include ':portal'
+include ':mustache'
+include ':thymeleaf'
+include ':xslt'
