@@ -1,10 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
-
-import com.enonic.wem.repo.internal.elasticsearch.LexiSortable;
 
 public class LexiSortableTest
 {

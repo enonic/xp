@@ -20,8 +20,7 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class StatsAggregationTest
     extends AbstractNodeTest
@@ -84,11 +83,11 @@ public class StatsAggregationTest
         assertTrue( subAgg instanceof StatsAggregation );
         final StatsAggregation stats = (StatsAggregation) subAgg;
 
-        assertEquals( stats.getAvg(), avg );
-        assertEquals( stats.getMin(), min );
-        assertEquals( stats.getMax(), max );
-        assertEquals( stats.getSum(), sum );
-        assertEquals( stats.getCount(), count );
+        assertEquals( stats.getAvg(), avg, 0 );
+        assertEquals( stats.getMin(), min, 0 );
+        assertEquals( stats.getMax(), max, 0 );
+        assertEquals( stats.getSum(), sum, 0 );
+        assertEquals( stats.getCount(), count, 0 );
     }
 
     private Node createNode( final String categoryValue, final Double otherValue, final String name, final NodePath parent )

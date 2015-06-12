@@ -8,8 +8,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class NodeHasChildResolverTest
     extends AbstractNodeTest

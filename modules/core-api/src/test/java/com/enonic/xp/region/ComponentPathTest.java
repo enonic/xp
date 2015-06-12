@@ -3,8 +3,7 @@ package com.enonic.xp.region;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ComponentPathTest
 {

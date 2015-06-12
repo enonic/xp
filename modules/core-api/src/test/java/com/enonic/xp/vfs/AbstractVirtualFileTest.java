@@ -2,14 +2,13 @@ package com.enonic.xp.vfs;
 
 import java.io.File;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-
-import junit.framework.Assert;
 
 public abstract class AbstractVirtualFileTest
 {

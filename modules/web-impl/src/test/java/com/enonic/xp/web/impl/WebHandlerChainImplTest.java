@@ -3,13 +3,13 @@ package com.enonic.xp.web.impl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.mock.MockHttpServletRequest;
-import com.enonic.xp.web.mock.MockHttpServletResponse;
 
 public class WebHandlerChainImplTest
 {

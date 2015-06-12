@@ -1,10 +1,7 @@
 package com.enonic.xp.util;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
-
-import com.enonic.xp.util.GeoPoint;
 
 public class GeoPointTest
 {
@@ -14,8 +11,8 @@ public class GeoPointTest
         final GeoPoint point = GeoPoint.from( "1.1,-2.2" );
         Assert.assertNotNull( point );
         Assert.assertEquals( "1.1,-2.2", point.toString() );
-        Assert.assertEquals( 1.1, point.getLatitude() );
-        Assert.assertEquals( -2.2, point.getLongitude() );
+        Assert.assertEquals( 1.1, point.getLatitude(), 0 );
+        Assert.assertEquals( -2.2, point.getLongitude(), 0 );
     }
 
     @Test

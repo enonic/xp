@@ -17,10 +17,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 
 public class ModuleImplTest

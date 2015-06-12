@@ -7,9 +7,8 @@ import org.junit.Test;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.relationship.Relationship;
-import com.enonic.xp.relationship.editor.AddRelationshipPropertiesEditor;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class AddRelationshipPropertiesEditorTest
 {

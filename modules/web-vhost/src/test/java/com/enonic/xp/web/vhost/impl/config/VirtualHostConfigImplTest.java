@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 

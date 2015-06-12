@@ -9,8 +9,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 
 import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class XmlPartDescriptorParserTest
     extends XmlModelParserTest

@@ -16,7 +16,7 @@ import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.form.inputtype.NullConfig;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class FormItemJsonTest
 {

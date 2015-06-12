@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.support.AbstractEqualsTest;
 import com.enonic.xp.node.NodeIds;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class NodeTest
 {

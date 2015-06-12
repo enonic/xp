@@ -1,12 +1,11 @@
 package com.enonic.xp.web.vhost.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.vhost.VirtualHost;

@@ -9,7 +9,6 @@ import com.enonic.xp.schema.content.ContentTypeFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class ContentTypeFilterTest

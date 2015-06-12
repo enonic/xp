@@ -11,8 +11,7 @@ import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class XmlPageDescriptorParserTest
     extends XmlModelParserTest

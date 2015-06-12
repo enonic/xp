@@ -20,8 +20,7 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ValueCountAggregationTest
     extends AbstractNodeTest

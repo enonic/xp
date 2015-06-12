@@ -19,10 +19,7 @@ import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
 import static com.enonic.xp.region.LayoutRegions.newLayoutRegions;
 import static com.enonic.xp.region.PartComponent.newPartComponent;
 import static com.enonic.xp.region.Region.newRegion;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class PageRegionsTest
 {

@@ -7,10 +7,10 @@ import javax.servlet.ServletException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletConfig;
 
-import com.enonic.xp.web.mock.MockHttpServletRequest;
-import com.enonic.xp.web.mock.MockHttpServletResponse;
-import com.enonic.xp.web.mock.MockServletConfig;
 
 public class DispatcherServletTest
 {

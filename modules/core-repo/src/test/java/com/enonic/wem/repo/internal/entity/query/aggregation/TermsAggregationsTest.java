@@ -18,8 +18,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TermsAggregationsTest
     extends AbstractNodeTest
