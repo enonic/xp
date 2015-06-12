@@ -3,6 +3,7 @@ module api.ui.image {
     import ImgEl = api.dom.ImgEl;
     import DivEl = api.dom.DivEl;
     import Button = api.ui.button.Button;
+    import Element = api.dom.Element;
 
     export interface Point {
         x: number;
@@ -18,7 +19,11 @@ module api.ui.image {
 
         private canvas: DivEl;
         private image: ImgEl;
-        private clip: api.dom.Element;
+        private clip: Element;
+        private dragHandle: Element;
+        private zoomSlider: Element;
+        private zoomLine: Element;
+        private zoomKnob: Element;
 
         private focusData: {x: number; y: number; r: number; auto: boolean} = {
             x: 0,
@@ -42,6 +47,10 @@ module api.ui.image {
 
         private mouseUpListener;
         private mouseMoveListener;
+        private mouseDownListener;
+        private mouseWheelListener;
+        private dragMouseDownListener;
+        private knobMouseDownListener;
 
         private buttonsContainer: DivEl;
         private focalButtonsContainer: DivEl;
@@ -58,6 +67,8 @@ module api.ui.image {
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
         private cropEditModeListeners: {(edit: boolean, position: Rect): void}[] = [];
+
+        public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -90,12 +101,18 @@ module api.ui.image {
                            '        <svg id="zoomSlider" class="zoom-slider">' +
                            '            <rect x="0" y="0" width="40" height="200" rx="20" ry="20"/>' +
                            '            <line id="zoomLine" x1="20" y1="20" x2="20" y2="180"/>' +
-                           '            <circle id="zoomKnob" cx="20" cy="180" r="8"/>' +
+                           '            <circle id="zoomKnob" cx="20" cy="-1" r="8"/>' +
                            '        </svg>' +
                            '    </g>' +
                            '</svg>';
 
-            this.clip = api.dom.Element.fromString(clipHtml);
+            this.clip = Element.fromString(clipHtml);
+
+            this.dragHandle = this.clip.findChildById('dragHandle', true);
+            this.zoomSlider = this.clip.findChildById('zoomSlider', true);
+            this.zoomLine = this.zoomSlider.findChildById('zoomLine');
+            this.zoomKnob = this.zoomSlider.findChildById('zoomKnob');
+
             this.canvas.appendChildren(this.image, this.clip);
 
             this.appendChildren(this.canvas, this.createToolbar());
@@ -105,6 +122,7 @@ module api.ui.image {
             }
 
             this.setFocusAutoPositioned(true);
+            this.setCropAutoPositioned(true);
         }
 
         remove(): ImageEditor {
@@ -441,13 +459,18 @@ module api.ui.image {
             var mouseDown: boolean = false;
             var lastPos: Point;
 
-            this.clip.onMouseDown((event: MouseEvent) => {
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.bindFocusMouseListeners');
+            }
+
+            this.mouseDownListener = (event: MouseEvent) => {
                 mouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
-            });
+            };
+            this.clip.onMouseDown(this.mouseDownListener);
 
             this.mouseMoveListener = (event: MouseEvent) => {
                 if (mouseDown) {
@@ -478,6 +501,10 @@ module api.ui.image {
         }
 
         private unbindFocusMouseListeners() {
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.unbindFocusMouseListeners');
+            }
+
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
@@ -507,7 +534,7 @@ module api.ui.image {
             var circles = this.clip.getHTMLElement().querySelectorAll('.focus-group circle');
 
             for (var i = 0; i < circles.length; i++) {
-                var circle = <Element> circles[i];
+                var circle = <HTMLElement> circles[i];
                 circle.setAttribute('r', this.focusData.r.toString());
                 circle.setAttribute('cx', this.focusData.x.toString());
                 circle.setAttribute('cy', this.focusData.y.toString());
@@ -541,7 +568,7 @@ module api.ui.image {
             } else {
                 this.unbindCropMouseListeners();
                 if (!applyChanges) {
-                    this.setCropPositionPx(this.revertCropData);
+                    this.moveZoomKnobTo(this.revertCropData);
                     this.setCropAutoPositioned(this.revertCropData.auto);
                 }
                 this.revertCropData = undefined;
@@ -564,7 +591,7 @@ module api.ui.image {
          */
         setCropPosition(x: number, y: number, w: number, h: number) {
             if (this.isImageLoaded()) {
-                this.setCropPositionPx(this.denormalizeRect(x, y, w, h));
+                this.moveZoomKnobTo(this.denormalizeRect(x, y, w, h));
             } else {
                 // use revert position to temporary save values until the image is loaded
                 this.revertCropData = {
@@ -620,7 +647,7 @@ module api.ui.image {
         }
 
         resetCropPosition() {
-            this.setCropPosition(0, 0, 1, 1);
+            this.moveZoomKnobTo(this.denormalizeRect(0, 0, 1, 1));
             this.setCropAutoPositioned(true);
         }
 
@@ -675,8 +702,10 @@ module api.ui.image {
             zoom.setAttribute('y', ((this.imgH - 200) / 2 ).toString());
         }
 
-        private zoomByDelta(zoomLineEl, zoomKnobEl, delta: number) {
+        private moveZoomKnobBy(delta: number) {
             debugger;
+            var zoomLineEl = this.zoomLine.getHTMLElement(),
+                zoomKnobEl = this.zoomKnob.getHTMLElement();
 
             var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
                 sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
@@ -702,38 +731,63 @@ module api.ui.image {
             }
         }
 
+        private moveZoomKnobTo(rect: Rect) {
+            var zoomKnobEl = this.zoomKnob.getHTMLElement(),
+                zoomLineEl = this.zoomLine.getHTMLElement();
+
+            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
+                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
+                sliderLength = sliderEnd - sliderStart,
+                knobPct = rect.w / this.imgW,
+                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
+                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
+
+            if (knobNewY != knobY) {
+                zoomKnobEl.setAttribute('cy', knobNewY.toString());
+
+                var newW = this.restrainWidth(rect.w),
+                    newH = this.restrainHeight(rect.h);
+
+                this.setCropPositionPx({
+                    x: this.restrainWidth(rect.x, newW),
+                    y: this.restrainHeight(rect.y, newH),
+                    w: newW,
+                    h: newH
+                });
+            }
+        }
+
         private bindCropMouseListeners() {
             var dragMouseDown = false,
                 zoomMouseDown = false,
                 panMouseDown = false;
             var lastPos: Point;
 
-            var dragHandle = this.clip.findChildById('dragHandle', true),
-                zoomSlider = this.clip.findChildById('zoomSlider', true),
-                zoomLine = zoomSlider.findChildById('zoomLine'),
-                zoomKnob = zoomSlider.findChildById('zoomKnob');
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.bindCropMouseListeners');
+            }
 
-            var zoomLineEl = zoomLine.getHTMLElement(),
-                zoomKnobEl = zoomKnob.getHTMLElement();
-
-            dragHandle.onMouseDown((event: MouseEvent) => {
+            this.dragMouseDownListener = (event: MouseEvent) => {
                 dragMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
-                dragHandle.addClass('active');
-            });
+                this.dragHandle.addClass('active');
+            };
+            this.dragHandle.onMouseDown(this.dragMouseDownListener);
 
-            zoomKnob.onMouseDown((event: MouseEvent) => {
+            this.knobMouseDownListener = (event: MouseEvent) => {
                 zoomMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
-                zoomSlider.addClass('active');
-            });
-            this.clip.onMouseWheel((event: WheelEvent) => {
+                this.zoomSlider.addClass('active');
+            };
+            this.zoomKnob.onMouseDown(this.knobMouseDownListener);
+
+            this.mouseWheelListener = (event: WheelEvent) => {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -750,8 +804,9 @@ module api.ui.image {
                     break;
                 }
 
-                this.zoomByDelta(zoomLineEl, zoomKnobEl, delta);
-            });
+                this.moveZoomKnobBy(delta);
+            };
+            this.clip.onMouseWheel(this.mouseWheelListener);
 
             this.mouseMoveListener = (event: MouseEvent) => {
 
@@ -762,7 +817,7 @@ module api.ui.image {
 
                 if (zoomMouseDown) {
 
-                    this.zoomByDelta(zoomLineEl, zoomKnobEl, this.getOffsetY(event) - lastPos.y);
+                    this.moveZoomKnobBy(this.getOffsetY(event) - lastPos.y);
 
                 } else if (dragMouseDown) {
 
@@ -796,10 +851,10 @@ module api.ui.image {
             this.mouseUpListener = (event: MouseEvent) => {
                 if (dragMouseDown) {
                     dragMouseDown = false;
-                    dragHandle.removeClass('active');
+                    this.dragHandle.removeClass('active');
                 } else if (zoomMouseDown) {
                     zoomMouseDown = false;
-                    zoomSlider.removeClass('active');
+                    this.zoomSlider.removeClass('active');
                 } else if (panMouseDown) {
                     panMouseDown = false;
                 }
@@ -808,6 +863,14 @@ module api.ui.image {
         }
 
         private unbindCropMouseListeners() {
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.unbindCropMouseListeners');
+            }
+
+            this.dragHandle.unMouseDown(this.dragMouseDownListener);
+            this.zoomKnob.unMouseDown(this.knobMouseDownListener);
+            this.clip.unMouseWheel(this.mouseWheelListener);
+
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
