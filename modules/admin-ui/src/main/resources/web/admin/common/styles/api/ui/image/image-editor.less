@@ -55,7 +55,8 @@
       }
 
       .crop-group {
-        #drag-handle {
+
+        .drag-handle {
           cursor: ns-resize;
           opacity: 0.5;
 
@@ -70,8 +71,37 @@
           &:hover,
           &.active {
             opacity: 0.7;
+            cursor: ns-resize;
           }
         }
+
+        .zoom-slider {
+          opacity: 0.5;
+
+          rect {
+            fill: white;
+          }
+
+          line {
+            stroke: #ccc;
+            stroke-width: 4px;
+          }
+
+          circle {
+            fill: black;
+            cursor: ns-resize;
+          }
+
+          &:hover,
+          &.active {
+            opacity: 0.7;
+
+            circle {
+              cursor: ns-resize;
+            }
+          }
+        }
+
       }
     }
   }
