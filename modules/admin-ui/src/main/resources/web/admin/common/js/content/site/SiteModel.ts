@@ -22,8 +22,8 @@ module api.content.site {
 
             this.site.getContentData().onPropertyAdded((event: api.data.PropertyAddedEvent) => {
                 var property: api.data.Property = event.getProperty();
-                // TODO:? property.getPath().startsWith(PropertyPath.fromString(".moduleConfig")) &&  property.getName( )=="config")
-                if (property.getPath().toString().indexOf(".moduleConfig") == 0 && property.getName() == "config") {
+                // TODO:? property.getPath().startsWith(PropertyPath.fromString(".siteConfig")) &&  property.getName( )=="config")
+                if (property.getPath().toString().indexOf(".siteConfig") == 0 && property.getName() == "config") {
                     var siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
                     if (!this.siteConfigs) {
                         this.siteConfigs = [];
@@ -35,7 +35,7 @@ module api.content.site {
 
             this.site.getContentData().onPropertyRemoved((event: api.data.PropertyRemovedEvent) => {
                 var property: api.data.Property = event.getProperty();
-                if (property.getName() == "moduleConfig") {
+                if (property.getName() == "siteConfig") {
                     var moduleKey = ModuleKey.fromString(property.getPropertySet().getString("moduleKey"));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
                             !siteConfig.getModuleKey().equals(moduleKey)
