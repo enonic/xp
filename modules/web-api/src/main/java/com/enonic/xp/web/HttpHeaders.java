@@ -2,17 +2,17 @@ package com.enonic.xp.web;
 
 import java.net.URI;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.net.MediaType;
 
@@ -48,16 +48,9 @@ public final class HttpHeaders
 
     public String getFirst( final String header )
     {
-        Collection<String> headerValues = map.get( header );
-        if ( headerValues != null )
-        {
-            Iterator<String> iter = headerValues.iterator();
-            return iter.hasNext() ? iter.next() : null;
-        }
-        else
-        {
-            return null;
-        }
+        final Collection<String> headerValues = this.map.get( header );
+        final Iterator<String> iter = headerValues.iterator();
+        return iter.hasNext() ? iter.next() : null;
     }
 
     public Multimap<String, String> getAsMap()
@@ -67,56 +60,31 @@ public final class HttpHeaders
 
     public void set( final String headerName, final String headerValue )
     {
-        map.put( headerName, headerValue );
+        this.map.put( headerName, headerValue );
     }
 
     public Set<HttpMethod> getAllow()
     {
-        String value = getFirst( ALLOW );
-        if ( !StringUtils.isEmpty( value ) )
-        {
-            List<HttpMethod> allowedMethod = new ArrayList<HttpMethod>( 5 );
-            String[] tokens = value.split( ",\\s*" );
-            for ( String token : tokens )
-            {
-                allowedMethod.add( HttpMethod.valueOf( token ) );
-            }
-            return EnumSet.copyOf( allowedMethod );
-        }
-        else
+        final String value = getFirst( ALLOW );
+        if ( Strings.isNullOrEmpty( value ) )
         {
             return EnumSet.noneOf( HttpMethod.class );
         }
+
+        final Iterable<String> parts = Splitter.on( "," ).omitEmptyStrings().trimResults().split( value );
+        return Lists.newArrayList( parts ).stream().map( HttpMethod::valueOf ).collect( Collectors.toSet() );
     }
 
     public void setAllow( final HttpMethod... values )
     {
-        set( ALLOW, collectionToCommaDelimitedString( Arrays.asList( values ) ) );
-    }
-
-    public static String collectionToCommaDelimitedString( final Collection<?> coll )
-    {
-        if ( coll == null || coll.isEmpty() )
-        {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        Iterator<?> it = coll.iterator();
-        while ( it.hasNext() )
-        {
-            sb.append( it.next() );
-            if ( it.hasNext() )
-            {
-                sb.append( "," );
-            }
-        }
-        return sb.toString();
+        final String value = Joiner.on( "," ).skipNulls().join( values );
+        set( ALLOW, value );
     }
 
     public MediaType getContentType()
     {
-        String value = getFirst( CONTENT_TYPE );
-        return ( StringUtils.isNotEmpty( value ) ? MediaType.parse( value ) : null );
+        final String value = getFirst( CONTENT_TYPE );
+        return ( Strings.isNullOrEmpty( value ) ? null : MediaType.parse( value ) );
     }
 
     public void setContentType( final MediaType mediaType )
@@ -126,7 +94,7 @@ public final class HttpHeaders
 
     public long getContentLength()
     {
-        String value = getFirst( CONTENT_LENGTH );
+        final String value = getFirst( CONTENT_LENGTH );
         return ( value != null ? Long.parseLong( value ) : -1 );
     }
 
@@ -142,11 +110,12 @@ public final class HttpHeaders
 
     public Instant getFirstDate( final String headerName )
     {
-        String headerValue = getFirst( headerName );
+        final String headerValue = getFirst( headerName );
         if ( headerValue == null )
         {
             return null;
         }
+
         return Instant.parse( headerValue );
     }
 
@@ -172,7 +141,7 @@ public final class HttpHeaders
 
     public URI getLocation()
     {
-        String value = getFirst( LOCATION );
+        final String value = getFirst( LOCATION );
         return ( value != null ? URI.create( value ) : null );
     }
 
@@ -193,7 +162,7 @@ public final class HttpHeaders
 
     public URI getReferer()
     {
-        String value = getFirst( REFERER );
+        final String value = getFirst( REFERER );
         return ( value != null ? URI.create( value ) : null );
     }
 
