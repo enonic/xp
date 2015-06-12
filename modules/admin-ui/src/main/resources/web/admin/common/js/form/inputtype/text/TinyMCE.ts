@@ -122,7 +122,9 @@ module api.form.inputtype.text {
                 },
                 init_instance_callback: (editor) => {
                     this.setEditorContent(id, property);
-                    this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                    if (this.notInLiveEdit()) {
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                    }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                 }
             });
@@ -217,6 +219,10 @@ module api.form.inputtype.text {
             if (property.hasNonNullValue()) {
                 this.getEditor(editorId).setContent(this.propertyValue2Content(property.getString()));
             }
+        }
+
+        private notInLiveEdit(): boolean {
+            return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
         }
 
         private setPropertyValue(id: string, property: Property) {
