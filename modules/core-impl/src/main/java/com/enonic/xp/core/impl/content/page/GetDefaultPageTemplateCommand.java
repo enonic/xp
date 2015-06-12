@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateSpec;
-import com.enonic.xp.content.page.PageTemplates;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateSpec;
+import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class GetDefaultPageTemplateCommand

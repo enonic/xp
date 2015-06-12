@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.region.Component;
 
 public final class ComponentControllerResource
     extends RendererControllerResource

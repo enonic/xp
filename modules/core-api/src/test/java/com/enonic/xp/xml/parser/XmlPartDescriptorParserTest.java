@@ -3,10 +3,10 @@ package com.enonic.xp.xml.parser;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.PartDescriptor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.region.PartDescriptor;
 
 import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
 import static junit.framework.Assert.assertEquals;

@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
 
-import com.enonic.xp.content.page.region.RegionDescriptor;
+import com.enonic.xp.region.RegionDescriptor;
 
 public class RegionDescriptorJson
 {

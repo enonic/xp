@@ -1,15 +1,15 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.region.Region;
+import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.support.serializer.AbstractDataSetSerializer;
 import com.enonic.xp.util.Reference;
-import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
 
 public class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>

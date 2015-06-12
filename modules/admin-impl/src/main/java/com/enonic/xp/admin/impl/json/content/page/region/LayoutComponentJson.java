@@ -5,13 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.ComponentName;
-import com.enonic.xp.content.page.region.LayoutComponent;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.region.ComponentName;
+import com.enonic.xp.region.LayoutComponent;
 
-import static com.enonic.xp.content.page.region.LayoutComponent.newLayoutComponent;
+import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutComponentJson

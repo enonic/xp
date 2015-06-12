@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.attachment.UpdateAttachmentsParams;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.attachment.UpdateAttachmentsParams;
 
 public class UpdateAttachmentsJson
 {

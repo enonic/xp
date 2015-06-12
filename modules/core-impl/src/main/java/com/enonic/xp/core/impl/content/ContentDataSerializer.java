@@ -5,17 +5,17 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.AttachmentNames;
-import com.enonic.xp.content.attachment.Attachments;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.core.impl.content.page.PageDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;

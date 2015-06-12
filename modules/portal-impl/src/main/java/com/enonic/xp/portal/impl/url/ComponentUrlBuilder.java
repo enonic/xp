@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.url;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.region.Component;
 
 final class ComponentUrlBuilder
     extends PortalUrlBuilder<ComponentUrlParams>
