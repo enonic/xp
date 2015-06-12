@@ -23,7 +23,7 @@ public final class ContentTypeForms
             helpText( "Description of the site. Optional" ).
             build() ).
         addFormItem( Input.create().
-            name( "moduleConfig" ).
+            name( "siteConfig" ).
             helpText( "Configure modules needed for the Site" ).
             inputType( InputTypes.SITE_CONFIGURATOR ).
             required( false ).

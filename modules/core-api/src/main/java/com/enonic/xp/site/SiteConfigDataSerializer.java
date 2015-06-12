@@ -11,7 +11,7 @@ public class SiteConfigDataSerializer
 {
     public void toData( final SiteConfig siteConfig, PropertySet parentSet )
     {
-        final PropertySet siteConfigAsSet = parentSet.addSet( "moduleConfig" );
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
         siteConfigAsSet.addString( "moduleKey", siteConfig.getModule().toString() );
         siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
     }

@@ -22,7 +22,7 @@ module api.content.site {
         getSiteConfigs(): SiteConfig[] {
 
             var siteConfigs: SiteConfig[] = [];
-            this.getContentData().forEachProperty("moduleConfig", (moduleProperty: Property) => {
+            this.getContentData().forEachProperty("siteConfig", (moduleProperty: Property) => {
                 var siteConfigData = moduleProperty.getPropertySet();
                 if (siteConfigData) {
                     var siteConfig = SiteConfig.create().fromData(siteConfigData).build();

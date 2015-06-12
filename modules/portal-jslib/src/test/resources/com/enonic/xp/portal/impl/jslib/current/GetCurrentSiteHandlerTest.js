@@ -3,7 +3,7 @@ var expectedJson = {
     "_name": "my-content",
     "_path": "/my-content",
     "data": {
-        "moduleConfig": {
+        "siteConfig": {
             "config": {
                 "Field": 42
             },
