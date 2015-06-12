@@ -12,7 +12,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.attachment.image.ImageAttachmentScale;
+import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;

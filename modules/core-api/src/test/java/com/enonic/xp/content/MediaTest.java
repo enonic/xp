@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.attachment.image.ImageAttachmentScale;
+import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
