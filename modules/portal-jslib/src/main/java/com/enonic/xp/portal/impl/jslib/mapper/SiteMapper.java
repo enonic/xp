@@ -28,7 +28,7 @@ public final class SiteMapper
 
     private void serializeSiteConfigs( final MapGenerator gen, final SiteConfigs siteConfigs )
     {
-        gen.map( "moduleConfigs" );
+        gen.map( "siteConfigs" );
         for ( SiteConfig siteConfig : siteConfigs )
         {
             serializeSiteConfig( gen, siteConfig );

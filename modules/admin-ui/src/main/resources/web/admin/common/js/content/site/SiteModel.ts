@@ -4,7 +4,7 @@ module api.content.site {
 
     export class SiteModel {
 
-        public static PROPERTY_NAME_SITE_CONFIGS = "moduleConfigs";
+        public static PROPERTY_NAME_SITE_CONFIGS = "siteConfigs";
 
         private site: api.content.site.Site;
 
@@ -45,7 +45,6 @@ module api.content.site {
             });
 
 
-
         }
 
         getSite(): api.content.site.Site {
@@ -66,9 +65,9 @@ module api.content.site {
 
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != curr;
-            });
+                this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
+                    return listener != curr;
+                });
         }
 
         private notifyPropertyChanged(property: string, oldValue: any, newValue: any, source: any) {
