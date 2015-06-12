@@ -13,7 +13,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-public final class BuiltinRelationshipTypesProvider
+final class BuiltinRelationshipTypesProvider
     implements RelationshipTypeProvider
 {
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";

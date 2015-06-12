@@ -13,7 +13,7 @@ import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlModelParser;
 
 @Beta
-public final class XmlRelationshipTypeParser
+final class XmlRelationshipTypeParser
     extends XmlModelParser<XmlRelationshipTypeParser>
 {
     private RelationshipType.Builder builder;

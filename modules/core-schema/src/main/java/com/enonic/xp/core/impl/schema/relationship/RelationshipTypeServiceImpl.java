@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.framework.BundleListener;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,7 +26,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 @Component(immediate = true)
 public final class RelationshipTypeServiceImpl
-    implements RelationshipTypeService, SynchronousBundleListener
+    implements RelationshipTypeService, BundleListener
 {
     private final Map<ModuleKey, RelationshipTypes> relationshipTypesMap;
 
@@ -81,38 +81,41 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipTypes getByModule( final ModuleKey moduleKey )
     {
-        return relationshipTypesMap.computeIfAbsent( moduleKey, moduleKeyParam -> {
-            RelationshipTypes relationshipTypes = null;
-            RelationshipTypeProvider relationshipTypeProvider = null;
+        return relationshipTypesMap.computeIfAbsent( moduleKey, this::loadByModule );
+    }
 
-            //If the module is the default module
-            if ( ModuleKey.SYSTEM.equals( moduleKeyParam ) )
-            {
-                //takes as provider the default RelationshipTypes provider
-                relationshipTypeProvider = new BuiltinRelationshipTypesProvider();
-            }
-            else
-            {
-                //Else, creates a provider with the corresponding bundle
-                final Module module = this.moduleService.getModule( moduleKeyParam );
-                if ( module != null )
-                {
-                    relationshipTypeProvider = BundleRelationshipTypeProvider.create( module.getBundle() );
-                }
-            }
+    private RelationshipTypes loadByModule( final ModuleKey moduleKey )
+    {
+        RelationshipTypes relationshipTypes = null;
+        RelationshipTypeProvider relationshipTypeProvider = null;
 
-            if ( relationshipTypeProvider != null )
+        //If the module is the default module
+        if ( ModuleKey.SYSTEM.equals( moduleKey ) )
+        {
+            //takes as provider the default RelationshipTypes provider
+            relationshipTypeProvider = new BuiltinRelationshipTypesProvider();
+        }
+        else
+        {
+            //Else, creates a provider with the corresponding bundle
+            final Module module = this.moduleService.getModule( moduleKey );
+            if ( module != null )
             {
-                relationshipTypes = relationshipTypeProvider.get();
+                relationshipTypeProvider = BundleRelationshipTypeProvider.create( module.getBundle() );
             }
+        }
 
-            if ( relationshipTypes == null )
-            {
-                relationshipTypes = RelationshipTypes.empty();
-            }
+        if ( relationshipTypeProvider != null )
+        {
+            relationshipTypes = relationshipTypeProvider.get();
+        }
 
-            return relationshipTypes;
-        } );
+        if ( relationshipTypes == null )
+        {
+            relationshipTypes = RelationshipTypes.empty();
+        }
+
+        return relationshipTypes;
     }
 
     @Reference
