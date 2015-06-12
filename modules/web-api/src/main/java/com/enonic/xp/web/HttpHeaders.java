@@ -2,7 +2,15 @@ package com.enonic.xp.web;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -40,8 +48,16 @@ public final class HttpHeaders
 
     public String getFirst( final String header )
     {
-        // TODO: Return the first value or null
-        return null;
+        Collection<String> headerValues = map.get( header );
+        if ( headerValues != null )
+        {
+            Iterator<String> iter = headerValues.iterator();
+            return iter.hasNext() ? iter.next() : null;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public Multimap<String, String> getAsMap()
@@ -49,91 +65,140 @@ public final class HttpHeaders
         return this.map;
     }
 
+    public void set( final String headerName, final String headerValue )
+    {
+        map.put( headerName, headerValue );
+    }
+
     public Set<HttpMethod> getAllow()
     {
-        // TODO: Get allow header
-        return null;
+        String value = getFirst( ALLOW );
+        if ( !StringUtils.isEmpty( value ) )
+        {
+            List<HttpMethod> allowedMethod = new ArrayList<HttpMethod>( 5 );
+            String[] tokens = value.split( ",\\s*" );
+            for ( String token : tokens )
+            {
+                allowedMethod.add( HttpMethod.valueOf( token ) );
+            }
+            return EnumSet.copyOf( allowedMethod );
+        }
+        else
+        {
+            return EnumSet.noneOf( HttpMethod.class );
+        }
     }
 
     public void setAllow( final HttpMethod... values )
     {
-        // TODO: Set allow header
+        set( ALLOW, collectionToCommaDelimitedString( Arrays.asList( values ) ) );
+    }
+
+    public static String collectionToCommaDelimitedString( final Collection<?> coll )
+    {
+        if ( coll == null || coll.isEmpty() )
+        {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        Iterator<?> it = coll.iterator();
+        while ( it.hasNext() )
+        {
+            sb.append( it.next() );
+            if ( it.hasNext() )
+            {
+                sb.append( "," );
+            }
+        }
+        return sb.toString();
     }
 
     public MediaType getContentType()
     {
-        // TODO: Return contnet type header or null
-        return null;
+        String value = getFirst( CONTENT_TYPE );
+        return ( StringUtils.isNotEmpty( value ) ? MediaType.parse( value ) : null );
     }
 
-    public void setContentType( final MediaType value )
+    public void setContentType( final MediaType mediaType )
     {
-        // TODO: Set content type header
+        set( CONTENT_TYPE, mediaType.toString() );
     }
 
     public long getContentLength()
     {
-        // TODO: Return content-length header or -1
-        return -1;
+        String value = getFirst( CONTENT_LENGTH );
+        return ( value != null ? Long.parseLong( value ) : -1 );
     }
 
-    public void setContentLength( final long value )
+    public void setContentLength( final long contentLength )
     {
-        // TODO: Set content-length header
+        set( CONTENT_LENGTH, Long.toString( contentLength ) );
     }
 
     public Instant getDate()
     {
-        // TODO: Return the date header or null
-        return null;
+        return getFirstDate( DATE );
+    }
+
+    public Instant getFirstDate( final String headerName )
+    {
+        String headerValue = getFirst( headerName );
+        if ( headerValue == null )
+        {
+            return null;
+        }
+        return Instant.parse( headerValue );
     }
 
     public void setDate( final Instant value )
     {
-        // TODO: Set date header
+        setDate( DATE, value );
+    }
+
+    public void setDate( final String headerName, final Instant date )
+    {
+        set( headerName, date.toString() );
     }
 
     public Instant getLastModified()
     {
-        // TODO: Return the last modified header or null
-        return null;
+        return getFirstDate( LAST_MODIFIED );
     }
 
-    public void setLastModified( final Instant value )
+    public void setLastModified( final Instant lastModified )
     {
-        // TODO: Set last modified header
+        setDate( LAST_MODIFIED, lastModified );
     }
 
     public URI getLocation()
     {
-        // TODO: Return the location header or null
-        return null;
+        String value = getFirst( LOCATION );
+        return ( value != null ? URI.create( value ) : null );
     }
 
-    public void setLocation( final URI value )
+    public void setLocation( final URI location )
     {
-        // TODO: Set the location header
+        set( LOCATION, location.toASCIIString() );
     }
 
     public Instant getExpires()
     {
-        // TODO: Returns the expires header
-        return null;
+        return getFirstDate( EXPIRES );
     }
 
     public void setExpires( final Instant value )
     {
-        // TODO: Set the expires header
+        setDate( EXPIRES, value );
     }
 
-    public String getReferer()
+    public URI getReferer()
     {
-        // TODO: Returns the referer header
-        return null;
+        String value = getFirst( REFERER );
+        return ( value != null ? URI.create( value ) : null );
     }
 
-    public void setReferer( final String value )
+    public void setReferer( final URI value )
     {
-        // TODO: Set referer header
+        set( REFERER, value.toASCIIString() );
     }
 }
