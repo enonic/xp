@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.icon.Icon;
@@ -15,9 +13,6 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-import static com.enonic.xp.schema.relationship.RelationshipType.newRelationshipType;
-
-@Component(immediate = true)
 public final class BuiltinRelationshipTypesProvider
     implements RelationshipTypeProvider
 {
@@ -42,19 +37,12 @@ public final class BuiltinRelationshipTypesProvider
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )
     {
-        return createRelationshipType( relationshipTypeName, displayName, fromSemantic, toSemantic, ContentTypeNames.empty() );
-    }
-
-    private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
-                                                            final String fromSemantic, final String toSemantic,
-                                                            final ContentTypeNames toContentTypes )
-    {
-        return newRelationshipType().
+        return RelationshipType.newRelationshipType().
             name( relationshipTypeName ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
-            addAllowedToTypes( toContentTypes ).
+            addAllowedToTypes( ContentTypeNames.empty() ).
             build();
     }
 

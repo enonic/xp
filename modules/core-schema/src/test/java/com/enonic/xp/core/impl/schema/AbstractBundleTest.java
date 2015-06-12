@@ -20,7 +20,7 @@ public abstract class AbstractBundleTest
     protected PojoServiceRegistry serviceRegistry;
 
     @Before
-    public final void setup()
+    public void setup()
         throws Exception
     {
         final Map<String, Object> config = Maps.newHashMap();

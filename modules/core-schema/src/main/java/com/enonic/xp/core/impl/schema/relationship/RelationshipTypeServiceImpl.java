@@ -1,18 +1,23 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
@@ -21,56 +26,107 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 @Component(immediate = true)
 public final class RelationshipTypeServiceImpl
-    implements RelationshipTypeService
+    implements RelationshipTypeService, SynchronousBundleListener
 {
-    private final Map<RelationshipTypeName, RelationshipType> map;
+    private final Map<ModuleKey, RelationshipTypes> relationshipTypesMap;
+
+    private ModuleService moduleService;
+
+    private BundleContext context;
 
     public RelationshipTypeServiceImpl()
     {
-        this.map = Maps.newConcurrentMap();
+        this.relationshipTypesMap = Maps.newConcurrentMap();
+    }
+
+    @Activate
+    public void start( final ComponentContext context )
+    {
+        this.context = context.getBundleContext();
+        this.context.addBundleListener( this );
+    }
+
+    @Deactivate
+    public void stop()
+    {
+        this.context.removeBundleListener( this );
     }
 
     @Override
     public RelationshipType getByName( final RelationshipTypeName name )
     {
-        return this.map.get( name );
+        final RelationshipTypes relationshipTypes = getByModule( name.getModuleKey() );
+        return relationshipTypes.get( name );
     }
 
     @Override
     public RelationshipTypes getAll()
     {
-        return RelationshipTypes.from( this.map.values() );
+        final Set<RelationshipType> relationshipTypeList = Sets.newLinkedHashSet();
+
+        //Gets the default RelationshipTypes
+        final RelationshipTypes systemRelationshipTypes = getByModule( ModuleKey.SYSTEM );
+        relationshipTypeList.addAll( systemRelationshipTypes.getList() );
+
+        //Gets for each module the RelationshipTypes
+        for ( Module module : this.moduleService.getAllModules() )
+        {
+            final RelationshipTypes relationshipTypes = getByModule( module.getKey() );
+            relationshipTypeList.addAll( relationshipTypes.getList() );
+        }
+
+        return RelationshipTypes.from( relationshipTypeList );
     }
 
     @Override
     public RelationshipTypes getByModule( final ModuleKey moduleKey )
     {
-        final Stream<RelationshipType> stream = this.map.values().stream().filter( new Predicate<RelationshipType>()
-        {
-            @Override
-            public boolean test( final RelationshipType value )
+        return relationshipTypesMap.computeIfAbsent( moduleKey, moduleKeyParam -> {
+            RelationshipTypes relationshipTypes = null;
+            RelationshipTypeProvider relationshipTypeProvider = null;
+
+            //If the module is the default module
+            if ( ModuleKey.SYSTEM.equals( moduleKeyParam ) )
             {
-                return value.getName().getModuleKey().equals( moduleKey );
+                //takes as provider the default RelationshipTypes provider
+                relationshipTypeProvider = new BuiltinRelationshipTypesProvider();
             }
+            else
+            {
+                //Else, creates a provider with the corresponding bundle
+                final Module module = this.moduleService.getModule( moduleKeyParam );
+                if ( module != null )
+                {
+                    relationshipTypeProvider = BundleRelationshipTypeProvider.create( module.getBundle() );
+                }
+            }
+
+            if ( relationshipTypeProvider != null )
+            {
+                relationshipTypes = relationshipTypeProvider.get();
+            }
+
+            if ( relationshipTypes == null )
+            {
+                relationshipTypes = RelationshipTypes.empty();
+            }
+
+            return relationshipTypes;
         } );
-
-        return RelationshipTypes.from( stream.collect( Collectors.toList() ) );
     }
 
-    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
-    public void addProvider( final RelationshipTypeProvider provider )
+    @Reference
+    public void setModuleService( final ModuleService moduleService )
     {
-        for ( final RelationshipType value : provider.get() )
-        {
-            this.map.put( value.getName(), value );
-        }
+        this.moduleService = moduleService;
     }
 
-    public void removeProvider( final RelationshipTypeProvider provider )
+    @Override
+    public void bundleChanged( final BundleEvent event )
     {
-        for ( final RelationshipType value : provider.get() )
+        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
         {
-            this.map.remove( value.getName() );
+            this.relationshipTypesMap.remove( ModuleKey.from( event.getBundle() ) );
         }
     }
 }

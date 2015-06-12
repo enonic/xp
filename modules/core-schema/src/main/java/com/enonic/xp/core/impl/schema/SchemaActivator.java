@@ -11,7 +11,6 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 
 import com.enonic.xp.core.impl.schema.content.BundleContentTypeProvider;
 import com.enonic.xp.core.impl.schema.mixin.BundleMixinProvider;
-import com.enonic.xp.core.impl.schema.relationship.BundleRelationshipTypeProvider;
 
 @Component(immediate = true)
 public final class SchemaActivator
@@ -48,7 +47,6 @@ public final class SchemaActivator
 
         final SchemaProviders providers = new SchemaProviders( bundle );
         providers.register( BundleMixinProvider.create( bundle ) );
-        providers.register( BundleRelationshipTypeProvider.create( bundle ) );
         providers.register( BundleContentTypeProvider.create( bundle ) );
 
         return providers;
