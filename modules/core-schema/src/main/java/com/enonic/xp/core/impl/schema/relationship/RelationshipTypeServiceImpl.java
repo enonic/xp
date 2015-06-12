@@ -20,7 +20,6 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
@@ -87,27 +86,23 @@ public final class RelationshipTypeServiceImpl
     private RelationshipTypes loadByModule( final ModuleKey moduleKey )
     {
         RelationshipTypes relationshipTypes = null;
-        RelationshipTypeProvider relationshipTypeProvider = null;
 
         //If the module is the default module
         if ( ModuleKey.SYSTEM.equals( moduleKey ) )
         {
-            //takes as provider the default RelationshipTypes provider
-            relationshipTypeProvider = new BuiltinRelationshipTypesProvider();
+            //loads the default relationship types
+            final BuiltinRelationshipTypeLoader builtinRelationshipTypeLoader = new BuiltinRelationshipTypeLoader();
+            relationshipTypes = builtinRelationshipTypeLoader.load();
         }
         else
         {
-            //Else, creates a provider with the corresponding bundle
+            //Else, loads the corresponding bundle relation types
             final Module module = this.moduleService.getModule( moduleKey );
             if ( module != null )
             {
-                relationshipTypeProvider = BundleRelationshipTypeProvider.create( module.getBundle() );
+                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( module.getBundle() );
+                relationshipTypes = bundleRelationshipTypeLoader.load();
             }
-        }
-
-        if ( relationshipTypeProvider != null )
-        {
-            relationshipTypes = relationshipTypeProvider.get();
         }
 
         if ( relationshipTypes == null )

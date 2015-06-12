@@ -21,9 +21,9 @@ import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-final class RelationshipTypeLoader
+final class BundleRelationshipTypeLoader
 {
-    private final static Logger LOG = LoggerFactory.getLogger( RelationshipTypeLoader.class );
+    private final static Logger LOG = LoggerFactory.getLogger( BundleRelationshipTypeLoader.class );
 
     private final static Pattern PATTERN = Pattern.compile( ".*/app/relationship-types/([^/]+)/([^/]+)\\.xml" );
 
@@ -39,7 +39,7 @@ final class RelationshipTypeLoader
 
     private final IconLoader iconLoader;
 
-    public RelationshipTypeLoader( final Bundle bundle )
+    public BundleRelationshipTypeLoader( final Bundle bundle )
     {
         this.bundle = bundle;
         this.moduleKey = ModuleKey.from( this.bundle );
