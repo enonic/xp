@@ -25,6 +25,69 @@ public class HttpHeadersTest
     }
 
     @Test
+    public void testSetContentTypeNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType( null );
+
+        assertEquals( httpHeaders.getContentType(), null );
+    }
+
+    @Test
+    public void testSetDateNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setDate( null );
+
+        assertEquals( httpHeaders.getDate(), null );
+    }
+
+    @Test
+    public void testSetExpiresNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setExpires( null );
+
+        assertEquals( httpHeaders.getExpires(), null );
+    }
+
+    @Test
+    public void testSetUriNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation( null );
+
+        assertEquals( httpHeaders.getLocation(), null );
+    }
+
+    @Test
+    public void testSetRefererNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setReferer( null );
+
+        assertEquals( httpHeaders.getReferer(), null );
+    }
+
+    @Test
+    public void testSetLastModifiedNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLastModified( null );
+
+        assertEquals( httpHeaders.getLastModified(), null );
+    }
+
+    @Test
+    public void testSetAllowNull()
+    {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAllow( null );
+
+        assertEquals( httpHeaders.getAllow(), EnumSet.noneOf( HttpMethod.class ) );
+    }
+
+    @Test
     public void testAllow()
     {
         final HttpHeaders httpHeaders = new HttpHeaders();
