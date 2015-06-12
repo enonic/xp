@@ -10,11 +10,9 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-final class BuiltinRelationshipTypesProvider
-    implements RelationshipTypeProvider
+final class BuiltinRelationshipTypeLoader
 {
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
 
@@ -27,11 +25,10 @@ final class BuiltinRelationshipTypesProvider
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {REFERENCE, PARENT};
 
-    private final RelationshipTypes types;
-
-    public BuiltinRelationshipTypesProvider()
+    public RelationshipTypes load()
     {
-        this.types = RelationshipTypes.from( generateSystemRelationshipTypes() );
+        final List<RelationshipType> relationshipTypeList = generateSystemRelationshipTypes();
+        return RelationshipTypes.from( relationshipTypeList );
     }
 
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
@@ -57,12 +54,6 @@ final class BuiltinRelationshipTypesProvider
             relationshipTypes.add( relationshipType );
         }
         return relationshipTypes;
-    }
-
-    @Override
-    public RelationshipTypes get()
-    {
-        return this.types;
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

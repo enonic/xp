@@ -3,13 +3,13 @@ package com.enonic.xp.core.impl.schema.relationship;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 
 import static org.junit.Assert.*;
 
-public class BundleRelationshipTypeProviderTest
+public class BundleRelationshipTypeLoaderTest
     extends AbstractBundleTest
 {
     @Test
@@ -21,12 +21,13 @@ public class BundleRelationshipTypeProviderTest
         final Bundle bundle = findBundle( "not-module" );
         assertNotNull( bundle );
 
-        final BundleRelationshipTypeProvider provider = BundleRelationshipTypeProvider.create( bundle );
-        assertNull( provider );
+        final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( bundle );
+        final RelationshipTypes relationshipTypes = bundleRelationshipTypeLoader.load();
+        assertNull( relationshipTypes );
     }
 
     @Test
-    public void test_loaded_mixins()
+    public void test_loaded_relationship_types()
         throws Exception
     {
         startBundles( newBundle( "module2" ) );
@@ -34,14 +35,12 @@ public class BundleRelationshipTypeProviderTest
         final Bundle bundle = findBundle( "module2" );
         assertNotNull( bundle );
 
-        final BundleRelationshipTypeProvider provider = BundleRelationshipTypeProvider.create( bundle );
-        assertNotNull( provider );
+        final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( bundle );
+        final RelationshipTypes relationshipTypes = bundleRelationshipTypeLoader.load();
+        assertNotNull( relationshipTypes );
+        assertEquals( 1, relationshipTypes.getSize() );
 
-        final RelationshipTypes values = provider.get();
-        assertNotNull( values );
-        assertEquals( 1, values.getSize() );
-
-        final RelationshipType type = values.get( 0 );
+        final RelationshipType type = relationshipTypes.get( 0 );
         assertEquals( "member", type.getName().getLocalName() );
         assertNotNull( type.getIcon() );
     }
