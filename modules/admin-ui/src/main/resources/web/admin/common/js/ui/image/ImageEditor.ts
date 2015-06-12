@@ -703,7 +703,6 @@ module api.ui.image {
         }
 
         private moveZoomKnobBy(delta: number) {
-            debugger;
             var zoomLineEl = this.zoomLine.getHTMLElement(),
                 zoomKnobEl = this.zoomKnob.getHTMLElement();
 
