@@ -6,11 +6,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.mock.MockHttpServletRequest;
+import com.enonic.xp.web.mock.MockHttpServletResponse;
 
 public class ContextHandlerTest
 {

@@ -1,7 +1,6 @@
 dependencies {
     compile project( ':web-api' )
     testCompile project( path: ':web-api', configuration: 'testOutput' )
-    testCompile 'org.springframework:spring-test:4.1.1.RELEASE'
 }
 
 bundle {

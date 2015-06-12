@@ -3,8 +3,8 @@ package com.enonic.xp.web.servlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.enonic.xp.web.mock.MockHttpServletRequest;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 

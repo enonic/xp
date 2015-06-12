@@ -5,7 +5,6 @@ dependencies {
     compile 'javax.servlet:javax.servlet-api:3.0.1'
 
     testCompile project( path: ':core-api', configuration: 'testOutput' )
-    testCompile 'org.springframework:spring-test:4.1.1.RELEASE'
 }
 
 bundle {

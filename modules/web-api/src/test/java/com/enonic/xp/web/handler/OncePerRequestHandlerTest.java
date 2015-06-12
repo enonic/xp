@@ -5,7 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.enonic.xp.web.mock.MockHttpServletRequest;
 
 public class OncePerRequestHandlerTest
 {
