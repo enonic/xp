@@ -2,11 +2,13 @@ package com.enonic.xp.web;
 
 public enum HttpStatus
 {
-
+    // Informational
     CONTINUE( 100, "Continue" ),
     SWITCHING_PROTOCOLS( 101, "Switching Protocols" ),
     PROCESSING( 102, "Processing" ),
     CHECKPOINT( 103, "Checkpoint" ),
+
+    // Successful
     OK( 200, "OK" ),
     CREATED( 201, "Created" ),
     ACCEPTED( 202, "Accepted" ),
@@ -17,6 +19,8 @@ public enum HttpStatus
     MULTI_STATUS( 207, "Multi-Status" ),
     ALREADY_REPORTED( 208, "Already Reported" ),
     IM_USED( 226, "IM Used" ),
+
+    // Redirection
     MULTIPLE_CHOICES( 300, "Multiple Choices" ),
     MOVED_PERMANENTLY( 301, "Moved Permanently" ),
     FOUND( 302, "Found" ),
@@ -24,6 +28,8 @@ public enum HttpStatus
     NOT_MODIFIED( 304, "Not Modified" ),
     TEMPORARY_REDIRECT( 307, "Temporary Redirect" ),
     PERMANENT_REDIRECT( 308, "Permanent Redirect" ),
+
+    // ClientError
     BAD_REQUEST( 400, "Bad Request" ),
     UNAUTHORIZED( 401, "Unauthorized" ),
     PAYMENT_REQUIRED( 402, "Payment Required" ),
@@ -49,6 +55,8 @@ public enum HttpStatus
     PRECONDITION_REQUIRED( 428, "Precondition Required" ),
     TOO_MANY_REQUESTS( 429, "Too Many Requests" ),
     REQUEST_HEADER_FIELDS_TOO_LARGE( 431, "Request Header Fields Too Large" ),
+
+    // ServerError
     INTERNAL_SERVER_ERROR( 500, "Internal Server Error" ),
     NOT_IMPLEMENTED( 501, "Not Implemented" ),
     BAD_GATEWAY( 502, "Bad Gateway" ),
