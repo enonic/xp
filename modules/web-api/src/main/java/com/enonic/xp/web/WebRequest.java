@@ -2,6 +2,8 @@ package com.enonic.xp.web;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.net.HostAndPort;
+
 public final class WebRequest
 {
     private final HttpServletRequest raw;
@@ -26,6 +28,16 @@ public final class WebRequest
     {
         // TODO: Return the headers. Do a lazy create on first access.
         return null;
+    }
+
+    public HostAndPort getLocalAddress()
+    {
+        return HostAndPort.fromParts( this.raw.getLocalName(), this.raw.getLocalPort() );
+    }
+
+    public HostAndPort getRemoteAddress()
+    {
+        return HostAndPort.fromParts( this.raw.getRemoteHost(), this.raw.getRemotePort() );
     }
 
     public final HttpServletRequest getRawRequest()
