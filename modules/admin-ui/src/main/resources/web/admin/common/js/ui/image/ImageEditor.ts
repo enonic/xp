@@ -84,7 +84,7 @@ module api.ui.image {
                            '        <clipPath id="focalClipPath">' +
                            '            <circle cx="0" cy="0" r="0" class="clip-circle"/>' +
                            '        </clipPath>' +
-                           '        <circle cx="0" cy="0" r="0" stroke="red" fill-opacity="0" stroke-width="4" class="stroke-circle"/>' +
+                           '        <circle cx="0" cy="0" r="0" class="stroke-circle"/>' +
                            '    </g>' +
                            '    <g class="edit-group crop-group">' +
                            '        <clipPath id="cropClipPath">' +
@@ -398,7 +398,7 @@ module api.ui.image {
 
         /**
          * Returns the center of the focal point as 0-1 values
-         * @returns {{x, y}|{x: number, y: number}}
+         * @returns {{x, y}|Point}
          */
         getFocusPosition(): Point {
             return this.normalizePoint(this.getFocusPositionPx());
@@ -582,12 +582,11 @@ module api.ui.image {
         }
 
         /**
-         * Sets the center of the focal point
-         * @param x top left edge x value in 0-1 interval
-         * @param y top left edge y value in 0-1 interval
-         * @param w width value in 0-1 interval
-         * @param h height value in 0-1 interval
-         * @returns {undefined}
+         * Sets the crop area
+         * @param x
+         * @param y
+         * @param w
+         * @param h
          */
         setCropPosition(x: number, y: number, w: number, h: number) {
             if (this.isImageLoaded()) {
@@ -630,8 +629,8 @@ module api.ui.image {
         }
 
         /**
-         * Returns the center of the focal point as 0-1 values
-         * @returns {{x, y}|{x: number, y: number}}
+         * Gets the crop area
+         * @returns {{x, y, w, h}|Rect}
          */
         getCropPosition(): Rect {
             return this.normalizeRect(this.getCropPositionPx());
@@ -757,6 +756,16 @@ module api.ui.image {
             }
         }
 
+        private isInsideCropRect(x: number, y: number) {
+            return x >= this.cropData.x && x <= this.cropData.x + this.cropData.w &&
+                   y >= this.cropData.y && y <= this.cropData.y + this.cropData.h;
+
+        }
+
+        private isInsideCanvas(x: number, y: number) {
+            return x >= 0 && x <= this.imgW && y >= 0 && y <= this.imgH;
+        }
+
         private bindCropMouseListeners() {
             var dragMouseDown = false,
                 zoomMouseDown = false,
@@ -768,6 +777,9 @@ module api.ui.image {
             }
 
             this.dragMouseDownListener = (event: MouseEvent) => {
+                event.stopPropagation();
+                event.preventDefault();
+
                 dragMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -778,6 +790,9 @@ module api.ui.image {
             this.dragHandle.onMouseDown(this.dragMouseDownListener);
 
             this.knobMouseDownListener = (event: MouseEvent) => {
+                event.stopPropagation();
+                event.preventDefault();
+
                 zoomMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -808,12 +823,31 @@ module api.ui.image {
             };
             this.clip.onMouseWheel(this.mouseWheelListener);
 
+            this.mouseDownListener = (event: MouseEvent) => {
+                var x = this.getOffsetX(event),
+                    y = this.getOffsetY(event);
+
+                if (this.isInsideCropRect(x, y)) {
+                    panMouseDown = true;
+                    lastPos = {
+                        x: x,
+                        y: y
+                    };
+                }
+            };
+            this.clip.onMouseDown(this.mouseDownListener);
+
             this.mouseMoveListener = (event: MouseEvent) => {
 
                 var currPos = {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
+
+                if (!this.isInsideCanvas(currPos.x, currPos.y)) {
+                    // only act when mouse is inside canvas
+                    return;
+                }
 
                 if (zoomMouseDown) {
 
@@ -870,6 +904,7 @@ module api.ui.image {
             this.dragHandle.unMouseDown(this.dragMouseDownListener);
             this.zoomKnob.unMouseDown(this.knobMouseDownListener);
             this.clip.unMouseWheel(this.mouseWheelListener);
+            this.clip.unMouseDown(this.mouseDownListener);
 
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
@@ -902,13 +937,8 @@ module api.ui.image {
         }
 
         private notifyFocusModeChanged(edit: boolean, position: Point) {
-            var normalizedPosition;
-            if (position) {
-                // position can be undefined when auto positioned
-                normalizedPosition = this.normalizePoint(position);
-            }
             this.focusEditModeListeners.forEach((listener) => {
-                listener(edit, normalizedPosition);
+                listener(edit, position);
             })
         }
 

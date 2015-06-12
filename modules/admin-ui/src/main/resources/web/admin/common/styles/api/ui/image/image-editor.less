@@ -10,6 +10,10 @@
 
       svg {
         display: block;
+
+        > image {
+          cursor: move;
+        }
       }
 
     }
@@ -49,9 +53,13 @@
       }
 
       .focus-group {
+
         .stroke-circle {
-          cursor: move;
+          stroke: red;
+          fill: none;
+          stroke-width: 4;
         }
+
       }
 
       .crop-group {
