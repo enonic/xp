@@ -77,8 +77,11 @@ public final class HttpHeaders
 
     public void setAllow( final HttpMethod... values )
     {
-        final String value = Joiner.on( "," ).skipNulls().join( values );
-        set( ALLOW, value );
+        if ( values != null )
+        {
+            final String value = Joiner.on( "," ).skipNulls().join( values );
+            set( ALLOW, value );
+        }
     }
 
     public MediaType getContentType()
@@ -89,7 +92,10 @@ public final class HttpHeaders
 
     public void setContentType( final MediaType mediaType )
     {
-        set( CONTENT_TYPE, mediaType.toString() );
+        if ( mediaType != null )
+        {
+            set( CONTENT_TYPE, mediaType.toString() );
+        }
     }
 
     public long getContentLength()
@@ -126,7 +132,10 @@ public final class HttpHeaders
 
     public void setDate( final String headerName, final Instant date )
     {
-        set( headerName, date.toString() );
+        if ( date != null )
+        {
+            set( headerName, date.toString() );
+        }
     }
 
     public Instant getLastModified()
@@ -147,7 +156,10 @@ public final class HttpHeaders
 
     public void setLocation( final URI location )
     {
-        set( LOCATION, location.toASCIIString() );
+        if ( location != null )
+        {
+            set( LOCATION, location.toASCIIString() );
+        }
     }
 
     public Instant getExpires()
@@ -168,6 +180,9 @@ public final class HttpHeaders
 
     public void setReferer( final URI value )
     {
-        set( REFERER, value.toASCIIString() );
+        if ( value != null )
+        {
+            set( REFERER, value.toASCIIString() );
+        }
     }
 }
