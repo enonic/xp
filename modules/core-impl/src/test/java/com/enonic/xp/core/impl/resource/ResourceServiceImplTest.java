@@ -1,13 +1,15 @@
 package com.enonic.xp.core.impl.resource;
 
 import java.net.URL;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -30,12 +32,14 @@ public class ResourceServiceImplTest
 
     private static final String RESOURCE_2_PATH = "/a/resource2.txt";
 
-    private static final Set<String> RESOURCE_PATHS = Sets.newHashSet( RESOURCE_PATH, RESOURCE_2_PATH );
+    private static final Collection<String> RESOURCE_PATHS = Lists.newArrayList( RESOURCE_PATH, RESOURCE_2_PATH );
 
 
     private ModuleKey moduleKey;
 
     private URL resourceUrl;
+
+    private Bundle bundle;
 
     private ResourceServiceImpl resourceService;
 
@@ -48,11 +52,14 @@ public class ResourceServiceImplTest
         resourceUrl = resourceTestHelper.getResource( RESOURCE_FILE_NAME );
         final URL resource2Url = resourceTestHelper.getResource( RESOURCE_2_FILE_NAME );
 
+        bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getResource( RESOURCE_PATH ) ).thenReturn( resourceUrl );
+        Mockito.when( bundle.getResource( RESOURCE_2_PATH ) ).thenReturn( resource2Url );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+
         Module module = Mockito.mock( Module.class );
         Mockito.when( module.getKey() ).thenReturn( moduleKey );
-        Mockito.when( module.getResource( RESOURCE_PATH ) ).thenReturn( resourceUrl );
-        Mockito.when( module.getResource( RESOURCE_2_PATH ) ).thenReturn( resource2Url );
-        Mockito.when( module.getResourcePaths() ).thenReturn( RESOURCE_PATHS );
+        Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( moduleKey ) ).thenReturn( module );
@@ -92,20 +99,24 @@ public class ResourceServiceImplTest
         Resources resources;
 
         //Finds resources for a specific path
+        Mockito.when( bundle.getEntryPaths( "/" ) ).thenReturn( Collections.enumeration( RESOURCE_PATHS ) );
         resources = resourceService.findResources( moduleKey, RESOURCE_PATH );
         assertEquals( 1, resources.getSize() );
         assertEquals( ResourceKey.from( moduleKey, RESOURCE_PATH ), resources.first().getKey() );
         assertEquals( resourceUrl, resources.first().getUrl() );
 
         //Finds all text resources in a specific folder
+        Mockito.when( bundle.getEntryPaths( "/" ) ).thenReturn( Collections.enumeration( RESOURCE_PATHS ) );
         resources = resourceService.findResources( moduleKey, "/a/.*\\.txt" );
         assertEquals( 2, resources.getSize() );
 
         //Finds all resources in an non existing folder
+        Mockito.when( bundle.getEntryPaths( "/" ) ).thenReturn( Collections.enumeration( RESOURCE_PATHS ) );
         resources = resourceService.findResources( moduleKey, "/b/.*" );
         assertEquals( 0, resources.getSize() );
 
         //Finds all resources for an incorrect module key
+        Mockito.when( bundle.getEntryPaths( "/" ) ).thenReturn( Collections.enumeration( RESOURCE_PATHS ) );
         ModuleKey incorrectModuleKey = ModuleKey.from( "othermodule" );
         resources = resourceService.findResources( incorrectModuleKey, RESOURCE_PATH );
         assertEquals( 0, resources.getSize() );

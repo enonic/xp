@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.resource;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,14 +30,10 @@ public class ResourceServiceImpl
     public Resource getResource( final ResourceKey resourceKey )
     {
         Resource resource = null;
-        final Module module = moduleService.getModule( resourceKey.getModule() );
+        final Module module = getActiveModule( resourceKey.getModule() );
         if ( module != null )
         {
-            final URL resourceUrl = module.getResource( resourceKey.getPath() );
-            if ( resourceUrl != null )
-            {
-                resource = new Resource( resourceKey, resourceUrl );
-            }
+            resource = getResource( module.getBundle(), resourceKey );
         }
         return resource;
     }
@@ -44,15 +42,18 @@ public class ResourceServiceImpl
     public Resources findResources( final ModuleKey moduleKey, final String pattern )
     {
         Resources resources = null;
-        final Module module = moduleService.getModule( moduleKey );
+        final Module module = getActiveModule( moduleKey );
+
         if ( module != null )
         {
-            final Set<String> resourcePaths = module.getResourcePaths();
+            Bundle bundle = module.getBundle();
             final Pattern compiledPattern = Pattern.compile( pattern );
+            final Enumeration<String> entryPaths = bundle.getEntryPaths( "/" );
 
-            final List<Resource> resourceList = resourcePaths.stream().
+            final List<Resource> resourceList = Collections.list( entryPaths ).
+                stream().
                 filter( resourcePath -> compiledPattern.matcher( resourcePath ).matches() ).
-                map( resourcePath -> getResource( module, resourcePath ) ).
+                map( resourcePath -> getResource( bundle, ResourceKey.from( module.getKey(), resourcePath ) ) ).
                 collect( Collectors.toList() );
 
             resources = Resources.from( resourceList );
@@ -66,11 +67,30 @@ public class ResourceServiceImpl
         return resources;
     }
 
-    private static Resource getResource( final Module module, final String resourcePath )
+    private Module getActiveModule( ModuleKey moduleKey )
     {
-        final ResourceKey resourceKey = ResourceKey.from( module.getKey(), resourcePath );
-        final URL resourceUrl = module.getResource( resourcePath );
-        return new Resource( resourceKey, resourceUrl );
+        Module activeModule = null;
+
+        final Module module = moduleService.getModule( moduleKey );
+        if ( module != null && module.getBundle().getState() == Bundle.ACTIVE )
+        {
+            activeModule = module;
+        }
+
+        return activeModule;
+    }
+
+    private Resource getResource( Bundle bundle, ResourceKey resourceKey )
+    {
+        Resource resource = null;
+
+        final URL resourceUrl = bundle.getResource( resourceKey.getPath() );
+        if ( resourceUrl != null )
+        {
+            resource = new Resource( resourceKey, resourceUrl );
+        }
+
+        return resource;
     }
 
     @Reference
