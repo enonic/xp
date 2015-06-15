@@ -10,11 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
-import org.osgi.service.url.URLStreamHandlerService;
 
 import com.google.common.base.Strings;
 
@@ -24,7 +20,6 @@ import com.enonic.xp.resource.ResourceKey;
 import static org.osgi.framework.BundleEvent.INSTALLED;
 import static org.osgi.framework.BundleEvent.UNINSTALLED;
 
-@Component(immediate = true, service = URLStreamHandlerService.class, property = {"url.handler.protocol=module"})
 public final class ModuleURLStreamHandler
     extends AbstractURLStreamHandlerService
 {
@@ -35,6 +30,11 @@ public final class ModuleURLStreamHandler
     public ModuleURLStreamHandler()
     {
         this.moduleNameToBundleIdCache = new ConcurrentHashMap<>();
+    }
+
+    public void setBundleContext( final BundleContext bundleContext )
+    {
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -94,10 +94,8 @@ public final class ModuleURLStreamHandler
         }
     }
 
-    @Activate
-    public void activate( final ComponentContext context )
+    public void initialize()
     {
-        this.bundleContext = context.getBundleContext();
         this.bundleContext.addBundleListener( this::invalidateCache );
     }
 }

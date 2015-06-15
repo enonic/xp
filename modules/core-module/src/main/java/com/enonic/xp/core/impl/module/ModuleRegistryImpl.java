@@ -4,12 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +18,6 @@ import com.enonic.xp.module.ModuleEventType;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
-@Component(immediate = true)
 public final class ModuleRegistryImpl
     implements ModuleRegistry, SynchronousBundleListener
 {
@@ -31,16 +27,22 @@ public final class ModuleRegistryImpl
 
     private EventPublisher eventPublisher;
 
+    private BundleContext bundleContext;
+
     public ModuleRegistryImpl()
     {
         this.modules = Maps.newConcurrentMap();
     }
 
-    @Activate
-    public void start( final ComponentContext context )
+    public void setBundleContext( final BundleContext bundleContext )
     {
-        context.getBundleContext().addBundleListener( this );
-        for ( final Bundle bundle : context.getBundleContext().getBundles() )
+        this.bundleContext = bundleContext;
+    }
+
+    public void initialize()
+    {
+        this.bundleContext.addBundleListener( this );
+        for ( final Bundle bundle : this.bundleContext.getBundles() )
         {
             if ( !isModule( bundle ) )
             {
@@ -146,7 +148,6 @@ public final class ModuleRegistryImpl
         this.modules.put( module.getKey(), module );
     }
 
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;

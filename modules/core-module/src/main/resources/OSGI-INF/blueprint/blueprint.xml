@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference id="eventPublisher" interface="com.enonic.xp.event.EventPublisher"/>
+
+  <bean id="moduleRegistry" class="com.enonic.xp.core.impl.module.ModuleRegistryImpl" init-method="initialize">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+    <property name="eventPublisher" ref="eventPublisher"/>
+  </bean>
+
+  <service interface="org.osgi.service.url.URLStreamHandlerService">
+    <service-properties>
+      <entry key="url.handler.protocol" value="module"/>
+    </service-properties>
+    <bean class="com.enonic.xp.core.impl.module.ModuleURLStreamHandler" init-method="initialize">
+      <property name="bundleContext" ref="blueprintBundleContext"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.xp.core.impl.module.ModuleServiceImpl">
+      <property name="registry" ref="moduleRegistry"/>
+    </bean>
+  </service>
+
+</blueprint>

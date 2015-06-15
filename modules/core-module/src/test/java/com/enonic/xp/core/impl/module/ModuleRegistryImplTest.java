@@ -8,11 +8,9 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -56,13 +54,11 @@ public class ModuleRegistryImplTest
     {
         final BundleContext bundleContext = this.serviceRegistry.getBundleContext();
 
-        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( componentContext.getBundleContext() ).thenReturn( bundleContext );
-
         this.registry = new ModuleRegistryImpl();
         this.registry.setEventPublisher( this.events::add );
+        this.registry.setBundleContext( bundleContext );
 
-        this.registry.start( componentContext );
+        this.registry.initialize();
     }
 
     @Test

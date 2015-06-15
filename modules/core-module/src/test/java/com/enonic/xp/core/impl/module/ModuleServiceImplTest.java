@@ -6,8 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
 
 import com.google.common.collect.Lists;
 
@@ -26,19 +24,12 @@ public class ModuleServiceImplTest
 
     private ModuleServiceImpl service;
 
-    private BundleContext bundleContext;
-
     @Before
     public void setup()
     {
         this.registry = Mockito.mock( ModuleRegistry.class );
         this.service = new ModuleServiceImpl();
         this.service.setRegistry( this.registry );
-
-        this.bundleContext = Mockito.mock( BundleContext.class );
-        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.bundleContext );
-        this.service.initialize( componentContext );
     }
 
     private Module createModule( final String key )

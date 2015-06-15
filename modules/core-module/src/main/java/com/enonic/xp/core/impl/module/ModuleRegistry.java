@@ -7,7 +7,7 @@ import com.enonic.xp.module.ModuleKey;
 
 public interface ModuleRegistry
 {
-    public Module get( ModuleKey key );
+    Module get( ModuleKey key );
 
-    public Collection<Module> getAll();
+    Collection<Module> getAll();
 }
