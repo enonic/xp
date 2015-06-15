@@ -6,9 +6,11 @@ tinymce.PluginManager.add('image', function (editor) {
         var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null,
             rng = editor.selection.getRng();
 
-        function setCursorToFigCaption(figCaptionEl) {
-            if (figCaptionEl.offsetTop > 0) {
-                editor.selection.placeCaretAt(0, figCaptionEl.offsetTop);
+        function setCursorToFigCaption(id) {
+            var figCaptionEl = editor.getBody().querySelector('figcaption[id="' + id + '"]');
+            if (figCaptionEl) {
+                figCaptionEl.scrollIntoView(false);
+                editor.selection.placeCaretAt(figCaptionEl.offsetLeft, figCaptionEl.offsetTop);
             }
         }
 

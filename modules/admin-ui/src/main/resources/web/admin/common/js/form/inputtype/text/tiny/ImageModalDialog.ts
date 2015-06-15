@@ -245,12 +245,22 @@ module api.form.inputtype.text.tiny {
             super.initializeActions();
         }
 
+        private generateUUID(): string {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+
         private createImageTag(): void {
             var imageEl = <api.dom.ImgEl>this.image,
                 container = this.elementContainer,
                 isProperContainer = function () {
                     return container.nodeName !== "FIGURE" && container.nodeName !== "FIGCAPTION"
-                };
+                }, figCaptionId;
 
             if (this.imageElement) {
                 this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
@@ -258,6 +268,8 @@ module api.form.inputtype.text.tiny {
             else {
                 var figure = api.dom.ElementHelper.fromName("figure");
                 var figCaption = api.dom.ElementHelper.fromName("figcaption");
+                figCaptionId = this.generateUUID();
+                figCaption.setId(figCaptionId);
                 figure.appendChildren([imageEl.getEl().getHTMLElement(), figCaption.getHTMLElement()]);
 
                 if (!isProperContainer()) {
@@ -274,8 +286,8 @@ module api.form.inputtype.text.tiny {
                     this.getEditor().insertContent(figure.getHTMLElement().outerHTML);
                 }
 
-                this.callback(figCaption.getHTMLElement());
-                figCaption.scrollIntoView();
+                this.callback(figCaptionId);
+                figCaption.setId(api.util.StringHelper.EMPTY_STRING);
             }
         }
 
