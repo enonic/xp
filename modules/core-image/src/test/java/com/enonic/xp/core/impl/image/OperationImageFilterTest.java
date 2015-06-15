@@ -6,8 +6,6 @@ import java.awt.image.BufferedImageOp;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.impl.image.OperationImageFilter;
-
 import static org.junit.Assert.*;
 
 public class OperationImageFilterTest
