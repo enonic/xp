@@ -26,11 +26,13 @@ public final class PortalResponse
 
     private final Map<String, String> headers;
 
+    private final Map<String, Object> options;
+
     private boolean postProcess;
 
     private final ListMultimap<HtmlTag, String> contributions;
 
-    public PortalResponse( Builder builder )
+    public PortalResponse( final Builder builder )
     {
         this.status = builder.status;
         this.contentType = builder.contentType;
@@ -38,6 +40,7 @@ public final class PortalResponse
         this.headers = builder.headers;
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions;
+        this.options = builder.options;
     }
 
     public int getStatus()
@@ -70,6 +73,11 @@ public final class PortalResponse
         return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : Collections.emptyList();
     }
 
+    public Map<String, Object> getOptions()
+    {
+        return options;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -80,7 +88,7 @@ public final class PortalResponse
         return ( this.body != null ) ? this.body.toString() : null;
     }
 
-    public static Builder create( PortalResponse source )
+    public static Builder create( final PortalResponse source )
     {
         return new Builder().
             body( source.body ).
@@ -88,7 +96,8 @@ public final class PortalResponse
             contentType( source.contentType ).
             postProcess( source.postProcess ).
             contributions( source.contributions ).
-            status( source.status );
+            status( source.status ).
+            options( source.options );
     }
 
     public static class Builder
@@ -96,6 +105,8 @@ public final class PortalResponse
         private Object body;
 
         private Map<String, String> headers;
+
+        private Map<String, Object> options;
 
         private String contentType = "text/plain; charset=utf-8";
 
@@ -107,6 +118,7 @@ public final class PortalResponse
 
         {
             clearHeaders();
+            clearOptions();
             clearContributions();
         }
 
@@ -136,6 +148,28 @@ public final class PortalResponse
         public Builder clearHeaders()
         {
             headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+            return this;
+        }
+
+        public Builder options( final Map<String, Object> options )
+        {
+            this.options = options;
+            return this;
+        }
+
+        public Builder option( final String key, final Object value )
+        {
+            if ( this.options == null )
+            {
+                clearHeaders();
+            }
+            this.options.put( key, value );
+            return this;
+        }
+
+        public Builder clearOptions()
+        {
+            options = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
             return this;
         }
 
