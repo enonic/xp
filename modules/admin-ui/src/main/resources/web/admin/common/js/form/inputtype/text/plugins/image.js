@@ -3,11 +3,23 @@
 tinymce.PluginManager.add('image', function (editor) {
 
     function showDialog() {
-        var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null;
+        var imgEl = editor.selection.getNode().nodeName == 'IMG' ? editor.selection.getNode() : null,
+            rng = editor.selection.getRng();
+
+        function setCursorToFigCaption(id) {
+            var figCaptionEl = editor.getBody().querySelector('figcaption[id="' + id + '"]');
+            if (figCaptionEl) {
+                figCaptionEl.scrollIntoView(false);
+                editor.selection.placeCaretAt(figCaptionEl.offsetLeft, figCaptionEl.offsetTop + 10);
+                figCaptionEl.innerHTML = "";
+            }
+        }
 
         editor.execCommand("openImageDialog", {
             editor: editor,
-            element: imgEl
+            element: imgEl,
+            container: rng.endContainer,
+            callback: setCursorToFigCaption
         });
     }
 
@@ -30,4 +42,3 @@ tinymce.PluginManager.add('image', function (editor) {
     editor.addCommand('mceImage', showDialog);
 
 });
-

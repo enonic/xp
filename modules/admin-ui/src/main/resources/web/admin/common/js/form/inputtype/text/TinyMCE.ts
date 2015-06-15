@@ -256,13 +256,14 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private openLinkDialog(config: ElementConfig) {
-            var linkModalDialog = new LinkModalDialog(config.editor, config.element);
+
+        private openLinkDialog(config: TinyMCELink) {
+            var linkModalDialog = new LinkModalDialog(config);
             linkModalDialog.open();
         }
 
-        private openImageDialog(config: ElementConfig) {
-            var imageModalDialog = new ImageModalDialog(config.editor, <HTMLImageElement>config.element, this.contentId);
+        private openImageDialog(config: TinyMCEImage) {
+            var imageModalDialog = new ImageModalDialog(config, this.contentId);
             imageModalDialog.open();
         }
 
@@ -365,14 +366,18 @@ module api.form.inputtype.text {
         property: Property;
     }
 
-    interface ElementConfig {
+    export interface TinyMCELink {
         editor: TinyMceEditor
         element: HTMLElement
+        text: string
     }
 
-    interface ImageTag {
-        src: string
-        imageId: string
+    export interface TinyMCEImage {
+        editor: TinyMceEditor
+        element: HTMLElement
+        container: HTMLElement
+        callback: Function
     }
+
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
 }

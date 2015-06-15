@@ -9,6 +9,7 @@ module api.form.inputtype.text.tiny {
     export class LinkModalDialog extends ModalDialog {
         private dockedPanel: DockedPanel;
         private link: HTMLElement;
+        private linkText: string;
 
         private static tabNames: any = {
             content: "Content",
@@ -22,14 +23,15 @@ module api.form.inputtype.text.tiny {
         private static emailPrefix = "mailto:";
         private static subjectPrefix = "?subject=";
 
-        constructor(editor: TinyMceEditor, link: HTMLElement) {
-            this.link = link;
+        constructor(config: api.form.inputtype.text.TinyMCELink) {
+            this.link = config.element;
+            this.linkText = config.text;
 
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Link"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"));
         }
 
         private getLinkText(): string {
-            return this.link ? this.link["text"] : api.util.StringHelper.EMPTY_STRING;
+            return this.link ? this.link["text"] : this.linkText;
         }
 
         private getToolTip(): string {
