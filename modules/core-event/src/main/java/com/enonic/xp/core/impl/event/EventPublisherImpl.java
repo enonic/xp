@@ -46,13 +46,11 @@ public final class EventPublisherImpl
 
     public void addListener( final EventListener listener )
     {
-        System.out.println( "ADD " + listener );
         this.listeners.add( listener );
     }
 
     public void removeListener( final EventListener listener )
     {
-        System.out.println( "REMOVE " + listener );
         this.listeners.remove( listener );
     }
 }
