@@ -20,12 +20,16 @@ module api.form.inputtype.text.tiny {
         private progress: api.ui.ProgressBar;
         private error: api.dom.DivEl;
         private image: api.dom.ImgEl;
+        private elementContainer: HTMLElement;
+        private callback: Function;
 
-        constructor(editor: TinyMceEditor, imageElement: HTMLImageElement, contentId: api.content.ContentId) {
-            this.imageElement = imageElement;
+        constructor(config: api.form.inputtype.text.TinyMCEImage, contentId: api.content.ContentId) {
+            this.imageElement = <HTMLImageElement>config.element;
+            this.elementContainer = config.container;
             this.contentId = contentId;
+            this.callback = config.callback;
 
-            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
+            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Image"));
         }
 
         private getImageId(images: api.content.ContentSummary[]): string {
@@ -241,14 +245,54 @@ module api.form.inputtype.text.tiny {
             super.initializeActions();
         }
 
+        private generateUUID(): string {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+
+        private createFigureElement(figCaptionId: string) {
+            var figure = api.dom.ElementHelper.fromName("figure");
+            var figCaption = api.dom.ElementHelper.fromName("figcaption");
+            figCaption.setId(figCaptionId);
+            figCaption.setInnerHtml("caption");
+
+            figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
+
+            return figure;
+        }
+
         private createImageTag(): void {
-            var imageEl = <api.dom.ImgEl>this.image;
+            var container = this.elementContainer,
+                isProperContainer = function () {
+                    return container.nodeName !== "FIGCAPTION" && container.nodeName !== "#text"
+                };
 
             if (this.imageElement) {
-                this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
+                this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
             }
             else {
-                this.getEditor().insertContent("<figure>" + imageEl.toString() + "<figcaption></figcaption></figure>");
+                var figCaptionId = this.generateUUID(),
+                    figure = this.createFigureElement(figCaptionId);
+
+                if (!isProperContainer() || container.nodeName === "FIGURE") {
+                    while (!isProperContainer()) {
+                        container = container.parentElement;
+                    }
+                    ;
+
+                    figure.insertAfterEl(new api.dom.ElementHelper(container));
+                    this.getEditor().nodeChanged();
+                }
+                else {
+                    this.getEditor().insertContent(figure.getHTMLElement().outerHTML);
+                }
+
+                this.callback(figCaptionId);
             }
         }
 

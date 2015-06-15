@@ -127,7 +127,9 @@ module api.form.inputtype.text {
                 },
                 init_instance_callback: (editor) => {
                     this.setEditorContent(id, property);
-                    this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                    if (this.notInLiveEdit()) {
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                    }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
                     this.temporarilyDisableScrolling(); //XP-736
                 }
@@ -238,6 +240,10 @@ module api.form.inputtype.text {
             }
         }
 
+        private notInLiveEdit(): boolean {
+            return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
+        }
+
         private setPropertyValue(id: string, property: Property) {
             property.setValue(this.editorContent2PropertyValue(id));
         }
@@ -256,13 +262,13 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private openLinkDialog(config: ElementConfig) {
-            var linkModalDialog = new LinkModalDialog(config.editor, config.element);
+        private openLinkDialog(config: TinyMCELink) {
+            var linkModalDialog = new LinkModalDialog(config);
             linkModalDialog.open();
         }
 
-        private openImageDialog(config: ElementConfig) {
-            var imageModalDialog = new ImageModalDialog(config.editor, <HTMLImageElement>config.element, this.contentId);
+        private openImageDialog(config: TinyMCEImage) {
+            var imageModalDialog = new ImageModalDialog(config, this.contentId);
             imageModalDialog.open();
         }
 
@@ -365,14 +371,18 @@ module api.form.inputtype.text {
         property: Property;
     }
 
-    interface ElementConfig {
+    export interface TinyMCELink {
         editor: TinyMceEditor
         element: HTMLElement
+        text: string
     }
 
-    interface ImageTag {
-        src: string
-        imageId: string
+    export interface TinyMCEImage {
+        editor: TinyMceEditor
+        element: HTMLElement
+        container: HTMLElement
+        callback: Function
     }
+
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
 }

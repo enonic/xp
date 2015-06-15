@@ -81,7 +81,8 @@ public final class LocaleServiceImpl
         try
         {
             final Resource resource = Resource.from( resourceKey );
-            if ( resource != null )
+
+            if ( resource != null && resource.exists() )
             {
                 try
                 {
