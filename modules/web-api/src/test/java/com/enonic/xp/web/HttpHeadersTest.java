@@ -82,7 +82,7 @@ public class HttpHeadersTest
     public void testSetAllowNull()
     {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAllow( null );
+        httpHeaders.setAllow();
 
         assertEquals( httpHeaders.getAllow(), EnumSet.noneOf( HttpMethod.class ) );
     }
