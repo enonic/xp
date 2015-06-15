@@ -255,31 +255,37 @@ module api.form.inputtype.text.tiny {
             return uuid;
         }
 
+        private createFigureElement(figCaptionId: string) {
+            var figure = api.dom.ElementHelper.fromName("figure");
+            var figCaption = api.dom.ElementHelper.fromName("figcaption");
+            figCaption.setId(figCaptionId);
+            figCaption.setInnerHtml("caption");
+
+            figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
+
+            return figure;
+        }
+
         private createImageTag(): void {
-            var imageEl = <api.dom.ImgEl>this.image,
-                container = this.elementContainer,
+            var container = this.elementContainer,
                 isProperContainer = function () {
-                    return container.nodeName !== "FIGURE" && container.nodeName !== "FIGCAPTION"
-                }, figCaptionId;
+                    return container.nodeName !== "FIGCAPTION" && container.nodeName !== "#text"
+                };
 
             if (this.imageElement) {
-                this.imageElement.parentElement.replaceChild(imageEl.getEl().getHTMLElement(), this.imageElement);
+                this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
             }
             else {
-                var figure = api.dom.ElementHelper.fromName("figure");
-                var figCaption = api.dom.ElementHelper.fromName("figcaption");
-                figCaptionId = this.generateUUID();
-                figCaption.setId(figCaptionId);
-                figure.appendChildren([imageEl.getEl().getHTMLElement(), figCaption.getHTMLElement()]);
+                var figCaptionId = this.generateUUID(),
+                    figure = this.createFigureElement(figCaptionId);
 
-                if (!isProperContainer()) {
-                    if (container.nodeName === "FIGCAPTION") {
+                if (!isProperContainer() || container.nodeName === "FIGURE") {
+                    while (!isProperContainer()) {
                         container = container.parentElement;
                     }
-                    if (container.nodeName === "FIGURE") {
-                        figure.insertAfterEl(new api.dom.ElementHelper(container));
-                    }
+                    ;
 
+                    figure.insertAfterEl(new api.dom.ElementHelper(container));
                     this.getEditor().nodeChanged();
                 }
                 else {
@@ -287,7 +293,6 @@ module api.form.inputtype.text.tiny {
                 }
 
                 this.callback(figCaptionId);
-                figCaption.setId(api.util.StringHelper.EMPTY_STRING);
             }
         }
 

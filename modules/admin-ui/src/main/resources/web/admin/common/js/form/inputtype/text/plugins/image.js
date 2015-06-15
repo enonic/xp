@@ -10,7 +10,8 @@ tinymce.PluginManager.add('image', function (editor) {
             var figCaptionEl = editor.getBody().querySelector('figcaption[id="' + id + '"]');
             if (figCaptionEl) {
                 figCaptionEl.scrollIntoView(false);
-                editor.selection.placeCaretAt(figCaptionEl.offsetLeft, figCaptionEl.offsetTop);
+                editor.selection.placeCaretAt(figCaptionEl.offsetLeft, figCaptionEl.offsetTop + 10);
+                figCaptionEl.innerHTML = "";
             }
         }
 
