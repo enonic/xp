@@ -31,7 +31,7 @@ public class ImageSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig config = builder.build();
 
@@ -47,7 +47,7 @@ public class ImageSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         ImageSelectorConfig config = builder.build();
 
         // exercise
@@ -62,7 +62,7 @@ public class ImageSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
@@ -79,7 +79,7 @@ public class ImageSelectorConfigJsonSerializerTest
     {
         // setup
         String json = "{}";
-        ImageSelectorConfig expected = ImageSelectorConfig.newImageSelectorConfig().build();
+        ImageSelectorConfig expected = ImageSelectorConfig.create().build();
 
         // exercise
         ImageSelectorConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );

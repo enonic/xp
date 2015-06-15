@@ -98,7 +98,7 @@ public abstract class RenderBaseResourceTest
         PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.newContent().
+        final Content.Builder content = Content.create().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
@@ -108,14 +108,14 @@ public abstract class RenderBaseResourceTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.newPageRegions().
-                add( Region.newRegion().name( "main-region" ).
-                    add( PartComponent.newPartComponent().name( ComponentName.from( "mypart" ) ).
+            PageRegions pageRegions = PageRegions.create().
+                add( Region.create().name( "main-region" ).
+                    add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                         build() ).
                     build() ).
                 build();
 
-            Page page = Page.newPage().
+            Page page = Page.create().
                 template( PageTemplateKey.from( "my-page" ) ).
                 regions( pageRegions ).
                 config( rootDataSet ).
@@ -130,12 +130,12 @@ public abstract class RenderBaseResourceTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
             build();
 
-        return Site.newSite().
+        return Site.create().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
@@ -151,9 +151,9 @@ public abstract class RenderBaseResourceTest
         final PropertyTree pageTemplateConfig = new PropertyTree();
         pageTemplateConfig.addLong( "pause", 10000L );
 
-        PageRegions pageRegions = PageRegions.newPageRegions().
-            add( Region.newRegion().name( "main-region" ).
-                add( PartComponent.newPartComponent().name( ComponentName.from( "mypart" ) ).
+        PageRegions pageRegions = PageRegions.create().
+            add( Region.create().name( "main-region" ).
+                add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
                     build() ).
                 build() ).
             build();

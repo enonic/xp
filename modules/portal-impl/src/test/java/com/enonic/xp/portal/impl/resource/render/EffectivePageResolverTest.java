@@ -35,15 +35,15 @@ public class EffectivePageResolverTest
         configB = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         configB.addString( "b", "1" );
 
-        regionsA = PageRegions.newPageRegions().
-            add( Region.newRegion().name( "regionA" ).
-                add( PartComponent.newPartComponent().name( "my-part" ).build() ).
+        regionsA = PageRegions.create().
+            add( Region.create().name( "regionA" ).
+                add( PartComponent.create().name( "my-part" ).build() ).
                 build() ).
             build();
 
-        regionsB = PageRegions.newPageRegions().
-            add( Region.newRegion().name( "regionB" ).
-                add( PartComponent.newPartComponent().name( "my-part" ).build() ).
+        regionsB = PageRegions.create().
+            add( Region.create().name( "regionB" ).
+                add( PartComponent.create().name( "my-part" ).build() ).
                 build() ).
             build();
     }
@@ -56,14 +56,14 @@ public class EffectivePageResolverTest
             key( PageTemplateKey.from( "t-1" ) ).
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
-            page( Page.newPage().
+            page( Page.create().
                 controller( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
             build();
 
-        Content content = Content.newContent().
+        Content content = Content.create().
             parentPath( ContentPath.ROOT ).
             name( "my-content" ).
             build();
@@ -86,17 +86,17 @@ public class EffectivePageResolverTest
             key( PageTemplateKey.from( "t-1" ) ).
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
-            page( Page.newPage().
+            page( Page.create().
                 controller( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
             build();
 
-        Content content = Content.newContent().
+        Content content = Content.create().
             parentPath( ContentPath.ROOT ).
             name( "my-content" ).
-            page( Page.newPage().
+            page( Page.create().
                 template( template.getKey() ).
                 config( configB ).
                 build() ).
@@ -120,17 +120,17 @@ public class EffectivePageResolverTest
             key( PageTemplateKey.from( "t-1" ) ).
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
-            page( Page.newPage().
+            page( Page.create().
                 controller( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
             build();
 
-        Content content = Content.newContent().
+        Content content = Content.create().
             parentPath( ContentPath.ROOT ).
             name( "my-content" ).
-            page( Page.newPage().
+            page( Page.create().
                 template( template.getKey() ).
                 regions( regionsB ).
                 build() ).

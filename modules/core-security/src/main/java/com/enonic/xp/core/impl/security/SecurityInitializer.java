@@ -241,7 +241,7 @@ public final class SecurityInitializer
     {
         try
         {
-            securityService.addRelationship( PrincipalRelationship.from( container ).to( member ) );
+            securityService.addRelationship( PrincipalRelationship.create( container ).to( member ) );
             LOG.info( "Added " + member + " as member of " + container );
         }
         catch ( final Exception t )

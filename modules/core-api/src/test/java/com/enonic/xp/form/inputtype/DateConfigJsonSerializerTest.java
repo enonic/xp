@@ -30,7 +30,7 @@ public class DateConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.newDateConfig();
+        DateConfig.Builder builder = DateConfig.create();
         builder.withTimezone( true );
         DateConfig config = builder.build();
 
@@ -46,7 +46,7 @@ public class DateConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.newDateConfig();
+        DateConfig.Builder builder = DateConfig.create();
         builder.withTimezone( true );
         DateConfig expected = builder.build();
 
@@ -63,7 +63,7 @@ public class DateConfigJsonSerializerTest
     {
         // setup
         String json = "{}";
-        DateConfig expected = DateConfig.newDateConfig().build();
+        DateConfig expected = DateConfig.create().build();
 
         // exercise
         DateConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );

@@ -64,7 +64,7 @@ public final class PrincipalRelationship
         return Objects.hash( from, to );
     }
 
-    public static Builder from( final PrincipalKey fromPrincipal )
+    public static Builder create( final PrincipalKey fromPrincipal )
     {
         return new Builder( fromPrincipal );
     }

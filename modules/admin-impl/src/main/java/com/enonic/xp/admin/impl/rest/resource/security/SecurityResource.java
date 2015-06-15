@@ -63,7 +63,7 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
-import static com.enonic.xp.security.PrincipalQuery.newQuery;
+import static com.enonic.xp.security.PrincipalQuery.create;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -112,7 +112,7 @@ public final class SecurityResource
     @Path("userstore/default")
     public UserStoreJson getDefaultUserStore()
     {
-        final UserStore userStore = UserStore.newUserStore().displayName( "" ).key( UserStoreKey.createDefault() ).build();
+        final UserStore userStore = UserStore.create().displayName( "" ).key( UserStoreKey.createDefault() ).build();
 
         final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
@@ -243,7 +243,7 @@ public final class SecurityResource
             throw new WebApplicationException( "Expected email parameter" );
         }
         final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : UserStoreKey.from( userStoreKeyParam );
-        final PrincipalQuery query = newQuery().email( email ).userStore( userStoreKey ).build();
+        final PrincipalQuery query = create().email( email ).userStore( userStoreKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );
     }
@@ -264,7 +264,7 @@ public final class SecurityResource
 
         for ( PrincipalKey membershipToAdd : params.getMemberships() )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
+            final PrincipalRelationship rel = PrincipalRelationship.create( membershipToAdd ).to( userKey );
             securityService.addRelationship( rel );
         }
 
@@ -280,7 +280,7 @@ public final class SecurityResource
         final PrincipalKey groupKey = group.getKey();
         for ( PrincipalKey member : params.getMembers() )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( groupKey ).to( member );
+            final PrincipalRelationship rel = PrincipalRelationship.create( groupKey ).to( member );
             securityService.addRelationship( rel );
         }
         return new GroupJson( group, params.getMembers() );
@@ -294,7 +294,7 @@ public final class SecurityResource
         final PrincipalKey roleKey = role.getKey();
         for ( PrincipalKey member : params.getMembers() )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( roleKey ).to( member );
+            final PrincipalRelationship rel = PrincipalRelationship.create( roleKey ).to( member );
             securityService.addRelationship( rel );
         }
         return new RoleJson( role, params.getMembers() );
@@ -309,12 +309,12 @@ public final class SecurityResource
         final PrincipalKey userKey = user.getKey();
         for ( PrincipalKey membershipToAdd : params.getAddMemberships() )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
+            final PrincipalRelationship rel = PrincipalRelationship.create( membershipToAdd ).to( userKey );
             securityService.addRelationship( rel );
         }
         for ( PrincipalKey membershipToRemove : params.getRemoveMemberships() )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToRemove ).to( userKey );
+            final PrincipalRelationship rel = PrincipalRelationship.create( membershipToRemove ).to( userKey );
             securityService.removeRelationship( rel );
         }
 
@@ -386,13 +386,13 @@ public final class SecurityResource
     {
         for ( PrincipalKey memberToAdd : membersToAdd )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( target ).to( memberToAdd );
+            final PrincipalRelationship rel = PrincipalRelationship.create( target ).to( memberToAdd );
             securityService.addRelationship( rel );
         }
 
         for ( PrincipalKey memberToRemove : membersToRemove )
         {
-            final PrincipalRelationship rel = PrincipalRelationship.from( target ).to( memberToRemove );
+            final PrincipalRelationship rel = PrincipalRelationship.create( target ).to( memberToRemove );
             securityService.removeRelationship( rel );
         }
     }

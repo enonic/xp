@@ -116,7 +116,7 @@ public class DuplicateNodeCommandTest
 
         final Node node1Duplicate = duplicateNode( node1 );
 
-        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
+        final Node dNode1_1 = getNodeByPath( NodePath.create( node1Duplicate.path(), node1_1.name().toString() ).build() );
         assertEquals( dNode1_1.id(), node1Duplicate.data().getReference( "node1_1-id" ).getNodeId() );
         assertEquals( node2.id(), node1Duplicate.data().getReference( "node2-id" ).getNodeId() );
     }
@@ -147,13 +147,13 @@ public class DuplicateNodeCommandTest
         refresh();
 
         final Node node1Duplicate = duplicateNode( node1 );
-        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
+        final Node dNode1_1 = getNodeByPath( NodePath.create( node1Duplicate.path(), node1_1.name().toString() ).build() );
 
         final Reference reference = node1Duplicate.data().getReference( "node1_1-id" );
 
         assertEquals( dNode1_1.id(), reference.getNodeId() );
 
-        final Node dNode1_1_1 = getNodeByPath( NodePath.newNodePath( dNode1_1.path(), node_1_1_1.name().toString() ).build() );
+        final Node dNode1_1_1 = getNodeByPath( NodePath.create( dNode1_1.path(), node_1_1_1.name().toString() ).build() );
         assertEquals( dNode1_1.id(), node1Duplicate.data().getReference( "node1_1-id" ).getNodeId() );
         assertEquals( dNode1_1_1.id(), dNode1_1.data().getReference( "node1_1_1-id" ).getNodeId() );
         assertEquals( dNode1_1_1.id(), node1Duplicate.data().getReference( "node1_1_1-id" ).getNodeId() );
@@ -202,10 +202,10 @@ public class DuplicateNodeCommandTest
 
         final Node duplicatedNode1 = duplicateNode( node1 );
 
-        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( duplicatedNode1.path(), node1_1.name().toString() ).build() );
-        final Node dNode1_2 = getNodeByPath( NodePath.newNodePath( duplicatedNode1.path(), node1_2.name().toString() ).build() );
-        final Node dNode1_1_1 = getNodeByPath( NodePath.newNodePath( dNode1_1.path(), node1_1_1.name().toString() ).build() );
-        final Node dNode1_2_1 = getNodeByPath( NodePath.newNodePath( dNode1_2.path(), node1_2_1.name().toString() ).build() );
+        final Node dNode1_1 = getNodeByPath( NodePath.create( duplicatedNode1.path(), node1_1.name().toString() ).build() );
+        final Node dNode1_2 = getNodeByPath( NodePath.create( duplicatedNode1.path(), node1_2.name().toString() ).build() );
+        final Node dNode1_1_1 = getNodeByPath( NodePath.create( dNode1_1.path(), node1_1_1.name().toString() ).build() );
+        final Node dNode1_2_1 = getNodeByPath( NodePath.create( dNode1_2.path(), node1_2_1.name().toString() ).build() );
         assertNotNull( dNode1_1 );
         assertNotNull( dNode1_2 );
         assertNotNull( dNode1_1_1 );
@@ -238,7 +238,7 @@ public class DuplicateNodeCommandTest
 
         final Node node1Duplicate = duplicateNode( node1 );
 
-        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
+        final Node dNode1_1 = getNodeByPath( NodePath.create( node1Duplicate.path(), node1_1.name().toString() ).build() );
 
         assertEquals( node1Duplicate.id(), dNode1_1.data().getReference( "node1-id" ).getNodeId() );
     }

@@ -14,19 +14,19 @@ public final class PageRegions
         super( builder );
     }
 
-    public static Builder newPageRegions()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newPageRegions( final PageRegions source )
+    public static Builder create( final PageRegions source )
     {
         return new Builder( source );
     }
 
     public PageRegions copy()
     {
-        return PageRegions.newPageRegions( this ).build();
+        return PageRegions.create( this ).build();
     }
 
     public static class Builder

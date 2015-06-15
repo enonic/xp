@@ -26,11 +26,10 @@ public class LayoutComponentTest
             public Object[] getObjectsThatNotEqualsX()
             {
 
-                return new Object[]{ImageComponent.newImageComponent().
+                return new Object[]{ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
-                    build(), TextComponent.newTextComponent().text( "image" ).name( "imageComponent" ).build(),
-                    LayoutComponent.newLayoutComponent().
+                    build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), LayoutComponent.create().
                         name( "name" ).
                         descriptor( DescriptorKey.from( "descriptor" ) ).
                         regions( null ).
@@ -72,13 +71,13 @@ public class LayoutComponentTest
         final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config1.addString( "some", "config" );
 
-        return LayoutComponent.newLayoutComponent().
+        return LayoutComponent.create().
             name( "name" ).
             config( config1 ).
             descriptor( DescriptorKey.from( "descriptor" ) ).
-            regions( LayoutRegions.newLayoutRegions().add( Region.newRegion().
+            regions( LayoutRegions.create().add( Region.create().
                 name( "region" ).
-                add( TextComponent.newTextComponent().
+                add( TextComponent.create().
                     text( "text" ).
                     name( "textComponent" ).
                     build() ).

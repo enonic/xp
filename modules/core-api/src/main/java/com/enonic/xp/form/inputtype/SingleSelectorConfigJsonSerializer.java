@@ -35,7 +35,7 @@ public class SingleSelectorConfigJsonSerializer
     @Override
     public SingleSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
+        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.create();
         final SingleSelectorConfig.SelectorType selectorType =
             SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", inputTypeConfigNode ) );
         builder.type( selectorType );

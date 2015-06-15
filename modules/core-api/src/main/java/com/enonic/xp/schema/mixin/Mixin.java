@@ -23,12 +23,12 @@ public final class Mixin
         return formItems;
     }
 
-    public static Builder newMixin()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newMixin( final Mixin mixin )
+    public static Builder create( final Mixin mixin )
     {
         return new Builder( mixin );
     }

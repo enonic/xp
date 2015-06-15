@@ -25,7 +25,7 @@ public class TimezoneConfig
 
     }
 
-    public static Builder newTimezoneConfig()
+    public static Builder create()
     {
         return new Builder();
     }

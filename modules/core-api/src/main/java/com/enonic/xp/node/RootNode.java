@@ -34,10 +34,16 @@ public class RootNode
     }
 
     public static class Builder
+        extends Node.Builder
     {
         private AccessControlList permissions;
 
         private ChildOrder childOrder;
+
+        public Builder()
+        {
+            super();
+        }
 
         public Builder childOrder( final ChildOrder childOrder )
         {

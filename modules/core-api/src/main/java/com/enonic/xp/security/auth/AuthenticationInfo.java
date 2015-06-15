@@ -64,7 +64,7 @@ public final class AuthenticationInfo
         return new Builder( true );
     }
 
-    public static Builder copyOf( final AuthenticationInfo authInfo )
+    public static Builder create( final AuthenticationInfo authInfo )
     {
         return new Builder( authInfo );
     }

@@ -22,7 +22,7 @@ final class GetDefaultPageTemplateCommand
             site( site ).
             contentService( contentService ).
             execute();
-        final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( contentType ).build();
+        final PageTemplateSpec spec = PageTemplateSpec.create().canRender( contentType ).build();
         final PageTemplates supportedTemplates = pageTemplates.filter( spec );
         return supportedTemplates.first();
     }

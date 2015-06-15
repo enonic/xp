@@ -46,7 +46,7 @@ public class SetNodeChildOrderCommand
             orderChildNodes( parentNode );
         }
 
-        final Node editedNode = Node.newNode( parentNode ).childOrder( childOrder ).build();
+        final Node editedNode = Node.create( parentNode ).childOrder( childOrder ).build();
 
         doStoreNode( editedNode );
 
@@ -72,7 +72,7 @@ public class SetNodeChildOrderCommand
 
             final Node node = doGetById( nodeIdOrderValue.getNodeId(), false );
 
-            final Node editedNode = Node.newNode( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
+            final Node editedNode = Node.create( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
 
             doStoreNode( editedNode );
         }

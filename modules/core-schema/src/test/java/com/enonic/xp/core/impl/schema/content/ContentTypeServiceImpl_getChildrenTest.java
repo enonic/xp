@@ -17,7 +17,7 @@ public class ContentTypeServiceImpl_getChildrenTest
         throws Exception
     {
         final ContentType contentType1 = ContentType.
-            newContentType().
+            create().
             name( "mymodule:my_content_type1" ).
             displayName( ContentTypeName.unstructured().toString() ).
             superType( null ).
@@ -25,28 +25,28 @@ public class ContentTypeServiceImpl_getChildrenTest
             build();
 
         final ContentType contentType2 = ContentType.
-            newContentType().
+            create().
             name( "mymodule:my_content_type2" ).
             displayName( "Display Name 2" ).
             superType( ContentTypeName.from( "mymodule:my_content_type1" ) ).
             build();
 
         final ContentType contentType3 = ContentType.
-            newContentType().
+            create().
             name( "mymodule:my_content_type3" ).
             displayName( "Display Name 3" ).
             superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
             build();
 
         final ContentType contentType4 = ContentType.
-            newContentType().
+            create().
             name( "mymodule:my_content_type4" ).
             displayName( "Display Name 4" ).
             superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
             build();
 
         final ContentType contentType5 = ContentType.
-            newContentType().
+            create().
             name( ContentTypeName.folder().toString() ).
             displayName( "Folder root content type" ).
             setBuiltIn().

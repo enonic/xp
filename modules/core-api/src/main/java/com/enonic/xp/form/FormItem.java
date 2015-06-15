@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
+import static com.enonic.xp.form.FormItemSet.create;
 
 @Beta
 public abstract class FormItem
@@ -121,7 +121,7 @@ public abstract class FormItem
         final FormItem newFormItem;
         if ( formItem instanceof FormItemSet )
         {
-            newFormItem = newFormItemSet( (FormItemSet) formItem ).build();
+            newFormItem = create( (FormItemSet) formItem ).build();
         }
         else if ( formItem instanceof Input )
         {

@@ -27,7 +27,7 @@ public class ImageComponentDataSerializer
     @Override
     public ImageComponent fromData( final PropertySet asData )
     {
-        ImageComponent.Builder component = ImageComponent.newImageComponent();
+        ImageComponent.Builder component = ImageComponent.create();
         applyComponentFromData( component, asData );
         if ( asData.isNotNull( "image" ) )
         {

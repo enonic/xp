@@ -50,7 +50,7 @@ import com.enonic.xp.security.acl.UserStoreAccess;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
-import static com.enonic.xp.security.PrincipalRelationship.from;
+import static com.enonic.xp.security.PrincipalRelationship.create;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
@@ -166,7 +166,7 @@ public class SecurityResourceTest
         final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.newUserStore().
+        final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
@@ -197,7 +197,7 @@ public class SecurityResourceTest
         final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.newUserStore().
+        final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
@@ -331,8 +331,8 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
 
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = create( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = create( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( memberships );
 
@@ -357,8 +357,8 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:superuser" ) ) ).thenReturn(
             userRes );
 
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = create( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = create( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "role:superuser" ) ) ).thenReturn( memberships );
 
@@ -381,7 +381,7 @@ public class SecurityResourceTest
             login( "alice" ).
             build();
 
-        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().addPrincipal( user ).totalSize( 1 ).build();
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.create().addPrincipal( user ).totalSize( 1 ).build();
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
 
         String jsonString = request().
@@ -397,7 +397,7 @@ public class SecurityResourceTest
     public void isEmailAvailablePositive()
         throws Exception
     {
-        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().totalSize( 0 ).build();
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.create().totalSize( 0 ).build();
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
 
         String jsonString = request().
@@ -504,8 +504,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = create( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = create( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
 
@@ -528,8 +528,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = create( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = create( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
 
@@ -607,12 +607,12 @@ public class SecurityResourceTest
 
     private UserStores createUserStores()
     {
-        final UserStore userStore1 = UserStore.newUserStore().
+        final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
             build();
 
-        final UserStore userStore2 = UserStore.newUserStore().
+        final UserStore userStore2 = UserStore.create().
             key( USER_STORE_2 ).
             displayName( "File based user store" ).
             build();

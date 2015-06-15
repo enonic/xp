@@ -17,12 +17,12 @@ public class TextComponent
         this.text = builder.text;
     }
 
-    public static Builder newTextComponent()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newTextComponent( final TextComponent source )
+    public static Builder create( final TextComponent source )
     {
         return new Builder( source );
     }
@@ -30,7 +30,7 @@ public class TextComponent
     @Override
     public TextComponent copy()
     {
-        return newTextComponent( this ).build();
+        return create( this ).build();
     }
 
     @Override

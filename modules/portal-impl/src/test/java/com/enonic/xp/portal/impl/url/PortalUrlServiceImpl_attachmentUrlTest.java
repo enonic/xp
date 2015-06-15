@@ -96,11 +96,11 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private Content createContent()
     {
-        final Attachment a1 = Attachment.newAttachment().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpg" ).build();
-        final Attachment a2 = Attachment.newAttachment().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpg" ).build();
+        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpg" ).build();
+        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpg" ).build();
         final Attachments attachments = Attachments.from( a1, a2 );
 
-        final Content content = Content.newContent( ContentFixtures.newContent() ).
+        final Content content = Content.create( ContentFixtures.newContent() ).
             attachments( attachments ).
             build();
 

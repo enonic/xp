@@ -18,7 +18,8 @@ public class PageTemplateSpec
         return pageTemplate.getCanRender().contains( canRender );
     }
 
-    public static Builder newPageTemplateParams() {
+    public static Builder create()
+    {
         return new Builder();
     }
 

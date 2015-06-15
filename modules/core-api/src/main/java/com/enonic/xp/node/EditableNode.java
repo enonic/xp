@@ -41,7 +41,7 @@ public class EditableNode
 
     public Node build()
     {
-        return Node.newNode( source ).
+        return Node.create( source ).
             name( name ).
             data( data ).
             indexConfigDocument( indexConfigDocument ).

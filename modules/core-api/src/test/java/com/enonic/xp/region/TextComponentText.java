@@ -17,7 +17,7 @@ public class TextComponentText
             @Override
             public Object getObjectX()
             {
-                return TextComponent.newTextComponent().
+                return TextComponent.create().
                     text( "text" ).
                     name( "textComponent" ).
                     build();
@@ -26,11 +26,10 @@ public class TextComponentText
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{ImageComponent.newImageComponent().
+                return new Object[]{ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
-                    build(), TextComponent.newTextComponent().text( "textComponent" ).name( "text" ).build(),
-                    ImageComponent.newImageComponent().
+                    build(), TextComponent.create().text( "textComponent" ).name( "text" ).build(), ImageComponent.create().
                         name( "text" ).
                         build(), new Object()};
             }
@@ -38,7 +37,7 @@ public class TextComponentText
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return TextComponent.newTextComponent().
+                return TextComponent.create().
                     text( "text" ).
                     name( "textComponent" ).
                     build();
@@ -47,7 +46,7 @@ public class TextComponentText
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return TextComponent.newTextComponent().
+                return TextComponent.create().
                     text( "text" ).
                     name( "textComponent" ).
                     build();
@@ -59,7 +58,7 @@ public class TextComponentText
     @Test
     public void copy()
     {
-        final TextComponent source = TextComponent.newTextComponent().text( "text" ).name( "name" ).build();
+        final TextComponent source = TextComponent.create().text( "text" ).name( "name" ).build();
 
         final TextComponent copy = source.copy();
 

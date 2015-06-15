@@ -70,7 +70,7 @@ public class CreateNodeParams
         return new Builder( source );
     }
 
-    public static Builder from( final Node node )
+    public static Builder create( final Node node )
     {
         return new Builder().
             parent( node.parentPath() ).

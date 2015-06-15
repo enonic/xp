@@ -265,7 +265,7 @@ public class ApplyNodePermissionsCommandTest
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
         ContextBuilder.from( context ).
-            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( principal, PrincipalKey.ofGroup( USK, "group1" ) ).build() ).
+            authInfo( AuthenticationInfo.create( authInfo ).principals( principal, PrincipalKey.ofGroup( USK, "group1" ) ).build() ).
             build().
             runWith( runnable );
     }

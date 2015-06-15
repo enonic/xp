@@ -11,7 +11,7 @@ public class XmlNodeParserTest
     public void testParse()
         throws Exception
     {
-        final Node.Builder builder = Node.newNode();
+        final Node.Builder builder = Node.create();
 
         final XmlNodeParser parser = new XmlNodeParser();
         parser.source( getClass().getResource( "node.xml" ) );
@@ -32,7 +32,7 @@ public class XmlNodeParserTest
     public void testParse_double_decoded()
         throws Exception
     {
-        final Node.Builder builder = Node.newNode();
+        final Node.Builder builder = Node.create();
 
         final XmlNodeParser parser = new XmlNodeParser();
         parser.source( getClass().getResource( "node-double-encoded.xml" ) );
