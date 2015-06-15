@@ -20,7 +20,7 @@ public final class Resource
 
     private final URL url;
 
-    private Resource( final ResourceKey key, final URL url )
+    public Resource( final ResourceKey key, final URL url )
     {
         this.key = key;
         this.url = url;
