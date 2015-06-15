@@ -6,16 +6,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.module.ModuleKey;
 
-// @Component(immediate = true)
 public final class BeanManagerImpl
     implements BeanManager
 {
@@ -28,7 +24,6 @@ public final class BeanManagerImpl
         this.containers = Maps.newConcurrentMap();
     }
 
-    @Activate
     public void initialize( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
@@ -64,7 +59,6 @@ public final class BeanManagerImpl
         }
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, service = BlueprintContainer.class)
     public void addContainer( final ServiceReference ref )
     {
         final ModuleKey key = ModuleKey.from( ref.getBundle() );
