@@ -7,7 +7,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;
 import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 
@@ -16,7 +15,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.module.ModuleKey;
 
-@Component(immediate = true)
+// @Component(immediate = true)
 public final class BeanManagerImpl
     implements BeanManager
 {
