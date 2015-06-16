@@ -91,6 +91,14 @@ module api.app.wizard {
                 this.appendChild(this.formPanel);
             }
 
+            var mask = new api.ui.mask.Mask(this.formPanel);
+            this.appendChild(mask);
+
+            api.app.wizard.MaskWizardPanelEvent.on(event => {
+                mask.setVisible(event.isMask());
+                this.actions.suspendActions(event.isMask());
+            });
+
             var aboveStepPanels = new api.dom.DivEl();
             aboveStepPanels.appendChild(params.formIcon);
             aboveStepPanels.appendChild(this.header);
@@ -116,7 +124,7 @@ module api.app.wizard {
                     this.stepsPanel.setScrollOffset(item.getElement().getEl().getHeight());
                 }
             });
-            this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepsPanel);
+            this.formPanel.appendChildren(aboveStepPanels, this.stepsPanel);
 
             this.layingOutNew = this.persistedItem == null;
 

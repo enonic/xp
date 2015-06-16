@@ -17,3 +17,4 @@
 ///<reference path='UploadFinishedEvent.ts' />
 ///<reference path='WizardClosedEvent.ts' />
 ///<reference path='WizardValidityManager.ts' />
+///<reference path='MaskWizardPanelEvent.ts' />
