@@ -274,6 +274,9 @@ module api.form.inputtype.text.tiny {
 
             if (this.imageElement) {
                 this.imageElement.parentElement.replaceChild((<api.dom.ImgEl>this.image).getEl().getHTMLElement(), this.imageElement);
+                setTimeout(() => {
+                    this.getEditor().nodeChanged({selectionChange: true})
+                }, 50);
             }
             else {
                 var figCaptionId = this.generateUUID(),
@@ -283,7 +286,6 @@ module api.form.inputtype.text.tiny {
                     while (!isProperContainer()) {
                         container = container.parentElement;
                     }
-                    ;
 
                     figure.insertAfterEl(new api.dom.ElementHelper(container));
                     this.getEditor().nodeChanged();

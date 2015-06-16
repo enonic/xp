@@ -17,7 +17,7 @@ interface TinyMceEditor extends TinyMceObservable {
     undoManager: TinyMceUndoManager
     settings: Object
     insertContent: (content: string, args?: Object) => string
-    nodeChanged: () => void
+    nodeChanged: (args?: Object) => void
 }
 
 interface TinyMceUndoManager {
