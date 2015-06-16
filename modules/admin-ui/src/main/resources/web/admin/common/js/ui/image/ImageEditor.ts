@@ -311,12 +311,7 @@ module api.ui.image {
         }
 
         private setShaderVisible(visible: boolean) {
-            var shader = api.liveedit.Shader.get();
-            if (visible) {
-                shader.shade(this);
-            } else {
-                shader.hide();
-            }
+            new api.app.wizard.MaskWizardPanelEvent(visible).fire();
         }
 
         /*

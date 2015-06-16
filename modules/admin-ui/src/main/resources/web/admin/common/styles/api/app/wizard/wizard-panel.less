@@ -1,6 +1,11 @@
 .wizard-panel {
   font-size: 14px;
 
+  .mask {
+    background-color: white;
+    .opacity(.8);
+  }
+
   .toolbar {
 
     border-bottom: 1px solid @admin-medium-gray-border;
@@ -51,8 +56,8 @@
 
     &.scroll-stick {
       position: fixed;
+      z-index: @z-index-mask + 2; // to be above image input type mask and the input type itself
       top: 84px;
-      z-index: @z-index-wizard-steps;
       border-top: 1px solid @admin-medium-gray-border;
 
       .box-shadow(-3px 3px 6px 0 @admin-toolbar-shadow);

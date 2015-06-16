@@ -4,6 +4,8 @@ module api.content.form.inputtype.upload {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import Point = api.ui.image.Point;
+    import Rect = api.ui.image.Rect;
 
     export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
@@ -91,8 +93,15 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onFocalPointEditModeChanged((edit: boolean, position: {x: number; y: number}) => {
+            this.imageUploader.onCropEditModeChanged((edit: boolean, crop: Rect) => {
                 this.validate(false);
+                this.toggleClass('standout', edit);
+            });
+
+            this.imageUploader.onFocalPointEditModeChanged((edit: boolean, position: Point) => {
+                this.validate(false);
+                this.toggleClass('standout', edit);
+
                 if (!edit && position) {
                     var tree;
                     switch (property.getType()) {
@@ -150,7 +159,7 @@ module api.content.form.inputtype.upload {
             var recording = new api.form.inputtype.InputValidationRecording();
             var propertyValue = this.property.getValue();
 
-            if (this.imageUploader.isFocalPointEditMode()) {
+            if (this.imageUploader.isFocalPointEditMode() || this.imageUploader.isCropEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);
             }
             if (propertyValue.isNull() && this.input.getOccurrences().getMinimum() > 0) {

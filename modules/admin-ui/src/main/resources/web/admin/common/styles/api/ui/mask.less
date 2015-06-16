@@ -1,6 +1,7 @@
 .mask {
   .reset(true);
 
+  position: absolute;
   background-color: black;
   display: none;
   z-index: @z-index-mask;
@@ -46,12 +47,10 @@
   }
 
   &.load-mask {
-    position: absolute;
     background-color: white;
   }
 
   &.drag-mask {
-    position: absolute;
     top: 0;
     left: 0;
     background-color: white;
