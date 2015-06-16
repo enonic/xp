@@ -8,17 +8,17 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
-public class BuiltinMixinProviderTest
+public class BuiltinMixinsLoaderTest
 {
     @Test
     public void testBuiltin()
     {
-        final Mixins mixins = new BuiltinMixinProvider().get();
+        final Mixins mixins = new BuiltinMixinsLoader().load();
         assertEquals( 3, mixins.getSize() );
 
-        assertSchema( mixins.get( 0 ), MixinName.from( "media:image-info" ), false );
-        assertSchema( mixins.get( 1 ), MixinName.from( "media:photo-info" ), false );
-        assertSchema( mixins.get( 2 ), MixinName.from( "base:gps-info" ), false );
+        assertSchema( mixins.get( 0 ), MixinName.from( "system:image-info" ), false );
+        assertSchema( mixins.get( 1 ), MixinName.from( "system:photo-info" ), false );
+        assertSchema( mixins.get( 2 ), MixinName.from( "system:gps-info" ), false );
     }
 
     private void assertSchema( final Mixin schema, final MixinName name, final boolean hasIcon )
