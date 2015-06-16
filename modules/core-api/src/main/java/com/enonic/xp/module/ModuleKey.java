@@ -22,6 +22,11 @@ public final class ModuleKey
         this.name = name;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
     @Override
     public boolean equals( final Object o )
     {

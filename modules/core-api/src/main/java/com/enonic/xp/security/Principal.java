@@ -63,7 +63,12 @@ public abstract class Principal
         return Objects.equals( key, other.key ) &&
             Objects.equals( displayName, other.displayName ) &&
             Objects.equals( modifiedTime, other.modifiedTime );
+    }
 
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( key, displayName, modifiedTime );
     }
 
     public static abstract class Builder<B>
