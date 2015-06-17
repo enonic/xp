@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="viewFunctionService" class="com.enonic.xp.portal.impl.ViewFunctionServiceImpl"/>
+
+  <bean id="com.enonic.xp.lib.thymeleaf.ThymeleafService" class="com.enonic.xp.lib.thymeleaf.ThymeleafService">
+    <property name="viewFunctionService" ref="viewFunctionService"/>
+  </bean>
+
+</blueprint>
