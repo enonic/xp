@@ -25,7 +25,9 @@ module api.content.form.inputtype.upload {
                 name: input.getName(),
                 skipWizardEvents: false,
                 maximumOccurrences: 1,
-                scaleWidth: true
+                scaleWidth: true,
+                hideDropZone: true,
+                showReset: false
             });
 
             this.appendChild(this.imageUploader);

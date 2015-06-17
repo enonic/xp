@@ -40,6 +40,7 @@ module api.ui.uploader {
         params?: {[key:string]: any};
         value?: string;
         disabled?: boolean;
+        hideDropZone?: boolean;
     }
 
     export class Uploader<MODEL> extends api.dom.FormInputEl {
@@ -93,6 +94,9 @@ module api.ui.uploader {
             this.dropzone.getEl().setTabIndex(-1);// for mac default settings
             this.getEl().setTabIndex(0);
             this.dropzoneContainer.appendChild(this.dropzone);
+            if (config.hideDropZone) {
+                this.dropzoneContainer.getEl().setAttribute("hidden", "true");
+            }
             this.appendChild(this.dropzoneContainer);
 
             this.progress = new api.ui.ProgressBar();
@@ -160,7 +164,7 @@ module api.ui.uploader {
 
                     if (this.value) {
                         this.setValue(this.value);
-                    } else {
+                    } else if (!this.config.hideDropZone) {
                         this.setDropzoneVisible();
                     }
                 }

@@ -72,7 +72,8 @@ module api.content {
             });
             var image = imageEditor.getImage();
 
-            this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+            image.getEl().setWidthPx(this.initialWidth);
+            this.getEl().setMaxWidthPx(this.initialWidth);
 
             image.onLoaded(() => {
                 this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
@@ -81,8 +82,23 @@ module api.content {
                 this.getEl().setMaxWidthPx(this.initialWidth);
             });
 
-            imageEditor.onClicked((event: MouseEvent) => {
-                imageEditor.toggleClass('selected');
+            this.onFocus(() => {
+                setTimeout(() => {
+                    if (!imageEditor.hasClass('selected')) {
+                        this.toggleSelected(imageEditor);
+                    }
+                }, 150);
+            });
+
+            this.onBlur(() => {
+                if (imageEditor.hasClass('selected')) {
+                    this.toggleSelected(imageEditor);
+                }
+            });
+
+            image.onClicked((event: MouseEvent) => {
+
+                this.toggleSelected(imageEditor);
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -92,11 +108,21 @@ module api.content {
 
             api.dom.Body.get().onClicked((event: MouseEvent) => {
                 this.imageEditors.forEach((editor) => {
-                    editor.removeClass('selected');
+                    if (editor.hasClass('selected')) {
+                        editor.removeClass('selected');
+                        if (wemjq(this.getHTMLElement()).has(editor.getHTMLElement()).length) {
+                            this.setResetVisible(false);
+                        }
+                    }
                 });
             });
 
             return imageEditor;
+        }
+
+        private toggleSelected(imageEditor: ImageEditor) {
+            imageEditor.toggleClass('selected');
+            this.setResetVisible(imageEditor.hasClass('selected'));
         }
 
         setFocalPoint(x: number, y: number) {
