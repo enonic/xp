@@ -34,11 +34,6 @@ public class ContentTypeServiceImpl_getAllTest
 
         verifyContentType( "mymodule:my-contenttype-1", "DisplayName1", result );
         verifyContentType( "mymodule:my-contenttype-2", "DisplayName2", result );
-
-        unregister();
-
-        final ContentTypes result2 = this.service.getAll( new GetAllContentTypesParams() );
-        assertEquals( 0, result2.getSize() );
     }
 
     @Test

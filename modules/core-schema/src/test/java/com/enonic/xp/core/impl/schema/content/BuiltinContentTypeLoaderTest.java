@@ -7,12 +7,12 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 import static org.junit.Assert.*;
 
-public class BuiltinContentTypeProviderTest
+public class BuiltinContentTypeLoaderTest
 {
     @Test
     public void testBuiltin()
     {
-        final ContentTypes types = new BuiltinContentTypeProvider().get();
+        final ContentTypes types = new BuiltinContentTypeLoader().load();
         assertEquals( 21, types.getSize() );
 
         assertType( types.get( 0 ), "base:unstructured", true );

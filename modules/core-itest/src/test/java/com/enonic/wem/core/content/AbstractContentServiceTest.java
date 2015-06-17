@@ -43,7 +43,7 @@ import com.enonic.xp.core.impl.content.ContentNodeTranslator;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.core.impl.schema.content.ContentTypeRegistryImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
@@ -59,6 +59,7 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -114,6 +115,8 @@ public class AbstractContentServiceTest
 
     protected MixinService mixinService;
 
+    protected ContentTypeRegistry contentTypeRegistry;
+
     protected ContentNodeTranslator contentNodeTranslator;
 
     private NodeDaoImpl nodeDao;
@@ -164,6 +167,7 @@ public class AbstractContentServiceTest
         this.nodeService.setBranchService( branchService );
 
         this.mixinService = Mockito.mock( MixinService.class );
+        this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
 
         this.contentNodeTranslator = new ContentNodeTranslator();
 
@@ -179,7 +183,7 @@ public class AbstractContentServiceTest
 
         final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
-        contentTypeService.addProvider( new BuiltinContentTypeProvider() );
+        contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
