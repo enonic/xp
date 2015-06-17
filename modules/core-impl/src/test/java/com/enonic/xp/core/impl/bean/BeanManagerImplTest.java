@@ -16,8 +16,6 @@ public class BeanManagerImplTest
 {
     private BeanManagerImpl manager;
 
-    private BundleContext context;
-
     private ServiceReference serviceRef;
 
     private BlueprintContainer container;
@@ -26,8 +24,8 @@ public class BeanManagerImplTest
     public void setup()
     {
         this.manager = new BeanManagerImpl();
-        this.context = Mockito.mock( BundleContext.class );
-        this.manager.initialize( this.context );
+        final BundleContext context = Mockito.mock( BundleContext.class );
+        this.manager.setBundleContext( context );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "foo.bar" );
@@ -36,7 +34,7 @@ public class BeanManagerImplTest
         Mockito.when( this.serviceRef.getBundle() ).thenReturn( bundle );
 
         this.container = Mockito.mock( BlueprintContainer.class );
-        Mockito.when( this.context.getService( this.serviceRef ) ).thenReturn( this.container );
+        Mockito.when( context.getService( this.serviceRef ) ).thenReturn( this.container );
     }
 
     @Test(expected = IllegalArgumentException.class)
