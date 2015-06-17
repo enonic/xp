@@ -1,0 +1,232 @@
+<node xmlns="urn:enonic:xp:export:1.0">
+    <id>5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b</id>
+    <childOrder>modifiedtime DESC</childOrder>
+    <nodeType>content</nodeType>
+    <data>
+        <boolean name="valid">true</boolean>
+        <string name="displayName">Elephant_(Loxodonta_Africana)_04.jpg</string>
+        <dateTime name="modifiedTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="modifier">user:system:su</string>
+        <string name="creator">user:system:anonymous</string>
+        <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="type">media:image</string>
+        <property-set name="data">
+            <string name="media">Elephant_(Loxodonta_Africana)_04.jpg</string>
+            <string name="mimeType">image/jpeg</string>
+            <property-set name="metadata">
+                <string name="unknownTag(0x0115)">3</string>
+                <string name="date">2013-01-21T12:16:09</string>
+                <string name="printFlagsInformation">0 1 0 0 0 0 0 0 0 2</string>
+                <string name="exifVersion">2.21</string>
+                <string name="slices">zaD3Z34568b-rev4 (0,0,2679,3109) 1 Slices</string>
+                <string name="iccUntaggedProfile">1</string>
+                <string name="compressionType">Baseline</string>
+                <string name="thumbnailCompression">JPEG (old-style)</string>
+                <string name="printFlags">0 0 0 0 0 0 0 0 1</string>
+                <string name="numberOfComponents">3</string>
+                <string name="component2">Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="component1">Y component: Quantization table 0, Sampling factors 1 horiz/1 vert</string>
+                <string name="ycbcrPositioning">Center of pixel array</string>
+                <string name="tiffResolutionunit">Inch</string>
+                <string name="seedNumber">1</string>
+                <string name="XResolution">72 dots per inch</string>
+                <string name="iptcNaaRecord">15 bytes binary data</string>
+                <string name="unknownTag(0x043a)">[147 bytes]</string>
+                <string name="versionInfo">1 (Adobe Photoshop, Adobe Photoshop CS5) 1</string>
+                <string name="component3">Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="modified">2013-01-21T12:16:09</string>
+                <string name="thumbnailData">JpegRGB, 160x138, Decomp 66240 bytes, 1572865 bpp, 10525 bytes</string>
+                <string name="tiffBitspersample">8</string>
+                <string name="applicationRecordVersion">44431</string>
+                <string name="resolutionInfo">72.0x72.0 DPI</string>
+                <string name="unknownTag(0x0102)">8 8 8</string>
+                <string name="metaCreationDate">2013-01-21T12:16:09</string>
+                <string name="tiffSamplesperpixel">3</string>
+                <string name="captionDigest">[16 bytes]</string>
+                <string name="creationDate">2013-01-21T12:16:09</string>
+                <string name="orientation">Top, left side (Horizontal / normal)</string>
+                <string name="tiffOrientation">1</string>
+                <string name="tiffSoftware">Adobe Photoshop CS5 Windows</string>
+                <string name="thumbnailOffset">402 bytes</string>
+                <string name="colorTransform">YCbCr</string>
+                <string name="globalAngle">30</string>
+                <string name="exifImageHeight">2679 pixels</string>
+                <string name="software">Adobe Photoshop CS5 Windows</string>
+                <string name="unknownTag(0x0106)">2</string>
+                <string name="tiffYresolution">72.0</string>
+                <string name="YResolution">72 dots per inch</string>
+                <string name="colorTransferFunctions">[112 bytes]</string>
+                <string name="unknownTag(0x0101)">3012</string>
+                <string name="dataPrecision">8 bits</string>
+                <string name="codedCharacterSet">%G</string>
+                <string name="tiffImagelength">3012</string>
+                <string name="jpegQuality">12 (Maximum), Standard format, 3 scans</string>
+                <string name="dctermsCreated">2013-01-21T12:16:09</string>
+                <string name="dctermsModified">2013-01-21T12:16:09</string>
+                <string name="lastModified">2013-01-21T12:16:09</string>
+                <string name="lastSaveDate">2013-01-21T12:16:09</string>
+                <string name="thumbnailLength">10525 bytes</string>
+                <string name="colorSpace">Undefined</string>
+                <string name="globalAltitude">30</string>
+                <string name="metaSaveDate">2013-01-21T12:16:09</string>
+                <string name="contentType">image/jpeg</string>
+                <string name="XParsedBy">org.apache.tika.parser.DefaultParser</string>
+                <string name="unknownTag(0x0100)">4516</string>
+                <string name="colorHalftoningInformation">[72 bytes]</string>
+                <string name="tiffXresolution">72.0</string>
+                <string name="dateTime">2013:01:21 12:16:09</string>
+                <string name="gridAndGuidesInformation">[16 bytes]</string>
+                <string name="dctEncodeVersion">1</string>
+                <string name="exifImageWidth">3109 pixels</string>
+                <string name="imageHeight">2679 pixels</string>
+                <string name="pixelAspectRatio">1.0</string>
+                <string name="imageWidth">3109 pixels</string>
+                <string name="flags0">64</string>
+                <string name="resolutionUnit">Inch</string>
+                <string name="unknownTag(0x043b)">[434 bytes]</string>
+                <string name="urlList">0</string>
+                <string name="printScale">Centered, Scale 1.0</string>
+                <string name="tiffImagewidth">4516</string>
+                <string name="subSecTime">238</string>
+                <string name="flags1">0</string>
+            </property-set>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Elephant_(Loxodonta_Africana)_04.jpg</string>
+            <string name="label">source</string>
+            <binaryReference name="binary">Elephant_(Loxodonta_Africana)_04.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">7670152</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Elephant_(Loxodonta_Africana)_04_small.jpg</string>
+            <string name="label">small</string>
+            <binaryReference name="binary">Elephant_(Loxodonta_Africana)_04_small.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">12958</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Elephant_(Loxodonta_Africana)_04_medium.jpg</string>
+            <string name="label">medium</string>
+            <binaryReference name="binary">Elephant_(Loxodonta_Africana)_04_medium.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">46903</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Elephant_(Loxodonta_Africana)_04_large.jpg</string>
+            <string name="label">large</string>
+            <binaryReference name="binary">Elephant_(Loxodonta_Africana)_04_large.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">164522</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Elephant_(Loxodonta_Africana)_04_extra-large.jpg</string>
+            <string name="label">extra-large</string>
+            <binaryReference name="binary">Elephant_(Loxodonta_Africana)_04_extra-large.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">539960</long>
+        </property-set>
+    </data>
+    <indexConfigs>
+        <analyzer>content_default</analyzer>
+        <defaultConfig>
+            <decideByType>true</decideByType>
+            <enabled>true</enabled>
+            <nGram>false</nGram>
+            <fulltext>false</fulltext>
+            <includeInAllText>false</includeInAllText>
+        </defaultConfig>
+        <pathIndexConfigs>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata.media</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>draft</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>attachment</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>true</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>form</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>page</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>site</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>type</path>
+            </pathIndexConfig>
+        </pathIndexConfigs>
+    </indexConfigs>
+</node>

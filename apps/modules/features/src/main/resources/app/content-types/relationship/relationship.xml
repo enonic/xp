@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Relationship</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="myRelation" type="ContentSelector">
+      <label>A single DEFAULT relation to another content</label>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myLikeRelation" type="ContentSelector">
+      <label>A single LIKE relation to another content</label>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myUnrequiredUnlimitedRelationship" type="ContentSelector">
+      <label>Unrequired, maximum allowed</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myUnrequiredMax3Relationship" type="ContentSelector">
+      <label>Unrequired, maximum 3</label>
+      <occurrences minimum="0" maximum="3"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myRequiredUnlimitedRelationship" type="ContentSelector">
+      <label>Required, maximum allowed relations</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myRequiredRelationship" type="ContentSelector">
+      <label>Required, maximum 1</label>
+      <occurrences minimum="1" maximum="1"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myRequiredMax2Relationship" type="ContentSelector">
+      <label>Required, maximum 2</label>
+      <occurrences minimum="1" maximum="2"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="myRequiredMax3Relationship" type="ContentSelector">
+      <label>Required, maximum 3</label>
+      <occurrences minimum="1" maximum="3"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+  </form>
+</content-type>

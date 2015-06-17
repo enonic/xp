@@ -1,0 +1,18 @@
+<div>
+    <div>
+        <h2>Cities list</h2>
+    </div>
+    <div data-th-if="${cities}" data-th-remove="tag">
+        <div>
+            <span>Cities ordered by distance from: </span>
+            <select id="citiesSelect" onchange="location = this.options[this.selectedIndex].value;">
+                <option data-th-text="${currentCity}" selected="selected"/>
+                <option data-th-each="city : ${cities}" data-th-value="${currentPage} + '?city=' + ${city._name}"
+                        data-th-text="${city.displayName}"/>
+            </select>
+        </div>
+        <ol>
+            <li data-th-each="city : ${cities}" data-th-text="${city.displayName} + ': ' + ${city.data.cityLocation}"/>
+        </ol>
+    </div>
+</div>

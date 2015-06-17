@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page>
+  <display-name>default</display-name>
+  <config>
+  </config>
+  <regions>
+    <region name="main"/>
+  </regions>
+</page>

@@ -1,0 +1,265 @@
+<node xmlns="urn:enonic:xp:export:1.0">
+    <id>2940adcf-1991-4493-a38c-3d590c805db2</id>
+    <childOrder>modifiedtime DESC</childOrder>
+    <nodeType>content</nodeType>
+    <data>
+        <boolean name="valid">true</boolean>
+        <string name="displayName">Cape_Agulhas_P1040396.JPG</string>
+        <dateTime name="modifiedTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="modifier">user:system:su</string>
+        <string name="creator">user:system:anonymous</string>
+        <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="type">media:image</string>
+        <property-set name="data">
+            <string name="media">Cape_Agulhas_P1040396.JPG</string>
+            <string name="mimeType">image/jpeg</string>
+            <property-set name="metadata">
+                <string name="exifVersion">1.04</string>
+                <string name="compressionType">Baseline</string>
+                <string name="thumbnailCompression">JPEG (old-style)</string>
+                <string name="numberOfComponents">3</string>
+                <string name="component2">Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="focalLength">7.4 mm</string>
+                <string name="component1">Y component: Quantization table 0, Sampling factors 1 horiz/2 vert</string>
+                <string name="tiffResolutionunit">Inch</string>
+                <string name="dateTimeOriginal">2006:09:12 13:11:29</string>
+                <string name="tiffMake">Panasonic</string>
+                <string name="component3">Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="internalSerialNumber">S010507310635</string>
+                <string name="FNumber">F6.3</string>
+                <string name="focusMode">Auto</string>
+                <string name="qualityMode">High</string>
+                <string name="tiffBitspersample">8</string>
+                <string name="unknownDataDump">[5312 bytes]</string>
+                <string name="burstMode">Off</string>
+                <string name="fileSource">Digital Still Camera (DSC)</string>
+                <string name="metaCreationDate">2006-09-12T13:11:29</string>
+                <string name="flashBias">0</string>
+                <string name="creationDate">2006-09-12T13:11:29</string>
+                <string name="make">Panasonic</string>
+                <string name="meteringMode">Multi-segment</string>
+                <string name="orientation">Top, left side (Horizontal / normal)</string>
+                <string name="contrast">None</string>
+                <string name="tiffOrientation">1</string>
+                <string name="unknownTag(0x002f)">1</string>
+                <string name="interoperabilityIndex">Recommended Exif Interoperability Rules (ExifR98)</string>
+                <string name="tiffSoftware">Ver.1.0  </string>
+                <string name="thumbnailOffset">6804 bytes</string>
+                <string name="gainControl">None</string>
+                <string name="exifImageHeight">2448 pixels</string>
+                <string name="opticalZoomMode">Standard</string>
+                <string name="tiffYresolution">72.0</string>
+                <string name="YResolution">72 dots per inch</string>
+                <string name="macroMode">On</string>
+                <string name="whiteBalance">Auto</string>
+                <string name="sensingMethod">One-chip color area sensor</string>
+                <string name="lastModified">2006-09-12T13:11:29</string>
+                <string name="exifExposuretime">0.0025</string>
+                <string name="thumbnailLength">5765 bytes</string>
+                <string name="noiseReduction">Standard (0)</string>
+                <string name="dateTime">2006:09:12 13:11:29</string>
+                <string name="exifImageWidth">3264 pixels</string>
+                <string name="imageHeight">2448 pixels</string>
+                <string name="whiteBalanceBias">0</string>
+                <string name="tiffModel">DMC-FZ30</string>
+                <string name="afAssistLamp">Enabled but not used</string>
+                <string name="exifIsospeedratings">80</string>
+                <string name="recordMode">Normal</string>
+                <string name="model">DMC-FZ30</string>
+                <string name="audio">On</string>
+                <string name="tiffImagewidth">3264</string>
+                <string name="whiteBalanceMode">Auto white balance</string>
+                <string name="date">2006-09-12T13:11:29</string>
+                <string name="componentsConfiguration">YCbCr</string>
+                <string name="selfTimer">Off</string>
+                <string name="ycbcrPositioning">Datum point</string>
+                <string name="XResolution">72 dots per inch</string>
+                <string name="interoperabilityVersion">1.00</string>
+                <string name="focalLength35">35mm</string>
+                <string name="modified">2006-09-12T13:11:29</string>
+                <string name="unknownTag(0x0022)">0</string>
+                <string name="exposureProgram">Program normal</string>
+                <string name="digitalZoomRatio">Digital zoom not used.</string>
+                <string name="imageStabilization">On, Mode 1</string>
+                <string name="afAreaMode">1-area</string>
+                <string name="exifFnumber">6.3</string>
+                <string name="colorMode">Normal</string>
+                <string name="exposureTime">1/400 sec</string>
+                <string name="isoSpeedRatings">80</string>
+                <string name="cameraUptime">17.74 s</string>
+                <string name="exifFocallength">7.4</string>
+                <string name="unknownTag(0xc4a5)">[208 bytes]</string>
+                <string name="software">Ver.1.0</string>
+                <string name="sceneType">Directly photographed image</string>
+                <string name="flashpixVersion">1.00</string>
+                <string name="colorEffect">Off</string>
+                <string name="dataPrecision">8 bits</string>
+                <string name="compressedBitsPerPixel">4 bits/pixel</string>
+                <string name="tiffImagelength">2448</string>
+                <string name="dctermsCreated">2006-09-12T13:11:29</string>
+                <string name="dctermsModified">2006-09-12T13:11:29</string>
+                <string name="exifFlash">false</string>
+                <string name="lastSaveDate">2006-09-12T13:11:29</string>
+                <string name="sequenceNumber">0</string>
+                <string name="colorSpace">sRGB</string>
+                <string name="metaSaveDate">2006-09-12T13:11:29</string>
+                <string name="dateTimeDigitized">2006:09:12 13:11:29</string>
+                <string name="flash">Flash did not fire, auto</string>
+                <string name="contentType">image/jpeg</string>
+                <string name="XParsedBy">org.apache.tika.parser.DefaultParser</string>
+                <string name="tiffXresolution">72.0</string>
+                <string name="saturation">None</string>
+                <string name="exifDatetimeoriginal">2006-09-12T13:11:29</string>
+                <string name="sharpness">None</string>
+                <string name="rotation">Horizontal</string>
+                <string name="contrastMode">Normal</string>
+                <string name="imageWidth">3264 pixels</string>
+                <string name="resolutionUnit">Inch</string>
+                <string name="exposureBiasValue">0 EV</string>
+                <string name="conversionLens">Off</string>
+                <string name="maxApertureValue">F2.8</string>
+                <string name="exposureMode">Auto exposure</string>
+                <string name="sceneCaptureType">Standard</string>
+                <string name="customRendered">Normal process</string>
+                <string name="unknownTag(0x0027)">0</string>
+            </property-set>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Cape_Agulhas_P1040396.JPG</string>
+            <string name="label">source</string>
+            <binaryReference name="binary">Cape_Agulhas_P1040396.JPG</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">3226043</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Cape_Agulhas_P1040396_small.JPG</string>
+            <string name="label">small</string>
+            <binaryReference name="binary">Cape_Agulhas_P1040396_small.JPG</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">7714</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Cape_Agulhas_P1040396_medium.JPG</string>
+            <string name="label">medium</string>
+            <binaryReference name="binary">Cape_Agulhas_P1040396_medium.JPG</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">24624</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Cape_Agulhas_P1040396_large.JPG</string>
+            <string name="label">large</string>
+            <binaryReference name="binary">Cape_Agulhas_P1040396_large.JPG</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">84845</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Cape_Agulhas_P1040396_extra-large.JPG</string>
+            <string name="label">extra-large</string>
+            <binaryReference name="binary">Cape_Agulhas_P1040396_extra-large.JPG</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">293991</long>
+        </property-set>
+    </data>
+    <indexConfigs>
+        <analyzer>content_default</analyzer>
+        <defaultConfig>
+            <decideByType>true</decideByType>
+            <enabled>true</enabled>
+            <nGram>false</nGram>
+            <fulltext>false</fulltext>
+            <includeInAllText>false</includeInAllText>
+        </defaultConfig>
+        <pathIndexConfigs>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata.media</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>draft</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>attachment</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>true</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>form</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>page</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>site</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>type</path>
+            </pathIndexConfig>
+        </pathIndexConfigs>
+    </indexConfigs>
+</node>

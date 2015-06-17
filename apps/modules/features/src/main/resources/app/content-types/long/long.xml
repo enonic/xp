@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Long</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="long" type="Long">
+      <label>Long</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="0" maximum="1"/>
+      <help-text>..that's the question!</help-text>
+    </input>
+    <input name="requiredLong" type="Long">
+      <label>Required Long</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="1" maximum="0"/>
+      <help-text>..that's the question!</help-text>
+    </input>
+  </form>
+</content-type>

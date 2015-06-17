@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Tiny MCE editor</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="htmlarea_text" type="TinyMCE">
+      <label>HTML content</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input name="htmlarea_text2" type="TinyMCE">
+      <label>Second HTML content</label>
+      <occurrences minimum="0" maximum="2"/>
+    </input>
+    <input name="htmlarea_text3" type="TinyMCE">
+      <label>Third HTML content</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+  </form>
+</content-type>

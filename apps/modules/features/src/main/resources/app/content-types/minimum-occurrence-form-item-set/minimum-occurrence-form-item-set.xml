@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>FormItemSet Minimum Occurrences</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="name" type="TextLine">
+      <label>Name</label>
+      <occurrences minimum="1" maximum="1"/>
+      <help-text>First name</help-text>
+    </input>
+    <item-set name="minimum3">
+      <label>Minimum 3</label>
+      <items>
+        <input name="label" type="TextLine">
+          <label>Label</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="value" type="TextLine">
+          <label>Value</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+      <occurrences minimum="3" maximum="0"/>
+    </item-set>
+    <item-set name="minimum2">
+      <label>Minimum 2</label>
+      <items>
+        <input name="label" type="TextLine">
+          <label>Label</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="value" type="TextLine">
+          <label>Value</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+      <occurrences minimum="2" maximum="0"/>
+    </item-set>
+    <item-set name="minimum1">
+      <label>Minimum 1</label>
+      <items>
+        <input name="label" type="TextLine">
+          <label>Label</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="value" type="TextLine">
+          <label>Value</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+      <occurrences minimum="1" maximum="0"/>
+    </item-set>
+    <item-set name="minimum0">
+      <label>Minimum 0</label>
+      <items>
+        <input name="label" type="TextLine">
+          <label>Label</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="value" type="TextLine">
+          <label>Value</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+      <occurrences minimum="0" maximum="0"/>
+    </item-set>
+  </form>
+</content-type>

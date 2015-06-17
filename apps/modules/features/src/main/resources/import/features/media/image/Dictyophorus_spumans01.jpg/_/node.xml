@@ -1,0 +1,232 @@
+<node xmlns="urn:enonic:xp:export:1.0">
+    <id>a76ec725-b7f9-45dd-8ffd-e173476535e5</id>
+    <childOrder>modifiedtime DESC</childOrder>
+    <nodeType>content</nodeType>
+    <data>
+        <boolean name="valid">true</boolean>
+        <string name="displayName">Dictyophorus_spumans01.jpg</string>
+        <dateTime name="modifiedTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="modifier">user:system:su</string>
+        <string name="creator">user:system:anonymous</string>
+        <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+        <string name="type">media:image</string>
+        <property-set name="data">
+            <string name="media">Dictyophorus_spumans01.jpg</string>
+            <string name="mimeType">image/jpeg</string>
+            <property-set name="metadata">
+                <string name="date">2007-01-06T22:32:53</string>
+                <string name="exifVersion">2.20</string>
+                <string name="componentsConfiguration">YCbCr</string>
+                <string name="compressionType">Baseline</string>
+                <string name="imageDescription">OLYMPUS DIGITAL CAMERA</string>
+                <string name="thumbnailCompression">JPEG (old-style)</string>
+                <string name="numberOfComponents">3</string>
+                <string name="component2">Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="focalLength">10.9 mm</string>
+                <string name="component1">Y component: Quantization table 0, Sampling factors 1 horiz/2 vert</string>
+                <string name="ycbcrPositioning">Datum point</string>
+                <string name="tiffResolutionunit">Inch</string>
+                <string name="dateTimeOriginal">2005:11:10 14:36:36</string>
+                <string name="XResolution">72 dots per inch</string>
+                <string name="tiffMake">OLYMPUS CORPORATION</string>
+                <string name="interoperabilityVersion">1.00</string>
+                <string name="component3">Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert</string>
+                <string name="FNumber">F3.2</string>
+                <string name="modified">2007-01-06T22:32:53</string>
+                <string name="tiffBitspersample">8</string>
+                <string name="exposureProgram">Program creative (slow program)</string>
+                <string name="userComment"/>
+                <string name="fileSource">Digital Still Camera (DSC)</string>
+                <string name="metaCreationDate">2005-11-10T14:36:36</string>
+                <string name="exifFnumber">3.2</string>
+                <string name="exposureTime">0.01 sec</string>
+                <string name="isoSpeedRatings">64</string>
+                <string name="creationDate">2005-11-10T14:36:36</string>
+                <string name="make">OLYMPUS CORPORATION</string>
+                <string name="meteringMode">Multi-segment</string>
+                <string name="orientation">Top, left side (Horizontal / normal)</string>
+                <string name="tiffOrientation">1</string>
+                <string name="interoperabilityIndex">Recommended Exif Interoperability Rules (ExifR98)</string>
+                <string name="tiffSoftware">OLYMPUS CAMEDIA Master</string>
+                <string name="exifFocallength">10.9</string>
+                <string name="thumbnailOffset">2012 bytes</string>
+                <string name="makernoteUnknown1">0</string>
+                <string name="exifImageHeight">1536 pixels</string>
+                <string name="software">OLYMPUS CAMEDIA Master</string>
+                <string name="makernoteUnknown3">-112 -245 -300 -42 -67 -67</string>
+                <string name="makernoteUnknown2">3581/500</string>
+                <string name="tiffYresolution">72.0</string>
+                <string name="YResolution">72 dots per inch</string>
+                <string name="sceneType">Directly photographed image</string>
+                <string name="dcDescription">OLYMPUS DIGITAL CAMERA         </string>
+                <string name="firmwareVersion">SX754</string>
+                <string name="flashpixVersion">1.00</string>
+                <string name="macro">Unknown (2)</string>
+                <string name="dataPrecision">8 bits</string>
+                <string name="compressedBitsPerPixel">1 bit/pixel</string>
+                <string name="whiteBalance">Unknown</string>
+                <string name="tiffImagelength">1536</string>
+                <string name="description">OLYMPUS DIGITAL CAMERA         </string>
+                <string name="dctermsCreated">2005-11-10T14:36:36</string>
+                <string name="dctermsModified">2007-01-06T22:32:53</string>
+                <string name="lastModified">2007-01-06T22:32:53</string>
+                <string name="exifFlash">false</string>
+                <string name="exifExposuretime">0.01</string>
+                <string name="lastSaveDate">2007-01-06T22:32:53</string>
+                <string name="thumbnailLength">7242 bytes</string>
+                <string name="colorSpace">sRGB</string>
+                <string name="metaSaveDate">2007-01-06T22:32:53</string>
+                <string name="dateTimeDigitized">2005:11:10 14:36:36</string>
+                <string name="flash">Flash did not fire, auto</string>
+                <string name="jpegQuality">SQ</string>
+                <string name="contentType">image/jpeg</string>
+                <string name="XParsedBy">org.apache.tika.parser.DefaultParser</string>
+                <string name="tiffXresolution">72.0</string>
+                <string name="exifDatetimeoriginal">2005-11-10T14:36:36</string>
+                <string name="dateTime">2007:01:06 22:32:53</string>
+                <string name="digizoomRatio">Unknown (1)</string>
+                <string name="exifImageWidth">2048 pixels</string>
+                <string name="imageHeight">1536 pixels</string>
+                <string name="imageWidth">2048 pixels</string>
+                <string name="resolutionUnit">Inch</string>
+                <string name="tiffModel">C740UZ</string>
+                <string name="exifIsospeedratings">64</string>
+                <string name="exposureBiasValue">0 EV</string>
+                <string name="maxApertureValue">F3.2</string>
+                <string name="model">C740UZ</string>
+                <string name="cameraId">[32 bytes]</string>
+                <string name="tiffImagewidth">2048</string>
+            </property-set>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Dictyophorus_spumans01.jpg</string>
+            <string name="label">source</string>
+            <binaryReference name="binary">Dictyophorus_spumans01.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">683675</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Dictyophorus_spumans01_small.jpg</string>
+            <string name="label">small</string>
+            <binaryReference name="binary">Dictyophorus_spumans01_small.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">14265</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Dictyophorus_spumans01_medium.jpg</string>
+            <string name="label">medium</string>
+            <binaryReference name="binary">Dictyophorus_spumans01_medium.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">49574</long>
+        </property-set>
+        <property-set name="attachment">
+            <string name="name">Dictyophorus_spumans01_large.jpg</string>
+            <string name="label">large</string>
+            <binaryReference name="binary">Dictyophorus_spumans01_large.jpg</binaryReference>
+            <string name="mimeType">image/jpeg</string>
+            <long name="size">163285</long>
+        </property-set>
+    </data>
+    <indexConfigs>
+        <analyzer>content_default</analyzer>
+        <defaultConfig>
+            <decideByType>true</decideByType>
+            <enabled>true</enabled>
+            <nGram>false</nGram>
+            <fulltext>false</fulltext>
+            <includeInAllText>false</includeInAllText>
+        </defaultConfig>
+        <pathIndexConfigs>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata.media</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data.metadata</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>draft</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>attachment</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>true</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>data</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>form</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>page</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>false</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>site</path>
+            </pathIndexConfig>
+            <pathIndexConfig>
+                <indexConfig>
+                    <decideByType>false</decideByType>
+                    <enabled>true</enabled>
+                    <nGram>false</nGram>
+                    <fulltext>false</fulltext>
+                    <includeInAllText>false</includeInAllText>
+                </indexConfig>
+                <path>type</path>
+            </pathIndexConfig>
+        </pathIndexConfigs>
+    </indexConfigs>
+</node>

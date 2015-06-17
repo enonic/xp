@@ -1,0 +1,119 @@
+<node xmlns="urn:enonic:xp:export:1.0">
+  <id>cc9f78f2-9bd1-45fd-8386-c0d32f53ccd2</id>
+  <childOrder>modifiedtime DESC</childOrder>
+  <nodeType>content</nodeType>
+  <data>
+    <boolean name="valid">true</boolean>
+    <string name="displayName">create 3</string>
+    <string name="type">com.enonic.xp.modules.features:blog</string>
+    <string name="owner">user:system:su</string>
+    <dateTime name="modifiedTime">2015-06-04T12:07:41.090Z</dateTime>
+    <string name="modifier">user:system:su</string>
+    <string name="creator">user:system:su</string>
+    <dateTime name="createdTime">2015-06-04T12:07:38.495Z</dateTime>
+    <property-set name="data">
+      <string name="heading"/>
+      <property-set name="authors">
+        <string name="author"/>
+      </property-set>
+      <property-set name="topics">
+        <string name="topic"/>
+      </property-set>
+      <string name="preface"/>
+      <property-set name="articleFieldSet">
+        <string name="slide_title"/>
+        <htmlPart name="article_text"/>
+      </property-set>
+    </property-set>
+    <property-set name="x">
+      <property-set name="com-enonic-xp-modules-features">
+        <property-set name="menu-item">
+          <boolean name="menuItem">false</boolean>
+          <string name="menuName"/>
+        </property-set>
+      </property-set>
+    </property-set>
+  </data>
+  <indexConfigs>
+    <analyzer>content_default</analyzer>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page.regions</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>attachment</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>x</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>site</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>type</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>

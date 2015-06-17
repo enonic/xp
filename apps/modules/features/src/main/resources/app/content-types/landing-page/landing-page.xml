@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+  <display-name>Landing page</display-name>
+  <super-type>base:structured</super-type>
+  <allow-child-content>true</allow-child-content>
+  <form>
+  </form>
+</content-type>

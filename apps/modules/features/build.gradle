@@ -1,0 +1,13 @@
+apply plugin: 'com.enonic.xp.gradle.module'
+
+module {
+    // name = 'com.enonic.xp.modules.features'
+    displayName = 'Features Module'
+    url = 'https://github.com/enonic/xp-sample-modules'
+    vendorName = 'Enonic AS'
+    vendorUrl = 'http://enonic.com'
+}
+
+dependencies {
+    compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
+}

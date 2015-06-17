@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<relationship-type>
+  <display-name>Media relation</display-name>
+  <from-semantic>related media</from-semantic>
+  <to-semantic>used by</to-semantic>
+  <allowed-from-types/>
+  <allowed-to-types>
+    <content-type>media:image</content-type>
+  </allowed-to-types>
+</relationship-type>
