@@ -31,10 +31,19 @@
     }
   }
 
+  &.selected, &.edit-mode {
+    .image-canvas {
+      border: 1px solid @admin-input-blue;
+      .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
+    }
+  }
+
   .image-canvas {
     overflow: visible;
     position: relative;
-    background-color: #000;
+    background-color: @admin-black;
+    box-shadow: none;
+    border: 1px solid @admin-white;
 
     .image-bg {
       vertical-align: top; // to remove padding below the image
