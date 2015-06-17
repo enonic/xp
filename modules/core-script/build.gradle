@@ -1,8 +1,0 @@
-dependencies {
-    compile project( ':core-api' )
-    testCompile project( path: ':core-api', configuration: 'testOutput' )
-}
-
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Script'
-}

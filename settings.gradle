@@ -7,7 +7,6 @@ include 'core-relationship'
 include 'core-security'
 include 'core-image'
 include 'core-export'
-include 'core-script'
 include 'core-impl'
 include 'core-itest'
 
