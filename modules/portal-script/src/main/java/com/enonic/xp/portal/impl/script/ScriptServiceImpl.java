@@ -104,6 +104,7 @@ public final class ScriptServiceImpl
         this.moduleService = moduleService;
     }
 
+    @Reference
     public void setBeanManager( final BeanManager beanManager )
     {
         this.beanManager = beanManager;
