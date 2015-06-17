@@ -38,7 +38,7 @@ public final class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
+        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.create( existingNode ).
             name( newNodeName );
         attachBinaries( existingNode, createNodeParams );
 
@@ -67,7 +67,7 @@ public final class DuplicateNodeCommand
 
         for ( final Node node : findNodesByParentResult.getNodes() )
         {
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
+            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.create( node ).
                 parent( newParent.path() );
 
             attachBinaries( node, paramsBuilder );
@@ -137,7 +137,7 @@ public final class DuplicateNodeCommand
 
         while ( !resolvedUnique )
         {
-            final NodePath checkIfExistsPath = NodePath.newNodePath( existingNode.parentPath(), newNodeName ).build();
+            final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
             Node foundNode = this.doGetByPath( checkIfExistsPath, false );
 
             if ( foundNode == null )

@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 
-import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptors.create;
 import static org.junit.Assert.*;
 
 public class LayoutDescriptorsTest
@@ -13,19 +13,19 @@ public class LayoutDescriptorsTest
     @Test
     public void testBuilder()
     {
-        final LayoutDescriptors layoutDescriptors = LayoutDescriptors.newLayoutDescriptors().
+        final LayoutDescriptors layoutDescriptors = LayoutDescriptors.create().
             add( LayoutDescriptor.create().
                 name( "fancy-layout" ).
                 displayName( "Fancy layout" ).
-                config( Form.newForm().build() ).
-                regions( newRegionDescriptors().build() ).
+                config( Form.create().build() ).
+                regions( create().build() ).
                 key( DescriptorKey.from( "module:fancy-layout" ) ).
                 build() ).
             add( LayoutDescriptor.create().
                 name( "fancy-layout2" ).
                 displayName( "Fancy layout2" ).
-                config( Form.newForm().build() ).
-                regions( newRegionDescriptors().build() ).
+                config( Form.create().build() ).
+                regions( create().build() ).
                 key( DescriptorKey.from( "module:fancy-layout2" ) ).
                 build() ).
             build();

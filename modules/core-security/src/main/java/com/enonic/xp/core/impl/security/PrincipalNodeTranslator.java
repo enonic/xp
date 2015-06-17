@@ -204,7 +204,7 @@ abstract class PrincipalNodeTranslator
         {
             final String memberKey = member.getValue().asString();
             final PrincipalKey relationshipTo = PrincipalKey.from( memberKey );
-            final PrincipalRelationship relationship = PrincipalRelationship.from( relationshipFrom ).to( relationshipTo );
+            final PrincipalRelationship relationship = PrincipalRelationship.create( relationshipFrom ).to( relationshipTo );
             relationships.add( relationship );
         }
         return PrincipalRelationships.from( relationships.build() );

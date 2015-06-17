@@ -251,7 +251,7 @@ public final class SecurityServiceImpl
     @Override
     public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
     {
-        final PrincipalQuery.Builder principalQuery = PrincipalQuery.newQuery().
+        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
             includeTypes( types ).
             searchText( query );
@@ -678,14 +678,14 @@ public final class SecurityServiceImpl
             final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
-            return PrincipalQueryResult.newResult().
+            return PrincipalQueryResult.create().
                 addPrincipals( principals ).
                 totalSize( Ints.checkedCast( result.getTotalHits() ) ).
                 build();
         }
         catch ( NodeNotFoundException e )
         {
-            return PrincipalQueryResult.newResult().build();
+            return PrincipalQueryResult.create().build();
         }
     }
 

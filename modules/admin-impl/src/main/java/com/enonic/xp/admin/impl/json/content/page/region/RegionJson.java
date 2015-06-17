@@ -21,7 +21,7 @@ public class RegionJson
     @JsonCreator
     public RegionJson( @JsonProperty("name") final String name, @JsonProperty("components") final List<ComponentJson> componentJsons )
     {
-        final Region.Builder builder = Region.newRegion();
+        final Region.Builder builder = Region.create();
         builder.name( name );
         for ( final ComponentJson componentJson : componentJsons )
         {

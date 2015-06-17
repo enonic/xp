@@ -57,7 +57,7 @@ public final class PageTemplates
 
     public Contents toContents()
     {
-        final Contents.Builder builder = Contents.builder();
+        final Contents.Builder builder = Contents.create();
         for ( final PageTemplate pageTemplate : this )
         {
             builder.add( pageTemplate );
@@ -96,7 +96,7 @@ public final class PageTemplates
         }
     }
 
-    public static Builder newPageTemplates()
+    public static Builder create()
     {
         return new Builder();
     }

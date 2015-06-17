@@ -2,10 +2,6 @@ package com.enonic.xp.security;
 
 import org.junit.Test;
 
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalRelationship;
-import com.enonic.xp.security.UserStoreKey;
-
 import static org.junit.Assert.*;
 
 public class PrincipalRelationshipTest
@@ -26,7 +22,7 @@ public class PrincipalRelationshipTest
     public void testFromToSamePrincipal()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( GROUP );
+        PrincipalRelationship rel = PrincipalRelationship.create( GROUP ).to( GROUP );
     }
 
     // from Role
@@ -34,7 +30,7 @@ public class PrincipalRelationshipTest
     public void testFromRoleToUser()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( USER );
+        PrincipalRelationship rel = PrincipalRelationship.create( ROLE ).to( USER );
         assertEquals( ROLE, rel.getFrom() );
         assertEquals( USER, rel.getTo() );
         assertEquals( "role:role -> user:system:user", rel.toString() );
@@ -44,7 +40,7 @@ public class PrincipalRelationshipTest
     public void testFromRoleToGroup()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( GROUP );
+        PrincipalRelationship rel = PrincipalRelationship.create( ROLE ).to( GROUP );
         assertEquals( ROLE, rel.getFrom() );
         assertEquals( GROUP, rel.getTo() );
         assertEquals( "role:role -> group:system:group", rel.toString() );
@@ -54,7 +50,7 @@ public class PrincipalRelationshipTest
     public void testFromRoleToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( ROLE_2 );
+        PrincipalRelationship rel = PrincipalRelationship.create( ROLE ).to( ROLE_2 );
     }
 
     // from Group
@@ -62,7 +58,7 @@ public class PrincipalRelationshipTest
     public void testFromGroupToUser()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( USER );
+        PrincipalRelationship rel = PrincipalRelationship.create( GROUP ).to( USER );
         assertEquals( GROUP, rel.getFrom() );
         assertEquals( USER, rel.getTo() );
         assertEquals( "group:system:group -> user:system:user", rel.toString() );
@@ -72,7 +68,7 @@ public class PrincipalRelationshipTest
     public void testFromGroupToGroup()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( GROUP_2 );
+        PrincipalRelationship rel = PrincipalRelationship.create( GROUP ).to( GROUP_2 );
         assertEquals( GROUP, rel.getFrom() );
         assertEquals( GROUP_2, rel.getTo() );
         assertEquals( "group:system:group -> group:system:group2", rel.toString() );
@@ -82,7 +78,7 @@ public class PrincipalRelationshipTest
     public void testFromGroupToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( ROLE );
+        PrincipalRelationship rel = PrincipalRelationship.create( GROUP ).to( ROLE );
     }
 
     // from User
@@ -90,30 +86,30 @@ public class PrincipalRelationshipTest
     public void testFromUserToUser()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( USER_2 );
+        PrincipalRelationship rel = PrincipalRelationship.create( USER ).to( USER_2 );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFromUserToGroup()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( GROUP );
+        PrincipalRelationship rel = PrincipalRelationship.create( USER ).to( GROUP );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFromUserToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( ROLE );
+        PrincipalRelationship rel = PrincipalRelationship.create( USER ).to( ROLE );
     }
 
     @Test
     public void testEquals()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
+        PrincipalRelationship rel = PrincipalRelationship.create( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
             to( PrincipalKey.ofUser( UserStoreKey.system(), "user" ) );
-        PrincipalRelationship rel2 = PrincipalRelationship.from( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
+        PrincipalRelationship rel2 = PrincipalRelationship.create( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
             to( PrincipalKey.ofUser( UserStoreKey.system(), "user" ) );
 
         assertTrue( rel != rel2 );

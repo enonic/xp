@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeForms;
@@ -16,9 +17,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeProvider;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
+import static com.enonic.xp.schema.content.ContentType.create;
 
 @Component(immediate = true)
 public final class BuiltinContentTypeProvider
@@ -130,7 +130,7 @@ public final class BuiltinContentTypeProvider
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
         final String displayName = WordUtils.capitalize( contentTypeName.getLocalName() );
-        return newContentType().
+        return ContentType.create().
             name( contentTypeName ).
             displayName( displayName ).
             setBuiltIn();
@@ -141,7 +141,7 @@ public final class BuiltinContentTypeProvider
         final List<ContentType> systemContentTypes = Lists.newArrayList();
         for ( ContentType contentType : SYSTEM_TYPES )
         {
-            contentType = newContentType( contentType ).
+            contentType = create( contentType ).
                 icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().getLocalName() ) ).
                 build();
             systemContentTypes.add( contentType );

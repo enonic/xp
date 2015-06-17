@@ -26,12 +26,12 @@ public class ImageComponent
         this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
-    public static Builder newImageComponent()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newImageComponent( final ImageComponent source )
+    public static Builder create( final ImageComponent source )
     {
         return new Builder( source );
     }
@@ -39,7 +39,7 @@ public class ImageComponent
     @Override
     public ImageComponent copy()
     {
-        return newImageComponent( this ).build();
+        return create( this ).build();
     }
 
     @Override

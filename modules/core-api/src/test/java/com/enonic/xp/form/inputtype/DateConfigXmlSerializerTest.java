@@ -12,7 +12,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.form.inputtype.DateConfig.newDateConfig;
+import static com.enonic.xp.form.inputtype.DateConfig.create;
 import static org.junit.Assert.*;
 
 public class DateConfigXmlSerializerTest
@@ -34,7 +34,7 @@ public class DateConfigXmlSerializerTest
         throws IOException, SAXException
     {
         // setup
-        DateConfig.Builder builder = newDateConfig();
+        DateConfig.Builder builder = create();
         builder.withTimezone( true );
         DateConfig config = builder.build();
 
@@ -50,7 +50,7 @@ public class DateConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = newDateConfig();
+        DateConfig.Builder builder = create();
         builder.withTimezone( true );
         DateConfig expected = builder.build();
 
@@ -66,7 +66,7 @@ public class DateConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.newDateConfig();
+        DateConfig.Builder builder = DateConfig.create();
         DateConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
@@ -89,7 +89,7 @@ public class DateConfigXmlSerializerTest
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
-        DateConfig expected = DateConfig.newDateConfig().build();
+        DateConfig expected = DateConfig.create().build();
 
         // exercise
         DateConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );

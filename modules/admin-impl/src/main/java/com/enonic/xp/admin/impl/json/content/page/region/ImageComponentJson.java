@@ -12,8 +12,6 @@ import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ImageComponent;
 
-import static com.enonic.xp.region.ImageComponent.newImageComponent;
-
 @SuppressWarnings("UnusedDeclaration")
 public class ImageComponentJson
     extends ComponentJson<ImageComponent>
@@ -26,7 +24,7 @@ public class ImageComponentJson
     public ImageComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
                                @JsonProperty("config") final List<PropertyArrayJson> config, @JsonProperty("image") final String image )
     {
-        super( newImageComponent().
+        super( ImageComponent.create().
             name( name != null ? ComponentName.from( name ) : null ).
             image( image != null ? ContentId.from( image ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).

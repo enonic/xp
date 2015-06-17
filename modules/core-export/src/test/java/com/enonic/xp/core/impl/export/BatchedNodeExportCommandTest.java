@@ -92,13 +92,13 @@ public class BatchedNodeExportCommandTest
     @Test
     public void writerOrderList()
     {
-        final Node root = Node.newNode().
+        final Node root = Node.create().
             name( NodeName.from( "root" ) ).
             parentPath( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
             build();
 
-        this.nodeService.create( CreateNodeParams.from( root ).build() );
+        this.nodeService.create( CreateNodeParams.create( root ).build() );
 
         createNode( "child1", root.path() );
         createNode( "child2", root.path() );
@@ -132,12 +132,12 @@ public class BatchedNodeExportCommandTest
         createNode( "child1_1_1", child1_1.path() );
         createNode( "child1_1_2", child1_1.path() );
 
-        this.nodeService.create( CreateNodeParams.from( root ).build() );
+        this.nodeService.create( CreateNodeParams.create( root ).build() );
 
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
+            sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -160,12 +160,12 @@ public class BatchedNodeExportCommandTest
         createNode( "child1_1_1", child1_1.path() );
         createNode( "child1_1_2", child1_1.path() );
 
-        this.nodeService.create( CreateNodeParams.from( root ).build() );
+        this.nodeService.create( CreateNodeParams.create( root ).build() );
 
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.newPath( "/mynode/child1" ).build() ).
+            sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -215,12 +215,12 @@ public class BatchedNodeExportCommandTest
 
     private Node createNode( final String name, final NodePath root )
     {
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             name( NodeName.from( name ) ).
             parentPath( root ).
             build();
 
-        return this.nodeService.create( CreateNodeParams.from( node ).build() );
+        return this.nodeService.create( CreateNodeParams.create( node ).build() );
     }
 
     private void assertFileExists( final String path )

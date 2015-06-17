@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.enonic.xp.relationship.Relationship;
 
-import static com.enonic.xp.relationship.Relationship.newRelationship;
+import static com.enonic.xp.relationship.Relationship.create;
 
 final class AddRelationshipPropertiesEditor
     implements RelationshipEditor
@@ -19,7 +19,7 @@ final class AddRelationshipPropertiesEditor
     @Override
     public Relationship edit( final Relationship relationship )
     {
-        final Relationship.Builder builder = newRelationship( relationship );
+        final Relationship.Builder builder = create( relationship );
         for ( Map.Entry<String, String> property : source.entrySet() )
         {
             builder.property( property.getKey(), property.getValue() );

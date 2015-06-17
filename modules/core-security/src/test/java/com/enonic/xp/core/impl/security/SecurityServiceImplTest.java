@@ -53,7 +53,7 @@ import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 
-import static com.enonic.xp.security.PrincipalQuery.newQuery;
+import static com.enonic.xp.security.PrincipalQuery.create;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.UserStoreAccess.WRITE_USERS;
@@ -370,8 +370,8 @@ public class SecurityServiceImplTest
             securityService.createUser( createUser2 );
             securityService.createGroup( createGroup );
 
-            PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
-            PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+            PrincipalRelationship membership = PrincipalRelationship.create( groupKey1 ).to( userKey1 );
+            PrincipalRelationship membership2 = PrincipalRelationship.create( groupKey1 ).to( userKey2 );
 
             // exercise
             securityService.addRelationship( membership );
@@ -419,8 +419,8 @@ public class SecurityServiceImplTest
             securityService.createGroup( createGroup );
             refresh();
 
-            PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
-            PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+            PrincipalRelationship membership = PrincipalRelationship.create( groupKey1 ).to( userKey1 );
+            PrincipalRelationship membership2 = PrincipalRelationship.create( groupKey1 ).to( userKey2 );
 
             securityService.addRelationship( membership );
             securityService.addRelationship( membership2 );
@@ -469,8 +469,8 @@ public class SecurityServiceImplTest
             securityService.createGroup( createGroup );
             refresh();
 
-            PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
-            PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+            PrincipalRelationship membership = PrincipalRelationship.create( groupKey1 ).to( userKey1 );
+            PrincipalRelationship membership2 = PrincipalRelationship.create( groupKey1 ).to( userKey2 );
 
             securityService.addRelationship( membership );
             securityService.addRelationship( membership2 );
@@ -618,8 +618,8 @@ public class SecurityServiceImplTest
             securityService.createUser( createUser );
             securityService.createGroup( createGroup1 );
             securityService.createGroup( createGroup2 );
-            securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
-            securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( userKey ) );
+            securityService.addRelationship( PrincipalRelationship.create( groupKey1 ).to( userKey ) );
+            securityService.addRelationship( PrincipalRelationship.create( groupKey2 ).to( userKey ) );
 
             refresh();
 
@@ -757,8 +757,7 @@ public class SecurityServiceImplTest
                 password( "123456" ).
                 build();
 
-
-            final PrincipalQuery query = newQuery().userStore( UserStoreKey.system() ).build();
+            final PrincipalQuery query = create().userStore( UserStoreKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
             queryResult = securityService.query( query );

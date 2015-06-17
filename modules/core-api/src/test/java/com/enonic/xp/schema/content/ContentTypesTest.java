@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class ContentTypesTest
@@ -21,8 +20,8 @@ public class ContentTypesTest
         ContentTypes contentTypes = ContentTypes.empty();
 
         ContentTypes newContentTypes =
-            contentTypes.add( newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                              newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            contentTypes.add( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
+                              ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
 
         assertEquals( 0, contentTypes.getSize() );
         assertEquals( 2, newContentTypes.getSize() );
@@ -34,8 +33,8 @@ public class ContentTypesTest
         ContentTypes contentTypes = ContentTypes.empty();
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                                newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
 
         ContentTypes newContentTypes = contentTypes.add( contentTypeList );
 
@@ -46,12 +45,12 @@ public class ContentTypesTest
     @Test
     public void contentTypes()
     {
-        ContentType.Builder builder = newContentType().name( ContentTypeName.media() ).form(
+        ContentType.Builder builder = ContentType.create().name( ContentTypeName.media() ).form(
             ContentTypeForms.PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
             "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
             Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
-        ContentTypes contentTypes = ContentTypes.newContentTypes().add( contentType ).build();
+        ContentTypes contentTypes = ContentTypes.create().add( contentType ).build();
         assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );
         assertTrue( ContentTypes.empty().getSize() == 0 );
         assertTrue( ContentTypes.from( contentType ).getSize() == 1 );
@@ -62,13 +61,13 @@ public class ContentTypesTest
     public void from()
     {
         ContentTypes contentTypes =
-            ContentTypes.from( newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                               newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            ContentTypes.from( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
+                               ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                                newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build(),
-                                newContentType().superType( ContentTypeName.structured() ).name( "mymodule:test3" ).build() );
+            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test3" ).build() );
 
         assertEquals( 2, contentTypes.getSize() );
         assertEquals( 2, ContentTypes.from( contentTypes ).getSize() );

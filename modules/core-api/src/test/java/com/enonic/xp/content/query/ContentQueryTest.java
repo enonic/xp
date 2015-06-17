@@ -50,7 +50,7 @@ public class ContentQueryTest
             origin( GeoPoint.from( "20,30" ) ).
             build();
 
-        final ContentQuery.Builder builder = ContentQuery.newContentQuery();
+        final ContentQuery.Builder builder = ContentQuery.create();
         builder.addContentTypeName( ContentTypeName.imageMedia() );
         builder.addContentTypeNames( ContentTypeNames.from( ContentTypeName.archiveMedia(), ContentTypeName.dataMedia() ) );
         builder.aggregationQuery( query1 );

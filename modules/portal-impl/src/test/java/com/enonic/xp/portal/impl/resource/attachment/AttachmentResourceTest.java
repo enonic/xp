@@ -39,7 +39,7 @@ public class AttachmentResourceTest
     private void setupMedia()
         throws Exception
     {
-        final Attachment attachment = Attachment.newAttachment().
+        final Attachment attachment = Attachment.create().
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).

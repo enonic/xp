@@ -86,6 +86,6 @@ public class MixinServiceImplTest
 
     private Mixin createMixin( final String name )
     {
-        return Mixin.newMixin().name( name ).build();
+        return Mixin.create().name( name ).build();
     }
 }

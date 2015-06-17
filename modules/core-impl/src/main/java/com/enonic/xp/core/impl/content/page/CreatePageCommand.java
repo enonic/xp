@@ -11,8 +11,6 @@ import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.security.User;
 
-import static com.enonic.xp.page.Page.newPage;
-
 final class CreatePageCommand
 {
     private final CreatePageParams params;
@@ -34,7 +32,7 @@ final class CreatePageCommand
     {
         this.params.validate();
 
-        final Page page = newPage().
+        final Page page = Page.create().
             controller( this.params.getController() ).
             template( this.params.getPageTemplate() ).
             config( this.params.getConfig() ).

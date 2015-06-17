@@ -89,7 +89,7 @@ public class FormItemJsonTest
     public void deserialize_serialization_of_FormItemSet()
         throws IOException
     {
-        FormItemSetJson formItemSetJson = new FormItemSetJson( FormItemSet.newFormItemSet().
+        FormItemSetJson formItemSetJson = new FormItemSetJson( FormItemSet.create().
             name( "mySet" ).
             label( "My set" ).
             customText( "Custom text" ).
@@ -115,7 +115,7 @@ public class FormItemJsonTest
     public void deserialize_serialization_of_FieldSet()
         throws IOException
     {
-        FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.newFieldSet().
+        FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.create().
             name( "myFieldSet" ).
             label( "My field set" ).
             addFormItem( Input.create().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).

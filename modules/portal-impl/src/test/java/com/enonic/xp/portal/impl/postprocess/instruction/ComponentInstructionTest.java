@@ -20,14 +20,12 @@ import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentService;
+import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
-import static com.enonic.xp.page.PageRegions.newPageRegions;
-import static com.enonic.xp.region.PartComponent.newPartComponent;
-import static com.enonic.xp.region.Region.newRegion;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -93,7 +91,7 @@ public class ComponentInstructionTest
 
     private Component createPartComponent()
     {
-        return newPartComponent().
+        return PartComponent.create().
             name( "myPartComponent" ).
             descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
             build();
@@ -104,21 +102,21 @@ public class ComponentInstructionTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Region region = newRegion().
+        Region region = Region.create().
             name( "myRegion" ).
-            add( newPartComponent().
+            add( PartComponent.create().
                 name( "myPartComponent" ).
                 descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
                 build() ).
             build();
 
-        PageRegions pageRegions = newPageRegions().add( region ).build();
-        Page page = Page.newPage().
+        PageRegions pageRegions = PageRegions.create().add( region ).build();
+        Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             regions( pageRegions ).
             build();
 
-        return Content.newContent().
+        return Content.create().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
@@ -134,12 +132,12 @@ public class ComponentInstructionTest
         PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
             build();
 
-        return Site.newSite().
+        return Site.create().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).

@@ -74,9 +74,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-import static com.enonic.xp.content.Content.newContent;
 import static com.enonic.xp.security.acl.Permission.READ;
-import static com.enonic.xp.site.Site.newSite;
 
 public class ContentResourceTest
     extends AbstractResourceTest
@@ -257,7 +255,7 @@ public class ContentResourceTest
     {
         PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "A", 1L );
-        SiteConfig siteConfig = SiteConfig.newSiteConfig().
+        SiteConfig siteConfig = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
@@ -281,31 +279,31 @@ public class ContentResourceTest
         PropertyTree componentConfig = new PropertyTree();
         componentConfig.setString( "my-prop", "value" );
 
-        PartComponent component = PartComponent.newPartComponent().
+        PartComponent component = PartComponent.create().
             name( "my-component" ).
             descriptor( DescriptorKey.from( "mainmodule:partTemplateName" ) ).
             config( componentConfig ).
             build();
 
-        Region region = Region.newRegion().
+        Region region = Region.create().
             name( "my-region" ).
             add( component ).
             build();
 
-        PageRegions regions = PageRegions.newPageRegions().
+        PageRegions regions = PageRegions.create().
             add( region ).
             build();
 
         PropertyTree pageConfig = new PropertyTree();
         pageConfig.setString( "background-color", "blue" );
-        Page page = Page.newPage().
+        Page page = Page.create().
             template( PageTemplateKey.from( "mypagetemplate" ) ).
             regions( regions ).
             config( pageConfig ).
             build();
 
         Content content = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        content = newContent( content ).page( page ).build();
+        content = Content.create( content ).page( page ).build();
 
         PropertyTree contentData = content.getData();
         contentData.setString( "myProperty", "myValue" );
@@ -548,7 +546,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        Content content = newContent().
+        Content content = Content.create().
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
@@ -599,7 +597,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent1 );
 
-        final Content aContent2 = newContent().
+        final Content aContent2 = Content.create().
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
@@ -718,13 +716,13 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            setPushedContent( Contents.from( Content.create().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addFailed( newContent().
+            addFailed( Content.create().
                 id( ContentId.from( "my-content2" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -746,7 +744,7 @@ public class ContentResourceTest
         Contents deleted = Contents.from( Arrays.asList( createContent( "content-id", "content-name", "mymodule:content-type" ) ) );
 
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            setPushedContent( Contents.from( Content.create().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -821,7 +819,7 @@ public class ContentResourceTest
             Optional.of( anon ) );
 
         final AccessControlList permissions = getTestPermissions();
-        content = Content.newContent( content ).permissions( permissions ).inheritPermissions( true ).build();
+        content = Content.create( content ).permissions( permissions ).inheritPermissions( true ).build();
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/applyPermissions" ).
@@ -881,7 +879,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-        content = Content.newContent( content ).childOrder( ChildOrder.defaultOrder() ).build();
+        content = Content.create( content ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
 
@@ -912,7 +910,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-        content = Content.newContent( content ).childOrder( ChildOrder.defaultOrder() ).build();
+        content = Content.create( content ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
 
@@ -996,7 +994,7 @@ public class ContentResourceTest
         final PropertyTree metadata = new PropertyTree();
         metadata.setLong( "myProperty", 1L );
 
-        return newContent().
+        return Content.create().
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).
@@ -1015,7 +1013,7 @@ public class ContentResourceTest
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )
     {
-        return newSite().
+        return Site.create().
             siteConfigs( siteConfigs ).
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
@@ -1034,7 +1032,7 @@ public class ContentResourceTest
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().
+        return ContentType.create().
             superType( ContentTypeName.structured() ).
             displayName( "My type" ).
             name( name ).

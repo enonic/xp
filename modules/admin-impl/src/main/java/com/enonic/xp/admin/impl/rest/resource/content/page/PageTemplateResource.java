@@ -84,7 +84,7 @@ public final class PageTemplateResource
     {
         final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
-        final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( ContentTypeName.from( contentTypeName ) ).build();
+        final PageTemplateSpec spec = PageTemplateSpec.create().canRender( ContentTypeName.from( contentTypeName ) ).build();
         final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( filteredPageTemplates.getSize() ).
