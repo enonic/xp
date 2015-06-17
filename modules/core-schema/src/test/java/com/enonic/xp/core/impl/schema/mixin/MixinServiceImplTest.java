@@ -2,90 +2,144 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
+import org.osgi.service.component.ComponentContext;
 
+import com.enonic.xp.core.impl.schema.AbstractBundleTest;
+import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinProvider;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
 public class MixinServiceImplTest
+    extends AbstractBundleTest
 {
-    private MixinServiceImpl service;
 
-    private MixinProvider provider;
+    private Bundle myBundle;
+
+    private ModuleKey myModuleKey;
 
     private Mixin mixin1;
 
-    private Mixin mixin2;
+    private Module myModule;
+
+    private ModuleService moduleService;
+
+    private MixinServiceImpl service;
 
     @Before
+    @Override
     public void setup()
+        throws Exception
     {
-        this.service = new MixinServiceImpl();
-        this.mixin1 = createMixin( "mymodule:test" );
-        this.mixin2 = createMixin( "othermodule:test" );
-        this.provider = () -> Mixins.from( this.mixin1, this.mixin2 );
+        super.setup();
+
+        //Mocks a module
+        startBundles( newBundle( "module2" ) );
+        myBundle = findBundle( "module2" );
+        myModuleKey = ModuleKey.from( myBundle );
+        this.mixin1 = createMixin( "module2:mixin1" );
+        myModule = Mockito.mock( Module.class );
+        Mockito.when( myModule.getKey() ).thenReturn( myModuleKey );
+        Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
+
+        //Mocks the module service
+        moduleService = Mockito.mock( ModuleService.class );
+
+        //Mocks the ComponentContext
+        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
+        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.serviceRegistry.getBundleContext() );
+
+        //Creates the service to test
+        service = new MixinServiceImpl();
+        service.setModuleService( moduleService );
+
+        //Starts the service
+        service.start( componentContext );
     }
 
     @Test
-    public void testEmpty()
+    public void test_empty()
     {
-        final Mixins result = this.service.getAll();
-        assertNotNull( result );
-        assertEquals( 0, result.getSize() );
+        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+
+        Mixins mixins = service.getAll();
+        assertNotNull( mixins );
+        assertEquals( 3, mixins.getSize() );
+
+        mixins = service.getByModule( myModuleKey );
+        assertNotNull( mixins );
+        assertEquals( 0, mixins.getSize() );
+
+        Mixin mixin = service.getByName( this.mixin1.getName() );
+        assertEquals( null, mixin );
     }
 
     @Test
-    public void testGetByName()
+    public void test_add_removal_module()
     {
-        this.service.addProvider( this.provider );
 
-        final Mixin result1 = this.service.getByName( this.mixin1.getName() );
-        assertNotNull( result1 );
+        Modules modules = Modules.from( myModule );
+        Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
+        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
 
-        this.service.removeProvider( this.provider );
+        Mixins mixins = service.getAll();
+        assertNotNull( mixins );
+        assertEquals( 4, mixins.getSize() );
 
-        final Mixin result2 = this.service.getByName( this.mixin1.getName() );
-        assertNull( result2 );
+        mixins = service.getByModule( myModuleKey );
+        assertNotNull( mixins );
+        assertEquals( 1, mixins.getSize() );
+
+        Mixin mixin = service.getByName( this.mixin1.getName() );
+        assertNotNull( mixin );
+
+        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( null );
+        service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
+
+        test_empty();
     }
 
     @Test
-    public void testGetByLocalName()
+    public void test_get_system_module()
     {
-        this.service.addProvider( this.provider );
 
-        final Mixin result1 = this.service.getByLocalName( "test" );
-        assertNotNull( result1 );
-        assertEquals( "test", result1.getName().getLocalName() );
+        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+
+        Mixins mixins = service.getAll();
+        assertNotNull( mixins );
+        assertEquals( 3, mixins.getSize() );
+
+        mixins = service.getByModule( ModuleKey.SYSTEM );
+        assertNotNull( mixins );
+        assertEquals( 3, mixins.getSize() );
+
+        Mixin mixin = service.getByName( BuiltinMixinsLoader.GPS_INFO_METADATA_NAME );
+        assertNotNull( mixin );
+
+        mixin = service.getByName( BuiltinMixinsLoader.IMAGE_INFO_METADATA_NAME );
+        assertNotNull( mixin );
+
+        mixin = service.getByName( BuiltinMixinsLoader.PHOTO_INFO_METADATA_NAME );
+        assertNotNull( mixin );
     }
 
     @Test
-    public void testGetAll()
+    public void test_stop()
     {
-        this.service.addProvider( this.provider );
-
-        final Mixins result = this.service.getAll();
-        assertNotNull( result );
-        assertEquals( 2, result.getSize() );
-        assertSame( this.mixin1, result.get( 1 ) );
-        assertSame( this.mixin2, result.get( 0 ) );
-    }
-
-    @Test
-    public void testGetByModule()
-    {
-        this.service.addProvider( this.provider );
-
-        final Mixins result = this.service.getByModule( ModuleKey.from( "mymodule" ) );
-        assertNotNull( result );
-        assertEquals( 1, result.getSize() );
-        assertSame( this.mixin1, result.get( 0 ) );
+        service.stop();
     }
 
     private Mixin createMixin( final String name )
     {
         return Mixin.newMixin().name( name ).build();
     }
+    
 }

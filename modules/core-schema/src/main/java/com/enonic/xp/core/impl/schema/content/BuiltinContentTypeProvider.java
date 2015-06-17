@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeProvider;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
+import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinsLoader;
 
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 
@@ -82,7 +82,8 @@ public final class BuiltinContentTypeProvider
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_IMAGE ).
-        metadata( MixinNames.from( BuiltinMixinProvider.IMAGE_INFO_METADATA_NAME, BuiltinMixinProvider.PHOTO_INFO_METADATA_NAME, BuiltinMixinProvider.GPS_INFO_METADATA_NAME
+        metadata( MixinNames.from( BuiltinMixinsLoader.IMAGE_INFO_METADATA_NAME, BuiltinMixinsLoader.PHOTO_INFO_METADATA_NAME,
+                                   BuiltinMixinsLoader.GPS_INFO_METADATA_NAME
         ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).

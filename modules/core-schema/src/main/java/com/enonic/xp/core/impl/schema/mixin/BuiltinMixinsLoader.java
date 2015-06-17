@@ -15,18 +15,16 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinProvider;
 import com.enonic.xp.schema.mixin.Mixins;
 
 @Component(immediate = true)
-public final class BuiltinMixinProvider
-    implements MixinProvider
+public final class BuiltinMixinsLoader
 {
-    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "image-info" );
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.SYSTEM, "image-info" );
 
-    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "photo-info" );
+    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.SYSTEM, "photo-info" );
 
-    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "base" ), "gps-info" );
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.SYSTEM, "gps-info" );
 
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -52,7 +50,7 @@ public final class BuiltinMixinProvider
 
     private final Mixins mixins;
 
-    public BuiltinMixinProvider()
+    public BuiltinMixinsLoader()
     {
         this.mixins = Mixins.from( generateSystemMixins() );
     }
@@ -141,8 +139,7 @@ public final class BuiltinMixinProvider
         return mixins;
     }
 
-    @Override
-    public Mixins get()
+    public Mixins load()
     {
         return this.mixins;
     }
