@@ -11,9 +11,4 @@ public final class LocalizationException
     {
         super( message, t );
     }
-
-    public LocalizationException( final String message )
-    {
-        super( message );
-    }
 }

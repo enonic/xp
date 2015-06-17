@@ -7,14 +7,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.i18n.MessageBundle;
 
-@Component
-public final class MessageBundleImpl
+final class MessageBundleImpl
     implements MessageBundle
 {
     private static final String UTF_8_ENCODING = "UTF-8";

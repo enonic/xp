@@ -5,7 +5,6 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 
-@Component
 public final class LocaleServiceImpl
     implements LocaleService
 {
@@ -104,7 +102,6 @@ public final class LocaleServiceImpl
 
     private Properties getOrCreateProperties( final ModuleKey module )
     {
-
         Properties properties = null /*getFromCache( module )*/;
 
         if ( properties == null )
@@ -114,6 +111,4 @@ public final class LocaleServiceImpl
 
         return properties;
     }
-
-
 }

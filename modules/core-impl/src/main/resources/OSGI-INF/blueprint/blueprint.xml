@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="beanManager" class="com.enonic.xp.core.impl.bean.BeanManagerImpl">
-    <property name="bundleContext" ref="blueprintBundleContext"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.xp.core.impl.bean.BeanManagerImpl">
+      <property name="bundleContext" ref="blueprintBundleContext"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.xp.core.impl.i18n.LocaleServiceImpl"/>
+  </service>
 
 </blueprint>
