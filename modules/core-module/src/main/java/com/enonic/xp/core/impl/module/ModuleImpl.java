@@ -164,6 +164,18 @@ final class ModuleImpl
     }
 
     @Override
+    public boolean isApplication()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isSystem()
+    {
+        return !isApplication();
+    }
+
+    @Override
     public String toString()
     {
         return MoreObjects.toStringHelper( this ).

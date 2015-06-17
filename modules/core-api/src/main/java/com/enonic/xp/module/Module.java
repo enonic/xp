@@ -42,4 +42,8 @@ public interface Module
     ClassLoader getClassLoader();
 
     void checkIfStarted();
+
+    boolean isApplication();
+
+    boolean isSystem();
 }
