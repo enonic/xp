@@ -24,7 +24,7 @@ public final class BeanManagerImpl
         this.containers = Maps.newConcurrentMap();
     }
 
-    public void initialize( final BundleContext bundleContext )
+    public void setBundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
     }
