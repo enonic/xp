@@ -3,3 +3,10 @@ include ':portal'
 include ':mustache'
 include ':thymeleaf'
 include ':xslt'
+
+rootProject.children.each { project ->
+    String projectDirName = "modules/${project.name}"
+    project.projectDir = new File( (File) settingsDir, projectDirName )
+    assert project.projectDir.isDirectory()
+    assert project.buildFile.isFile()
+}
