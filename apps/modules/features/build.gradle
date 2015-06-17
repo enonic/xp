@@ -1,7 +1,7 @@
 apply plugin: 'com.enonic.xp.gradle.module'
 
 module {
-    name = 'com.enonic.xp.apps.features'
+    name = 'com.enonic.xp.modules.features'
     displayName = 'Features App'
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
