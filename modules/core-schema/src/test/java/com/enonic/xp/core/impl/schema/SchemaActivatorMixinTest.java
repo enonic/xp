@@ -14,13 +14,13 @@ public class SchemaActivatorMixinTest
         throws Exception
     {
         final List<MixinProvider> list1 = getServices( null, MixinProvider.class );
-        assertEquals( 1, list1.size() );
+        assertEquals( 2, list1.size() );
 
         final List<MixinProvider> list2 = getServices( "module1", MixinProvider.class );
         assertEquals( 1, list2.size() );
 
         final List<MixinProvider> list3 = getServices( "module2", MixinProvider.class );
-        assertEquals( 0, list3.size() );
+        assertEquals( 1, list3.size() );
 
         final List<MixinProvider> list4 = getServices( "not-module", MixinProvider.class );
         assertEquals( 0, list4.size() );

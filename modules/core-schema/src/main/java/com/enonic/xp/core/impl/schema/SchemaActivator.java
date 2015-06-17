@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
-import com.enonic.xp.core.impl.schema.content.BundleContentTypeProvider;
 import com.enonic.xp.core.impl.schema.mixin.BundleMixinProvider;
 
 @Component(immediate = true)
@@ -47,7 +46,6 @@ public final class SchemaActivator
 
         final SchemaProviders providers = new SchemaProviders( bundle );
         providers.register( BundleMixinProvider.create( bundle ) );
-        providers.register( BundleContentTypeProvider.create( bundle ) );
 
         return providers;
     }
