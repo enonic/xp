@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.content;
 
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -157,10 +156,10 @@ public final class BuiltinContentTypeLoader
 
     public ContentTypes loadByModule( final ModuleKey moduleKey )
     {
-        List<ContentType> contentTypes =
-            Arrays.stream( SYSTEM_TYPES ).filter( elem -> moduleKey.equals( elem.getName().getModuleKey() ) ).collect(
-                Collectors.toList() );
-        return ContentTypes.from( contentTypes );
+        final List<ContentType> contentTypeList = types.stream().
+            filter( contentType -> contentType.getName().getModuleKey().equals( moduleKey ) ).
+            collect( Collectors.toList() );
+        return ContentTypes.from( contentTypeList );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
