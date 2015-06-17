@@ -1,9 +1,8 @@
 apply plugin: 'com.enonic.xp.gradle.module'
 
 module {
-    // name = 'com.enonic.wem.modules.xslt'
-    displayName = 'Xslt Sample Module'
-    url = 'https://github.com/enonic/xp-sample-modules'
+    name = 'com.enonic.wem.apps.xslt'
+    displayName = 'Xslt Sample App'
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
 }
