@@ -10,6 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.Module;
@@ -34,6 +35,8 @@ public final class ScriptServiceImpl
     private final ConcurrentMap<ModuleKey, ScriptExecutor> executors;
 
     private ModuleService moduleService;
+
+    private BeanManager beanManager;
 
     public ScriptServiceImpl()
     {
@@ -70,6 +73,7 @@ public final class ScriptServiceImpl
         executor.setEngine( engine );
         executor.setInvoker( this.invoker );
         executor.setGlobalMap( this.globalMap );
+        executor.setBeanManager( this.beanManager );
         executor.initialize();
         return executor;
     }
@@ -98,5 +102,10 @@ public final class ScriptServiceImpl
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+    }
+
+    public void setBeanManager( final BeanManager beanManager )
+    {
+        this.beanManager = beanManager;
     }
 }

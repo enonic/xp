@@ -7,9 +7,11 @@ import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 public final class CallFunction
     extends AbstractFunction
 {
+    public final static String NAME = "__call";
+
     public CallFunction()
     {
-        super( "__call" );
+        super( NAME );
     }
 
     @Override

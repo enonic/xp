@@ -1,8 +1,8 @@
-(function (key, log, execute, require, resolve) {
+(function ( log, execute, require, resolve, __) {
     var exports = {};
     var module = {};
-    module.id = key.toString();
-    module.name = key.module.toString();
+    module.id = __.script.toString();
+    module.name = __.module.toString();
 
     Object.defineProperty(module, 'exports', {
         get: function () {

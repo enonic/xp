@@ -12,15 +12,12 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.portal.impl.script.bean.ModuleScriptInfo;
+import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
-import com.enonic.xp.portal.impl.script.function.ExecuteFunction;
-import com.enonic.xp.portal.impl.script.function.RequireFunction;
-import com.enonic.xp.portal.impl.script.function.ResolveFunction;
+import com.enonic.xp.portal.impl.script.function.ScriptFunctions;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
-import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -38,6 +35,8 @@ final class ScriptExecutorImpl
 
     private Map<ResourceKey, Object> exportsCache;
 
+    private BeanManager beanManager;
+
     public void setEngine( final ScriptEngine engine )
     {
         this.engine = engine;
@@ -51,6 +50,11 @@ final class ScriptExecutorImpl
     public void setGlobalMap( final Map<String, Object> globalMap )
     {
         this.globalMap = globalMap;
+    }
+
+    public void setBeanManager( final BeanManager beanManager )
+    {
+        this.beanManager = beanManager;
     }
 
     public void initialize()
@@ -89,13 +93,8 @@ final class ScriptExecutorImpl
     {
         try
         {
-            final ResolveFunction resolve = new ResolveFunction( script );
-            final RequireFunction require = new RequireFunction( script, this );
-            final ScriptLogger logger = new ScriptLogger( script );
-            final ExecuteFunction execute = new ExecuteFunction( script, this.invoker );
-            final ModuleScriptInfo moduleInfo = new ModuleScriptInfo( script );
-
-            return func.call( moduleInfo, script, logger, execute, require, resolve );
+            final ScriptFunctions functions = new ScriptFunctions( script, this );
+            return func.call( null, functions.getLog(), functions.getExecute(), functions.getRequire(), functions.getResolve(), functions );
         }
         catch ( final Exception e )
         {
@@ -128,11 +127,23 @@ final class ScriptExecutorImpl
     {
         try
         {
-            return ( (Invocable) this.engine ).invokeMethod( this.global, "__call", func, args );
+            return ( (Invocable) this.engine ).invokeMethod( this.global, CallFunction.NAME, func, args );
         }
         catch ( final Exception e )
         {
             throw ErrorHelper.handleError( e );
         }
+    }
+
+    @Override
+    public CommandInvoker getInvoker()
+    {
+        return this.invoker;
+    }
+
+    @Override
+    public BeanManager getBeanManager()
+    {
+        return this.beanManager;
     }
 }

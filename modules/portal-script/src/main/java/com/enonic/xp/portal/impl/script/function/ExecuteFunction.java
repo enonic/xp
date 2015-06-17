@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.script.function;
 
 import java.util.Collections;
 
+import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
-import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.invoker.CommandRequestImpl;
 import com.enonic.xp.resource.ResourceKey;
 
@@ -12,13 +12,13 @@ public final class ExecuteFunction
 {
     private final ResourceKey script;
 
-    private final CommandInvoker invoker;
+    private final ScriptExecutor executor;
 
-    public ExecuteFunction( final ResourceKey script, final CommandInvoker invoker )
+    public ExecuteFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "execute" );
         this.script = script;
-        this.invoker = invoker;
+        this.executor = executor;
     }
 
     @Override
@@ -36,6 +36,6 @@ public final class ExecuteFunction
         request.setName( name );
         request.setScript( this.script );
         request.setParamsMap( JsObjectConverter.fromJsAsMap( params ) );
-        return this.invoker.invoke( request );
+        return this.executor.getInvoker().invoke( request );
     }
 }

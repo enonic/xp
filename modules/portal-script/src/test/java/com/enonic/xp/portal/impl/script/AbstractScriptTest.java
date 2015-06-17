@@ -20,13 +20,17 @@ public abstract class AbstractScriptTest
 
     protected final CommandInvokerImpl invoker;
 
+    protected final SimpleBeanManager beanManager;
+
     public AbstractScriptTest()
     {
         this.invoker = new CommandInvokerImpl();
+        this.beanManager = new SimpleBeanManager();
 
         this.scriptService = new ScriptServiceImpl();
         this.scriptService.addGlobalVariable( "assert", new AssertHelper() );
         this.scriptService.setInvoker( this.invoker );
+        this.scriptService.setBeanManager( this.beanManager );
 
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
