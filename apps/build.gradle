@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenLocal()
@@ -17,8 +16,8 @@ allprojects {
     apply plugin: 'base'
     apply plugin: 'idea'
 
-    version = '2.0.0-SNAPSHOT'
-    group = 'com.enonic.xp.modules'
+    version = '6.0.0-SNAPSHOT'
+    group = 'com.enonic.xp.apps'
 }
 
 subprojects {
@@ -26,7 +25,7 @@ subprojects {
     apply plugin: 'maven-publish'
 
     repositories {
-//        mavenLocal()
+        mavenLocal()
         mavenCentral()
         maven {
             url 'http://repo.enonic.net/public'

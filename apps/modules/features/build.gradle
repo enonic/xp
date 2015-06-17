@@ -1,9 +1,8 @@
 apply plugin: 'com.enonic.xp.gradle.module'
 
 module {
-    // name = 'com.enonic.xp.modules.features'
-    displayName = 'Features Module'
-    url = 'https://github.com/enonic/xp-sample-modules'
+    name = 'com.enonic.xp.apps.features'
+    displayName = 'Features App'
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
 }
