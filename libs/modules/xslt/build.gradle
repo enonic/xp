@@ -1,0 +1,3 @@
+dependencies {
+    compile 'com.enonic.osgi.bundles:saxon-he:9.5.1_1'
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="com.enonic.xp.lib.xslt.XsltService" class="com.enonic.xp.lib.xslt.XsltService">
+    <property name="viewFunctionService">
+      <reference interface="com.enonic.xp.portal.view.ViewFunctionService"/>
+    </property>
+  </bean>
+
+</blueprint>
