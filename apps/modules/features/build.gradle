@@ -9,4 +9,10 @@ module {
 
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.libs:mustache:6.0.0-SNAPSHOT'
+}
+
+bundle {
+    instruction 'Private-Package', 'app.*;-split-package:=merge-first'
+    instruction 'Private-Package', 'OSGI-INF.blueprint.*;-split-package:=merge-first'
 }

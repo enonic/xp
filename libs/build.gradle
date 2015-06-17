@@ -1,14 +1,21 @@
 apply plugin: 'java-base'
 
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
+    }
+}
+
 allprojects {
     group = 'com.enonic.xp.libs'
 
     repositories {
         mavenLocal()
         jcenter()
-        maven {
-            url 'http://repo.enonic.com/public'
-        }
+        maven { url 'http://repo.enonic.com/public' }
     }
 
     buildDir = 'target'
@@ -17,6 +24,8 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
 
     def defaultEncoding = 'UTF-8'
 
@@ -55,8 +64,8 @@ subprojects {
     }
 
     dependencies {
-        compile "com.enonic.xp:core-api:${version}"
-        compile "com.enonic.xp:web-api:${version}"
-        compile "com.enonic.xp:portal-api:${version}"
+        provided "com.enonic.xp:core-api:${version}"
+        provided "com.enonic.xp:web-api:${version}"
+        provided "com.enonic.xp:portal-api:${version}"
     }
 }
