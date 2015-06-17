@@ -2,27 +2,28 @@ package com.enonic.xp.core.impl.schema.content;
 
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.WordUtils;
 import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeForms;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeProvider;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
 
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 
 @Component(immediate = true)
-public final class BuiltinContentTypeProvider
-    implements ContentTypeProvider
+public final class BuiltinContentTypeLoader
 {
     private static final String CONTENT_TYPES_FOLDER = "content-types";
 
@@ -122,7 +123,7 @@ public final class BuiltinContentTypeProvider
 
     private final ContentTypes types;
 
-    public BuiltinContentTypeProvider()
+    public BuiltinContentTypeLoader()
     {
         this.types = ContentTypes.from( generateSystemContentTypes() );
     }
@@ -149,10 +150,17 @@ public final class BuiltinContentTypeProvider
         return systemContentTypes;
     }
 
-    @Override
-    public ContentTypes get()
+    public ContentTypes load()
     {
         return this.types;
+    }
+
+    public ContentTypes loadByModule( final ModuleKey moduleKey )
+    {
+        List<ContentType> contentTypes =
+            Arrays.stream( SYSTEM_TYPES ).filter( elem -> moduleKey.equals( elem.getName().getModuleKey() ) ).collect(
+                Collectors.toList() );
+        return ContentTypes.from( contentTypes );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

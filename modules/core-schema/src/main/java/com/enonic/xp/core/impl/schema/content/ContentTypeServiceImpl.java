@@ -2,12 +2,10 @@ package com.enonic.xp.core.impl.schema.content;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeProvider;
+import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
@@ -22,13 +20,12 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class ContentTypeServiceImpl
     implements ContentTypeService
 {
-    private final ContentTypeRegistry registry;
+    private ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
     public ContentTypeServiceImpl()
     {
-        this.registry = new ContentTypeRegistryImpl();
     }
 
     @Override
@@ -95,14 +92,9 @@ public final class ContentTypeServiceImpl
         this.mixinService = mixinService;
     }
 
-    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
-    public void addProvider( final ContentTypeProvider provider )
+    @Reference
+    public void setContentTypeRegistry( final ContentTypeRegistry contentTypeRegistry )
     {
-        this.registry.addProvider( provider );
-    }
-
-    public void removeProvider( final ContentTypeProvider provider )
-    {
-        this.registry.removeProvider( provider );
+        this.registry = contentTypeRegistry;
     }
 }
