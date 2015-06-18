@@ -8,3 +8,8 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Event'
 }
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+}
