@@ -147,10 +147,10 @@ public final class BuiltinMixinsLoader
 
     public Mixins loadByModule( final ModuleKey moduleKey )
     {
-        List<Mixin> mixins = MIXINS.stream().
-            filter( elem -> moduleKey.equals( elem.getName().getModuleKey() ) ).
+        final List<Mixin> mixinList = mixins.stream().
+            filter( mixin -> mixin.getName().getModuleKey().equals( moduleKey ) ).
             collect( Collectors.toList() );
-        return Mixins.from( mixins );
+        return Mixins.from( mixinList );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

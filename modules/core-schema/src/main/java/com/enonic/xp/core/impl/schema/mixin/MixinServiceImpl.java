@@ -63,10 +63,11 @@ public final class MixinServiceImpl
     @Override
     public Mixin getByLocalName( final String localName )
     {
-        return this.map.values().stream().
-            flatMap( mixins -> mixins.stream() ).
-            filter( ( mixin ) -> mixin.getName().getLocalName().equals( localName ) ).
-            findFirst().orElse( null );
+        return getAll().
+            stream().
+            filter( mixin -> mixin.getName().getLocalName().equals( localName ) ).
+            findFirst().
+            orElse( null );
     }
 
     @Override

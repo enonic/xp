@@ -94,13 +94,6 @@ public class MixinServiceImplTest
         Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
 
         Mixin mixin = service.getByLocalName( "mixin1" );
-        assertNull( mixin );
-
-        Mixins mixins = service.getByModule( myModuleKey );
-        assertNotNull( mixins );
-        assertEquals( 1, mixins.getSize() );
-
-        mixin = service.getByLocalName( "mixin1" );
         assertNotNull( mixin );
         assertEquals( mixin.getName(), this.mixin1.getName() );
     }
