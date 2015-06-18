@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.security;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.impl.security.PBKDF2Encoder;
-
 import static org.junit.Assert.*;
 
 public class PBKDF2EncoderTest
