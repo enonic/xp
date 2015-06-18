@@ -1,29 +1,29 @@
-var service = __.getBean('com.enonic.xp.lib.portal.url.UrlService');
+var service = __.getBean('com.enonic.xp.lib.portal.url.UrlServiceWrapper');
 
 exports.assetUrl = function (params) {
-    return service.createAssetUrl(params);
+    return service.assetUrl(__.toScriptValue(params));
 };
 
 exports.imageUrl = function (params) {
-    return service.createImageUrl(params);
+    return service.imageUrl(__.toScriptValue(params));
 };
 
 exports.componentUrl = function (params) {
-    return service.createComponentUrl(params);
+    return service.componentUrl(__.toScriptValue(params));
 };
 
 exports.attachmentUrl = function (params) {
-    return service.createServiceUrl(params);
+    return service.attachmentUrl(__.toScriptValue(params));
 };
 
 exports.pageUrl = function (params) {
-    return service.createPageUrl(params);
+    return service.pageUrl(__.toScriptValue(params));
 };
 
 exports.serviceUrl = function (params) {
-    return service.createServiceUrl(params);
+    return service.serviceUrl(__.toScriptValue(params));
 };
 
 exports.processHtml = function (params) {
-    return service.createProcessUrl(params);
+    return service.processHtml(__.toScriptValue(params));
 };

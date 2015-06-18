@@ -19,5 +19,4 @@ final class ProcessHtmlHandler
         final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.processHtml( params );
     }
-
 }
