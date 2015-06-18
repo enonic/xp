@@ -8,39 +8,39 @@ public final class UrlService
 {
     private PortalUrlService urlService;
 
-    public void createAssetUrl( final Map<String, Object> params )
+    public String createAssetUrl( final Map<String, Object> params )
     {
-        new AssetUrlHandler( this.urlService ).createUrl( params );
+        return new AssetUrlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createAttachmentUrl( final Map<String, Object> params )
+    public String createAttachmentUrl( final Map<String, Object> params )
     {
-        new AttachmentUrlHandler( this.urlService ).createUrl( params );
+        return new AttachmentUrlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createComponentUrl( final Map<String, Object> params )
+    public String createComponentUrl( final Map<String, Object> params )
     {
-        new ComponentUrlHandler( this.urlService ).createUrl( params );
+        return new ComponentUrlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createImageUrl( final Map<String, Object> params )
+    public String createImageUrl( final Map<String, Object> params )
     {
-        new ImageUrlHandler( this.urlService ).createUrl( params );
+        return new ImageUrlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createPageUrl( final Map<String, Object> params )
+    public String createPageUrl( final Map<String, Object> params )
     {
-        new PageUrlHandler( this.urlService ).createUrl( params );
+        return new PageUrlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createProcessUrl( final Map<String, Object> params )
+    public String createProcessUrl( final Map<String, Object> params )
     {
-        new ProcessHtmlHandler( this.urlService ).createUrl( params );
+        return new ProcessHtmlHandler( this.urlService ).createUrl( params );
     }
 
-    public void createServiceUrl( final Map<String, Object> params )
+    public String createServiceUrl( final Map<String, Object> params )
     {
-        new ServiceUrlHandler( this.urlService ).createUrl( params );
+        return new ServiceUrlHandler( this.urlService ).createUrl( params );
     }
 
     public void setUrlService( final PortalUrlService urlService )
