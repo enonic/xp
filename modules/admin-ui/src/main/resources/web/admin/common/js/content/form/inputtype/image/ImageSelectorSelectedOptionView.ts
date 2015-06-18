@@ -123,6 +123,7 @@ module api.content.form.inputtype.image {
             this.loadMask.hide();
             this.icon.getEl().setVisibility('visible');
             this.check.show();
+            this.progress.hide();
         }
 
         showError(text: string) {
