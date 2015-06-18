@@ -9,3 +9,8 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Impl'
 }
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+}
