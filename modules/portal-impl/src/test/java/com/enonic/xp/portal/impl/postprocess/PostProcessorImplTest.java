@@ -12,7 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
 import static java.util.stream.Collectors.joining;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class PostProcessorImplTest
 {

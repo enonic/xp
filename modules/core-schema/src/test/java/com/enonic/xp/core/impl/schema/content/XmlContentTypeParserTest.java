@@ -8,7 +8,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class XmlContentTypeParserTest
     extends XmlModelParserTest

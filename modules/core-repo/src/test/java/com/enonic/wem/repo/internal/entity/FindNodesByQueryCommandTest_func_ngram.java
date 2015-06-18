@@ -13,7 +13,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest_func_ngram

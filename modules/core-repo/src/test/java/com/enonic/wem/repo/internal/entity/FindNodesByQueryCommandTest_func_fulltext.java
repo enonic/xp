@@ -23,7 +23,6 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest_func_fulltext

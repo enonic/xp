@@ -28,7 +28,7 @@ import com.enonic.xp.site.Site;
 import static com.enonic.xp.page.PageRegions.newPageRegions;
 import static com.enonic.xp.region.PartComponent.newPartComponent;
 import static com.enonic.xp.region.Region.newRegion;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
