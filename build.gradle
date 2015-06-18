@@ -20,8 +20,6 @@ allprojects {
 
 ext {
     javaProjects = subprojects - project( ':distro' )
-    itestProjects = subprojects.findAll { it.name.endsWith( '-itest' ) || it.name.startsWith( 'itest-' ) }
-    osgiProjects = javaProjects - project( ':launcher' ) - itestProjects
     mavenProjects = subprojects
 }
 
@@ -30,11 +28,6 @@ configure( javaProjects ) {
     apply from: "$rootDir/gradle/checkstyle.gradle"
 }
 
-configure( osgiProjects ) {
-    apply from: "$rootDir/gradle/osgi.gradle"
-}
-
 configure( mavenProjects ) {
     apply from: "$rootDir/gradle/maven.gradle"
 }
-

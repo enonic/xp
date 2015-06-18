@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':core-api' )
     compile 'org.apache.tika:tika-parsers:1.6'
