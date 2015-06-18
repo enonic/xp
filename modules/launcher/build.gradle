@@ -29,3 +29,8 @@ jar {
         attributes( ['Implementation-Version': project.version] )
     }
 }
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+}
