@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.schema.mixin;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -15,18 +16,16 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinProvider;
 import com.enonic.xp.schema.mixin.Mixins;
 
 @Component(immediate = true)
-public final class BuiltinMixinProvider
-    implements MixinProvider
+public final class BuiltinMixinsLoader
 {
-    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "image-info" );
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.MEDIA_MOD, "image-info" );
 
-    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "photo-info" );
+    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.MEDIA_MOD, "photo-info" );
 
-    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "base" ), "gps-info" );
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.BASE, "gps-info" );
 
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -52,7 +51,7 @@ public final class BuiltinMixinProvider
 
     private final Mixins mixins;
 
-    public BuiltinMixinProvider()
+    public BuiltinMixinsLoader()
     {
         this.mixins = Mixins.from( generateSystemMixins() );
     }
@@ -141,10 +140,17 @@ public final class BuiltinMixinProvider
         return mixins;
     }
 
-    @Override
-    public Mixins get()
+    public Mixins load()
     {
         return this.mixins;
+    }
+
+    public Mixins loadByModule( final ModuleKey moduleKey )
+    {
+        final List<Mixin> mixinList = mixins.stream().
+            filter( mixin -> mixin.getName().getModuleKey().equals( moduleKey ) ).
+            collect( Collectors.toList() );
+        return Mixins.from( mixinList );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

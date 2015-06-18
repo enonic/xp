@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
+import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinsLoader;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
@@ -82,8 +82,8 @@ public final class BuiltinContentTypeLoader
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_IMAGE ).
-        metadata( MixinNames.from( BuiltinMixinProvider.IMAGE_INFO_METADATA_NAME, BuiltinMixinProvider.PHOTO_INFO_METADATA_NAME,
-                                   BuiltinMixinProvider.GPS_INFO_METADATA_NAME ) ).build();
+        metadata( MixinNames.from( BuiltinMixinsLoader.IMAGE_INFO_METADATA_NAME, BuiltinMixinsLoader.PHOTO_INFO_METADATA_NAME,
+                                   BuiltinMixinsLoader.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_DEFAULT ).build();
