@@ -5,8 +5,6 @@ import org.junit.Test;
 
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.util.MediaTypes;
-
 public class MediaTypesTest
 {
     @Test

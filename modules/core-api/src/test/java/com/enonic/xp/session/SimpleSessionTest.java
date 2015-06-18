@@ -3,10 +3,6 @@ package com.enonic.xp.session;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.session.Session;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
-
 import static org.junit.Assert.*;
 
 public class SimpleSessionTest

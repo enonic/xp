@@ -2,8 +2,6 @@ package com.enonic.xp.convert;
 
 import org.junit.Test;
 
-import com.enonic.xp.convert.ConvertException;
-import com.enonic.xp.convert.Converters;
 import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.Assert.*;

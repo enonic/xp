@@ -2,8 +2,6 @@ package com.enonic.xp.name;
 
 import org.junit.Test;
 
-import com.enonic.xp.name.NamePrettyfier;
-
 import static org.junit.Assert.*;
 
 public class NamePrettyfierTest

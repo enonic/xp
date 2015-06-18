@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.query.expr.DynamicConstraintExpr;
-import com.enonic.xp.query.expr.FunctionExpr;
-
 public class DynamicConstraintExprTest
 {
     @Test
