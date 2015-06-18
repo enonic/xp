@@ -37,5 +37,4 @@ public final class XsltService
     {
         new XsltFunctionLibrary( viewFunctionService ).registerAll( this.configuration );
     }
-
 }

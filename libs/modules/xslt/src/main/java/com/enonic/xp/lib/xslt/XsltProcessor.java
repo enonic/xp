@@ -3,7 +3,6 @@ package com.enonic.xp.lib.xslt;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -15,13 +14,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 
-final class XsltProcessor
+public final class XsltProcessor
 {
     private final TransformerFactory factory;
 
@@ -47,11 +48,15 @@ final class XsltProcessor
         this.xsltSource = new StreamSource( resource.getUrl().toString() );
     }
 
-    public void setModel( final Map<String, Object> model )
+    public void setModel( final ScriptValue model )
     {
         if ( model != null )
         {
-            this.xmlSource = MapToXmlConverter.toSource( model );
+            this.xmlSource = MapToXmlConverter.toSource( model.getMap() );
+        }
+        else
+        {
+            this.xmlSource = MapToXmlConverter.toSource( Maps.newHashMap() );
         }
     }
 
