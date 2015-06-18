@@ -1,19 +1,32 @@
 .publish-dialog {
 
   .dialog-content {
+
+    max-height: 400px;
+    overflow-y: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 250px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 150px;
+    }
+
     @media screen and (max-height: 360px) {
-      height: 60%;
+      max-height: 80px;
     }
   }
 
   .item-list {
     padding: 0px;
-    max-height: 280px;
-    overflow-y: auto;
   }
 
   .dependencies-toggle-label {
     color: @admin-blue;
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .dialog-buttons {
@@ -50,6 +63,10 @@
 
     input[type="checkbox"] + label {
       color: @admin-blue !important;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     @media screen and (max-height: 360px) {
@@ -79,24 +96,9 @@
   .initial-items {
 
     &.item-list {
-      padding-bottom: 10px;
 
-      min-height: 150px;
+      min-height: 40px;
 
-      @media screen and (max-height: 720px) {
-        max-height: 350px;
-        min-height: 100px;
-      }
-
-      @media screen and (max-height: 540px) {
-        max-height: 170px;
-        min-height: 80px;
-      }
-
-      @media screen and (max-height: 360px) {
-        max-height: 80px;
-        min-height: 40px;
-      }
     }
 
     .browse-selection-publish-item {
@@ -186,23 +188,9 @@
 
   .dependant-items {
 
-    &.item-list {
-      padding-top: 10px;
-    }
-
-    @media screen and (max-height: 720px) {
-      max-height: 160px;
-    }
-
-    @media screen and (max-height: 540px) {
-      max-height: 80px;
-    }
-
-    @media screen and (max-height: 360px) {
-      max-height: 40px;
-    }
-
     .browse-selection-publish-item {
+
+      display: block;
 
       .content-resolved-dependant-viewer {
         padding: 4px 0px 4px 0px;
@@ -221,17 +209,18 @@
         .names-and-icon-view {
           .wrapper {
             margin: 0px;
+            height: 16px;
+            width: 16px;
+            line-height: 16px;
           }
 
           .name-span {
             margin: 0px 15px 0px 8px;
-            line-height: 32px;
+            line-height: 16px;
           }
 
         }
       }
-
-      display: inline;
 
       &.disabled {
         .checkbox {

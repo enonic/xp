@@ -8,7 +8,7 @@ module app.publish {
     import PublishContentRequest = api.content.PublishContentRequest;
     import CompareStatus = api.content.CompareStatus;
     import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson;
-    import ResolvedPublishDependencyJson = api.content.json.ResolvedPublishDependencyJson;
+    import ResolvedPublishContentJson = api.content.json.ResolvedPublishContentJson;
     import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
@@ -120,9 +120,9 @@ module app.publish {
         /**
          * Builds array of ContentPublishItem[] from resolved contents.
          */
-        static getResolvedContents(jsonItems: ResolvedPublishDependencyJson[]): ContentPublishItem[] {
+        static getResolvedContents(jsonItems: ResolvedPublishContentJson[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            jsonItems.forEach((obj: ResolvedPublishDependencyJson) => {
+            jsonItems.forEach((obj: ResolvedPublishContentJson) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;
@@ -161,7 +161,7 @@ module app.publish {
             }
         }
 
-        fromJson(json: ResolvedPublishDependencyJson): ContentPublishItemBuilder {
+        fromJson(json: ResolvedPublishContentJson): ContentPublishItemBuilder {
             this.id = json.id;
             this.path = ContentPath.fromString(json.path);
             this.compareStatus = <CompareStatus>CompareStatus[json.compareStatus];

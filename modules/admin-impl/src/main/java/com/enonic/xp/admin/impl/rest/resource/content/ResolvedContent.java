@@ -220,4 +220,70 @@ public class ResolvedContent
         }
     }
 
+    public static class ResolvedDependencyContent
+        extends ResolvedContent
+    {
+
+        private final boolean child;
+
+        public ResolvedDependencyContent( Builder builder )
+        {
+            super( builder );
+            this.child = builder.child;
+        }
+
+        public static Builder create()
+        {
+            return new Builder();
+        }
+
+        @SuppressWarnings("unused")
+        public boolean isChild()
+        {
+            return child;
+        }
+
+        public static final class Builder
+            extends ResolvedContent.Builder
+        {
+            private boolean child;
+
+            public Builder isChild( final boolean child )
+            {
+                this.child = child;
+                return this;
+            }
+
+            public Builder content( final Content content )
+            {
+                this.content = content;
+                return this;
+            }
+
+            public Builder compareStatus( final String compareStatus )
+            {
+                this.compareStatus = compareStatus;
+                return this;
+            }
+
+            public Builder iconUrl( final String iconUrl )
+            {
+                this.iconUrl = iconUrl;
+                return this;
+            }
+
+            public ResolvedDependencyContent build()
+            {
+                this.id = content.getId().toString();
+                this.path = content.getPath().toString();
+                this.displayName = content.getDisplayName();
+                this.name = content.getName().toString();
+                this.type = content.getType().toString();
+                this.isValid = content.isValid();
+
+                return new ResolvedDependencyContent( this );
+            }
+        }
+    }
+
 }

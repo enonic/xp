@@ -7,8 +7,8 @@ module app.publish {
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import CompareStatus = api.content.CompareStatus;
-    import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson;
     import ResolvedPublishRequestedContentJson = api.content.json.ResolvedPublishRequestedContentJson;
+    import ResolvedPublishDependencyContentJson = api.content.json.ResolvedPublishDependencyContentJson;
     import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
@@ -96,6 +96,66 @@ module app.publish {
 
         build(): ContentPublishRequestedItem {
             return new ContentPublishRequestedItem(this);
+        }
+    }
+
+    export class ContentPublishDependencyItem extends ContentPublishItem {
+
+        private child: boolean;
+
+        constructor(builder: ContentPublishDependencyItemBuilder) {
+            super(builder);
+
+            this.child = builder.child;
+        }
+
+        isChild(): boolean {
+            return this.child;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentPublishRequestedItem)) {
+                return false;
+            }
+
+            var other = <ContentPublishRequestedItem>o;
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.booleanEquals(this.child, other.child)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        static getPushDependenciesContents(jsonItems: ResolvedPublishDependencyContentJson[]): ContentPublishDependencyItem[] {
+            var array: ContentPublishDependencyItem[] = [];
+            jsonItems.forEach((obj: ResolvedPublishDependencyContentJson) => {
+                array.push(new ContentPublishDependencyItemBuilder().fromJson(obj).build());
+            });
+            return array;
+        }
+
+    }
+
+    export class ContentPublishDependencyItemBuilder extends ContentPublishItemBuilder {
+
+        child: boolean;
+
+        fromJson(json: ResolvedPublishDependencyContentJson): ContentPublishDependencyItemBuilder {
+            super.fromJson(json);
+
+            this.child = json.child;
+
+            return this;
+        }
+
+        build(): ContentPublishDependencyItem {
+            return new ContentPublishDependencyItem(this);
         }
     }
 }

@@ -19,7 +19,7 @@
 ///<reference path='SetOrderUpdateJson.ts' />
 ///<reference path='SetChildOrderAndReorderJson.ts' />
 ///<reference path='ResolvePublishRequestedContentsResultJson.ts' />
-///<reference path='ResolvedPublishDependencyJson.ts' />
+///<reference path='ResolvedPublishContentJson.ts' />
 ///<reference path='ResolvePublishDependenciesResultJson.ts' />
 ///<reference path='ResolvedPublishRequestedContentJson.ts' />
 

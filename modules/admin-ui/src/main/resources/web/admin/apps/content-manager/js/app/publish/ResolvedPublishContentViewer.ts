@@ -45,7 +45,7 @@ module app.publish {
         }
     }
 
-    export class ResolvedDependantContentViewer<M extends ContentPublishItem>extends api.ui.Viewer<M> {
+    export class ResolvedDependantContentViewer<M extends ContentPublishItem> extends api.ui.Viewer<M> {
 
         private namesAndIconView: DependantNamesAndIconView;
 
@@ -58,7 +58,7 @@ module app.publish {
         setObject(object: M, relativePath: boolean = false) {
             super.setObject(object);
 
-            var displayName = this.resolveDisplayName(object) || this.normalizeDisplayName(this.resolveUnnamedDisplayName(object)),
+            var displayName = this.resolveDisplayName(object),
                 iconUrl = this.resolveIconUrl(object);
 
             this.namesAndIconView.setMainName(displayName);
@@ -71,30 +71,16 @@ module app.publish {
         }
 
         resolveDisplayName(object: M): string {
-            var contentName = object.getName(),
-                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
+            var invalid = !object.isValid(),
                 pendingDelete = CompareStatus.PENDING_DELETE == object.getCompareStatus() ? true : false;
             this.toggleClass("invalid", invalid);
             this.toggleClass("pending-delete", pendingDelete);
 
-            return object.getDisplayName();
-        }
-
-        resolveUnnamedDisplayName(object: M): string {
-            return object.getType() ? object.getType().getLocalName() : "";
+            return object.getPath().toString();
         }
 
         resolveIconUrl(object: any): string {
             return new ContentIconUrlResolver().setContent(object).resolve();
-        }
-
-        private normalizeDisplayName(displayName: string): string {
-            if (api.util.StringHelper.isEmpty(displayName)) {
-                return "";
-            } else {
-                displayName = api.util.StringHelper.capitalizeAll(displayName.replace(/-/g, " ").trim());
-                return "<Unnamed " + displayName + ">";
-            }
         }
 
         getPreferredHeight(): number {

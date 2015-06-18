@@ -1,6 +1,6 @@
 module api.content.json {
 
-    export interface ResolvedPublishDependencyJson {
+    export interface ResolvedPublishContentJson {
 
         id: string;
 

@@ -49,16 +49,17 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
 
         final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 0, result.getDependantContents().size() );
-        assertEquals( 2, result.getChildrenContents().size() );
+        assertEquals( 2, result.getDependenciesContents().size() );
 
-        assertNotNull( result.getChildrenContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getName() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getId() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getPath() );
-        assertNotNull( result.getChildrenContents().get( 0 ).getType() );
+        assertEquals( result.getDependenciesContents().get( 0 ).isChild(), true );
+
+        assertNotNull( result.getDependenciesContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getId() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getType() );
     }
 
     @Test
@@ -80,16 +81,17 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
 
         final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 2, result.getDependantContents().size() );
-        assertEquals( 0, result.getChildrenContents().size() );
+        assertEquals( 2, result.getDependenciesContents().size() );
 
-        assertNotNull( result.getDependantContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getDependantContents().get( 0 ).getName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getDependantContents().get( 0 ).getId() );
-        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
-        assertNotNull( result.getDependantContents().get( 0 ).getType() );
+        assertEquals( result.getDependenciesContents().get( 0 ).isChild(), false );
+
+        assertNotNull( result.getDependenciesContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getId() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getType() );
     }
 
     @Test
@@ -113,16 +115,15 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
 
         final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 2, result.getDependantContents().size() );
-        assertEquals( 2, result.getChildrenContents().size() );
+        assertEquals( 4, result.getDependenciesContents().size() );
 
-        assertNotNull( result.getDependantContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getDependantContents().get( 0 ).getName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getDependantContents().get( 0 ).getId() );
-        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
-        assertNotNull( result.getDependantContents().get( 0 ).getType() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getId() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getType() );
     }
 
     @Test
@@ -150,19 +151,19 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
 
         final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 3, result.getDependantContents().size() );
+        assertEquals( 3, result.getDependenciesContents().size() );
 
-        assertEquals( result.getDependantContents().get( 0 ).getId(), "s2" );
-        assertEquals( result.getDependantContents().get( 1 ).getId(), "s1" );
-        assertEquals( result.getDependantContents().get( 2 ).getId(), "s3" );
+        assertEquals( result.getDependenciesContents().get( 0 ).getId(), "s2" );
+        assertEquals( result.getDependenciesContents().get( 1 ).getId(), "s1" );
+        assertEquals( result.getDependenciesContents().get( 2 ).getId(), "s3" );
 
-        assertNotNull( result.getDependantContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getDependantContents().get( 0 ).getName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getDependantContents().get( 0 ).getId() );
-        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
-        assertNotNull( result.getDependantContents().get( 0 ).getType() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getId() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getType() );
     }
 
     @Test
@@ -184,15 +185,15 @@ public class ResolvePublishDependenciesResultJsonFactoryTest
 
         final ResolvePublishDependenciesResultJson result = createDependantsResultJson( resolvedDependencies, resolved, compareResults );
 
-        assertEquals( 2, result.getDependantContents().size() );
+        assertEquals( 2, result.getDependenciesContents().size() );
 
-        assertNull( result.getDependantContents().get( 0 ).getCompareStatus() );
-        assertNotNull( result.getDependantContents().get( 0 ).getName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getDisplayName() );
-        assertNotNull( result.getDependantContents().get( 0 ).getIconUrl() );
-        assertNotNull( result.getDependantContents().get( 0 ).getId() );
-        assertNotNull( result.getDependantContents().get( 0 ).getPath() );
-        assertNotNull( result.getDependantContents().get( 0 ).getType() );
+        assertNull( result.getDependenciesContents().get( 0 ).getCompareStatus() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getDisplayName() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getIconUrl() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getId() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getPath() );
+        assertNotNull( result.getDependenciesContents().get( 0 ).getType() );
     }
 
     @Test(expected = IllegalArgumentException.class)

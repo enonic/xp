@@ -1,6 +1,7 @@
 {
-  "childrenContents": [
+  "dependenciesContents": [
     {
+      "child": true,
       "compareStatus": "NEW",
       "displayName": "My Content",
       "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
@@ -9,10 +10,9 @@
       "path": "/node1_1_1_content",
       "type": "mymodule:my_type",
       "valid": true
-    }
-  ],
-  "dependantContents": [
+    },
     {
+      "child": false,
       "compareStatus": "NEW",
       "displayName": "My Content",
       "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",

@@ -3,30 +3,20 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.List;
 
-import com.enonic.xp.admin.impl.rest.resource.content.ResolvedContent;
+import com.enonic.xp.admin.impl.rest.resource.content.ResolvedContent.ResolvedDependencyContent;
 
 public class ResolvePublishDependenciesResultJson
 {
-    private final List<ResolvedContent> dependantContents;
+    private final List<ResolvedDependencyContent> dependenciesContents;
 
-    private final List<ResolvedContent> childrenContents;
-
-    public ResolvePublishDependenciesResultJson( final List<ResolvedContent> dependantContents,
-                                                 final List<ResolvedContent> childrenContents )
+    public ResolvePublishDependenciesResultJson( List<ResolvedDependencyContent> dependenciesContents )
     {
-        this.dependantContents = dependantContents;
-        this.childrenContents = childrenContents;
+        this.dependenciesContents = dependenciesContents;
     }
 
     @SuppressWarnings("unused")
-    public List<ResolvedContent> getDependantContents()
+    public List<ResolvedDependencyContent> getDependenciesContents()
     {
-        return dependantContents;
-    }
-
-    @SuppressWarnings("unused")
-    public List<ResolvedContent> getChildrenContents()
-    {
-        return childrenContents;
+        return dependenciesContents;
     }
 }

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ResolvedContent.ResolvedDependencyContent;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesResultJson;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -42,34 +43,42 @@ public class ResolvePublishDependenciesResultJsonFactory
 
         final ContentIds childrenContentIds = pushContentRequests.getChildrenContentIds( true, true );
 
-        final List<ResolvedContent> dependantContents = populateResultList( dependantsContentIds );
+        final List<ResolvedDependencyContent> dependenciesContents = populateResultList( dependantsContentIds, childrenContentIds );
 
-        final List<ResolvedContent> childrenContents = populateResultList( childrenContentIds );
+        sortResults( dependenciesContents );
 
-        sortResults( dependantContents );
-
-        sortResults( childrenContents );
-
-        return new ResolvePublishDependenciesResultJson( dependantContents, childrenContents );
+        return new ResolvePublishDependenciesResultJson( dependenciesContents );
     }
 
-    private List<ResolvedContent> populateResultList( final ContentIds contentIds )
+    private List<ResolvedDependencyContent> populateResultList( final ContentIds dependantsContentIds, final ContentIds childrenContentIds )
     {
 
-        final List<ResolvedContent> resolvedContentList = new ArrayList<>();
+        final List<ResolvedDependencyContent> resolvedContentList = new ArrayList<>();
 
-        for ( final ContentId dependantContentId : contentIds )
+        for ( final ContentId dependantContentId : dependantsContentIds )
         {
-            Content resolvedContent = getResolvedContent( dependantContentId );
+            resolvedContentList.add( buildResolvedDependencyContent( dependantContentId, false ) );
+        }
 
-            resolvedContentList.add( ResolvedContent.create().
-                content( resolvedContent ).
-                compareStatus( fetchStatus( dependantContentId, compareContentResults ) ).
-                iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
-                build() );
+        for ( final ContentId childContentId : childrenContentIds )
+        {
+            resolvedContentList.add( buildResolvedDependencyContent( childContentId, true ) );
         }
 
         return resolvedContentList;
+    }
+
+    private ResolvedDependencyContent buildResolvedDependencyContent( final ContentId dependencyContentId, final boolean isChild )
+    {
+
+        final Content resolvedContent = getResolvedContent( dependencyContentId );
+
+        return ResolvedDependencyContent.create().
+            content( resolvedContent ).
+            compareStatus( fetchStatus( dependencyContentId, compareContentResults ) ).
+            iconUrl( iconUrlResolver.resolve( resolvedContent ) ).
+            isChild( isChild ).
+            build();
     }
 
     private Content getResolvedContent( final ContentId contentId )
@@ -84,7 +93,7 @@ public class ResolvePublishDependenciesResultJsonFactory
         return content;
     }
 
-    private void sortResults( final List<ResolvedContent> dependantContents )
+    private void sortResults( final List<ResolvedDependencyContent> dependantContents )
     {
         dependantContents.sort( ( o1, o2 ) -> o1.getPath().compareTo( o2.getPath() ) );
     }
