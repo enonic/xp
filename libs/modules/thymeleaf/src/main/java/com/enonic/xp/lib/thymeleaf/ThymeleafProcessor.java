@@ -8,6 +8,7 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 
@@ -32,11 +33,11 @@ public final class ThymeleafProcessor
         this.view = view;
     }
 
-    public void setModel( final Map<String, Object> model )
+    public void setModel( final ScriptValue model )
     {
         if ( model != null )
         {
-            this.parameters.putAll( model );
+            this.parameters.putAll( model.getMap() );
         }
     }
 

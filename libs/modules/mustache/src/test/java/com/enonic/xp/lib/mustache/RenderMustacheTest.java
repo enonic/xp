@@ -54,7 +54,7 @@ public class RenderMustacheTest
         throws Exception
     {
         final String result = stripEmptyLines( execute( "render" ).toString() );
-        final String expected = stripEmptyLines( readFile( "/app/test/test-result.html" ) );
+        final String expected = stripEmptyLines( readFile( "/app/test/view/test-result.html" ) );
         assertEquals( expected, result );
     }
 }
