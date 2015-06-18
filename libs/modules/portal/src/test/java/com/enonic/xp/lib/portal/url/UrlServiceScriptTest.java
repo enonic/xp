@@ -39,6 +39,7 @@ public class UrlServiceScriptTest
         service.setUrlService( Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
 
         addBean( "com.enonic.xp.lib.portal.url.UrlServiceWrapper", service );
+        addBean( "com.enonic.xp.lib.portal.current.PortalServiceWrapper", new Object() );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

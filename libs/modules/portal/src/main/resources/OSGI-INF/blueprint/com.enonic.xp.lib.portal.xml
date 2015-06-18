@@ -7,4 +7,10 @@
     </property>
   </bean>
 
+  <bean id="com.enonic.xp.lib.portal.current.PortalServiceWrapper" class="com.enonic.xp.lib.portal.current.PortalServiceWrapper">
+    <property name="contentService">
+      <reference interface="com.enonic.xp.content.ContentService"/>
+    </property>
+  </bean>
+
 </blueprint>

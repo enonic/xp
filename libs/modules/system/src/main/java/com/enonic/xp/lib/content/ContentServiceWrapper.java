@@ -2,7 +2,7 @@ package com.enonic.xp.lib.content;
 
 import com.enonic.xp.content.ContentService;
 
-public final class ContentLibService
+public final class ContentServiceWrapper
 {
     private ContentService contentService;
 

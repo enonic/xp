@@ -1,29 +1,45 @@
-var service = __.getBean('com.enonic.xp.lib.portal.url.UrlServiceWrapper');
+var urlService = __.getBean('com.enonic.xp.lib.portal.url.UrlServiceWrapper');
+var currentService = __.getBean('com.enonic.xp.lib.portal.current.PortalServiceWrapper');
 
 exports.assetUrl = function (params) {
-    return service.assetUrl(__.toScriptValue(params));
+    return urlService.assetUrl(__.toScriptValue(params));
 };
 
 exports.imageUrl = function (params) {
-    return service.imageUrl(__.toScriptValue(params));
+    return urlService.imageUrl(__.toScriptValue(params));
 };
 
 exports.componentUrl = function (params) {
-    return service.componentUrl(__.toScriptValue(params));
+    return urlService.componentUrl(__.toScriptValue(params));
 };
 
 exports.attachmentUrl = function (params) {
-    return service.attachmentUrl(__.toScriptValue(params));
+    return urlService.attachmentUrl(__.toScriptValue(params));
 };
 
 exports.pageUrl = function (params) {
-    return service.pageUrl(__.toScriptValue(params));
+    return urlService.pageUrl(__.toScriptValue(params));
 };
 
 exports.serviceUrl = function (params) {
-    return service.serviceUrl(__.toScriptValue(params));
+    return urlService.serviceUrl(__.toScriptValue(params));
 };
 
 exports.processHtml = function (params) {
-    return service.processHtml(__.toScriptValue(params));
+    return urlService.processHtml(__.toScriptValue(params));
 };
+
+//
+
+exports.getContent = function () {
+    return currentService.currentContent();
+};
+
+exports.getComponent = function () {
+    return currentService.currentComponent();
+};
+
+exports.getSite = function () {
+    return currentService.currentSite();
+};
+

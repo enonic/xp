@@ -1,4 +1,4 @@
-var service = __.getBean('com.enonic.xp.lib.content.ContentLibService');
+var service = __.getBean('com.enonic.xp.lib.content.ContentServiceWrapper');
 
 exports.get = function (params) {
 
