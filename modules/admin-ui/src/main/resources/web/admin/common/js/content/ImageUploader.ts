@@ -90,14 +90,13 @@ module api.content {
                 }, 150);
             });
 
-            this.onBlur(() => {
-                if (imageEditor.hasClass('selected')) {
+            this.onBlur((event) => {
+                if (imageEditor.hasClass('selected') && !api.ObjectHelper.objectEquals(event.relatedTarget, this.getResetButton())) {
                     this.toggleSelected(imageEditor);
                 }
             });
 
             image.onClicked((event: MouseEvent) => {
-
                 this.toggleSelected(imageEditor);
 
                 event.stopPropagation();

@@ -150,6 +150,10 @@ module api.ui.uploader {
             this.resetBtn.setVisible(visible);
         }
 
+        getResetButton(): CloseButton {
+            return this.resetBtn;
+        }
+
         private initHandler() {
             if (this.config.disabled) {
                 if (Uploader.debug) {
