@@ -15,8 +15,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
