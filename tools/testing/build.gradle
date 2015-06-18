@@ -1,6 +1,0 @@
-dependencies {
-    compile "com.enonic.xp:core-api:${version}"
-    compile "com.enonic.xp:web-api:${version}"
-    compile "com.enonic.xp:portal-api:${version}"
-    compile 'junit:junit:4.12'
-}
