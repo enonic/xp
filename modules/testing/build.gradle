@@ -1,0 +1,4 @@
+dependencies {
+    compile project( ':portal-api' )
+    compile 'junit:junit:4.10'
+}

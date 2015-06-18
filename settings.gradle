@@ -32,6 +32,9 @@ include 'itest-core'
 include 'launcher'
 include 'distro'
 
+include 'testing'
+include 'gradle-plugin'
+
 rootProject.name = 'xp'
 
 rootProject.children.each { project ->

@@ -1,2 +1,0 @@
-include ':testing'
-include ':gradle-plugin'
