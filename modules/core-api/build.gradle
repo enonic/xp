@@ -16,3 +16,8 @@ bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Api'
     instruction 'Export-Package', 'com.enonic.xp.*;-split-package:=first'
 }
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+}
