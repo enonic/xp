@@ -50,10 +50,21 @@ public final class ServletRequestUrlHelper
 
     private static String createUriWithHost( final HttpServletRequest req, final String path )
     {
+        final StringBuilder str = new StringBuilder();
+
+        str.append( createHost( req ) );
+        str.append( createUri( path ) );
+
+        return str.toString();
+    }
+
+    private static String createHost( final HttpServletRequest req )
+    {
+        final StringBuilder str = new StringBuilder();
+
         final String scheme = req.getScheme();
         final int port = req.getServerPort();
 
-        final StringBuilder str = new StringBuilder();
         str.append( scheme ).append( "://" );
         str.append( req.getServerName() );
 
@@ -61,9 +72,54 @@ public final class ServletRequestUrlHelper
         {
             str.append( ":" ).append( port );
         }
-
-        str.append( createUri( path ) );
         return str.toString();
+    }
+
+    public static String createBaseUrl( final String baseUri, final String branch, final String contentPath )
+    {
+        return createBaseUrl( ServletRequestHolder.getRequest(), baseUri, branch, contentPath );
+    }
+
+    private static String createBaseUrl( final HttpServletRequest req, final String baseUri, final String branch, final String contentPath )
+    {
+        final String host = createHost( req );
+        final String normalizedBaseUri = normalizePath( baseUri );
+        final String normalizedBranch = normalizePath( branch );
+        final String normalizedContentPath = normalizePath( contentPath );
+        final String baseUriAndBranch = normalizedBaseUri + normalizedBranch;
+        final String uri = normalizedBaseUri + normalizedBranch + normalizedContentPath;
+
+        //The base URL starts with the host
+        final StringBuilder baseUrl = new StringBuilder( host );
+
+        //If the URI is rewritten
+        final UriRewritingResult rewritingResult = rewriteUri( req, uri );
+        if ( rewritingResult.getNewUriPrefix() != null )
+        {
+            //Appends the rewritten part to the host
+            baseUrl.append( rewritingResult.getNewUriPrefix() );
+
+            if ( rewritingResult.getDeletedUriPrefix().startsWith( normalizedBaseUri ) )
+            {
+                if ( !rewritingResult.getDeletedUriPrefix().startsWith( baseUriAndBranch ) )
+                {
+                    //If the baseUri has been rewritten but not the branch, append the branch to the rewritten part
+                    baseUrl.append( normalizedBranch );
+                }
+            }
+            else
+            {
+                // If the baseUri has not been rewritten, appends the baseUri and the branch to the rewritten part
+                baseUrl.append( baseUriAndBranch );
+            }
+        }
+        else
+        {
+            //If there is no rewriting, appends the baseUri and the branch to the host
+            baseUrl.append( baseUriAndBranch );
+        }
+
+        return baseUrl.toString();
     }
 
     private static boolean needPortNumber( final String scheme, final int port )
