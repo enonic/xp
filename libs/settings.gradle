@@ -3,6 +3,7 @@ include ':portal'
 include ':mustache'
 include ':thymeleaf'
 include ':xslt'
+include ':i18n'
 
 rootProject.children.each { project ->
     String projectDirName = "modules/${project.name}"
