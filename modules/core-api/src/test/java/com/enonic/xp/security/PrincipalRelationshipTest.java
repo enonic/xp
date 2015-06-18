@@ -2,10 +2,6 @@ package com.enonic.xp.security;
 
 import org.junit.Test;
 
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalRelationship;
-import com.enonic.xp.security.UserStoreKey;
-
 import static org.junit.Assert.*;
 
 public class PrincipalRelationshipTest

@@ -2,7 +2,6 @@ package com.enonic.xp.index;
 
 import org.junit.Test;
 
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;

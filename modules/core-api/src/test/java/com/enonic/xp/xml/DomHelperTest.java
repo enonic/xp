@@ -12,8 +12,6 @@ import org.w3c.dom.Element;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.xml.DomHelper;
-
 import static org.junit.Assert.*;
 
 public class DomHelperTest

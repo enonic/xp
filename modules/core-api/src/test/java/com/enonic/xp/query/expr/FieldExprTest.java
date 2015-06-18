@@ -3,8 +3,6 @@ package com.enonic.xp.query.expr;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.query.expr.FieldExpr;
-
 public class FieldExprTest
 {
     @Test

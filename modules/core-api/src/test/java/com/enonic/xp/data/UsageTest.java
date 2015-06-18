@@ -4,10 +4,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
-
 import static org.junit.Assert.*;
 
 public class UsageTest

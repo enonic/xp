@@ -5,8 +5,6 @@ import org.junit.Test;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 

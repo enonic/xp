@@ -3,7 +3,6 @@ package com.enonic.xp.convert;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.convert.Converters;
 
 import static org.junit.Assert.*;
 

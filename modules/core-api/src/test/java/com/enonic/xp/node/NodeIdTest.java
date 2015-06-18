@@ -2,8 +2,6 @@ package com.enonic.xp.node;
 
 import org.junit.Test;
 
-import com.enonic.xp.node.NodeId;
-
 public class NodeIdTest
 {
     @Test
