@@ -3,10 +3,9 @@ package com.enonic.xp.portal.i18n;
 import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import com.google.common.collect.Lists;
-
-import junit.framework.TestCase;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -16,7 +15,7 @@ import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.site.Site;
 
 public class LocalizeParamsTest
-    extends TestCase
+
 {
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
@@ -36,6 +35,7 @@ public class LocalizeParamsTest
         PortalRequestAccessor.set( request );
     }
 
+    @Test
     public void testName()
         throws Exception
     {
