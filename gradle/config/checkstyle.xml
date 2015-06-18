@@ -9,7 +9,7 @@
     <module name="UnusedImports"/>
 
     <module name="IllegalImport">
-      <property name="illegalPkgs" value="java.io, java.sql"/>
+      <property name="illegalPkgs" value="junit.framework"/>
     </module>
 
     <module name="NoFinalizer"/>
