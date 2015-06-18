@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.script.function;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptFunctions
@@ -56,5 +57,10 @@ public final class ScriptFunctions
     public Object getBean( final String name )
     {
         return this.executor.getBeanManager().getBean( this.script.getModule(), name );
+    }
+
+    public ScriptValue toScriptValue( final Object value )
+    {
+        return this.executor.newScriptValue( value );
     }
 }

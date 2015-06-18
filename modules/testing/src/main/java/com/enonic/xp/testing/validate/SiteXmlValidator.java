@@ -1,4 +1,4 @@
-package com.enonic.xp.tools.testing.validate;
+package com.enonic.xp.testing.validate;
 
 import java.io.File;
 

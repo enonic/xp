@@ -71,5 +71,6 @@ subprojects {
         provided "com.enonic.xp:core-api:${version}"
         provided "com.enonic.xp:web-api:${version}"
         provided "com.enonic.xp:portal-api:${version}"
+        testCompile "com.enonic.xp:testing:${version}"
     }
 }
