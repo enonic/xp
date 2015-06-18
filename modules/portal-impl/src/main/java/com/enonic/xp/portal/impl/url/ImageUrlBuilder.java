@@ -45,12 +45,13 @@ final class ImageUrlBuilder
 
         if ( this.params.getFormat() != null )
         {
-            return name + "." + this.params.getFormat();
+            String[] nameSpl = name.split( "\\.(?=[^\\.]+$)" );
+            if ( nameSpl.length == 1 || ( nameSpl.length > 1 && !nameSpl[1].equals( this.params.getFormat() ) ) )
+            {
+                return name + "." + this.params.getFormat();
+            }
         }
-        else
-        {
-            return name;
-        }
+        return name;
     }
 
     private ContentId resolveId()
