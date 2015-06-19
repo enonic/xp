@@ -90,7 +90,7 @@ public class XmlNodeSerializerTest
         indexConfig.analyzer( "no" );
         indexConfig.add( "mydata", IndexConfig.FULLTEXT );
 
-        return Node.newNode().
+        return Node.create().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
             parentPath( NodePath.ROOT ).

@@ -406,7 +406,7 @@ public class ContentServiceImpl
                 throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
             }
 
-            final Node movedNode = nodeService.move( sourceNodeId, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+            final Node movedNode = nodeService.move( sourceNodeId, NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements(
                 params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();

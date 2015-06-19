@@ -18,7 +18,7 @@ public class PageMapperTest
 
     public PageMapperTest()
     {
-        region1 = Region.newRegion().name( "myRegion" ).build();
+        region1 = Region.create().name( "myRegion" ).build();
         config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config1.addString( "a", "b" );
     }
@@ -27,10 +27,10 @@ public class PageMapperTest
     public void page_with_emptyRegions()
         throws Exception
     {
-        final Page page = Page.newPage().
+        final Page page = Page.create().
             controller( DescriptorKey.from( "mymodule:default" ) ).
             config( config1 ).
-            regions( PageRegions.newPageRegions().build() ).
+            regions( PageRegions.create().build() ).
             build();
 
         // exercise
@@ -44,7 +44,7 @@ public class PageMapperTest
     public void page_with_nullRegions()
         throws Exception
     {
-        final Page page = Page.newPage().
+        final Page page = Page.create().
             controller( DescriptorKey.from( "mymodule:default" ) ).
             config( config1 ).
             regions( null ).
@@ -62,10 +62,10 @@ public class PageMapperTest
     public void page_with_nullConfig()
         throws Exception
     {
-        final Page page = Page.newPage().
+        final Page page = Page.create().
             controller( DescriptorKey.from( "mymodule:default" ) ).
             config( null ).
-            regions( PageRegions.newPageRegions().add( region1 ).build() ).
+            regions( PageRegions.create().add( region1 ).build() ).
             build();
 
         // exercise
@@ -79,10 +79,10 @@ public class PageMapperTest
     public void page_with_emptyConfig()
         throws Exception
     {
-        final Page page = Page.newPage().
+        final Page page = Page.create().
             controller( DescriptorKey.from( "mymodule:default" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            regions( PageRegions.newPageRegions().add( region1 ).build() ).
+            regions( PageRegions.create().add( region1 ).build() ).
             build();
 
         // exercise

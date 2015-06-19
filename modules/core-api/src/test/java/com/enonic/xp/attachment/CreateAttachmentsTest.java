@@ -68,7 +68,7 @@ public class CreateAttachmentsTest
             name( "MyImage2.png" ).
             build();
 
-        CreateAttachments attachments = CreateAttachments.builder().add( a1 ).add( CreateAttachments.from( a2, a3 ) ).build();
+        CreateAttachments attachments = CreateAttachments.create().add( a1 ).add( CreateAttachments.from( a2, a3 ) ).build();
 
         assertEquals( 3, attachments.getSize() );
         assertEquals( a1, attachments.first() );

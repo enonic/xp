@@ -21,7 +21,7 @@ public class FieldSetJson
     public FieldSetJson( @JsonProperty("name") String name, @JsonProperty("label") String label,
                          @JsonProperty("items") List<FormItemJson> items )
     {
-        super( FieldSet.newFieldSet().
+        super( FieldSet.create().
             name( name ).
             label( label ).
             addFormItems( unwrapFormItems( items ) ).

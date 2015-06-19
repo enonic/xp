@@ -101,7 +101,7 @@ public final class CreateContentHandler
             return null;
         }
 
-        final ExtraDatas.Builder metadatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder metadatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
             final ModuleKey moduleKey = ExtraData.fromModulePrefix( modulePrefix );

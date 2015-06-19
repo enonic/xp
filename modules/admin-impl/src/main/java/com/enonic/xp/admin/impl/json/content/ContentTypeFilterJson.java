@@ -69,7 +69,7 @@ public final class ContentTypeFilterJson
     @JsonIgnore
     public ContentTypeFilter toContentTypeFilter()
     {
-        final ContentTypeFilter.Builder filter = ContentTypeFilter.newContentFilter();
+        final ContentTypeFilter.Builder filter = ContentTypeFilter.create();
 
         for ( final String allowStr : allow )
         {

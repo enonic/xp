@@ -80,12 +80,12 @@ public final class Occurrences
         return s.toString();
     }
 
-    public static Builder newOccurrences()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newOccurrences( final Occurrences occurrences )
+    public static Builder create( final Occurrences occurrences )
     {
         return new Builder( occurrences );
     }

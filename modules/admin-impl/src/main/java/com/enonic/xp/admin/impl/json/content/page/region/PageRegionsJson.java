@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Region;
 
-import static com.enonic.xp.page.PageRegions.newPageRegions;
-
 @SuppressWarnings("UnusedDeclaration")
 public class PageRegionsJson
 {
@@ -40,7 +38,7 @@ public class PageRegionsJson
     public PageRegionsJson( final List<RegionJson> regionJsons )
     {
         this.regionsJson = regionJsons;
-        final PageRegions.Builder builder = newPageRegions();
+        final PageRegions.Builder builder = PageRegions.create();
         for ( RegionJson region : regionJsons )
         {
             builder.add( region.getRegion() );

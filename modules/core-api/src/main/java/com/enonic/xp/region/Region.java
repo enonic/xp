@@ -34,19 +34,19 @@ public final class Region
         }
     }
 
-    public static Builder newRegion()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newRegion( final Region source )
+    public static Builder create( final Region source )
     {
         return new Builder( source );
     }
 
     public Region copy()
     {
-        return Region.newRegion( this ).build();
+        return Region.create( this ).build();
     }
 
     public String getName()

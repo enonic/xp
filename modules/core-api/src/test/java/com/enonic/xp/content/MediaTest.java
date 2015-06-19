@@ -46,7 +46,7 @@ public class MediaTest
     @Test
     public void getBestFitImageAttachment_onlySource()
     {
-        Attachment source = Attachment.newAttachment().
+        Attachment source = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1024 ).
             label( "source" ).
@@ -104,35 +104,35 @@ public class MediaTest
 
     private Attachments generateAllSizesAttachments()
     {
-        Attachment source = Attachment.newAttachment().
+        Attachment source = Attachment.create().
             mimeType( "image/jpg" ).
             size( 10709855 ).
             label( "source" ).
             name( "MyImage.jpg" ).
             build();
 
-        Attachment small = Attachment.newAttachment().
+        Attachment small = Attachment.create().
             mimeType( "image/jpg" ).
             size( 24217 ).
             label( "small" ).
             name( "MyImage_small.jpg" ).
             build();
 
-        Attachment medium = Attachment.newAttachment().
+        Attachment medium = Attachment.create().
             mimeType( "image/jpg" ).
             size( 94293 ).
             label( "medium" ).
             name( "MyImage_medium.jpg" ).
             build();
 
-        Attachment large = Attachment.newAttachment().
+        Attachment large = Attachment.create().
             mimeType( "image/jpg" ).
             size( 363595 ).
             label( "large" ).
             name( "MyImage_large.jpg" ).
             build();
 
-        Attachment extra_large = Attachment.newAttachment().
+        Attachment extra_large = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1248953 ).
             label( "extra-large" ).

@@ -34,7 +34,7 @@ final class BuiltinRelationshipTypeLoader
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )
     {
-        return RelationshipType.newRelationshipType().
+        return RelationshipType.create().
             name( relationshipTypeName ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
@@ -48,7 +48,7 @@ final class BuiltinRelationshipTypeLoader
         final List<RelationshipType> relationshipTypes = Lists.newArrayList();
         for ( RelationshipType relationshipType : RELATIONSHIP_TYPES )
         {
-            relationshipType = RelationshipType.newRelationshipType( relationshipType ).
+            relationshipType = RelationshipType.create( relationshipType ).
                 icon( loadSchemaIcon( RELATIONSHIP_TYPES_FOLDER, relationshipType.getName().getLocalName() ) ).
                 build();
             relationshipTypes.add( relationshipType );

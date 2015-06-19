@@ -15,10 +15,6 @@ import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static com.enonic.xp.content.Content.newContent;
-import static com.enonic.xp.form.FieldSet.newFieldSet;
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class OccurrenceValidatorTest
@@ -30,7 +26,7 @@ public class OccurrenceValidatorTest
     @Before
     public void before()
     {
-        contentType = newContentType().
+        contentType = ContentType.create().
             name( "mymodule:my_type" ).
             superType( ContentTypeName.structured() ).
             build();
@@ -41,7 +37,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 1 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "1" );
         content.getData().setString( "myInput[1]", "2" );
 
@@ -57,7 +53,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).maximumOccurrences( 2 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "1" );
         content.getData().setString( "myInput[1]", "2" );
         content.getData().setString( "myInput[2]", "3" );
@@ -73,7 +69,7 @@ public class OccurrenceValidatorTest
     public void given_required_input_with_data_when_validate_then_hasErrors_returns_false()
     {
         contentType.form().addFormItem( Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput", "value" );
 
         // exercise
@@ -85,7 +81,7 @@ public class OccurrenceValidatorTest
     public void given_required_input_with_no_data_when_validate_then_hasErrors_returns_true()
     {
         contentType.form().addFormItem( Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType.form() ).validate( content.getData().getRoot() );
@@ -97,7 +93,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput", "" );
 
         // exercise
@@ -111,7 +107,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput", "value" );
 
         // exercise
@@ -126,7 +122,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 3 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "value 1" );
         content.getData().setString( "myInput[1]", "value 2" );
 
@@ -142,7 +138,7 @@ public class OccurrenceValidatorTest
     {
         contentType.form().addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 2 ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "value 1" );
         content.getData().setString( "myInput[1]", "" );
 
@@ -157,9 +153,9 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
 
-        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
+        contentType.form().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
             Input.create().name( "myField" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType.form() ).validate( content.getData().getRoot() );
@@ -170,10 +166,10 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
-            newFieldSet().label( "My Layout" ).name( "myLayout" ).addFormItem(
+        contentType.form().addFormItem( FieldSet.create().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
+            FieldSet.create().label( "My Layout" ).name( "myLayout" ).addFormItem(
                 Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType.form() ).validate( content.getData().getRoot() );
@@ -185,10 +181,10 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_empty_string_within_set_within_layout_when_validate_then_MissingRequiredValueValidationError()
     {
         Input myInput = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = newFormItemSet().name( "mySet" ).addFormItem( myInput ).build();
-        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem( mySet ).build();
+        FormItemSet mySet = FormItemSet.create().name( "mySet" ).addFormItem( myInput ).build();
+        FieldSet myLayout = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( mySet ).build();
         contentType.form().addFormItem( myLayout );
-        Content content = newContent().path( MY_CONTENT_PATH ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
         content.getData().setString( "mySet.myInput", "" );
 
         // exercise
@@ -201,9 +197,9 @@ public class OccurrenceValidatorTest
     public void given_required_input_with_empty_string_within_set_when_validate_then_MissingRequiredValueValidationError()
     {
         Input myInput = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = newFormItemSet().name( "mySet" ).required( true ).addFormItem( myInput ).build();
+        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "mySet.myInput", "" );
 
         // exercise
@@ -216,11 +212,11 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_empty_string_within_layout_within_a_set_when_validate_then_MissingRequiredValueValidationError()
     {
         Input myRequiredInput = Input.create().name( "myRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem( myRequiredInput ).build();
-        FormItemSet myRequiredSet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myLayout ).build();
+        FieldSet myLayout = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( myRequiredInput ).build();
+        FormItemSet myRequiredSet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myLayout ).build();
 
         contentType.form().addFormItem( myRequiredSet );
-        Content content = newContent().path( MY_CONTENT_PATH ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
         content.getData().setString( "mySet.myRequiredInput", "" );
 
         // exercise
@@ -234,9 +230,9 @@ public class OccurrenceValidatorTest
     @Test()
     public void given_required_set_with_data_when_validate_then_hasErrors_returns_false()
     {
-        contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).addFormItem(
+        contentType.form().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "mySet.myInput", "value" );
 
         // exercise
@@ -247,9 +243,9 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( newFormItemSet().name( "mySet" ).required( true ).addFormItem(
+        contentType.form().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
             Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType.form() ).validate( content.getData().getRoot() );
@@ -261,10 +257,10 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
-            newFormItemSet().name( "mySet" ).required( true ).addFormItem(
+        contentType.form().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+            FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
         DataValidationErrors validationResults = new OccurrenceValidator( contentType.form() ).validate( content.getData().getRoot() );
@@ -276,11 +272,11 @@ public class OccurrenceValidatorTest
     public void given_required_input_at_top_and_inside_formItemSet_and_formItemSet_have_other_unrequired_data_when_validate_then_two_errors_are_found()
     {
         Input myInput = Input.create().name( "myRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myInput ).build();
+        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
         contentType.form().addFormItem(
             Input.create().name( "myOtherRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "mySet.myUnrequiredData", "1" );
 
         assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
@@ -306,9 +302,9 @@ public class OccurrenceValidatorTest
     public void data_for_input_is_not_required_if_parent_data_set_does_not_exist()
     {
         Input myInput = Input.create().name( "myRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myInput ).build();
+        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myData", "1" );
 
         // exercise
@@ -321,9 +317,9 @@ public class OccurrenceValidatorTest
     public void todo_required_data_not_given_in_second_instance_of_unrequired_set()
     {
         Input myInput = Input.create().name( "myRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = newFormItemSet().name( "mySet" ).required( false ).multiple( true ).addFormItem( myInput ).build();
+        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).multiple( true ).addFormItem( myInput ).build();
         contentType.form().addFormItem( mySet );
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "mySet[0].myRequiredInput", "1" );
         content.getData().setString( "mySet[1].myRequiredInput", "" );
 
@@ -339,17 +335,17 @@ public class OccurrenceValidatorTest
         // setup
         contentType.form().addFormItem( Input.create().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        FormItemSet personalia = newFormItemSet().name( "personalia" ).multiple( false ).required( true ).build();
+        FormItemSet personalia = FormItemSet.create().name( "personalia" ).multiple( false ).required( true ).build();
         personalia.add( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         personalia.add( Input.create().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentType.form().addFormItem( personalia );
 
-        FormItemSet crimes = newFormItemSet().name( "crimes" ).multiple( true ).build();
+        FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
         contentType.form().addFormItem( crimes );
         crimes.add( Input.create().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
         crimes.add( Input.create().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         content.getData().setString( "name", "Thomas" );
         content.getData().setString( "crimes[0].description", "Stole tomatoes from neighbour" );

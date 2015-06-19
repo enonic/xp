@@ -83,7 +83,7 @@ public final class UpdateContentJson
 
     private ExtraDatas parseExtradata( final List<ExtraDataJson> extraDataJsonList )
     {
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( ExtraDataJson extraDataJson : extraDataJsonList )
         {
             extradatasBuilder.add( extraDataJson.getExtraData() );

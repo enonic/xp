@@ -140,7 +140,7 @@ public final class ContentDataSerializer
     public Content.Builder fromData( final PropertySet contentAsSet )
     {
         final ContentTypeName contentTypeName = ContentTypeName.from( contentAsSet.getString( ContentPropertyNames.TYPE ) );
-        final Content.Builder builder = Content.newContent( contentTypeName );
+        final Content.Builder builder = Content.create( contentTypeName );
 
         builder.displayName( contentAsSet.getString( DISPLAY_NAME ) );
         builder.valid( contentAsSet.getBoolean( VALID ) != null ? contentAsSet.getBoolean( ContentPropertyNames.VALID ) : false );
@@ -192,7 +192,7 @@ public final class ContentDataSerializer
         final PropertySet metadataSet = contentAsSet.getSet( EXTRA_DATA );
         if ( metadataSet != null )
         {
-            final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+            final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
             for ( final String metadataModulePrefix : metadataSet.getPropertyNames() )
             {
                 final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
@@ -229,10 +229,10 @@ public final class ContentDataSerializer
 
     Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )
     {
-        final Attachments.Builder attachments = Attachments.builder();
+        final Attachments.Builder attachments = Attachments.create();
         for ( final PropertySet attachmentAsSet : attachmentSets )
         {
-            attachments.add( Attachment.newAttachment().
+            attachments.add( Attachment.create().
                 name( attachmentAsSet.getString( "name" ) ).
                 label( attachmentAsSet.getString( "label" ) ).
                 mimeType( attachmentAsSet.getString( "mimeType" ) ).

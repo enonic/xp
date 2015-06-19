@@ -64,7 +64,7 @@ public class EditableContent
 
     public Content build()
     {
-        return Content.newContent( this.source ).
+        return Content.create( this.source ).
             displayName( displayName ).
             data( data ).
             extraDatas( extraDatas ).

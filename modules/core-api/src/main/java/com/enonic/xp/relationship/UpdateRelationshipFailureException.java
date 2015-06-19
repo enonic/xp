@@ -59,7 +59,7 @@ public final class UpdateRelationshipFailureException
         }
     }
 
-    public static Builder newUpdateRelationshipsResult()
+    public static Builder create()
     {
         return new Builder();
     }

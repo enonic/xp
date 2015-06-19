@@ -9,8 +9,6 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.mixin.MixinNames;
 
-import static com.enonic.xp.form.Form.newForm;
-
 @Beta
 public final class ContentType
     extends BaseSchema<ContentTypeName>
@@ -52,12 +50,12 @@ public final class ContentType
         this.metadata = builder.metadata;
     }
 
-    public static Builder newContentType()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newContentType( final ContentType contentType )
+    public static Builder create( final ContentType contentType )
     {
         return new Builder( contentType );
     }
@@ -138,7 +136,7 @@ public final class ContentType
 
         private boolean isBuiltIn;
 
-        private Form.Builder formBuilder = newForm();
+        private Form.Builder formBuilder = Form.create();
 
         private ContentTypeName superType;
 
@@ -149,7 +147,7 @@ public final class ContentType
         private Builder()
         {
             super();
-            formBuilder = newForm();
+            formBuilder = Form.create();
             isAbstract = false;
             isFinal = true;
             allowChildContent = true;
@@ -167,7 +165,7 @@ public final class ContentType
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
-                this.formBuilder = newForm( source.form() );
+                this.formBuilder = Form.create( source.form() );
             }
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
             this.metadata = source.metadata;
@@ -242,7 +240,7 @@ public final class ContentType
 
         public Builder form( final Form form )
         {
-            this.formBuilder = newForm( form );
+            this.formBuilder = Form.create( form );
             return this;
         }
 

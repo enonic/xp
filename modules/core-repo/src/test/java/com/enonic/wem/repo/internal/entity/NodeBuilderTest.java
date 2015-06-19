@@ -17,7 +17,7 @@ public class NodeBuilderTest
     public void build_given_no_properties_then_rootDataSet_not_null()
         throws Exception
     {
-        final Node myNode = Node.newNode().name( NodeName.from( "my-node" ) ).parentPath( NodePath.ROOT ).build();
+        final Node myNode = Node.create().name( NodeName.from( "my-node" ) ).parentPath( NodePath.ROOT ).build();
         assertNotNull( myNode.data() );
     }
 
@@ -25,7 +25,7 @@ public class NodeBuilderTest
     @Test
     public void build_given_index_config()
     {
-        final Node myNode = Node.newNode().
+        final Node myNode = Node.create().
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 build() ).
@@ -39,7 +39,7 @@ public class NodeBuilderTest
     @Test
     public void build_given_path()
     {
-        final Node myNode = Node.newNode().
+        final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
             parentPath( NodePath.ROOT ).
             path( "test" ).
@@ -55,7 +55,7 @@ public class NodeBuilderTest
 
         LocalDateTime localDateTime = LocalDateTime.of( 2013, 10, 25, 10, 43 );
 
-        final Node myNode = Node.newNode().
+        final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
             parentPath( NodePath.ROOT ).
             path( "test" ).

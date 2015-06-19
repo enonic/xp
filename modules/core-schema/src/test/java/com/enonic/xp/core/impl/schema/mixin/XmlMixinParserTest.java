@@ -23,7 +23,7 @@ public class XmlMixinParserTest
         this.parser = new XmlMixinParser();
         this.parser.currentModule( ModuleKey.from( "mymodule" ) );
 
-        this.builder = Mixin.newMixin();
+        this.builder = Mixin.create();
         this.builder.name( MixinName.from( "mymodule:mymixin" ) );
         this.parser.builder( this.builder );
     }

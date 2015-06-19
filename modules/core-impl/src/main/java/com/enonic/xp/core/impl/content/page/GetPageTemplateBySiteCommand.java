@@ -18,7 +18,7 @@ final class GetPageTemplateBySiteCommand
 
     public PageTemplates execute()
     {
-        final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
+        final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.create();
         final Content site = contentService.getById( siteId );
         final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), ContentServiceImpl.TEMPLATES_FOLDER_NAME );
         final FindContentByParentResult result =
