@@ -25,7 +25,7 @@ public class ScriptingTest
     {
         setupRequest();
 
-        this.portalRequest.setSite( Site.newSite().
+        this.portalRequest.setSite( Site.create().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( Locale.ENGLISH ).

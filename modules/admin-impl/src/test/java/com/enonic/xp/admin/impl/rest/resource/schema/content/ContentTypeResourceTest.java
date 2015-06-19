@@ -29,10 +29,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static com.enonic.xp.form.FieldSet.newFieldSet;
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 
@@ -66,7 +63,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         // setup
-        final ContentType contentType = newContentType().
+        final ContentType contentType = ContentType.create().
             name( MY_CTY_QUALIFIED_NAME ).
             createdTime( SOME_DATE ).
             superType( ContentTypeName.unstructured() ).
@@ -111,7 +108,7 @@ public class ContentTypeResourceTest
             required( false ).
             build();
 
-        FieldSet myFieldSet = newFieldSet().
+        FieldSet myFieldSet = FieldSet.create().
             name( "myFieldSet" ).
             label( "My field set" ).
             addFormItem( Input.create().
@@ -122,7 +119,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        FormItemSet myFormItemSet = newFormItemSet().
+        FormItemSet myFormItemSet = FormItemSet.create().
             name( "myFormItemSet" ).
             label( "My form item set" ).
             addFormItem( Input.create().
@@ -133,11 +130,11 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        InlineMixin myInline = InlineMixin.newInlineMixin().
+        InlineMixin myInline = InlineMixin.create().
             mixin( "mymodule:mymixin" ).
             build();
 
-        ContentType contentType = newContentType().
+        ContentType contentType = ContentType.create().
             createdTime( SOME_DATE ).
             name( MY_CTY_QUALIFIED_NAME ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
@@ -164,7 +161,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         // setup
-        final ContentType contentType = newContentType().
+        final ContentType contentType = ContentType.create().
             createdTime( SOME_DATE ).
             name( MY_CTY_QUALIFIED_NAME ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
@@ -199,7 +196,7 @@ public class ContentTypeResourceTest
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
-        final ContentType contentType = ContentType.newContentType().
+        final ContentType contentType = ContentType.create().
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             superType( ContentTypeName.from( "mymodule:unstructured" ) ).
@@ -222,7 +219,7 @@ public class ContentTypeResourceTest
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
-        final ContentType systemContentType = ContentType.newContentType().
+        final ContentType systemContentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( "mymodule:unstructured" ).
             displayName( "Unstructured" ).
@@ -230,7 +227,7 @@ public class ContentTypeResourceTest
             build();
         setupContentType( systemContentType );
 
-        final ContentType contentType = ContentType.newContentType().
+        final ContentType contentType = ContentType.create().
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             superType( systemContentType.getName() ).

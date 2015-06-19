@@ -14,12 +14,12 @@ public class UpdateAttachmentsParamsTest
     {
         ContentId id = ContentId.from( "id-1" );
 
-        Attachment attachment = Attachment.newAttachment().
+        Attachment attachment = Attachment.create().
             mimeType( "image/jpg" ).
             name( "MyImage.jpg" ).
             build();
 
-        UpdateAttachmentsParams params = UpdateAttachmentsParams.newUpdateAttachments( id ).
+        UpdateAttachmentsParams params = UpdateAttachmentsParams.create( id ).
             addAttachments( attachment ).build();
 
         assertEquals( id, params.getContentId() );

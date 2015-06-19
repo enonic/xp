@@ -133,7 +133,7 @@ final class ValidateContentDataCommand
                     continue;
                 }
 
-                final Form mixinForm = Form.newForm().addFormItems( mixin.getFormItems() ).build();
+                final Form mixinForm = Form.create().addFormItems( mixin.getFormItems() ).build();
 
                 this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
             }

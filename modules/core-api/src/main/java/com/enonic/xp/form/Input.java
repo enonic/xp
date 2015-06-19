@@ -12,8 +12,6 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 
-import static com.enonic.xp.form.Occurrences.newOccurrences;
-
 @Beta
 public final class Input
     extends FormItem
@@ -257,7 +255,7 @@ public final class Input
 
         private boolean immutable = false;
 
-        private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
+        private Occurrences occurrences = Occurrences.create().minimum( 0 ).maximum( 1 ).build();
 
         private boolean indexed = false;
 
@@ -316,25 +314,25 @@ public final class Input
 
         public Builder occurrences( Occurrences value )
         {
-            occurrences = newOccurrences().minimum( value.getMinimum() ).maximum( value.getMaximum() ).build();
+            occurrences = Occurrences.create().minimum( value.getMinimum() ).maximum( value.getMaximum() ).build();
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences = newOccurrences().minimum( minOccurrences ).maximum( maxOccurrences ).build();
+            occurrences = Occurrences.create().minimum( minOccurrences ).maximum( maxOccurrences ).build();
             return this;
         }
 
         public Builder minimumOccurrences( int value )
         {
-            occurrences = newOccurrences( occurrences ).minimum( value ).build();
+            occurrences = Occurrences.create( occurrences ).minimum( value ).build();
             return this;
         }
 
         public Builder maximumOccurrences( int value )
         {
-            occurrences = newOccurrences( occurrences ).maximum( value ).build();
+            occurrences = Occurrences.create( occurrences ).maximum( value ).build();
             return this;
         }
 
@@ -342,11 +340,11 @@ public final class Input
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences = newOccurrences( occurrences ).minimum( 1 ).build();
+                occurrences = Occurrences.create( occurrences ).minimum( 1 ).build();
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences = newOccurrences( occurrences ).minimum( 0 ).build();
+                occurrences = Occurrences.create( occurrences ).minimum( 0 ).build();
             }
             return this;
         }
@@ -361,11 +359,11 @@ public final class Input
         {
             if ( value )
             {
-                occurrences = newOccurrences( occurrences ).maximum( 0 ).build();
+                occurrences = Occurrences.create( occurrences ).maximum( 0 ).build();
             }
             else
             {
-                occurrences = newOccurrences( occurrences ).maximum( 1 ).build();
+                occurrences = Occurrences.create( occurrences ).maximum( 1 ).build();
             }
             return this;
         }

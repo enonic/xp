@@ -18,7 +18,7 @@ public class RelationshipKeyTest
             @Override
             public Object getObjectX()
             {
-                return RelationshipKey.newRelationshipKey().
+                return RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
@@ -29,27 +29,27 @@ public class RelationshipKeyTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{RelationshipKey.newRelationshipKey().
+                return new Object[]{RelationshipKey.create().
                     type( RelationshipTypeName.REFERENCE ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( PropertyPath.from( "myInput" ) ).
-                    build(), RelationshipKey.newRelationshipKey().
+                    build(), RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "333" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( PropertyPath.from( "myInput" ) ).
-                    build(), RelationshipKey.newRelationshipKey().
+                    build(), RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "444" ) ).
                     managingData( PropertyPath.from( "myInput" ) ).
-                    build(), RelationshipKey.newRelationshipKey().
+                    build(), RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( PropertyPath.from( "myOtherInput" ) ).
-                    build(), RelationshipKey.newRelationshipKey().
+                    build(), RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
@@ -59,7 +59,7 @@ public class RelationshipKeyTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return RelationshipKey.newRelationshipKey().
+                return RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
@@ -70,7 +70,7 @@ public class RelationshipKeyTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return RelationshipKey.newRelationshipKey().
+                return RelationshipKey.create().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).

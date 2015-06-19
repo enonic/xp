@@ -78,7 +78,7 @@ public final class PartDescriptors
         }
     }
 
-    public static Builder newPartDescriptors()
+    public static Builder create()
     {
         return new Builder();
     }

@@ -46,7 +46,7 @@ public final class QueryContentHandler
 
         final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
 
-        final ContentQuery contentQuery = ContentQuery.newContentQuery().
+        final ContentQuery contentQuery = ContentQuery.create().
             from( start ).
             size( count ).
             aggregationQueries( aggregations ).

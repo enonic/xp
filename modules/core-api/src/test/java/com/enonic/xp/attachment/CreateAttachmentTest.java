@@ -73,7 +73,7 @@ public class CreateAttachmentTest
     @Test
     public void serializeAttachment()
     {
-        Attachment a1 = Attachment.newAttachment().
+        Attachment a1 = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1024 ).
             label( "My Image 1" ).
@@ -87,14 +87,14 @@ public class CreateAttachmentTest
     @Test
     public void compareAttachments()
     {
-        Attachment a1 = Attachment.newAttachment().
+        Attachment a1 = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1024 ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
 
-        Attachment.Builder a2Builder = Attachment.newAttachment( a1 );
+        Attachment.Builder a2Builder = Attachment.create( a1 );
 
         assertTrue( a1.equals( a1 ) );
 

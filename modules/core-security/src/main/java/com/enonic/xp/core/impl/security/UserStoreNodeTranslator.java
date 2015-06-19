@@ -46,7 +46,7 @@ abstract class UserStoreNodeTranslator
 
     static NodePath getRolesNodePath()
     {
-        return NodePath.newNodePath( NodePath.ROOT, PrincipalKey.ROLES_NODE_NAME ).build();
+        return NodePath.create( NodePath.ROOT, PrincipalKey.ROLES_NODE_NAME ).build();
     }
 
     static NodePath getUserStoresParentPath()
@@ -249,7 +249,7 @@ abstract class UserStoreNodeTranslator
         }
         final PropertySet nodeAsSet = node.data().getRoot();
 
-        return UserStore.newUserStore().
+        return UserStore.create().
             displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
             key( UserStoreNodeTranslator.toKey( node ) ).
             build();

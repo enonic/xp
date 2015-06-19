@@ -63,7 +63,7 @@ public class PageDataSerializer
     @Override
     public Page fromData( final PropertySet asData )
     {
-        final Page.Builder page = Page.newPage();
+        final Page.Builder page = Page.create();
         if ( asData.isNotNull( CONTROLLER ) )
         {
             page.controller( DescriptorKey.from( asData.getString( CONTROLLER ) ) );
@@ -74,7 +74,7 @@ public class PageDataSerializer
         }
         if ( asData.hasProperty( REGION ) )
         {
-            final PageRegions.Builder pageRegionsBuilder = PageRegions.newPageRegions();
+            final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
             for ( final Property regionAsProp : asData.getProperties( REGION ) )
             {
                 if ( regionAsProp.hasNotNullValue() )

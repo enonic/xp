@@ -55,7 +55,7 @@ public abstract class AbstractContentTypeServiceTest
 
     protected final ContentType createContentType( final String name, final String displayName )
     {
-        return ContentType.newContentType().superType( ContentTypeName.structured() ).displayName( displayName ).name( name ).build();
+        return ContentType.create().superType( ContentTypeName.structured() ).displayName( displayName ).name( name ).build();
     }
 
     protected final void verifyContentType( final String contentTypeName, final String displayName, final ContentTypes result )

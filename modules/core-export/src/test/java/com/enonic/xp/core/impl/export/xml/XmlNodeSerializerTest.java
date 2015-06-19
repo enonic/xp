@@ -123,7 +123,7 @@ public class XmlNodeSerializerTest
             build();
         final AccessControlList accessControlList = AccessControlList.of( systemAccessControlEntry, cmsAccessControlEntry );
 
-        return Node.newNode().
+        return Node.create().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
             parentPath( NodePath.ROOT ).

@@ -35,7 +35,7 @@ public class ImportNodeCommandTest
     public void no_timestamp()
         throws Exception
     {
-        final Node importNode = Node.newNode().
+        final Node importNode = Node.create().
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
             data( new PropertyTree() ).
@@ -50,7 +50,7 @@ public class ImportNodeCommandTest
     public void created_nodes_with_id_and_timestamp_should_be_equal()
         throws Exception
     {
-        CTX_DEFAULT.callWith( () -> importNode( Node.newNode().
+        CTX_DEFAULT.callWith( () -> importNode( Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -58,7 +58,7 @@ public class ImportNodeCommandTest
             timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
             build() ) );
 
-        CTX_OTHER.callWith( () -> importNode( Node.newNode().
+        CTX_OTHER.callWith( () -> importNode( Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -81,7 +81,7 @@ public class ImportNodeCommandTest
     public void import_with_id()
         throws Exception
     {
-        final Node importNode = Node.newNode().
+        final Node importNode = Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -113,7 +113,7 @@ public class ImportNodeCommandTest
                 build() ).
             build();
 
-        final Node importNode = Node.newNode().
+        final Node importNode = Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).

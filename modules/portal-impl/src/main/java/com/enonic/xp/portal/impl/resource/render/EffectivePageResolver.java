@@ -27,13 +27,13 @@ final class EffectivePageResolver
             // The Content has no Page, but it has a supporting PageTemplate, so then we use the Page from the PageTemplate instead
             if ( template.getPage() == null )
             {
-                return Page.newPage().
+                return Page.create().
                     template( template.getKey() ).
                     build();
             }
             else
             {
-                return Page.newPage( template.getPage() ).
+                return Page.create( template.getPage() ).
                     controller( null ).
                     template( template.getKey() ).
                     build();
@@ -42,7 +42,7 @@ final class EffectivePageResolver
         else
         {
             final Page contentPage = content.getPage();
-            final Page.Builder effectivePage = Page.newPage( template.getPage() ).
+            final Page.Builder effectivePage = Page.create( template.getPage() ).
                 controller( null ).
                 template( contentPage.getTemplate() );
 

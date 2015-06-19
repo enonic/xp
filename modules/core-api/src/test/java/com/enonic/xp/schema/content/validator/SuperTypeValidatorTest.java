@@ -9,7 +9,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import static com.enonic.xp.schema.content.ContentType.newContentType;
+
 import static org.junit.Assert.*;
 
 public class SuperTypeValidatorTest
@@ -18,7 +18,7 @@ public class SuperTypeValidatorTest
     @Test
     public void content_type_passes_validation()
     {
-        ContentType contentType = newContentType().
+        ContentType contentType = ContentType.create().
             name( ContentTypeName.documentMedia() ).
             superType( ContentTypeName.media() ).
             build();
@@ -28,7 +28,7 @@ public class SuperTypeValidatorTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( contentType );
 
-        ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator()
+        ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.create()
             .contentTypeService( contentTypeService ).build();
         validator.validate( ContentTypeName.documentMedia(), ContentTypeName.media() );
     }
@@ -38,7 +38,7 @@ public class SuperTypeValidatorTest
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator()
+        ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.create()
             .contentTypeService( contentTypeService ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).

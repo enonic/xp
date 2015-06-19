@@ -50,12 +50,12 @@ public final class Site
         return super.equals( o );
     }
 
-    public static Builder newSite()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newSite( final Site source )
+    public static Builder create( final Site source )
     {
         return new Builder( source );
     }

@@ -868,7 +868,7 @@ public final class ContentResource
     private long countChildren( ContentPaths contentsPaths )
     {
         FindContentByQueryResult result = this.contentService.find( FindContentByQueryParams.create().
-            contentQuery( ContentQuery.newContentQuery().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
+            contentQuery( ContentQuery.create().size( 0 ).queryExpr( constructExprToCountChildren( contentsPaths ) ).build() ).
             build() );
 
         return result.getTotalHits();

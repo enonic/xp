@@ -112,7 +112,7 @@ public class ContentNodeTranslatorTest
         attachmentSet.addString( "mimeType", "image/png" );
         attachmentSet.addLong( "size", 1L );
 
-        Node node = Node.newNode().id( NodeId.from( "myId" ) ).
+        Node node = Node.create().id( NodeId.from( "myId" ) ).
             attachedBinaries( attachedBinaries ).
             parentPath( NodePath.ROOT ).
             path( "myPath" ).
@@ -147,7 +147,7 @@ public class ContentNodeTranslatorTest
         contentAsData.addSet( "form" );
         contentAsData.addString( ContentPropertyNames.CREATOR, "user:system:rmy" );
 
-        final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
+        final Node node = Node.create().id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).

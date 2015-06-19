@@ -9,9 +9,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 
-import static com.enonic.xp.form.Form.newForm;
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.InlineMixin.newInlineMixin;
 import static org.junit.Assert.*;
 
 public class InlineMixinsToFormItemsTransformTest
@@ -31,7 +28,7 @@ public class InlineMixinsToFormItemsTransformTest
     public void transform_input()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().
+        Mixin mixin = Mixin.create().
             name( "mymodule:my_mixin" ).
             addFormItem( Input.create().name( "input1" ).
                 label( "Input" ).
@@ -40,9 +37,9 @@ public class InlineMixinsToFormItemsTransformTest
                 build() ).
             build();
 
-        Form form = newForm().
+        Form form = Form.create().
             addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.newInlineMixin().mixin( "mymodule:my_mixin" ).build() ).
+            addFormItem( InlineMixin.create().mixin( "mymodule:my_mixin" ).build() ).
             build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
@@ -62,15 +59,15 @@ public class InlineMixinsToFormItemsTransformTest
     public void transform_formItemSet()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
+        Mixin mixin = Mixin.create().name( "mymodule:address" ).addFormItem( FormItemSet.create().name( "address" ).addFormItem(
             Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        Form form = newForm().
+        Form form = Form.create().
             addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInlineMixin( mixin ).build() ).
+            addFormItem( InlineMixin.create( mixin ).build() ).
             build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
@@ -89,8 +86,8 @@ public class InlineMixinsToFormItemsTransformTest
     public void transform_two_formItemSets_with_changed_names()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).
-            addFormItem( newFormItemSet().name( "address" ).
+        Mixin mixin = Mixin.create().name( "mymodule:address" ).
+            addFormItem( FormItemSet.create().name( "address" ).
                 addFormItem( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 addFormItem( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 addFormItem( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -98,14 +95,14 @@ public class InlineMixinsToFormItemsTransformTest
                 build() ).
             build();
 
-        Form form = newForm().
-            addFormItem( newFormItemSet().
+        Form form = Form.create().
+            addFormItem( FormItemSet.create().
                 name( "home" ).
-                addFormItem( InlineMixin.newInlineMixin( mixin ).build() ).
+                addFormItem( InlineMixin.create( mixin ).build() ).
                 build() ).
-            addFormItem( newFormItemSet().
+            addFormItem( FormItemSet.create().
                 name( "cottage" ).
-                addFormItem( InlineMixin.newInlineMixin( mixin ).build() ).
+                addFormItem( InlineMixin.create( mixin ).build() ).
                 build() ).
             build();
 
@@ -132,11 +129,11 @@ public class InlineMixinsToFormItemsTransformTest
     public void inlineMixinsToFormItems_layout()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().
+        Mixin mixin = Mixin.create().
             name( "mymodule:address" ).
-            addFormItem( newFormItemSet().
+            addFormItem( FormItemSet.create().
                 name( "address" ).
-                addFormItem( FieldSet.newFieldSet().
+                addFormItem( FieldSet.create().
                     label( "My Field Set" ).
                     name( "fieldSet" ).
                     addFormItem( Input.create().
@@ -152,8 +149,8 @@ public class InlineMixinsToFormItemsTransformTest
                 build() ).
             build();
 
-        Form form = newForm().
-            addFormItem( InlineMixin.newInlineMixin( mixin ).build() ).
+        Form form = Form.create().
+            addFormItem( InlineMixin.create( mixin ).build() ).
             build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );

@@ -14,9 +14,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
-
-import static com.enonic.xp.region.RegionDescriptor.newRegionDescriptor;
-import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
+import com.enonic.xp.region.RegionDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 
 public class LayoutDescriptorResourceTest
     extends AbstractResourceTest
@@ -39,7 +38,7 @@ public class LayoutDescriptorResourceTest
         throws Exception
     {
         final DescriptorKey key = DescriptorKey.from( "module:fancy-layout" );
-        final Form layoutForm = Form.newForm().
+        final Form layoutForm = Form.create().
             addFormItem( Input.create().
                 name( "columns" ).
                 maximizeUIInputWidth( true ).
@@ -52,9 +51,9 @@ public class LayoutDescriptorResourceTest
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
-            regions( newRegionDescriptors().
-                add( newRegionDescriptor().name( "left" ).build() ).
-                add( newRegionDescriptor().name( "right" ).build() ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "left" ).build() ).
+                add( RegionDescriptor.create().name( "right" ).build() ).
                 build() ).
             key( key ).
             build();
@@ -71,7 +70,7 @@ public class LayoutDescriptorResourceTest
     public void test_get_by_modules()
         throws Exception
     {
-        final Form layoutForm = Form.newForm().
+        final Form layoutForm = Form.create().
             addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
@@ -79,9 +78,9 @@ public class LayoutDescriptorResourceTest
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
-            regions( newRegionDescriptors().
-                add( newRegionDescriptor().name( "left" ).build() ).
-                add( newRegionDescriptor().name( "right" ).build() ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "left" ).build() ).
+                add( RegionDescriptor.create().name( "right" ).build() ).
                 build() ).
             key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
@@ -90,9 +89,9 @@ public class LayoutDescriptorResourceTest
             name( "putty-layout" ).
             displayName( "Putty layout" ).
             config( layoutForm ).
-            regions( newRegionDescriptors().
-                add( newRegionDescriptor().name( "top" ).build() ).
-                add( newRegionDescriptor().name( "bottom" ).build() ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "top" ).build() ).
+                add( RegionDescriptor.create().name( "bottom" ).build() ).
                 build() ).
             key( DescriptorKey.from( "module:putty-layout" ) ).
             build();

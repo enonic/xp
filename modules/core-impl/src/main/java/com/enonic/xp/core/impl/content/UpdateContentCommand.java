@@ -85,7 +85,7 @@ final class UpdateContentCommand
         validateBlockingChecks( editedContent );
         final boolean validated = validateNonBlockingChecks( editedContent );
 
-        editedContent = Content.newContent( editedContent ).
+        editedContent = Content.create( editedContent ).
             valid( validated ).
             build();
         editedContent = processContent( contentBeforeChange, editedContent );
@@ -138,7 +138,7 @@ final class UpdateContentCommand
             final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
             if ( mediaThumbnail != null )
             {
-                return Content.newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+                return Content.create( editedContent ).thumbnail( mediaThumbnail ).build();
             }
         }
         return editedContent;
@@ -156,7 +156,7 @@ final class UpdateContentCommand
 
     private Content setModifiedTime( final Content content )
     {
-        return Content.newContent( content ).
+        return Content.create( content ).
             modifiedTime( Instant.now() ).
             build();
     }
