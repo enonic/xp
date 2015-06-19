@@ -30,7 +30,7 @@ public abstract class AbstractFunctionTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final XsltService service = new XsltService();
-        service.setViewFunctionService( Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
+        service.setViewFunctionService( () -> Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
         this.processor = service.newProcessor();
     }
