@@ -99,7 +99,7 @@ public final class XsltProcessor
 
         if ( systemId != null )
         {
-            return ResourceProblemException.newBuilder().
+            return ResourceProblemException.create().
                 lineNumber( locator.getLineNumber() ).
                 resource( toResourceKey( systemId ) ).
                 cause( e ).

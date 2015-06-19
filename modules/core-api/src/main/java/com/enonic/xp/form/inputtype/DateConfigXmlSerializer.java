@@ -12,7 +12,7 @@ final class DateConfigXmlSerializer
     @Override
     public DateConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final DateConfig.Builder builder = DateConfig.newDateConfig();
+        final DateConfig.Builder builder = DateConfig.create();
         parseTimezone( currentModule, elem, builder );
         return builder.build();
     }

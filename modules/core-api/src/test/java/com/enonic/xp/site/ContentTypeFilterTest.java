@@ -17,7 +17,7 @@ public class ContentTypeFilterTest
     public void testContentFilterDeny()
         throws Exception
     {
-        final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
+        final ContentTypeFilter filter = ContentTypeFilter.create().
             defaultDeny().
             allowContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
             allowContentType( "mymodule:system.folder" ).
@@ -36,7 +36,7 @@ public class ContentTypeFilterTest
     public void testContentFilterAllow()
         throws Exception
     {
-        final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
+        final ContentTypeFilter filter = ContentTypeFilter.create().
             defaultAllow().
             denyContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
             denyContentType( "mymodule:system.folder" ).
@@ -55,7 +55,7 @@ public class ContentTypeFilterTest
     public void testContentFilterIteration()
         throws Exception
     {
-        final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
+        final ContentTypeFilter filter = ContentTypeFilter.create().
             defaultAllow().
             denyContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
             denyContentType( "mymodule:system.folder" ).

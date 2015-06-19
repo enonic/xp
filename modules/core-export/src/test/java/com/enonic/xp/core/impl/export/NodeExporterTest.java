@@ -92,7 +92,7 @@ public class NodeExporterTest
     @Test
     public void writerOrderList()
     {
-        final Node root = Node.newNode().
+        final Node root = Node.create().
             name( NodeName.from( "root" ) ).
             parentPath( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
@@ -137,7 +137,7 @@ public class NodeExporterTest
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
+            sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -165,7 +165,7 @@ public class NodeExporterTest
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.newPath( "/mynode/child1" ).build() ).
+            sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -242,7 +242,7 @@ public class NodeExporterTest
 
     private Node createNode( final String name, final NodePath root )
     {
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             name( NodeName.from( name ) ).
             parentPath( root ).
             build();

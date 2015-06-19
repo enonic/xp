@@ -73,7 +73,7 @@ public final class ExtraDatas
         }
     }
 
-    public static Builder builder()
+    public static Builder create()
     {
         return new Builder();
     }

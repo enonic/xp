@@ -21,7 +21,7 @@ public class ImageComponentTest
                 final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 config1.addString( "some", "config" );
 
-                return ImageComponent.newImageComponent().
+                return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
                     config( config1 ).
@@ -32,11 +32,10 @@ public class ImageComponentTest
             public Object[] getObjectsThatNotEqualsX()
             {
 
-                return new Object[]{ImageComponent.newImageComponent().
+                return new Object[]{ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
-                    build(), TextComponent.newTextComponent().text( "image" ).name( "imageComponent" ).build(),
-                    ImageComponent.newImageComponent().
+                    build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), ImageComponent.create().
                         image( ContentId.from( "image" ) ).
                         build(), new Object()};
             }
@@ -47,7 +46,7 @@ public class ImageComponentTest
                 final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 config1.addString( "some", "config" );
 
-                return ImageComponent.newImageComponent().
+                return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
                     config( config1 ).
@@ -60,7 +59,7 @@ public class ImageComponentTest
                 final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 config1.addString( "some", "config" );
 
-                return ImageComponent.newImageComponent().
+                return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
                     config( config1 ).
@@ -76,7 +75,7 @@ public class ImageComponentTest
         final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config1.addString( "some", "config" );
 
-        final ImageComponent source = ImageComponent.newImageComponent().
+        final ImageComponent source = ImageComponent.create().
             image( ContentId.from( "image" ) ).
             config( config1 ).
             build();

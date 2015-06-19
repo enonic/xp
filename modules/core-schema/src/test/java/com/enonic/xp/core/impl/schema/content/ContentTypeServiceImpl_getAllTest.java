@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
@@ -13,9 +14,6 @@ import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 
-import static com.enonic.xp.form.Form.newForm;
-import static com.enonic.xp.form.InlineMixin.newInlineMixin;
-import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class ContentTypeServiceImpl_getAllTest
@@ -42,7 +40,7 @@ public class ContentTypeServiceImpl_getAllTest
     {
         final String contentTypeName = "mymodule:my-contenttype-1";
 
-        final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
+        final Mixin mixin = Mixin.create().name( "mymodule:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
@@ -50,11 +48,11 @@ public class ContentTypeServiceImpl_getAllTest
                 build() ).
             build();
 
-        final Form form = newForm().addFormItem( newInlineMixin( mixin ).build() ).build();
+        final Form form = Form.create().addFormItem( InlineMixin.create( mixin ).build() ).build();
 
         Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
-        final ContentType contentType = ContentType.newContentType().
+        final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( contentTypeName ).
             displayName( "displayName" ).

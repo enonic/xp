@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.form.inputtype.InputTypes;
 
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
 import static org.junit.Assert.*;
 
 public class InputTest
@@ -45,7 +44,7 @@ public class InputTest
     public void toInput_given_FormItem_of_type_FormItemSet_then_exception_is_thrown()
     {
         // setup
-        FormItem formItem = newFormItemSet().name( "mySet" ).build();
+        FormItem formItem = FormItemSet.create().name( "mySet" ).build();
 
         // exercise
         try

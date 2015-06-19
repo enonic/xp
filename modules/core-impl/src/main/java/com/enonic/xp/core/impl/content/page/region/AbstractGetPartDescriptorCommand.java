@@ -67,7 +67,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     protected final PartDescriptors getDescriptorsFromModules( final Modules modules )
     {
-        final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
+        final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
         for ( final Module module : modules )
         {
             readDescriptor( module, partDescriptors );
@@ -78,7 +78,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     protected final PartDescriptors getDescriptorsFromModule( final Module module )
     {
-        final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
+        final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
         readDescriptor( module, partDescriptors );
         return partDescriptors.build();
     }

@@ -30,7 +30,7 @@ final class ImageSelectorConfigXmlSerializer
     {
         final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
 
-        final ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        final ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );
 
         final String text = DomHelper.getTextValue( relationshipTypeEl );

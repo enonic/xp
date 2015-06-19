@@ -29,7 +29,7 @@ public class GetNearestSiteCommandTest
     {
         final ContentId contentId = ContentId.from( "aaa" );
 
-        final Site site = Site.newSite().path( "/mycontent" ).id( contentId ).build();
+        final Site site = Site.create().path( "/mycontent" ).id( contentId ).build();
         Mockito.when( this.contentService.getById( contentId ) ).thenReturn( site );
 
         final GetNearestSiteCommand command = GetNearestSiteCommand.create().
@@ -47,7 +47,7 @@ public class GetNearestSiteCommandTest
         final ContentId contentId = ContentId.from( "aaa" );
         final ContentPath parentPath = ContentPath.from( "/aaa" );
 
-        final Content content = Content.newContent().
+        final Content content = Content.create().
             id( contentId ).
             name( "name" ).
             parentPath( parentPath ).
@@ -56,7 +56,7 @@ public class GetNearestSiteCommandTest
         Mockito.when( this.contentService.getById( contentId ) ).
             thenReturn( content );
 
-        final Site parent = Site.newSite().
+        final Site parent = Site.create().
             path( "/mycontent" ).
             id( ContentId.from( "bbb" ) ).
             build();
@@ -78,7 +78,7 @@ public class GetNearestSiteCommandTest
     {
         final ContentId contentId = ContentId.from( "aaa" );
 
-        final Content content = Content.newContent().
+        final Content content = Content.create().
             id( contentId ).
             name( "name" ).
             parentPath( ContentPath.from( "/aaa" ) ).
@@ -87,13 +87,13 @@ public class GetNearestSiteCommandTest
         Mockito.when( this.contentService.getById( contentId ) ).
             thenReturn( content );
 
-        final Content parent = Content.newContent().
+        final Content parent = Content.create().
             id( ContentId.from( "bbb" ) ).
             name( "renome" ).
             parentPath( ContentPath.from( "/bbb" ) ).
             build();
 
-        final Site parentOfParent = Site.newSite().
+        final Site parentOfParent = Site.create().
             path( "/mycontent" ).
             id( ContentId.from( "ccc" ) ).
             build();
@@ -115,11 +115,11 @@ public class GetNearestSiteCommandTest
         throws Exception
     {
         final ContentId contentId = ContentId.from( "aaa" );
-        final Content content = Content.newContent().id( contentId ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
+        final Content content = Content.create().id( contentId ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
         Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
         final ContentPath contentPath = ContentPath.from( "/mycontent" );
-        final Content parent = Content.newContent().path( contentPath ).id( ContentId.from( "bbb" ) ).build();
+        final Content parent = Content.create().path( contentPath ).id( ContentId.from( "bbb" ) ).build();
         Mockito.when( this.contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( parent );
 
         final GetNearestSiteCommand command = GetNearestSiteCommand.create().

@@ -171,17 +171,17 @@ public class Node
         return this.path.toString();
     }
 
-    public static Builder newNode()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newNode( final NodeId id )
+    public static Builder create( final NodeId id )
     {
         return new Builder( id );
     }
 
-    public static Builder newNode( final Node node )
+    public static Builder create( final Node node )
     {
         return new Builder( node );
     }

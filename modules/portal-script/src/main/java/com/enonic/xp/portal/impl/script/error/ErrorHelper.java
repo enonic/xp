@@ -32,7 +32,7 @@ public final class ErrorHelper
 
     private static ResourceProblemException doHandleException( final ScriptException e )
     {
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.cause( e.getCause() );
         builder.lineNumber( e.getLineNumber() );
         builder.resource( toResourceKey( e.getFileName() ) );
@@ -47,7 +47,7 @@ public final class ErrorHelper
             return e;
         }
 
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.cause( e );
         builder.lineNumber( elem.getLineNumber() );
         builder.resource( toResourceKey( elem.getFileName() ) );

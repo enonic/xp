@@ -19,8 +19,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.mixin.MixinNames;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
-
 @Component(immediate = true)
 public final class BuiltinContentTypeLoader
 {
@@ -123,7 +121,7 @@ public final class BuiltinContentTypeLoader
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
         final String displayName = WordUtils.capitalize( contentTypeName.getLocalName() );
-        return newContentType().
+        return ContentType.create().
             name( contentTypeName ).
             displayName( displayName ).
             setBuiltIn();
@@ -139,7 +137,7 @@ public final class BuiltinContentTypeLoader
         final List<ContentType> generatedSystemContentTypes = Lists.newArrayList();
         for ( ContentType contentType : contentTypes )
         {
-            contentType = newContentType( contentType ).
+            contentType = ContentType.create( contentType ).
                 icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().getLocalName() ) ).
                 build();
             generatedSystemContentTypes.add( contentType );

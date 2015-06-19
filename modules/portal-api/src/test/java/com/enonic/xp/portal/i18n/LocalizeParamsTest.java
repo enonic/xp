@@ -27,7 +27,7 @@ public class LocalizeParamsTest
         throws Exception
     {
         request = new PortalRequest();
-        request.setSite( Site.newSite().
+        request.setSite( Site.create().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( DEFAULT_LOCALE ).

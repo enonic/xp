@@ -141,7 +141,7 @@ final class BundleRelationshipTypeLoader
 
     private RelationshipType.Builder parse( final String str )
     {
-        final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        final RelationshipType.Builder builder = RelationshipType.create();
 
         final XmlRelationshipTypeParser parser = new XmlRelationshipTypeParser();
         parser.builder( builder );

@@ -39,7 +39,7 @@ public final class Relationships
         return new Relationships( ImmutableList.copyOf( relationshipTypes ) );
     }
 
-    public static Builder newRelationships()
+    public static Builder create()
     {
         return new Builder();
     }

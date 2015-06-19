@@ -30,7 +30,7 @@ public class UpdateAttachmentsParams
         return contentId;
     }
 
-    public static Builder newUpdateAttachments( final ContentId contentId )
+    public static Builder create( final ContentId contentId )
     {
         return new Builder( contentId );
     }
