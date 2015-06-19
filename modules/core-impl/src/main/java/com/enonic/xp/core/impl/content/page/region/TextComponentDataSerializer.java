@@ -23,7 +23,7 @@ public class TextComponentDataSerializer
     @Override
     public TextComponent fromData( final PropertySet asData )
     {
-        TextComponent.Builder component = TextComponent.newTextComponent();
+        TextComponent.Builder component = TextComponent.create();
         applyComponentFromData( component, asData );
         if ( asData.isNotNull( "text" ) )
         {

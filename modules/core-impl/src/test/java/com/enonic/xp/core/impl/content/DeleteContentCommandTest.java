@@ -44,7 +44,7 @@ public class DeleteContentCommandTest
     {
         final NodeId id = NodeId.from( "test" );
 
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             id( id ).
             name( "myContent" ).
             parentPath( NodePath.ROOT ).
@@ -88,7 +88,7 @@ public class DeleteContentCommandTest
     {
         final NodeId id = NodeId.from( "test" );
 
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             id( id ).
             name( "myContent" ).
             parentPath( NodePath.ROOT ).

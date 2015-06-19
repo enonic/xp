@@ -67,7 +67,7 @@ public class FindNodesByQueryCommandTest_paths
     private Node createNodeWithPath( final NodePath parent, final String name )
     {
         return createNode( CreateNodeParams.create().
-            parent( NodePath.newPath( parent ).build() ).
+            parent( NodePath.create( parent ).build() ).
             name( name ).
             setNodeId( NodeId.from( name ) ).
             build() );

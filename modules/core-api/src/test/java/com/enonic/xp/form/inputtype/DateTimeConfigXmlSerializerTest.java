@@ -12,7 +12,6 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.form.inputtype.DateTimeConfig.create;
 import static org.junit.Assert.*;
 
 public class DateTimeConfigXmlSerializerTest
@@ -34,7 +33,7 @@ public class DateTimeConfigXmlSerializerTest
         throws IOException, SAXException
     {
         // setup
-        DateTimeConfig.Builder builder = create();
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
         builder.withTimezone( true );
         DateTimeConfig config = builder.build();
 
@@ -50,7 +49,7 @@ public class DateTimeConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        DateTimeConfig.Builder builder = create();
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
         builder.withTimezone( true );
         DateTimeConfig expected = builder.build();
 

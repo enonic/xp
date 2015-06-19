@@ -144,7 +144,7 @@ public class NodeExporter
     {
         final NodePath newParentPath = resolveNewParentPath( node );
 
-        final Node relativeNode = Node.newNode( node ).parentPath( newParentPath ).build();
+        final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
         final XmlNodeSerializer serializer = new XmlNodeSerializer();
         serializer.exportNodeIds( this.exportNodeIds );

@@ -63,7 +63,7 @@ public class UserNodeTranslatorTest
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, userKey.getUserStore().toString() );
         rootDataSet.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, "clear:password" );
 
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( userKey ) ).
             data( rootDataSet ).

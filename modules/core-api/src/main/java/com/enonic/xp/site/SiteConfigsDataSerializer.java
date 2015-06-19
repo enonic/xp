@@ -26,7 +26,7 @@ public class SiteConfigsDataSerializer
 
     public SiteConfigs.Builder fromProperties( final PropertySet data )
     {
-        final SiteConfigs.Builder builder = SiteConfigs.builder();
+        final SiteConfigs.Builder builder = SiteConfigs.create();
         for ( final Property siteConfigAsProperty : data.getProperties( "siteConfig" ) )
         {
             final SiteConfig siteConfig = siteConfigSerializer.fromData( siteConfigAsProperty.getSet() );

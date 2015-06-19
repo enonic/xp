@@ -32,7 +32,7 @@ public final class TestDataFixtures
 {
     public static Content newContent()
     {
-        final Content.Builder builder = Content.newContent();
+        final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "123456" ) );
         builder.name( "mycontent" );
         builder.displayName( "My Content" );

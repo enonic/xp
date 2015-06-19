@@ -32,7 +32,7 @@ public class ImportNodeFactory
 
     public Node execute()
     {
-        return Node.newNode( serializedNode ).
+        return Node.create( serializedNode ).
             parentPath( this.nodeImportPath.getParentPath() ).
             name( getNodeName() ).
             inheritPermissions( serializedNode.inheritsPermissions() ).

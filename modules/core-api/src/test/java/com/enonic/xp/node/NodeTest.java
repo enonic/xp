@@ -27,7 +27,7 @@ public class NodeTest
             @Override
             public Object getObjectX()
             {
-                return Node.newNode().
+                return Node.create().
                     name( name1 ).
                     data( data1 ).
                     childOrder( childOrder1 ).
@@ -37,19 +37,19 @@ public class NodeTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                Node notX1 = Node.newNode().
+                Node notX1 = Node.create().
                     name( name2 ).
                     data( data1 ).
                     childOrder( childOrder1 ).
                     build();
 
-                Node notX2 = Node.newNode().
+                Node notX2 = Node.create().
                     name( name1 ).
                     data( data2 ).
                     childOrder( childOrder1 ).
                     build();
 
-                Node notX3 = Node.newNode().
+                Node notX3 = Node.create().
                     name( name1 ).
                     data( data1 ).
                     childOrder( childOrder2 ).
@@ -61,7 +61,7 @@ public class NodeTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return Node.newNode().
+                return Node.create().
                     name( name1 ).
                     data( data1 ).
                     childOrder( childOrder1 ).
@@ -71,7 +71,7 @@ public class NodeTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return Node.newNode().
+                return Node.create().
                     name( name1 ).
                     data( data1 ).
                     childOrder( childOrder1 ).

@@ -77,7 +77,7 @@ public final class PageResource
         }
 
         final Page effectivePage = new EffectivePageResolver( resource.content, resource.pageTemplate ).resolve();
-        final Content effectiveContent = Content.newContent( resource.content ).
+        final Content effectiveContent = Content.create( resource.content ).
             page( effectivePage ).
             build();
 

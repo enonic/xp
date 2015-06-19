@@ -27,11 +27,11 @@ abstract class AbstractCommand
     private final ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
     {
         final InlineMixinsToFormItemsTransformer transformer = new InlineMixinsToFormItemsTransformer( this.mixinService );
-        final ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
+        final ContentTypes.Builder transformedContentTypes = ContentTypes.create();
         for ( final ContentType contentType : contentTypes )
         {
             final Form transformedForm = transformer.transformForm( contentType.form() );
-            final ContentType transformedCty = ContentType.newContentType( contentType ).form( transformedForm ).build();
+            final ContentType transformedCty = ContentType.create( contentType ).form( transformedForm ).build();
             transformedContentTypes.add( transformedCty );
         }
         return transformedContentTypes.build();

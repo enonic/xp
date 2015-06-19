@@ -70,8 +70,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
-
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -314,7 +312,7 @@ public class AbstractContentServiceTest
 
     protected ContentType createContentTypeForAllInputTypes()
     {
-        final FormItemSet set = FormItemSet.newFormItemSet().
+        final FormItemSet set = FormItemSet.create().
             name( "set" ).
             addFormItem( Input.create().
                 name( "setString" ).
@@ -326,7 +324,7 @@ public class AbstractContentServiceTest
                 build() ).
             build();
 
-        return newContentType().
+        return ContentType.create().
             superType( ContentTypeName.documentMedia() ).
             name( "myContentType" ).
             addFormItem( Input.create().

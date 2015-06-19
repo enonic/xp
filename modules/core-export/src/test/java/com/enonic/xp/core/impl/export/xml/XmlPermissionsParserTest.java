@@ -27,7 +27,7 @@ public class XmlPermissionsParserTest
     public void testParse()
         throws Exception
     {
-        final Node.Builder builder = Node.newNode();
+        final Node.Builder builder = Node.create();
 
         final XmlPermissionsParser parser = new XmlPermissionsParser();
         final URL resource = getClass().getResource( "permissions.xml" );

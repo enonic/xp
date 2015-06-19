@@ -20,7 +20,7 @@ public class InlineMixinsToFormItemsTransformer
 
     public Form transformForm( final Form form )
     {
-        final Form.Builder transformedForm = Form.newForm();
+        final Form.Builder transformedForm = Form.create();
         final List<FormItem> transformedFormItems = transform( form );
 
         for ( final FormItem formItem : transformedFormItems )
@@ -53,14 +53,14 @@ public class InlineMixinsToFormItemsTransformer
             }
             else if ( formItem instanceof FormItemSet )
             {
-                final FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet( (FormItemSet) formItem );
+                final FormItemSet.Builder formItemSetBuilder = FormItemSet.create( (FormItemSet) formItem );
                 formItemSetBuilder.clearFormItems();
                 formItemSetBuilder.addFormItems( transform( (FormItemSet) formItem ) );
                 formItems.add( formItemSetBuilder.build() );
             }
             else if ( formItem instanceof FieldSet )
             {
-                final FieldSet.Builder formItemSetBuilder = FieldSet.newFieldSet( (FieldSet) formItem );
+                final FieldSet.Builder formItemSetBuilder = FieldSet.create( (FieldSet) formItem );
                 formItemSetBuilder.clearFormItems();
                 formItemSetBuilder.addFormItems( transform( (FieldSet) formItem ) );
                 formItems.add( formItemSetBuilder.build() );

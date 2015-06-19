@@ -64,6 +64,6 @@ public class NodeExportPathResolverTest
 
     private NodePath createNodePath( final String value )
     {
-        return NodePath.newPath( value ).build();
+        return NodePath.create( value ).build();
     }
 }

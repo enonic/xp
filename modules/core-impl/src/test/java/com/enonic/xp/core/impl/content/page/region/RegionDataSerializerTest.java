@@ -23,18 +23,18 @@ public class RegionDataSerializerTest
         PropertyTree myPartConfig = new PropertyTree( propertyIdProvider );
         myPartConfig.addString( "some", "config" );
 
-        Region region = Region.newRegion().
+        Region region = Region.create().
             name( "main" ).
-            add( PartComponent.newPartComponent().
+            add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-part" ).
                 config( myPartConfig ).
                 build() ).
-            add( ImageComponent.newImageComponent().
+            add( ImageComponent.create().
                 name( "MyImage" ).
                 config( new PropertyTree( propertyIdProvider ) ).
                 build() ).
-            add( LayoutComponent.newLayoutComponent().
+            add( LayoutComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-layout" ).
                 config( new PropertyTree( propertyIdProvider ) ).

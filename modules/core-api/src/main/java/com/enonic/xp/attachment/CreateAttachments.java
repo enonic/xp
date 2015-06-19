@@ -68,7 +68,7 @@ public final class CreateAttachments
         }
     }
 
-    public static Builder builder()
+    public static Builder create()
     {
         return new Builder();
     }

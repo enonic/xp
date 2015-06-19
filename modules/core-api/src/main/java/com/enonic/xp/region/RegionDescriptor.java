@@ -51,7 +51,7 @@ public final class RegionDescriptor
         return name;
     }
 
-    public static Builder newRegionDescriptor()
+    public static Builder create()
     {
         return new Builder();
     }

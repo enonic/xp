@@ -11,7 +11,7 @@ public class ResourceProblemExceptionTest
     {
         final ResourceKey resource = ResourceKey.from( "mymodule:/test.js" );
 
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.resource( resource );
         builder.lineNumber( 10 );
 
@@ -28,7 +28,7 @@ public class ResourceProblemExceptionTest
     @Test
     public void testMessage()
     {
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.message( "A {problem} here" );
 
         final ResourceProblemException ex = builder.build();
@@ -39,7 +39,7 @@ public class ResourceProblemExceptionTest
     @Test
     public void testMessageWithArgs()
     {
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.message( "A {0} here", "problem" );
 
         final ResourceProblemException ex = builder.build();
@@ -50,7 +50,7 @@ public class ResourceProblemExceptionTest
     @Test
     public void testCallStack()
     {
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.callLine( "first", 1 );
         builder.callLine( "second", 2 );
 
@@ -64,12 +64,12 @@ public class ResourceProblemExceptionTest
     @Test
     public void testInnerError()
     {
-        final ResourceProblemException.Builder builder1 = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder1 = ResourceProblemException.create();
         ResourceProblemException cause1 = builder1.build();
 
         final Throwable cause2 = new Throwable( cause1 );
 
-        final ResourceProblemException.Builder builder2 = ResourceProblemException.newBuilder();
+        final ResourceProblemException.Builder builder2 = ResourceProblemException.create();
         builder2.cause( cause2 );
 
         final ResourceProblemException ex = builder2.build();
