@@ -15,6 +15,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.xml.schema.SchemaNamespaces;
@@ -61,6 +62,8 @@ public final class XmlNodeSerializer
         serializeValueElement( "childOrder", this.node.getChildOrder() );
         serializeValueElement( "nodeType", this.node.getNodeType() );
 
+        serialize( this.node.getPermissions() );
+
         serializeData( this.node.data() );
         serialize( this.node.getIndexConfigDocument() );
     }
@@ -88,6 +91,16 @@ public final class XmlNodeSerializer
 
         this.builder.end();
     }
+
+    private void serialize( final AccessControlList value )
+    {
+        PermissionsXmlSerializer.create().
+            domBuilder( this.builder ).
+            accessControlList( value ).
+            build().
+            serialize();
+    }
+
 
     private void serialize( final PatternIndexConfigDocument value )
     {
