@@ -32,7 +32,7 @@ class RepoPath
         Preconditions.checkArgument( !Strings.isNullOrEmpty( repositoryId ), "repositoryId cannot be empty" );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodePath ), "nodePath cannot be empty" );
 
-        return new RepoPath( Branch.from( branch ), RepositoryId.from( repositoryId ), NodePath.newPath( nodePath ).build() );
+        return new RepoPath( Branch.from( branch ), RepositoryId.from( repositoryId ), NodePath.create( nodePath ).build() );
     }
 
     static RepoPath from( final String repoPath )

@@ -25,7 +25,6 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class InputValidatorTest
@@ -232,7 +231,7 @@ public class InputValidatorTest
 
     protected ContentType createContentTypeForAllInputTypes( final ContentTypeName superType )
     {
-        final FormItemSet set = FormItemSet.newFormItemSet().
+        final FormItemSet set = FormItemSet.create().
             name( "set" ).
             addFormItem( Input.create().
                 name( "setString" ).
@@ -243,7 +242,7 @@ public class InputValidatorTest
                 inputType( InputTypes.DOUBLE ).
                 build() ).
             build();
-        return newContentType().
+        return ContentType.create().
             superType( superType ).
             name( "myContentType" ).
             addFormItem( Input.create().

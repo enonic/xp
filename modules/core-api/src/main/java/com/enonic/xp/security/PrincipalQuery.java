@@ -78,7 +78,7 @@ public final class PrincipalQuery
         return email;
     }
 
-    public static Builder newQuery()
+    public static Builder create()
     {
         return new Builder();
     }

@@ -42,7 +42,7 @@ public class ContentQuery
         this.queryFilters = builder.queryFilters.build();
     }
 
-    public static Builder newContentQuery()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -81,7 +81,7 @@ public class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.newContentTypeNames();
+        private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
         private int from = 0;
 

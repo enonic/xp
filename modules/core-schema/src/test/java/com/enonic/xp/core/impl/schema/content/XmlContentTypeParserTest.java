@@ -23,7 +23,7 @@ public class XmlContentTypeParserTest
         this.parser = new XmlContentTypeParser();
         this.parser.currentModule( ModuleKey.from( "mymodule" ) );
 
-        this.builder = ContentType.newContentType();
+        this.builder = ContentType.create();
         this.builder.name( ContentTypeName.from( "mymodule:mytype" ) );
         this.parser.builder( this.builder );
     }

@@ -758,7 +758,7 @@ public class ResolveSyncWorkCommandTest
 
         updateNode( "a2_1" );
 
-        moveNode( "b2_1", NodePath.newPath( "/s2" ).build(), "b2_1" );
+        moveNode( "b2_1", NodePath.create( "/s2" ).build(), "b2_1" );
 
         final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
 

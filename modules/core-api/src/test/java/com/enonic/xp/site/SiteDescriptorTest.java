@@ -35,7 +35,7 @@ public class SiteDescriptorTest
             inputType( InputTypes.DOUBLE ).
             build();
 
-        final Form form = Form.newForm().
+        final Form form = Form.create().
             addFormItem( formItem ).
             build();
 

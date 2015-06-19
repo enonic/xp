@@ -157,7 +157,7 @@ public class NodeImportCommandTest
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
-        final NodePath importRoot = NodePath.newNodePath( NodePath.ROOT, "my-import-here" ).build();
+        final NodePath importRoot = NodePath.create( NodePath.ROOT, "my-import-here" ).build();
 
         this.importNodeService.create( CreateNodeParams.create().
             parent( importRoot.getParentPath() ).
@@ -185,7 +185,7 @@ public class NodeImportCommandTest
     public void import_node_non_existing_parent()
         throws Exception
     {
-        final NodePath importRoot = NodePath.newNodePath( NodePath.ROOT, "non-existing-node" ).build();
+        final NodePath importRoot = NodePath.create( NodePath.ROOT, "non-existing-node" ).build();
 
         NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -293,7 +293,7 @@ public class NodeImportCommandTest
         assertNodeExists( mynode.path(), "mychild1" );
         assertNodeExists( mynode.path(), "mychild2" );
 
-        final Node mychild3 = this.importNodeService.getByPath( NodePath.newNodePath( mynode.path(), "mychild3" ).build() );
+        final Node mychild3 = this.importNodeService.getByPath( NodePath.create( mynode.path(), "mychild3" ).build() );
         assertNull( mychild3 );
     }
 
@@ -426,7 +426,7 @@ public class NodeImportCommandTest
 
     private Node assertNodeExists( final NodePath parentPath, final String name )
     {
-        final Node node = importNodeService.getByPath( NodePath.newNodePath( parentPath, name ).build() );
+        final Node node = importNodeService.getByPath( NodePath.create( parentPath, name ).build() );
         assertNotNull( node );
         return node;
     }

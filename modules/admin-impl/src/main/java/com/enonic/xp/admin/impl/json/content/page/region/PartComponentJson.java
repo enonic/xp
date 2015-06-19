@@ -11,8 +11,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 
-import static com.enonic.xp.region.PartComponent.newPartComponent;
-
 @SuppressWarnings("UnusedDeclaration")
 public class PartComponentJson
     extends DescriptorBasedComponentJson<PartComponent>
@@ -29,7 +27,7 @@ public class PartComponentJson
     public PartComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
                               @JsonProperty("config") final List<PropertyArrayJson> config )
     {
-        super( newPartComponent().
+        super( PartComponent.create().
             name( name != null ? ComponentName.from( name ) : null ).
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).

@@ -62,7 +62,7 @@ public final class ContentTypeNames
         }
     }
 
-    public static Builder newContentTypeNames()
+    public static Builder create()
     {
         return new Builder();
     }

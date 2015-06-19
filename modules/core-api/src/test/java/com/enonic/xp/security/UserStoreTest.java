@@ -11,7 +11,7 @@ public class UserStoreTest
         throws Exception
     {
         final UserStoreKey userStoreKey = UserStoreKey.from( "myUserStore" );
-        final UserStore userStore = UserStore.newUserStore().displayName( "my user store" ).key( userStoreKey ).build();
+        final UserStore userStore = UserStore.create().displayName( "my user store" ).key( userStoreKey ).build();
 
         assertEquals( "myUserStore", userStore.getKey().toString() );
         assertEquals( "my user store", userStore.getDisplayName() );
@@ -22,8 +22,8 @@ public class UserStoreTest
         throws Exception
     {
         final UserStoreKey userStoreKey = UserStoreKey.from( "myUserStore" );
-        final UserStore userStore = UserStore.newUserStore().displayName( "my user store" ).key( userStoreKey ).build();
-        final UserStore userStoreCopy = UserStore.newUserStore( userStore ).build();
+        final UserStore userStore = UserStore.create().displayName( "my user store" ).key( userStoreKey ).build();
+        final UserStore userStoreCopy = UserStore.create( userStore ).build();
 
         assertEquals( "myUserStore", userStoreCopy.getKey().toString() );
         assertEquals( "my user store", userStoreCopy.getDisplayName() );

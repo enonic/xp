@@ -58,7 +58,7 @@ public class RendererFactoryImplTest
 
     private Content createContent()
     {
-        return Content.newContent().name( "my-content" ).parentPath( ContentPath.ROOT ).build();
+        return Content.create().name( "my-content" ).parentPath( ContentPath.ROOT ).build();
     }
 
     private Renderer createRenderer( final Class type )

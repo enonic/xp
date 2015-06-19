@@ -78,12 +78,12 @@ public class PortalUrlServiceImpl_componentUrlTest
     private void addComponent()
     {
         final PartComponent component = PartComponent.
-            newPartComponent().
+            create().
             name( "mycomp" ).
             build();
 
         final Region region = Region.
-            newRegion().
+            create().
             name( "main" ).
             add( component ).
             build();

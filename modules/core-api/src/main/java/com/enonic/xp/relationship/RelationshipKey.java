@@ -108,7 +108,7 @@ public final class RelationshipKey
         return new RelationshipKey( type, fromContent, toContent, managingData );
     }
 
-    public static Builder newRelationshipKey()
+    public static Builder create()
     {
         return new Builder();
     }

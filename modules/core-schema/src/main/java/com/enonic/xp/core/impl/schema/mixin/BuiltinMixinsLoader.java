@@ -29,19 +29,19 @@ public final class BuiltinMixinsLoader
 
     private static final String MIXINS_FOLDER = "mixins";
 
-    private static final Mixin IMAGE_METADATA = Mixin.newMixin().
+    private static final Mixin IMAGE_METADATA = Mixin.create().
         name( IMAGE_INFO_METADATA_NAME ).
         displayName( "Image Info" ).
         formItems( createImageInfoMixinForm() ).
         build();
 
-    private static final Mixin PHOTO_METADATA = Mixin.newMixin().
+    private static final Mixin PHOTO_METADATA = Mixin.create().
         name( PHOTO_INFO_METADATA_NAME ).
         displayName( "Photo Info" ).
         formItems( createPhotoInfoMixinForm() ).
         build();
 
-    private static final Mixin GPS_METADATA = Mixin.newMixin().
+    private static final Mixin GPS_METADATA = Mixin.create().
         name( GPS_INFO_METADATA_NAME ).
         displayName( "Gps Info" ).
         formItems( createGpsInfoMixinForm() ).
@@ -132,7 +132,7 @@ public final class BuiltinMixinsLoader
         final List<Mixin> mixins = Lists.newArrayList();
         for ( Mixin mixin : MIXINS )
         {
-            mixin = Mixin.newMixin( mixin ).
+            mixin = Mixin.create( mixin ).
                 icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().getLocalName() ) ).
                 build();
             mixins.add( mixin );

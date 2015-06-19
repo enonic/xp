@@ -68,7 +68,7 @@ final class MustacheProcessor
 
     private RuntimeException handleError( final MustacheException.Context e )
     {
-        return ResourceProblemException.newBuilder().
+        return ResourceProblemException.create().
             lineNumber( e.lineNo ).
             resource( this.view ).
             cause( e ).

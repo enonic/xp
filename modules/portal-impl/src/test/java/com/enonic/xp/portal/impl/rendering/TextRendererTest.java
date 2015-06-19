@@ -32,7 +32,7 @@ public class TextRendererTest
     public void textComponentWithNoText()
     {
         // setup
-        textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
         // exercise
@@ -47,7 +47,7 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
-        textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
         // exercise
@@ -61,7 +61,7 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.PREVIEW );
-        textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
         // exercise
@@ -77,7 +77,7 @@ public class TextRendererTest
     {
         // setup
         String text = "<h2>hello</h2><p>How are you?</p>";
-        textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).text( text ).build();
+        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
         renderer = new TextRenderer();
 
         // exercise
@@ -93,7 +93,7 @@ public class TextRendererTest
         // setup
         portalRequest.setMode( RenderMode.EDIT );
         String text = "<h2>hello</h2><p>How are you?</p>";
-        textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).text( text ).build();
+        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
         renderer = new TextRenderer();
 
         // exercise

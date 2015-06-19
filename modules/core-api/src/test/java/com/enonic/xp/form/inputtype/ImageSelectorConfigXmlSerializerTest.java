@@ -13,7 +13,6 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 import static org.junit.Assert.*;
 
 public class ImageSelectorConfigXmlSerializerTest
@@ -35,7 +34,7 @@ public class ImageSelectorConfigXmlSerializerTest
         throws IOException, SAXException
     {
         // setup
-        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig config = builder.build();
 
@@ -51,7 +50,7 @@ public class ImageSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
@@ -68,7 +67,7 @@ public class ImageSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
@@ -90,7 +89,7 @@ public class ImageSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         ImageSelectorConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
@@ -113,7 +112,7 @@ public class ImageSelectorConfigXmlSerializerTest
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
-        ImageSelectorConfig expected = ImageSelectorConfig.newImageSelectorConfig().build();
+        ImageSelectorConfig expected = ImageSelectorConfig.create().build();
 
         // exercise
         ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );

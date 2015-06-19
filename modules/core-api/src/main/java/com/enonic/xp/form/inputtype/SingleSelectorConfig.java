@@ -56,7 +56,7 @@ public class SingleSelectorConfig
         return s.toString();
     }
 
-    public static Builder newSingleSelectorConfig()
+    public static Builder create()
     {
         return new Builder();
     }
