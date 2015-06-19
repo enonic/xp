@@ -19,7 +19,6 @@ import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.bean.SimpleBeanManager;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
@@ -29,17 +28,13 @@ public abstract class ScriptTestSupport
 
     protected final ScriptServiceImpl scriptService;
 
-    private final SimpleBeanManager beanManager;
-
     private final BundleContext bundleContext;
 
     protected final PortalRequest portalRequest;
 
     public ScriptTestSupport()
     {
-        this.beanManager = new SimpleBeanManager();
         this.scriptService = new ScriptServiceImpl();
-        this.scriptService.setBeanManager( this.beanManager );
 
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
@@ -71,11 +66,6 @@ public abstract class ScriptTestSupport
         this.portalRequest.setContent( content );
 
         PortalRequestAccessor.set( this.portalRequest );
-    }
-
-    protected final void addBean( final String name, final Object bean )
-    {
-        this.beanManager.register( getModuleKey(), name, bean );
     }
 
     @SuppressWarnings("unchecked")

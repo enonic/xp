@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
@@ -36,8 +35,6 @@ final class ScriptExecutorImpl
 
     private Map<ResourceKey, Object> exportsCache;
 
-    private BeanManager beanManager;
-
     private ClassLoader classLoader;
 
     private ServiceRegistry serviceRegistry;
@@ -55,11 +52,6 @@ final class ScriptExecutorImpl
     public void setGlobalMap( final Map<String, Object> globalMap )
     {
         this.globalMap = globalMap;
-    }
-
-    public void setBeanManager( final BeanManager beanManager )
-    {
-        this.beanManager = beanManager;
     }
 
     public void setClassLoader( final ClassLoader classLoader )
@@ -154,12 +146,6 @@ final class ScriptExecutorImpl
     public CommandInvoker getInvoker()
     {
         return this.invoker;
-    }
-
-    @Override
-    public BeanManager getBeanManager()
-    {
-        return this.beanManager;
     }
 
     @Override

@@ -19,7 +19,23 @@ final class ServiceRefImpl<T>
     @Override
     public T get()
     {
+        final T service = findService();
+        if ( service != null )
+        {
+            return service;
+        }
+
+        throw new IllegalArgumentException( "Service [" + this.type.getName() + "] not found" );
+    }
+
+    private T findService()
+    {
         final ServiceReference<T> ref = this.bundleContext.getServiceReference( this.type );
+        if ( ref == null )
+        {
+            return null;
+        }
+
         return this.bundleContext.getService( ref );
     }
 }

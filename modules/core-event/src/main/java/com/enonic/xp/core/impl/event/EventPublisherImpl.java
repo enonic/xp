@@ -2,6 +2,10 @@ package com.enonic.xp.core.impl.event;
 
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +15,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 
+@Component(immediate = true)
 public final class EventPublisherImpl
     implements EventPublisher
 {
@@ -44,6 +49,7 @@ public final class EventPublisherImpl
         }
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addListener( final EventListener listener )
     {
         this.listeners.add( listener );

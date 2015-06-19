@@ -9,13 +9,10 @@ module {
 
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
+    compile 'com.enonic.xp:portal-api:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:portal:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:thymeleaf:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:xslt:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:mustache:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:i18n:6.0.0-SNAPSHOT'
-}
-
-bundle {
-    instruction 'Private-Package', 'app.*;-split-package:=merge-first'
 }

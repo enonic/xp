@@ -57,11 +57,6 @@ public final class ScriptFunctions
         return new ResolveFunction( this.script );
     }
 
-    public Object getBean( final String name )
-    {
-        return this.executor.getBeanManager().getBean( this.script.getModule(), name );
-    }
-
     public Object newBean( final String type )
         throws Exception
     {
