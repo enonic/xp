@@ -7,21 +7,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 
 public final class CreateContentHandler
     extends BaseContextHandler
 {
-    private final ContentService contentService;
-
     private String name;
 
     private String parentPath;
@@ -35,11 +33,6 @@ public final class CreateContentHandler
     private Map<String, Object> x;
 
     private String contentType;
-
-    public CreateContentHandler( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
 
     @Override
     protected Object doExecute()
@@ -136,7 +129,8 @@ public final class CreateContentHandler
     {
         if ( value instanceof Map )
         {
-            return new ExtraData( mixinName, createPropertyTree( (Map) value, mixinName ) );
+            final PropertyTree tree = createPropertyTree( (Map) value, mixinName );
+            return tree != null ? new ExtraData( mixinName, tree ) : null;
         }
 
         return null;
@@ -162,14 +156,14 @@ public final class CreateContentHandler
         this.requireValid = requireValid;
     }
 
-    public void setData( final Map<String, Object> data )
+    public void setData( final ScriptValue data )
     {
-        this.data = data;
+        this.data = data != null ? data.getMap() : null;
     }
 
-    public void setX( final Map<String, Object> x )
+    public void setX( final ScriptValue x )
     {
-        this.x = x;
+        this.x = x != null ? x.getMap() : null;
     }
 
     public void setContentType( final String contentType )

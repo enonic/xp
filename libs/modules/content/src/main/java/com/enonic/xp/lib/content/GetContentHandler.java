@@ -4,32 +4,23 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
 public final class GetContentHandler
     extends BaseContextHandler
 {
-    private final ContentService contentService;
-
     private String key;
-
-    public GetContentHandler( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
 
     @Override
     protected Object doExecute()
     {
-        final String key = checkRequired( "key", this.key );
-        if ( key.startsWith( "/" ) )
+        if ( this.key.startsWith( "/" ) )
         {
-            return getByPath( ContentPath.from( key ) );
+            return getByPath( ContentPath.from( this.key ) );
         }
         else
         {
-            return getById( ContentId.from( key ) );
+            return getById( ContentId.from( this.key ) );
         }
     }
 

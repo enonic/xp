@@ -4,33 +4,23 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DeleteContentParams;
 
 public final class DeleteContentHandler
     extends BaseContextHandler
 {
-    private final ContentService contentService;
-
     private String key;
-
-    public DeleteContentHandler( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
 
     @Override
     protected Object doExecute()
     {
-        final String key = checkRequired( "key", this.key );
-
-        if ( key.startsWith( "/" ) )
+        if ( this.key.startsWith( "/" ) )
         {
-            return deleteByPath( ContentPath.from( key ) );
+            return deleteByPath( ContentPath.from( this.key ) );
         }
         else
         {
-            return deleteById( ContentId.from( key ) );
+            return deleteById( ContentId.from( this.key ) );
         }
     }
 

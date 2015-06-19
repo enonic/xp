@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +10,6 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -20,30 +18,21 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 
 public final class ModifyContentHandler
     extends BaseContextHandler
 {
-    private final ContentService contentService;
-
     private String key;
 
-    private Function<Object[], Object> editor;
-
-    public ModifyContentHandler( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
+    private ScriptValue editor;
 
     @Override
     protected Object doExecute()
     {
-        final String key = checkRequired( "key", this.key );
-        final Function<Object[], Object> editor = checkRequired( "editor", this.editor );
-
-        final Content existingContent = getExistingContent( key );
+        final Content existingContent = getExistingContent( this.key );
         if ( existingContent == null )
         {
             return null;
@@ -51,7 +40,7 @@ public final class ModifyContentHandler
 
         final UpdateContentParams params = new UpdateContentParams();
         params.contentId( existingContent.getId() );
-        params.editor( newContentEditor( editor, existingContent ) );
+        params.editor( newContentEditor( existingContent ) );
 
         final Content result = this.contentService.update( params );
         return result != null ? new ContentMapper( result ) : null;
@@ -76,13 +65,13 @@ public final class ModifyContentHandler
         }
     }
 
-    private ContentEditor newContentEditor( final Function<Object[], Object> func, final Content existingContent )
+    private ContentEditor newContentEditor( final Content existingContent )
     {
         return edit -> {
-            final Object value = func.apply( new Object[]{new ContentMapper( edit.source )} );
-            if ( value instanceof Map )
+            final ScriptValue value = this.editor.call( new ContentMapper( edit.source ) );
+            if ( value != null )
             {
-                updateContent( edit, (Map) value, existingContent );
+                updateContent( edit, value.getMap(), existingContent );
             }
         };
     }
@@ -188,7 +177,7 @@ public final class ModifyContentHandler
         this.key = key;
     }
 
-    public void setEditor( final Function<Object[], Object> editor )
+    public void setEditor( final ScriptValue editor )
     {
         this.editor = editor;
     }

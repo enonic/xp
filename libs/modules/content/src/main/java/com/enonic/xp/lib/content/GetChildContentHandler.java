@@ -3,7 +3,6 @@ package com.enonic.xp.lib.content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -15,8 +14,6 @@ public final class GetChildContentHandler
 {
     static final int DEFAULT_COUNT = 10;
 
-    private final ContentService contentService;
-
     private String key;
 
     private Integer start;
@@ -25,15 +22,9 @@ public final class GetChildContentHandler
 
     private String sort;
 
-    public GetChildContentHandler( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
     @Override
     protected Object doExecute()
     {
-        final String key = checkRequired( "key", this.key );
         final int start = valueOrDefault( this.start, 0 );
         final int count = valueOrDefault( this.count, DEFAULT_COUNT );
         final String sortExpr = valueOrDefault( this.sort, "" );

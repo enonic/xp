@@ -2,13 +2,17 @@ package com.enonic.xp.lib.content;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.script.command.CommandRequest;
+import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.portal.bean.ScriptBean;
 
 public abstract class BaseContextHandler
+    implements ScriptBean
 {
+    protected ContentService contentService;
 
     private String branch;
 
@@ -17,16 +21,16 @@ public abstract class BaseContextHandler
         this.branch = branch;
     }
 
-    public final Object execute( final CommandRequest req )
+    public final Object execute()
     {
-        if ( Strings.isNullOrEmpty( branch ) )
+        if ( Strings.isNullOrEmpty( this.branch ) )
         {
             return doExecute();
         }
 
         final Context context = ContextBuilder.
             from( ContextAccessor.current() ).
-            branch( branch ).
+            branch( this.branch ).
             build();
 
         return context.callWith( this::doExecute );
@@ -48,4 +52,9 @@ public abstract class BaseContextHandler
         return value == null ? defValue : value;
     }
 
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.contentService = context.getService( ContentService.class ).get();
+    }
 }
