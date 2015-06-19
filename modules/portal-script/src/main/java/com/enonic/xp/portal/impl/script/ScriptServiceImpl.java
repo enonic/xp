@@ -18,6 +18,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
+import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
@@ -74,6 +75,8 @@ public final class ScriptServiceImpl
         executor.setInvoker( this.invoker );
         executor.setGlobalMap( this.globalMap );
         executor.setBeanManager( this.beanManager );
+        executor.setClassLoader( module.getClassLoader() );
+        executor.setServiceRegistry( new ServiceRegistryImpl( module.getBundle().getBundleContext() ) );
         executor.initialize();
         return executor;
     }

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,8 +55,14 @@ public abstract class AbstractControllerTest
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
 
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( ModuleKey.from( "mymodule" ) ) ).thenReturn( module );

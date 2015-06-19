@@ -18,6 +18,7 @@ import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
 import com.enonic.xp.portal.impl.script.function.ScriptFunctions;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
+import com.enonic.xp.portal.impl.script.service.ServiceRegistry;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -37,6 +38,10 @@ final class ScriptExecutorImpl
 
     private BeanManager beanManager;
 
+    private ClassLoader classLoader;
+
+    private ServiceRegistry serviceRegistry;
+
     public void setEngine( final ScriptEngine engine )
     {
         this.engine = engine;
@@ -55,6 +60,16 @@ final class ScriptExecutorImpl
     public void setBeanManager( final BeanManager beanManager )
     {
         this.beanManager = beanManager;
+    }
+
+    public void setClassLoader( final ClassLoader classLoader )
+    {
+        this.classLoader = classLoader;
+    }
+
+    public void setServiceRegistry( final ServiceRegistry serviceRegistry )
+    {
+        this.serviceRegistry = serviceRegistry;
     }
 
     public void initialize()
@@ -145,5 +160,17 @@ final class ScriptExecutorImpl
     public BeanManager getBeanManager()
     {
         return this.beanManager;
+    }
+
+    @Override
+    public ClassLoader getClassLoader()
+    {
+        return this.classLoader;
+    }
+
+    @Override
+    public ServiceRegistry getServiceRegistry()
+    {
+        return serviceRegistry;
     }
 }

@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.script;
 
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -35,8 +37,14 @@ public abstract class AbstractScriptTest
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( MYMODULE_KEY ) ).thenReturn( module );

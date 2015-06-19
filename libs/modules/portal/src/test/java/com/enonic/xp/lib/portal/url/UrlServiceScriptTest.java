@@ -7,13 +7,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -25,21 +18,8 @@ public class UrlServiceScriptTest
     @Before
     public void setUp()
     {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMode( RenderMode.LIVE );
-        portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setModule( ModuleKey.from( "mymodule" ) );
-        portalRequest.setBaseUri( "/portal" );
-
-        final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        portalRequest.setContent( content );
-        PortalRequestAccessor.set( portalRequest );
-
-        final UrlServiceWrapper service = new UrlServiceWrapper();
-        service.setUrlService( Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
-
-        addBean( "com.enonic.xp.lib.portal.url.UrlServiceWrapper", service );
-        addBean( "com.enonic.xp.lib.portal.current.PortalServiceWrapper", new Object() );
+        setupRequest();
+        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
