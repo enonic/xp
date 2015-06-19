@@ -32,14 +32,17 @@ exports.processHtml = function (params) {
 //
 
 exports.getContent = function () {
+    //return __.toNativeObject(currentService.currentContent());
     return currentService.currentContent();
 };
 
 exports.getComponent = function () {
+    //return __.toNativeObject(currentService.currentComponent());
     return currentService.currentComponent();
 };
 
 exports.getSite = function () {
+    //return __.toNativeObject(currentService.currentSite());
     return currentService.currentSite();
 };
 
