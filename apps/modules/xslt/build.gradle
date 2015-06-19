@@ -1,4 +1,4 @@
-apply plugin: 'com.enonic.xp.gradle.module'
+apply plugin: 'com.enonic.xp.module'
 
 module {
     name = 'com.enonic.wem.apps.xslt'

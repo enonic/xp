@@ -8,13 +8,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.enonic.xp.gradle:gradle-plugin:1.2.0'
+        classpath 'com.enonic.xp:gradle-plugin:6.0.0-SNAPSHOT'
     }
 }
 
 allprojects {
     apply plugin: 'base'
-    apply plugin: 'idea'
 
     version = '6.0.0-SNAPSHOT'
     group = 'com.enonic.xp.apps'
@@ -22,7 +21,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'maven'
-    apply plugin: 'maven-publish'
 
     repositories {
         mavenLocal()
@@ -32,15 +30,10 @@ subprojects {
         }
     }
 
-    publishing {
-        publications {
-            mavenJava( MavenPublication ) {
-                from components.java
-            }
-        }
+    uploadArchives {
         repositories {
-            maven {
-                url 'http://repo.enonic.net/artifactory/public'
+            mavenDeployer {
+                repository( url: 'http://repo.enonic.net/artifactory/public' )
             }
         }
     }

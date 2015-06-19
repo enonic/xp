@@ -1,11 +1,13 @@
 package com.enonic.xp.tools.gradle;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.dm.gradle.plugins.bundle.BundleExtension;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ModuleVersionIdentifier;
+import org.gradle.api.artifacts.ResolvedArtifact;
 
 final class BundleConfigurator
 {
@@ -48,8 +50,12 @@ final class BundleConfigurator
         instruction( "X-Vendor-Name", module.getVendorName() );
         instruction( "X-Vendor-Url", module.getVendorUrl() );
         instruction( "X-System-Version", module.getSystemVersion() );
-        instruction( "Bundle-ClassPath", getBundleClassPath() );
-        instruction( "Include-Resource", getIncludeResource() );
+
+        final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
+        final Configuration filteredConfig = new UnwantedJarFilter( libConfig ).filter();
+
+        instruction( "Bundle-ClassPath", getBundleClassPath( filteredConfig ) );
+        instruction( "Include-Resource", getIncludeResource( filteredConfig ) );
 
         for ( final Map.Entry<String, String> entry : instructions.entrySet() )
         {
@@ -65,23 +71,24 @@ final class BundleConfigurator
         }
     }
 
-    private String getBundleClassPath()
+    private String getBundleClassPath( final Configuration config )
     {
         final StringBuilder str = new StringBuilder( "." );
-        for ( final File file : this.project.getConfigurations().getByName( "include" ) )
+        for ( final ResolvedArtifact artifact : config.getResolvedConfiguration().getResolvedArtifacts() )
         {
-            str.append( ",OSGI-INF/lib/" ).append( file.getName() );
+            str.append( ",OSGI-INF/lib/" ).append( getFileName( artifact ) );
         }
 
         return str.toString();
     }
 
-    private String getIncludeResource()
+    private String getIncludeResource( final Configuration config )
     {
         final StringBuilder str = new StringBuilder( "" );
-        for ( final File file : this.project.getConfigurations().getByName( "include" ) )
+        for ( final ResolvedArtifact artifact : config.getResolvedConfiguration().getResolvedArtifacts() )
         {
-            str.append( ",OSGI-INF/lib/" ).append( file.getName() ).append( "=" ).append( file.getPath() );
+            final String name = getFileName( artifact );
+            str.append( ",OSGI-INF/lib/" ).append( name ).append( "=" ).append( artifact.getFile().getPath() );
         }
 
         return str.length() > 0 ? str.substring( 1 ) : str.toString();
@@ -93,5 +100,18 @@ final class BundleConfigurator
         {
             throw new IllegalArgumentException( "Invalid module name [" + name + "]. Name should not contain [-]." );
         }
+    }
+
+    private String getFileName( final ResolvedArtifact artifact )
+    {
+        final ModuleVersionIdentifier id = artifact.getModuleVersion().getId();
+        String name = id.getGroup() + "/" + id.getName() + "-" + id.getVersion();
+
+        if ( artifact.getClassifier() != null )
+        {
+            name += "-" + artifact.getClassifier();
+        }
+
+        return name + "." + artifact.getExtension();
     }
 }
