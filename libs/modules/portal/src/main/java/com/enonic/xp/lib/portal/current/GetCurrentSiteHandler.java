@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.portal.current;
 
-import com.enonic.xp.lib.mapper.SiteMapper;
+import com.enonic.xp.lib.content.mapper.SiteMapper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
