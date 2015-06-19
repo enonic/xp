@@ -32,7 +32,7 @@ final class GetContentTypesCommand
 
     private ContentTypes getContentTypes( final ContentTypeNames contentTypeNames )
     {
-        final ContentTypes.Builder contentTypes = ContentTypes.newContentTypes();
+        final ContentTypes.Builder contentTypes = ContentTypes.create();
         for ( final ContentTypeName contentTypeName : contentTypeNames )
         {
             final ContentType contentType = this.registry.get( contentTypeName );

@@ -57,7 +57,7 @@ public final class SiteConfig
         return Objects.hash( module, config );
     }
 
-    public static Builder newSiteConfig()
+    public static Builder create()
     {
         return new Builder();
     }

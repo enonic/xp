@@ -99,7 +99,7 @@ public class ReorderChildNodeCommand
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
     {
-        final Node updatedNode = Node.newNode( nodeToMove ).
+        final Node updatedNode = Node.create( nodeToMove ).
             manualOrderValue( newOrderValue ).
             build();
 

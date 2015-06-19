@@ -26,7 +26,6 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
-import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class MixinResourceTest
@@ -59,7 +58,7 @@ public class MixinResourceTest
     public final void test_get_mixin()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().
+        Mixin mixin = Mixin.create().
             createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
@@ -86,12 +85,12 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+        Mixin mixin1 = Mixin.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
             Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+        Mixin mixin2 = Mixin.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
             Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( NullConfig.create() ).label(
                 "Text Area" ).required( true ).helpText( "Help text area" ).required( true ).build() ).build();
@@ -111,7 +110,7 @@ public class MixinResourceTest
         byte[] data = Resources.toByteArray( getClass().getResource( "mixinicon.png" ) );
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
-        Mixin mixin = newMixin().
+        Mixin mixin = Mixin.create().
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
             icon( icon ).
@@ -131,7 +130,7 @@ public class MixinResourceTest
     public void testMixinIcon_default_image()
         throws Exception
     {
-        Mixin mixin = newMixin().
+        Mixin mixin = Mixin.create().
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
             addFormItem( Input.create().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).

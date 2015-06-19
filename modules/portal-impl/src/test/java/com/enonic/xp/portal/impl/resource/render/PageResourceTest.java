@@ -161,7 +161,7 @@ public class PageResourceTest
         final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         rootDataSet.addReference( "target", Reference.from( "ref" ) );
 
-        final Content content = Content.newContent().
+        final Content content = Content.create().
             id( ContentId.from( "id" ) ).
             path( ContentPath.from( "site/somepath/shortcut" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).

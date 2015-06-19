@@ -84,7 +84,7 @@ public final class ImageContentProcessor
             extraDatas = extractMetadata( mediaInfo, contentMixins );
         }
 
-        final CreateAttachments.Builder builder = CreateAttachments.builder();
+        final CreateAttachments.Builder builder = CreateAttachments.create();
         builder.add( sourceAttachment );
         builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
@@ -95,7 +95,7 @@ public final class ImageContentProcessor
 
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
     {
-        final CreateAttachments.Builder attachments = CreateAttachments.builder();
+        final CreateAttachments.Builder attachments = CreateAttachments.create();
         for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
         {
             final boolean doScale = scale.getSize() < sourceImage.getWidth();
@@ -133,7 +133,7 @@ public final class ImageContentProcessor
                 throw Exceptions.unchecked( e );
             }
 
-            final CreateAttachments.Builder builder = CreateAttachments.builder();
+            final CreateAttachments.Builder builder = CreateAttachments.create();
             builder.add( sourceAttachment );
             builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
@@ -165,7 +165,7 @@ public final class ImageContentProcessor
     private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
 
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
 
         Map<MixinName, ExtraData> metadataMap = new HashMap<>();
 

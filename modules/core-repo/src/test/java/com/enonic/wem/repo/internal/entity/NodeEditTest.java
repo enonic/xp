@@ -23,7 +23,7 @@ public class NodeEditTest
     {
         final Node node = createNode();
 
-        final Node editedNode = Node.newNode( node ).build();
+        final Node editedNode = Node.create( node ).build();
 
         assertEquals( node, editedNode );
     }
@@ -36,7 +36,7 @@ public class NodeEditTest
 
         final NodeName newName = NodeName.from( "newname" );
 
-        final Node editedNode = Node.newNode( node ).
+        final Node editedNode = Node.create( node ).
             name( newName ).
             build();
 
@@ -53,7 +53,7 @@ public class NodeEditTest
             defaultConfig( IndexConfig.FULLTEXT ).
             build();
 
-        final Node editedNode = Node.newNode( node ).
+        final Node editedNode = Node.create( node ).
             indexConfigDocument( newIndexConfig ).
             build();
 
@@ -69,7 +69,7 @@ public class NodeEditTest
         rootDataSet.setLocalDate( "b", LocalDate.now() );
         rootDataSet.setString( "c", "runar" );
 
-        return Node.newNode().
+        return Node.create().
             id( NodeId.from( "node" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "mynode" ) ).

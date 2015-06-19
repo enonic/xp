@@ -115,15 +115,15 @@ public final class Form
 
     public Form copy()
     {
-        return newForm( this ).build();
+        return create( this ).build();
     }
 
-    public static Builder newForm()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newForm( final Form form )
+    public static Builder create( final Form form )
     {
         return new Builder( form );
     }

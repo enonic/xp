@@ -20,7 +20,6 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-import static com.enonic.xp.schema.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeResourceTest
@@ -45,7 +44,7 @@ public class RelationshipTypeResourceTest
     public void testRequestGetRelationshipTypeJson_existing()
         throws Exception
     {
-        final RelationshipType relationshipType = newRelationshipType().
+        final RelationshipType relationshipType = RelationshipType.create().
             name( "mymodule:the_relationship_type" ).
             description( "RT description" ).
             build();
@@ -74,11 +73,11 @@ public class RelationshipTypeResourceTest
     public void testList()
         throws Exception
     {
-        final RelationshipType relationshipType1 = newRelationshipType().
+        final RelationshipType relationshipType1 = RelationshipType.create().
             name( "mymodule:the_relationship_type_1" ).
             build();
 
-        final RelationshipType relationshipType2 = newRelationshipType().
+        final RelationshipType relationshipType2 = RelationshipType.create().
             name( "mymodule:the_relationship_type_2" ).
             build();
 
@@ -98,7 +97,7 @@ public class RelationshipTypeResourceTest
         byte[] data = Resources.toByteArray( getClass().getResource( "relationshipicon.png" ) );
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
-        RelationshipType relationshipType = newRelationshipType().
+        RelationshipType relationshipType = RelationshipType.create().
             name( "mymodule:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
@@ -120,7 +119,7 @@ public class RelationshipTypeResourceTest
     public void testRelationshipTypeIcon_default_image()
         throws Exception
     {
-        RelationshipType relationshipType = newRelationshipType().
+        RelationshipType relationshipType = RelationshipType.create().
             name( "mymodule:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).

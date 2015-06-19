@@ -50,7 +50,7 @@ public abstract class ImageBaseResourceTest
     final void setupContent()
         throws Exception
     {
-        final Attachment attachment = Attachment.newAttachment().
+        final Attachment attachment = Attachment.create().
             name( "enonic-logo.png" ).
             mimeType( "image/png" ).
             label( "source" ).

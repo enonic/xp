@@ -14,7 +14,7 @@ public class TextComponentDataSerializerTest
     public void toData()
     {
         // setup
-        TextComponent textComponent = TextComponent.newTextComponent().name( "myText" ).text( "some text" ).build();
+        TextComponent textComponent = TextComponent.create().name( "myText" ).text( "some text" ).build();
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         // exercise

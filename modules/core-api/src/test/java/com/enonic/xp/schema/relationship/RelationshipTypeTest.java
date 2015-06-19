@@ -14,7 +14,7 @@ public class RelationshipTypeTest
     public void build()
     {
         // setup
-        RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        RelationshipType.Builder builder = RelationshipType.create();
         builder.name( "mymodule:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
@@ -36,7 +36,7 @@ public class RelationshipTypeTest
     public void test_equals()
     {
         // setup
-        RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        RelationshipType.Builder builder = RelationshipType.create();
         builder.name( "mymodule:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
@@ -44,7 +44,7 @@ public class RelationshipTypeTest
         builder.setAllowedToTypes( ContentTypeNames.from( ContentTypeName.from( "mymodule:person" ) ) );
 
         RelationshipType relationshipType1 = builder.build();
-        builder = RelationshipType.newRelationshipType( relationshipType1 );
+        builder = RelationshipType.create( relationshipType1 );
         RelationshipType relationshipType2 = builder.build();
 
         assertTrue( relationshipType1.equals( relationshipType1 ) );

@@ -81,7 +81,7 @@ public class ContentNodeTranslator
 
     public Contents fromNodes( final Nodes nodes )
     {
-        final Contents.Builder contents = Contents.builder();
+        final Contents.Builder contents = Contents.create();
 
         for ( final Node node : nodes )
         {
@@ -157,7 +157,7 @@ public class ContentNodeTranslator
 
     private NodePath resolveParentNodePath( final ContentPath parentContentPath )
     {
-        return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
+        return NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
 }

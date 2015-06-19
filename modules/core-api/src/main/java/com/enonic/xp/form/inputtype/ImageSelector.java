@@ -48,7 +48,7 @@ final class ImageSelector
     @Override
     public InputTypeConfig getDefaultConfig()
     {
-        return ImageSelectorConfig.newImageSelectorConfig().build();
+        return ImageSelectorConfig.create().build();
     }
 
     @Override

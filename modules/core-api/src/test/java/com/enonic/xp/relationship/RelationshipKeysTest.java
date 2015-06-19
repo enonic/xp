@@ -10,20 +10,20 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 public class RelationshipKeysTest
 {
-    private static final RelationshipKey parent_111_222_myInput = RelationshipKey.newRelationshipKey().
+    private static final RelationshipKey parent_111_222_myInput = RelationshipKey.create().
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
         managingData( PropertyPath.from( "myInput" ) ).build();
 
 
-    private static final RelationshipKey parent_111_222_myOtherInput = RelationshipKey.newRelationshipKey().
+    private static final RelationshipKey parent_111_222_myOtherInput = RelationshipKey.create().
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
         managingData( PropertyPath.from( "myOtherInput" ) ).build();
 
-    private static final RelationshipKey parent_555_222_myInput = RelationshipKey.newRelationshipKey().
+    private static final RelationshipKey parent_555_222_myInput = RelationshipKey.create().
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "555" ) ).
         toContent( ContentId.from( "222" ) ).

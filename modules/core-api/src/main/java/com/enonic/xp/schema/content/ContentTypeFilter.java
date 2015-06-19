@@ -75,7 +75,7 @@ public final class ContentTypeFilter
         return Objects.hashCode( defaultAccess, accessTable );
     }
 
-    public static Builder newContentFilter()
+    public static Builder create()
     {
         return new Builder();
     }

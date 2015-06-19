@@ -141,7 +141,7 @@ final class MixinLoader
 
     private Mixin.Builder parseMixinXml( final String serializedMixin )
     {
-        final Mixin.Builder builder = Mixin.newMixin();
+        final Mixin.Builder builder = Mixin.create();
 
         final XmlMixinParser parser = new XmlMixinParser();
         parser.builder( builder );

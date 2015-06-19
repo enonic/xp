@@ -24,23 +24,23 @@ public class PageDataSerializerTest
         PropertyTree myPartConfig = new PropertyTree( propertyIdProvider );
         myPartConfig.addString( "some", "config" );
 
-        Region mainRegion = Region.newRegion().
+        Region mainRegion = Region.create().
             name( "main" ).
-            add( PartComponent.newPartComponent().
+            add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
                 config( myPartConfig ).
                 build() ).
             build();
 
-        PageRegions regions = PageRegions.newPageRegions().
+        PageRegions regions = PageRegions.create().
             add( mainRegion ).
             build();
 
         PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
         pageConfig.addString( "some", "config" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             config( pageConfig ).
             template( PageTemplateKey.from( "template-x" ) ).
             regions( regions ).
@@ -57,13 +57,13 @@ public class PageDataSerializerTest
     @Test
     public void page_with_empty_regions()
     {
-        PageRegions regions = PageRegions.newPageRegions().
+        PageRegions regions = PageRegions.create().
             build();
 
         PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
         pageConfig.addString( "some", "config" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             config( pageConfig ).
             template( PageTemplateKey.from( "template-x" ) ).
             regions( regions ).
@@ -83,7 +83,7 @@ public class PageDataSerializerTest
         PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
         pageConfig.addString( "some", "config" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             config( pageConfig ).
             template( PageTemplateKey.from( "template-x" ) ).
             regions( null ).

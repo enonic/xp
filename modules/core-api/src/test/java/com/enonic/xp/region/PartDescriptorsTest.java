@@ -22,21 +22,21 @@ public class PartDescriptorsTest
         final PartDescriptor partDescriptor1 = PartDescriptor.create().
             name( "news-part" ).
             displayName( "News part" ).
-            config( Form.newForm().build() ).
+            config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor partDescriptor2 = PartDescriptor.create().
             name( "news-part2" ).
             displayName( "News part2" ).
-            config( Form.newForm().build() ).
+            config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part2" ) ).
             build();
 
         final PartDescriptor partDescriptor3 = PartDescriptor.create().
             name( "news-part3" ).
             displayName( "News part3" ).
-            config( Form.newForm().build() ).
+            config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part3" ) ).
             build();
 
@@ -48,7 +48,7 @@ public class PartDescriptorsTest
     @Test
     public void testBuilder()
     {
-        final PartDescriptors partDescriptors = PartDescriptors.newPartDescriptors().
+        final PartDescriptors partDescriptors = PartDescriptors.create().
             add( partDescriptorsList.get( 0 ) ).
             add( partDescriptorsList.get( 1 ) ).
             build();

@@ -16,7 +16,7 @@ public class SiteTest
     @Test
     public void description()
     {
-        Site site = Site.newSite().
+        Site site = Site.create().
             description( "This is my site" ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
@@ -27,12 +27,12 @@ public class SiteTest
     @Test
     public void siteEquals()
     {
-        Site site = Site.newSite().
+        Site site = Site.create().
             description( "This is my site" ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
             build();
-        Site site1 = Site.newSite().
+        Site site1 = Site.create().
             description( "This is my another site" ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
@@ -45,17 +45,17 @@ public class SiteTest
     @Test
     public void builder()
     {
-        SiteConfig siteConfig = SiteConfig.newSiteConfig().
+        SiteConfig siteConfig = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
-        Site site = Site.newSite().
+        Site site = Site.create().
             addSiteConfig( siteConfig ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
             build();
 
-        Site site1 = Site.newSite( site ).build();
+        Site site1 = Site.create( site ).build();
 
         assertEquals( site, site1 );
     }
@@ -63,11 +63,11 @@ public class SiteTest
     @Test
     public void siteConfigs()
     {
-        SiteConfig siteConfig = SiteConfig.newSiteConfig().
+        SiteConfig siteConfig = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
-        Site site = Site.newSite().
+        Site site = Site.create().
             siteConfigs( SiteConfigs.from( siteConfig ) ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
@@ -85,11 +85,11 @@ public class SiteTest
     @Test
     public void siteConfigEquals()
     {
-        SiteConfig siteConfig = SiteConfig.newSiteConfig().
+        SiteConfig siteConfig = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
-        SiteConfig siteConfig1 = SiteConfig.newSiteConfig().
+        SiteConfig siteConfig1 = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();

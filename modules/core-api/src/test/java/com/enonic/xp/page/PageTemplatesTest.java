@@ -39,12 +39,12 @@ public class PageTemplatesTest
     @Test
     public void filterTest()
     {
-        final PageTemplates pageTemplates = PageTemplates.newPageTemplates().
+        final PageTemplates pageTemplates = PageTemplates.create().
             add( generatePageTemplate1() ).
             addAll( Arrays.asList( generatePageTemplate2(), generatePageTemplate3() ) ).
             build();
 
-        final PageTemplateSpec pageTemplateSpec = PageTemplateSpec.newPageTemplateParams().
+        final PageTemplateSpec pageTemplateSpec = PageTemplateSpec.create().
             canRender( ContentTypeName.imageMedia() ).
             build();
 
@@ -59,7 +59,7 @@ public class PageTemplatesTest
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "testKey" ) ).
             canRender( ContentTypeNames.from( ContentTypeName.archiveMedia(), ContentTypeName.imageMedia() ) ).
-            regions( PageRegions.newPageRegions().build() ).
+            regions( PageRegions.create().build() ).
             name( "testContentName" ).
             id( ContentId.from( "id" ) ).
             parentPath( ContentPath.from( "path" ) ).

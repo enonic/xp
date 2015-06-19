@@ -33,7 +33,7 @@ public class StoreNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        Node updatedNode = Node.newNode( newNode ).
+        Node updatedNode = Node.create( newNode ).
             permissions( AccessControlList.create().
                 add( AccessControlEntry.create().
                     allow( Permission.READ ).

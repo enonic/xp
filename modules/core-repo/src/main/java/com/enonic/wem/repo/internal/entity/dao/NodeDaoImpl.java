@@ -134,7 +134,7 @@ public class NodeDaoImpl
         final NodePath parentPath = nodePath.getParentPath();
         final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
 
-        return Node.newNode( node ).
+        return Node.create( node ).
             parentPath( parentPath ).
             name( nodeName ).
             nodeState( nodeBranchVersion.getNodeState() ).
