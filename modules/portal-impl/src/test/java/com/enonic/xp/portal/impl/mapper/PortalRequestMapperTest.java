@@ -18,6 +18,7 @@ public class PortalRequestMapperTest
     {
         this.portalRequest = new PortalRequest();
         this.portalRequest.setUri( "/portal/live/master/a/b" );
+        this.portalRequest.setBaseUrl( "http://localhost.com/portal/live/master" );
         this.portalRequest.setMethod( "GET" );
         this.portalRequest.getParams().put( "param1", "value1" );
         this.portalRequest.getParams().put( "param2", "value2" );

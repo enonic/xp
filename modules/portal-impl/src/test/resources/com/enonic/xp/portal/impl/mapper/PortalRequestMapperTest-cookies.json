@@ -1,5 +1,6 @@
 {
   "uri": "/portal/live/master/a/b",
+  "baseUrl": "http://localhost.com/portal/live/master",
   "method": "GET",
   "mode": "live",
   "branch": "draft",

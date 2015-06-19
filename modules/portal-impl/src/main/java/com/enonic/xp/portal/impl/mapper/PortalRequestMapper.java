@@ -24,6 +24,7 @@ public final class PortalRequestMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "uri", this.request.getUri() );
+        gen.value( "baseUrl", this.request.getBaseUrl() );
         gen.value( "method", this.request.getMethod() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         if ( this.request.getBranch() != null )
