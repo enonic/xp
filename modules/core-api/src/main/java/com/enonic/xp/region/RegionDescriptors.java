@@ -33,7 +33,7 @@ public final class RegionDescriptors
         return regionByName.values().iterator();
     }
 
-    public static Builder newRegionDescriptors()
+    public static Builder create()
     {
         return new Builder();
     }

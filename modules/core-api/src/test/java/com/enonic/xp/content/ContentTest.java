@@ -11,7 +11,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 
-import static com.enonic.xp.content.Content.newContent;
 import static org.junit.Assert.*;
 
 public class ContentTest
@@ -21,20 +20,20 @@ public class ContentTest
     @Test(expected = IllegalArgumentException.class)
     public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
     {
-        Content.newContent().path( ContentPath.ROOT ).build();
+        Content.create().path( ContentPath.ROOT ).build();
     }
 
     @Test
     public void isRoot_given_path_with_one_element_then_true_is_returned()
     {
-        Content content = Content.newContent().path( "/myroot" ).build();
+        Content content = Content.create().path( "/myroot" ).build();
         assertEquals( true, content.isRoot() );
     }
 
     @Test
     public void isRoot_given_path_with_more_than_one_element_then_false_is_returned()
     {
-        Content content = Content.newContent().path( "/myroot/mysub" ).build();
+        Content content = Content.create().path( "/myroot/mysub" ).build();
         assertEquals( false, content.isRoot() );
     }
 
@@ -42,7 +41,7 @@ public class ContentTest
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
-        Content content = newContent().path( MY_CONTENT_PATH ).build();
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
         content.getData().setString( "myData", "Value 1" );
 
         // exercise
@@ -61,13 +60,13 @@ public class ContentTest
     @Test(expected = IllegalArgumentException.class)
     public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
     {
-        newContent().
+        Content.create().
             path( MY_CONTENT_PATH ).
-            page( Page.newPage().
+            page( Page.create().
                 controller( DescriptorKey.from( "abc:abc" ) ).
                 template( PageTemplateKey.from( "123" ) ).
                 config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-                regions( PageRegions.newPageRegions().build() ).
+                regions( PageRegions.create().build() ).
                 build() ).build();
     }
 }

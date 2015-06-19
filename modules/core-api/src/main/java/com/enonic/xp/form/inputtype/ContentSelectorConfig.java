@@ -52,7 +52,7 @@ public final class ContentSelectorConfig
 
         Builder()
         {
-            allowedContentTypes = ContentTypeNames.newContentTypeNames();
+            allowedContentTypes = ContentTypeNames.create();
         }
 
         public Builder relationshipType( final RelationshipTypeName value )

@@ -47,7 +47,7 @@ public class RelationshipJsonSerializerTest
     @Test
     public void serialize_relationship()
     {
-        Relationship relationship = Relationship.newRelationship().
+        Relationship relationship = Relationship.create().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
@@ -76,7 +76,7 @@ public class RelationshipJsonSerializerTest
     @Test
     public void serialize_relationship_with_managingData()
     {
-        Relationship relationship = Relationship.newRelationship().
+        Relationship relationship = Relationship.create().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
@@ -106,7 +106,7 @@ public class RelationshipJsonSerializerTest
     @Test
     public void serialize_relationship_with_properties()
     {
-        Relationship relationship = Relationship.newRelationship().
+        Relationship relationship = Relationship.create().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
@@ -144,7 +144,7 @@ public class RelationshipJsonSerializerTest
     @Test
     public void parse_relationship()
     {
-        Relationship toSerialize = Relationship.newRelationship().
+        Relationship toSerialize = Relationship.create().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).

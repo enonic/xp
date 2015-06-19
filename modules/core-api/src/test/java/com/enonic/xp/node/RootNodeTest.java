@@ -29,6 +29,6 @@ public class RootNodeTest
 
         assertEquals( "", rootNode.name().toString() );
         assertEquals( null, rootNode.parentPath() );
-        assertEquals( NodePath.newPath( NodePath.ROOT ).addElement( "" ).build(), rootNode.path() );
+        assertEquals( NodePath.create( NodePath.ROOT ).addElement( "" ).build(), rootNode.path() );
     }
 }

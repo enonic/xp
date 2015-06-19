@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 @Beta
 public final class ContentPath
 {
-    public static final ContentPath ROOT = newPath().absolute( true ).build();
+    public static final ContentPath ROOT = create().absolute( true ).build();
 
     private static final String ELEMENT_DIVIDER = "/";
 
@@ -67,7 +67,7 @@ public final class ContentPath
         }
 
         final LinkedList<String> parentElements = newListOfParentElements();
-        return newPath().absolute( absolute ).elements( parentElements ).build();
+        return create().absolute( absolute ).elements( parentElements ).build();
     }
 
     public boolean isAbsolute()
@@ -172,24 +172,24 @@ public final class ContentPath
     {
         final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
         boolean absolute = path.startsWith( ELEMENT_DIVIDER );
-        return newPath().elements( pathElements ).absolute( absolute ).build();
+        return create().elements( pathElements ).absolute( absolute ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return newPath().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
+        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final ContentPath relative )
     {
-        final Builder builder = newPath().elements( parent.elements );
+        final Builder builder = create().elements( parent.elements );
         builder.addElements( relative.elements );
         builder.absolute( parent.isAbsolute() );
         return builder.build();
     }
 
 
-    public static Builder newPath()
+    public static Builder create()
     {
         return new Builder();
     }

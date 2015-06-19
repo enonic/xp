@@ -20,7 +20,7 @@ class ContentNodeHelper
 {
     private final static String CONTENT_ROOT_NODE_NAME = "content";
 
-    final static NodePath CONTENT_ROOT_NODE = NodePath.newNodePath( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();
+    final static NodePath CONTENT_ROOT_NODE = NodePath.create( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();
 
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {

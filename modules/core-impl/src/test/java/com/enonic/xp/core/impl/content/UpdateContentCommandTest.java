@@ -25,8 +25,6 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteService;
 
-import static com.enonic.xp.content.Content.newContent;
-
 public class UpdateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
@@ -102,7 +100,7 @@ public class UpdateContentCommandTest
             siteService( this.siteService ).
             build();
 
-        final Node mockNode = Node.newNode().build();
+        final Node mockNode = Node.create().build();
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
@@ -115,7 +113,7 @@ public class UpdateContentCommandTest
 
     private Content createContent( final PropertyTree contentData )
     {
-        return newContent().
+        return Content.create().
             id( ContentId.from( "1" ) ).
             parentPath( ContentPath.ROOT ).
             name( "mycontent" ).

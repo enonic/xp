@@ -30,7 +30,7 @@ final class SingleSelectorConfigXmlSerializer
     @Override
     public InputTypeConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
+        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.create();
 
         final Element selectorTypeEl = DomHelper.getChildElementByTagName( elem, "selector-type" );
         builder.type( SingleSelectorConfig.SelectorType.valueOf( DomHelper.getTextValue( selectorTypeEl ) ) );

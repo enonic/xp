@@ -12,13 +12,9 @@ import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 
-import static com.enonic.xp.page.PageRegions.newPageRegions;
-import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
-import static com.enonic.xp.region.LayoutRegions.newLayoutRegions;
-import static com.enonic.xp.region.PartComponent.newPartComponent;
-import static com.enonic.xp.region.Region.newRegion;
 import static org.junit.Assert.*;
 
 public class PageRegionsTest
@@ -26,10 +22,10 @@ public class PageRegionsTest
     @Test
     public void iterator()
     {
-        final PageRegions regions = newPageRegions().
-            add( newRegion().name( "a-region" ).build() ).
-            add( newRegion().name( "b-region" ).build() ).
-            add( newRegion().name( "c-region" ).build() ).
+        final PageRegions regions = PageRegions.create().
+            add( Region.create().name( "a-region" ).build() ).
+            add( Region.create().name( "b-region" ).build() ).
+            add( Region.create().name( "c-region" ).build() ).
             build();
 
         Iterator<Region> iterator = regions.iterator();
@@ -51,10 +47,10 @@ public class PageRegionsTest
     @Test
     public void getRegion()
     {
-        final PageRegions regions = newPageRegions().
-            add( newRegion().name( "a-region" ).build() ).
-            add( newRegion().name( "b-region" ).build() ).
-            add( newRegion().name( "c-region" ).build() ).
+        final PageRegions regions = PageRegions.create().
+            add( Region.create().name( "a-region" ).build() ).
+            add( Region.create().name( "b-region" ).build() ).
+            add( Region.create().name( "c-region" ).build() ).
             build();
 
         assertEquals( "a-region", regions.getRegion( "a-region" ).getName() );
@@ -66,13 +62,13 @@ public class PageRegionsTest
     @Test
     public void componentPaths_one_level()
     {
-        final PageRegions regions = newPageRegions().
-            add( newRegion().name( "a-region" ).
-                add( newPartComponent().name( ComponentName.from( "part-a-in-a" ) ).build() ).
+        final PageRegions regions = PageRegions.create().
+            add( Region.create().name( "a-region" ).
+                add( PartComponent.create().name( ComponentName.from( "part-a-in-a" ) ).build() ).
                 build() ).
-            add( newRegion().name( "b-region" ).
-                add( newPartComponent().name( ComponentName.from( "part-a-in-b" ) ).build() ).
-                add( newPartComponent().name( ComponentName.from( "part-b-in-b" ) ).build() ).
+            add( Region.create().name( "b-region" ).
+                add( PartComponent.create().name( ComponentName.from( "part-a-in-b" ) ).build() ).
+                add( PartComponent.create().name( ComponentName.from( "part-b-in-b" ) ).build() ).
                 build() ).
             build();
 
@@ -93,12 +89,12 @@ public class PageRegionsTest
     @Test
     public void componentPaths_two_levels()
     {
-        final PageRegions pageRegions = newPageRegions().
-            add( newRegion().name( "region-level-1" ).
-                add( newLayoutComponent().name( ComponentName.from( "layout-level-1" ) ).
-                    regions( newLayoutRegions().
-                        add( newRegion().name( "region-level-2" ).
-                            add( newPartComponent().name( ComponentName.from( "part-level-2" ) ).build() ).
+        final PageRegions pageRegions = PageRegions.create().
+            add( Region.create().name( "region-level-1" ).
+                add( LayoutComponent.create().name( ComponentName.from( "layout-level-1" ) ).
+                    regions( LayoutRegions.create().
+                        add( Region.create().name( "region-level-2" ).
+                            add( PartComponent.create().name( ComponentName.from( "part-level-2" ) ).build() ).
                             build() ).
                         build() ).
                     build() ).
@@ -120,14 +116,14 @@ public class PageRegionsTest
     @Test
     public void getComponent()
     {
-        final PageRegions regions = newPageRegions().
-            add( newRegion().
+        final PageRegions regions = PageRegions.create().
+            add( Region.create().
                 name( "a-region" ).
-                add( newPartComponent().name( "part-1-in-region-a" ).build() ).
+                add( PartComponent.create().name( "part-1-in-region-a" ).build() ).
                 build() ).
-            add( newRegion().
+            add( Region.create().
                 name( "b-region" ).
-                add( newPartComponent().name( "part-1-in-region-b" ).build() ).
+                add( PartComponent.create().name( "part-1-in-region-b" ).build() ).
                 build() ).
             build();
 
@@ -139,11 +135,11 @@ public class PageRegionsTest
     @Test(expected = IllegalArgumentException.class)
     public void getComponent_throws_exception()
     {
-        final PageRegions regions = newPageRegions().
-            add( newRegion().
+        final PageRegions regions = PageRegions.create().
+            add( Region.create().
                 name( "a-region" ).
-                add( newPartComponent().name( "part-1-in-region-a" ).build() ).
-                add( newPartComponent().name( "part-1-in-region-b" ).build() ).
+                add( PartComponent.create().name( "part-1-in-region-a" ).build() ).
+                add( PartComponent.create().name( "part-1-in-region-b" ).build() ).
                 build() ).
             build();
 

@@ -18,7 +18,7 @@ public class SiteConfigDataSerializer
 
     SiteConfig fromData( final PropertySet siteConfigAsSet )
     {
-        return SiteConfig.newSiteConfig().
+        return SiteConfig.create().
             module( ModuleKey.from( siteConfigAsSet.getString( "moduleKey" ) ) ).
             config( siteConfigAsSet.getSet( "config" ).toTree() ).
             build();

@@ -73,7 +73,7 @@ public class ContentTypeValidationResult
         return new ContentTypeValidationResult( list );
     }
 
-    public static Builder newContentTypeValidationResult()
+    public static Builder create()
     {
         return new Builder();
     }

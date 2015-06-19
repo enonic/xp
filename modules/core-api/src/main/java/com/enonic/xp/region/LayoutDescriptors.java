@@ -77,7 +77,7 @@ public final class LayoutDescriptors
         }
     }
 
-    public static Builder newLayoutDescriptors()
+    public static Builder create()
     {
         return new Builder();
     }

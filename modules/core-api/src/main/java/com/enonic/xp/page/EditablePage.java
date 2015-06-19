@@ -26,7 +26,7 @@ public class EditablePage
 
     public Page build()
     {
-        final Page.Builder builder = Page.newPage();
+        final Page.Builder builder = Page.create();
         builder.controller( controller );
         builder.template( template );
         builder.regions( regions );

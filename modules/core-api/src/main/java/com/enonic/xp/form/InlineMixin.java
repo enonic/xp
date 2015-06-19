@@ -61,7 +61,7 @@ public class InlineMixin
         return Objects.hash( super.hashCode(), this.mixinName );
     }
 
-    public static Builder newInlineMixin()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -69,15 +69,15 @@ public class InlineMixin
     @Override
     public InlineMixin copy()
     {
-        return newInlineMixin( this ).build();
+        return create( this ).build();
     }
 
-    public static Builder newInlineMixin( final Mixin mixin )
+    public static Builder create( final Mixin mixin )
     {
         return new Builder( mixin );
     }
 
-    public static Builder newInlineMixin( final InlineMixin inline )
+    public static Builder create( final InlineMixin inline )
     {
         return new Builder( inline );
     }

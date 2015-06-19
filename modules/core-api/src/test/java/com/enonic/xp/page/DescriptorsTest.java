@@ -7,8 +7,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 
-import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 import static org.junit.Assert.*;
 
 public class DescriptorsTest
@@ -17,7 +17,7 @@ public class DescriptorsTest
     @Test
     public void pageDescriptor()
     {
-        final Form pageForm = Form.newForm().
+        final Form pageForm = Form.create().
             addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
@@ -25,7 +25,7 @@ public class DescriptorsTest
         final PageDescriptor pageDescriptor = PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
-            regions( newRegionDescriptors().build() ).
+            regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
@@ -36,7 +36,7 @@ public class DescriptorsTest
     @Test
     public void partDescriptor()
     {
-        final Form partForm = Form.newForm().
+        final Form partForm = Form.create().
             addFormItem( Input.create().name( "width" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
@@ -56,7 +56,7 @@ public class DescriptorsTest
     @Test
     public void layoutDescriptor()
     {
-        final Form layoutForm = Form.newForm().
+        final Form layoutForm = Form.create().
             addFormItem( Input.create().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
@@ -64,7 +64,7 @@ public class DescriptorsTest
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
-            regions( newRegionDescriptors().build() ).
+            regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
 

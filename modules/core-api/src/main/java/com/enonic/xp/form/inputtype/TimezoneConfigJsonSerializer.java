@@ -22,7 +22,7 @@ public abstract class TimezoneConfigJsonSerializer<T extends TimezoneConfig>
     @Override
     public T parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final T.Builder builder = T.newTimezoneConfig();
+        final T.Builder builder = T.create();
         final JsonNode withTimeZoneNode = inputTypeConfigNode.get( "withTimezone" );
         if ( withTimeZoneNode != null && !withTimeZoneNode.isNull() )
         {
