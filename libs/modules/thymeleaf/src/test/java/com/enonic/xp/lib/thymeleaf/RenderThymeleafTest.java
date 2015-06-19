@@ -36,7 +36,6 @@ public class RenderThymeleafTest
         return params.getName() + "(" + params.getArgs().toString() + ")";
     }
 
-
     private Object execute( final String method )
         throws Exception
     {
