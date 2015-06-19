@@ -13,14 +13,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
@@ -33,20 +25,8 @@ public class RenderThymeleafTest
     @Before
     public void setUp()
     {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMode( RenderMode.LIVE );
-        portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setModule( ModuleKey.from( "mymodule" ) );
-        portalRequest.setBaseUri( "/portal" );
-
-        final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        portalRequest.setContent( content );
-        PortalRequestAccessor.set( portalRequest );
-
-        final ThymeleafService service = new ThymeleafService();
-        service.setViewFunctionService( Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
-
-        addBean( "com.enonic.xp.lib.thymeleaf.ThymeleafService", service );
+        setupRequest();
+        addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
@@ -60,8 +40,7 @@ public class RenderThymeleafTest
     private Object execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "test/thymeleaf-test.js" );
-        return exports.executeMethod( method ).getValue();
+        return runTestFunction( "test/thymeleaf-test.js", method ).getValue();
     }
 
     @Test

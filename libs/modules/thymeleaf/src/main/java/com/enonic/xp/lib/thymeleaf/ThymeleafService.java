@@ -8,14 +8,16 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.portal.view.ViewFunctionService;
 
 public final class ThymeleafService
+    implements ScriptBean
 {
     private final TemplateEngine engine;
 
-    private ViewFunctionService viewFunctionService;
+    private BeanContext context;
 
     public ThymeleafService()
     {
@@ -43,14 +45,14 @@ public final class ThymeleafService
     private ThymeleafViewFunctions createViewFunctions()
     {
         final ThymeleafViewFunctions functions = new ThymeleafViewFunctions();
-        functions.viewFunctionService = this.viewFunctionService;
-        functions.portalRequest = PortalRequestAccessor.get();
+        functions.viewFunctionService = this.context.getService( ViewFunctionService.class ).get();
+        functions.portalRequest = this.context.getRequest().get();
         return functions;
     }
 
-    public void setViewFunctionService( final ViewFunctionService value )
+    @Override
+    public void initialize( final BeanContext context )
     {
-        this.viewFunctionService = value;
+        this.context = context;
     }
-
 }
