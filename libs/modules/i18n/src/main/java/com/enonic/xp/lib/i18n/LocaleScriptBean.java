@@ -9,33 +9,36 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.portal.script.ScriptValue;
 
 public final class LocaleScriptBean
+    implements ScriptBean
 {
     private LocaleService localeService;
 
+    private PortalRequest request;
+
     public String localize( final String key, final String locale, final ScriptValue values )
     {
-        final PortalRequest req = PortalRequestAccessor.get();
-        final ModuleKey moduleKey = req.getModule();
-        final Locale resolvedLocale = resolveLocale( req, locale );
+        final ModuleKey moduleKey = this.request.getModule();
+        final Locale resolvedLocale = resolveLocale( locale );
 
         final MessageBundle bundle = this.localeService.getBundle( moduleKey, resolvedLocale );
         return bundle.localize( key, toArray( values ) );
     }
 
-    private Locale resolveLocale( final PortalRequest req, final String locale )
+    private Locale resolveLocale( final String locale )
     {
-        return Strings.isNullOrEmpty( locale ) ? resolveLocaleFromSite( req ) : Locale.forLanguageTag( locale );
+        return Strings.isNullOrEmpty( locale ) ? resolveLocaleFromSite() : Locale.forLanguageTag( locale );
     }
 
-    private Locale resolveLocaleFromSite( final PortalRequest req )
+    private Locale resolveLocaleFromSite()
     {
-        if ( req.getSite().getLanguage() != null )
+        if ( this.request.getSite().getLanguage() != null )
         {
-            return req.getSite().getLanguage();
+            return this.request.getSite().getLanguage();
         }
 
         return null;
@@ -59,5 +62,12 @@ public final class LocaleScriptBean
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.localeService = context.getService( LocaleService.class ).get();
+        this.request = context.getRequest().get();
     }
 }

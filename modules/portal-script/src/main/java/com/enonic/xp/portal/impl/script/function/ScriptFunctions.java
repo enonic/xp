@@ -6,6 +6,7 @@ import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.bean2.BeanContextImpl;
 import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
+import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 
@@ -87,5 +88,10 @@ public final class ScriptFunctions
     public Object toNativeObject( final Object value )
     {
         return JsObjectConverter.toJs( value );
+    }
+
+    public Object nullOrValue( final Object value )
+    {
+        return NashornHelper.isUndefined( value ) ? null : value;
     }
 }
