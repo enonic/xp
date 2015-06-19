@@ -30,7 +30,7 @@ public final class TestDataFixtures
 {
     public static Content newContent()
     {
-        final Content.Builder builder = Content.newContent();
+        final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "123456" ) );
         builder.name( "mycontent" );
         builder.displayName( "My Content" );
@@ -49,7 +49,7 @@ public final class TestDataFixtures
 
     public static Content newSmallContent()
     {
-        final Content.Builder builder = Content.newContent().
+        final Content.Builder builder = Content.create().
             id( ContentId.from( "123456" ) ).
             name( "mycontent" ).
             type( ContentTypeName.from( "test:myContentType" ) ).
@@ -68,7 +68,7 @@ public final class TestDataFixtures
 
     public static Contents newContents()
     {
-        final Content content1 = Content.newContent().
+        final Content content1 = Content.create().
             id( ContentId.from( "111111" ) ).
             name( "mycontent" ).
             displayName( "My Content" ).
@@ -79,7 +79,7 @@ public final class TestDataFixtures
             createdTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
-        final Content content2 = Content.newContent().
+        final Content content2 = Content.create().
             id( ContentId.from( "222222" ) ).
             name( "othercontent" ).
             displayName( "Other Content" ).
@@ -90,7 +90,7 @@ public final class TestDataFixtures
             createdTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
-        final Content content3 = Content.newContent().
+        final Content content3 = Content.create().
             id( ContentId.from( "333333" ) ).
             name( "another" ).
             displayName( "Another Content" ).

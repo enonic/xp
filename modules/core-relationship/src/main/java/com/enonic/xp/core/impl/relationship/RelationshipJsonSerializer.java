@@ -116,7 +116,7 @@ public final class RelationshipJsonSerializer
     @Override
     protected Relationship parse( final JsonNode relationshipNode )
     {
-        final Relationship.Builder builder = Relationship.newRelationship();
+        final Relationship.Builder builder = Relationship.create();
 
         if ( includeCreator )
         {

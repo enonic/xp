@@ -29,7 +29,7 @@ final class RadioButtonsConfigXmlSerializer
     @Override
     public InputTypeConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newRadioButtonsConfig();
+        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.create();
 
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
         for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )

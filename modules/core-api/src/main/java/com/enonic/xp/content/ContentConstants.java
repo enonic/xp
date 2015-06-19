@@ -44,7 +44,7 @@ public class ContentConstants
 
     public static final NodePath CONTENT_ROOT_PARENT = NodePath.ROOT;
 
-    public static final NodePath CONTENT_ROOT_PATH = NodePath.newNodePath( CONTENT_ROOT_PARENT, CONTENT_ROOT_NAME ).build();
+    public static final NodePath CONTENT_ROOT_PATH = NodePath.create( CONTENT_ROOT_PARENT, CONTENT_ROOT_NAME ).build();
 
     public static final NodeType CONTENT_NODE_COLLECTION = NodeType.from( "content" );
 

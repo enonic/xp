@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class MixinsTest
@@ -16,7 +15,7 @@ public class MixinsTest
     public void test_immutable_mixins()
     {
         MixinName mixinName = MixinName.from( "mymodule:my1" );
-        Mixin mixin = newMixin().name( mixinName ).build();
+        Mixin mixin = Mixin.create().name( mixinName ).build();
         Mixins mixins = Mixins.from( mixin );
 
         assertTrue( mixins.getNames().size() == 1 );
@@ -43,7 +42,7 @@ public class MixinsTest
             assertTrue( e instanceof UnsupportedOperationException );
         }
 
-        mixins = Mixins.newMixins().add( mixin ).build();
+        mixins = Mixins.create().add( mixin ).build();
         assertTrue( mixins.getNames().size() == 1 );
         mixins = Mixins.empty();
         assertTrue( mixins.getNames().size() == 0 );
@@ -54,8 +53,8 @@ public class MixinsTest
     {
         Mixins mixins = Mixins.empty();
 
-        Mixin mixin1 = newMixin().name( MixinName.from( "mymodule:my1" ) ).build();
-        Mixin mixin2 = newMixin().name( MixinName.from( "mymodule:my2" ) ).build();
+        Mixin mixin1 = Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build();
+        Mixin mixin2 = Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build();
 
         Mixins newMixins = mixins.add( mixin1, mixin2 );
 
@@ -68,8 +67,8 @@ public class MixinsTest
     {
         Mixins mixins = Mixins.empty();
 
-        List<Mixin> mixinList = Lists.newArrayList( newMixin().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                                    newMixin().name( MixinName.from( "mymodule:my2" ) ).build() );
+        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
+                                                    Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
 
         Mixins newMixins = mixins.add( mixinList );
 
@@ -80,11 +79,11 @@ public class MixinsTest
     @Test
     public void from()
     {
-        Mixins mixins = Mixins.from( newMixin().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                     newMixin().name( MixinName.from( "mymodule:my2" ) ).build() );
+        Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
+                                     Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
 
-        List<Mixin> mixinList = Lists.newArrayList( newMixin().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                                    newMixin().name( MixinName.from( "mymodule:my2" ) ).build() );
+        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
+                                                    Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
 
         assertEquals( 2, mixins.getSize() );
         assertEquals( 2, Mixins.from( mixins ).getSize() );

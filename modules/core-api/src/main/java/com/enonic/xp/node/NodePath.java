@@ -65,7 +65,7 @@ public final class NodePath
         {
             return this;
         }
-        return newNodePath( this ).absolute( false ).build();
+        return create( this ).absolute( false ).build();
     }
 
     public NodePath asAbsolute()
@@ -74,7 +74,7 @@ public final class NodePath
         {
             return this;
         }
-        final Builder builder = newNodePath( this );
+        final Builder builder = create( this );
         return builder.absolute( true ).build();
     }
 
@@ -83,17 +83,12 @@ public final class NodePath
         return new NodePath( new Builder( this ).removeLastElement() );
     }
 
-    public static Builder newPath()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    private static Builder newNodePath( final NodePath source )
-    {
-        return new Builder( source );
-    }
-
-    public static Builder newNodePath( final NodePath parent, final String path )
+    public static Builder create( final NodePath parent, final String path )
     {
         return new Builder( parent ).
             elements( path ).
@@ -261,13 +256,13 @@ public final class NodePath
         return refString;
     }
 
-    public static Builder newPath( final NodePath source )
+    public static Builder create( final NodePath source )
     {
         Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 
-    public static Builder newPath( final String path )
+    public static Builder create( final String path )
     {
         final Builder builder = new Builder();
         builder.elements( path );

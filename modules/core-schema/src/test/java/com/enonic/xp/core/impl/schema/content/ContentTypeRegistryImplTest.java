@@ -148,7 +148,7 @@ public class ContentTypeRegistryImplTest
 
     protected final ContentType createContentType( final String name, final String displayName )
     {
-        return ContentType.newContentType().superType( ContentTypeName.structured() ).displayName( displayName ).name( name ).build();
+        return ContentType.create().superType( ContentTypeName.structured() ).displayName( displayName ).name( name ).build();
     }
 
 }

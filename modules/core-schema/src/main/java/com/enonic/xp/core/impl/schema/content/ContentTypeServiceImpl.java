@@ -78,7 +78,7 @@ public final class ContentTypeServiceImpl
     public ContentTypeValidationResult validate( final ContentType type )
     {
         final ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.
-            newContentTypeSuperTypeValidator().
+            create().
             contentTypeService( this ).
             build();
 

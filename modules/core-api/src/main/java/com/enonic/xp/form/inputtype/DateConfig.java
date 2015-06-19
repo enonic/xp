@@ -9,7 +9,7 @@ public final class DateConfig extends TimezoneConfig
         super(builder);
     }
 
-    public static Builder newDateConfig()
+    public static Builder create()
     {
         return new Builder();
     }

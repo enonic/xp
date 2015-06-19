@@ -99,7 +99,7 @@ public final class PrincipalKey
     {
         if ( this.isRole() )
         {
-            return NodePath.newPath().
+            return NodePath.create().
                 addElement( ROLES_NODE_NAME ).
                 addElement( getId() ).
                 build();
@@ -107,7 +107,7 @@ public final class PrincipalKey
         else
         {
             final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
-            return NodePath.newPath().
+            return NodePath.create().
                 addElement( getUserStore().toString() ).
                 addElement( folderName ).
                 addElement( getId() ).

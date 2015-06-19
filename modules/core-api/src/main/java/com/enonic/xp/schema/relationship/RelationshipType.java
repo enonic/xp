@@ -82,12 +82,12 @@ public final class RelationshipType
                                  allowedToTypes );
     }
 
-    public static Builder newRelationshipType()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newRelationshipType( final RelationshipType relationshipType )
+    public static Builder create( final RelationshipType relationshipType )
     {
         return new Builder( relationshipType );
     }

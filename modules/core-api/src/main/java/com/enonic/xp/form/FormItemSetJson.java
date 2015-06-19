@@ -8,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class FormItemSetJson
@@ -28,7 +26,7 @@ public class FormItemSetJson
                             @JsonProperty("inputType") InputTypeJson inputType, @JsonProperty("occurrences") OccurrencesJson occurrences,
                             @JsonProperty("items") List<FormItemJson> items )
     {
-        formItemSet = newFormItemSet().
+        formItemSet = FormItemSet.create().
             name( name ).
             label( label ).
             immutable( immutable ).

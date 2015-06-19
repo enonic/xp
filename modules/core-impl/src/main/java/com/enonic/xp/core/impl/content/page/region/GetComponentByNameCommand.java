@@ -31,7 +31,7 @@ class GetComponentByNameCommand
         final PartDescriptor partDescriptor = getPartDescriptor( componentDescriptorName );
         if ( partDescriptor != null )
         {
-            return PartComponent.newPartComponent().
+            return PartComponent.create().
                 name( this.name ).
                 descriptor( partDescriptor.getKey() ).
                 build();
@@ -39,7 +39,7 @@ class GetComponentByNameCommand
         final LayoutDescriptor layoutDescriptor = getLayoutDescriptor( componentDescriptorName );
         if ( layoutDescriptor != null )
         {
-            return LayoutComponent.newLayoutComponent().
+            return LayoutComponent.create().
                 name( this.name ).
                 descriptor( layoutDescriptor.getKey() ).
                 build();

@@ -9,10 +9,10 @@ public class RegionDescriptorsTest
     @Test
     public void testBuilder()
     {
-        final RegionDescriptors regionDescriptors = RegionDescriptors.newRegionDescriptors().
-            add( RegionDescriptor.newRegionDescriptor().name( "regionDescriptor1" ).build() ).
-            add( RegionDescriptor.newRegionDescriptor().name( "regionDescriptor2" ).build() ).
-            add( RegionDescriptor.newRegionDescriptor().name( "regionDescriptor3" ).build() ).
+        final RegionDescriptors regionDescriptors = RegionDescriptors.create().
+            add( RegionDescriptor.create().name( "regionDescriptor1" ).build() ).
+            add( RegionDescriptor.create().name( "regionDescriptor2" ).build() ).
+            add( RegionDescriptor.create().name( "regionDescriptor3" ).build() ).
             build();
 
         assertEquals( 3, regionDescriptors.numberOfRegions() );

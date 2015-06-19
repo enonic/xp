@@ -17,13 +17,13 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteService;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class CreateContentCommandTest
@@ -83,7 +83,7 @@ public class CreateContentCommandTest
         CreateContentCommand command = createContentCommand( params );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            newContentType().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
+            ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
         command.execute();
     }
@@ -155,7 +155,7 @@ public class CreateContentCommandTest
         CreateContentCommand command = createContentCommand( params );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            newContentType().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
+            ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
         Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
             ( invocation ) -> {
@@ -185,7 +185,7 @@ public class CreateContentCommandTest
         CreateContentCommand command = createContentCommand( params );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            newContentType().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
+            ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
         Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
             ( invocation ) -> {

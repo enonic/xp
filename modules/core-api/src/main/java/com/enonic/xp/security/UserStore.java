@@ -25,12 +25,12 @@ public final class UserStore
         return displayName;
     }
 
-    public static Builder newUserStore()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newUserStore( final UserStore userStore )
+    public static Builder create( final UserStore userStore )
     {
         return new Builder( userStore );
     }

@@ -8,7 +8,7 @@ final class XmlRegionDescriptorsMapper
 {
     public RegionDescriptors buildRegions( final DomElement root )
     {
-        final RegionDescriptors.Builder builder = RegionDescriptors.newRegionDescriptors();
+        final RegionDescriptors.Builder builder = RegionDescriptors.create();
         if ( root != null )
         {
             buildRegions( builder, root );
@@ -27,7 +27,7 @@ final class XmlRegionDescriptorsMapper
 
     private RegionDescriptor buildRegion( final DomElement root )
     {
-        final RegionDescriptor.Builder builder = RegionDescriptor.newRegionDescriptor();
+        final RegionDescriptor.Builder builder = RegionDescriptor.create();
         builder.name( root.getAttribute( "name" ) );
         return builder.build();
     }

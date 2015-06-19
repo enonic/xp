@@ -54,7 +54,7 @@ public class SiteConfigs
         return new SiteConfigs( ImmutableList.copyOf( siteConfigs ) );
     }
 
-    public static Builder builder()
+    public static Builder create()
     {
         return new Builder();
     }
