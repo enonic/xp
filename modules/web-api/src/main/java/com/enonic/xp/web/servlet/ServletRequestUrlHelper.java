@@ -13,6 +13,11 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 @Beta
 public final class ServletRequestUrlHelper
 {
+    public static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
+
+    public static final String X_FORWARDED_HOST = "X-Forwarded-Host";
+
+
     private ServletRequestUrlHelper()
     {
     }
@@ -67,16 +72,33 @@ public final class ServletRequestUrlHelper
     {
         final StringBuilder str = new StringBuilder();
 
-        final String scheme = req.getScheme();
-        final int port = req.getServerPort();
-
-        str.append( scheme ).append( "://" );
-        str.append( req.getServerName() );
-
-        if ( needPortNumber( scheme, port ) )
+        //Appends the scheme part
+        String scheme = req.getHeader( X_FORWARDED_PROTO );
+        if ( scheme == null )
         {
-            str.append( ":" ).append( port );
+            scheme = req.getScheme();
         }
+        str.append( scheme ).append( "://" );
+
+        //Appends the server name and port
+        String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
+        if ( xForwardedHost != null )
+        {
+            str.append( xForwardedHost );
+        }
+        else
+        {
+            final String serverName = req.getServerName();
+            final int port = req.getServerPort();
+
+            str.append( serverName );
+
+            if ( needPortNumber( scheme, port ) )
+            {
+                str.append( ":" ).append( port );
+            }
+        }
+
         return str.toString();
     }
 
