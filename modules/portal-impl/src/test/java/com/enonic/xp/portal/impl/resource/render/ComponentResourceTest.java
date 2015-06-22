@@ -105,5 +105,6 @@ public class ComponentResourceTest
 
         assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );
         assertEquals( "http://localhost/portal/master", jsRequest.getValue().getBaseUrl() );
+        assertEquals( "http://localhost", jsRequest.getValue().getServerUrl() );
     }
 }

@@ -77,7 +77,9 @@ public abstract class ControllerResource
 
         final String baseUrl = ServletRequestUrlHelper.createBaseUrl( this.httpServletRequest, this.baseUri, this.branch.getName(),
                                                                       this.contentPath.toString() );
+        final String serverUrl = ServletRequestUrlHelper.createServerUrl( this.httpServletRequest );
         portalRequest.setBaseUrl( baseUrl );
+        portalRequest.setServerUrl( serverUrl );
 
         final Multimap<String, String> contextHeaders = portalRequest.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );

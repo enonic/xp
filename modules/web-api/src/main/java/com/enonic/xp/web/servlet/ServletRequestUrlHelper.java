@@ -52,13 +52,18 @@ public final class ServletRequestUrlHelper
     {
         final StringBuilder str = new StringBuilder();
 
-        str.append( createHost( req ) );
+        str.append( createServerUrl( req ) );
         str.append( createUri( path ) );
 
         return str.toString();
     }
 
-    private static String createHost( final HttpServletRequest req )
+    public static String createServerUrl()
+    {
+        return createServerUrl( ServletRequestHolder.getRequest() );
+    }
+
+    public static String createServerUrl( final HttpServletRequest req )
     {
         final StringBuilder str = new StringBuilder();
 
@@ -82,7 +87,7 @@ public final class ServletRequestUrlHelper
 
     public static String createBaseUrl( final HttpServletRequest req, final String baseUri, final String branch, final String contentPath )
     {
-        final String host = createHost( req );
+        final String host = createServerUrl( req );
         final String normalizedBaseUri = normalizePath( baseUri );
         final String normalizedBranch = normalizePath( branch );
         final String normalizedContentPath = normalizePath( contentPath );
