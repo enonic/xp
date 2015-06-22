@@ -15,8 +15,22 @@ module api.ui.image {
         h: number;
     }
 
+    interface FocusData extends Point {
+        r: number;
+        auto: boolean;
+    }
+
+    interface CropData extends Rect {
+        auto: boolean;
+    }
+
+    interface ZoomData extends Rect {}
+
     export class ImageEditor extends api.dom.DivEl {
 
+        private static MAX_ZOOM = 5;
+
+        private frame: DivEl;
         private canvas: DivEl;
         private image: ImgEl;
         private clip: Element;
@@ -25,22 +39,14 @@ module api.ui.image {
         private zoomLine: Element;
         private zoomKnob: Element;
 
-        private focusData: {x: number; y: number; r: number; auto: boolean} = {
-            x: 0,
-            y: 0,
-            r: 0,
-            auto: true
-        };
-        private revertFocusData: {x: number; y: number; r: number; auto: boolean};
+        private focusData: FocusData = {x: 0, y: 0, r: 0, auto: true};
+        private revertFocusData: FocusData;
 
-        private cropData: {x: number; y: number; w: number; h: number; auto: boolean} = {
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-            auto: true
-        };
-        private revertCropData: {x: number; y: number; w: number; h: number; auto: boolean};
+        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: true};
+        private revertCropData: CropData;
+
+        private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
+        private revertZoomData: ZoomData;
 
         private imgW: number;
         private imgH: number;
@@ -73,30 +79,38 @@ module api.ui.image {
         constructor(src?: string) {
             super('image-editor');
 
+            this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
             this.image = new ImgEl(null, 'image-bg');
-            this.image.onLoaded((event: UIEvent) => this.updateImageDimensions());
+            this.image.onLoaded((event: UIEvent) => {
+                if (this.isImageLoaded()) {
+                    // check that real image has been loaded
+                    this.updateImageDimensions();
+                }
+            });
 
             var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
-                           '    <image width="100" height="100" xlink:href="' + ImgEl.PLACEHOLDER + '"/>' +
-                           '    <g class="edit-group focus-group">' +
-                           '        <clipPath id="focalClipPath">' +
+                           '    <defs>' +
+                           '        <clipPath id="focusClipPath">' +
                            '            <circle cx="0" cy="0" r="0" class="clip-circle"/>' +
                            '        </clipPath>' +
-                           '        <circle cx="0" cy="0" r="0" class="stroke-circle"/>' +
-                           '    </g>' +
-                           '    <g class="edit-group crop-group">' +
                            '        <clipPath id="cropClipPath">' +
                            '            <rect x="0" y="0" width="0" height="0"/>' +
                            '        </clipPath>' +
+                           '    </defs>' +
+                           '    <image xlink:href="' + ImgEl.PLACEHOLDER + '" width="100%" height="100%"/>' +   // FF won't apply css dimensions to image
+                           '    <g class="edit-group focus-group">' +
+                           '        <circle cx="0" cy="0" r="0" class="stroke-circle"/>' +
+                           '    </g>' +
+                           '    <g class="edit-group crop-group">' +
                            '        <svg id="dragHandle" class="drag-handle">' +
                            '            <defs>' +
-                           '                <polygon id="drag-triangle" class="drag-triangle" points="8,0,16,8,0,8"/>' +
+                           '                <polygon id="dragTriangle" class="drag-triangle" points="8,0,16,8,0,8"/>' +
                            '            </defs>' +
                            '            <circle cx="16" cy="16" r="16"/>' +
-                           '            <use xlink:href="#drag-triangle" x="8" y="6"/>' +
-                           '            <use xlink:href="#drag-triangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
+                           '            <use xlink:href="#dragTriangle" x="8" y="6"/>' +
+                           '            <use xlink:href="#dragTriangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
                            '        </svg>' +
                            '        <svg id="zoomSlider" class="zoom-slider">' +
                            '            <rect x="0" y="0" width="40" height="200" rx="20" ry="20"/>' +
@@ -113,9 +127,16 @@ module api.ui.image {
             this.zoomLine = this.zoomSlider.findChildById('zoomLine');
             this.zoomKnob = this.zoomSlider.findChildById('zoomKnob');
 
+            // prevent FF image dragging
+            this.clip.getHTMLElement().querySelector('image')['ondragstart'] = function () {
+                return false
+            };
+
             this.canvas.appendChildren(this.image, this.clip);
 
-            this.appendChildren(this.canvas, this.createToolbar());
+            this.frame.appendChild(this.canvas);
+
+            this.appendChildren(this.frame, this.createToolbar());
 
             if (src) {
                 this.setSrc(src);
@@ -127,14 +148,12 @@ module api.ui.image {
 
         remove(): ImageEditor {
             if (this.isFocusEditMode()) {
-                this.setFocusEditMode(false);
+                this.setFocusEditMode(false, false);
+            } else if (this.isCropEditMode()) {
+                this.setCropEditMode(false, false);
             }
             super.remove();
             return this;
-        }
-
-        getImage(): api.dom.ImgEl {
-            return this.image;
         }
 
         setSrc(src: string) {
@@ -226,24 +245,14 @@ module api.ui.image {
             return r * Math.min(this.imgW, this.imgH);
         }
 
-        private restrainWidth(x: number, width: number = 0) {
-            return Math.max(0, Math.min(this.imgW - width, x));
+        private getOffsetX(e: MouseEvent, relativeToZoom?: boolean): number {
+            return e.clientX - this.getEl().getOffset().left +
+                   (relativeToZoom ? this.cropData.x : 0);
         }
 
-        private restrainHeight(y: number, height: number = 0) {
-            return Math.max(0, Math.min(this.imgH - height, y));
-        }
-
-        private restrainRadius(r: number) {
-            return Math.max(0, Math.min(this.imgH, this.imgW, r));
-        }
-
-        private getOffsetX(e: MouseEvent): number {
-            return e.clientX - this.getEl().getOffset().left;
-        }
-
-        private getOffsetY(e: MouseEvent): number {
-            return e.clientY - this.getEl().getOffset().top;
+        private getOffsetY(e: MouseEvent, relativeToZoom?: boolean): number {
+            return e.clientY - this.getEl().getOffset().top +
+                   (relativeToZoom ? this.cropData.y : 0);
         }
 
         private isImageLoaded(): boolean {
@@ -252,40 +261,69 @@ module api.ui.image {
 
         private updateImageDimensions() {
             var imgEl = this.image.getEl();
+
             this.imgW = imgEl.getNaturalWidth() + imgEl.getBorderLeftWidth() + imgEl.getBorderRightWidth() +
                         imgEl.getPaddingLeft() + imgEl.getPaddingRight();
             this.imgH = imgEl.getNaturalHeight() + imgEl.getBorderTopWidth() + imgEl.getBorderBottomWidth() +
                         imgEl.getPaddingTop() + imgEl.getPaddingBottom();
 
-            // calculate radius first as it will be needed when setting position
-            var autoPositioned = this.focusData.auto;
-            this.setFocusRadius(0.25);
-            this.setFocusAutoPositioned(autoPositioned);
+            if (ImageEditor.debug) {
+                console.group('ImageEditor.updateImageDimensions');
+                console.log('Image loaded', this.isImageLoaded(), this.imgW, this.imgH);
+            }
 
-            if (this.isImageLoaded() && this.revertFocusData) {
-                // position was set while image was not yet loaded ( saved in 0-1 format )
-                this.setFocusPosition(this.revertFocusData.x, this.revertFocusData.y);
+            this.frame.getEl().setWidthPx(this.imgW).setHeightPx(this.imgH);
+
+            if (this.revertZoomData) {
+                // zoom was set while images was not yet loaded (saved in px);
+                this.setZoomPositionPx(this.denormalizeRect(
+                    this.revertZoomData.x,
+                    this.revertZoomData.y,
+                    this.revertZoomData.w,
+                    this.revertZoomData.h));
+
+                this.revertZoomData = undefined;
+            } else if (this.cropData.auto) {
+                // use cropData.auto flag for zoom as well
+                this.resetZoomPosition();
+            }
+
+            // crop depends on zoom so init it after
+            if (this.revertCropData) {
+                // crop was set while images was not yet loaded (saved in px);
+                this.setCropPositionPx(this.denormalizeRect(
+                    this.revertCropData.x,
+                    this.revertCropData.y,
+                    this.revertCropData.w,
+                    this.revertCropData.h));
+
+                this.revertCropData = undefined;
+            } else if (this.cropData.auto) {
+                this.resetCropPosition();
+            }
+
+            // focus is not modifiable for now so just reset it to default value
+            this.resetFocusRadius();
+
+            // focus depends on zoom so init it after
+            if (this.revertFocusData) {
+                // position was set while image was not yet loaded
+                this.setFocusPositionPx(this.denormalizePoint(
+                    this.revertFocusData.x,
+                    this.revertFocusData.y));
+
                 this.revertFocusData = undefined;
             } else if (this.focusData.auto) {
                 // set position to center by default
                 this.resetFocusPosition();
             }
 
-            if (this.isImageLoaded() && this.revertCropData) {
-                // crop was set while images was not yet loaded ( saved in 0-1 format );
-                this.setCropPosition(this.revertCropData.x, this.revertCropData.y, this.revertCropData.w, this.revertCropData.h);
-                this.revertCropData = undefined;
-            } else if (this.cropData.auto) {
-                this.resetCropPosition();
-            }
+            this.updateFocusMaskPosition();
+            this.updateCropMaskPosition();
+            this.updateZoomPosition();
 
-            var image = this.clip.getHTMLElement().querySelector('image');
-            image.setAttribute('width', this.imgW.toString());
-            image.setAttribute('height', this.imgH.toString());
-
-            if (this.image.isLoaded()) {
-                this.updateFocusMaskPosition();
-                this.updateCropMaskPosition();
+            if (ImageEditor.debug) {
+                console.groupEnd();
             }
         }
 
@@ -314,13 +352,14 @@ module api.ui.image {
             new api.app.wizard.MaskWizardPanelEvent(visible).fire();
         }
 
+
         /*
          *  Focus related methods
          */
 
         setFocusEditMode(edit: boolean, applyChanges: boolean = true) {
             this.toggleClass('edit-mode edit-focus', edit);
-            this.setImageClipPath('focalClipPath');
+            this.setImageClipPath('focusClipPath');
             this.setShaderVisible(edit);
 
             this.buttonsContainer.setVisible(!edit);
@@ -335,13 +374,14 @@ module api.ui.image {
                     r: this.getFocusRadiusPx(),
                     auto: this.focusData.auto
                 };
-                // update mask position in case it was updated during stand by
-                this.updateFocusMaskPosition();
+                // set mask position instead of just updating to restrain coordinates
+                // in case it was updated during stand by or the crop has been changed
+                this.setFocusPositionPx(this.revertFocusData);
             } else {
                 this.unbindFocusMouseListeners();
                 if (!applyChanges) {
-                    this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y});
-                    this.setFocusRadiusPx(this.revertFocusData.r);
+                    this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
+                    this.setFocusRadiusPx(this.revertFocusData.r, false);
                     this.setFocusAutoPositioned(this.revertFocusData.auto);
                 }
                 this.revertFocusData = undefined;
@@ -361,10 +401,12 @@ module api.ui.image {
          * @returns {undefined}
          */
         setFocusPosition(x: number, y: number) {
+
             if (this.isImageLoaded()) {
                 this.setFocusPositionPx(this.denormalizePoint(x, y));
             } else {
                 // use revert position to temporary save values until the image is loaded
+                // can't denormalize until image is loaded
                 this.revertFocusData = {
                     x: x,
                     y: y,
@@ -374,20 +416,36 @@ module api.ui.image {
             }
         }
 
-        private setFocusPositionPx(position: Point) {
+        private setFocusPositionPx(position: Point, updateAuto: boolean = true) {
             var oldX = this.focusData.x,
                 oldY = this.focusData.y;
 
-            this.focusData.x = this.restrainWidth(position.x);
-            this.focusData.y = this.restrainHeight(position.y);
-            this.setFocusAutoPositioned(false);
+            if (ImageEditor.debug) {
+                console.group('ImageEditor.setFocusPositionPx');
+                console.log('Before restraining', position.x - oldX, position.y - oldY, position);
+            }
+
+            this.focusData.x = this.restrainFocusX(position.x);
+            this.focusData.y = this.restrainFocusY(position.y);
+
+            if (updateAuto) {
+                this.setFocusAutoPositioned(false);
+            }
 
             if (oldX != this.focusData.x || oldY != this.focusData.y) {
                 this.notifyFocusPositionChanged(this.focusData);
 
-                if (this.image.isLoaded() && this.isFocusEditMode()) {
+                if (ImageEditor.debug) {
+                    console.log('After restraining', this.focusData.x - oldX, this.focusData.y - oldY, this.focusData);
+                }
+
+                if (this.isImageLoaded()) {
                     this.updateFocusMaskPosition();
                 }
+            }
+
+            if (ImageEditor.debug) {
+                console.groupEnd();
             }
         }
 
@@ -407,25 +465,51 @@ module api.ui.image {
         }
 
         resetFocusPosition() {
-            this.setFocusPosition(0.5, 0.5);
+            var denormalizedPoint = this.denormalizePoint(0.5, 0.5);
+            // make sure it resets to the center of the crop area
+            this.setFocusPositionPx({
+                x: denormalizedPoint.x + this.cropData.x,
+                y: denormalizedPoint.y + this.cropData.y
+            }, false);
             this.setFocusAutoPositioned(true);
+        }
+
+        resetFocusRadius() {
+            this.setFocusRadiusPx(this.denormalizeRadius(0.25), false);
         }
 
         setFocusRadius(r: number) {
             return this.setFocusRadiusPx(this.denormalizeRadius(r));
         }
 
-        private setFocusRadiusPx(r: number) {
+        private setFocusRadiusPx(r: number, updateAuto: boolean = true) {
             var oldR = this.focusData.r;
-            this.focusData.r = this.restrainRadius(r);
-            this.setFocusAutoPositioned(false);
+
+            if (ImageEditor.debug) {
+                console.group('ImageEditor.setFocusRadiusPx');
+                console.log('Before restraining', r - oldR, r);
+            }
+
+            this.focusData.r = this.restrainFocusRadius(r);
+
+            if (updateAuto) {
+                this.setFocusAutoPositioned(false);
+            }
 
             if (oldR != this.focusData.r) {
                 this.notifyFocusRadiusChanged(this.focusData.r);
 
-                if (this.image.isLoaded() && this.isFocusEditMode()) {
+                if (ImageEditor.debug) {
+                    console.log('After restraining', this.focusData.r - oldR, this.focusData);
+                }
+
+                if (this.isImageLoaded()) {
                     this.updateFocusMaskPosition();
                 }
+            }
+
+            if (ImageEditor.debug) {
+                console.groupEnd();
             }
         }
 
@@ -459,19 +543,29 @@ module api.ui.image {
             }
 
             this.mouseDownListener = (event: MouseEvent) => {
+
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.mouseDownListener');
+                }
+
                 mouseDown = true;
                 lastPos = {
-                    x: this.getOffsetX(event),
-                    y: this.getOffsetY(event)
+                    x: this.getOffsetX(event, true),
+                    y: this.getOffsetY(event, true)
                 };
             };
             this.clip.onMouseDown(this.mouseDownListener);
 
             this.mouseMoveListener = (event: MouseEvent) => {
                 if (mouseDown) {
+                    if (ImageEditor.debug) {
+                        console.log('ImageEditor.mouseMoveListener');
+                    }
+
+
                     var restrainedPos = {
-                        x: this.restrainWidth(this.focusData.x + this.getOffsetX(event) - lastPos.x),
-                        y: this.restrainHeight(this.focusData.y + this.getOffsetY(event) - lastPos.y)
+                        x: this.restrainFocusX(this.focusData.x + this.getOffsetX(event, true) - lastPos.x),
+                        y: this.restrainFocusY(this.focusData.y + this.getOffsetY(event, true) - lastPos.y)
                     };
                     this.setFocusPositionPx(restrainedPos);
 
@@ -482,10 +576,13 @@ module api.ui.image {
 
             this.mouseUpListener = (event: MouseEvent) => {
                 if (mouseDown) {
+                    if (ImageEditor.debug) {
+                        console.log('ImageEditor.mouseUpListener');
+                    }
                     // allow focus positioning by clicking
                     var restrainedPos = {
-                        x: this.restrainWidth(this.getOffsetX(event)),
-                        y: this.restrainHeight(this.getOffsetY(event))
+                        x: this.restrainFocusX(this.getOffsetX(event, true)),
+                        y: this.restrainFocusY(this.getOffsetY(event, true))
                     };
                     this.setFocusPositionPx(restrainedPos);
 
@@ -526,7 +623,12 @@ module api.ui.image {
         }
 
         private updateFocusMaskPosition() {
-            var circles = this.clip.getHTMLElement().querySelectorAll('.focus-group circle');
+            var clipEl = this.clip.getHTMLElement(),
+                circles = clipEl.querySelectorAll('.focus-group circle, #focusClipPath circle');
+
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.updateFocusPosition', this.focusData);
+            }
 
             for (var i = 0; i < circles.length; i++) {
                 var circle = <HTMLElement> circles[i];
@@ -535,6 +637,19 @@ module api.ui.image {
                 circle.setAttribute('cy', this.focusData.y.toString());
             }
         }
+
+        private restrainFocusX(x: number) {
+            return Math.max(this.cropData.x, Math.min(this.cropData.x + this.cropData.w, x));
+        }
+
+        private restrainFocusY(y: number) {
+            return Math.max(this.cropData.y, Math.min(this.cropData.y + this.cropData.h, y));
+        }
+
+        private restrainFocusRadius(r: number) {
+            return Math.max(0, Math.min(this.imgW, this.imgH, r));
+        }
+
 
         /*
          *  Crop related methods
@@ -558,15 +673,25 @@ module api.ui.image {
                     h: cropPosition.h,
                     auto: this.cropData.auto
                 };
+                var zoomPosition = this.getZoomPositionPx();
+                this.revertZoomData = {
+                    x: zoomPosition.x,
+                    y: zoomPosition.y,
+                    w: zoomPosition.w,
+                    h: zoomPosition.h
+                };
                 // update mask position in case it was updated during stand by
                 this.updateCropMaskPosition();
+                this.updateZoomPosition();
             } else {
                 this.unbindCropMouseListeners();
                 if (!applyChanges) {
-                    this.moveZoomKnobTo(this.revertCropData);
+                    this.setZoomPositionPx(this.revertZoomData, false);
+                    this.setCropPositionPx(this.revertCropData, false);
                     this.setCropAutoPositioned(this.revertCropData.auto);
                 }
                 this.revertCropData = undefined;
+                this.revertZoomData = undefined;
             }
             // notify position updated in case we exit edit mode and apply changes
             this.notifyCropModeChanged(edit, !edit && applyChanges ? this.getCropPosition() : undefined);
@@ -585,9 +710,10 @@ module api.ui.image {
          */
         setCropPosition(x: number, y: number, w: number, h: number) {
             if (this.isImageLoaded()) {
-                this.moveZoomKnobTo(this.denormalizeRect(x, y, w, h));
+                this.setCropPositionPx(this.denormalizeRect(x, y, w, h));
             } else {
                 // use revert position to temporary save values until the image is loaded
+                // can't denormalize until image is loaded
                 this.revertCropData = {
                     x: x,
                     y: y,
@@ -598,28 +724,47 @@ module api.ui.image {
             }
         }
 
-        private setCropPositionPx(crop: Rect) {
+        private setCropPositionPx(crop: Rect, updateAuto: boolean = true) {
             var oldX = this.cropData.x,
                 oldY = this.cropData.y,
                 oldW = this.cropData.w,
                 oldH = this.cropData.h;
 
-            this.cropData.x = this.restrainWidth(crop.x);
-            this.cropData.y = this.restrainHeight(crop.y);
-            this.cropData.w = this.restrainWidth(crop.w);
-            this.cropData.h = this.restrainHeight(crop.h);
-            this.setCropAutoPositioned(false);
+            if (ImageEditor.debug) {
+                console.group('ImageEditor.setCropPositionPx');
+                console.log('Before restraining', crop.x - oldX, crop.y - oldY, crop);
+            }
+
+            this.cropData.w = this.restrainCropW(crop.w);
+            this.cropData.h = this.restrainCropH(crop.h);
+            this.cropData.x = this.restrainCropX(crop.x);
+            this.cropData.y = this.restrainCropY(crop.y);
+
+            if (updateAuto) {
+                this.setCropAutoPositioned(false);
+            }
 
             if (oldX != this.cropData.x ||
                 oldY != this.cropData.y ||
                 oldW != this.cropData.w ||
                 oldH != this.cropData.h) {
 
+                var dx = this.cropData.x - oldX,
+                    dy = this.cropData.y - oldY;
+
+                if (ImageEditor.debug) {
+                    console.log('After restraining', dx, dy, this.cropData);
+                }
+
                 this.notifyCropPositionChanged(this.cropData);
 
-                if (this.image.isLoaded() && this.isCropEditMode()) {
+                if (this.isImageLoaded() && this.isCropEditMode()) {
                     this.updateCropMaskPosition();
                 }
+            }
+
+            if (ImageEditor.debug) {
+                console.groupEnd();
             }
         }
 
@@ -641,7 +786,7 @@ module api.ui.image {
         }
 
         resetCropPosition() {
-            this.moveZoomKnobTo(this.denormalizeRect(0, 0, 1, 1));
+            this.setCropPositionPx(this.denormalizeRect(0, 0, 1, 1), false);
             this.setCropAutoPositioned(true);
         }
 
@@ -659,7 +804,10 @@ module api.ui.image {
             cropButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => this.setCropEditMode(false));
 
             var resetButton = new Button('Reset');
-            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => this.resetCropPosition());
+            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
+                this.resetZoomPosition();
+                this.resetCropPosition();
+            });
 
             var cancelButton = new Button('Cancel');
             cancelButton.onClicked((event: MouseEvent) => this.setCropEditMode(false, false));
@@ -677,9 +825,13 @@ module api.ui.image {
 
         private updateCropMaskPosition() {
             var clipEl = this.clip.getHTMLElement(),
+                zoom = clipEl.querySelector('#zoomSlider'),
                 rect = clipEl.querySelector('#cropClipPath rect'),
-                drag = clipEl.querySelector('#dragHandle'),
-                zoom = clipEl.querySelector('#zoomSlider');
+                drag = clipEl.querySelector('#dragHandle');
+
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.updateCropPosition', this.cropData);
+            }
 
             rect.setAttribute('x', this.cropData.x.toString());
             rect.setAttribute('y', this.cropData.y.toString());
@@ -691,73 +843,17 @@ module api.ui.image {
             drag.setAttribute('y', (this.cropData.y + this.cropData.h - 16).toString());
 
             // 40px is the width of zoom control + 20px to the edge of the canvas
-            zoom.setAttribute('x', (this.imgW - 20 - 40).toString());
+            zoom.setAttribute('x', (this.cropData.x + this.cropData.w - 20 - 40).toString());
             // 200px is the height of the zoom control
-            zoom.setAttribute('y', ((this.imgH - 200) / 2 ).toString());
+            zoom.setAttribute('y', (this.cropData.y + (this.cropData.h - 200) / 2 ).toString());
         }
 
-        private moveZoomKnobBy(delta: number) {
-            var zoomLineEl = this.zoomLine.getHTMLElement(),
-                zoomKnobEl = this.zoomKnob.getHTMLElement();
+        private isInsideCrop(x: number, y: number) {
+            return x >= this.zoomData.x + this.cropData.x &&
+                   x <= (this.zoomData.x + this.cropData.x + this.cropData.w) &&
+                   y >= this.zoomData.y + this.cropData.y &&
+                   y <= (this.zoomData.y + this.cropData.y + this.cropData.h);
 
-            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
-                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
-                sliderLength = sliderEnd - sliderStart,
-                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
-                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + delta));
-
-            if (knobNewY != knobY) {
-                zoomKnobEl.setAttribute('cy', knobNewY.toString());
-
-                var knobDeltaPct = (knobNewY - knobY) / sliderLength,
-                    newW = this.restrainWidth(this.cropData.w + this.imgW * knobDeltaPct),
-                    newH = this.restrainHeight(this.cropData.h + this.imgH * knobDeltaPct),
-                    newX = this.cropData.x - (newW - this.cropData.w) / 2,
-                    newY = this.cropData.y - (newH - this.cropData.h) / 2;
-
-                this.setCropPositionPx({
-                    x: this.restrainWidth(newX, newW),
-                    y: this.restrainHeight(newY, newH),
-                    w: newW,
-                    h: newH
-                });
-            }
-        }
-
-        private moveZoomKnobTo(rect: Rect) {
-            var zoomKnobEl = this.zoomKnob.getHTMLElement(),
-                zoomLineEl = this.zoomLine.getHTMLElement();
-
-            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
-                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
-                sliderLength = sliderEnd - sliderStart,
-                knobPct = rect.w / this.imgW,
-                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
-                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
-
-            if (knobNewY != knobY) {
-                zoomKnobEl.setAttribute('cy', knobNewY.toString());
-
-                var newW = this.restrainWidth(rect.w),
-                    newH = this.restrainHeight(rect.h);
-
-                this.setCropPositionPx({
-                    x: this.restrainWidth(rect.x, newW),
-                    y: this.restrainHeight(rect.y, newH),
-                    w: newW,
-                    h: newH
-                });
-            }
-        }
-
-        private isInsideCropRect(x: number, y: number) {
-            return x >= this.cropData.x && x <= this.cropData.x + this.cropData.w &&
-                   y >= this.cropData.y && y <= this.cropData.y + this.cropData.h;
-
-        }
-
-        private isInsideCanvas(x: number, y: number) {
-            return x >= 0 && x <= this.imgW && y >= 0 && y <= this.imgH;
         }
 
         private bindCropMouseListeners() {
@@ -774,6 +870,10 @@ module api.ui.image {
                 event.stopPropagation();
                 event.preventDefault();
 
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.dragMouseListener');
+                }
+
                 dragMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -786,6 +886,10 @@ module api.ui.image {
             this.knobMouseDownListener = (event: MouseEvent) => {
                 event.stopPropagation();
                 event.preventDefault();
+
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.knobMouseListener');
+                }
 
                 zoomMouseDown = true;
                 lastPos = {
@@ -800,6 +904,10 @@ module api.ui.image {
                 event.preventDefault();
                 event.stopPropagation();
 
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.wheelMouseListener');
+                }
+
                 var delta;
                 switch (event.deltaMode) {
                 case WheelEvent.DOM_DELTA_PIXEL:
@@ -813,7 +921,7 @@ module api.ui.image {
                     break;
                 }
 
-                this.moveZoomKnobBy(delta);
+                this.moveZoomKnobByPx(delta);
             };
             this.clip.onMouseWheel(this.mouseWheelListener);
 
@@ -821,12 +929,23 @@ module api.ui.image {
                 var x = this.getOffsetX(event),
                     y = this.getOffsetY(event);
 
-                if (this.isInsideCropRect(x, y)) {
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.mouseDownListener');
+                }
+
+                if (this.isInsideCrop(x, y)) {
+                    if (ImageEditor.debug) {
+                        console.log('click inside crop area');
+                    }
                     panMouseDown = true;
                     lastPos = {
                         x: x,
                         y: y
                     };
+                } else {
+                    if (ImageEditor.debug) {
+                        console.log('click outside crop area');
+                    }
                 }
             };
             this.clip.onMouseDown(this.mouseDownListener);
@@ -838,14 +957,14 @@ module api.ui.image {
                     y: this.getOffsetY(event)
                 };
 
-                if (!this.isInsideCanvas(currPos.x, currPos.y)) {
-                    // only act when mouse is inside canvas
+                if (!this.isInsideZoom(currPos.x, currPos.y)) {
+                    // only act when mouse is inside zoomed image
                     return;
                 }
 
                 if (zoomMouseDown) {
 
-                    this.moveZoomKnobBy(this.getOffsetY(event) - lastPos.y);
+                    this.moveZoomKnobByPx(currPos.y - lastPos.y);
 
                 } else if (dragMouseDown) {
 
@@ -858,16 +977,16 @@ module api.ui.image {
                             x: this.cropData.x,
                             y: this.cropData.y,
                             w: this.cropData.w,
-                            h: this.restrainHeight(newH, this.cropData.y)
+                            h: newH
                         });
                     }
                 } else if (panMouseDown) {
 
-                    this.setCropPositionPx({
-                        x: this.restrainWidth(this.cropData.x + currPos.x - lastPos.x, this.cropData.w),
-                        y: this.restrainHeight(this.cropData.y + currPos.y - lastPos.y, this.cropData.h),
-                        w: this.cropData.w,
-                        h: this.cropData.h
+                    this.setZoomPositionPx({
+                        x: this.zoomData.x + currPos.x - lastPos.x,
+                        y: this.zoomData.y + currPos.y - lastPos.y,
+                        w: this.zoomData.w,
+                        h: this.zoomData.h
                     });
 
                 }
@@ -877,6 +996,10 @@ module api.ui.image {
             api.dom.Body.get().onMouseMove(this.mouseMoveListener);
 
             this.mouseUpListener = (event: MouseEvent) => {
+                if (ImageEditor.debug) {
+                    console.log('ImageEditor.mouseUpListener');
+                }
+
                 if (dragMouseDown) {
                     dragMouseDown = false;
                     this.dragHandle.removeClass('active');
@@ -903,6 +1026,192 @@ module api.ui.image {
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
+
+        /**
+         * Crop coordinate system starts in the top left corner of the zoom rectangle
+         * @param x
+         * @returns {number}
+         */
+        private restrainCropX(x: number) {
+            return Math.max(0, Math.min(this.zoomData.w - this.cropData.w, x));
+        }
+
+        private restrainCropY(y: number) {
+            return Math.max(0, Math.min(this.zoomData.h - this.cropData.h, y));
+        }
+
+        private restrainCropW(x: number) {
+            return Math.max(0, Math.min(this.zoomData.w, x));
+        }
+
+        private restrainCropH(y: number) {
+            return Math.max(0, Math.min(this.zoomData.h, y));
+        }
+
+
+        /*
+         *  Zoom related methods
+         */
+
+        setZoomPosition(x: number, y: number, w: number, h: number) {
+            if (this.isImageLoaded()) {
+                this.setZoomPositionPx(this.denormalizeRect(x, y, w, h));
+            } else {
+                // use revert position to temporary save values until the image is loaded
+                // can't denormalize until image is loaded
+                this.revertZoomData = {
+                    x: x,
+                    y: y,
+                    w: w,
+                    h: h
+                }
+            }
+        }
+
+        private setZoomPositionPx(zoom: Rect, updateAuto: boolean = true) {
+            var oldX = this.zoomData.x,
+                oldY = this.zoomData.y,
+                oldW = this.zoomData.w,
+                oldH = this.zoomData.h;
+
+            if (ImageEditor.debug) {
+                console.group('ImageEditor.setZoomPositionPx');
+                console.log('Before restraining', zoom.x - oldX, zoom.y - oldY, zoom);
+            }
+
+            this.zoomData.w = this.restrainZoomW(zoom.w);
+            this.zoomData.h = this.restrainZoomH(zoom.h);
+            this.zoomData.x = this.restrainZoomX(zoom.x);
+            this.zoomData.y = this.restrainZoomY(zoom.y);
+
+            if (oldX != this.zoomData.x ||
+                oldY != this.zoomData.y ||
+                oldW != this.zoomData.w ||
+                oldH != this.zoomData.h) {
+
+                var dx = this.zoomData.x - oldX,
+                    dy = this.zoomData.y - oldY;
+
+                if (ImageEditor.debug) {
+                    console.log('After restraining', dx, dy, this.zoomData);
+                }
+
+                if (this.isImageLoaded()) {
+                    this.updateZoomPosition();
+                }
+
+                // update crop position for it to stay in place as zoom changes parent svg size
+                this.setCropPositionPx({
+                    x: this.cropData.x - dx,
+                    y: this.cropData.y - dy,
+                    w: this.cropData.w,
+                    h: this.cropData.h
+                }, updateAuto);
+            }
+
+            if (ImageEditor.debug) {
+                console.groupEnd();
+            }
+        }
+
+        getZoomPosition(): Rect {
+            return this.normalizeRect(this.getZoomPositionPx());
+        }
+
+        private getZoomPositionPx(): Rect {
+            return {
+                x: this.zoomData.x,
+                y: this.zoomData.y,
+                w: this.zoomData.w,
+                h: this.zoomData.h
+            }
+        }
+
+        resetZoomPosition() {
+            this.setZoomPositionPx(this.denormalizeRect(0, 0, 1, 1), false);
+            this.setCropAutoPositioned(true);
+        }
+
+        private isInsideZoom(x: number, y: number) {
+            return x >= this.zoomData.x && x <= (this.zoomData.x + this.zoomData.w) &&
+                   y >= this.zoomData.y && y <= (this.zoomData.y + this.zoomData.h);
+        }
+
+        private moveZoomKnobByPx(delta: number) {
+
+            var zoomLineEl = this.zoomLine.getHTMLElement(),
+                zoomKnobEl = this.zoomKnob.getHTMLElement();
+
+            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
+                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
+                sliderLength = sliderEnd - sliderStart,
+                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
+                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + delta));
+
+            if (knobNewY != knobY) {
+                zoomKnobEl.setAttribute('cy', knobNewY.toString());
+
+                var knobPct = 1 - (knobNewY - sliderStart) / sliderLength,
+                    zoomCoeff = 1 + knobPct * ( ImageEditor.MAX_ZOOM - 1),
+                    newW = this.restrainZoomW(this.imgW * zoomCoeff),
+                    newH = this.restrainZoomH(this.imgH * zoomCoeff),
+                    newX = this.zoomData.x - (newW - this.zoomData.w) / 2,
+                    newY = this.zoomData.y - (newH - this.zoomData.h) / 2;
+
+                this.setZoomPositionPx({
+                    x: newX,
+                    y: newY,
+                    w: newW,
+                    h: newH
+                });
+            }
+        }
+
+        private updateZoomPosition() {
+
+            if (ImageEditor.debug) {
+                console.log('ImageEditor.updateZoomPosition', this.zoomData);
+            }
+
+            var zoomKnobEl = this.zoomKnob.getHTMLElement(),
+                zoomLineEl = this.zoomLine.getHTMLElement();
+
+            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
+                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
+                sliderLength = sliderEnd - sliderStart,
+                knobPct = 1 - (this.zoomData.w / this.imgW - 1 ) / (ImageEditor.MAX_ZOOM - 1),
+                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
+
+            zoomKnobEl.setAttribute('cy', knobNewY.toString());
+
+            this.canvas.getEl().
+                setWidthPx(this.zoomData.w).
+                setHeightPx(this.zoomData.h).
+                setLeftPx(this.zoomData.x).
+                setTopPx(this.zoomData.y);
+        }
+
+        /**
+         * Zoom coordinates system starts in the top left corner of the original image
+         * @param x
+         * @returns {number}
+         */
+        private restrainZoomX(x: number) {
+            return Math.max(this.imgW - this.zoomData.w, Math.min(0, x));
+        }
+
+        private restrainZoomY(y: number) {
+            return Math.max(this.imgH - this.zoomData.h, Math.min(0, y));
+        }
+
+        private restrainZoomW(x: number) {
+            return Math.max(this.imgW, Math.min(ImageEditor.MAX_ZOOM * this.imgW, x));
+        }
+
+        private restrainZoomH(y: number) {
+            return Math.max(this.imgH, Math.min(ImageEditor.MAX_ZOOM * this.imgH, y));
+        }
+
 
         /*
          *   Focus related listeners
@@ -986,6 +1295,7 @@ module api.ui.image {
             })
         }
 
+
         /*
          *   Crop related listeners
          */
@@ -1055,7 +1365,6 @@ module api.ui.image {
                 listener(normalizedPosition);
             })
         }
-
     }
 
 }
