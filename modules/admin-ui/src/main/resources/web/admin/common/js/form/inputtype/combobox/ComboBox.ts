@@ -1,7 +1,7 @@
 module api.form.inputtype.combobox {
 
-    import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
+    import Property = api.data.Property;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
@@ -16,15 +16,9 @@ module api.form.inputtype.combobox {
 
         private comboBoxConfig: ComboBoxConfig;
 
-        private input: api.form.Input;
-
-        private propertyArray: PropertyArray;
-
         private comboBox: api.ui.selector.combobox.ComboBox<string>;
 
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
-
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         constructor(context: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>) {
             super("combo-box");
@@ -47,8 +41,7 @@ module api.form.inputtype.combobox {
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
@@ -58,14 +51,15 @@ module api.form.inputtype.combobox {
             });
 
             var valueArray: string[] = [];
-            this.propertyArray.forEach((property: Property) => {
+            this.getPropertyArray().forEach((property: Property) => {
                 valueArray.push(property.getString());
             });
             this.comboBox.setValues(valueArray, true);
 
-
             this.appendChild(this.comboBox);
             this.appendChild(this.selectedOptionsView);
+
+            this.setLayoutInProgress(false);
 
             return wemQ<void>(null);
         }
@@ -86,9 +80,9 @@ module api.form.inputtype.combobox {
 
                 var value = new Value(event.getOption().value, ValueTypes.STRING);
                 if (event.getIndex() >= 0) {
-                    this.propertyArray.set(event.getIndex(), value);
+                    this.getPropertyArray().set(event.getIndex(), value);
                 } else {
-                    this.propertyArray.add(value);
+                    this.getPropertyArray().add(value);
                 }
 
 
@@ -96,7 +90,7 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>) => {
 
-                this.propertyArray.remove(removed.getIndex());
+                this.getPropertyArray().remove(removed.getIndex());
                 //this.notifyValueRemoved(removed.getIndex());
 
                 this.validate(false);
@@ -126,25 +120,10 @@ module api.form.inputtype.combobox {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-
-            var recording = new api.form.inputtype.InputValidationRecording();
-
-            var numberOfValid = this.comboBox.countSelectedOptions();
-            if (numberOfValid < this.input.getOccurrences().getMinimum()) {
-                recording.setBreaksMinimumOccurrences(true);
-            }
-            if (this.input.getOccurrences().maximumBreached(numberOfValid)) {
-                recording.setBreaksMaximumOccurrences(true);
-            }
-
-            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-            }
-
-            this.previousValidationRecording = recording;
-            return recording;
+        protected getNumberOfValids(): number {
+            return this.comboBox.countSelectedOptions();
         }
+
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.comboBox.onFocus(listener);
