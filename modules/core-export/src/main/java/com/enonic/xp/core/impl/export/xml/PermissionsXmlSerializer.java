@@ -31,6 +31,8 @@ public class PermissionsXmlSerializer
         {
             serialize( entry );
         }
+
+        this.domBuilder.end();
     }
 
     private void serialize( final AccessControlEntry entry )
