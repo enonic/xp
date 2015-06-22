@@ -16,6 +16,10 @@ public class UpdateMediaParams
 
     private ByteSource inputStream;
 
+    private double focalX = 0.5;
+
+    private double focalY = 0.5;
+
     public UpdateMediaParams content( final ContentId value )
     {
         this.content = value;
@@ -37,6 +41,18 @@ public class UpdateMediaParams
     public UpdateMediaParams byteSource( final ByteSource value )
     {
         this.inputStream = value;
+        return this;
+    }
+
+    public UpdateMediaParams focalX( final double focalX )
+    {
+        this.focalX = focalX;
+        return this;
+    }
+
+    public UpdateMediaParams focalY( final double focalY )
+    {
+        this.focalY = focalY;
         return this;
     }
 
@@ -65,5 +81,15 @@ public class UpdateMediaParams
     public ByteSource getByteSource()
     {
         return inputStream;
+    }
+
+    public double getFocalX()
+    {
+        return focalX;
+    }
+
+    public double getFocalY()
+    {
+        return focalY;
     }
 }

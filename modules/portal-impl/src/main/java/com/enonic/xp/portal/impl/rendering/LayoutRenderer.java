@@ -3,12 +3,12 @@ package com.enonic.xp.portal.impl.rendering;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.Descriptor;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.LayoutDescriptorService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.region.Descriptor;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptorService;
 
 @Component(immediate = true, service = Renderer.class)
 public final class LayoutRenderer

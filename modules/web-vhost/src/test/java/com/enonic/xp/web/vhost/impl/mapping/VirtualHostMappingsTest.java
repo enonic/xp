@@ -2,11 +2,10 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Iterator;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.Assert;
 
 public class VirtualHostMappingsTest
 {

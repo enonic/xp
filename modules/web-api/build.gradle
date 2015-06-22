@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':core-api' )
     compile 'org.jboss.resteasy:jaxrs-api:3.0.8.Final'
@@ -5,7 +7,6 @@ dependencies {
     compile 'javax.servlet:javax.servlet-api:3.0.1'
 
     testCompile project( path: ':core-api', configuration: 'testOutput' )
-    testCompile 'org.springframework:spring-test:4.1.1.RELEASE'
 }
 
 bundle {

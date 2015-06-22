@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.expr.CompareExpr;

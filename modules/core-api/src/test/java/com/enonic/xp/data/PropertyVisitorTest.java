@@ -6,15 +6,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.PropertyVisitor;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class PropertyVisitorTest
 {

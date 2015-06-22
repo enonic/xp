@@ -14,16 +14,10 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 
 public class ModuleImplTest
@@ -34,16 +28,12 @@ public class ModuleImplTest
     public void setup()
         throws Exception
     {
-        this.bundle = mockBundle( "module.xml", "cms/parts/mypart/part.xml", "cms/pages/mypage/page.xml" );
+        this.bundle = mockBundle( "app/site.xml", "app/parts/mypart/part.xml", "app/pages/mypage/page.xml" );
     }
 
     @Test
     public void testCreateModule()
     {
-        final Form config = Form.newForm().
-            addFormItem( Input.create().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            build();
-
         final ModuleImpl module = new ModuleImpl();
         module.moduleKey = ModuleKey.from( "mymodule" );
         module.moduleVersion = ModuleVersion.from( "1.0.0" );
@@ -51,14 +41,12 @@ public class ModuleImplTest
         module.url = "http://enonic.net";
         module.vendorName = "Enonic";
         module.vendorUrl = "https://www.enonic.com";
-        module.config = config;
 
         assertEquals( "mymodule", module.getKey().toString() );
         assertEquals( "module display name", module.getDisplayName() );
         assertEquals( "http://enonic.net", module.getUrl() );
         assertEquals( "Enonic", module.getVendorName() );
         assertEquals( "https://www.enonic.com", module.getVendorUrl() );
-        assertEquals( InputTypes.TEXT_LINE, module.getConfig().getInput( "some-name" ).getInputType() );
     }
 
     @Test
@@ -69,8 +57,8 @@ public class ModuleImplTest
         module.moduleVersion = ModuleVersion.from( "1.0.0" );
         module.bundle = this.bundle;
 
-        assertNotNull( module.getResource( "module.xml" ) );
-        assertNotNull( module.getResource( "cms/parts/mypart/part.xml" ) );
+        assertNotNull( module.getResource( "app/site.xml" ) );
+        assertNotNull( module.getResource( "app/parts/mypart/part.xml" ) );
         assertNull( module.getResource( "part" ) );
         assertNull( module.getResource( "not/found.txt" ) );
     }
@@ -86,7 +74,7 @@ public class ModuleImplTest
         final Set<String> set = module.getResourcePaths();
         assertNotNull( set );
         assertEquals( 3, set.size() );
-        assertTrue( set.contains( "cms/parts/mypart/part.xml" ) );
+        assertTrue( set.contains( "app/parts/mypart/part.xml" ) );
     }
 
     private Bundle mockBundle( final String... resourcePaths )

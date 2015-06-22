@@ -16,11 +16,11 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.LayoutDescriptor;
-import com.enonic.xp.content.page.region.LayoutDescriptorService;
-import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")

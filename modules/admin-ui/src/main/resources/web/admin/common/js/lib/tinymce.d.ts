@@ -16,6 +16,8 @@ interface TinyMceEditor extends TinyMceObservable {
     focus: (skip_focus?: Boolean) => void
     undoManager: TinyMceUndoManager
     settings: Object
+    insertContent: (content: string, args?: Object) => string
+    nodeChanged: (args?: Object) => void
 }
 
 interface TinyMceUndoManager {

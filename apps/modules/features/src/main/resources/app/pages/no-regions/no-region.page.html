@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title data-th-text="${reqContent.displayName}">main page controller</title>
+</head>
+
+<body data-portal-component-type="page" data-th-class="${editable}? 'edit'">
+
+<div data-th-include="com.enonic.xp.modules.features:/app/view/fragments/menu.html :: siteMenu" data-th-remove="tag">Footer</div>
+
+<div data-th-include="com.enonic.xp.modules.features:/app/view/fragments/footer.html :: copy">Footer</div>
+</body>
+</html>

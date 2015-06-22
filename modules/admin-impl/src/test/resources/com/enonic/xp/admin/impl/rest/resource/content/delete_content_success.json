@@ -1,11 +1,12 @@
 {
-    "failures": [ ],
-    "successes": [
-        {
-            "path": "/one"
-        },
-        {
-            "path": "/two"
-        }
-    ]
+  "failures": [],
+  "pendings": [],
+  "successes": [
+    {
+      "name": "one"
+    },
+    {
+      "name": "one"
+    }
+  ]
 }

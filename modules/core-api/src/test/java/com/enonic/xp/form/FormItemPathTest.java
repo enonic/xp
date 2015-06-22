@@ -1,9 +1,6 @@
 package com.enonic.xp.form;
 
-
 import org.junit.Test;
-
-import com.enonic.xp.form.FormItemPath;
 
 import static org.junit.Assert.*;
 

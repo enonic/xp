@@ -6,16 +6,16 @@ import org.junit.rules.ExpectedException;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.attachment.Attachments;
-import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.CreateSiteParams;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 
@@ -122,7 +122,7 @@ public class ContentServiceImplTest_create
         createSiteParams.parent( ContentPath.ROOT ).
             displayName( "My site" ).
             description( "This is my site" ).
-            moduleConfigs( ModuleConfigs.empty() );
+            siteConfigs( SiteConfigs.empty() );
 
         final Content content = this.contentService.create( createSiteParams );
 

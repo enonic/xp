@@ -7,11 +7,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.site.Site;
 
 public final class ServiceResource
     extends BaseSubResource
@@ -20,7 +20,7 @@ public final class ServiceResource
     public ServiceControllerResource controller( @PathParam("module") final String module, @PathParam("service") final String service )
     {
         final ModuleKey moduleKey = ModuleKey.from( module );
-        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "cms/services/" + service );
+        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "app/services/" + service );
 
         final ServiceControllerResource resource = initResource( new ServiceControllerResource() );
         resource.scriptDir = scriptDir;

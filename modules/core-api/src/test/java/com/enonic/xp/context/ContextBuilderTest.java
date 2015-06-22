@@ -2,10 +2,8 @@ package com.enonic.xp.context;
 
 import org.junit.Test;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
 

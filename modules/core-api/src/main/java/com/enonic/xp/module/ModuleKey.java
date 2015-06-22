@@ -13,6 +13,12 @@ public final class ModuleKey
 
     public final static ModuleKey SYSTEM = new ModuleKey( SYSTEM_MODULE_NAME );
 
+    public static final ModuleKey MEDIA_MOD = ModuleKey.from( "media" );
+
+    public static final ModuleKey PORTAL = ModuleKey.from( "portal" );
+
+    public static final ModuleKey BASE = ModuleKey.from( "base" );
+
     private final String name;
 
     private ModuleKey( final String name )
@@ -20,6 +26,16 @@ public final class ModuleKey
         Preconditions.checkNotNull( name, "ModuleKey cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "ModuleKey cannot be blank" );
         this.name = name;
+    }
+
+    public static boolean isSystemReservedModuleKey( final ModuleKey moduleKey )
+    {
+        return moduleKey.equals( MEDIA_MOD ) || moduleKey.equals( PORTAL ) || moduleKey.equals( BASE );
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     @Override

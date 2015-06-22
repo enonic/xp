@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -13,14 +16,16 @@ final class ImageUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.context.getContentPath().toString() );
+        appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "image" );
 
         final ContentId id = resolveId();
         final String name = resolveName( id );
+        final String scale = resolveScale();
 
         appendPart( url, id.toString() );
+        appendPart( url, scale );
         appendPart( url, name );
 
         addParamIfNeeded( params, "quality", this.params.getQuality() );
@@ -43,21 +48,31 @@ final class ImageUrlBuilder
 
         if ( this.params.getFormat() != null )
         {
-            return name + "." + this.params.getFormat();
+            final String extension = Files.getFileExtension( name );
+            if ( StringUtils.isEmpty( extension ) || !this.params.getFormat().equals( extension ) )
+            {
+                return name + "." + this.params.getFormat();
+            }
         }
-        else
-        {
-            return name;
-        }
+        return name;
     }
 
     private ContentId resolveId()
     {
         return new ContentIdResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).
             resolve();
+    }
+
+    private String resolveScale()
+    {
+        if ( this.params.getScale() == null )
+        {
+            throw new IllegalArgumentException( "Missing mandatory parameter 'scale' for image URL" );
+        }
+        return this.params.getScale().replaceAll( "[(,]", "-" ).replace( ")", "" );
     }
 }

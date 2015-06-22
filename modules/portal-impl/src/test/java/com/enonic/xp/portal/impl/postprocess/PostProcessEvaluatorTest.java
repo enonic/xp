@@ -15,7 +15,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static java.util.stream.Collectors.joining;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class PostProcessEvaluatorTest
 {
@@ -36,7 +36,7 @@ public class PostProcessEvaluatorTest
     public void testEvaluateContributions()
         throws Exception
     {
-        final PostProcessInjection contributionsInjection = ( context, tag ) -> {
+        final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
             {
                 case HEAD_BEGIN:
@@ -64,7 +64,7 @@ public class PostProcessEvaluatorTest
     public void testEvaluateMultipleContributions()
         throws Exception
     {
-        final PostProcessInjection contributionsInjection = ( context, tag ) -> {
+        final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
             {
                 case HEAD_BEGIN:
@@ -79,7 +79,7 @@ public class PostProcessEvaluatorTest
                     return null;
             }
         };
-        final PostProcessInjection contributionsInjection2 = ( context, tag ) -> {
+        final PostProcessInjection contributionsInjection2 = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
             {
                 case HEAD_BEGIN:
@@ -103,7 +103,7 @@ public class PostProcessEvaluatorTest
     public void testEvaluateDuplicatedContributions()
         throws Exception
     {
-        final PostProcessInjection contributionsInjection = ( context, tag ) -> {
+        final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
             {
                 case HEAD_BEGIN:
@@ -118,7 +118,7 @@ public class PostProcessEvaluatorTest
                     return null;
             }
         };
-        final PostProcessInjection contributionsInjection2 = ( context, tag ) -> {
+        final PostProcessInjection contributionsInjection2 = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
             {
                 case HEAD_BEGIN:
@@ -142,14 +142,14 @@ public class PostProcessEvaluatorTest
     public void testEvaluateInstructions()
         throws Exception
     {
-        final PostProcessInstruction uppercaseInstruction = ( context, instruction ) -> {
+        final PostProcessInstruction uppercaseInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "UPPERCASE" ) )
             {
                 return StringUtils.substringAfter( instruction, "UPPERCASE " ).toUpperCase();
             }
             return null;
         };
-        final PostProcessInstruction expandInstruction = ( context, instruction ) -> {
+        final PostProcessInstruction expandInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "EXPAND" ) )
             {
                 return "<!--#UPPERCASE " + StringUtils.substringAfter( instruction, "EXPAND " ) + "-->";

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.BreaksRequiredContractException;
-import com.enonic.xp.form.inputtype.SingleSelector;
 
 public class SingleSelectorTest
 {

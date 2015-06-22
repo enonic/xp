@@ -15,13 +15,13 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
@@ -34,7 +34,7 @@ public class CreateContentCommandTest
 
     private MixinService mixinService;
 
-    private ModuleService moduleService;
+    private SiteService siteService;
 
     private NodeService nodeService;
 
@@ -49,7 +49,7 @@ public class CreateContentCommandTest
     public void setUp()
         throws Exception
     {
-        moduleService = Mockito.mock( ModuleService.class );
+        siteService = Mockito.mock( SiteService.class );
         nodeService = Mockito.mock( NodeService.class );
         eventPublisher = Mockito.mock( EventPublisher.class );
         mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
@@ -220,7 +220,7 @@ public class CreateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             build();
 
         return command;

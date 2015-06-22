@@ -154,9 +154,6 @@ public final class PropertyTree
         return properties;
     }
 
-    /**
-     * If called, the next add or set Property will be ignored if the value is null.
-     */
     public PropertyTree ifNotNull()
     {
         root.ifNotNull();

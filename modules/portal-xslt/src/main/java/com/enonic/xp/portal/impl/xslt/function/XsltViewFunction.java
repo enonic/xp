@@ -6,8 +6,8 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
 
@@ -52,14 +52,14 @@ final class XsltViewFunction
         return new Call();
     }
 
-    private PortalContext getContext()
+    private PortalRequest getPortalRequest()
     {
-        return PortalContextAccessor.get();
+        return PortalRequestAccessor.get();
     }
 
     private String execute( final String[] args )
     {
-        final ViewFunctionParams params = new ViewFunctionParams().context( getContext() ).name( this.name ).args( args );
+        final ViewFunctionParams params = new ViewFunctionParams().portalRequest( getPortalRequest() ).name( this.name ).args( args );
         return this.service.execute( params ).toString();
     }
 }

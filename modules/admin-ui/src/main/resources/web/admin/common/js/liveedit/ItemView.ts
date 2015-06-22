@@ -171,16 +171,17 @@ module api.liveedit {
              setContent(this.tooltipViewer);
              }*/
 
-            if (builder.placeholder) {
-
-                if (this.getChildren().length > 0) {
-                    var children = this.getChildren().filter(children => {
-                        return !api.ObjectHelper.iFrameSafeInstanceOf(children, ItemViewPlaceholder)
-                    })
-                    this.removeChildren();
-                    this.appendChildren.apply(this, children);
+            // remove old placeholder in case of parsing already parsed page again
+            for (var i = 0; i < this.getChildren().length; i++) {
+                var child = this.getChildren()[i];
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, ItemViewPlaceholder)) {
+                    this.removeChild(child);
+                    // there can be only one placeholder
+                    break;
                 }
+            }
 
+            if (builder.placeholder) {
                 this.placeholder = builder.placeholder;
                 this.appendChild(this.placeholder);
             }
@@ -217,6 +218,14 @@ module api.liveedit {
             Shader.get().onClicked(this.shaderClickedListener);
 
             this.mouseOverViewListener = () => {
+                var isRegistered = !!this.getParentItemView();
+                if (ItemView.debug) {
+                    console.log('ItemView[' + this.toString() + '].mouseOverViewListener registered: ' + isRegistered);
+                }
+                if (!isRegistered) {
+                    // the component has not been registered yet
+                    return;
+                }
                 var hasSelectedView = this.getPageView().hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
@@ -229,6 +238,14 @@ module api.liveedit {
             this.onMouseOverView(this.mouseOverViewListener);
 
             this.mouseLeaveViewListener = () => {
+                var isRegistered = !!this.getParentItemView();
+                if (ItemView.debug) {
+                    console.log('ItemView[' + this.toString() + '].mouseLeaveViewListener registered: ' + isRegistered);
+                }
+                if (!isRegistered) {
+                    // the component has not been registered yet
+                    return;
+                }
                 var hasSelectedView = this.getPageView().hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
@@ -263,7 +280,7 @@ module api.liveedit {
         }
 
         shade() {
-            Shader.get().shadeItemView(this);
+            Shader.get().shade(this);
         }
 
         unshade() {

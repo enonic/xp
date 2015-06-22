@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Layout</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <field-set name="nameOfLayoutDoesNotAffectPathOfChildFormItems">
+      <label>A FieldSet around an Input</label>
+      <items>
+        <input name="myInputWithPathUnaffectedByLayout" type="TextLine">
+          <label>FormItem paths within layouts are not be affected by layout</label>
+          <indexed>true</indexed>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+    </field-set>
+    <input name="anInputNextToALayout" type="TextLine">
+      <label>An Input after a layout</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <field-set name="aFieldSetAroundAFormItemSet">
+      <label>A FieldSet around a FormItemSet</label>
+      <items>
+        <item-set name="address">
+          <label>Address</label>
+          <items>
+            <input name="label" type="TextLine">
+              <label>Label</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>Give this address a label</help-text>
+            </input>
+            <input name="street" type="TextLine">
+              <label>Street</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>Street</help-text>
+            </input>
+            <input name="postal_code" type="TextLine">
+              <label>Postal Code</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>Postal Code</help-text>
+            </input>
+            <input name="postal_address" type="TextLine">
+              <label>Postal Address</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>Postal Address</help-text>
+            </input>
+          </items>
+          <occurrences minimum="0" maximum="1"/>
+        </item-set>
+      </items>
+    </field-set>
+    <input name="anotherInputNextToALayout" type="TextLine">
+      <label>Another Input after a layout</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </form>
+</content-type>

@@ -2,8 +2,8 @@ module api.content {
 
     export interface MoveContentResultJson {
 
-        successes: { contentId:string }[];
+        successes: { name:string }[];
 
-        failures: { contentId:string; reason:string }[];
+        failures: { name:string; reason:string }[];
     }
 }

@@ -13,7 +13,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ContentSelectorConfigJsonSerializerTest
 {

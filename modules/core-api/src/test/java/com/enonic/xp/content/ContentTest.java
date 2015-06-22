@@ -5,13 +5,11 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.PageTemplateKey;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplateKey;
 
 import static com.enonic.xp.content.Content.newContent;
 import static org.junit.Assert.*;

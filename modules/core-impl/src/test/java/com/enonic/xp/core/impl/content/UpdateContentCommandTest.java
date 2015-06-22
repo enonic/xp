@@ -15,7 +15,6 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -24,6 +23,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.content.Content.newContent;
 
@@ -35,7 +35,7 @@ public class UpdateContentCommandTest
 
     private final MixinService mixinService = Mockito.mock( MixinService.class );
 
-    private final ModuleService moduleService = Mockito.mock( ModuleService.class );
+    private final SiteService siteService = Mockito.mock( SiteService.class );
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
@@ -67,7 +67,7 @@ public class UpdateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
@@ -99,7 +99,7 @@ public class UpdateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             build();
 
         final Node mockNode = Node.newNode().build();

@@ -1,17 +1,16 @@
 package com.enonic.xp.admin.impl.portal;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import junit.framework.Assert;
-
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 public class PortalForwardHandlerTest
@@ -77,10 +76,10 @@ public class PortalForwardHandlerTest
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
         Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
-        final PortalContext context = PortalContextAccessor.get( this.req );
-        Assert.assertNotNull( context );
-        Assert.assertEquals( "/admin/portal/edit", context.getBaseUri() );
-        Assert.assertEquals( RenderMode.EDIT, context.getMode() );
+        final PortalRequest portalRequest = PortalRequestAccessor.get( this.req );
+        Assert.assertNotNull( portalRequest );
+        Assert.assertEquals( "/admin/portal/edit", portalRequest.getBaseUri() );
+        Assert.assertEquals( RenderMode.EDIT, portalRequest.getMode() );
     }
 
     @Test
@@ -94,9 +93,9 @@ public class PortalForwardHandlerTest
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
         Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
-        final PortalContext context = PortalContextAccessor.get( this.req );
-        Assert.assertNotNull( context );
-        Assert.assertEquals( "/admin/portal/preview", context.getBaseUri() );
-        Assert.assertEquals( RenderMode.PREVIEW, context.getMode() );
+        final PortalRequest portalRequest = PortalRequestAccessor.get( this.req );
+        Assert.assertNotNull( portalRequest );
+        Assert.assertEquals( "/admin/portal/preview", portalRequest.getBaseUri() );
+        Assert.assertEquals( RenderMode.PREVIEW, portalRequest.getMode() );
     }
 }

@@ -65,6 +65,10 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResults;
@@ -78,7 +82,9 @@ import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -103,11 +109,6 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.AttachmentNames;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
-import com.enonic.xp.content.query.ContentQuery;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.index.ChildOrder;
@@ -182,11 +183,23 @@ public final class ContentResource
             final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
             createMediaParams.parent( parentContent.getPath() );
         }
-        createMediaParams.name( form.getAsString( "name" ) );
-
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
-        createMediaParams.mimeType( mediaFile.getContentType() );
-        createMediaParams.byteSource( getFileItemByteSource( mediaFile ) );
+        createMediaParams.name( form.getAsString( "name" ) ).
+            mimeType( mediaFile.getContentType() ).
+            byteSource( getFileItemByteSource( mediaFile ) );
+
+        String focalX = form.getAsString( "focalX" ),
+            focalY = form.getAsString( "focalY" );
+
+        if ( StringUtils.isNotBlank( focalX ) )
+        {
+            createMediaParams.focalX( Double.valueOf( focalX ) );
+        }
+        if ( StringUtils.isNotBlank( focalY ) )
+        {
+            createMediaParams.focalY( Double.valueOf( focalY ) );
+        }
+
         persistedContent = contentService.create( createMediaParams );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
@@ -198,9 +211,21 @@ public final class ContentResource
     public ContentJson updateMedia( final MultipartForm form )
     {
         final Content persistedContent;
-        final UpdateMediaParams params = new UpdateMediaParams();
-        params.content( ContentId.from( form.getAsString( "content" ) ) );
-        params.name( form.getAsString( "name" ) );
+        final UpdateMediaParams params = new UpdateMediaParams().
+            content( ContentId.from( form.getAsString( "content" ) ) ).
+            name( form.getAsString( "name" ) );
+
+        String focalX = form.getAsString( "focalX" ),
+            focalY = form.getAsString( "focalY" );
+
+        if ( StringUtils.isNotBlank( focalX ) )
+        {
+            params.focalX( Double.valueOf( focalX ) );
+        }
+        if ( StringUtils.isNotBlank( focalY ) )
+        {
+            params.focalY( Double.valueOf( focalY ) );
+        }
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         params.mimeType( mediaFile.getContentType() );
@@ -251,12 +276,20 @@ public final class ContentResource
         {
             try
             {
-                contentService.move( new MoveContentParams( ContentIds.from( contentId ), params.getParentContentPath() ) );
-                resultJson.addSuccess( contentId );
+                final Content movedContent = contentService.move( new MoveContentParams( contentId, params.getParentContentPath() ) );
+                resultJson.addSuccess( movedContent != null ? movedContent.getDisplayName() : contentId.toString() );
             }
             catch ( MoveContentException e )
             {
-                resultJson.addFailure( contentId, e.getMessage() );
+                try
+                {
+                    final Content failedContent = contentService.getById( contentId );
+                    resultJson.addFailure( failedContent != null ? failedContent.getDisplayName() : contentId.toString(), e.getMessage() );
+                }
+                catch ( ContentNotFoundException cnEx )
+                {
+                    resultJson.addFailure( contentId.toString(), e.getMessage() );
+                }
             }
         }
 
@@ -302,12 +335,35 @@ public final class ContentResource
 
             try
             {
-                contentService.delete( deleteContent );
-                jsonResult.addSuccess( contentToDelete );
+                Contents contents = contentService.delete( deleteContent );
+                contents.forEach( ( content ) -> {
+                    if ( ContentState.PENDING_DELETE.equals( content.getContentState() ) )
+                    {
+                        jsonResult.addPending( content.getDisplayName() );
+                    }
+                    else
+                    {
+                        jsonResult.addSuccess( content.getDisplayName() );
+                    }
+
+                } );
+
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
             {
-                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+                try
+                {
+                    Content content = contentService.getByPath( contentToDelete );
+                    if ( content != null )
+                    {
+                        jsonResult.addFailure( content.getDisplayName(), e.getMessage() );
+                    }
+                }
+                catch ( ContentNotFoundException | ContentAccessException ex )
+                {
+                    jsonResult.addFailure( deleteContent.getContentPath().toString(), e.getMessage() );
+                }
+
             }
         }
 
@@ -406,7 +462,6 @@ public final class ContentResource
                                    content.getChildOrder().toString() ) );
             }
         }
-
 
         //Applies the manual movements
         final ReorderChildContentsParams.Builder builder =

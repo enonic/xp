@@ -8,9 +8,6 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.mixin.MixinNames;
-
 @Beta
 public interface Module
 {
@@ -32,19 +29,21 @@ public interface Module
 
     String getVendorUrl();
 
-    Form getConfig();
-
     URL getResource( String path );
 
     Set<String> getResourcePaths();
 
     Bundle getBundle();
 
-    MixinNames getMetaSteps();
-
     Instant getModifiedTime();
 
     boolean isStarted();
 
     ClassLoader getClassLoader();
+
+    void checkIfStarted();
+
+    boolean isApplication();
+
+    boolean isSystem();
 }

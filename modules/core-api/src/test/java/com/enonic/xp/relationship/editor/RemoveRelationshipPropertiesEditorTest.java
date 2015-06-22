@@ -8,9 +8,8 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.relationship.Relationship;
-import com.enonic.xp.relationship.editor.RemoveRelationshipPropertiesEditor;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class RemoveRelationshipPropertiesEditorTest
 {

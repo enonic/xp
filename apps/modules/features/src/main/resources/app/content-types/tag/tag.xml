@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Tag</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="tag_unlimited" type="Tag">
+      <label>Unlimited</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="0" maximum="0"/>
+      <help-text>Some help text</help-text>
+    </input>
+    <input name="tag_max5" type="Tag">
+      <label>Zero to Five</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="0" maximum="5"/>
+      <help-text>Some help text</help-text>
+    </input>
+    <input name="tag_min_2_max5" type="Tag">
+      <label>Min 2 max 5 occurrences</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="2" maximum="5"/>
+      <help-text>Some help text</help-text>
+    </input>
+  </form>
+</content-type>

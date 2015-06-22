@@ -46,20 +46,17 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -73,10 +70,13 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static com.enonic.xp.content.Content.newContent;
-import static com.enonic.xp.content.site.Site.newSite;
 import static com.enonic.xp.security.acl.Permission.READ;
+import static com.enonic.xp.site.Site.newSite;
 
 public class ContentResourceTest
     extends AbstractResourceTest
@@ -255,14 +255,14 @@ public class ContentResourceTest
     public void get_site_content_by_id()
         throws Exception
     {
-        PropertyTree moduleConfigConfig = new PropertyTree();
-        moduleConfigConfig.setLong( "A", 1L );
-        ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "A", 1L );
+        SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
-            config( moduleConfigConfig ).
+            config( siteConfigConfig ).
             build();
 
-        Site content = createSite( "aaa", "my_a_content", "mymodule:my_type", ModuleConfigs.from( moduleConfig ) );
+        Site content = createSite( "aaa", "my_a_content", "mymodule:my_type", SiteConfigs.from( siteConfig ) );
 
         PropertyTree contentData = content.getData();
         contentData.setString( "myProperty", "myValue" );
@@ -552,6 +552,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( Contents.from( content ) );
 
@@ -602,6 +603,7 @@ public class ContentResourceTest
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
+            displayName( "one" ).
             build();
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
@@ -1011,10 +1013,10 @@ public class ContentResourceTest
             build();
     }
 
-    private Site createSite( final String id, final String name, final String contentTypeName, ModuleConfigs moduleConfigs )
+    private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )
     {
         return newSite().
-            moduleConfigs( moduleConfigs ).
+            siteConfigs( siteConfigs ).
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).

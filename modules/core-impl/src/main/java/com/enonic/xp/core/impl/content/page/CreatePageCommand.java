@@ -5,13 +5,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.page.CreatePageParams;
-import com.enonic.xp.content.page.Page;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.CreatePageParams;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.security.User;
 
-import static com.enonic.xp.content.page.Page.newPage;
+import static com.enonic.xp.page.Page.newPage;
 
 final class CreatePageCommand
 {

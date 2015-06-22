@@ -9,10 +9,6 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.schema.content.ContentTypeProvider;
-import com.enonic.xp.schema.mixin.MixinProvider;
-import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
-
 public final class SchemaProviders
 {
     private final BundleContext context;
@@ -23,21 +19,6 @@ public final class SchemaProviders
     {
         this.context = bundle.getBundleContext();
         this.registrations = Lists.newArrayList();
-    }
-
-    public void register( final MixinProvider provider )
-    {
-        registerService( MixinProvider.class, provider );
-    }
-
-    public void register( final RelationshipTypeProvider provider )
-    {
-        registerService( RelationshipTypeProvider.class, provider );
-    }
-
-    public void register( final ContentTypeProvider provider )
-    {
-        registerService( ContentTypeProvider.class, provider );
     }
 
     private <T> void registerService( final Class<T> type, final T instance )

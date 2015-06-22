@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Time</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="time" type="Time">
+      <label>Time</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="0" maximum="0"/>
+      <help-text>..that's the question!</help-text>
+    </input>
+    <input name="requiredTime" type="Time">
+      <label>Required Time</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="1" maximum="0"/>
+      <help-text>..that's the question!</help-text>
+    </input>
+  </form>
+</content-type>

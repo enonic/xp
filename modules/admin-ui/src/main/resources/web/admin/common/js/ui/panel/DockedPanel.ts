@@ -20,11 +20,11 @@ module api.ui.panel {
             this.setDoOffset(false);
         }
 
-        addItem<T extends Panel>(label: string, panel: T, hidden?: boolean): number {
-            var item = new api.ui.tab.TabBarItemBuilder().setLabel(label).build();
+        addItem<T extends Panel>(label: string, addLabelTitleAttribute: boolean, panel: T, select?: boolean): number {
+            var item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
             this.addItemArray(item);
 
-            this.deck.addNavigablePanel(item, panel, this.items.length == 1);
+            this.deck.addNavigablePanel(item, panel, select || this.items.length == 1);
 
             return this.deck.getPanelIndex(panel);
         }

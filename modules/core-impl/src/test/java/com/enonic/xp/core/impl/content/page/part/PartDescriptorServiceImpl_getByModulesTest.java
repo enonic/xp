@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.content.page.part;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.content.page.region.PartDescriptors;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.Modules;
+import com.enonic.xp.region.PartDescriptors;
 
 public class PartDescriptorServiceImpl_getByModulesTest
     extends AbstractPartDescriptorServiceTest
@@ -18,7 +18,7 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Module module = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-part-descr" );
 
-        mockResourcePaths( module, "cms/parts/foomodule-part-descr/part.xml" );
+        mockResourcePaths( module, "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
         final PartDescriptors result = this.service.getByModule( module.getKey() );
 
         Assert.assertNotNull( result );
@@ -32,8 +32,8 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResourcePaths( modules.getModule( ModuleKey.from( "foomodule" ) ), "cms/parts/foomodule-part-descr/part.xml" );
-        mockResourcePaths( modules.getModule( ModuleKey.from( "barmodule" ) ), "cms/parts/barmodule-part-descr/part.xml" );
+        mockResourcePaths( modules.getModule( ModuleKey.from( "foomodule" ) ), "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
+        mockResourcePaths( modules.getModule( ModuleKey.from( "barmodule" ) ), "app/parts/barmodule-part-descr/barmodule-part-descr.xml" );
 
         final PartDescriptors result = this.service.getByModules( modules.getModuleKeys() );
 

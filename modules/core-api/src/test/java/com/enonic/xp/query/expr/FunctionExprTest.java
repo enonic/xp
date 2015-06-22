@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.query.expr.FunctionExpr;
-import com.enonic.xp.query.expr.ValueExpr;
-
 public class FunctionExprTest
 {
     @Test

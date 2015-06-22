@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
 import com.enonic.xp.admin.impl.json.content.page.DescriptorJson;
-import com.enonic.xp.content.page.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 
 
 public class PartDescriptorJson

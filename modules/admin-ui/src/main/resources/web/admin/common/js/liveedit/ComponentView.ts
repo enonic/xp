@@ -135,6 +135,7 @@ module api.liveedit {
             };
 
             this.setComponent(builder.component);
+            this.onRemoved(event => this.unregisterComponentListeners(this.component));
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.setDraggable(true);

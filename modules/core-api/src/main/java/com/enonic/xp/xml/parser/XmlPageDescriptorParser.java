@@ -2,7 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.xml.DomElement;
 
 @Beta
@@ -21,7 +21,7 @@ public final class XmlPageDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "page-component" );
+        assertTagName( root, "page" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentModule );

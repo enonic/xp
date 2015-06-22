@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':portal-script' )
     compile 'com.enonic.osgi.bundles:saxon-he:9.5.1_1'

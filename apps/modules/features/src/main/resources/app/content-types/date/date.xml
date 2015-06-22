@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Date</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="date" type="Date">
+      <label>Date</label>
+      <indexed>true</indexed>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input name="requiredDate" type="Date">
+      <label>Required Date</label>
+      <indexed>true</indexed>
+      <custom-text>Custom text</custom-text>
+      <occurrences minimum="1" maximum="0"/>
+      <help-text>..that's the question!</help-text>
+    </input>
+  </form>
+</content-type>

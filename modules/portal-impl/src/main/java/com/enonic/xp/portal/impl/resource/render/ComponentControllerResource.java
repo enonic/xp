@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.portal.rendering.RenderResult;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.region.Component;
 
 public final class ComponentControllerResource
     extends RendererControllerResource
@@ -11,9 +11,9 @@ public final class ComponentControllerResource
     protected Renderer<Component> renderer;
 
     @Override
-    protected RenderResult execute( final PortalContext context )
+    protected PortalResponse execute( final PortalRequest portalRequest )
         throws Exception
     {
-        return this.renderer.render( this.component, context );
+        return this.renderer.render( this.component, portalRequest );
     }
 }

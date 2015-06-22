@@ -3,14 +3,16 @@ package com.enonic.xp.portal.impl.resource.image;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.image.scale.ScaleParamsParser;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+import com.enonic.xp.util.MediaTypes;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
@@ -18,20 +20,32 @@ public final class ImageResource
     extends BaseSubResource
 {
 
-    @Path("{id}/{name}")
-    public ImageHandleResource imageById( @PathParam("id") final String id, @PathParam("name") final String name )
+    @Path("{id}/{scale}/{name}")
+    public ImageHandleResource imageById( @PathParam("id") final String id, @PathParam("scale") final String scale,
+                                          @PathParam("name") final String name )
     {
         final ImageHandleResource resource = initResource( new ImageHandleResource() );
 
         final ContentId imageContentId = ContentId.from( id );
         final Media imageContent = getImage( imageContentId );
+        final ScaleParams scaleParams = new ScaleParamsParser().parse( scale );
 
         if ( !contentNameMatch( imageContent.getName(), name ) )
         {
             throw notFound( "Image [%s] not found for content [%s]", name, id );
         }
 
-        final Attachment attachment = imageContent.getMediaAttachment();
+        final Attachment attachment;
+        final int requiredImageSize = scaleParams.getRequiredImageSize();
+        if ( requiredImageSize > 0 )
+        {
+            attachment = imageContent.getBestFitImageAttachment( requiredImageSize );
+        }
+        else
+        {
+            attachment = imageContent.getMediaAttachment();
+        }
+
         if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
@@ -45,6 +59,8 @@ public final class ImageResource
 
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
+        resource.scaleParams = scaleParams;
+        resource.focalPoint = imageContent.getFocalPoint();
         return resource;
     }
 

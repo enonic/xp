@@ -6,9 +6,9 @@ import java.util.Locale;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 

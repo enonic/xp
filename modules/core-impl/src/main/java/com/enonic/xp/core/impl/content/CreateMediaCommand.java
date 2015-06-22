@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
@@ -51,6 +51,8 @@ final class CreateMediaCommand
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).
+            focalX( params.getFocalX() ).
+            focalY( params.getFocalY() ).
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
@@ -74,7 +76,7 @@ final class CreateMediaCommand
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).
             mediaInfo( mediaInfo ).
             params( createContentParams ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build();
 

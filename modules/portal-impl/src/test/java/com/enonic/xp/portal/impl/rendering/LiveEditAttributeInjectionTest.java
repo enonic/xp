@@ -5,10 +5,10 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.content.page.region.TextComponentType;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.region.TextComponentType;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class LiveEditAttributeInjectionTest
 {
@@ -19,12 +19,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part1Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part1Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );
@@ -37,12 +37,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part2Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part2Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );
@@ -55,12 +55,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part3Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part3Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );
@@ -73,12 +73,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part4Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part4Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );
@@ -91,12 +91,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part5Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part5Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );
@@ -109,12 +109,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part6Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
 
         assertEquals( html, outputHtml );
     }
@@ -126,12 +126,12 @@ public class LiveEditAttributeInjectionTest
         final String html = readResource( "part7Source.html" );
 
         final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
-        final PortalResponse response = new PortalResponse();
-        response.setBody( html );
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
 
-        liveEditAttributeInjection.injectLiveEditAttribute( response, TextComponentType.INSTANCE );
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
-        final String outputHtml = response.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "part7Rendered.html" );
 
         assertEquals( expectedResult, outputHtml );

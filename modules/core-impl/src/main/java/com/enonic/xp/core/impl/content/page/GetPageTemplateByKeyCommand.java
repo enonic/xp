@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateKey;
 
 final class GetPageTemplateByKeyCommand
 {

@@ -4,13 +4,15 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.PageDescriptorService;
-import com.enonic.xp.content.page.PageTemplateService;
 import com.enonic.xp.image.ImageFilterBuilder;
+import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.site.SiteService;
 
 @Component
 public final class PortalServicesImpl
@@ -30,7 +32,11 @@ public final class PortalServicesImpl
 
     private PageDescriptorService pageDescriptorService;
 
+    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
+
     private PortalUrlService portalUrlService;
+
+    private SiteService siteService;
 
     @Override
     public ModuleService getModuleService()
@@ -75,9 +81,23 @@ public final class PortalServicesImpl
     }
 
     @Override
+    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder()
+    {
+        return this.imageScaleFunctionBuilder;
+    }
+
+    ;
+
+    @Override
     public PortalUrlService getPortalUrlService()
     {
         return this.portalUrlService;
+    }
+
+    @Override
+    public SiteService getSiteService()
+    {
+        return this.siteService;
     }
 
     @Reference
@@ -123,8 +143,20 @@ public final class PortalServicesImpl
     }
 
     @Reference
+    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
+    {
+        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
+    }
+
+    @Reference
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
         this.portalUrlService = portalUrlService;
+    }
+
+    @Reference
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
     }
 }

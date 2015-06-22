@@ -2,9 +2,6 @@ package com.enonic.xp.convert;
 
 import org.junit.Test;
 
-import com.enonic.xp.convert.ConvertException;
-import com.enonic.xp.convert.Converters;
-
 import static org.junit.Assert.*;
 
 public abstract class NumberConverterTest<T extends Number>

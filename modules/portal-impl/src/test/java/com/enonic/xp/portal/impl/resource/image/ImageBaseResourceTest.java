@@ -7,25 +7,30 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.BuilderContext;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.ImageScaleFunctionBuilder;
+import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 
 public abstract class ImageBaseResourceTest
     extends BaseResourceTest
 {
     private ImageFilterBuilder imageFilterBuilder;
+
+    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
     protected ContentService contentService;
 
@@ -34,7 +39,9 @@ public abstract class ImageBaseResourceTest
         throws Exception
     {
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
+        this.imageScaleFunctionBuilder = Mockito.mock( ImageScaleFunctionBuilder.class );
         this.services.setImageFilterBuilder( this.imageFilterBuilder );
+        this.services.setImageScaleFunctionBuilder( this.imageScaleFunctionBuilder );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.services.setContentService( this.contentService );
@@ -46,7 +53,7 @@ public abstract class ImageBaseResourceTest
         final Attachment attachment = Attachment.newAttachment().
             name( "enonic-logo.png" ).
             mimeType( "image/png" ).
-            label( "small" ).
+            label( "source" ).
             build();
 
         final Content content = createContent( "content-id", "path/to/image-name.jpg", attachment );
@@ -58,14 +65,22 @@ public abstract class ImageBaseResourceTest
 
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( ByteSource.wrap( imageData ) );
-        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).
+        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( String.class ) ) ).
             thenReturn( getImageFilterBuilder() );
+        Mockito.when( this.imageScaleFunctionBuilder.build( Mockito.isA( ScaleParams.class ), Mockito.isA( FocalPoint.class ) ) ).
+            thenReturn( getImageScaleFunctionBuilder() );
     }
 
     private ImageFilter getImageFilterBuilder()
     {
         return source -> source;
     }
+
+    private ImageScaleFunction getImageScaleFunctionBuilder()
+    {
+        return source -> source;
+    }
+
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Nested Form Item Sets</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <item-set name="level-1">
+      <label>Level 1</label>
+      <items>
+        <input name="myTextLine" type="TextLine">
+          <label>My text line</label>
+          <indexed>true</indexed>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <item-set name="level-2">
+          <label>Level 2</label>
+          <items>
+            <input name="myTextLine" type="TextLine">
+              <label>My text line</label>
+              <indexed>true</indexed>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+            <item-set name="level-3">
+              <label>Level 3</label>
+              <items>
+                <input name="myTextLine" type="TextLine">
+                  <label>My text line</label>
+                  <indexed>true</indexed>
+                  <occurrences minimum="1" maximum="1"/>
+                </input>
+                <item-set name="level-4">
+                  <label>Level 4</label>
+                  <items>
+                    <input name="myTextLine" type="TextLine">
+                      <label>My text line</label>
+                      <indexed>true</indexed>
+                      <occurrences minimum="1" maximum="1"/>
+                    </input>
+                  </items>
+                  <occurrences minimum="1" maximum="0"/>
+                </item-set>
+              </items>
+              <occurrences minimum="1" maximum="0"/>
+            </item-set>
+          </items>
+          <occurrences minimum="1" maximum="0"/>
+        </item-set>
+      </items>
+      <occurrences minimum="0" maximum="0"/>
+    </item-set>
+  </form>
+</content-type>

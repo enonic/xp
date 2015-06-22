@@ -20,7 +20,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class DateRangeAggregationTest

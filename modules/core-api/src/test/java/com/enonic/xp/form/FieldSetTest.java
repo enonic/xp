@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.xp.form.inputtype.InputTypes;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class FieldSetTest
 {

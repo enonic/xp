@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<relationship-type>
+  <display-name>Citation</display-name>
+  <from-semantic>citation in</from-semantic>
+  <to-semantic>cited by</to-semantic>
+  <allowed-from-types/>
+  <allowed-to-types>
+    <content-type>com.enonic.xp.modules.features:article</content-type>
+  </allowed-to-types>
+</relationship-type>

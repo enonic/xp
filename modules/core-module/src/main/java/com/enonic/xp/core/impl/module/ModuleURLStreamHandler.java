@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
@@ -95,9 +94,9 @@ public final class ModuleURLStreamHandler
     }
 
     @Activate
-    public void activate( final ComponentContext context )
+    public void activate( final BundleContext context )
     {
-        this.bundleContext = context.getBundleContext();
+        this.bundleContext = context;
         this.bundleContext.addBundleListener( this::invalidateCache );
     }
 }

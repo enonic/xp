@@ -184,12 +184,19 @@ module api.dom {
         }
 
 
-        public findChildById(id: string): Element {
-            var result: Element[] = this.children.filter((child: Element) => {
-                return child.getId() == id;
-            });
-
-            return result.length > 0 ? result[0] : null;
+        public findChildById(id: string, deep: boolean = false): Element {
+            for (var i = 0; i < this.children.length; i++) {
+                var child = this.children[i];
+                if (child.getId() == id) {
+                    return child;
+                } else if (deep) {
+                    var found = child.findChildById(id, deep);
+                    if (found) {
+                        return found;
+                    }
+                }
+            }
+            return null;
         }
 
         init() {
@@ -234,12 +241,13 @@ module api.dom {
             this.notifyHidden(this);
         }
 
-        setVisible(value: boolean) {
+        setVisible(value: boolean): Element {
             if (value) {
                 this.show();
             } else {
                 this.hide();
             }
+            return this;
         }
 
         isVisible() {
@@ -455,7 +463,10 @@ module api.dom {
         }
 
         private registerChildElement(child: Element, index?: number) {
-            if (!(child.getHTMLElement().parentElement === this.getHTMLElement())) {
+            var parentNode = child.getHTMLElement().parentNode;
+            // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
+            // then parentElement will be null but parentNode will not
+            if (parentNode && parentNode !== this.getHTMLElement()) {
                 throw new Error("Given child must be a child of this Element in DOM before it can be registered");
             }
             if (!index) {
@@ -812,15 +823,15 @@ module api.dom {
             this.getEl().removeEventListener("mousemove", listener);
         }
 
-        onMouseWheel(listener: (event: MouseEvent) => void) {
+        onMouseWheel(listener: (event: WheelEvent) => void) {
             // http://www.javascriptkit.com/javatutors/onmousewheel.shtml
             // FF doesn't recognize mousewheel as of FF3.x
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
             this.getEl().addEventListener(eventName, listener);
         }
 
         unMouseWheel(listener: (event: MouseEvent) => void) {
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
             this.getEl().removeEventListener(eventName, listener);
         }
 
@@ -952,29 +963,24 @@ module api.dom {
                 setParentElement(parent));
         }
 
-        static fromString(s: string, setLoadExistingChildren: boolean = true): Element {
-            var elementAsJQ = wemjq(s);
-            var elementASHtmlElement = elementAsJQ.get(0);
-            return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(elementASHtmlElement)).
-                setLoadExistingChildren(setLoadExistingChildren).
-                setParentElement(Element.fromString(elementASHtmlElement.parentElement)))
-                : null;
+        static fromString(s: string, loadExistingChildren: boolean = true): Element {
+            var htmlEl = wemjq(s).get(0);
+            var parentEl;
+            if (htmlEl && htmlEl.parentElement) {
+                parentEl = Element.fromHtmlElement(htmlEl.parentElement);
+            }
+            return this.fromHtmlElement(htmlEl, loadExistingChildren, parentEl);
         }
 
-        static elementsFromRequest(s: string, setLoadExistingChildren: boolean = true): Element[] {
-            var elementAsJQ = wemjq(s);
-            var elements = [];
-            elementAsJQ.each((index, elem) => {
-                var e = wemjq(elem);
-                elements.push(
-                    new Element(new ElementFromHelperBuilder().
-                        setHelper(new ElementHelper(e.get(0))).
-                        setLoadExistingChildren(setLoadExistingChildren))
-                );
-            });
-
-            return elements;
+        static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
+            return wemjq(s).map((index, elem) => {
+                var htmlEl = <HTMLElement> elem,
+                    parentEl;
+                if (htmlEl && htmlEl.parentElement) {
+                    parentEl = Element.fromHtmlElement(htmlEl.parentElement);
+                }
+                return Element.fromHtmlElement(htmlEl, loadExistingChildren, parentEl);
+            }).get();
         }
     }
 }

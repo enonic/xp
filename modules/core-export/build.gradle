@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':core-api' )
     testCompile project( path: ':core-api', configuration: 'testOutput' )
@@ -5,4 +7,9 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Export'
+}
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
 }

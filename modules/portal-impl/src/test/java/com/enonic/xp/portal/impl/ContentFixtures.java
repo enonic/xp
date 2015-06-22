@@ -6,29 +6,29 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageDescriptor;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.LayoutRegions;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
-import static com.enonic.xp.content.page.region.RegionDescriptor.newRegionDescriptor;
-import static com.enonic.xp.content.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 
 public final class ContentFixtures
 {
@@ -134,17 +134,17 @@ public final class ContentFixtures
 
     public static Site newSite()
     {
-        final PropertyTree moduleConfigConfig = new PropertyTree();
-        moduleConfigConfig.setLong( "Field", 42l );
+        final PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "Field", 42l );
 
-        final ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+        final SiteConfig siteConfig = SiteConfig.newSiteConfig().
             module( ModuleKey.from( "mymodule" ) ).
-            config( moduleConfigConfig ).
+            config( siteConfigConfig ).
             build();
 
         final Site.Builder site = Site.newSite();
         site.id( ContentId.from( "100123" ) );
-        site.moduleConfigs( ModuleConfigs.from( moduleConfig ) );
+        site.siteConfigs( SiteConfigs.from( siteConfig ) );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();

@@ -169,8 +169,8 @@ public class JsonToPropertyTreeTranslatorTest
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
-                name( "moduleConfigurator" ).
-                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                name( "siteConfigurator" ).
+                inputType( InputTypes.SITE_CONFIGURATOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).

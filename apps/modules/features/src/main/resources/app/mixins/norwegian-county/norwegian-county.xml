@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mixin>
+  <display-name>Norwegian counties</display-name>
+  <items>
+    <input type="SingleSelector" name="norwegianCounty">
+      <label>Norwegian county</label>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <options>
+          <option>
+            <label>Østfold</label>
+            <value>01</value>
+          </option>
+          <option>
+            <label>Akershus</label>
+            <value>02</value>
+          </option>
+          <option>
+            <label>Oslo</label>
+            <value>03</value>
+          </option>
+          <option>
+            <label>Hedmark</label>
+            <value>04</value>
+          </option>
+          <option>
+            <label>Oppland</label>
+            <value>05</value>
+          </option>
+          <option>
+            <label>Buskerud</label>
+            <value>06</value>
+          </option>
+          <option>
+            <label>Vestfold</label>
+            <value>07</value>
+          </option>
+          <option>
+            <label>Telemark</label>
+            <value>08</value>
+          </option>
+          <option>
+            <label>Øst-Agder</label>
+            <value>09</value>
+          </option>
+          <option>
+            <label>Vest-Agder</label>
+            <value>10</value>
+          </option>
+          <option>
+            <label>Rogaland</label>
+            <value>11</value>
+          </option>
+          <option>
+            <label>Hordaland</label>
+            <value>12</value>
+          </option>
+          <option>
+            <label>Sogn og Fjordane</label>
+            <value>14</value>
+          </option>
+          <option>
+            <label>Møre og Romsdal</label>
+            <value>15</value>
+          </option>
+          <option>
+            <label>Sør-Trøndelag</label>
+            <value>16</value>
+          </option>
+          <option>
+            <label>Nord-Trøndelag</label>
+            <value>17</value>
+          </option>
+          <option>
+            <label>Nordland</label>
+            <value>18</value>
+          </option>
+          <option>
+            <label>Troms</label>
+            <value>19</value>
+          </option>
+          <option>
+            <label>Finnmark</label>
+            <value>20</value>
+          </option>
+        </options>
+        <selector-type>DROPDOWN</selector-type>
+      </config>
+    </input>
+  </items>
+</mixin>

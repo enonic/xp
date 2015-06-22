@@ -32,13 +32,15 @@ module api.ui.uploader {
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showInput?: boolean;
-        showButtons?: boolean;
+        showReset?: boolean;
+        showCancel?: boolean;
         showResult?: boolean;
         maximumOccurrences?: number;
         deferred?: boolean;
         params?: {[key:string]: any};
         value?: string;
         disabled?: boolean;
+        hideDropZone?: boolean;
     }
 
     export class Uploader<MODEL> extends api.dom.FormInputEl {
@@ -92,6 +94,9 @@ module api.ui.uploader {
             this.dropzone.getEl().setTabIndex(-1);// for mac default settings
             this.getEl().setTabIndex(0);
             this.dropzoneContainer.appendChild(this.dropzone);
+            if (config.hideDropZone) {
+                this.dropzoneContainer.getEl().setAttribute("hidden", "true");
+            }
             this.appendChild(this.dropzoneContainer);
 
             this.progress = new api.ui.ProgressBar();
@@ -101,7 +106,7 @@ module api.ui.uploader {
             this.appendChild(this.resultContainer);
 
             this.cancelBtn = new Button("Cancel");
-            this.cancelBtn.setVisible(this.config.showButtons);
+            this.cancelBtn.setVisible(this.config.showCancel);
             this.cancelBtn.onClicked((event: MouseEvent) => {
                 this.stop();
                 this.reset();
@@ -109,7 +114,7 @@ module api.ui.uploader {
             this.appendChild(this.cancelBtn);
 
             this.resetBtn = new CloseButton();
-            this.resetBtn.setVisible(this.config.showButtons);
+            this.resetBtn.setVisible(this.config.showReset);
             this.resetBtn.onClicked((event: MouseEvent) => {
                 this.reset();
             });
@@ -140,6 +145,15 @@ module api.ui.uploader {
             this.onRemoved((event) => this.destroyHandler.call(this, event));
         }
 
+        public setResetVisible(visible: boolean) {
+            this.config.showReset = visible;
+            this.resetBtn.setVisible(visible);
+        }
+
+        getResetButton(): CloseButton {
+            return this.resetBtn;
+        }
+
         private initHandler() {
             if (this.config.disabled) {
                 if (Uploader.debug) {
@@ -154,7 +168,7 @@ module api.ui.uploader {
 
                     if (this.value) {
                         this.setValue(this.value);
-                    } else {
+                    } else if (!this.config.hideDropZone) {
                         this.setDropzoneVisible();
                     }
                 }
@@ -180,8 +194,11 @@ module api.ui.uploader {
             if (this.config.allowMultiSelection == undefined) {
                 this.config.allowMultiSelection = false;
             }
-            if (this.config.showButtons == undefined) {
-                this.config.showButtons = true;
+            if (this.config.showCancel == undefined) {
+                this.config.showCancel = true;
+            }
+            if (this.config.showReset == undefined) {
+                this.config.showReset = true;
             }
             if (this.config.maximumOccurrences == undefined) {
                 this.config.maximumOccurrences = 0;
@@ -300,7 +317,7 @@ module api.ui.uploader {
             }
 
             this.progress.setVisible(visible);
-            this.cancelBtn.setVisible(visible && this.config.showButtons);
+            this.cancelBtn.setVisible(visible && this.config.showCancel);
         }
 
         private setResultVisible(visible: boolean = true) {
@@ -314,7 +331,7 @@ module api.ui.uploader {
             }
 
             this.resultContainer.setVisible(visible);
-            this.resetBtn.setVisible(visible && this.config.showButtons);
+            this.resetBtn.setVisible(visible && this.config.showReset);
         }
 
 

@@ -7,8 +7,6 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.impl.export.xml.XmlDateTimeConverter;
-
 import static org.junit.Assert.*;
 
 public class XmlDateTimeConverterTest

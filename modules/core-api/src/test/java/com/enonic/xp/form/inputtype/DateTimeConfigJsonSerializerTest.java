@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DateTimeConfigJsonSerializerTest
 {

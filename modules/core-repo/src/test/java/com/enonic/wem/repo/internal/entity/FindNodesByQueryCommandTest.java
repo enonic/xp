@@ -20,7 +20,6 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest

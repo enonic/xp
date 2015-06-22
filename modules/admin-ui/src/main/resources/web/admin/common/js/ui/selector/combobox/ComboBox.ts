@@ -64,6 +64,9 @@ module api.ui.selector.combobox {
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
+        private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
+
+
         /**
          * Indicates if combobox is currently has focus
          * @type {boolean}
@@ -150,6 +153,7 @@ module api.ui.selector.combobox {
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
+            this.notifyExpanded(true);
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
             this.dropdownHandle.down();
 
@@ -445,6 +449,10 @@ module api.ui.selector.combobox {
             this.icon.getEl().setSrc(iconUrl);
         }
 
+        getInput(): ComboBoxOptionFilterInput {
+            return this.input;
+        }
+
         private setupListeners() {
 
             this.onClicked((event: MouseEvent) => {
@@ -715,6 +723,17 @@ module api.ui.selector.combobox {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.comboBoxDropdown.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                listener(event);
+            });
+        }
+
+        onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {
+            this.expandedListeners.push(listener);
+        }
+
+        private notifyExpanded(expanded: boolean) {
+            var event = new api.ui.selector.DropdownExpandedEvent(this.comboBoxDropdown.getDropdownGrid().getElement(), expanded);
+            this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });
         }

@@ -49,7 +49,7 @@ public final class AssetResource
 
     private void resolveResourceUrl( final String path )
     {
-        this.resourceUrl = this.module.getResource( "cms/assets/" + path );
+        this.resourceUrl = this.module.getResource( "app/assets/" + path );
         if ( this.resourceUrl == null )
         {
             throw notFound( "File [%s] not found in module [%s]", path, this.module.getKey().toString() );

@@ -7,10 +7,6 @@ import org.junit.Test;
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ActiveContentVersionEntry;
-import com.enonic.xp.content.ContentVersion;
-import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.content.GetActiveContentVersionsResult;
 
 import static org.junit.Assert.*;
 

@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import com.acme.DummyCustomInputType;
 
-import com.enonic.xp.form.inputtype.InputTypeName;
-import com.enonic.xp.form.inputtype.InputTypes;
-
 import static org.junit.Assert.*;
 
 public class InputTypeNameTest

@@ -2,13 +2,13 @@ package com.enonic.xp.portal.rendering;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.rendering.Renderable;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 
 @Beta
-public interface Renderer<R extends Renderable>
+public interface Renderer<R>
 {
     Class<R> getType();
 
-    RenderResult render( R component, PortalContext context );
+    PortalResponse render( R component, PortalRequest portalRequest );
 }

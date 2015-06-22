@@ -5,9 +5,6 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-/**
- * A generic holder for the value of a Property.
- */
 @Beta
 public abstract class Value
 {
@@ -78,25 +75,16 @@ public abstract class Value
         return type;
     }
 
-    /**
-     * Returns value as Object.
-     */
     public Object getObject()
     {
         return object;
     }
 
-    /**
-     * Returns a JSON compatible value. Default is object. Override if needed.
-     */
     Object toJsonValue()
     {
         return object;
     }
 
-    /**
-     * Attempts to return value as RootDataSet, using best effort converting if value is not of type RootDataSet.
-     */
     public com.enonic.xp.data.PropertySet asData()
         throws ClassCastException
     {
@@ -107,9 +95,6 @@ public abstract class Value
         return ValueTypes.PROPERTY_SET.convert( object );
     }
 
-    /**
-     * Attempts to return value as String, using best effort converting if value is not of type String.
-     */
     public java.lang.String asString()
     {
         if ( object == null )
@@ -119,9 +104,6 @@ public abstract class Value
         return ValueTypes.STRING.convert( object );
     }
 
-    /**
-     * Attempts to return value as Long, using best effort converting if value is not of type Long.
-     */
     public java.lang.Long asLong()
     {
         if ( object == null || "".equals( object ) )
@@ -131,9 +113,6 @@ public abstract class Value
         return ValueTypes.LONG.convert( object );
     }
 
-    /**
-     * Attempts to return value as Boolean, using best effort converting if value is not of type Boolean.
-     */
     public java.lang.Boolean asBoolean()
     {
         if ( object == null )
@@ -143,9 +122,6 @@ public abstract class Value
         return ValueTypes.BOOLEAN.convert( object );
     }
 
-    /**
-     * Attempts to return value as Double, using best effort converting if value is not of type Double.
-     */
     public java.lang.Double asDouble()
     {
         if ( object == null || "".equals( object ) )
@@ -155,9 +131,6 @@ public abstract class Value
         return ValueTypes.DOUBLE.convert( object );
     }
 
-    /**
-     * Attempts to return value as LocalDate, using best effort converting if value is not of type LocalDate.
-     */
     public java.time.LocalDate asLocalDate()
     {
         if ( object == null )
@@ -185,9 +158,6 @@ public abstract class Value
         return ValueTypes.LOCAL_DATE_TIME.convert( object );
     }
 
-    /**
-     * Attempts to return value as java.time.Instant, using best effort converting if value is not of type java.time.Instant.
-     */
     public java.time.Instant asInstant()
     {
         if ( object == null )
@@ -206,9 +176,6 @@ public abstract class Value
         return ValueTypes.GEO_POINT.convert( object );
     }
 
-    /**
-     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
-     */
     public com.enonic.xp.util.Reference asReference()
     {
         if ( object == null )
@@ -219,9 +186,6 @@ public abstract class Value
     }
 
 
-    /**
-     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
-     */
     public com.enonic.xp.util.BinaryReference asBinaryReference()
     {
         if ( object == null )
@@ -231,10 +195,6 @@ public abstract class Value
         return ValueTypes.BINARY_REFERENCE.convert( object );
     }
 
-
-    /**
-     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
-     */
     public com.enonic.xp.util.Link asLink()
     {
         if ( object == null )
@@ -244,12 +204,6 @@ public abstract class Value
         return ValueTypes.LINK.convert( object );
     }
 
-
-    /**
-     * Ensures a copy is done of this value. Objects could be reused if they are of immutable classes.
-     *
-     * @param tree the PropertyTree that the value will be attached to. Needed for values of type PropertySet.
-     */
     abstract Value copy( final PropertyTree tree );
 
     @Override

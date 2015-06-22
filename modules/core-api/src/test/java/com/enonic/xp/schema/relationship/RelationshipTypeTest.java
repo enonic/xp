@@ -1,15 +1,12 @@
 package com.enonic.xp.schema.relationship;
 
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RelationshipTypeTest
 {
@@ -54,37 +51,6 @@ public class RelationshipTypeTest
         assertTrue( relationshipType1.equals( relationshipType2 ) );
         assertEquals( relationshipType1.hashCode(), relationshipType2.hashCode() );
         assertFalse( relationshipType1.equals( builder ) );
-
-        RelationshipTypes relTypes = RelationshipTypes.from( RelationshipType.newRelationshipType().name( "mymodule:like" ).build() );
-        assertEquals( relTypes, RelationshipTypes.from( relTypes ) );
     }
 
-    @Test
-    public void test_immutable_relationship_types()
-    {
-        RelationshipTypes relTypes = RelationshipTypes.empty();
-        assertTrue( relTypes.getSize() == 0 );
-        try{
-            relTypes.getList().add( null );
-        }
-        catch ( Exception e )
-        {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
-        }
-        relTypes = RelationshipTypes.from( RelationshipType.newRelationshipType().name( "mymodule:like" ).build() );
-        try {
-            relTypes.getList().add( null );
-        }
-        catch ( Exception e )
-        {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
-        }
-        try {
-            relTypes.getNames().add( null );
-        }
-        catch ( Exception e )
-        {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
-        }
-    }
 }

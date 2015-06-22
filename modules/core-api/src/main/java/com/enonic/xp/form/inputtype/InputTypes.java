@@ -61,7 +61,7 @@ public final class InputTypes
 
     public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilter();
 
-    public static final InputType MODULE_CONFIGURATOR = new ModuleConfigurator();
+    public static final InputType SITE_CONFIGURATOR = new SiteConfigurator();
 
     private static final ImmutableList<InputType> INPUT_TYPES = new ImmutableList.Builder<InputType>().
         add( COLOR ).
@@ -86,7 +86,7 @@ public final class InputTypes
         add( XML ).
         add( PAGE_CONTROLLER ).
         add( CONTENT_TYPE_FILTER ).
-        add( MODULE_CONFIGURATOR ).
+        add( SITE_CONFIGURATOR ).
         add( TINY_MCE ).
         build();
 

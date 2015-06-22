@@ -2,11 +2,11 @@ module app.wizard.page.contextwindow.inspect.region {
 
     import SiteModel = api.content.site.SiteModel;
     import PartDescriptor = api.content.page.region.PartDescriptor;
-    import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
     import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
     import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
     import GetPartDescriptorByKeyRequest = api.content.page.region.GetPartDescriptorByKeyRequest;
     import PartComponent = api.content.page.region.PartComponent;
+    import PartDescriptorDropdown = api.content.page.region.PartDescriptorDropdown;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import DescriptorKey = api.content.page.DescriptorKey;
@@ -23,7 +23,9 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private partComponent: PartComponent;
 
-        private partSelector: PartDescriptorComboBox;
+        private partSelector: PartDescriptorDropdown;
+
+        private partForm: DescriptorBasedDropdownForm;
 
         private handleSelectorEvents: boolean = true;
 
@@ -41,7 +43,8 @@ module app.wizard.page.contextwindow.inspect.region {
             var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new PartDescriptorLoader(descriptorsRequest);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
-            this.partSelector = new PartDescriptorComboBox(loader);
+            this.partSelector = new PartDescriptorDropdown("", {loader: loader});
+            this.partForm = new DescriptorBasedDropdownForm(this.partSelector, "Part");
             loader.load();
 
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
@@ -56,16 +59,14 @@ module app.wizard.page.contextwindow.inspect.region {
             };
 
             this.initSelectorListeners();
-            this.appendChild(this.partSelector);
+            this.appendChild(this.partForm);
 
         }
 
         setComponent(component: PartComponent, descriptor?: PartDescriptor) {
 
             super.setComponent(component);
-            if (descriptor) {
-                this.partSelector.setDescriptor(descriptor);
-            }
+            this.partSelector.setDescriptor(descriptor);
         }
 
         private setSelectorValue(descriptor: PartDescriptor) {
@@ -121,12 +122,6 @@ module app.wizard.page.contextwindow.inspect.region {
                     var option: Option<PartDescriptor> = event.getOption();
                     var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                     this.partComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
-                }
-            });
-
-            this.partSelector.onOptionDeselected((option: SelectedOption<PartDescriptor>) => {
-                if (this.handleSelectorEvents) {
-                    this.partComponent.setDescriptor(null, null);
                 }
             });
         }

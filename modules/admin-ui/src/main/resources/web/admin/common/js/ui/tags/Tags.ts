@@ -58,6 +58,7 @@ module api.ui.tags {
             this.maxTags = builder.maxTags;
 
             this.textInput = new api.ui.text.TextInput();
+            this.textInput.disableAutocomplete();
             this.appendChild(this.textInput);
 
             this.tagSuggestions = new TagSuggestions();
@@ -113,7 +114,12 @@ module api.ui.tags {
                 }
 
                 var searchString = event.getNewValue();
-                this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 100);
+
+                if (api.util.StringHelper.isBlank(searchString)) {
+                    this.tagSuggestions.hide();
+                } else {
+                    this.searchTimeout = setTimeout(() => this.searchSuggestions(searchString), 100);
+                }
             });
 
             this.onClicked(() => {

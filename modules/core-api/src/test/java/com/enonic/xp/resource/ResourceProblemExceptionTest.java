@@ -2,9 +2,6 @@ package com.enonic.xp.resource;
 
 import org.junit.Test;
 
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceProblemException;
-
 import static org.junit.Assert.*;
 
 public class ResourceProblemExceptionTest

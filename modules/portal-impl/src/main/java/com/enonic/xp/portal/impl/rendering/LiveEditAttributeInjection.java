@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import com.enonic.xp.content.page.region.ComponentType;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.region.ComponentType;
 
 final class LiveEditAttributeInjection
 {
@@ -9,12 +9,12 @@ final class LiveEditAttributeInjection
     {
     }
 
-    public void injectLiveEditAttribute( final PortalResponse response, final ComponentType componentType )
+    public PortalResponse injectLiveEditAttribute( final PortalResponse response, final ComponentType componentType )
     {
         final Object bodyObj = response.getBody();
         if ( !( bodyObj instanceof String ) )
         {
-            return;
+            return response;
         }
 
         final String responseHtml = (String) bodyObj;
@@ -34,7 +34,7 @@ final class LiveEditAttributeInjection
         }
         if ( ch != '<' )
         {
-            return; // no opening tag found, live edit attribute cannot be injected
+            return response; // no opening tag found, live edit attribute cannot be injected
         }
 
         int startAttrPos = 0;
@@ -53,8 +53,9 @@ final class LiveEditAttributeInjection
         {
             final String liveEditAttribute = " " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"" + componentType.toString() + "\"";
             final String injectedHtml = new StringBuilder( responseHtml ).insert( startAttrPos, liveEditAttribute ).toString();
-            response.setBody( injectedHtml );
+            return PortalResponse.create( response ).body( injectedHtml ).build();
         }
+        return response;
     }
 
     private int skipXmlDeclaration( final String responseHtml, final int initialPosition )

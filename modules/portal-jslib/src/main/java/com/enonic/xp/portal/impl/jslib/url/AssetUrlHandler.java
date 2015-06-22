@@ -21,7 +21,7 @@ public final class AssetUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final AssetUrlParams params = new AssetUrlParams().context( getContext() ).setAsMap( map );
+        final AssetUrlParams params = new AssetUrlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.assetUrl( params );
     }
 

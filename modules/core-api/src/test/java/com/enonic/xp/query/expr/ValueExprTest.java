@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.query.expr.ValueExpr;
 
 public class ValueExprTest
 {

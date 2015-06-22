@@ -10,9 +10,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.relationship.Relationship;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class RelationshipTest
 {

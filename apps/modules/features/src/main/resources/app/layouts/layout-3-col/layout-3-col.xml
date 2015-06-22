@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<layout>
+  <display-name>3-col</display-name>
+  <config/>
+  <regions>
+    <region name="left"/>
+    <region name="center"/>
+    <region name="right"/>
+  </regions>
+</layout>

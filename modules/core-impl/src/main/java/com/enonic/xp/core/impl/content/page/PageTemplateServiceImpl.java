@@ -8,13 +8,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.CreatePageTemplateParams;
-import com.enonic.xp.content.page.GetDefaultPageTemplateParams;
-import com.enonic.xp.content.page.PageService;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.PageTemplateService;
-import com.enonic.xp.content.page.PageTemplates;
+import com.enonic.xp.page.CreatePageTemplateParams;
+import com.enonic.xp.page.GetDefaultPageTemplateParams;
+import com.enonic.xp.page.PageService;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.page.PageTemplates;
 
 @Component(immediate = true)
 public final class PageTemplateServiceImpl

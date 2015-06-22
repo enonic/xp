@@ -13,7 +13,7 @@ import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
 import static com.enonic.xp.form.inputtype.DateTimeConfig.create;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DateTimeConfigXmlSerializerTest
 {

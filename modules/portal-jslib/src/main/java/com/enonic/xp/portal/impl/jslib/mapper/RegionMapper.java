@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.content.page.region.Component;
-import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.Region;
 
 public final class RegionMapper
     implements MapSerializable
@@ -21,14 +21,14 @@ public final class RegionMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final Region value )
+    private void serialize( final MapGenerator gen, final Region value )
     {
         gen.map( value.getName() );
         serializeComponents( gen, value.getComponents() );
         gen.end();
     }
 
-    private static void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
+    private void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
     {
         gen.array( "components" );
         for ( final Component component : values )
@@ -38,5 +38,6 @@ public final class RegionMapper
             gen.end();
         }
         gen.end();
+        gen.value( "name", this.value.getName() );
     }
 }

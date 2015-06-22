@@ -118,9 +118,6 @@ public abstract class InputType
         return null;
     }
 
-    /**
-     * Override this method to validate what type of Occurrences is allowed for this type.
-     */
     public void validateOccurrences( final Occurrences occurrences )
     {
         // Default: nothing

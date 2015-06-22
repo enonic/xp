@@ -6,26 +6,26 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageDescriptor;
-import com.enonic.xp.content.page.PageDescriptorService;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.PageTemplateService;
-import com.enonic.xp.content.page.region.ComponentName;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.region.ComponentName;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 public abstract class RenderBaseResourceTest
@@ -182,10 +182,10 @@ public abstract class RenderBaseResourceTest
         final DescriptorKey key = DescriptorKey.from( module, name );
 
         final String xml = "<?xml version=\"1.0\"?>\n" +
-            "<page-component>\n" +
+            "<page>\n" +
             "  <display-name>Landing page</display-name>\n" +
             "  <config/>\n" +
-            "</page-component>";
+            "</page>";
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
         parseXml( module, builder, xml );

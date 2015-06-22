@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mixin>
+  <display-name>Address</display-name>
+  <items>
+    <input type="TextLine" name="street">
+      <label>Street</label>
+      <indexed>true</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="2"/>
+    </input>
+    <input type="TextLine" name="postalCode">
+      <label>Postal code</label>
+      <indexed>true</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="1" maximum="1"/>
+    </input>
+    <input type="TextLine" name="postalPlace">
+      <label>Postal place</label>
+      <indexed>true</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </items>
+</mixin>

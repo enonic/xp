@@ -6,10 +6,10 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.region.Region;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.Region;
 
-import static com.enonic.xp.content.page.PageRegions.newPageRegions;
+import static com.enonic.xp.page.PageRegions.newPageRegions;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PageRegionsJson

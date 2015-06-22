@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.module;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -21,14 +18,6 @@ public final class ModuleServiceImpl
     implements ModuleService
 {
     private ModuleRegistry registry;
-
-    private BundleContext bundleContext;
-
-    @Activate
-    public void initialize( final ComponentContext context )
-    {
-        this.bundleContext = context.getBundleContext();
-    }
 
     @Override
     public Module getModule( final ModuleKey key )
@@ -64,19 +53,6 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public void installModule( final String url )
-    {
-        try
-        {
-            this.bundleContext.installBundle( url );
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    @Override
     public void startModule( final ModuleKey key )
     {
         startModule( getModule( key ) );
@@ -87,18 +63,6 @@ public final class ModuleServiceImpl
     public void stopModule( final ModuleKey key )
     {
         stopModule( getModule( key ) );
-    }
-
-    @Override
-    public void updateModule( final ModuleKey key )
-    {
-        updateModule( getModule( key ) );
-    }
-
-    @Override
-    public void uninstallModule( final ModuleKey key )
-    {
-        uninstallModule( getModule( key ) );
     }
 
     private void startModule( final Module module )
@@ -118,30 +82,6 @@ public final class ModuleServiceImpl
         try
         {
             module.getBundle().stop();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private void updateModule( final Module module )
-    {
-        try
-        {
-            module.getBundle().update();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private void uninstallModule( final Module module )
-    {
-        try
-        {
-            module.getBundle().uninstall();
         }
         catch ( final Exception e )
         {

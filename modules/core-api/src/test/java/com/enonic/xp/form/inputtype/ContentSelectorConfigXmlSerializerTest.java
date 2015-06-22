@@ -13,7 +13,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ContentSelectorConfigXmlSerializerTest
 {
@@ -162,7 +162,6 @@ public class ContentSelectorConfigXmlSerializerTest
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
         ContentSelectorConfig expected = ContentSelectorConfig.create().build();
-
 
         // exercise
         ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );

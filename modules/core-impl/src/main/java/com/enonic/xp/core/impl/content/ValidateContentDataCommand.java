@@ -5,16 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.site.ModuleConfig;
-import com.enonic.xp.content.site.ModuleConfigs;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -24,6 +19,11 @@ import com.enonic.xp.schema.content.validator.OccurrenceValidator;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 
 final class ValidateContentDataCommand
 {
@@ -33,7 +33,7 @@ final class ValidateContentDataCommand
 
     private final MixinService mixinService;
 
-    private final ModuleService moduleService;
+    private final SiteService siteService;
 
     private final PropertyTree contentData;
 
@@ -47,7 +47,7 @@ final class ValidateContentDataCommand
     {
         contentTypeService = builder.contentTypeService;
         mixinService = builder.mixinService;
-        moduleService = builder.moduleService;
+        siteService = builder.siteService;
         contentData = builder.contentData;
         extraDatas = builder.extraDatas;
         contentType = builder.contentType;
@@ -75,12 +75,12 @@ final class ValidateContentDataCommand
 
         validateContentTypeForm( contentData, contentType );
         validateMetadata();
-        validateSiteModuleConfigs( contentType );
+        validateSiteConfigs( contentType );
 
         return this.resultBuilder.build();
     }
 
-    private void validateSiteModuleConfigs( final ContentType contentType )
+    private void validateSiteConfigs( final ContentType contentType )
     {
         if ( contentType != null )
         {
@@ -88,16 +88,23 @@ final class ValidateContentDataCommand
             if ( contentType.getName().isSite() )
             {
 
-                final ModuleConfigs moduleConfigs = new ModuleConfigsDataSerializer().fromProperties( this.contentData.getRoot() ).build();
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( this.contentData.getRoot() ).build();
 
-                for ( final ModuleConfig moduleConfig : moduleConfigs )
+                for ( final SiteConfig siteConfig : siteConfigs )
                 {
-                    final ModuleKey moduleKey = moduleConfig.getModule();
+                    final ModuleKey moduleKey = siteConfig.getModule();
 
-                    final Module module = moduleService.getModule( moduleKey );
+                    if ( siteService != null )
+                    {
+                        final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
 
-                    this.resultBuilder.addAll(
-                        new OccurrenceValidator( module.getConfig() ).validate( moduleConfig.getConfig().getRoot() ) );
+                        if ( siteDescriptor != null )
+                        {
+                            this.resultBuilder.addAll(
+                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
+                        }
+
+                    }
                 }
             }
         }
@@ -140,7 +147,7 @@ final class ValidateContentDataCommand
 
         private MixinService mixinService;
 
-        private ModuleService moduleService;
+        private SiteService siteService;
 
         private PropertyTree contentData;
 
@@ -164,9 +171,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder moduleService( ModuleService moduleService )
+        public Builder siteService( SiteService siteService )
         {
-            this.moduleService = moduleService;
+            this.siteService = siteService;
             return this;
         }
 

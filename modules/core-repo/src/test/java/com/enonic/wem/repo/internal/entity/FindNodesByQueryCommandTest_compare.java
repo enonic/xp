@@ -16,7 +16,6 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest_compare
@@ -122,7 +121,6 @@ public class FindNodesByQueryCommandTest_compare
         assertEquals( 1, result.getNodes().getSize() );
         assertNotNull( result.getNodes().getNodeById( node1.id() ) );
     }
-
 
 
     @Test

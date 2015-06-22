@@ -7,7 +7,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetChildContentTypesParams;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ContentTypeServiceImpl_getChildrenTest
     extends AbstractContentTypeServiceTest

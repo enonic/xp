@@ -1,0 +1,164 @@
+.image-editor {
+  .notSelectable();
+  display: inline-block;
+
+  &.edit-mode {
+    .image-canvas {
+      .image-bg {
+        .opacity(.7);
+      }
+
+      svg {
+        display: block;
+
+        > image {
+          cursor: move;
+        }
+      }
+
+    }
+
+    &.edit-focus {
+      .focus-group {
+        display: block;
+      }
+    }
+
+    &.edit-crop {
+      .crop-group {
+        display: block;
+      }
+    }
+  }
+
+  &.selected, &.edit-mode {
+    .image-canvas {
+      border: 1px solid @admin-input-blue;
+      .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
+    }
+  }
+
+  .image-canvas {
+    overflow: visible;
+    position: relative;
+    background: url("../images/checker-16x16.png") repeat;
+    box-shadow: none;
+    border: 1px solid @admin-white;
+
+    .image-bg {
+      vertical-align: top; // to remove padding below the image
+    }
+
+    svg {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      .edit-group {
+        display: none;
+      }
+
+      .focus-group {
+
+        .stroke-circle {
+          stroke: red;
+          fill: none;
+          stroke-width: 4;
+        }
+
+      }
+
+      .crop-group {
+
+        .drag-handle {
+          cursor: ns-resize;
+          opacity: 0.5;
+
+          circle {
+            fill: white;
+          }
+
+          .drag-triangle {
+            fill: black;
+          }
+
+          &:hover,
+          &.active {
+            opacity: 0.7;
+            cursor: ns-resize;
+          }
+        }
+
+        .zoom-slider {
+          opacity: 0.5;
+
+          rect {
+            fill: white;
+          }
+
+          line {
+            stroke: #ccc;
+            stroke-width: 4px;
+          }
+
+          circle {
+            fill: black;
+            cursor: ns-resize;
+          }
+
+          &:hover,
+          &.active {
+            opacity: 0.7;
+
+            circle {
+              cursor: ns-resize;
+            }
+          }
+        }
+
+      }
+    }
+  }
+
+  .image-toolbar {
+    padding: 10px;
+    .clearfix();
+
+    .buttons-container {
+
+      button {
+        font-size: 32px;
+        padding: 0;
+        .button-foreground(@admin-font-gray2);
+
+        &.manual {
+          .button-foreground(@admin-blue);
+        }
+
+        span {
+          display: none;
+        }
+
+      }
+
+    }
+
+    .edit-container {
+      text-align: center;
+
+      button {
+        margin-left: 10px;
+
+        span {
+          // make text buttons equal height with icon ones
+          line-height: 30px;
+        }
+      }
+    }
+
+  }
+
+}

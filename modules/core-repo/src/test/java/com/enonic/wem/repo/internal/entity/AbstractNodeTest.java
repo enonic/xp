@@ -47,7 +47,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest

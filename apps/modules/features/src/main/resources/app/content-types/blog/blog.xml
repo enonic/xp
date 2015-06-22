@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Blog</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <field-set name="blogFieldSet">
+      <label>Blog</label>
+      <items>
+        <input name="heading" type="TextLine">
+          <label>Heading</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <item-set name="authors">
+          <label>Authors</label>
+          <items>
+            <input name="author" type="TextLine">
+              <label>Author</label>
+              <occurrences minimum="0" maximum="0"/>
+            </input>
+          </items>
+          <occurrences minimum="0" maximum="1"/>
+        </item-set>
+        <item-set name="topics">
+          <label>Topics</label>
+          <items>
+            <input name="topic" type="TextLine">
+              <label>Topic</label>
+              <occurrences minimum="0" maximum="0"/>
+            </input>
+          </items>
+          <occurrences minimum="0" maximum="1"/>
+        </item-set>
+        <field-set name="metadata">
+          <label>Metadata</label>
+          <items>
+            <input name="tags" type="Tag">
+              <label>Tags for tag cloud</label>
+              <occurrences minimum="0" maximum="5"/>
+            </input>
+          </items>
+        </field-set>
+        <input name="preface" type="TextArea">
+          <label>Preface</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>Preface</help-text>
+        </input>
+        <item-set name="articleFieldSet">
+          <label>Article Content</label>
+          <items>
+            <input name="slide_title" type="TextLine">
+              <label>Slide Title</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+            <input name="article_text" type="HtmlArea">
+              <label>Article Text</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>HTML Area</help-text>
+            </input>
+          </items>
+          <occurrences minimum="1" maximum="0"/>
+        </item-set>
+      </items>
+    </field-set>
+  </form>
+</content-type>

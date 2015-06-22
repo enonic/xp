@@ -7,11 +7,11 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 
 public abstract class AbstractPortalUrlServiceImplTest
 {
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
 
     protected PortalUrlServiceImpl service;
 
@@ -20,11 +20,11 @@ public abstract class AbstractPortalUrlServiceImplTest
     @Before
     public void setup()
     {
-        this.context = new PortalContext();
-        this.context.setBranch( Branch.from( "draft" ) );
-        this.context.setModule( ModuleKey.from( "mymodule" ) );
-        this.context.setBaseUri( "/portal" );
-        this.context.setContentPath( ContentPath.from( "context/path" ) );
+        this.portalRequest = new PortalRequest();
+        this.portalRequest.setBranch( Branch.from( "draft" ) );
+        this.portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.service = new PortalUrlServiceImpl();

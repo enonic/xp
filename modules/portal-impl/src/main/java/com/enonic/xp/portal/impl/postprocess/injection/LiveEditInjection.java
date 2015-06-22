@@ -14,8 +14,10 @@ import com.google.common.io.Resources;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 
 @Component(immediate = true)
@@ -33,40 +35,40 @@ public final class LiveEditInjection
     }
 
     @Override
-    public List<String> inject( final PortalContext context, final Tag tag )
+    public List<String> inject( final PortalRequest portalRequest, final PortalResponse portalResponse, final HtmlTag htmlTag )
     {
-        if ( RenderMode.EDIT != context.getMode() )
+        if ( RenderMode.EDIT != portalRequest.getMode() )
         {
             return null;
         }
 
-        if ( tag == Tag.HEAD_END )
+        if ( htmlTag == HtmlTag.HEAD_END )
         {
-            return Arrays.asList( injectHeadEnd( context ) );
+            return Arrays.asList( injectHeadEnd( portalRequest ) );
         }
 
-        if ( tag == Tag.BODY_END )
+        if ( htmlTag == HtmlTag.BODY_END )
         {
-            return Arrays.asList( injectBodyEnd( context ) );
+            return Arrays.asList( injectBodyEnd( portalRequest ) );
         }
 
         return null;
     }
 
-    private String injectHeadEnd( final PortalContext context )
+    private String injectHeadEnd( final PortalRequest portalRequest )
     {
-        return injectUsingTemplate( context, this.headEndTemplate );
+        return injectUsingTemplate( portalRequest, this.headEndTemplate );
     }
 
-    private String injectBodyEnd( final PortalContext context )
+    private String injectBodyEnd( final PortalRequest portalRequest )
     {
-        return injectUsingTemplate( context, this.bodyEndTemplate );
+        return injectUsingTemplate( portalRequest, this.bodyEndTemplate );
     }
 
-    private String injectUsingTemplate( final PortalContext context, final Template template )
+    private String injectUsingTemplate( final PortalRequest portalRequest, final Template template )
     {
         final Map<String, String> map = Maps.newHashMap();
-        map.put( "adminUrl", context.rewriteUri( "/admin" ) );
+        map.put( "adminUrl", portalRequest.rewriteUri( "/admin" ) );
 
         final StringWriter out = new StringWriter();
         template.execute( map, out );

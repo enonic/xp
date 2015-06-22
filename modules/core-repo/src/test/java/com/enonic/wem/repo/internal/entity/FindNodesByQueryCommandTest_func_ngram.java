@@ -13,7 +13,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest_func_ngram
@@ -54,10 +53,19 @@ public class FindNodesByQueryCommandTest_func_ngram
         queryAndAssert( node, "ngram('title', 'l', 'AND')", 2 );
     }
 
+    @Test
+    public void ngram_word_breaking_character()
+        throws Exception
+    {
+        final Node node = createNodes();
+
+        queryAndAssert( node, "ngram('title', 'levenshteins-algo', 'AND')", 1 );
+    }
+
     private Node createNodes()
     {
         final PropertyTree data = new PropertyTree();
-        data.addString( "title", "Levenshteins algorithm" );
+        data.addString( "title", "Levenshteins-algorithm" );
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node-1" ).

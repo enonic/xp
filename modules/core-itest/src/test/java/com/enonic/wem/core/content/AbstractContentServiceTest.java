@@ -29,12 +29,12 @@ import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -43,10 +43,10 @@ import com.enonic.xp.core.impl.content.ContentNodeTranslator;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
-import com.enonic.xp.core.impl.module.ModuleRegistry;
-import com.enonic.xp.core.impl.module.ModuleServiceImpl;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.core.impl.schema.content.ContentTypeRegistryImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
+import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
@@ -59,6 +59,7 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -114,6 +115,8 @@ public class AbstractContentServiceTest
 
     protected MixinService mixinService;
 
+    protected ContentTypeRegistry contentTypeRegistry;
+
     protected ContentNodeTranslator contentNodeTranslator;
 
     private NodeDaoImpl nodeDao;
@@ -164,6 +167,7 @@ public class AbstractContentServiceTest
         this.nodeService.setBranchService( branchService );
 
         this.mixinService = Mockito.mock( MixinService.class );
+        this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
 
         this.contentNodeTranslator = new ContentNodeTranslator();
 
@@ -173,18 +177,18 @@ public class AbstractContentServiceTest
         mediaInfoService.setDetector( new DefaultDetector() );
         mediaInfoService.setParser( new DefaultParser() );
 
-        final ModuleRegistry moduleRegistry = Mockito.mock( ModuleRegistry.class );
-        final ModuleServiceImpl moduleService = new ModuleServiceImpl();
-        moduleService.setRegistry( moduleRegistry );
+        final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
+        final SiteServiceImpl siteService = new SiteServiceImpl();
+        siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
 
         final ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
-        contentTypeService.addProvider( new BuiltinContentTypeProvider() );
+        contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
-        this.contentService.setModuleService( moduleService );
+        this.contentService.setSiteService( siteService );
         this.contentService.setContentNodeTranslator( this.contentNodeTranslator );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
@@ -249,8 +253,9 @@ public class AbstractContentServiceTest
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected Content createContent(ContentPath parentPath)
-        throws Exception {
+    protected Content createContent( ContentPath parentPath )
+        throws Exception
+    {
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -263,7 +268,8 @@ public class AbstractContentServiceTest
     }
 
 
-    protected PropertyTree createPropertyTreeForAllInputTypes () {
+    protected PropertyTree createPropertyTreeForAllInputTypes()
+    {
 
         //Creates a content and a reference to this object
         final Content referredContent = this.contentService.create( CreateContentParams.create().
@@ -280,7 +286,7 @@ public class AbstractContentServiceTest
         propertySet.addDouble( "setDouble", 1.5d );
 
         //Creates the property tree with value assigned for each attribute
-        PropertyTree data = new PropertyTree( );
+        PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addDouble( "double", 1.4d );
         data.addLong( "long", 2l );
@@ -292,7 +298,7 @@ public class AbstractContentServiceTest
         data.addString( "tag", "tag" );
         data.addReference( "contentSelector", reference );
         data.addString( "contentTypeFilter", "stringValue" );
-        data.addString( "moduleConfigurator", "com.enonic.xp.modules.features" );
+        data.addString( "siteConfigurator", "com.enonic.xp.modules.features" );
         data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
         data.addLocalTime( "time", LocalTime.NOON );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
@@ -304,7 +310,6 @@ public class AbstractContentServiceTest
 
         return data;
     }
-
 
 
     protected ContentType createContentTypeForAllInputTypes()
@@ -382,8 +387,8 @@ public class AbstractContentServiceTest
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
-                name( "moduleConfigurator" ).
-                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                name( "siteConfigurator" ).
+                inputType( InputTypes.SITE_CONFIGURATOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).

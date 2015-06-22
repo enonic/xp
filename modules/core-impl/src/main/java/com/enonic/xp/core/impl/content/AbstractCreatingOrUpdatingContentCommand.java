@@ -4,22 +4,22 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.site.SiteService;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
 {
     final MixinService mixinService;
 
-    final ModuleService moduleService;
+    final SiteService siteService;
 
     AbstractCreatingOrUpdatingContentCommand( final Builder builder )
     {
         super( builder );
         this.mixinService = builder.mixinService;
-        this.moduleService = builder.moduleService;
+        this.siteService = builder.siteService;
     }
 
     public static class Builder<B extends Builder>
@@ -27,7 +27,7 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         private MixinService mixinService;
 
-        private ModuleService moduleService;
+        private SiteService siteService;
 
         Builder()
         {
@@ -37,7 +37,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             super( source );
             this.mixinService = source.mixinService;
-            this.moduleService = source.moduleService;
+            this.siteService = source.siteService;
         }
 
         @SuppressWarnings("unchecked")
@@ -48,9 +48,9 @@ class AbstractCreatingOrUpdatingContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        B moduleService( final ModuleService moduleService )
+        B siteService( final SiteService siteService )
         {
-            this.moduleService = moduleService;
+            this.siteService = siteService;
             return (B) this;
         }
 
@@ -58,7 +58,6 @@ class AbstractCreatingOrUpdatingContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( moduleService, "moduleService cannot be null" );
             Preconditions.checkNotNull( mixinService, "mixinService cannot be null" );
         }
     }

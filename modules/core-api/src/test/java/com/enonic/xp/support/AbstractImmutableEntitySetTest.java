@@ -7,9 +7,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
-
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class AbstractImmutableEntitySetTest
 {

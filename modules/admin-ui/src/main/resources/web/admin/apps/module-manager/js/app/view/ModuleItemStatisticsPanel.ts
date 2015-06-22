@@ -19,8 +19,7 @@ module app.view {
             super("module-item-statistics-panel");
 
             this.actionMenu =
-            new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE,
-                ModuleBrowseActions.get().UNINSTALL_MODULE);
+            new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE);
 
             this.appendChild(this.actionMenu);
 

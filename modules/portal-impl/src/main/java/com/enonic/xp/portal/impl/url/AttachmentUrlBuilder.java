@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 final class AttachmentUrlBuilder
@@ -15,7 +15,7 @@ final class AttachmentUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.context.getContentPath().toString() );
+        appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "attachment" );
 
@@ -41,7 +41,7 @@ final class AttachmentUrlBuilder
     private ContentId resolveId()
     {
         return new ContentIdResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).

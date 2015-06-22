@@ -12,9 +12,9 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.filter.ScaleMaxFilter;
-import com.enonic.xp.image.filter.ScaleSquareFilter;
-import com.enonic.xp.image.filter.ScaleWidthFilter;
+import com.enonic.xp.image.filter.ScaleMaxFunction;
+import com.enonic.xp.image.filter.ScaleSquareFunction;
+import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.Exceptions;
 
@@ -52,15 +52,15 @@ public final class ContentImageHelperImpl
         {
             if ( imageParams.isCropRequired() )
             {
-                return new ScaleSquareFilter( imageParams.getSize() ).filter( image );
+                return new ScaleSquareFunction( imageParams.getSize() ).scale( image );
             }
             else if ( scaleWidth )
             {
-                return new ScaleWidthFilter( imageParams.getSize() ).filter( image );
+                return new ScaleWidthFunction( imageParams.getSize() ).scale( image );
             }
             else
             {
-                return new ScaleMaxFilter( imageParams.getSize() ).filter( image );
+                return new ScaleMaxFunction( imageParams.getSize() ).scale( image );
             }
         }
         else

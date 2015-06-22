@@ -7,26 +7,24 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.content.attachment.AttachmentNames;
-import com.enonic.xp.content.attachment.Attachments;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.site.Site;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.rendering.Renderable;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.Site;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class Content
-    implements Renderable
 {
     private final boolean valid;
 

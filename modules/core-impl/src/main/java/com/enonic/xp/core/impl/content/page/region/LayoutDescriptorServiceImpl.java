@@ -3,13 +3,13 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.region.LayoutDescriptor;
-import com.enonic.xp.content.page.region.LayoutDescriptorService;
-import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component

@@ -22,13 +22,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.page.GetDefaultPageTemplateParams;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.PageTemplateService;
-import com.enonic.xp.content.page.PageTemplateSpec;
-import com.enonic.xp.content.page.PageTemplates;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.page.GetDefaultPageTemplateParams;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.page.PageTemplateSpec;
+import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -73,8 +73,8 @@ public final class PageTemplateResource
             totalHits( pageTemplates.getSize() ).
             hits( pageTemplates.getSize() ).
             build();
-        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(),
-                                    inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer,
+                                    principalsResolver );
     }
 
     @GET
@@ -119,7 +119,7 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = contentService.getById( contentId );
+            final Content content = this.contentService.getById( contentId );
             final Content nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )

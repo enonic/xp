@@ -22,7 +22,7 @@ public class AssetResourceTest
     public void getAssetResource_found()
         throws Exception
     {
-        addResource( "main.css", "demo:/cms/assets/css/main.css", "p {color:red;}" );
+        addResource( "main.css", "demo:/app/assets/css/main.css", "p {color:red;}" );
 
         final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );

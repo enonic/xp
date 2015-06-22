@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>Set In Set</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="first_name" type="TextLine">
+      <label>First Name</label>
+      <occurrences minimum="1" maximum="1"/>
+      <help-text>First name</help-text>
+    </input>
+    <input name="last_name" type="TextLine">
+      <label>Last Name</label>
+      <occurrences minimum="1" maximum="1"/>
+      <help-text>Last name</help-text>
+    </input>
+    <item-set name="contact_info">
+      <label>Contact Info</label>
+      <items>
+        <input name="label" type="TextLine">
+          <label>Label</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>Give this address a label</help-text>
+        </input>
+        <input name="street" type="TextLine">
+          <label>Street</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>Street</help-text>
+        </input>
+        <input name="postal_code" type="TextLine">
+          <label>Postal Code</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>Postal Code</help-text>
+        </input>
+        <input name="postal_address" type="TextLine">
+          <label>Postal Address</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>Postal Address</help-text>
+        </input>
+        <item-set name="phone_numbers">
+          <label>Phone Numbers</label>
+          <items>
+            <input name="phone_number" type="TextLine">
+              <label>Phone Number</label>
+              <occurrences minimum="0" maximum="1"/>
+              <help-text>Should be prefixed with country calling code</help-text>
+            </input>
+          </items>
+          <occurrences minimum="0" maximum="1"/>
+        </item-set>
+      </items>
+      <occurrences minimum="0" maximum="0"/>
+    </item-set>
+  </form>
+</content-type>

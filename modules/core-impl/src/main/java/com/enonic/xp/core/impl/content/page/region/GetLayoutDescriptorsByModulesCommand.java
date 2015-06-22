@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.Modules;
+import com.enonic.xp.region.LayoutDescriptors;
 
 final class GetLayoutDescriptorsByModulesCommand
     extends AbstractGetLayoutDescriptorCommand<GetLayoutDescriptorsByModulesCommand>

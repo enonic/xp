@@ -18,13 +18,7 @@ module app.view {
                             .addContentPath(contentToDelete.getPath())
                             .sendAndParse()
                             .then((result: api.content.DeleteContentResult) => {
-                                if (result.getDeleted().length > 0) {
-                                    var path = result.getDeleted()[0].toString();
-                                    api.notify.showFeedback('Content [' + path + '] deleted!');
-                                } else {
-                                    var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
-                                    api.notify.showWarning('Content could not be deleted. ' + reason);
-                                }
+                                DeleteAction.showDeleteResult(result);
                             }).catch((reason: any) => {
                                 if (reason && reason.message) {
                                     api.notify.showError(reason.message);
@@ -34,6 +28,24 @@ module app.view {
                             }).done();
                     }).open();
             });
+        }
+
+        public static showDeleteResult(result: api.content.DeleteContentResult) {
+            if (result.getPendings().length == 1) {
+                api.notify.showFeedback('\"' + result.getPendings()[0] + '\" marked for deletion');
+            } else if (result.getPendings().length > 1) {
+                api.notify.showFeedback(result.getPendings().length + ' items marked for deletion');
+            }
+
+            if (result.getDeleted().length == 1) {
+                api.notify.showFeedback('\"' + result.getDeleted()[0] + '\" deleted');
+            } else if (result.getDeleted().length > 1) {
+                api.notify.showFeedback(result.getDeleted().length + ' items deleted');
+            }
+
+            if (result.getDeleteFailures().length > 0) {
+                api.notify.showWarning('Content could not be deleted. ' + result.getDeleteFailures()[0].getReason());
+            }
         }
 
     }

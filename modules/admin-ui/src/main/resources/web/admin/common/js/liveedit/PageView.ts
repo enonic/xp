@@ -47,8 +47,6 @@ module api.liveedit {
 
         private regionViews: RegionView[];
 
-        private regionIndex: number;
-
         private viewsById: {[s:number] : ItemView;};
 
         private ignorePropertyChanges: boolean;
@@ -108,7 +106,6 @@ module api.liveedit {
             this.pageModel = builder.liveEditModel.getPageModel();
 
             this.regionViews = [];
-            this.regionIndex = 0;
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
@@ -187,12 +184,8 @@ module api.liveedit {
             }
 
             this.listenToMouseEvents();
-        }
 
-        remove(): PageView {
-            super.remove();
-            this.unregisterPageModel(this.pageModel);
-            return this;
+            this.onRemoved(event => this.unregisterPageModel(this.pageModel));
         }
 
         private setIgnorePropertyChanges(value: boolean) {
@@ -279,13 +272,32 @@ module api.liveedit {
             return [unlockAction];
         }
 
+        selectLocked(pos: Position) {
+            this.setLockVisible(true);
+            this.lockedContextMenu.showAt(pos.x, pos.y);
+
+            new ItemViewSelectedEvent(this, pos).fire();
+            new PageSelectedEvent(this).fire();
+        }
+
+        deselectLocked() {
+            this.setLockVisible(false);
+            this.lockedContextMenu.hide();
+
+            new ItemViewDeselectEvent(this).fire();
+        }
+
         handleShaderClick(event: MouseEvent) {
             if (this.isLocked()) {
                 if (!this.lockedContextMenu) {
                     this.lockedContextMenu = this.createLockedContextMenu();
                 }
-
-                this.lockedContextMenu.showAt(event.pageX, event.pageY);
+                if (this.lockedContextMenu.isVisible()) {
+                    this.deselectLocked();
+                }
+                else {
+                    this.selectLocked({x: event.pageX, y: event.pageY});
+                }
             }
             else if (this.isSelected()) {
                 this.deselect();
@@ -302,12 +314,25 @@ module api.liveedit {
             }
         }
 
+        hideContextMenu() {
+            if (this.lockedContextMenu) {
+                this.lockedContextMenu.hide();
+            }
+            return super.hideContextMenu();
+        }
+
         isLocked() {
             return this.hasClass('locked');
         }
 
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
+        }
+
         setLocked(locked: boolean) {
             this.toggleClass('locked', locked);
+
+            this.hideContextMenu();
 
             if (locked) {
                 this.shade();
@@ -556,7 +581,6 @@ module api.liveedit {
             });
 
             this.regionViews = [];
-            this.regionIndex = 0;
             this.viewsById = {};
 
             this.doParseItemViews();
@@ -573,27 +597,39 @@ module api.liveedit {
             if (!pageRegions) {
                 return;
             }
-            var regions: Region[] = pageRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
-                if (itemType) {
-                    if (RegionItemType.get().equals(itemType)) {
-                        // regions may be nested on different levels so use page wide var for count
-                        var region = regions[this.regionIndex++];
-                        if (region) {
-                            var regionView = new RegionView(new RegionViewBuilder().
-                                setLiveEditModel(this.liveEditModel).
-                                setParentView(this).
-                                setRegion(region).
-                                setElement(childElement));
+                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                var region, regionName, regionView;
 
-                            this.registerRegionView(regionView);
-                        }
-                    } else {
-                        this.doParseItemViews(childElement);
+                if (isRegionView) {
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = pageRegions.getRegionByName(regionName);
+                    if (region) {
+                        // reuse existing region view
+                        regionView = <RegionView> childElement;
+                        // update view's data
+                        regionView.setRegion(region);
+                        // register it again because we unregistered everything before parsing
+                        this.registerRegionView(regionView);
                     }
+
+                } else if (itemType && RegionItemType.get().equals(itemType)) {
+                    regionName = RegionItemType.getRegionName(childElement);
+                    region = pageRegions.getRegionByName(regionName);
+
+                    if (region) {
+                        regionView = new RegionView(new RegionViewBuilder().
+                            setLiveEditModel(this.liveEditModel).
+                            setParentView(this).
+                            setRegion(region).
+                            setElement(childElement));
+
+                        this.registerRegionView(regionView);
+                    }
+
                 } else {
                     this.doParseItemViews(childElement);
                 }

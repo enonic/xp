@@ -3,7 +3,8 @@
   "controller": "mymodule:default",
   "regions": {
     "myRegion": {
-      "components": []
+      "components": [],
+      "name": "myRegion"
     }
   }
 }

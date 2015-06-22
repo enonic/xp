@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':portal-api' )
     compile project( ':web-jaxrs' )
@@ -9,4 +11,9 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin - Impl'
+}
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
 }

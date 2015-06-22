@@ -8,11 +8,11 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
 import static java.util.stream.Collectors.joining;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class PostProcessorImplTest
 {
@@ -25,17 +25,14 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInstruction( new TestPostProcessInstruction() );
 
-        final PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
-        resp.setBody( html );
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
 
-        final PortalContext context = new PortalContext();
-        context.setResponse( resp );
-        context.setMethod( "GET" );
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( context );
+        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
 
-        final String outputHtml = resp.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult1.html" );
 
         assertEqualsTrimmed( expectedResult, outputHtml );
@@ -50,17 +47,14 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInjection( new TestPostProcessInjection() );
 
-        final PortalResponse resp = new PortalResponse();
-        resp.setPostProcess( true );
-        resp.setBody( html );
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
 
-        final PortalContext context = new PortalContext();
-        context.setResponse( resp );
-        context.setMethod( "GET" );
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( "GET" );
 
-        postProcessor.processResponse( context );
+        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
 
-        final String outputHtml = resp.getBody().toString();
+        final String outputHtml = portalResponse.getBody().toString();
         final String expectedResult = readResource( "postProcessResult2.html" );
 
         assertEqualsTrimmed( expectedResult, outputHtml );

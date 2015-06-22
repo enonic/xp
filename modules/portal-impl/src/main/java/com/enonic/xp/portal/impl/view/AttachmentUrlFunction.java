@@ -23,7 +23,8 @@ public final class AttachmentUrlFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final AttachmentUrlParams urlParams = new AttachmentUrlParams().setAsMap( params.getArgs() ).context( params.getContext() );
+        final AttachmentUrlParams urlParams =
+            new AttachmentUrlParams().setAsMap( params.getArgs() ).portalRequest( params.getPortalRequest() );
         return this.urlService.attachmentUrl( urlParams );
     }
 

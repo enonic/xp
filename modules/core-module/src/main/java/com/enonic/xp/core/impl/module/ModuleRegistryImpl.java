@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,10 +37,10 @@ public final class ModuleRegistryImpl
     }
 
     @Activate
-    public void start( final ComponentContext context )
+    public void start( final BundleContext context )
     {
-        context.getBundleContext().addBundleListener( this );
-        for ( final Bundle bundle : context.getBundleContext().getBundles() )
+        context.addBundleListener( this );
+        for ( final Bundle bundle : context.getBundles() )
         {
             if ( !isModule( bundle ) )
             {

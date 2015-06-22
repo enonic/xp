@@ -2,8 +2,10 @@ module api.content {
 
     export interface DeleteContentResultJson {
 
-        successes: {path:string}[];
+        successes: {name:string}[];
 
-        failures: {path:string; reason:string}[];
+        pendings: {name:string}[];
+
+        failures: {name:string; reason:string}[];
     }
 }

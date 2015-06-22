@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.data.PropertyTree;
@@ -14,9 +15,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class HistogramAggregationTest

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.Mockito;
 
@@ -14,8 +15,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
 import com.enonic.xp.admin.impl.rest.multipart.MultipartFormReader;
@@ -114,7 +113,7 @@ public abstract class AbstractResourceTest
 
     protected final void assertEquals( Object a1, Object a2 )
     {
-        Assert.assertEquals(  a1 ,a2 );
+        Assert.assertEquals( a1, a2 );
     }
 
     protected final String arrayToString( Object[] a )

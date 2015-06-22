@@ -41,7 +41,7 @@ module api.liveedit.part {
             });
 
             partView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
                     request.setModuleKeys(partView.liveEditModel.getSiteModel().getModuleKeys());
                     loader.load();
                 }

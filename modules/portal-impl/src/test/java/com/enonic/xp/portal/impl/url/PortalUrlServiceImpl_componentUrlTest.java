@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +18,7 @@ public class PortalUrlServiceImpl_componentUrlTest
     public void createUrl_toMeAndContextIsPage()
     {
         final ComponentUrlParams params = new ComponentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             param( "a", 3 );
 
         final String url = this.service.componentUrl( params );
@@ -31,7 +31,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         addComponent();
 
         final ComponentUrlParams params = new ComponentUrlParams().
-            context( this.context );
+            portalRequest( this.portalRequest );
 
         final String url = this.service.componentUrl( params );
         assertEquals( "/portal/draft/context/path/_/component/main/0", url );
@@ -41,7 +41,7 @@ public class PortalUrlServiceImpl_componentUrlTest
     public void createUrl_toOtherComponentOnPage()
     {
         final ComponentUrlParams params = new ComponentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
@@ -52,7 +52,7 @@ public class PortalUrlServiceImpl_componentUrlTest
     public void createUrl_toComponentOnOtherPageWithPath()
     {
         final ComponentUrlParams params = new ComponentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             path( "/a/b" ).
             component( "other/1" );
 
@@ -67,7 +67,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         final ComponentUrlParams params = new ComponentUrlParams().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             id( "123456" ).
             component( "other/1" );
 
@@ -89,6 +89,6 @@ public class PortalUrlServiceImpl_componentUrlTest
             build();
 
         component.setRegion( region );
-        this.context.setComponent( component );
+        this.portalRequest.setComponent( component );
     }
 }

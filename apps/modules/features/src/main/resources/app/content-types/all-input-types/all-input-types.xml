@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>All the Input Types</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <input name="myCheckbox" type="Checkbox">
+      <label>Checkbox</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myComboBox" type="ComboBox">
+      <label>ComboBox</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+      </config>
+    </input>
+    <input name="myDate" type="Date">
+      <label>Date</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myDateTime" type="DateTime">
+      <label>DateTime</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myDouble" type="Double">
+      <label>Double</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myGeoPoint" type="GeoPoint">
+      <label>GeoPoint</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myImageSelector" type="ImageSelector">
+      <label>ImageSelector</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config/>
+    </input>
+    <input name="myHtmlArea" type="HtmlArea">
+      <label>HtmlArea</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myLong" type="Long">
+      <label>Long</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myRelationship" type="ContentSelector">
+      <label>Relationship (like)</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <relationship-type>system:reference</relationship-type>
+      </config>
+    </input>
+    <input name="mySingleSelectorAsDropdown" type="SingleSelector">
+      <label>SingleSelector as Dropdown</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+        <selector-type>DROPDOWN</selector-type>
+      </config>
+    </input>
+    <input name="mySingleSelectorAsRadio" type="SingleSelector">
+      <label>SingleSelector as Radio</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+        <selector-type>RADIO</selector-type>
+      </config>
+    </input>
+    <input name="mySingleSelectorAsComboBox" type="SingleSelector">
+      <label>SingleSelector as ComboBox</label>
+      <occurrences minimum="0" maximum="0"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+        <selector-type>COMBOBOX</selector-type>
+      </config>
+    </input>
+    <input name="myTag" type="Tag">
+      <label>Tag</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myTextLine" type="TextLine">
+      <label>TextLine</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myTextArea" type="TextArea">
+      <label>TextArea</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myTime" type="Time">
+      <label>Time</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="myXml" type="Xml">
+      <label>Xml</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+  </form>
+</content-type>

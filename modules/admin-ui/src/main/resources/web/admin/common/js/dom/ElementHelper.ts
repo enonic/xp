@@ -1,5 +1,12 @@
 module api.dom {
 
+    export interface ElementDimensions {
+        top: number;
+        left: number;
+        width: number;
+        height: number;
+    }
+
     export class ElementHelper {
 
         private el: HTMLElement;
@@ -82,7 +89,7 @@ module api.dom {
         }
 
         setInnerHtml(value: string, escapeHtml: boolean = false): ElementHelper {
-            wemjq(this.el).html(escapeHtml ? api.util.StringHelper.escapeHtml(value): value);
+            wemjq(this.el).html(escapeHtml ? api.util.StringHelper.escapeHtml(value) : value);
             return this;
         }
 
@@ -557,6 +564,17 @@ module api.dom {
         setOffset(offset: { top:number; left:number; }): ElementHelper {
             wemjq(this.el).offset(offset);
             return this;
+        }
+
+        getDimensions(): ElementDimensions {
+            var offset = this.getOffset();
+
+            return {
+                top: offset.top,
+                left: offset.left,
+                width: this.getWidthWithBorder(),
+                height: this.getHeightWithBorder()
+            };
         }
 
         /**

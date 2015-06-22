@@ -9,7 +9,7 @@
         <help-text>helpText</help-text>
         <validation-regexp>!@$%</validation-regexp>
     </input>
-    <form-item-set name="myFormItemSet">
+  <item-set name="myFormItemSet">
         <label>My form item set</label>
         <items>
             <input name="myTextLine" type="TextLine">
@@ -38,6 +38,6 @@
         </items>
         <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
-    </form-item-set>
+  </item-set>
   <inline mixin="mymodule:reference"/>
 </form>

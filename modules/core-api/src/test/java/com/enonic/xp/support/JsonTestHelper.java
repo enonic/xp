@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class JsonTestHelper
 {

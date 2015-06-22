@@ -4,7 +4,7 @@ import org.attoparser.AttoParseException;
 import org.attoparser.markup.MarkupAttoParser;
 
 import com.enonic.xp.portal.impl.rendering.RenderException;
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 
 public final class HtmlBlockParser
 {
@@ -66,10 +66,10 @@ public final class HtmlBlockParser
         this.currentBlock = new StringBuilder();
     }
 
-    void addTagMarker( final PostProcessInjection.Tag tagMarker )
+    void addTagMarker( final HtmlTag htmlTag )
     {
         addStaticHtml();
-        final TagMarker block = new TagMarker( tagMarker );
+        final TagMarker block = new TagMarker( htmlTag );
         this.htmlBlocks.add( block );
     }
 

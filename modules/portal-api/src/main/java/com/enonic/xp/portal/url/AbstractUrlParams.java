@@ -7,12 +7,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+
 
 @Beta
 public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
-    private PortalContext context;
+    private PortalRequest portalRequest;
 
     private final Multimap<String, String> params;
 
@@ -26,9 +27,9 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return this.params;
     }
 
-    public final PortalContext getContext()
+    public final PortalRequest getPortalRequest()
     {
-        return this.context;
+        return this.portalRequest;
     }
 
     public final T param( final String name, final Object value )
@@ -38,9 +39,9 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return typecastThis();
     }
 
-    public final T context( final PortalContext value )
+    public final T portalRequest( final PortalRequest portalRequest )
     {
-        this.context = value;
+        this.portalRequest = portalRequest;
         return typecastThis();
     }
 

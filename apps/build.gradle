@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url 'http://repo.enonic.net/public'
+        }
+    }
+
+    dependencies {
+        classpath 'com.enonic.xp:gradle-plugin:6.0.0-SNAPSHOT'
+    }
+}
+
+allprojects {
+    apply plugin: 'base'
+
+    version = '6.0.0-SNAPSHOT'
+    group = 'com.enonic.xp.apps'
+}
+
+subprojects {
+    apply plugin: 'maven'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url 'http://repo.enonic.net/public'
+        }
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository( url: 'http://repo.enonic.net/artifactory/public' )
+            }
+        }
+    }
+}

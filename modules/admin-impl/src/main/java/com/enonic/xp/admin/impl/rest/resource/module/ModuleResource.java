@@ -12,11 +12,12 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.module.ModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
-import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
 import com.enonic.xp.module.Module;
@@ -24,6 +25,8 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,19 +37,28 @@ public final class ModuleResource
 {
     private ModuleService moduleService;
 
+    private SiteService siteService;
+
     @GET
     @Path("list")
     public ListModuleJson list()
     {
         final Modules modules = this.moduleService.getAllModules();
-        return new ListModuleJson( modules );
+        final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
+        for ( Module module : modules )
+        {
+            siteDescriptors.add( this.siteService.getDescriptor( module.getKey() ) );
+        }
+
+        return new ListModuleJson( modules, siteDescriptors.build() );
     }
 
     @GET
     public ModuleJson getByKey( @QueryParam("moduleKey") String moduleKey )
     {
         final Module module = this.moduleService.getModule( ModuleKey.from( moduleKey ) );
-        return new ModuleJson( module );
+        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ModuleKey.from( moduleKey ) );
+        return new ModuleJson( module, siteDescriptor );
     }
 
     @POST
@@ -69,39 +81,17 @@ public final class ModuleResource
         return new ModuleSuccessJson();
     }
 
-    @POST
-    @Path("update")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson update( final ModuleListParams params )
-        throws Exception
-    {
-        params.getModuleKeys().forEach( this.moduleService::updateModule );
-        return new ModuleSuccessJson();
-    }
-
-    @POST
-    @Path("uninstall")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson uninstall( final ModuleListParams params )
-        throws Exception
-    {
-        params.getModuleKeys().forEach( this.moduleService::uninstallModule );
-        return new ModuleSuccessJson();
-    }
-
-    @POST
-    @Path("install")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson install( final ModuleInstallParams params )
-        throws Exception
-    {
-        this.moduleService.installModule( params.getUrl() );
-        return new ModuleSuccessJson();
-    }
-
     @Reference
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
     }
+
+    @Reference
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
+    }
+
 }
+

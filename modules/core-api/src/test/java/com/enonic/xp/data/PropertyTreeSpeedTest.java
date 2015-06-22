@@ -5,10 +5,6 @@ import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
 
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
-
 @Ignore
 public class PropertyTreeSpeedTest
 {

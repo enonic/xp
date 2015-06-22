@@ -18,8 +18,11 @@ module api.content {
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/updateThumbnail");
             }
-            if (config.showButtons == undefined) {
-                config.showButtons = false;
+            if (config.showCancel == undefined) {
+                config.showCancel = false;
+            }
+            if (config.showReset == undefined) {
+                config.showReset = false;
             }
             if (config.dropzoneAlwaysVisible == undefined) {
                 config.dropzoneAlwaysVisible = true;

@@ -28,9 +28,6 @@ public final class PropertySet
 
     private final LinkedHashMap<String, PropertyArray> propertyArrayByName = new LinkedHashMap<>();
 
-    /**
-     * If set to true, then the next added or set property with a null value must be ignored.
-     */
     private boolean ifNotNull = false;
 
     public PropertySet()
@@ -158,9 +155,6 @@ public final class PropertySet
         return Objects.hash( propertyArrayByName );
     }
 
-    /**
-     * Makes a copy of this PropertySet and attach it to the given PropertyTree.
-     */
     public PropertySet copy( final PropertyTree tree )
     {
         return new PropertySet( this, tree );
@@ -185,20 +179,12 @@ public final class PropertySet
         this.property = property;
     }
 
-    /**
-     * If invoked, then the next added or set property with a null will be ignored.
-     * The second add or set after this method is called will not be affected.
-     */
     public PropertySet ifNotNull()
     {
         ifNotNull = true;
         return this;
     }
 
-    /**
-     * Creates a new PropertySet attached to the same PropertyTree as this.
-     * However it is not added to this PropertySet.
-     */
     public PropertySet newSet()
     {
         if ( tree == null )
@@ -615,12 +601,6 @@ public final class PropertySet
         return properties;
     }
 
-    /**
-     * Creates a new PropertySet attached to the same PropertyTree as this
-     * and adds it to this PropertySet with the given name.
-     *
-     * @return returns the created PropertySet.
-     */
     public PropertySet addSet( final String name )
     {
         final PropertySet propertySet = tree != null ? new PropertySet( tree ) : new PropertySet();
@@ -1297,13 +1277,9 @@ public final class PropertySet
     public Iterable<BinaryReference> getBinaryReferences( final String name )
     {
         final ImmutableList.Builder<BinaryReference> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getBinaryReference() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getBinaryReference() );
+        } );
         return stringsBuilder.build();
     }
 
@@ -1329,13 +1305,9 @@ public final class PropertySet
     public Iterable<Link> getLinks( final String name )
     {
         final ImmutableList.Builder<Link> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getLink() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getLink() );
+        } );
         return stringsBuilder.build();
     }
 
@@ -1361,13 +1333,9 @@ public final class PropertySet
     public Iterable<LocalDate> getLocalDates( final String name )
     {
         final ImmutableList.Builder<LocalDate> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getLocalDate() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getLocalDate() );
+        } );
         return stringsBuilder.build();
     }
 
@@ -1393,13 +1361,9 @@ public final class PropertySet
     public Iterable<LocalDateTime> getLocalDateTimes( final String name )
     {
         final ImmutableList.Builder<LocalDateTime> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getLocalDateTime() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getLocalDateTime() );
+        } );
         return stringsBuilder.build();
     }
 
@@ -1425,13 +1389,9 @@ public final class PropertySet
     public Iterable<LocalTime> getLocalTimes( final String name )
     {
         final ImmutableList.Builder<LocalTime> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getLocalTime() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getLocalTime() );
+        } );
         return stringsBuilder.build();
     }
 
@@ -1457,13 +1417,9 @@ public final class PropertySet
     public Iterable<Instant> getInstants( final String name )
     {
         final ImmutableList.Builder<Instant> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getInstant() );
-            }
-        }
+        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
+            stringsBuilder.add( property.getInstant() );
+        } );
         return stringsBuilder.build();
     }
 }

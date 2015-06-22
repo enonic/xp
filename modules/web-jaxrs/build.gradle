@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':web-api' )
     compile 'com.enonic.osgi.bundles:resteasy:3.0.8_1'

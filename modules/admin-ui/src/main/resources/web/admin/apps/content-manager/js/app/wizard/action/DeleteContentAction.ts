@@ -14,13 +14,7 @@ module app.wizard.action {
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
                             .sendAndParse()
                             .then((result: api.content.DeleteContentResult) => {
-                                if (result.getDeleted().length > 0) {
-                                    var path = result.getDeleted()[0].toString();
-                                    api.notify.showFeedback('Content [' + path + '] deleted!');
-                                } else {
-                                    var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
-                                    api.notify.showWarning('Content could not be deleted. ' + reason);
-                                }
+                                app.view.DeleteAction.showDeleteResult(result);
                             }).catch((reason: any) => {
                                 if (reason && reason.message) {
                                     api.notify.showError(reason.message);

@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.page.region.ImageComponent;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.PartComponent;
-import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.region.ImageComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.Region;
 
 import static org.junit.Assert.*;
 

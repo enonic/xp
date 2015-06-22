@@ -2,7 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.content.page.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.xml.DomElement;
 
 @Beta
@@ -21,7 +21,7 @@ public final class XmlPartDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "part-component" );
+        assertTagName( root, "part" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );

@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class CompareNodesCommandTest
     extends AbstractNodeTest

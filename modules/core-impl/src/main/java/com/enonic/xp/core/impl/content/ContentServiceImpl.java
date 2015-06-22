@@ -53,24 +53,18 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.site.CreateSiteParams;
-import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
-import com.enonic.xp.content.site.Site;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -85,6 +79,10 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CreateSiteParams;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -99,7 +97,7 @@ public class ContentServiceImpl
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
-    private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private ContentTypeService contentTypeService;
 
@@ -115,7 +113,7 @@ public class ContentServiceImpl
 
     private MixinService mixinService;
 
-    private ModuleService moduleService;
+    private SiteService siteService;
 
     public ContentServiceImpl()
     {
@@ -138,7 +136,7 @@ public class ContentServiceImpl
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
-        MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
+        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             type( ContentTypeName.site() ).
@@ -154,7 +152,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             params( createContentParams ).
             build().
@@ -182,7 +180,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             params( params ).
             build().
@@ -215,7 +213,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -229,7 +227,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -244,7 +242,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
-            moduleService( this.moduleService ).
+            siteService( this.siteService ).
             mixinService( this.mixinService ).
             build().
             execute();
@@ -379,7 +377,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents move( final MoveContentParams params )
+    public Content move( final MoveContentParams params )
     {
         final ContentPath destinationPath = params.getParentContentPath();
         if ( !destinationPath.isRoot() )
@@ -401,27 +399,24 @@ public class ContentServiceImpl
 
         try
         {
-            final NodeIds sourceNodesIds =
-                NodeIds.from( params.getContentIds().stream().map( ContentId::toString ).toArray( String[]::new ) );
-            final Nodes sourceNodes = nodeService.getByIds( sourceNodesIds );
-            if ( sourceNodes == null )
+            final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
+            final Node sourceNode = nodeService.getById( sourceNodeId );
+            if ( sourceNode == null )
             {
-                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentIds() ) );
+                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
             }
 
-            final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+            final Node movedNode = nodeService.move( sourceNodeId, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
                 params.getParentContentPath().toString() ).build() );
 
             final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
 
-            sourceNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( node.path() ) ) );
-            movedNodes.stream().forEach(
-                node -> builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( node.path() ) ) );
+            builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) );
+            builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) );
 
             eventPublisher.publish( builder.build() );
 
-            return contentNodeTranslator.fromNodes( movedNodes );
+            return contentNodeTranslator.fromNode( movedNode );
         }
         catch ( MoveNodeException e )
         {
@@ -717,8 +712,8 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setSiteService( final SiteService siteService )
     {
-        this.moduleService = moduleService;
+        this.siteService = siteService;
     }
 }

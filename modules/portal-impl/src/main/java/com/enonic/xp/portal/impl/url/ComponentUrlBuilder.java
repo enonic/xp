@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.url;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.region.Component;
 
 final class ComponentUrlBuilder
     extends PortalUrlBuilder<ComponentUrlParams>
@@ -29,7 +29,7 @@ final class ComponentUrlBuilder
     private ContentPath resolvePath()
     {
         return new ContentPathResolver().
-            context( this.context ).
+            portalRequest( this.portalRequest ).
             contentService( this.contentService ).
             id( this.params.getId() ).
             path( this.params.getPath() ).
@@ -43,7 +43,7 @@ final class ComponentUrlBuilder
             return this.params.getComponent();
         }
 
-        final Component component = this.context.getComponent();
+        final Component component = this.portalRequest.getComponent();
         if ( component == null )
         {
             return null;

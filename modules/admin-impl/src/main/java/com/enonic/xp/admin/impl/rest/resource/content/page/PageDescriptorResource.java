@@ -17,12 +17,12 @@ import com.enonic.xp.admin.impl.json.content.page.PageDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByModulesParams;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.PageDescriptor;
-import com.enonic.xp.content.page.PageDescriptorService;
-import com.enonic.xp.content.page.PageDescriptors;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")

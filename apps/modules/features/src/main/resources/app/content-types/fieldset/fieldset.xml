@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<content-type>
+  <display-name>FieldSet</display-name>
+  <super-type>base:structured</super-type>
+  <form>
+    <field-set name="documentFieldSet">
+      <label>Document</label>
+      <items>
+        <input name="heading" type="TextLine">
+          <label>Heading</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="text" type="HtmlArea">
+          <label>Text</label>
+          <occurrences minimum="0" maximum="1"/>
+          <help-text>HTML Area</help-text>
+        </input>
+      </items>
+    </field-set>
+  </form>
+</content-type>

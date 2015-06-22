@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>FocalEditor test page</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../admin/common/styles/_all.css">
+
+    <style>
+        body {
+            overflow: auto;
+        }
+
+        .col {
+            float: left;
+            overflow: auto;
+        }
+
+        .col.right {
+            width: 300px;
+        }
+
+        .focal-editor {
+            width: 100%;
+        }
+
+        .row {
+            clear: left;
+            padding: 10px;
+        }
+
+        .row label {
+            width: 120px;
+            float: left;
+        }
+
+        .row .value {
+            margin-left: 120px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!-- Configuration -->
+<script type="text/javascript">
+    var CONFIG = {
+        baseUri: '../../../..'
+    };
+</script>
+
+<!-- include source files here... -->
+<script type="text/javascript" src="../../../../../../admin/common/lib/_all.js"></script>
+<script type="text/javascript" src="../../../../../../admin/common/js/_all.js"></script>
+
+<!-- include spec files here... -->
+<script type="text/javascript">
+
+    var DivEl = api.dom.DivEl,
+            InputEl = api.dom.InputEl,
+            LabelEl = api.dom.LabelEl,
+            SpanEl = api.dom.SpanEl,
+            ButtonEl = api.dom.ButtonEl;
+
+
+    var left = new DivEl('left col'),
+            right = new DivEl('right col');
+
+    api.dom.Body.get().appendChild(left);
+    api.dom.Body.get().appendChild(right);
+
+    var curX, curY, curR;
+    function renderCurrent() {
+        currValue.setHtml('x: ' + curX + ', y: ' + curY + ', r: ' + curR);
+    }
+
+    var focalEditor = new api.ui.image.ImageEditor('green_railway_683x1024.jpg');
+    focalEditor.onFocusPositionChanged(function (position) {
+        curX = position.x;
+        curY = position.y;
+        renderCurrent();
+    });
+    focalEditor.onFocusRadiusChanged(function (r) {
+        curR = r;
+        renderCurrent();
+    });
+    left.appendChild(focalEditor);
+
+    var currRow = new DivEl('row');
+    var currLabel = new LabelEl('Current position:');
+    var currValue = new DivEl('value');
+    currRow.appendChildren(currLabel, currValue);
+
+    var newRow = new DivEl('row');
+    var newLabel = new LabelEl('Set position:');
+    var newValue = new DivEl('value');
+    var newX = new InputEl('half');
+    var newY = new InputEl('half');
+    var newButton = new ButtonEl();
+    newButton.setHtml('OK');
+    newButton.onClicked(function () {
+        focalEditor.setFocusPosition(parseFloat(newX.getValue()), parseFloat(newY.getValue()));
+    });
+    newValue.appendChildren(newX, newY, newButton);
+    newRow.appendChildren(newLabel, newValue);
+
+    var actRow = new DivEl('row');
+    var actLabel = new LabelEl('Set active:');
+    var actValue = new DivEl('value');
+    var yesButton = new ButtonEl();
+    yesButton.setHtml('Yes');
+    yesButton.onClicked(function () {
+        focalEditor.setFocusEditMode(true);
+    });
+    var saveButton = new ButtonEl();
+    saveButton.setHtml('Save');
+    saveButton.onClicked(function () {
+        focalEditor.setFocusEditMode(false);
+    });
+    var cancelButton = new ButtonEl();
+    cancelButton.setHtml('Cancel');
+    cancelButton.onClicked(function () {
+        focalEditor.setFocusEditMode(false, false);
+    });
+    var resetButton = new ButtonEl();
+    resetButton.setHtml('Reset');
+    resetButton.onClicked(function () {
+        focalEditor.resetFocusPosition();
+    });
+    actValue.appendChildren(yesButton, saveButton, cancelButton, resetButton);
+    actRow.appendChildren(actLabel, actValue);
+
+    right.appendChildren(currRow, newRow, actRow);
+
+
+</script>
+
+
+</body>
+</html>

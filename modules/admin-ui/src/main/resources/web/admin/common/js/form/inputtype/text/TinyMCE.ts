@@ -10,12 +10,26 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
+    import ImageModalDialog = api.form.inputtype.text.tiny.ImageModalDialog;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        private editors: TinyEditorOccurenceInfo[];
+        private contentId: api.content.ContentId;
+
+        static imagePrefix = "image://";
+        static maxImageWidth = 640;
+
+        private previousScrollPos: number = 0;//fix for XP-736
+        private isScrollProhibited: boolean = false;
+
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super(config);
+
             this.addClass("tinymce-editor");
+            this.editors = [];
+            this.contentId = config.contentId;
         }
 
         getValueType(): ValueType {
@@ -27,82 +41,105 @@ module api.form.inputtype.text {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            var focusedEditorCls = "tinymce-editor-focused";
-            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
 
-            var clazz = textAreaEl.getId().replace(/\./g, '_');
+            var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
+            var editorId = textAreaEl.getId();
+
+            var clazz = editorId.replace(/\./g, '_');
             textAreaEl.addClass(clazz);
-            var baseUrl = CONFIG.assetsUri;
+
             var textAreaWrapper = new api.dom.DivEl();
 
+            this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property});
+
             textAreaEl.onRendered(() => {
-                tinymce.init({
-                    selector: 'textarea.' + clazz,
-                    document_base_url: baseUrl + '/common/lib/tinymce/',
-                    skin_url: baseUrl + '/common/lib/tinymce/skins/lightgray',
-                    theme_url: 'modern',
-
-                    toolbar: [
-                        "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap link unlink | table | code"
-                    ],
-                    menubar: false,
-                    statusbar: false,
-                    paste_as_text: true,
-                    plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
-                    external_plugins: {
-                        "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js"
-                    },
-                    autoresize_min_height: 100,
-                    autoresize_bottom_margin: 0,
-                    height: 100,
-
-                    setup: (editor) => {
-                        editor.addCommand("initSelectors", this.initSelectors, this);
-                        editor.on('change', (e) => {
-                            var value = this.newValue(this.getEditor(textAreaEl.getId()).getContent());
-                            property.setValue(value);
-                        });
-                        editor.on('focus', (e) => {
-                            this.resetInputHeight();
-                            textAreaWrapper.addClass(focusedEditorCls);
-                        });
-                        editor.on('blur', (e) => {
-                            this.setStaticInputHeight();
-                            textAreaWrapper.removeClass(focusedEditorCls);
-                        });
-                        editor.on('keydown', (e) => {
-                            if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
-                                e.preventDefault();
-                                var value = this.newValue(this.getEditor(textAreaEl.getId()).getContent());
-                                property.setValue(value); // ensure that entered value is stored
-
-                                wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
-                                    bubbles: e.bubbles,
-                                    cancelable: e.cancelable,
-                                    view: parent,
-                                    ctrlKey: e.ctrlKey,
-                                    altKey: e.altKey,
-                                    shiftKey: e.shiftKey,
-                                    metaKey: e.metaKey,
-                                    keyCode: e.keyCode,
-                                    charCode: e.charCode
-                                });
-                            }
-                        });
-                    },
-                    init_instance_callback: (editor) => {
-                        this.setEditorContent(textAreaEl.getId(), property);
-                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
-                    }
-                });
-
+                this.initEditor(editorId, property, textAreaWrapper);
             });
 
             textAreaWrapper.appendChild(textAreaEl);
 
-            textAreaWrapper.giveFocus = () => {
+            this.setFocusOnEditorAfterCreate(textAreaWrapper, editorId);
+
+            return textAreaWrapper;
+        }
+
+        private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
+            this.previousScrollPos = wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(); //XP-736
+
+            var focusedEditorCls = "tinymce-editor-focused";
+            var baseUrl = CONFIG.assetsUri;
+
+            tinymce.init({
+                selector:          'textarea.' + id.replace(/\./g, '_'),
+                document_base_url: baseUrl + '/common/lib/tinymce/',
+                skin_url:          baseUrl + '/common/lib/tinymce/skins/lightgray',
+                content_css: baseUrl + '/common/styles/api/form/inputtype/text/tinymce-editor.css',
+                theme_url: 'modern',
+
+                toolbar: [
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap image link unlink | table | code"
+                ],
+                menubar: false,
+                statusbar: false,
+                paste_as_text: true,
+                plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
+                external_plugins: {
+                    "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
+                    "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js"
+                },
+                autoresize_min_height: 100,
+                autoresize_bottom_margin: 0,
+                height: 100,
+
+                setup: (editor) => {
+                    editor.addCommand("openLinkDialog", this.openLinkDialog, this);
+                    editor.addCommand("openImageDialog", this.openImageDialog, this);
+                    editor.on('change', (e) => {
+                        this.setPropertyValue(id, property);
+                    });
+                    editor.on('focus', (e) => {
+                        this.resetInputHeight();
+                        textAreaWrapper.addClass(focusedEditorCls);
+                    });
+                    editor.on('blur', (e) => {
+                        this.setStaticInputHeight();
+                        textAreaWrapper.removeClass(focusedEditorCls);
+                    });
+                    editor.on('keydown', (e) => {
+                        if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+                            e.preventDefault();
+
+                            this.setPropertyValue(id, property);
+
+                            wemjq(this.getEl().getHTMLElement()).simulate(e.type, { // as editor resides in a frame - propagate event via wrapping element
+                                bubbles: e.bubbles,
+                                cancelable: e.cancelable,
+                                view: parent,
+                                ctrlKey: e.ctrlKey,
+                                altKey: e.altKey,
+                                shiftKey: e.shiftKey,
+                                metaKey: e.metaKey,
+                                keyCode: e.keyCode,
+                                charCode: e.charCode
+                            });
+                        }
+                    });
+                },
+                init_instance_callback: (editor) => {
+                    this.setEditorContent(id, property);
+                    if (this.notInLiveEdit()) {
+                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper);
+                    }
+                    this.removeTooltipFromEditorArea(textAreaWrapper);
+                    this.temporarilyDisableScrolling(); //XP-736
+                }
+            });
+        }
+
+        private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
+            inputOccurence.giveFocus = () => {
                 try {
-                    this.getEditor(textAreaEl.getId()).focus();
+                    this.getEditor(id).focus();
                     return true;
                 }
                 catch (e) {
@@ -110,12 +147,16 @@ module api.form.inputtype.text {
                     return false;
                 }
             };
-
-            return textAreaWrapper;
         }
 
         private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element) {
-            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", () => this.updateStickyEditorToolbar(inputOccurence));
+            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", (event) => {
+                this.updateStickyEditorToolbar(inputOccurence);
+
+                if (this.isScrollProhibited) {
+                    wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(this.previousScrollPos);
+                }
+            });
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
                 this.updateEditorToolbarWidth();
@@ -131,6 +172,13 @@ module api.form.inputtype.text {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
             });
+        }
+
+        private temporarilyDisableScrolling() {
+            this.isScrollProhibited = true;
+            setTimeout(() => {
+                this.isScrollProhibited = false;
+            }, 300);
         }
 
         private updateStickyEditorToolbar(inputOccurence: Element) {
@@ -188,8 +236,16 @@ module api.form.inputtype.text {
 
         private setEditorContent(editorId: string, property: Property): void {
             if (property.hasNonNullValue()) {
-                this.getEditor(editorId).setContent(property.getString());
+                this.getEditor(editorId).setContent(this.propertyValue2Content(property.getString()));
             }
+        }
+
+        private notInLiveEdit(): boolean {
+            return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
+        }
+
+        private setPropertyValue(id: string, property: Property) {
+            property.setValue(this.editorContent2PropertyValue(id));
         }
 
         private newValue(s: string): Value {
@@ -206,59 +262,126 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private createContentSelector(contentTypeNames?: api.schema.content.ContentTypeName[]): api.content.ContentComboBox {
-            var loader = new api.content.ContentSummaryLoader(),
-                contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                focusedSelectorCls = "mce-content-selector-focused";
-
-            if (contentTypeNames) {
-                loader.setAllowedContentTypeNames(contentTypeNames);
-            }
-
-            contentSelector.addClass("mce-abs-layout-item mce-content-selector");
-
-            contentSelector.onFocus((e) => {
-                contentSelector.addClass(focusedSelectorCls);
-            });
-
-            contentSelector.onBlur((e) => {
-                contentSelector.removeClass(focusedSelectorCls);
-            });
-
-            return contentSelector;
+        private openLinkDialog(config: TinyMCELink) {
+            var linkModalDialog = new LinkModalDialog(config);
+            linkModalDialog.open();
         }
 
-        private addContentSelector(dialogEl: HTMLElement, placeholderCls: string, contentTypeNames?: api.schema.content.ContentTypeName[]) {
-            var placeholder = wemjq(dialogEl).find(placeholderCls),
-                contentSelector = this.createContentSelector(contentTypeNames);
-
-            contentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
-                placeholder.val(event.getOption().value);
-            });
-
-            contentSelector.onOptionDeselected(() => {
-                placeholder.val("");
-            });
-
-            wemjq(contentSelector.getHTMLElement()).insertAfter(placeholder);
-
-            placeholder.hide();
-
-            if (placeholder.val()) {
-                contentSelector.setValue(placeholder.val());
-            }
+        private openImageDialog(config: TinyMCEImage) {
+            var imageModalDialog = new ImageModalDialog(config, this.contentId);
+            imageModalDialog.open();
         }
 
-        private initSelectors(ui: boolean, dialogEl: HTMLElement) {
-            var focusEl = wemjq(dialogEl).find(".mce-link-text");
-
-            this.addContentSelector(dialogEl, ".mce-link-tab-content-placeholder");
-            this.addContentSelector(dialogEl, ".mce-link-tab-media-placeholder", api.schema.content.ContentTypeName.getMediaTypes());
-
-            if (focusEl) {
-                focusEl.focus();
-            }
+        private removeTooltipFromEditorArea(inputOccurence: Element) {
+            wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
         }
+
+        handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+            super.handleDnDStart(event, ui);
+
+            var editorId = wemjq('textarea', ui.item)[0].id;
+            this.destroyEditor(editorId);
+        }
+
+        handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
+            var editorId = wemjq('textarea', ui.item)[0].id;
+
+            this.reInitEditor(editorId);
+            tinymce.execCommand('mceAddEditor', false, editorId);
+
+            this.getEditor(editorId).focus();
+        }
+
+        private destroyEditor(id: string): void {
+            this.getEditor(id).destroy(false);
+        }
+
+        private reInitEditor(id: string) {
+            var savedEditor: TinyEditorOccurenceInfo = this.findElementByFieldValue(this.editors, "id", id);
+
+            this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
+        }
+
+        private findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {
+            var result: T;
+
+            array.every((element: T) => {
+                if (element[field] == value) {
+                    result = element;
+                    return false;
+                }
+                return true;
+            });
+
+            return result;
+        }
+
+        private getConvertedImageSrc(imgSrc: string): string {
+            var contentId = imgSrc.replace(TinyMCE.imagePrefix, api.util.StringHelper.EMPTY_STRING),
+                imageUrl = new api.content.ContentImageUrlResolver().
+                    setContentId(new api.content.ContentId(contentId)).
+                    setScaleWidth(true).
+                    setSize(TinyMCE.maxImageWidth).
+                    resolve();
+
+            return "src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
+        }
+
+        private propertyValue2Content(propertyValue: string) {
+            var content = propertyValue,
+                processedContent = propertyValue,
+                regex = /<img.*?src="(.*?)"/g,
+                imgSrcs, imgSrc;
+
+            while ((imgSrcs = regex.exec(content)) != null) {
+                imgSrc = imgSrcs[1];
+                if (imgSrc.indexOf(TinyMCE.imagePrefix) === 0) {
+                    processedContent = processedContent.replace("src=\"" + imgSrc + "\"", this.getConvertedImageSrc(imgSrc));
+                }
+            }
+
+            return processedContent;
+        }
+
+        private editorContent2PropertyValue(editorId: string): Value {
+            var content = this.getEditor(editorId).getContent(),
+                processedContent = this.getEditor(editorId).getContent(),
+                regex = /<img.*?data-src="(.*?)".*?>/g,
+                imgTags, imgTag;
+
+            while ((imgTags = regex.exec(content)) != null) {
+                imgTag = imgTags[0];
+                if (imgTag.indexOf("<img ") === 0 && imgTag.indexOf(TinyMCE.imagePrefix) > 0) {
+                    var dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1],
+                        src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
+
+                    var convertedImg = imgTag.replace(src, dataSrc).replace(" data-src=\"" + dataSrc + "\"",
+                        api.util.StringHelper.EMPTY_STRING);
+                    processedContent = processedContent.replace(imgTag, convertedImg);
+                }
+            }
+
+            return this.newValue(processedContent);
+        }
+    }
+
+    export interface TinyEditorOccurenceInfo {
+        id: string;
+        textAreaWrapper: Element;
+        property: Property;
+    }
+
+    export interface TinyMCELink {
+        editor: TinyMceEditor
+        element: HTMLElement
+        text: string
+    }
+
+    export interface TinyMCEImage {
+        editor: TinyMceEditor
+        element: HTMLElement
+        container: HTMLElement
+        callback: Function
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));

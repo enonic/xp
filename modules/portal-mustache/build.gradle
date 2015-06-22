@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':portal-script' )
     compile 'com.enonic.osgi.bundles:jmustache:1.9.0_1'

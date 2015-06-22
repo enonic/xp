@@ -4,9 +4,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.page.Page;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.region.ComponentPath;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.region.ComponentPath;
 
 public final class ComponentResource
     extends RenderResource

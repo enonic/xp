@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<part-component xmlns="urn:enonic:xp:model:1.0">
+<part xmlns="urn:enonic:xp:model:1.0">
   <display-name>A Part</display-name>
   <config>
     <input type="Double" name="width">
@@ -10,4 +10,4 @@
     </input>
     <inline mixin="mymodule:link-urls"/>
   </config>
-</part-component>
+</part>

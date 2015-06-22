@@ -1,0 +1,62 @@
+.site-view {
+  padding: 10px;
+  background-color: @admin-bg-light-gray;
+
+  .form-element-spacing(15px);
+
+  &.collapsed {
+    .header {
+      margin: 0;
+    }
+  }
+
+  .header {
+    position: relative;
+    line-height: 48px;
+    overflow: hidden;
+    margin: 0 0 10px;
+
+    .clearfix();
+
+    .names-and-icon-view {
+      float: left;
+
+      .names-view h6 {
+        height: auto;
+        font-size: 22px;
+        line-height: 30px;
+
+        .ellipsis();
+      }
+    }
+
+    .collapse-button,
+    .remove-button {
+      cursor: pointer;
+    }
+
+    .collapse-button {
+      float: right;
+      margin: 0 20px;
+    }
+
+    .remove-button {
+      float: right;
+      line-height: 48px;
+    }
+
+  }
+
+  .form-view {
+    padding: 15px 0;
+    margin: 0;
+    background-color: @admin-white;
+
+    .bottom-button-row {
+      margin-left: 0px;
+      padding-right: 0px;
+    }
+
+  }
+
+}

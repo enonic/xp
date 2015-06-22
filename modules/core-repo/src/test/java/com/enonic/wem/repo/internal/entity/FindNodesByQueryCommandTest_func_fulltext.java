@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -20,8 +21,8 @@ import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.parser.QueryParser;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 public class FindNodesByQueryCommandTest_func_fulltext
@@ -358,6 +359,40 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+    }
+
+    @Ignore("Does not work due to the use of the document field _analyzer")
+    @Test
+    public void fulltext_word_breaking_character()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "Levenshteins-algorithm" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        queryAndAssert( "fulltext('title', 'levenshteins algorithm', 'AND')", 1 );
+        queryAndAssert( "fulltext('title', 'levenshteins-algorithm', 'AND')", 1 );
+    }
+
+    private void queryAndAssert( final Node node, final String queryString, final int expected )
+    {
+        final NodeQuery query = NodeQuery.create().
+            query( QueryParser.parse( queryString ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( expected, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node.id() ) );
     }
 
 }

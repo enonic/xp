@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.query.ContentQuery;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;

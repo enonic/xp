@@ -21,7 +21,7 @@ public final class PageUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final PageUrlParams params = new PageUrlParams().context( getContext() ).setAsMap( map );
+        final PageUrlParams params = new PageUrlParams().portalRequest( getPortalRequest() ).setAsMap( map );
         return this.urlService.pageUrl( params );
     }
 

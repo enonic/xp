@@ -1,0 +1,9 @@
+<div class="row" style="background-color: #fff; padding-top: 30px; padding-bottom: 30px;">
+
+    <div data-portal-component-type="region" data-portal-region="center" class="col-md-8 col-md-offset-2">
+        <div data-th-each="component : ${centerRegion.components}" data-th-remove="tag">
+            <div data-portal-component="${component.path}" data-th-remove="tag"/>
+        </div>
+    </div>
+
+</div>

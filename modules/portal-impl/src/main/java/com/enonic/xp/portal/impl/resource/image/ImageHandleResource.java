@@ -13,9 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.image.BuilderContext;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 
 public final class ImageHandleResource
@@ -40,13 +42,18 @@ public final class ImageHandleResource
 
     protected String name;
 
+    protected ScaleParams scaleParams;
+
+    protected FocalPoint focalPoint = FocalPoint.DEFAULT;
+
     @GET
     public Response handle()
         throws Exception
     {
         final BufferedImage contentImage = toBufferedImage( this.binary );
         final String format = getFormat( this.name );
-        final BufferedImage image = applyFilters( contentImage, format );
+        BufferedImage image = applyScaling( contentImage );
+        image = applyFilters( image, format );
 
         final byte[] imageData = serializeImage( image, format );
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
@@ -59,7 +66,7 @@ public final class ImageHandleResource
             return sourceImage;
         }
 
-        final ImageFilter imageFilter = this.services.getImageFilterBuilder().build( new BuilderContext(), this.filterParam );
+        final ImageFilter imageFilter = this.services.getImageFilterBuilder().build( this.filterParam );
         final BufferedImage targetImage = imageFilter.filter( sourceImage );
 
         if ( !ImageHelper.supportsAlphaChannel( format ) )
@@ -70,6 +77,20 @@ public final class ImageHandleResource
         {
             return targetImage;
         }
+    }
+
+    private BufferedImage applyScaling( final BufferedImage sourceImage )
+    {
+        if ( this.scaleParams == null )
+        {
+            return sourceImage;
+        }
+
+        final ImageScaleFunction imageScaleFunction =
+            this.services.getImageScaleFunctionBuilder().build( this.scaleParams, this.focalPoint );
+        final BufferedImage targetImage = imageScaleFunction.scale( sourceImage );
+
+        return targetImage;
     }
 
     private BufferedImage toBufferedImage( final ByteSource byteSource )

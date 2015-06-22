@@ -11,17 +11,17 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.attachment.AttachmentNames;
-import com.enonic.xp.content.attachment.Attachments;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -190,7 +190,7 @@ public class ContentServiceImplTest_update
             contentData( data ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            type( BuiltinContentTypeProvider.FOLDER.getName() ).
+            type( BuiltinContentTypeLoader.FOLDER.getName() ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
@@ -421,7 +421,7 @@ public class ContentServiceImplTest_update
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             permissions( AccessControlList.empty() ).
-            type( BuiltinContentTypeProvider.FOLDER.getName() ).
+            type( BuiltinContentTypeLoader.FOLDER.getName() ).
             extraDatas( extraDatas ).
             build();
 

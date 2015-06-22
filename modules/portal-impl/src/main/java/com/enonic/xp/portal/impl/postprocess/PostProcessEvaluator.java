@@ -3,13 +3,15 @@ package com.enonic.xp.portal.impl.postprocess;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.parser.HtmlBlock;
 import com.enonic.xp.portal.impl.parser.HtmlBlockParser;
 import com.enonic.xp.portal.impl.parser.HtmlBlocks;
 import com.enonic.xp.portal.impl.parser.Instruction;
 import com.enonic.xp.portal.impl.parser.StaticHtml;
 import com.enonic.xp.portal.impl.parser.TagMarker;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
@@ -17,7 +19,9 @@ import static java.util.stream.Collectors.joining;
 
 final class PostProcessEvaluator
 {
-    protected PortalContext context;
+    protected PortalRequest portalRequest;
+
+    protected PortalResponse portalResponse;
 
     protected String input;
 
@@ -74,7 +78,7 @@ final class PostProcessEvaluator
     {
         for ( final PostProcessInstruction instruction : this.instructions )
         {
-            final String result = instruction.evaluate( this.context, content );
+            final String result = instruction.evaluate( this.portalRequest, content );
             if ( result != null )
             {
                 return new HtmlBlockParser().parse( result );
@@ -91,8 +95,8 @@ final class PostProcessEvaluator
         {
             if ( isTagMarker( htmlBlock ) )
             {
-                final PostProcessInjection.Tag tagMarker = ( (TagMarker) htmlBlock ).getTag();
-                final StaticHtml injectionHtml = evalPostProcessInjection( tagMarker );
+                final HtmlTag htmlTag = ( (TagMarker) htmlBlock ).getTag();
+                final StaticHtml injectionHtml = evalPostProcessInjection( htmlTag );
                 if ( injectionHtml != null )
                 {
                     processedHtmlBlocks.add( injectionHtml );
@@ -107,12 +111,12 @@ final class PostProcessEvaluator
         return processedHtmlBlocks.build();
     }
 
-    private StaticHtml evalPostProcessInjection( final PostProcessInjection.Tag tag )
+    private StaticHtml evalPostProcessInjection( final HtmlTag htmlTag )
     {
         List<String> injections = null;
         for ( final PostProcessInjection injection : this.injections )
         {
-            final List<String> contributions = injection.inject( this.context, tag );
+            final List<String> contributions = injection.inject( this.portalRequest, this.portalResponse, htmlTag );
             if ( contributions != null )
             {
                 if ( injections == null )

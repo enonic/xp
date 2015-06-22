@@ -6,7 +6,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.impl.rendering.RenderException;
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 
 import static org.junit.Assert.*;
 
@@ -53,9 +53,9 @@ public class HtmlBlockParserTest
         assertEquals( 4, blocks.getSize() );
         assertEquals( StaticHtml.class, blocks.get( 0 ).getClass() );
         assertEquals( TagMarker.class, blocks.get( 1 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
         assertEquals( TagMarker.class, blocks.get( 2 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_END, ( (TagMarker) blocks.get( 2 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_END, ( (TagMarker) blocks.get( 2 ) ).getTag() );
         assertEquals( StaticHtml.class, blocks.get( 3 ).getClass() );
     }
 
@@ -93,10 +93,10 @@ public class HtmlBlockParserTest
         assertEquals( 5, blocks.getSize() );
         assertEquals( StaticHtml.class, blocks.get( 0 ).getClass() );
         assertEquals( TagMarker.class, blocks.get( 1 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
         assertEquals( StaticHtml.class, blocks.get( 2 ).getClass() );
         assertEquals( TagMarker.class, blocks.get( 3 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_END, ( (TagMarker) blocks.get( 3 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_END, ( (TagMarker) blocks.get( 3 ) ).getTag() );
         assertEquals( StaticHtml.class, blocks.get( 4 ).getClass() );
     }
 
@@ -113,12 +113,12 @@ public class HtmlBlockParserTest
         assertEquals( 7, blocks.getSize() );
         assertEquals( StaticHtml.class, blocks.get( 0 ).getClass() );
         assertEquals( TagMarker.class, blocks.get( 1 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_BEGIN, ( (TagMarker) blocks.get( 1 ) ).getTag() );
         assertEquals( StaticHtml.class, blocks.get( 2 ).getClass() );
         assertEquals( Instruction.class, blocks.get( 3 ).getClass() );
         assertEquals( StaticHtml.class, blocks.get( 4 ).getClass() );
         assertEquals( TagMarker.class, blocks.get( 5 ).getClass() );
-        assertEquals( PostProcessInjection.Tag.BODY_END, ( (TagMarker) blocks.get( 5 ) ).getTag() );
+        assertEquals( HtmlTag.BODY_END, ( (TagMarker) blocks.get( 5 ) ).getTag() );
         assertEquals( StaticHtml.class, blocks.get( 6 ).getClass() );
     }
 

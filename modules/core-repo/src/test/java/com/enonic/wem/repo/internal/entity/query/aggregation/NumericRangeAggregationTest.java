@@ -7,8 +7,7 @@ import org.junit.Test;
 
 import com.google.common.base.Strings;
 
-import junit.framework.Assert;
-
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -21,9 +20,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class NumericRangeAggregationTest
@@ -130,7 +127,7 @@ public class NumericRangeAggregationTest
 
         if ( !Strings.isNullOrEmpty( key ) )
         {
-            Assert.assertEquals( buck.getKey(), key );
+            assertEquals( buck.getKey(), key );
         }
     }
 
