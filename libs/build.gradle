@@ -29,7 +29,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.enonic.xp.module'
+    apply plugin: 'com.enonic.xp.lib'
 
     def defaultEncoding = 'UTF-8'
 

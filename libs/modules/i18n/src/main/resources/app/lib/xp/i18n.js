@@ -1,5 +1,4 @@
-var bean = __.getBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
-
 exports.localize = function (param) {
-    return bean.localize(param.key, param.locale, __.toScriptValue(param.values));
+    var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    return bean.localize(param.key, __.nullOrValue(param.locale), __.toScriptValue(param.values));
 };

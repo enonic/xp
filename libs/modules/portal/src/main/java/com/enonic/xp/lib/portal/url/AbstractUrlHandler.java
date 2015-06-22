@@ -6,26 +6,26 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.url.PortalUrlService;
 
-abstract class AbstractUrlHandler
+public abstract class AbstractUrlHandler
+    implements ScriptBean
 {
-    protected final PortalUrlService urlService;
+    protected PortalRequest request;
 
-    public AbstractUrlHandler( final PortalUrlService urlService )
-    {
-        this.urlService = urlService;
-    }
-
-    protected final PortalRequest getPortalRequest()
-    {
-        return PortalRequestAccessor.get();
-    }
+    protected PortalUrlService urlService;
 
     protected abstract String buildUrl( final Multimap<String, String> map );
 
-    public final String createUrl( final Map<String, Object> params )
+    public final String createUrl( final ScriptValue params )
+    {
+        return createUrl( params.getMap() );
+    }
+
+    private String createUrl( final Map<String, Object> params )
     {
         final Multimap<String, String> map = toMap( params );
         return buildUrl( map );
@@ -87,4 +87,10 @@ abstract class AbstractUrlHandler
         }
     }
 
+    @Override
+    public final void initialize( final BeanContext context )
+    {
+        this.request = context.getRequest().get();
+        this.urlService = context.getService( PortalUrlService.class ).get();
+    }
 }

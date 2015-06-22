@@ -1,4 +1,4 @@
-var service = __.getBean('com.enonic.xp.lib.thymeleaf.ThymeleafService');
+var service = __.newBean('com.enonic.xp.lib.thymeleaf.ThymeleafService');
 
 exports.render = function (view, model) {
     var processor = service.newProcessor();

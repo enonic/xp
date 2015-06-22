@@ -2,6 +2,7 @@ package com.enonic.xp.portal.i18n;
 
 import java.util.Locale;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.site.Site;
 
 public class LocalizeParamsTest
-
+    extends Assert
 {
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 

@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.module;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.module.Module;
@@ -10,6 +13,7 @@ import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.util.Exceptions;
 
+@Component
 public final class ModuleServiceImpl
     implements ModuleService
 {
@@ -52,6 +56,7 @@ public final class ModuleServiceImpl
     public void startModule( final ModuleKey key )
     {
         startModule( getModule( key ) );
+
     }
 
     @Override
@@ -84,6 +89,7 @@ public final class ModuleServiceImpl
         }
     }
 
+    @Reference
     public void setRegistry( final ModuleRegistry registry )
     {
         this.registry = registry;

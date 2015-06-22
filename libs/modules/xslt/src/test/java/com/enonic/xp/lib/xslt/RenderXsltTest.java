@@ -2,12 +2,15 @@ package com.enonic.xp.lib.xslt;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.portal.view.ViewFunctionParams;
+import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 import com.enonic.xp.xml.DomHelper;
 
@@ -19,22 +22,20 @@ public class RenderXsltTest
     @Before
     public void setUp()
     {
-        final XsltService service = new XsltService();
-        addBean( "com.enonic.xp.lib.xslt.XsltService", service );
+        addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
     }
 
-    private ScriptValue execute( final String method )
+    private Object execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "/test/xslt-test.js" );
-        return exports.executeMethod( method );
+        return runTestFunction( "/test/xslt-test.js", method ).getValue();
     }
 
     @Test
     public void renderTest()
         throws Exception
     {
-        final String result = cleanupXml( execute( "render" ).getValue().toString() );
+        final String result = cleanupXml( execute( "render" ).toString() );
         final String expected =
             cleanupXml( Resources.toString( getClass().getResource( "/app/test/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
@@ -44,5 +45,12 @@ public class RenderXsltTest
         throws Exception
     {
         return DomHelper.serialize( DomHelper.parse( xml ) );
+    }
+
+    private Object urlAnswer( final InvocationOnMock invocation )
+        throws Exception
+    {
+        final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
+        return params.getName() + "(" + params.getArgs().toString() + ")";
     }
 }

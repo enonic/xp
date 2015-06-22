@@ -1,17 +1,19 @@
 package com.enonic.xp.lib.portal.current;
 
-import com.enonic.xp.lib.mapper.ComponentMapper;
+import com.enonic.xp.lib.content.mapper.ComponentMapper;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.region.Component;
 
 public final class GetCurrentComponentHandler
+    implements ScriptBean
 {
+    private PortalRequest request;
 
     public ComponentMapper execute()
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-        final Component component = portalRequest.getComponent();
+        final Component component = this.request.getComponent();
         return component != null ? convert( component ) : null;
     }
 
@@ -20,4 +22,9 @@ public final class GetCurrentComponentHandler
         return component == null ? null : new ComponentMapper( component );
     }
 
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.request = context.getRequest().get();
+    }
 }

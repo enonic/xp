@@ -1,4 +1,4 @@
-include ':system'
+include ':content'
 include ':portal'
 include ':mustache'
 include ':thymeleaf'

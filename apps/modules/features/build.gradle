@@ -1,4 +1,4 @@
-apply plugin: 'com.enonic.xp.gradle.module'
+apply plugin: 'com.enonic.xp.module'
 
 module {
     name = 'com.enonic.xp.modules.features'
@@ -9,10 +9,10 @@ module {
 
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
+    compile 'com.enonic.xp:portal-api:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.libs:portal:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.libs:thymeleaf:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.libs:xslt:6.0.0-SNAPSHOT'
     include 'com.enonic.xp.libs:mustache:6.0.0-SNAPSHOT'
-}
-
-bundle {
-    instruction 'Private-Package', 'app.*;-split-package:=merge-first'
-    instruction 'Private-Package', 'OSGI-INF.blueprint.*;-split-package:=merge-first'
+    include 'com.enonic.xp.libs:i18n:6.0.0-SNAPSHOT'
 }

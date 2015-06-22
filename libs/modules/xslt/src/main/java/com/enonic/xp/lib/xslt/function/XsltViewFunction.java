@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.xslt.function;
 
+import java.util.function.Supplier;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.Sequence;
@@ -34,7 +36,7 @@ final class XsltViewFunction
 
     private String name;
 
-    protected ViewFunctionService service;
+    protected Supplier<ViewFunctionService> service;
 
     public XsltViewFunction( final String name )
     {
@@ -60,6 +62,6 @@ final class XsltViewFunction
     private String execute( final String[] args )
     {
         final ViewFunctionParams params = new ViewFunctionParams().portalRequest( getPortalRequest() ).name( this.name ).args( args );
-        return this.service.execute( params ).toString();
+        return this.service.get().execute( params ).toString();
     }
 }
