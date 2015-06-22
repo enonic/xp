@@ -16,15 +16,9 @@ module api.content.form.inputtype.relationship {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>;
 
-        private input: api.form.Input;
-
-        private propertyArray: PropertyArray;
-
         private relationshipTypeName: api.schema.relationshiptype.RelationshipTypeName;
 
         private contentComboBox: api.content.ContentComboBox;
-
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         private draggingIndex: number;
 
@@ -51,8 +45,7 @@ module api.content.form.inputtype.relationship {
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             var relationshipLoader = new ContentSelectorLoader();
 
@@ -87,10 +80,10 @@ module api.content.form.inputtype.relationship {
 
                                 var value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                                    this.propertyArray.set(0, value);
+                                    this.getPropertyArray().set(0, value);
                                 }
                                 else {
-                                    this.propertyArray.add(value);
+                                    this.getPropertyArray().add(value);
                                 }
 
                                 this.refreshSortable();
@@ -100,12 +93,14 @@ module api.content.form.inputtype.relationship {
 
                             this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
-                                this.propertyArray.remove(removed.getIndex());
+                                this.getPropertyArray().remove(removed.getIndex());
                                 this.updateSelectedOptionStyle();
                                 this.validate(false);
                             });
 
                             this.setupSortable();
+
+                            this.setLayoutInProgress(false);
                         });
                 });
         }
@@ -154,14 +149,14 @@ module api.content.form.inputtype.relationship {
             if (this.draggingIndex >= 0) {
                 var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
                 var draggedToIndex = draggedElement.getSiblingIndex();
-                this.propertyArray.move(this.draggingIndex, draggedToIndex);
+                this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
 
             this.draggingIndex = -1;
         }
 
         private updateSelectedOptionStyle() {
-            if (this.propertyArray.getSize() > 1) {
+            if (this.getPropertyArray().getSize() > 1) {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
             else {
@@ -173,26 +168,8 @@ module api.content.form.inputtype.relationship {
             wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
         }
 
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-
-            var recording = new api.form.inputtype.InputValidationRecording();
-
-            var numberOfValids = this.contentComboBox.countSelected();
-            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.setBreaksMinimumOccurrences(true);
-            }
-            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
-                recording.setBreaksMaximumOccurrences(true);
-            }
-
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
-            }
-
-            this.previousValidationRecording = recording;
-            return recording;
+        protected getNumberOfValids(): number {
+            return this.contentComboBox.countSelected();
         }
 
         giveFocus(): boolean {

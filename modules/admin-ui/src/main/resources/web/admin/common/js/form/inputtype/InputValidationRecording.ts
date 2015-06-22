@@ -23,11 +23,11 @@ module api.form.inputtype {
             this.breaksMaximumOccurrences = value;
         }
 
-        isMinimumOccurrenesBreached(): boolean {
+        isMinimumOccurrencesBreached(): boolean {
             return this.breaksMinimumOccurrences;
         }
 
-        isMaximumOccurrenesBreached(): boolean {
+        isMaximumOccurrencesBreached(): boolean {
             return this.breaksMaximumOccurrences;
         }
 

@@ -35,10 +35,6 @@ module api.content.form.inputtype.image {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
 
-        private input: api.form.Input;
-
-        private propertyArray: PropertyArray;
-
         private relationshipTypeName: RelationshipTypeName;
 
         private contentComboBox: ImageContentComboBox;
@@ -52,10 +48,6 @@ module api.content.form.inputtype.image {
         private uploader: ImageUploader;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
-
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
-
-        private layoutInProgress: boolean;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>) {
             super("image-selector");
@@ -88,7 +80,7 @@ module api.content.form.inputtype.image {
 
         private updateSelectedItemsIcons() {
             if (this.contentComboBox.getSelectedOptions().length > 0) {
-                this.doLoadContent(this.propertyArray).then((contents: ContentSummary[]) => {
+                this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
                     contents.forEach((content: ContentSummary) => {
                         this.selectedOptionsView.updateUploadedOption(<Option<ImageSelectorDisplayValue>>{
                             value: content.getId(),
@@ -96,7 +88,7 @@ module api.content.form.inputtype.image {
                         });
                     });
 
-                    this.layoutInProgress = false;
+                    this.setLayoutInProgress(false);
                 });
             }
         }
@@ -118,7 +110,7 @@ module api.content.form.inputtype.image {
         }
 
         private getRemainingOccurrences(): number {
-            var inputMaximum = this.input.getOccurrences().getMaximum();
+            var inputMaximum = this.getInput().getOccurrences().getMaximum();
             var countSelected = this.countSelectedOptions();
             var rest = -1;
             if (inputMaximum == 0) {
@@ -148,7 +140,7 @@ module api.content.form.inputtype.image {
             });
 
             selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
-                this.propertyArray.set(event.getArrayIndex(), event.getNewValue());
+                this.getPropertyArray().set(event.getArrayIndex(), event.getNewValue());
                 this.validate(false);
             });
 
@@ -178,13 +170,13 @@ module api.content.form.inputtype.image {
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
                 // property not found.
                 if (!!removed.getOption().displayValue.getContentSummary()) {
-                    this.propertyArray.remove(removed.getIndex());
+                    this.getPropertyArray().remove(removed.getIndex());
                 }
                 this.validate(false);
             });
 
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ImageSelectorDisplayValue>) => {
-                if (!this.layoutInProgress) {
+                if (!this.isLayoutInProgress()) {
                     var contentId = event.getOption().displayValue.getContentId();
                     if (!contentId) {
                         return;
@@ -199,9 +191,7 @@ module api.content.form.inputtype.image {
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            this.layoutInProgress = true;
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
                 .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
@@ -222,7 +212,7 @@ module api.content.form.inputtype.image {
                     this.appendChild(comboBoxWrapper);
                     this.appendChild(this.selectedOptionsView);
 
-                    return this.doLoadContent(this.propertyArray).then((contents: ContentSummary[]) => {
+                    return this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
                         contents.forEach((content: ContentSummary) => {
                             this.contentComboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
                                 value: content.getId(),
@@ -230,13 +220,13 @@ module api.content.form.inputtype.image {
                             });
                         });
 
-                        this.layoutInProgress = false;
+                        this.setLayoutInProgress(false);
                     });
                 });
         }
 
         private createUploader(): ImageUploader {
-            var multiSelection = (this.input.getOccurrences().getMaximum() != 1);
+            var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
 
             this.uploader = new api.content.ImageUploader({
                 params: {
@@ -367,22 +357,8 @@ module api.content.form.inputtype.image {
             return new api.content.GetContentSummaryByIds(contentIds).get();
         }
 
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            var recording = new api.form.inputtype.InputValidationRecording();
-
-            var numberOfValid = this.contentComboBox.countSelected();
-            if (numberOfValid < this.input.getOccurrences().getMinimum() || this.input.getOccurrences().maximumBreached(numberOfValid)) {
-                recording.setBreaksMaximumOccurrences(true);
-            }
-
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
-            }
-
-            this.previousValidationRecording = recording;
-            return recording;
+        protected getNumberOfValids(): number {
+            return this.contentComboBox.countSelected();
         }
 
         giveFocus(): boolean {
@@ -398,10 +374,10 @@ module api.content.form.inputtype.image {
             var value = new Value(reference, ValueTypes.REFERENCE);
 
             if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                this.propertyArray.set(0, value);
+                this.getPropertyArray().set(0, value);
             }
             else {
-                this.propertyArray.add(value);
+                this.getPropertyArray().add(value);
             }
         }
 

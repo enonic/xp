@@ -183,10 +183,10 @@ module api.form {
             var recording = new ValidationRecording();
             var validationRecordingPath = this.resolveValidationRecordingPath();
 
-            if (inputRecording.isMinimumOccurrenesBreached()) {
+            if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
             }
-            if (inputRecording.isMaximumOccurrenesBreached()) {
+            if (inputRecording.isMaximumOccurrencesBreached()) {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
@@ -240,6 +240,7 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
+
             this.validationViewer.setObject(recording);
 
             if (recording.isValid()) {
