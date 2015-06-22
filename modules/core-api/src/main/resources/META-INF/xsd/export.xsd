@@ -5,6 +5,7 @@
 
   <xs:complexType name="node">
     <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="permissions" type="permissions"/>
       <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
@@ -181,7 +182,6 @@
     </xs:sequence>
   </xs:complexType>
 
-
   <xs:complexType name="indexConfigs">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="1" name="analyzer" type="xs:string"/>
@@ -194,6 +194,28 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
+  </xs:complexType> 
+
+  <xs:complexType name="permissions">
+    <xs:sequence>
+      <xs:element name="principal" maxOccurs="unbounded" minOccurs="0" type="principal">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="principal">
+    <xs:sequence>
+      <xs:element name="allow" type="accessRightList" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="deny" type="accessRightList" maxOccurs="1" minOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="key" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="accessRightList">
+    <xs:sequence>
+      <xs:element type="xs:string" name="value" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="type" use="optional"/>
   </xs:complexType>
 
   <xs:element name="node" type="node"/>
