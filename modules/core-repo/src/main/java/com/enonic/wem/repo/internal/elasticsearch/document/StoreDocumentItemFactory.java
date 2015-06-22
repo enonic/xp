@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.elasticsearch.document;
 
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
