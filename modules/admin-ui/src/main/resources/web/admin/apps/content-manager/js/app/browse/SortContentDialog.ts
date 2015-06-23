@@ -9,6 +9,7 @@ module app.browse {
     import ChildOrder = api.content.ChildOrder;
     import OrderChildMovements = api.content.OrderChildMovements;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+    import DialogButton = api.ui.dialog.DialogButton;
 
     export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -28,9 +29,11 @@ module app.browse {
 
         private isOpen: boolean;
 
+        private saveButton: DialogButton;
+
         constructor() {
             super({
-                title: new api.ui.dialog.ModalDialogHeader("Default sorting")
+                title: new api.ui.dialog.ModalDialogHeader("Sort items")
             });
 
             var menu = new api.ui.tab.TabMenu();
@@ -67,7 +70,8 @@ module app.browse {
 
             this.sortAction = new SaveSortedContentAction(this);
 
-            this.addAction(this.sortAction);
+            this.saveButton = this.addAction(this.sortAction);
+            this.saveButton.addClass("save-button");
 
             this.contentGrid = new app.browse.SortContentTreeGrid();
             this.contentGrid.getEl().addClass("sort-content-grid");
@@ -95,21 +99,26 @@ module app.browse {
                 if (this.curChildOrder.equals(this.parentContent.getChildOrder()) && !this.curChildOrder.isManual()) {
                     this.close();
                 } else {
+                    this.showLoadingSpinner();
+
                     if (this.curChildOrder.isManual()) {
                         if (this.prevChildOrder && !this.prevChildOrder.equals(this.parentContent.getChildOrder())) {
                             this.setManualReorder(this.prevChildOrder, this.gridDragHandler.getContentMovements()).done(() => {
                                 new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                                this.hideLoadingSpinner();
                                 this.close();
                             });
                         } else {
                             this.setManualReorder(null, this.gridDragHandler.getContentMovements()).done(() => {
                                 new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                                this.hideLoadingSpinner();
                                 this.close();
                             });
                         }
                     } else {
                         this.setContentChildOrder(this.curChildOrder).done(() => {
                             new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                            this.hideLoadingSpinner();
                             this.close();
                         });
                     }
@@ -164,6 +173,14 @@ module app.browse {
 
         getContent(): ContentSummary {
             return this.parentContent;
+        }
+
+        private showLoadingSpinner() {
+            this.saveButton.addClass("spinner");
+        }
+
+        private hideLoadingSpinner() {
+            this.saveButton.removeClass("spinner");
         }
 
         private setContentChildOrder(order: ChildOrder, silent: boolean = false): wemQ.Promise<api.content.Content> {
