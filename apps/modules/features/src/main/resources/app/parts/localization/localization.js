@@ -1,3 +1,4 @@
+var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/view/thymeleaf');
 var view = resolve('localization.html');
 var service = require('service.js').service;
@@ -5,7 +6,7 @@ var service = require('service.js').service;
 function handleGet(req) {
 
     var content = execute('portal.getContent');
-    var currentPage = execute('portal.pageUrl', {
+    var currentPage = portal.pageUrl({
         path: content._path
     });
 

@@ -1,3 +1,5 @@
+var portal = require('/lib/xp/portal');
+
 function handlePost(req) {
 
     var parentPath = req.formParams.parentPath;
@@ -57,7 +59,7 @@ function handlePost(req) {
     }
 
     return {
-        redirect: execute('portal.pageUrl', {
+        redirect: portal.pageUrl({
             path: parentPath + "?city=" + cityName
         })
     }

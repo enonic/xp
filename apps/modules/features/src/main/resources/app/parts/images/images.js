@@ -1,3 +1,4 @@
+var portal = require('/lib/xp/portal');
 var thymeleaf = require('view/thymeleaf');
 
 var scaleOptions = [
@@ -41,7 +42,7 @@ exports.get = function (req) {
         imageUrls.push(defaultImageUrl(imageIds[i]));
     }
 
-    var postUrl = execute('portal.componentUrl', {});
+    var postUrl = portal.componentUrl({});
     var params = {
         imageUrls: imageUrls,
         postUrl: postUrl,
@@ -57,8 +58,8 @@ exports.get = function (req) {
         body: body,
         pageContributions: {
             bodyEnd: [
-                '<script src="' + execute('portal.assetUrl', {path: 'js/jquery-2.1.4.min.js'}) + '" type="text/javascript"></script>',
-                '<script src="' + execute('portal.assetUrl', {path: 'js/images-part.js'}) + '" type="text/javascript"></script>'
+                '<script src="' + portal.assetUrl({path: 'js/jquery-2.1.4.min.js'}) + '" type="text/javascript"></script>',
+                '<script src="' + portal.assetUrl({path: 'js/images-part.js'}) + '" type="text/javascript"></script>'
             ]
         }
     };
@@ -72,7 +73,7 @@ exports.post = function (req) {
     var imageIds = getImageIds();
     var imageUrls = [];
     for (var i = 0; i < imageIds.length; i++) {
-        var imageUrl = execute('portal.imageUrl', {
+        var imageUrl = portal.imageUrl({
             id: imageIds[i],
             scale: scale,
             filter: filter
@@ -109,7 +110,7 @@ function getImageIds() {
 }
 
 function defaultImageUrl(contentId) {
-    return execute('portal.imageUrl', {
+    return portal.imageUrl({
         id: contentId,
         scale: 'wide(600,400)'
     });

@@ -1,3 +1,4 @@
+var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/view/thymeleaf');
 
 function handleGet(req) {
@@ -12,7 +13,7 @@ function handleGet(req) {
         path: content.path,
         name: content.name,
         editable: editMode,
-        resourcesPath: execute('portal.assetUrl', {}),
+        resourcesPath: portal.assetUrl({}),
         component: component,
         leftRegion: component.regions["left"],
         rightRegion: component.regions["right"]

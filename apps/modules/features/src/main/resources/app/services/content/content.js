@@ -1,3 +1,4 @@
+var portal = require('/lib/xp/portal');
 var stk = require('stk/stk');
 
 exports.post = handlePost;
@@ -49,7 +50,7 @@ function handlePost(req) {
 
     return {
 
-        redirect: execute('portal.pageUrl', {
+        redirect: portal.pageUrl({
             path: contentItem._path,
             params: {
                 submitted: contentCreated ? 'ok' : null,
