@@ -256,6 +256,8 @@ module api.liveedit {
                 }
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
+
+            this.getPageView().onItemViewAdded(this.shaderClickedListener);
         }
 
         private unbindMouseListeners() {
@@ -269,6 +271,7 @@ module api.liveedit {
             Shader.get().unClicked(this.shaderClickedListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
+            this.getPageView().unItemViewAdded(this.shaderClickedListener);
         }
 
         highlight() {
@@ -471,6 +474,7 @@ module api.liveedit {
                 // it won't receive mouse event and won't be deselected
                 // therefore we deselect it manually
                 this.deselectParent();
+                this.getPageView().deselectChildViews();
 
                 this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
             } else {
