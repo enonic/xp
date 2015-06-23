@@ -388,6 +388,22 @@ module api.liveedit {
             }
         }
 
+        hasTargetWithinTextComponent(target: HTMLElement) {
+            var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
+            var result: boolean = false;
+
+            var textView: api.liveedit.text.TextComponentView;
+            textItemViews.forEach((view: ItemView) => {
+                textView = <api.liveedit.text.TextComponentView> view;
+                if (textView.getEl().contains(target)) {
+                    result = true;
+                    return;
+                }
+            });
+
+            return result;
+        }
+
         isEmpty(): boolean {
             return !this.pageModel || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
         }
