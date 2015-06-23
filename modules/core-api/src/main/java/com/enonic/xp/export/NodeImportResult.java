@@ -148,10 +148,13 @@ public class NodeImportResult
 
         private final String message;
 
+        private final StackTraceElement[] stacktrace;
+
         public ImportError( final Exception exception, final String message )
         {
             this.exception = exception.toString();
             this.message = message;
+            this.stacktrace = exception.getStackTrace();
         }
 
         public String getException()
@@ -162,6 +165,11 @@ public class NodeImportResult
         public String getMessage()
         {
             return message;
+        }
+
+        public StackTraceElement[] getStacktrace()
+        {
+            return stacktrace;
         }
 
         @Override

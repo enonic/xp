@@ -41,8 +41,6 @@ public class CreateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
-    private final boolean dryRun;
-
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -57,7 +55,6 @@ public class CreateNodeParams
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
-        this.dryRun = builder.dryRun;
     }
 
     public static Builder create()
@@ -148,11 +145,6 @@ public class CreateNodeParams
         return binaryAttachments;
     }
 
-    public boolean isDryRun()
-    {
-        return dryRun;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -211,8 +203,6 @@ public class CreateNodeParams
 
         private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
 
-        private boolean dryRun = false;
-
         private Builder()
         {
             this.inheritPermissions = false;
@@ -232,7 +222,6 @@ public class CreateNodeParams
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
             this.binaryAttachments = createNodeParams.binaryAttachments.getSet();
-            this.dryRun = createNodeParams.dryRun;
         }
 
         public Builder setNodeId( final NodeId nodeId )
@@ -309,13 +298,12 @@ public class CreateNodeParams
 
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
-            this.binaryAttachments = Sets.newHashSet( binaryAttachments );
-            return this;
-        }
+            if ( binaryAttachments == null )
+            {
+                return this;
+            }
 
-        public Builder dryRun( final boolean dryRun )
-        {
-            this.dryRun = dryRun;
+            this.binaryAttachments = Sets.newHashSet( binaryAttachments );
             return this;
         }
 

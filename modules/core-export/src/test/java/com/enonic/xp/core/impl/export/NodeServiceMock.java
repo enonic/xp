@@ -25,7 +25,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
-import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.node.ImportNodeParams2;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -390,8 +390,20 @@ class NodeServiceMock
     }
 
     @Override
-    public Node importNode( final ImportNodeParams params )
+    public Node importNode( final ImportNodeParams2 params )
     {
-        return doCreate( params.getCreateNodeParams(), params.getTimestamp() );
+        final Node importNode = params.getNode();
+
+        return doCreate( CreateNodeParams.create().
+            setBinaryAttachments( params.getBinaryAttachments() ).
+            childOrder( importNode.getChildOrder() ).
+            data( importNode.data() ).
+            indexConfigDocument( importNode.getIndexConfigDocument() ).
+            insertManualStrategy( params.getInsertManualStrategy() ).
+            name( importNode.name().toString() ).
+            parent( importNode.parentPath() ).
+            setNodeId( importNode.id() ).
+            permissions( importNode.getPermissions() ).
+            build(), importNode.getTimestamp() );
     }
 }

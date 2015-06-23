@@ -1,0 +1,89 @@
+package com.enonic.wem.repo.internal.entity;
+
+import java.time.Instant;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+
+import static org.junit.Assert.*;
+
+public class ImportNodeCommandTest
+    extends AbstractNodeTest
+{
+    @Override
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        CTX_DEFAULT.callWith( this::createDefaultRootNode );
+        CTX_OTHER.callWith( this::createDefaultRootNode );
+    }
+
+    @Test
+    public void no_timestamp()
+        throws Exception
+    {
+        final Node importNode = Node.newNode().
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( new PropertyTree() ).
+            build();
+
+        final Node createdNode = importNode( importNode );
+
+        assertNotNull( createdNode.getTimestamp() );
+    }
+
+    @Test
+    public void created_nodes_with_id_and_timestamp_should_be_equal()
+        throws Exception
+    {
+        CTX_DEFAULT.callWith( () -> importNode( Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( new PropertyTree() ).
+            timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
+            build() ) );
+
+        CTX_OTHER.callWith( () -> importNode( Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( new PropertyTree() ).
+            timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
+            build() ) );
+
+        final NodeComparison comparison = CompareNodeCommand.create().
+            nodeId( NodeId.from( "abc" ) ).
+            target( CTX_OTHER.getBranch() ).
+            branchService( this.branchService ).
+            versionService( this.versionService ).
+            build().
+            execute();
+
+        assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
+    }
+
+    private Node importNode( final Node importNode )
+    {
+        return ImportNodeCommand.create().
+            importNode( importNode ).
+            binaryBlobStore( this.binaryBlobStore ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            branchService( this.branchService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
+}

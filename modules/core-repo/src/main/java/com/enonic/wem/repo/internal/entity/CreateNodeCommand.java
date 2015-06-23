@@ -103,12 +103,8 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        if ( !this.params.isDryRun() )
-        {
-            return this.doStoreNode( newNode );
-        }
 
-        return newNode;
+            return this.doStoreNode( newNode );
     }
 
     private AttachedBinaries storeAndAttachBinaries()
@@ -130,11 +126,9 @@ public final class CreateNodeCommand
 
             try
             {
-                if ( !this.params.isDryRun() )
-                {
-                    final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
-                    builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
-                }
+                final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
+                builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
+
             }
             catch ( final IOException e )
             {

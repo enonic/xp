@@ -64,6 +64,28 @@ public class NodeImporterTest
     }
 
     @Test
+    public void import_node_with_timestamp()
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), "myExport", "mynode", "_" ) );
+        assert nodeFileDir != null;
+
+        final byte[] nodeXmlFile = readFromFile( "node_timestamp.xml" ).getBytes();
+
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+
+        final NodeImportResult result = NodeImporter.create().
+            nodeService( importNodeService ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.addedNodes.getSize() );
+    }
+
+    @Test
     public void import_node_with_id()
         throws Exception
     {

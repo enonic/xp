@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
@@ -21,6 +20,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.ImportNodeParams2;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -222,24 +222,26 @@ public class NodeImporter
         return updatedNode;
     }
 
-    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node newNode,
+    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node serializedNode,
                              final NodePath importNodePath )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
-            processNodeSettings( processNodeSettings.build() ).
-            newNode( newNode ).
-            importPath( importNodePath ).
-            binaryAttachments( binaryAttachments ).
+        final Node importNode = ImportNodeFactory.create().
             importNodeIds( this.importNodeIds ).
-            dryRun( this.dryRun ).
+            serializedNode( serializedNode ).
+            importPath( importNodePath ).
+            processNodeSettings( processNodeSettings.build() ).
             build().
             execute();
 
-        CreateNodeParams validatedCreateNodeParams = validateImportData( createNodeParams );
+        final ImportNodeParams2 importNodeParams = ImportNodeParams2.create().
+            importNode( importNode ).
+            binaryAttachments( binaryAttachments ).
+            insertManualStrategy( processNodeSettings.build().getInsertManualStrategy() ).
+            build();
 
-        final Node createdNode = this.nodeService.create( validatedCreateNodeParams );
+        final Node createdNode = this.nodeService.importNode( importNodeParams );
 
         result.added( createdNode.path() );
 
