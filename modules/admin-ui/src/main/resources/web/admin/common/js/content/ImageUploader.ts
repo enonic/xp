@@ -19,6 +19,8 @@ module api.content {
         private cropEditModeListeners: {(edit: boolean, crop: Rect): void}[];
 
         private initialWidth: number;
+        private originalHeight: number;
+        private originalWidth: number;
 
         private scaleWidth: boolean = false; // parameter states if width of the image must be preferred over its height during resolving
 
@@ -51,6 +53,15 @@ module api.content {
             });
         }
 
+        setOriginalDimensions(width: string, height: string) {
+            this.originalWidth = parseInt(width);
+            this.originalHeight = parseInt(height);
+        }
+
+        private getProportionalHeight(): number {
+            return this.initialWidth * this.originalHeight / this.originalWidth;
+        }
+
         createResultItem(value: string): api.dom.DivEl {
             this.initialWidth = this.getParentElement().getEl().getWidth();
 
@@ -71,6 +82,12 @@ module api.content {
                 this.notifyCropEditModeChanged(edit, crop);
             });
 
+            this.getResultContainer().addClass("placeholder");
+            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
+            imageEditor.getImage().onLoaded((event: UIEvent) => {
+                this.getResultContainer().removeClass("placeholder");
+            });
+
             this.onFocus(() => {
                 setTimeout(() => {
                     if (!imageEditor.hasClass('selected')) {
@@ -80,7 +97,9 @@ module api.content {
             });
 
             this.onBlur((event) => {
-                if (imageEditor.hasClass('selected') && !api.ObjectHelper.objectEquals(event.relatedTarget, this.getResetButton())) {
+                var targetEl = event.relatedTarget ? api.dom.Element.fromHtmlElement(<HTMLElement>event.relatedTarget) : null,
+                    resetButtonEl = api.dom.Element.fromHtmlElement(this.getResetButton().getHTMLElement());
+                if (imageEditor.hasClass('selected') && (!targetEl || (targetEl.getId() !== resetButtonEl.getId()))) {
                     this.toggleSelected(imageEditor);
                 }
             });
@@ -91,7 +110,7 @@ module api.content {
 
             api.dom.Body.get().onClicked((event: MouseEvent) => {
                 this.imageEditors.forEach((editor) => {
-                    if (editor.hasClass('selected')) {
+                    if (editor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
                         editor.removeClass('selected');
                         if (wemjq(this.getHTMLElement()).has(editor.getHTMLElement()).length) {
                             this.setResetVisible(false);

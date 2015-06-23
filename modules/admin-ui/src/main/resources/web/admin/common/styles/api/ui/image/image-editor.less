@@ -45,7 +45,7 @@
   }
 
   &.selected, &.edit-mode {
-    .image-canvas {
+    .image-frame .image-canvas {
       border: 1px solid @admin-input-blue;
       .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
     }
@@ -54,12 +54,12 @@
   .image-frame {
     overflow: hidden;
     position: relative;
-    background: url("../images/checker-16x16.png") repeat;
     box-shadow: none;
     border: 1px solid @admin-white;
 
     .image-canvas {
       position: absolute;
+      border: 1px solid @admin-white;
 
       .image-bg {
         vertical-align: top; // to remove padding below the image
