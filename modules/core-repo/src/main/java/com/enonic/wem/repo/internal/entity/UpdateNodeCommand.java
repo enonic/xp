@@ -1,6 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.blob.BlobStore;
@@ -60,6 +62,7 @@ public final class UpdateNodeCommand
         {
             requireContextUserPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode );
         }
+
         final AttachedBinaries updatedBinaries = UpdatedAttachedBinariesResolver.create().
             editableNode( editableNode ).
             persistedNode( persistedNode ).
@@ -69,12 +72,14 @@ public final class UpdateNodeCommand
             resolve();
 
         final Node editedNode = editableNode.build();
+
         if ( editedNode.equals( persistedNode ) )
         {
             return persistedNode;
         }
 
         final Node updatedNode = createUpdatedNode( Node.newNode( editedNode ).
+            timestamp( Instant.now() ).
             attachedBinaries( updatedBinaries ).
             build() );
 

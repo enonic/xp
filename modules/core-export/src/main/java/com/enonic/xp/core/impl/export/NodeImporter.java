@@ -138,7 +138,6 @@ public class NodeImporter
         return children;
     }
 
-
     private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
         try
@@ -166,8 +165,6 @@ public class NodeImporter
         {
             result.addError( "Could not import node in folder [" + nodeFolder.getPath().getPath() + "]: " + e.getMessage(), e );
         }
-
-
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )

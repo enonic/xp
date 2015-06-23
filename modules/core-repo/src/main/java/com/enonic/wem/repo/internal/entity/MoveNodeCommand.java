@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.index.query.QueryService;
@@ -116,6 +118,7 @@ public class MoveNodeCommand
             name( nodeName ).
             parentPath( newParentPath ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
+            timestamp( Instant.now() ).
             build();
 
         final Node movedNode;

@@ -241,7 +241,7 @@ public class Node
             this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
             this.nodeState = node.nodeState;
-            this.timestamp = Instant.now();
+            this.timestamp = node.timestamp;
         }
 
         public Builder( final NodeId id, final NodeName name )
