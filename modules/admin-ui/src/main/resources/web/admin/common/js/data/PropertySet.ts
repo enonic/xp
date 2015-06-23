@@ -264,7 +264,7 @@ module api.data {
                     propertySet.removeProperty(property.getName(), property.getIndex())
                 }
                 else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
-                    propertySet.removeProperty(property.getName(), property.getIndex())
+                    propertySet.removeProperty(property.getName(), property.getIndex());
                 }
                 else if (type.equals(api.data.ValueTypes.DATA)) {
                     var propertySetValue = property.getValue().getPropertySet();
@@ -272,6 +272,8 @@ module api.data {
                     if (propertySetValue.isEmpty()) {
                         propertySet.removeProperty(property.getName(), property.getIndex())
                     }
+                } else if (type.equals(api.data.ValueTypes.BOOLEAN) && (property.getValue().getBoolean() == false)) {
+                    propertySet.removeProperty(property.getName(), property.getIndex());
                 }
             });
             this.removeEmptyArrays();
