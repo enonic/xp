@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,10 +81,16 @@ class NodeServiceMock
 
     private Node doCreate( final CreateNodeParams params )
     {
+        return doCreate( params, null );
+    }
+
+    private Node doCreate( final CreateNodeParams params, final Instant timestamp )
+    {
         final Node.Builder builder = Node.newNode().
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
+            timestamp( timestamp != null ? timestamp : null ).
             childOrder( params.getChildOrder() );
 
         final AttachedBinaries.Builder attachmentBuilder = AttachedBinaries.create();
@@ -385,6 +392,6 @@ class NodeServiceMock
     @Override
     public Node importNode( final ImportNodeParams params )
     {
-        return doCreate( params.getCreateNodeParams() );
+        return doCreate( params.getCreateNodeParams(), params.getTimestamp() );
     }
 }
