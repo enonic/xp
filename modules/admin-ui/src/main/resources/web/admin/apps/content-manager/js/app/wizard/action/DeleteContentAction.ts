@@ -15,6 +15,9 @@ module app.wizard.action {
                             .sendAndParse()
                             .then((result: api.content.DeleteContentResult) => {
                                 app.view.DeleteAction.showDeleteResult(result);
+                                result.getDeleted().forEach((deleted) => {
+                                    new api.content.ContentDeletedEvent(deleted.getId()).fire();
+                                });
                             }).catch((reason: any) => {
                                 if (reason && reason.message) {
                                     api.notify.showError(reason.message);

@@ -54,17 +54,21 @@ module api.content.form.inputtype.image {
                 this.notifyEditSelectedOptions(this.selection);
             });
             this.toolbar.onRemoveClicked(() => {
-                this.notifyRemoveSelectedOptions(this.selection);
-                // clear the selection;
-                this.selection.length = 0;
-                this.updateSelectionToolbarLayout();
-                this.hideImageSelectorDialog();
+                this.removeSelectedOptions(this.selection);
             });
             this.appendChild(this.toolbar);
 
             this.onShown((event: api.dom.ElementShownEvent) => {
                 this.updateLayout();
             });
+        }
+
+        removeSelectedOptions(options: SelectedOption<ImageSelectorDisplayValue>[]) {
+            this.notifyRemoveSelectedOptions(options);
+            // clear the selection;
+            this.selection.length = 0;
+            this.updateSelectionToolbarLayout();
+            this.hideImageSelectorDialog();
         }
 
         createSelectedOption(option: Option<ImageSelectorDisplayValue>): SelectedOption<ImageSelectorDisplayValue> {

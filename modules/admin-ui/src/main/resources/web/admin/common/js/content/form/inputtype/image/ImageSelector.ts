@@ -76,6 +76,15 @@ module api.content.form.inputtype.image {
             this.onShown(() => {
                 this.updateSelectedItemsIcons();
             });
+
+            api.content.ContentDeletedEvent.on((event) => {
+                var deleted = event.getContentId();
+                var option = this.selectedOptionsView.getById(deleted.toString());
+                if (option != null) {
+                    this.selectedOptionsView.removeSelectedOptions([option]);
+                }
+            });
+
         }
 
         private updateSelectedItemsIcons() {
