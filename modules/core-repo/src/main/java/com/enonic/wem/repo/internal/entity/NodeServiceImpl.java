@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -30,6 +31,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -201,10 +203,15 @@ public class NodeServiceImpl
     @Override
     public Node create( final CreateNodeParams params )
     {
-        return doCreate( params );
+        return doCreate( (CreateNodeParams) params );
     }
 
     private Node doCreate( final CreateNodeParams params )
+    {
+        return doCreate( params, null );
+    }
+
+    private Node doCreate( final CreateNodeParams params, final Instant timestamp )
     {
         return CreateNodeCommand.create().
             params( params ).
@@ -214,9 +221,11 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            timestamp( timestamp ).
             build().
             execute();
     }
+
 
     @Override
     public Node update( final UpdateNodeParams params )
@@ -543,6 +552,12 @@ public class NodeServiceImpl
         }
 
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
+    }
+
+    @Override
+    public Node importNode( final ImportNodeParams params )
+    {
+        return doCreate( params.getCreateNodeParams(), params.getTimestamp() );
     }
 
     @Override

@@ -2,6 +2,7 @@
   <id>abc</id>
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
+  <permissions/>
   <data>
     <string name="myString">myStringValue</string>
     <string name="myString">myStringValue2</string>

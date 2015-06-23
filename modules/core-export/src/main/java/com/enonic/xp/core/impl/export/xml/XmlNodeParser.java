@@ -48,6 +48,8 @@ public final class XmlNodeParser
             this.builder.id( NodeId.from( id ) );
         }
 
+        this.builder.timestamp( root.getChildValue( "timestamp" ) != null ? Instant.parse( root.getChildValue( "timestamp" ) ) : null );
+
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );
 

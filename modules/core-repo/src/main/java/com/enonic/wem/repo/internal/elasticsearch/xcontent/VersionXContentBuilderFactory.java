@@ -19,7 +19,8 @@ public class VersionXContentBuilderFactory
 
             addField( builder, VersionIndexPath.VERSION_ID.getPath(), nodeVersionDocument.getNodeVersionId().toString() );
             addField( builder, VersionIndexPath.NODE_ID.getPath(), nodeVersionDocument.getNodeId().toString() );
-            addField( builder, VersionIndexPath.TIMESTAMP.getPath(), Instant.now() );
+            addField( builder, VersionIndexPath.TIMESTAMP.getPath(),
+                      nodeVersionDocument.getTimestamp() != null ? nodeVersionDocument.getTimestamp() : Instant.now() );
             addField( builder, VersionIndexPath.NODE_PATH.getPath(), nodeVersionDocument.getNodePath().toString() );
 
             endBuilder( builder );

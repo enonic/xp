@@ -11,6 +11,7 @@
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
       <xs:element name="data" type="propertyTree"/>
       <xs:element minOccurs="0" maxOccurs="1" name="indexConfigs" type="indexConfigs"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="timestamp" type="xs:string"/>
     </xs:all>
   </xs:complexType>
 

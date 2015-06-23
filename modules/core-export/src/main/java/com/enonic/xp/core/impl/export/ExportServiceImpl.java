@@ -37,7 +37,7 @@ public class ExportServiceImpl
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        return NodeImportCommand.create().
+        return NodeImporter.create().
             nodeService( this.nodeService ).
             sourceDirectory( params.getSource() ).
             targetNodePath( params.getTargetNodePath() ).

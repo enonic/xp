@@ -27,7 +27,7 @@ import com.enonic.xp.vfs.VirtualFiles;
 
 import static org.junit.Assert.*;
 
-public class NodeImportCommandTest
+public class NodeImporterTest
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -52,7 +52,7 @@ public class NodeImportCommandTest
 
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -74,7 +74,7 @@ public class NodeImportCommandTest
 
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -100,7 +100,7 @@ public class NodeImportCommandTest
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
         final NodeServiceMock importNodeService = new NodeServiceMock();
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -110,7 +110,7 @@ public class NodeImportCommandTest
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 1, result.addedNodes.getSize() );
 
-        final NodeImportResult updateResult = NodeImportCommand.create().
+        final NodeImportResult updateResult = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -132,7 +132,7 @@ public class NodeImportCommandTest
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -164,7 +164,7 @@ public class NodeImportCommandTest
             name( importRoot.getLastElement().toString() ).
             build() );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( importRoot ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -187,7 +187,7 @@ public class NodeImportCommandTest
     {
         final NodePath importRoot = NodePath.newNodePath( NodePath.ROOT, "non-existing-node" ).build();
 
-        NodeImportCommand.create().
+        NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( importRoot ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -201,7 +201,7 @@ public class NodeImportCommandTest
     {
         createNodeXmlFile( Paths.get( "myExport", "mynode", "_" ), false );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -222,7 +222,7 @@ public class NodeImportCommandTest
         createNodeXmlFile( Paths.get( "myExport", "mynode2", "mychild1", "mychildchild1" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode3" ), false );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -249,7 +249,7 @@ public class NodeImportCommandTest
         createOrderFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild" ), "mychildchildchild1", "mychildchildchild2",
                          "mychildchildchild3" );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -279,7 +279,7 @@ public class NodeImportCommandTest
 
         createOrderFile( Paths.get( "myExport", "mynode" ), "mychild2", "mychild1" );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -303,7 +303,7 @@ public class NodeImportCommandTest
     {
         createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -321,7 +321,7 @@ public class NodeImportCommandTest
         createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
         createBinaryFile( Paths.get( "myExport", "mynode" ), "image.jpg", "this-is-the-source".getBytes() );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
@@ -351,7 +351,7 @@ public class NodeImportCommandTest
         createNodeXmlFile( Paths.get( "myExport", "mynode", myChildName, myChildChildName ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", myChildName, myChildChildName, myChildChildChildName ), false );
 
-        final NodeImportResult result = NodeImportCommand.create().
+        final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).

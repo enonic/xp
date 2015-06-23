@@ -8,6 +8,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 
+
 public class CreateNodeParamsFactory
 {
     private final Node newNode;

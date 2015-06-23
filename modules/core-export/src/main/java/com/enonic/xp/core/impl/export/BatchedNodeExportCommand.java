@@ -39,6 +39,8 @@ public class BatchedNodeExportCommand
 
     private final boolean exportNodeIds;
 
+    private final boolean exportTimestamp;
+
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
     private BatchedNodeExportCommand( final Builder builder )
@@ -50,6 +52,7 @@ public class BatchedNodeExportCommand
         this.targetDirectory = builder.targetDirectory;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
+        this.exportTimestamp = builder.exportTimestamp;
     }
 
     public static Builder create()
@@ -253,8 +256,16 @@ public class BatchedNodeExportCommand
 
         private boolean exportNodeIds = true;
 
+        private boolean exportTimestamp = true;
+
         private Builder()
         {
+        }
+
+        public Builder keepTimestamp( boolean keepTimestamp )
+        {
+            this.exportTimestamp = keepTimestamp;
+            return this;
         }
 
         public Builder sourceNodePath( NodePath exportRootNode )

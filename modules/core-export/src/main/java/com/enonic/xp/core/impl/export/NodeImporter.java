@@ -32,7 +32,7 @@ import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 import com.enonic.xp.xml.XmlException;
 
-public class NodeImportCommand
+public class NodeImporter
 {
     private static final Long IMPORT_NODE_ORDER_START_VALUE = 0L;
 
@@ -52,15 +52,18 @@ public class NodeImportCommand
 
     private final boolean importNodeIds;
 
+    private final boolean keepTimestamp;
+
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
 
-    private NodeImportCommand( final Builder builder )
+    private NodeImporter( final Builder builder )
     {
         this.nodeService = builder.nodeService;
         this.exportRoot = builder.exportRoot;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
+        this.keepTimestamp = builder.keepTimestamp;
     }
 
     public static Builder create()
@@ -329,6 +332,8 @@ public class NodeImportCommand
 
         private boolean importNodeIds = true;
 
+        private boolean keepTimestamp = true;
+
         private Builder()
         {
         }
@@ -363,9 +368,15 @@ public class NodeImportCommand
             return this;
         }
 
-        public NodeImportCommand build()
+        public Builder keepTimestamp( final boolean keepTimestamp )
         {
-            return new NodeImportCommand( this );
+            this.keepTimestamp = keepTimestamp;
+            return this;
+        }
+
+        public NodeImporter build()
+        {
+            return new NodeImporter( this );
         }
     }
 

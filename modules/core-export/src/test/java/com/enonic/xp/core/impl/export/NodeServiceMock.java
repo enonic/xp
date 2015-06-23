@@ -24,6 +24,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -34,7 +35,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
@@ -74,6 +74,11 @@ class NodeServiceMock
 
     @Override
     public Node create( final CreateNodeParams params )
+    {
+        return doCreate( params );
+    }
+
+    private Node doCreate( final CreateNodeParams params )
     {
         final Node.Builder builder = Node.newNode().
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
@@ -375,5 +380,11 @@ class NodeServiceMock
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public Node importNode( final ImportNodeParams params )
+    {
+        return doCreate( params.getCreateNodeParams() );
     }
 }

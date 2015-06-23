@@ -14,7 +14,7 @@
         "store": "true",
         "index": "not_analyzed"
       },
-      "blobkey": {
+      "versionid": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"

@@ -1,11 +1,13 @@
 package com.enonic.wem.repo.internal.elasticsearch.xcontent;
 
+import java.time.Instant;
+
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
-import com.enonic.xp.branch.Branch;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.index.IndexException;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.xp.branch.Branch;
 
 public class BranchXContentBuilderFactory
     extends AbstractXContentBuilderFactor
@@ -20,6 +22,7 @@ public class BranchXContentBuilderFactory
             addField( builder, BranchIndexPath.NODE_ID.getPath(), doc.getNode().id().toString() );
             addField( builder, BranchIndexPath.STATE.getPath(), doc.getNode().getNodeState().value() );
             addField( builder, BranchIndexPath.PATH.getPath(), doc.getNode().path().toString() );
+            addField( builder, BranchIndexPath.TIMESTAMP.getPath(), doc.getNode().getTimestamp() != null ? doc.getNode().getTimestamp() : Instant.now() );
             endBuilder( builder );
             return builder;
         }

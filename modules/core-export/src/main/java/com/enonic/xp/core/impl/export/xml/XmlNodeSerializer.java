@@ -61,6 +61,7 @@ public final class XmlNodeSerializer
 
         serializeValueElement( "childOrder", this.node.getChildOrder() );
         serializeValueElement( "nodeType", this.node.getNodeType() );
+        serializeValueElement( "timestamp", this.node.getTimestamp() );
 
         serialize( this.node.getPermissions() );
 
