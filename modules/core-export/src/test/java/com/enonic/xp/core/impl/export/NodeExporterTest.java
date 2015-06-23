@@ -23,7 +23,7 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
-public class BatchedNodeExportCommandTest
+public class NodeExporterTest
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -43,7 +43,7 @@ public class BatchedNodeExportCommandTest
     {
         createNode( "mynode", NodePath.ROOT );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
@@ -69,7 +69,7 @@ public class BatchedNodeExportCommandTest
         final Node child2 = createNode( "child2", root.path() );
         createNode( "child2_1", child2.path() );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
@@ -107,7 +107,7 @@ public class BatchedNodeExportCommandTest
         createNode( "child5", root.path() );
         createNode( "child6", root.path() );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
@@ -134,7 +134,7 @@ public class BatchedNodeExportCommandTest
 
         this.nodeService.create( CreateNodeParams.from( root ).build() );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
@@ -162,7 +162,7 @@ public class BatchedNodeExportCommandTest
 
         this.nodeService.create( CreateNodeParams.from( root ).build() );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.newPath( "/mynode/child1" ).build() ).
@@ -196,7 +196,7 @@ public class BatchedNodeExportCommandTest
             attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = BatchedNodeExportCommand.create().
+        final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).

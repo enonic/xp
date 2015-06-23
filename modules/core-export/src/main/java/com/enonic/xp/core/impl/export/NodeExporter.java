@@ -19,7 +19,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
 
-public class BatchedNodeExportCommand
+public class NodeExporter
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
@@ -43,7 +43,7 @@ public class BatchedNodeExportCommand
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
-    private BatchedNodeExportCommand( final Builder builder )
+    private NodeExporter( final Builder builder )
     {
         this.sourceNodePath = builder.sourceNodePath;
         this.batchSize = builder.batchSize;
@@ -310,9 +310,9 @@ public class BatchedNodeExportCommand
             return this;
         }
 
-        public BatchedNodeExportCommand build()
+        public NodeExporter build()
         {
-            return new BatchedNodeExportCommand( this );
+            return new NodeExporter( this );
         }
     }
 }
