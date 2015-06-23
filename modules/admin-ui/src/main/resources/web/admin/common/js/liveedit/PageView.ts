@@ -607,6 +607,15 @@ module api.liveedit {
             });
         }
 
+        deselectChildViews() {
+            for (var itemView in this.viewsById) {
+                var view = this.viewsById[itemView];
+                if (api.ObjectHelper.iFrameSafeInstanceOf(view, ItemView) && view.isSelected()) {
+                    view.deselect();
+                }
+            }
+        }
+
         private doParseItemViews(parentElement?: api.dom.Element) {
 
             var pageRegions = this.liveEditModel.getPageModel().getRegions();
