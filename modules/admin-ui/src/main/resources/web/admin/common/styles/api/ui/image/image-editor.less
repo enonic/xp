@@ -1,32 +1,45 @@
 .image-editor {
   .notSelectable();
-  display: inline-block;
+  display: block;
 
   &.edit-mode {
-    .image-canvas {
-      .image-bg {
-        .opacity(.7);
-      }
+    .image-frame {
+      .image-canvas {
 
-      svg {
-        display: block;
-
-        > image {
-          cursor: move;
+        .image-bg {
+          .opacity(.2);
         }
-      }
 
+        > svg {
+          display: block;
+
+          > image {
+            cursor: move;
+          }
+        }
+
+      }
     }
 
     &.edit-focus {
-      .focus-group {
-        display: block;
+      .image-frame {
+        .image-canvas {
+          .focus-group {
+            display: block;
+          }
+        }
       }
     }
 
     &.edit-crop {
-      .crop-group {
-        display: block;
+      .image-frame {
+        overflow: visible;
+
+        .image-canvas {
+          .crop-group {
+            display: block;
+          }
+        }
       }
     }
   }
@@ -38,93 +51,108 @@
     }
   }
 
-  .image-canvas {
-    overflow: visible;
+  .image-frame {
+    overflow: hidden;
     position: relative;
     background: url("../images/checker-16x16.png") repeat;
     box-shadow: none;
     border: 1px solid @admin-white;
 
-    .image-bg {
-      vertical-align: top; // to remove padding below the image
-    }
-
-    svg {
-      display: none;
+    .image-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
 
-      .edit-group {
+      .image-bg {
+        vertical-align: top; // to remove padding below the image
+        width: 100%;
+        height: 100%;
+      }
+
+      > svg {
         display: none;
-      }
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
 
-      .focus-group {
-
-        .stroke-circle {
-          stroke: red;
-          fill: none;
-          stroke-width: 4;
+        image {
+          width: 100%;
+          height: 100%;
         }
 
-      }
-
-      .crop-group {
-
-        .drag-handle {
-          cursor: ns-resize;
-          opacity: 0.5;
-
-          circle {
-            fill: white;
-          }
-
-          .drag-triangle {
-            fill: black;
-          }
-
-          &:hover,
-          &.active {
-            opacity: 0.7;
-            cursor: ns-resize;
-          }
+        .edit-group {
+          display: none;
         }
 
-        .zoom-slider {
-          opacity: 0.5;
+        .focus-group {
 
-          rect {
-            fill: white;
+          .stroke-circle {
+            stroke: red;
+            fill: none;
+            stroke-width: 4;
           }
 
-          line {
-            stroke: #ccc;
-            stroke-width: 4px;
-          }
+        }
 
-          circle {
-            fill: black;
+        .crop-group {
+
+          .drag-handle {
             cursor: ns-resize;
-          }
-
-          &:hover,
-          &.active {
-            opacity: 0.7;
+            opacity: 0.5;
 
             circle {
+              fill: white;
+            }
+
+            .drag-triangle {
+              fill: black;
+            }
+
+            &:hover,
+            &.active {
+              opacity: 0.7;
               cursor: ns-resize;
             }
           }
-        }
 
+          .zoom-slider {
+            opacity: 0.5;
+
+            rect {
+              fill: white;
+            }
+
+            line {
+              stroke: #ccc;
+              stroke-width: 4px;
+            }
+
+            circle {
+              fill: black;
+              cursor: ns-resize;
+            }
+
+            &:hover,
+            &.active {
+              opacity: 0.7;
+
+              circle {
+                cursor: ns-resize;
+              }
+            }
+          }
+
+        }
       }
+
     }
+
   }
 
   .image-toolbar {
     padding: 10px;
+    position: relative;
+    z-index: @z-index-mask + 1;
     .clearfix();
 
     .buttons-container {
