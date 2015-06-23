@@ -4,22 +4,26 @@
  */
 package com.enonic.xp.core.impl.image.parser;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class FilterExprParserTest
-    extends TestCase
+    extends Assert
 {
+    @Test
     public void testEmpty()
     {
         assertEquals( "", parseAndSerialize( "" ) );
     }
 
+    @Test
     public void testNoArgs()
     {
         assertEquals( "some()", parseAndSerialize( "some" ) );
         assertEquals( "some()", parseAndSerialize( "some()" ) );
     }
 
+    @Test
     public void testOneArg()
     {
         assertEquals( "some(1)", parseAndSerialize( "some(1)" ) );
@@ -33,6 +37,7 @@ public class FilterExprParserTest
         assertEquals( "some(1)", parseAndSerialize( "some(0x1)" ) );
     }
 
+    @Test
     public void testMultiArgs()
     {
         assertEquals( "some(1,2)", parseAndSerialize( "some(1,2)" ) );
@@ -41,6 +46,7 @@ public class FilterExprParserTest
         assertEquals( "some(1,true,false)", parseAndSerialize( "some(1,true,false)" ) );
     }
 
+    @Test
     public void testMultiExpr()
     {
         assertEquals( "aa();bb();cc()", parseAndSerialize( "aa;bb();cc" ) );
