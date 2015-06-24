@@ -48,6 +48,7 @@ public class ImportNodeCommand
     {
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             setNodeId( this.importNode.id() ).
+            nodeType( this.importNode.getNodeType() ).
             childOrder( this.importNode.getChildOrder() ).
             setBinaryAttachments( this.binaryAttachments ).
             data( this.importNode.data() ).
