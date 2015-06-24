@@ -2,6 +2,7 @@
   <id>abc</id>
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
+  <inheritPermissions>true</inheritPermissions>
   <data>
     <string name="myString">myStringValue</string>
     <string name="myString">myStringValue2</string>
@@ -54,4 +55,28 @@
       </pathIndexConfig>
     </pathIndexConfigs>
   </indexConfigs>
+  <accessControlList>
+    <accessControlEntry>
+      <principal>role:system.admin</principal>
+      <allowedPermissions>
+        <permission>READ</permission>
+        <permission>CREATE</permission>
+        <permission>MODIFY</permission>
+        <permission>DELETE</permission>
+        <permission>PUBLISH</permission>
+        <permission>READ_PERMISSIONS</permission>
+        <permission>WRITE_PERMISSIONS</permission>
+      </allowedPermissions>
+      <deniedPermissions/>
+    </accessControlEntry>
+    <accessControlEntry>
+      <principal>role:cms.admin</principal>
+      <allowedPermissions>
+        <permission>CREATE</permission>
+      </allowedPermissions>
+      <deniedPermissions>
+        <permission>PUBLISH</permission>
+      </deniedPermissions>
+    </accessControlEntry>
+  </accessControlList>
 </node>

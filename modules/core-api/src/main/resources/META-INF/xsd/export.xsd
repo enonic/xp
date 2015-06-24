@@ -8,8 +8,10 @@
       <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="inheritPermissions" type="xs:boolean"/>
       <xs:element name="data" type="propertyTree"/>
       <xs:element minOccurs="0" maxOccurs="1" name="indexConfigs" type="indexConfigs"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="accessControlList" type="accessControlList"/>
     </xs:all>
   </xs:complexType>
 
@@ -193,6 +195,26 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="accessControlList">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="accessControlEntry">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="principal" type="xs:string"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="allowedPermissions" type="permissions"/>
+            <xs:element minOccurs="0" maxOccurs="1" name="deniedPermissions" type="permissions"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="permissions">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="permission" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 

@@ -18,6 +18,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -50,9 +54,11 @@ public final class XmlNodeParser
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );
+        this.builder.inheritPermissions( root.getChildValueAs( "inheritPermissions", Boolean.class, Boolean.TRUE ) );
 
         this.builder.data( parseData( root.getChild( "data" ) ) );
         this.builder.indexConfigDocument( parseIndexConfigs( root.getChild( "indexConfigs" ) ) );
+        this.builder.permissions( parseAccessControlList( root.getChild( "accessControlList" ) ) );
     }
 
     private PropertyTree parseData( final DomElement root )
@@ -295,5 +301,56 @@ public final class XmlNodeParser
         builder.path( PropertyPath.from( root.getChildValue( "path" ) ) );
         builder.indexConfig( parseIndexConfig( root.getChild( "indexConfig" ) ) );
         return builder.build();
+    }
+
+    private AccessControlList parseAccessControlList( final DomElement root )
+    {
+        final AccessControlList.Builder builder = AccessControlList.create();
+        parseAccessControlEntries( builder, root );
+        return builder.build();
+    }
+
+    private void parseAccessControlEntries( final AccessControlList.Builder builder, final DomElement root )
+    {
+        if ( root != null )
+        {
+            for ( final DomElement elem : root.getChildren( "accessControlEntry" ) )
+            {
+                builder.add( parseAccessControlEntry( elem ) );
+            }
+        }
+    }
+
+    private AccessControlEntry parseAccessControlEntry( final DomElement elem )
+    {
+        final AccessControlEntry.Builder builder = AccessControlEntry.create();
+        builder.principal( PrincipalKey.from( elem.getChildValue( "principal" ) ) );
+        parseAllowedPermissions( builder, elem );
+        parseDeniedPermissions( builder, elem );
+        return builder.build();
+    }
+
+    private void parseAllowedPermissions( final AccessControlEntry.Builder builder, final DomElement elem )
+    {
+        final DomElement allowedPermissions = elem.getChild( "allowedPermissions" );
+        if ( allowedPermissions != null )
+        {
+            for ( DomElement allowedPermission : allowedPermissions.getChildren( "permission" ) )
+            {
+                builder.allow( Permission.valueOf( allowedPermission.getValue() ) );
+            }
+        }
+    }
+
+    private void parseDeniedPermissions( final AccessControlEntry.Builder builder, final DomElement elem )
+    {
+        final DomElement deniedPermissions = elem.getChild( "deniedPermissions" );
+        if ( deniedPermissions != null )
+        {
+            for ( DomElement deniedPermission : deniedPermissions.getChildren( "permission" ) )
+            {
+                builder.deny( Permission.valueOf( deniedPermission.getValue() ) );
+            }
+        }
     }
 }
