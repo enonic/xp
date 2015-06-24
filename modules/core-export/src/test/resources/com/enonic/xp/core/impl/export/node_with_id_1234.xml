@@ -1,4 +1,4 @@
-<node xmlns="urn:enonic:xp:export:1.0">
+<node>
   <id>1234</id>
   <childOrder>_name DESC</childOrder>
   <nodeType>content</nodeType>
