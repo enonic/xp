@@ -31,7 +31,7 @@ public final class XmlNodeSerializer
 
     public XmlNodeSerializer()
     {
-        this.builder = DomBuilder.create( EXPORT_NS, "node" );
+        this.builder = DomBuilder.create( "node" );
     }
 
     public XmlNodeSerializer node( final Node value )
