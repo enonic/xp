@@ -19,7 +19,9 @@ module api.form.inputtype {
         unOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
 
 
-        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void)
+        unOccurrenceRemoved(listener: (event: api.form.OccurrenceRemovedEvent)=>void);
+
+        getSpecialValidation(): api.form.AdditionalValidationRecord;
 
     }
 }

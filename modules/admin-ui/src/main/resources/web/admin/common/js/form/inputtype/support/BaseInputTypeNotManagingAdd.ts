@@ -13,7 +13,7 @@ module api.form.inputtype.support {
 
         private propertyArray: PropertyArray;
 
-        private inputOccurrences: InputOccurrences;
+        protected inputOccurrences: InputOccurrences;
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
@@ -194,7 +194,10 @@ module api.form.inputtype.support {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
+            var additionalValidation: api.form.AdditionalValidationRecord = this.getSpecialValidation();
+            recording.setAdditionalValidationRecord(additionalValidation);
             if (!silent) {
+
                 if (recording.validityChanged(this.previousValidationRecording)) {
                     this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
                 }
@@ -202,6 +205,10 @@ module api.form.inputtype.support {
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        getSpecialValidation(): api.form.AdditionalValidationRecord {
+            return api.form.AdditionalValidationRecord.create().setOverwriteDefault(false).build();
         }
 
         notifyRequiredContractBroken(state: boolean, index: number) {

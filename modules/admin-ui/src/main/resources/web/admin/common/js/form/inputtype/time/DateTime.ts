@@ -73,6 +73,7 @@ module api.content.form.inputtype.time {
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
                 var newValue = new Value(event.getDate(), valueType);
                 property.setValue(newValue);
+                this.validate(false);
             });
             return dateTimePicker;
         }
@@ -96,8 +97,27 @@ module api.content.form.inputtype.time {
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
                 var newValue = new Value(event.getDate() == null ? null : api.util.DateTime.fromDate(event.getDate()), valueType);
                 property.setValue(newValue);
+                this.validate(false);
             });
             return dateTimePicker;
+        }
+
+        getSpecialValidation(): api.form.AdditionalValidationRecord {
+
+            var result = api.form.AdditionalValidationRecord.create().setOverwriteDefault(false).build();
+
+            this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: api.form.inputtype.support.InputOccurrenceView) => {
+                var datePicker = <api.ui.time.DateTimePicker>(occurrenceView.getInputElement());
+                if (datePicker.isDateParsingFailed()) {
+                    result = api.form.AdditionalValidationRecord.create().
+                        setOverwriteDefault(true).
+                        setMessage("Incorrect value entered").
+                        build();
+                    return;
+                }
+            });
+
+            return result;
         }
 
     }
