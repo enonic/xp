@@ -16,6 +16,8 @@ public class NodeExportPathResolver
 
     public static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
+    public static final String EXPORT_PROPERTIES_NAME = "export.properties";
+
     public static Path resolveNodeBasePath( final Path exportFilePath, final NodePath nodePath, final NodePath exportRootNodePath )
     {
         final Path fullNodePath = Paths.get( nodePath.toString() );
@@ -54,5 +56,10 @@ public class NodeExportPathResolver
     public static Path resolveBinaryPath( final Path basePath, final BinaryReference binaryReference )
     {
         return Paths.get( basePath.toString(), BINARY_FOLDER, binaryReference.toString() );
+    }
+
+    public static Path resolveExportPropertiesPath( final Path exportFilePath )
+    {
+        return Paths.get( exportFilePath.toString(), EXPORT_PROPERTIES_NAME );
     }
 }
