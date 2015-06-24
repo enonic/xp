@@ -1,4 +1,5 @@
-var view = resolve('./view.xsl');
+var xslt = require('/lib/xp/xslt');
+var view = resolve('view.xsl');
 
 exports.get = function (req) {
 
@@ -22,10 +23,7 @@ exports.get = function (req) {
         ]
     };
 
-    var body = execute('xslt.render', {
-        view: view,
-        model: model
-    });
+    var body = xslt.render(view, model);
 
     return {
         contentType: 'text/xml',
