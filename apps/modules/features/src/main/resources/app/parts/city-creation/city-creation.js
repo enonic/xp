@@ -1,5 +1,7 @@
 var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
+
 var view = resolve('city-creation.page.html');
 var service = require('service.js').service;
 
@@ -29,7 +31,7 @@ function handleGet(req) {
     var body = thymeleaf.render(view, params);
 
     function getCity(cityName) {
-        var result = execute('content.query', {
+        var result = contentSvc.query({
                 count: 1,
                 contentTypes: [
                     module.name + ':city'

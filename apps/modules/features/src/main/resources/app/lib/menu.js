@@ -1,4 +1,5 @@
 var portal = require('/lib/xp/portal');
+var contentSvc = require('/lib/xp/content');
 
 function isInteger(x) {
     return Math.round(x) === x;
@@ -19,7 +20,7 @@ function isMenuItem(content) {
 }
 
 function getChildMenuItems(parentContent, levels) {
-    var childrenResult = execute('content.getChildren', {
+    var childrenResult = contentSvc.getChildren({
         key: parentContent._id,
         count: 100
     });

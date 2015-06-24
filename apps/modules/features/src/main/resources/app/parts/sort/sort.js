@@ -1,5 +1,7 @@
 var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
+
 var view = resolve('sort-test.html');
 var service = require('service.js').service;
 
@@ -11,20 +13,20 @@ function handleGet(req) {
         path: content._path
     });
 
-    var byDefault = execute('content.getChildren', {
+    var byDefault = contentSvc.getChildren({
         key: "/features/sorting/getchildren-test",
         start: 0,
         count: 1000
     });
 
-    var byCreatedTime = execute('content.getChildren', {
+    var byCreatedTime = contentSvc.getChildren({
         key: "/features/sorting/getchildren-test",
         start: 0,
         count: 1000,
         sort: 'createdTime DESC'
     });
 
-    var byUpdateTime = execute('content.getChildren', {
+    var byUpdateTime = contentSvc.getChildren({
         key: "/features/sorting/getchildren-test",
         start: 0,
         count: 1000,

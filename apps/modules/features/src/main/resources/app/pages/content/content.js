@@ -1,5 +1,7 @@
 var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
+
 var parentPath = './';
 var view = resolve(parentPath + 'content.page.html');
 var stk = require('stk/stk');
@@ -12,7 +14,7 @@ function handleGet(req) {
     if (req.params && req.params.contentId) {
         stk.log("Loading content with Id " + req.parameters.contentId);
 
-        var result = execute('content.get', {
+        var result = contentSvc.get({
             key: req.params.contentId
         });
 

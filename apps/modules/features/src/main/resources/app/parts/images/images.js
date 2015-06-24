@@ -1,5 +1,6 @@
 var portal = require('/lib/xp/portal');
 var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
 
 var scaleOptions = [
     {name: 'Scale Max', value: 'max(600)'},
@@ -95,7 +96,7 @@ function getImageIds() {
     var imageFolderId = component.config.imageFolder;
     var imageIds = [];
     if (imageFolderId) {
-        var result = execute('content.getChildren', {
+        var result = contentSvc.getChildren({
             key: imageFolderId,
             count: 20
         });

@@ -1,4 +1,5 @@
 var portal = require('/lib/xp/portal');
+var contentSvc = require('/lib/xp/content');
 
 exports.content = {};
 
@@ -13,7 +14,7 @@ exports.content.get = function (key) {
         content = portal.getContent();
     }
     else {
-        content = execute('content.get', {
+        content = contentSvc.get({
             key: key
         });
     }
