@@ -18,15 +18,7 @@ module api.schema.content.inputtype {
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
-        private input: Input;
-
-        private propertyArray: PropertyArray;
-
         private combobox: ContentTypeComboBox;
-
-        private validationRecording: InputValidationRecording;
-
-        private layoutInProgress: boolean;
 
         private context: ContentInputTypeViewContext<any>;
 
@@ -54,7 +46,7 @@ module api.schema.content.inputtype {
 
         private createComboBox(): ContentTypeComboBox {
             var loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null,
-                comboBox = new ContentTypeComboBox(this.input.getOccurrences().getMaximum(), loader);
+                comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded((contentTypeArray: ContentTypeSummary[]) => this.onContentTypesLoaded(contentTypeArray));
             comboBox.onOptionSelected((event: OptionSelectedEvent<ContentTypeSummary>) => this.onContentTypeSelected(event));
@@ -65,43 +57,41 @@ module api.schema.content.inputtype {
 
         private onContentTypesLoaded(contentTypeArray: ContentTypeSummary[]): void {
             var contentTypes = [];
-            this.propertyArray.forEach((property: Property) => {
+            this.getPropertyArray().forEach((property: Property) => {
                 contentTypes.push(property.getString());
             });
 
             this.combobox.getComboBox().setValues(contentTypes);
 
-            this.layoutInProgress = false;
+            this.setLayoutInProgress(false);
             this.combobox.unLoaded(this.onContentTypesLoaded);
 
             this.validate(false);
         }
 
         private onContentTypeSelected(event: OptionSelectedEvent<ContentTypeSummary>): void {
-            if (this.layoutInProgress) {
+            if (this.isLayoutInProgress()) {
                 return;
             }
 
             var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
             if (this.combobox.countSelected() == 1) { // overwrite initial value
-                this.propertyArray.set(0, value);
+                this.getPropertyArray().set(0, value);
             }
             else {
-                this.propertyArray.add(value);
+                this.getPropertyArray().add(value);
             }
 
             this.validate(false);
         }
 
         private onContentTypeDeselected(option: SelectedOption<ContentTypeSummary>): void {
-            this.propertyArray.remove(option.getIndex());
+            this.getPropertyArray().remove(option.getIndex());
             this.validate(false);
         }
 
         layout(input: Input, propertyArray: PropertyArray): wemQ.Promise<void> {
-            this.layoutInProgress = true;
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             this.appendChild(this.combobox = this.createComboBox());
 
@@ -114,26 +104,8 @@ module api.schema.content.inputtype {
             });
         }
 
-        validate(silent: boolean = true): InputValidationRecording {
-            var recording = new InputValidationRecording();
-
-            if (this.layoutInProgress) {
-                this.validationRecording = recording;
-                return recording;
-            }
-
-            var values = this.getValues(),
-                occurrences = this.input.getOccurrences();
-
-            recording.setBreaksMinimumOccurrences(occurrences.minimumBreached(values.length));
-            recording.setBreaksMaximumOccurrences(occurrences.maximumBreached(values.length));
-
-            if (!silent && recording.validityChanged(this.validationRecording)) {
-                this.notifyValidityChanged(new InputValidityChangedEvent(recording, this.input.getName()));
-            }
-
-            this.validationRecording = recording;
-            return recording;
+        protected getNumberOfValids(): number {
+            return this.getValues().length;
         }
 
         giveFocus(): boolean {

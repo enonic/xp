@@ -65,6 +65,8 @@ module api.liveedit {
 
         private componentRemovedListener: (event: api.content.page.region.ComponentRemovedEvent) => void;
 
+        private mouseDownLastTarget: HTMLElement;
+
         public static debug: boolean;
 
         constructor(builder: RegionViewBuilder) {
@@ -128,6 +130,12 @@ module api.liveedit {
             //this.onDragEnter(this.handleDragEnter.bind(this));
             //this.onDragLeave(this.handleDragLeave.bind(this));
             //this.onDrop(this.handleDrop.bind(this));
+
+            this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
+        }
+
+        memorizeLastMouseDownTarget(event: MouseEvent) {
+            this.mouseDownLastTarget = <HTMLElement> event.target;
         }
 
         private createRegionContextMenuActions() {
@@ -212,7 +220,9 @@ module api.liveedit {
 
             var pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
-                pageView.setTextEditMode(false);
+                if (!pageView.hasTargetWithinTextComponent(this.mouseDownLastTarget)) {
+                    pageView.setTextEditMode(false);
+                }
             } else {
                 super.handleClick(event);
             }

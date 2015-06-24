@@ -4,6 +4,8 @@
  */
 package com.enonic.xp.core.impl.image;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.enonic.xp.core.impl.image.command.FilterCommand;
 import com.enonic.xp.core.impl.image.command.FilterCommandRegistry;
 import com.enonic.xp.core.impl.image.parser.FilterExpr;
@@ -12,6 +14,7 @@ import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
 
+@Component(immediate = true)
 public final class ImageFilterBuilderImpl
     implements ImageFilterBuilder
 {

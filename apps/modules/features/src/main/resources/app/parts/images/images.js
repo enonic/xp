@@ -1,4 +1,6 @@
-var thymeleaf = require('view/thymeleaf');
+var portal = require('/lib/xp/portal');
+var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
 
 var scaleOptions = [
     {name: 'Scale Max', value: 'max(600)'},
@@ -41,7 +43,7 @@ exports.get = function (req) {
         imageUrls.push(defaultImageUrl(imageIds[i]));
     }
 
-    var postUrl = execute('portal.componentUrl', {});
+    var postUrl = portal.componentUrl({});
     var params = {
         imageUrls: imageUrls,
         postUrl: postUrl,
@@ -57,8 +59,8 @@ exports.get = function (req) {
         body: body,
         pageContributions: {
             bodyEnd: [
-                '<script src="' + execute('portal.assetUrl', {path: 'js/jquery-2.1.4.min.js'}) + '" type="text/javascript"></script>',
-                '<script src="' + execute('portal.assetUrl', {path: 'js/images-part.js'}) + '" type="text/javascript"></script>'
+                '<script src="' + portal.assetUrl({path: 'js/jquery-2.1.4.min.js'}) + '" type="text/javascript"></script>',
+                '<script src="' + portal.assetUrl({path: 'js/images-part.js'}) + '" type="text/javascript"></script>'
             ]
         }
     };
@@ -72,7 +74,7 @@ exports.post = function (req) {
     var imageIds = getImageIds();
     var imageUrls = [];
     for (var i = 0; i < imageIds.length; i++) {
-        var imageUrl = execute('portal.imageUrl', {
+        var imageUrl = portal.imageUrl({
             id: imageIds[i],
             scale: scale,
             filter: filter
@@ -89,12 +91,12 @@ exports.post = function (req) {
 };
 
 function getImageIds() {
-    var component = execute('portal.getComponent');
+    var component = portal.getComponent();
 
     var imageFolderId = component.config.imageFolder;
     var imageIds = [];
     if (imageFolderId) {
-        var result = execute('content.getChildren', {
+        var result = contentSvc.getChildren({
             key: imageFolderId,
             count: 20
         });
@@ -109,7 +111,7 @@ function getImageIds() {
 }
 
 function defaultImageUrl(contentId) {
-    return execute('portal.imageUrl', {
+    return portal.imageUrl({
         id: contentId,
         scale: 'wide(600,400)'
     });

@@ -6,13 +6,9 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextImpl;
-import com.enonic.xp.context.LocalScopeImpl;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.branch.Branch;
 
 import static org.junit.Assert.*;
 

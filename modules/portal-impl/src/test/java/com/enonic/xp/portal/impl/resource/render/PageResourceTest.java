@@ -90,6 +90,8 @@ public class PageResourceTest
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUri() );
+        assertEquals( "http://localhost/portal/master", jsRequest.getValue().getBaseUrl() );
+        assertEquals( "http://localhost", jsRequest.getValue().getServerUrl() );
     }
 
     @Test

@@ -8,7 +8,7 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class XmlMixinParserTest
     extends XmlModelParserTest

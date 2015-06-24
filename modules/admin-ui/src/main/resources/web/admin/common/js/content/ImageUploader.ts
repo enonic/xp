@@ -70,17 +70,6 @@ module api.content {
                 this.setResetVisible(!edit);
                 this.notifyCropEditModeChanged(edit, crop);
             });
-            var image = imageEditor.getImage();
-
-            image.getEl().setWidthPx(this.initialWidth);
-            this.getEl().setMaxWidthPx(this.initialWidth);
-
-            image.onLoaded(() => {
-                this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
-            });
-            image.onRemoved(() => {
-                this.getEl().setMaxWidthPx(this.initialWidth);
-            });
 
             this.onFocus(() => {
                 setTimeout(() => {
@@ -90,19 +79,13 @@ module api.content {
                 }, 150);
             });
 
-            this.onBlur(() => {
-                if (imageEditor.hasClass('selected')) {
+            this.onBlur((event) => {
+                if (imageEditor.hasClass('selected') && !api.ObjectHelper.objectEquals(event.relatedTarget, this.getResetButton())) {
                     this.toggleSelected(imageEditor);
                 }
             });
 
-            image.onClicked((event: MouseEvent) => {
-
-                this.toggleSelected(imageEditor);
-
-                event.stopPropagation();
-                event.preventDefault();
-            });
+            this.onClicked((event: MouseEvent) => this.toggleSelected(imageEditor));
 
             this.imageEditors.push(imageEditor);
 

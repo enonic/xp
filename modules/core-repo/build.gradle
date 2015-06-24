@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':core-api' )
     compile 'com.enonic.osgi.bundles:elasticsearch:1.4.4_1'
@@ -6,4 +8,9 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Repo'
+}
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
 }

@@ -3,8 +3,6 @@ package com.enonic.xp.index;
 import org.junit.Test;
 
 import com.enonic.xp.data.PropertyPath;
-import com.enonic.xp.index.IndexConfig;
-import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static org.junit.Assert.*;
 

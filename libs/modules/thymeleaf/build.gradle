@@ -1,3 +1,6 @@
 dependencies {
-    compile 'com.enonic.osgi.bundles:thymeleaf:2.1.1_2'
+    compile('org.thymeleaf:thymeleaf:2.1.4.RELEASE') {
+        exclude group: 'org.slf4j'
+    }
+    testCompile 'junit:junit:4.10'
 }

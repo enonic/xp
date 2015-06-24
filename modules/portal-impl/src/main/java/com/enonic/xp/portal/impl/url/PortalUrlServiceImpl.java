@@ -49,7 +49,7 @@ public final class PortalUrlServiceImpl
                              ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+))\")",
                          Pattern.MULTILINE | Pattern.UNIX_LINES );
 
-    private static final String IMAGE_FILTER = "scalewidth(768)";
+    private static final String IMAGE_SCALE = "width(768)";
 
     private static final String IMAGE_FORMAT = "jpeg";
 
@@ -128,7 +128,7 @@ public final class PortalUrlServiceImpl
                 {
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
                         id( id ).
-                        filter( IMAGE_FILTER ).
+                        scale( IMAGE_SCALE ).
                         format( IMAGE_FORMAT ).
                         portalRequest( params.getPortalRequest() );
 

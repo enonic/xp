@@ -1,5 +1,7 @@
 {
   "uri": "/portal/live/master/a/b",
+  "baseUrl": "http://localhost.com/portal/live/master",
+  "serverUrl": "http://localhost.com",
   "method": "GET",
   "mode": "live",
   "branch": "draft",
@@ -20,5 +22,5 @@
     "header2": "value2",
     "header1": "value1"
   },
-  "cookies" : { }
+  "cookies": {}
 }

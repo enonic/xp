@@ -4,9 +4,6 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import com.enonic.xp.vfs.VirtualFilePath;
-import com.enonic.xp.vfs.VirtualFilePaths;
-
 import static org.junit.Assert.*;
 
 public class VirtualFilePathTest

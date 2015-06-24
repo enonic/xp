@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.blob;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.google.common.io.ByteSource;
@@ -19,7 +18,7 @@ public interface BlobStore
      *
      * @param key blob key
      * @return the record if found, null otherwise
-     * @throws IOException if an error occurred
+     * @throws java.io.IOException if an error occurred
      */
     public BlobRecord getRecord( BlobKey key )
         throws BlobStoreException;
@@ -32,7 +31,7 @@ public interface BlobStore
      *
      * @param in binary stream
      * @return blob record that contains the given stream
-     * @throws IOException if an error occurred
+     * @throws java.io.IOException if an error occurred
      */
     public BlobRecord addRecord( InputStream in )
         throws BlobStoreException;
@@ -41,7 +40,7 @@ public interface BlobStore
      * Get all stored keys.
      *
      * @return an iterator over all key objects
-     * @throws IOException if an error occurred
+     * @throws java.io.IOException if an error occurred
      */
     public Iterable<BlobKey> getAllKeys()
         throws BlobStoreException;
@@ -51,7 +50,7 @@ public interface BlobStore
      *
      * @param key blob key
      * @return true if deleted, false otherwise
-     * @throws IOException if an error occurred
+     * @throws java.io.IOException if an error occurred
      */
     public boolean deleteRecord( BlobKey key )
         throws BlobStoreException;

@@ -1,8 +1,15 @@
 .sort-content-dialog {
 
+  .dialog-content {
+    max-height: 480px;
+    overflow-y: hidden;
+  }
+
   @media screen and (max-height: 360px) {
     .dialog-content {
       height: 65%;
+      max-height: 180px;
+      overflow-y: hidden;
 
       > h6 {
         display: none;
@@ -21,8 +28,40 @@
   }
 
   @media screen and (max-height: 540px) {
+
+    .dialog-content {
+      max-height: 200px;
+      overflow-y: hidden;
+    }
+
     padding-top: 20px;
     padding-bottom: 10px;
+  }
+
+  @media screen and (max-height: 720px) {
+
+    .dialog-content {
+      max-height: 240px;
+      overflow-y: hidden;
+    }
+  }
+
+  .dialog-buttons {
+    .button {
+      &.save-button {
+
+        &.spinner {
+          font-family: 'live-edit-font-icon';
+
+          &:after {
+            .animation(rotate360, .5s, .0s, linear);
+            content: "\e007";
+            color: white;
+            display: inline-block;
+          }
+        }
+      }
+    }
   }
 
   .slick-viewport {

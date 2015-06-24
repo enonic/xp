@@ -1,4 +1,7 @@
-var thymeleaf = require('/lib/view/thymeleaf');
+var portal = require('/lib/xp/portal');
+var thymeleaf = require('/lib/xp/thymeleaf');
+var contentSvc = require('/lib/xp/content');
+
 var view = resolve('cities-list.page.html');
 var service = require('service.js').service;
 
@@ -11,7 +14,7 @@ function handleGet(req) {
         var city = getCity(req.params.city);
         if (city) {
             currentCityName = city.displayName;
-            cities = execute('content.query', {
+            cities = contentSvc.query({
                     start: 0,
                     count: 25,
                     contentTypes: [
@@ -29,7 +32,7 @@ function handleGet(req) {
     }
 
     if (!cities) {
-        cities = execute('content.query', {
+        cities = contentSvc.query({
                 start: 0,
                 count: 25,
                 contentTypes: [
@@ -39,8 +42,8 @@ function handleGet(req) {
         );
     }
 
-    var content = execute('portal.getContent');
-    var currentPage = execute('portal.pageUrl', {
+    var content = portal.getContent();
+    var currentPage = portal.pageUrl({
         path: content._path
     });
 
@@ -52,7 +55,7 @@ function handleGet(req) {
     var body = thymeleaf.render(view, params);
 
     function getCity(cityName) {
-        var result = execute('content.query', {
+        var result = contentSvc.query({
                 count: 1,
                 contentTypes: [
                     module.name + ':city'

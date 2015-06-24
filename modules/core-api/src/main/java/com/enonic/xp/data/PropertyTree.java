@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -155,9 +154,6 @@ public final class PropertyTree
         return properties;
     }
 
-    /**
-     * If called, the next add or set Property will be ignored if the value is null.
-     */
     public PropertyTree ifNotNull()
     {
         root.ifNotNull();

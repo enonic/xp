@@ -1,6 +1,8 @@
+var contentSvc = require('/lib/xp/content');
+
 exports.getChildren = function (parentPath, size) {
 
-    return execute('content.getChildren', {
+    return contentSvc.getChildren({
         key: parentPath,
         start: 0,
         count: size ? size : 500
@@ -9,7 +11,7 @@ exports.getChildren = function (parentPath, size) {
 
 exports.getContentById = function (contentId) {
 
-    return execute('content.get', {
+    return contentSvc.get({
         key: contentId
     });
 

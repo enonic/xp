@@ -1,8 +1,10 @@
 {
   "mode": "live",
   "headers": {},
+  "baseUrl": "",
   "method": "GET",
   "formParams": {},
+  "serverUrl": "",
   "params": {},
   "uri": "",
   "branch": "draft",

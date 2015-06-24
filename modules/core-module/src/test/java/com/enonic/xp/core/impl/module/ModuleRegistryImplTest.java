@@ -56,9 +56,7 @@ public class ModuleRegistryImplTest
 
         this.registry = new ModuleRegistryImpl();
         this.registry.setEventPublisher( this.events::add );
-        this.registry.setBundleContext( bundleContext );
-
-        this.registry.initialize();
+        this.registry.start( bundleContext );
     }
 
     @Test

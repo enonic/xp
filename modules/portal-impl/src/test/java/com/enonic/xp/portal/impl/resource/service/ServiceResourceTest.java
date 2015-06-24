@@ -98,6 +98,8 @@ public class ServiceResourceTest
         final PortalRequest portalRequest = jsRequest.getValue();
 
         assertEquals( "http://localhost/portal/master/path/to/content/_/service/demo/test?a=b", portalRequest.getUri() );
+        assertEquals( "http://localhost/portal/master", portalRequest.getBaseUrl() );
+        assertEquals( "http://localhost", portalRequest.getServerUrl() );
     }
 
     @Test

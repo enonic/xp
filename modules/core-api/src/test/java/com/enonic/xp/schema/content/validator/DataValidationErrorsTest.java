@@ -1,17 +1,9 @@
 package com.enonic.xp.schema.content.validator;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class DataValidationErrorsTest

@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
 dependencies {
     compile project( ':portal-script' )
     testCompile project( path: ':portal-script', configuration: 'testOutput' )

@@ -29,7 +29,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.enonic.xp.module'
+    apply plugin: 'com.enonic.xp.lib'
 
     def defaultEncoding = 'UTF-8'
 
@@ -71,5 +71,6 @@ subprojects {
         provided "com.enonic.xp:core-api:${version}"
         provided "com.enonic.xp:web-api:${version}"
         provided "com.enonic.xp:portal-api:${version}"
+        testCompile "com.enonic.xp:testing:${version}"
     }
 }

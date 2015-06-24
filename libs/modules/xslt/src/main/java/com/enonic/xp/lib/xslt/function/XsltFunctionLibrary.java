@@ -1,14 +1,16 @@
 package com.enonic.xp.lib.xslt.function;
 
+import java.util.function.Supplier;
+
 import net.sf.saxon.Configuration;
 
 import com.enonic.xp.portal.view.ViewFunctionService;
 
 public final class XsltFunctionLibrary
 {
-    private final ViewFunctionService viewFunctionService;
+    private final Supplier<ViewFunctionService> viewFunctionService;
 
-    public XsltFunctionLibrary( final ViewFunctionService viewFunctionService )
+    public XsltFunctionLibrary( final Supplier<ViewFunctionService> viewFunctionService )
     {
         this.viewFunctionService = viewFunctionService;
     }

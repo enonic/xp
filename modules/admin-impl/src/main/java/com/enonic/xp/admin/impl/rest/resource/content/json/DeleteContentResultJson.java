@@ -27,9 +27,9 @@ public class DeleteContentResultJson
         return failures;
     }
 
-    public void addSuccess( final String contentName )
+    public void addSuccess( final String id, final String contentName )
     {
-        successes.add( new Success( contentName ) );
+        successes.add( new Success( id, contentName ) );
     }
 
     public void addPending( final String contentName )
@@ -37,9 +37,9 @@ public class DeleteContentResultJson
         pendings.add( new Pending( contentName ) );
     }
 
-    public void addFailure( final String contentName, final String reason )
+    public void addFailure( final String id, final String contentName, final String reason )
     {
-        failures.add( new Failure( contentName, reason ) );
+        failures.add( new Failure( id, contentName, reason ) );
     }
 
     public class Success
@@ -47,14 +47,22 @@ public class DeleteContentResultJson
 
         private String name;
 
-        public Success( final String contentName )
+        private String id;
+
+        public Success( final String id, final String contentName )
         {
+            this.id = id;
             this.name = contentName;
         }
 
         public String getName()
         {
             return name;
+        }
+
+        public String getId()
+        {
+            return id;
         }
     }
 
@@ -80,9 +88,9 @@ public class DeleteContentResultJson
 
         private String reason;
 
-        public Failure( final String contentName, final String reason )
+        public Failure( final String id, final String contentName, final String reason )
         {
-            super( contentName );
+            super( id, contentName );
             this.reason = reason;
         }
 

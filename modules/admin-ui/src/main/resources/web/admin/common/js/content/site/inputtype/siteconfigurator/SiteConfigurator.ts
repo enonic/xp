@@ -24,13 +24,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private context: api.form.inputtype.InputTypeViewContext<any>;
 
-        private input: api.form.Input;
-
-        private propertyArray: PropertyArray;
-
         private comboBox: SiteConfiguratorComboBox;
-
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         private _displayValidationErrors: boolean;
 
@@ -53,8 +47,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             var siteConfigProvider = new SiteConfigProvider(propertyArray);
             this.comboBox = this.createComboBox(input, siteConfigProvider);
@@ -63,8 +56,10 @@ module api.content.site.inputtype.siteconfigurator {
 
             return this.doLoadModules(propertyArray).then(() => {
 
+                this.setLayoutInProgress(false);
+
                 this.comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
-                    this.propertyArray.remove(removed.getIndex());
+                    this.getPropertyArray().remove(removed.getIndex());
                     this.validate(false);
                 });
 
@@ -137,18 +132,12 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
+        protected getNumberOfValids(): number {
+            return this.comboBox.countSelected();
+        }
+
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-
             var recording = new api.form.inputtype.InputValidationRecording();
-
-            // check the number of occurrences
-            var numberOfValids = this.comboBox.countSelected();
-            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.setBreaksMinimumOccurrences(true);
-            }
-            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
-                recording.setBreaksMaximumOccurrences(true);
-            }
 
             this.comboBox.getSelectedOptionViews().forEach((view: SiteConfiguratorSelectedOptionView) => {
 
@@ -161,14 +150,7 @@ module api.content.site.inputtype.siteconfigurator {
                 }
             });
 
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
-            }
-
-            this.previousValidationRecording = recording;
-            return recording;
+            return super.validate(silent, recording);
         }
 
         giveFocus(): boolean {

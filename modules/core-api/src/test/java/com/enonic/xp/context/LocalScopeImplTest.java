@@ -2,7 +2,6 @@ package com.enonic.xp.context;
 
 import org.junit.Test;
 
-import com.enonic.xp.context.LocalScopeImpl;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 

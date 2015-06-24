@@ -343,7 +343,7 @@ public final class ContentResource
                     }
                     else
                     {
-                        jsonResult.addSuccess( content.getDisplayName() );
+                        jsonResult.addSuccess( content.getId().toString(), content.getDisplayName() );
                     }
 
                 } );
@@ -356,12 +356,12 @@ public final class ContentResource
                     Content content = contentService.getByPath( contentToDelete );
                     if ( content != null )
                     {
-                        jsonResult.addFailure( content.getDisplayName(), e.getMessage() );
+                        jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), e.getMessage() );
                     }
                 }
                 catch ( ContentNotFoundException | ContentAccessException ex )
                 {
-                    jsonResult.addFailure( deleteContent.getContentPath().toString(), e.getMessage() );
+                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e.getMessage() );
                 }
 
             }

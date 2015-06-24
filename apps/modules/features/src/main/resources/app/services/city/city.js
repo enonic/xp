@@ -1,3 +1,6 @@
+var portal = require('/lib/xp/portal');
+var contentSvc = require('/lib/xp/content');
+
 function handlePost(req) {
 
     var parentPath = req.formParams.parentPath;
@@ -15,7 +18,7 @@ function handlePost(req) {
     }
 
     function getCity(cityName) {
-        var result = execute('content.query', {
+        var result = contentSvc.query({
                 count: 1,
                 contentTypes: [
                     module.name + ':city'
@@ -29,7 +32,7 @@ function handlePost(req) {
 
     function modifyCity(city, cityName, cityLocation) {
 
-        var result = execute('content.modify', {
+        var result = contentSvc.modify({
             key: city._id,
             editor: function (c) {
                 c.data.cityLocation = cityLocation;
@@ -41,7 +44,7 @@ function handlePost(req) {
     }
 
     function createCity(cityName, cityLocation) {
-        var result = execute('content.create', {
+        var result = contentSvc.create({
             name: cityName,
             parentPath: parentPath,
             displayName: cityName,
@@ -57,7 +60,7 @@ function handlePost(req) {
     }
 
     return {
-        redirect: execute('portal.pageUrl', {
+        redirect: portal.pageUrl({
             path: parentPath + "?city=" + cityName
         })
     }

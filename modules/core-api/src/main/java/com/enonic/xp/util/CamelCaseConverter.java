@@ -67,9 +67,6 @@ public class CamelCaseConverter
         return s.substring( 0, 1 ).toUpperCase() + s.substring( 1 ).toLowerCase();
     }
 
-    /**
-     * Convert to camel case using DEFAULT_ILLEGAL_CHARS.
-     */
     public static String defaultConvert( final String s )
     {
         return new CamelCaseConverter( DEFAULT_ILLEGAL_CHARS ).toCamelCase( s );

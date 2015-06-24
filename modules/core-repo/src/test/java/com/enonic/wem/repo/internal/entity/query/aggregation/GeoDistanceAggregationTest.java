@@ -22,7 +22,6 @@ import com.enonic.xp.query.aggregation.DistanceRange;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class GeoDistanceAggregationTest

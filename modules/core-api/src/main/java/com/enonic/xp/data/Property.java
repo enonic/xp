@@ -286,9 +286,6 @@ public final class Property
         return getPath().elementCount() - 1;
     }
 
-    /**
-     * Copies this Property and adds it to the given PropertySet.
-     */
     public Property copyTo( final PropertySet destination )
     {
         final Value copiedValue = value.copy( destination.getTree() );

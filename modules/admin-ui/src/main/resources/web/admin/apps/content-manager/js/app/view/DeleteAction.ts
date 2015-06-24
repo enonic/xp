@@ -38,7 +38,7 @@ module app.view {
             }
 
             if (result.getDeleted().length == 1) {
-                api.notify.showFeedback('\"' + result.getDeleted()[0] + '\" deleted');
+                api.notify.showFeedback('\"' + result.getDeleted()[0].getName() + '\" deleted');
             } else if (result.getDeleted().length > 1) {
                 api.notify.showFeedback(result.getDeleted().length + ' items deleted');
             }

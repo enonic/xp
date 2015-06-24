@@ -1,8 +1,9 @@
-var thymeleaf = require('view/thymeleaf');
+var portal = require('/lib/xp/portal');
+var thymeleaf = require('/lib/xp/thymeleaf');
 
 exports.get = function(req) {
 
-    var content = execute('portal.getContent');
+    var content = portal.getContent();
     var view = resolve('tinymce.html');
 
     log.info("content %s", JSON.stringify(content, null, 4));

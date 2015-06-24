@@ -2,8 +2,6 @@ package com.enonic.xp.util;
 
 import org.junit.Test;
 
-import com.enonic.xp.util.CamelCaseConverter;
-
 import static org.junit.Assert.*;
 
 public class CamelCaseConverterTest

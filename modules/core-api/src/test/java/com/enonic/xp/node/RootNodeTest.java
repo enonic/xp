@@ -8,9 +8,6 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RootNode;
 
 import static org.junit.Assert.*;
 

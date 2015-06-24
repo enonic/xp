@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.resource.ResourceKey;
 
 public class ResourceKeyTest
 {

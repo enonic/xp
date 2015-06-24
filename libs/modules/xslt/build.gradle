@@ -1,3 +1,4 @@
 dependencies {
-    compile 'com.enonic.osgi.bundles:saxon-he:9.5.1_1'
+    compile 'net.sf.saxon:Saxon-HE:9.5.1-8'
+    testCompile 'junit:junit:4.10'
 }

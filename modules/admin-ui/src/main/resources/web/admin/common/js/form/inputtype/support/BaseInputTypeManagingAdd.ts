@@ -11,6 +11,14 @@ module api.form.inputtype.support {
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
+        private input: api.form.Input;
+
+        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
+
+        private layoutInProgress: boolean;
+
+        private propertyArray: PropertyArray;
+
         constructor(className: string) {
             super("input-type-view" + (className ? " " + className : ""));
         }
@@ -39,11 +47,14 @@ module api.form.inputtype.support {
         }
 
         /**
-         * Must be overridden by inheritors.
+         * Must be resolved by inheritors.
          */
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            this.input = input;
+            this.layoutInProgress = true;
+            this.propertyArray = propertyArray;
 
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+            return wemQ<void>(null);
         }
 
         hasValidUserInput(): boolean {
@@ -57,12 +68,31 @@ module api.form.inputtype.support {
 
         }
 
-        /**
-         * Must be overridden by inheritors.
-         */
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+        validate(silent: boolean = true, rec: api.form.inputtype.InputValidationRecording = null): api.form.inputtype.InputValidationRecording {
 
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+            var recording = rec || new api.form.inputtype.InputValidationRecording();
+
+            if (this.layoutInProgress) {
+                this.previousValidationRecording = recording;
+                return recording;
+            }
+
+            var numberOfValids = this.getNumberOfValids();
+
+            if (this.input.getOccurrences().minimumBreached(numberOfValids)) {
+                recording.setBreaksMinimumOccurrences(true);
+            }
+
+            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
+                recording.setBreaksMaximumOccurrences(true);
+            }
+
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
+            }
+
+            this.previousValidationRecording = recording;
+            return recording;
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
@@ -97,6 +127,24 @@ module api.form.inputtype.support {
             // Have to use stub here because it doesn't extend BaseInputTypeView
         }
 
+        protected getInput(): api.form.Input {
+            return this.input;
+        }
 
+        protected getNumberOfValids(): number {
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        protected isLayoutInProgress(): boolean {
+            return this.layoutInProgress;
+        }
+
+        protected setLayoutInProgress(layoutInProgress: boolean) {
+            this.layoutInProgress = layoutInProgress;
+        }
+
+        protected getPropertyArray(): PropertyArray {
+            return this.propertyArray;
+        }
     }
 }

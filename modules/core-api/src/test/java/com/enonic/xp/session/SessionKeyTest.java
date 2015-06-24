@@ -2,8 +2,6 @@ package com.enonic.xp.session;
 
 import org.junit.Test;
 
-import com.enonic.xp.session.SessionKey;
-
 import static org.junit.Assert.*;
 
 public class SessionKeyTest

@@ -68,9 +68,6 @@ public class ImageComponent
         return config.hasProperty( CAPTION ) && StringUtils.isNotBlank( config.getString( CAPTION ) );
     }
 
-    /**
-     * Returns value of property "caption" in config.
-     */
     public String getCaption()
     {
         return config.getString( CAPTION );

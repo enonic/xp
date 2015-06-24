@@ -40,6 +40,27 @@ public class PortalRequestTest
     }
 
     @Test
+    public void setBaseUrl()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( "", request.getBaseUrl() );
+
+        request.setBaseUrl( "baseUrl" );
+        assertEquals( "baseUrl", request.getBaseUrl() );
+    }
+
+
+    @Test
+    public void setServerUrl()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( "", request.getServerUrl() );
+
+        request.setServerUrl( "serverUrl" );
+        assertEquals( "serverUrl", request.getServerUrl() );
+    }
+
+    @Test
     public void addParam()
     {
         final PortalRequest request = new PortalRequest();

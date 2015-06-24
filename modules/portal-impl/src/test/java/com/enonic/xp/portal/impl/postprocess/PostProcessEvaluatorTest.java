@@ -15,7 +15,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static java.util.stream.Collectors.joining;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class PostProcessEvaluatorTest
 {

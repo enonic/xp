@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.impl.content.ContentPathNameGenerator;
-
 import static org.junit.Assert.*;
 
 public class ContentPathNameGeneratorTest

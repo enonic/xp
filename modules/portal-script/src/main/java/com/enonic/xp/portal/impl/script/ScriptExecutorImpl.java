@@ -12,12 +12,12 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.bean.BeanManager;
 import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
 import com.enonic.xp.portal.impl.script.function.ScriptFunctions;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
+import com.enonic.xp.portal.impl.script.service.ServiceRegistry;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -35,7 +35,9 @@ final class ScriptExecutorImpl
 
     private Map<ResourceKey, Object> exportsCache;
 
-    private BeanManager beanManager;
+    private ClassLoader classLoader;
+
+    private ServiceRegistry serviceRegistry;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -52,9 +54,14 @@ final class ScriptExecutorImpl
         this.globalMap = globalMap;
     }
 
-    public void setBeanManager( final BeanManager beanManager )
+    public void setClassLoader( final ClassLoader classLoader )
     {
-        this.beanManager = beanManager;
+        this.classLoader = classLoader;
+    }
+
+    public void setServiceRegistry( final ServiceRegistry serviceRegistry )
+    {
+        this.serviceRegistry = serviceRegistry;
     }
 
     public void initialize()
@@ -142,8 +149,14 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public BeanManager getBeanManager()
+    public ClassLoader getClassLoader()
     {
-        return this.beanManager;
+        return this.classLoader;
+    }
+
+    @Override
+    public ServiceRegistry getServiceRegistry()
+    {
+        return serviceRegistry;
     }
 }

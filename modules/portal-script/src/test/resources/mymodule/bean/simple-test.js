@@ -1,7 +1,5 @@
-var bean = __.getBean('mybean');
-assert.assertEquals(0, bean.count);
-assert.assertEquals(1, bean.count);
+var bean1 = __.newBean('com.enonic.xp.portal.impl.script.bean.MyTestBeanOne');
+assert.assertEquals('MyTestBeanOne', bean1.status);
 
-bean.count = 10;
-assert.assertEquals(10, bean.count);
-assert.assertEquals(11, bean.count);
+var bean2 = __.newBean('com.enonic.xp.portal.impl.script.bean.MyTestBeanTwo');
+assert.assertEquals('MyTestBeanTwo, mymodule:/bean/simple-test.js', bean2.status);

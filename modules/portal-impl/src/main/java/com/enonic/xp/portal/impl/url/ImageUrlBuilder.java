@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -45,12 +48,13 @@ final class ImageUrlBuilder
 
         if ( this.params.getFormat() != null )
         {
-            return name + "." + this.params.getFormat();
+            final String extension = Files.getFileExtension( name );
+            if ( StringUtils.isEmpty( extension ) || !this.params.getFormat().equals( extension ) )
+            {
+                return name + "." + this.params.getFormat();
+            }
         }
-        else
-        {
-            return name;
-        }
+        return name;
     }
 
     private ContentId resolveId()
