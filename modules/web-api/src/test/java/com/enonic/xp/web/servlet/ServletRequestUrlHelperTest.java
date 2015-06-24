@@ -82,6 +82,19 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
+    public void createServerUrl_x_forwarded_headers()
+    {
+        this.req.setServerName( "localhost" );
+        this.req.setScheme( "http" );
+        this.req.setServerPort( 8080 );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO, "https" );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_HOST, "127.0.0.1:123" );
+
+        final String serverUrl = ServletRequestUrlHelper.createServerUrl();
+        assertEquals( "https://127.0.0.1:123", serverUrl );
+    }
+
+    @Test
     public void rewriteUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
