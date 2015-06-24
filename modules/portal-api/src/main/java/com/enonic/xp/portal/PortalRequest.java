@@ -45,6 +45,8 @@ public final class PortalRequest
 
     private String baseUrl;
 
+    private String serverUrl;
+
     private Site site;
 
     private Content content;
@@ -62,6 +64,7 @@ public final class PortalRequest
         this.uri = "";
         this.baseUri = "";
         this.baseUrl = "";
+        this.serverUrl = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
@@ -224,5 +227,15 @@ public final class PortalRequest
     public void setBaseUrl( final String baseUrl )
     {
         this.baseUrl = baseUrl;
+    }
+
+    public String getServerUrl()
+    {
+        return this.serverUrl;
+    }
+
+    public void setServerUrl( final String serverUrl )
+    {
+        this.serverUrl = serverUrl;
     }
 }

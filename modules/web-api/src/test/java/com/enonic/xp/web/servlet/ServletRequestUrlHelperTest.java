@@ -71,6 +71,17 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
+    public void createServerUrl()
+    {
+        this.req.setServerName( "localhost" );
+        this.req.setScheme( "http" );
+        this.req.setServerPort( 8080 );
+
+        final String serverUrl = ServletRequestUrlHelper.createServerUrl();
+        assertEquals( "http://localhost:8080", serverUrl );
+    }
+
+    @Test
     public void rewriteUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
