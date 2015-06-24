@@ -101,4 +101,72 @@ public class ServletRequestUrlHelperTest
         final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/admin/page", uri3 );
     }
+
+    @Test
+    public void createBaseUrl_no_vhost()
+    {
+        VirtualHostHelper.setVirtualHost( this.req, null );
+
+        String baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "http://localhost/portal/draft", baseUrl );
+
+        this.req.setServerPort( 443 );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "http://localhost:443/portal/draft", baseUrl );
+
+        this.req.setScheme( "https" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/portal/draft", baseUrl );
+    }
+
+    @Test
+    public void createBaseUrl_vhost()
+    {
+        final VirtualHost vhost = Mockito.mock( VirtualHost.class );
+        VirtualHostHelper.setVirtualHost( this.req, vhost );
+
+        Mockito.when( vhost.getSource() ).thenReturn( "/main" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/" );
+
+        String baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "http://localhost/main/portal/draft", baseUrl );
+
+        this.req.setServerPort( 443 );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "http://localhost:443/main/portal/draft", baseUrl );
+
+        this.req.setScheme( "https" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/main/portal/draft", baseUrl );
+
+        //Calls the method with a virtual mapping /main -> /portal
+        Mockito.when( vhost.getSource() ).thenReturn( "/main" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/portal" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/main/draft", baseUrl );
+
+        //Calls the method with a virtual mapping /main -> /portal/draft
+        Mockito.when( vhost.getSource() ).thenReturn( "/main" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/portal/draft" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/main", baseUrl );
+
+        //Calls the method with a virtual mapping /main -> /portal/draft/path
+        Mockito.when( vhost.getSource() ).thenReturn( "/main" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/portal/draft/path" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/main", baseUrl );
+
+        //Calls the method with a virtual mapping / -> /portal/draft/path
+        Mockito.when( vhost.getSource() ).thenReturn( "/" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/portal/draft/path" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/", baseUrl );
+
+        //Calls the method with a virtual mapping /portal/draft/path -> /portal/draft/path
+        Mockito.when( vhost.getSource() ).thenReturn( "/portal/draft/path" );
+        Mockito.when( vhost.getTarget() ).thenReturn( "/portal/draft/path" );
+        baseUrl = ServletRequestUrlHelper.createBaseUrl( "portal", "draft", "/path/to/page" );
+        assertEquals( "https://localhost/portal/draft/path", baseUrl );
+    }
 }
