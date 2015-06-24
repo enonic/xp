@@ -12,6 +12,7 @@ module api.form.inputtype.text {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
     import ImageModalDialog = api.form.inputtype.text.tiny.ImageModalDialog;
+    import AnchorModalDialog = api.form.inputtype.text.tiny.AnchorModalDialog;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
 
@@ -77,7 +78,7 @@ module api.form.inputtype.text {
                 theme_url: 'modern',
 
                 toolbar: [
-                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap image link unlink | table | code"
+                    "styleselect | cut copy pastetext | bullist numlist outdent indent | charmap anchor image link unlink | table | code"
                 ],
                 menubar: false,
                 statusbar: false,
@@ -85,7 +86,8 @@ module api.form.inputtype.text {
                 plugins: ['autoresize', 'table', 'paste', 'charmap', 'code'],
                 external_plugins: {
                     "link": baseUrl + "/common/js/form/inputtype/text/plugins/link.js",
-                    "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js"
+                    "image": baseUrl + "/common/js/form/inputtype/text/plugins/image.js",
+                    "anchor": baseUrl + "/common/js/form/inputtype/text/plugins/anchor.js"
                 },
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
@@ -94,6 +96,7 @@ module api.form.inputtype.text {
                 setup: (editor) => {
                     editor.addCommand("openLinkDialog", this.openLinkDialog, this);
                     editor.addCommand("openImageDialog", this.openImageDialog, this);
+                    editor.addCommand("openAnchorDialog", this.openAnchorDialog, this);
                     editor.on('change', (e) => {
                         this.setPropertyValue(id, property);
                     });
@@ -262,7 +265,7 @@ module api.form.inputtype.text {
             return true;
         }
 
-        private openLinkDialog(config: TinyMCELink) {
+        private openLinkDialog(config: TinyMCEAnchor) {
             var linkModalDialog = new LinkModalDialog(config);
             linkModalDialog.open();
         }
@@ -270,6 +273,11 @@ module api.form.inputtype.text {
         private openImageDialog(config: TinyMCEImage) {
             var imageModalDialog = new ImageModalDialog(config, this.contentId);
             imageModalDialog.open();
+        }
+
+        private openAnchorDialog(config: TinyMCEAnchor) {
+            var anchorModalDialog = new AnchorModalDialog(config);
+            anchorModalDialog.open();
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
@@ -371,7 +379,7 @@ module api.form.inputtype.text {
         property: Property;
     }
 
-    export interface TinyMCELink {
+    export interface TinyMCEAnchor {
         editor: TinyMceEditor
         element: HTMLElement
         text: string

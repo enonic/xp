@@ -64,7 +64,9 @@ module api.form.inputtype.text.tiny {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
-            this.focusFirstField();
+            if (this.firstFocusField) {
+                this.focusFirstField();
+            }
         }
 
         protected createForm(formItems: FormItem[]): Form {

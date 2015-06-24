@@ -23,7 +23,7 @@ module api.form.inputtype.text.tiny {
         private static emailPrefix = "mailto:";
         private static subjectPrefix = "?subject=";
 
-        constructor(config: api.form.inputtype.text.TinyMCELink) {
+        constructor(config: api.form.inputtype.text.TinyMCEAnchor) {
             this.link = config.element;
             this.linkText = config.text;
 
