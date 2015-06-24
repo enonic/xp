@@ -44,6 +44,17 @@ module api.liveedit.text {
             this.onKeyDown(this.handleKey.bind(this));
             this.onKeyUp(this.handleKey.bind(this));
 
+            this.rootElement.getHTMLElement().onpaste = this.handlePasteEvent.bind(this);
+        }
+
+        private isAllTextSelected(): boolean {
+            return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
+        }
+
+        private handlePasteEvent(event) {
+            if (this.isAllTextSelected()) {
+                this.rootElement.getHTMLElement().innerHTML = "";
+            }
         }
 
         showTooltip() {

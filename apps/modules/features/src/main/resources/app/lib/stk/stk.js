@@ -1,3 +1,5 @@
+var portal = require('/lib/xp/portal');
+
 exports.data = require('data.js').data;
 exports.content = require('content.js').content;
 exports.view = require('view.js').view;
@@ -9,23 +11,23 @@ exports.log = function (data) {
 exports.serviceUrl = function (service, params, module) {
     var url;
     if (params && module) {
-        url = execute('portal.serviceUrl', {
+        url = portal.serviceUrl({
             service: service,
             params: params,
             module: module
         });
     } else if (params) {
-        url = execute('portal.serviceUrl', {
+        url = portal.serviceUrl({
             service: service,
             params: params
         });
     } else if(module) {
-        url = execute('portal.serviceUrl', {
+        url = portal.serviceUrl({
             service: service,
             module: module
         });
     } else {
-        url = execute('portal.serviceUrl', {
+        url = portal.serviceUrl({
             service: service
         });
     }
