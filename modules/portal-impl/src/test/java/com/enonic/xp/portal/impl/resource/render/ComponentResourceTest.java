@@ -104,5 +104,6 @@ public class ComponentResourceTest
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
         assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUri() );
+        assertEquals( "http://localhost/portal/master", jsRequest.getValue().getBaseUrl() );
     }
 }

@@ -1,6 +1,7 @@
 {
   "mode": "live",
   "headers": {},
+  "baseUrl": "",
   "method": "GET",
   "formParams": {},
   "params": {},

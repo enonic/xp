@@ -4,6 +4,7 @@
     "Language": "en",
     "Cookies": "mycookie=123; other=abc;"
   },
+  "baseUrl": "http://enonic.com/",
   "method": "GET",
   "formParams": {},
   "params": {

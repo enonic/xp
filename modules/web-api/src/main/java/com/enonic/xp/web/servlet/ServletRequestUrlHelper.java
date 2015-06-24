@@ -80,7 +80,7 @@ public final class ServletRequestUrlHelper
         return createBaseUrl( ServletRequestHolder.getRequest(), baseUri, branch, contentPath );
     }
 
-    private static String createBaseUrl( final HttpServletRequest req, final String baseUri, final String branch, final String contentPath )
+    public static String createBaseUrl( final HttpServletRequest req, final String baseUri, final String branch, final String contentPath )
     {
         final String host = createHost( req );
         final String normalizedBaseUri = normalizePath( baseUri );

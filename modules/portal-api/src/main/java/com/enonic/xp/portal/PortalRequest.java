@@ -43,6 +43,8 @@ public final class PortalRequest
 
     private String baseUri;
 
+    private String baseUrl;
+
     private Site site;
 
     private Content content;
@@ -59,6 +61,7 @@ public final class PortalRequest
     {
         this.uri = "";
         this.baseUri = "";
+        this.baseUrl = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
@@ -211,5 +214,15 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
+    }
+
+    public String getBaseUrl()
+    {
+        return this.baseUrl;
+    }
+
+    public void setBaseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
     }
 }
