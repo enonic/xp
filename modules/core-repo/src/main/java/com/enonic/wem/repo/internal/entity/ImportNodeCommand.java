@@ -20,7 +20,7 @@ public class ImportNodeCommand
 
     private ImportNodeCommand( Builder builder )
     {
-        super(builder);
+        super( builder );
         insertManualStrategy = builder.insertManualStrategy;
         binaryAttachments = builder.binaryAttachments;
         importNode = builder.importNode;
@@ -46,8 +46,8 @@ public class ImportNodeCommand
 
     private Node createNode()
     {
-
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
+            setNodeId( this.importNode.id() ).
             childOrder( this.importNode.getChildOrder() ).
             setBinaryAttachments( this.binaryAttachments ).
             data( this.importNode.data() ).
@@ -64,7 +64,8 @@ public class ImportNodeCommand
     }
 
 
-    public static final class Builder extends AbstractNodeCommand.Builder<Builder>
+    public static final class Builder
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private InsertManualStrategy insertManualStrategy;
 

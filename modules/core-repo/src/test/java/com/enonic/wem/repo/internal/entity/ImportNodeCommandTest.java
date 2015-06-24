@@ -11,6 +11,10 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -71,6 +75,59 @@ public class ImportNodeCommandTest
             execute();
 
         assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
+    }
+
+    @Test
+    public void import_with_id()
+        throws Exception
+    {
+        final Node importNode = Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( new PropertyTree() ).
+            build();
+
+        importNode( importNode );
+
+        final Node abc = getNodeById( NodeId.from( "abc" ) );
+
+        assertNotNull( abc );
+    }
+
+
+    @Test
+    public void keep_permissions()
+        throws Exception
+    {
+        final AccessControlList aclList = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( PrincipalKey.ofAnonymous() ).
+                allowAll().
+                deny( Permission.DELETE ).
+                build() ).
+            add( AccessControlEntry.create().
+                principal( TEST_DEFAULT_USER.getKey() ).
+                allowAll().
+                deny( Permission.DELETE ).
+                build() ).
+            build();
+
+        final Node importNode = Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( new PropertyTree() ).
+            permissions( aclList ).
+            build();
+
+        importNode( importNode );
+
+        final Node abc = getNodeById( NodeId.from( "abc" ) );
+
+        assertNotNull( abc );
+
+        assertEquals( aclList, abc.getPermissions() );
     }
 
     private Node importNode( final Node importNode )
