@@ -1,5 +1,5 @@
 var portal = require('/lib/xp/portal');
-var thymeleaf = require('view/thymeleaf');
+var thymeleaf = require('/lib/xp/thymeleaf');
 var parentPath = './';
 var view = resolve(parentPath + 'content.page.html');
 var stk = require('stk/stk');
@@ -21,13 +21,13 @@ function handleGet(req) {
 
     var params = {
         post: content.data,
-        pageTemplate: content.type == 'portal:page-template' ? true : false,
+        pageTemplate: content.type === 'portal:page-template',
         site: site,
         content: content,
         postUrl: postUrl
     };
 
-    return stk.view.render(view, params);
+    return thymeleaf.render(view, params);
 }
 
 exports.get = handleGet;

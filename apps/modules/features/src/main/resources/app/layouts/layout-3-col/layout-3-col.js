@@ -1,5 +1,5 @@
 var portal = require('/lib/xp/portal');
-var thymeleaf = require('/lib/view/thymeleaf');
+var thymeleaf = require('/lib/xp/thymeleaf');
 
 exports.get = function (req) {
     var editMode = req.mode == 'edit';
