@@ -5,7 +5,7 @@ var service = require('service.js').service;
 
 function handleGet(req) {
 
-    var content = execute('portal.getContent');
+    var content = portal.getContent();
 
     var currentPage = portal.pageUrl({
         path: content._path

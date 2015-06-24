@@ -1,3 +1,5 @@
+var portal = require('/lib/xp/portal');
+
 exports.content = {};
 
 /**
@@ -8,7 +10,7 @@ exports.content = {};
 exports.content.get = function (key) {
     var content;
     if (typeof key == 'undefined') {
-        content = execute('portal.getContent');
+        content = portal.getContent();
     }
     else {
         content = execute('content.get', {
@@ -53,7 +55,7 @@ exports.content.getPath = function(contentKey, noDefault) {
     if(noDefault) {
         defaultContent._path = null;
     } else {
-        defaultContent = execute('portal.getContent');
+        defaultContent = portal.getContent();
     }
 
     var contentPath;

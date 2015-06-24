@@ -1,3 +1,5 @@
+var portal = require('/lib/xp/portal');
+
 function isInteger(x) {
     return Math.round(x) === x;
 }
@@ -56,7 +58,7 @@ function menuItemToJson(content, levels) {
 
 exports.getSiteMenu = function (levels) {
     levels = (isInteger(levels) ? levels : 1);
-    var site = execute('portal.getSite');
+    var site = portal.getSite();
     if (!site) {
         return [];
     }

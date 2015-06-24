@@ -90,7 +90,7 @@ exports.post = function (req) {
 };
 
 function getImageIds() {
-    var component = execute('portal.getComponent');
+    var component = portal.getComponent();
 
     var imageFolderId = component.config.imageFolder;
     var imageIds = [];

@@ -1,11 +1,12 @@
+var portal = require('/lib/xp/portal');
 var thymeleaf = require('view/thymeleaf');
 var parentPath = './';
 var view = resolve(parentPath + 'content.page.html');
 var stk = require('stk/stk');
 
 function handleGet(req) {
-    var site = execute('portal.getSite');
-    var content = execute('portal.getContent');
+    var site = portal.getSite();
+    var content = portal.getContent();
     var postUrl = stk.serviceUrl("content", {});
 
     if (req.params && req.params.contentId) {
