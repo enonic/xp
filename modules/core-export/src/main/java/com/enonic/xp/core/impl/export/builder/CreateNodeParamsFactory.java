@@ -52,7 +52,8 @@ public class CreateNodeParamsFactory
             data( this.newNode.data() ).
             indexConfigDocument( this.newNode.getIndexConfigDocument() ).
             dryRun( this.dryRun ).
-            inheritPermissions( true ).
+            inheritPermissions( this.newNode.inheritsPermissions() ).
+            permissions( this.newNode.getPermissions() ).
             setBinaryAttachments( binaryAttachments );
 
         if ( importNodeIds && ( this.newNode.id() != null ) )

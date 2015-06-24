@@ -15,6 +15,9 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.xml.schema.SchemaNamespaces;
@@ -60,9 +63,11 @@ public final class XmlNodeSerializer
 
         serializeValueElement( "childOrder", this.node.getChildOrder() );
         serializeValueElement( "nodeType", this.node.getNodeType() );
+        serializeValueElement( "inheritPermissions", this.node.inheritsPermissions() );
 
         serializeData( this.node.data() );
         serialize( this.node.getIndexConfigDocument() );
+        serialize( this.node.getPermissions() );
     }
 
     private void serializeData( final PropertyTree value )
@@ -119,6 +124,59 @@ public final class XmlNodeSerializer
 
         serializeValueElement( "path", value.getPath() );
         this.builder.end();
+    }
+
+
+    private void serialize( final AccessControlList accessControlList )
+    {
+        if ( accessControlList == null )
+        {
+            return;
+        }
+
+        this.builder.start( "accessControlList" );
+        for ( AccessControlEntry accessControlEntry : accessControlList )
+        {
+            serialize( accessControlEntry );
+        }
+        this.builder.end();
+    }
+
+    private void serialize( final AccessControlEntry accessControlEntry )
+    {
+
+        if ( accessControlEntry == null )
+        {
+            return;
+        }
+
+        this.builder.start( "accessControlEntry" );
+
+        serializeValueElement( "principal", accessControlEntry.getPrincipal() );
+
+        if ( accessControlEntry.getAllowedPermissions() != null )
+        {
+            this.builder.start( "allowedPermissions" );
+            serialize( accessControlEntry.getAllowedPermissions() );
+            this.builder.end();
+        }
+
+        if ( accessControlEntry.getDeniedPermissions() != null )
+        {
+            this.builder.start( "deniedPermissions" );
+            serialize( accessControlEntry.getDeniedPermissions() );
+            this.builder.end();
+        }
+
+        this.builder.end();
+    }
+
+    private void serialize( final Iterable<Permission> permissions )
+    {
+        for ( Permission permission : permissions )
+        {
+            serializeValueElement( "permission", permission );
+        }
     }
 
     private void serializeProperty( final Property value )
