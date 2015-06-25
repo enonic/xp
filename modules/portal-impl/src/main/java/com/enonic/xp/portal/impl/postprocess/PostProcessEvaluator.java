@@ -33,7 +33,7 @@ final class PostProcessEvaluator
     {
     }
 
-    public String evaluate()
+    public PortalResponse evaluate()
     {
         HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
 
@@ -47,7 +47,7 @@ final class PostProcessEvaluator
             htmlBlocks = processContributions( htmlBlocks );
         }
 
-        return htmlBlocks.toString();
+        return PortalResponse.create( this.portalResponse ).body( htmlBlocks.toString() ).build();
     }
 
     private HtmlBlocks processInstructions( final HtmlBlocks htmlBlocks )
@@ -78,10 +78,15 @@ final class PostProcessEvaluator
     {
         for ( final PostProcessInstruction instruction : this.instructions )
         {
-            final String result = instruction.evaluate( this.portalRequest, content );
-            if ( result != null )
+            final PortalResponse instructionResponse = instruction.evaluate( this.portalRequest, content );
+            if ( instructionResponse != null )
             {
-                return new HtmlBlockParser().parse( result );
+                if ( instructionResponse.hasContributions() )
+                {
+                    this.portalResponse = PortalResponse.create( this.portalResponse ).contributionsFrom( instructionResponse ).build();
+                }
+                final String resultBody = instructionResponse.getAsString();
+                return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
             }
         }
         return null;

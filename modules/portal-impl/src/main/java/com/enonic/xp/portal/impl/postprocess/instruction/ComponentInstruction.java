@@ -47,7 +47,7 @@ public final class ComponentInstruction
     }
 
     @Override
-    public String evaluate( final PortalRequest portalRequest, final String instruction )
+    public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
         if ( !instruction.startsWith( "COMPONENT " ) )
         {
@@ -64,7 +64,7 @@ public final class ComponentInstruction
         return renderComponent( portalRequest, path );
     }
 
-    private String renderComponent( final PortalRequest portalRequest, final String componentSelector )
+    private PortalResponse renderComponent( final PortalRequest portalRequest, final String componentSelector )
     {
         final Component component;
         if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
@@ -82,7 +82,7 @@ public final class ComponentInstruction
         return renderComponent( portalRequest, component );
     }
 
-    private String renderComponent( final PortalRequest portalRequest, final Component component )
+    private PortalResponse renderComponent( final PortalRequest portalRequest, final Component component )
     {
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
@@ -90,8 +90,7 @@ public final class ComponentInstruction
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
 
-        final PortalResponse response = renderer.render( component, portalRequest );
-        return response.getAsString();
+        return renderer.render( component, portalRequest );
     }
 
     private Component resolveComponent( final PortalRequest portalRequest, final ComponentPath path )

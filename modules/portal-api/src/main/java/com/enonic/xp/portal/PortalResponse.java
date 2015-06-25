@@ -1,12 +1,12 @@
 package com.enonic.xp.portal;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -18,29 +18,29 @@ public final class PortalResponse
 
     public final static int STATUS_METHOD_NOT_ALLOWED = 405;
 
-    private int status;
+    private final int status;
 
-    private String contentType;
+    private final String contentType;
 
-    private Object body;
+    private final Object body;
 
-    private final Map<String, String> headers;
+    private final ImmutableMap<String, String> headers;
 
-    private final Map<String, Object> options;
+    private final ImmutableMap<String, Object> options;
 
-    private boolean postProcess;
+    private final boolean postProcess;
 
-    private final ListMultimap<HtmlTag, String> contributions;
+    private final ImmutableListMultimap<HtmlTag, String> contributions;
 
     public PortalResponse( final Builder builder )
     {
         this.status = builder.status;
         this.contentType = builder.contentType;
         this.body = builder.body;
-        this.headers = builder.headers;
+        this.headers = builder.headers.build();
         this.postProcess = builder.postProcess;
-        this.contributions = builder.contributions;
-        this.options = builder.options;
+        this.contributions = builder.contributions.build();
+        this.options = builder.options.build();
     }
 
     public int getStatus()
@@ -58,7 +58,7 @@ public final class PortalResponse
         return this.body;
     }
 
-    public Map<String, String> getHeaders()
+    public ImmutableMap<String, String> getHeaders()
     {
         return this.headers;
     }
@@ -68,12 +68,17 @@ public final class PortalResponse
         return postProcess;
     }
 
-    public List<String> getContributions( final HtmlTag tag )
+    public ImmutableList<String> getContributions( final HtmlTag tag )
     {
-        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : Collections.emptyList();
+        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : ImmutableList.of();
     }
 
-    public Map<String, Object> getOptions()
+    public boolean hasContributions()
+    {
+        return !this.contributions.isEmpty();
+    }
+
+    public ImmutableMap<String, Object> getOptions()
     {
         return options;
     }
@@ -90,38 +95,42 @@ public final class PortalResponse
 
     public static Builder create( final PortalResponse source )
     {
-        return new Builder().
-            body( source.body ).
-            headers( source.headers ).
-            contentType( source.contentType ).
-            postProcess( source.postProcess ).
-            contributions( source.contributions ).
-            status( source.status ).
-            options( source.options );
+        return new Builder( source );
     }
 
     public static class Builder
     {
         private Object body;
 
-        private Map<String, String> headers;
+        private ImmutableMap.Builder<String, String> headers;
 
-        private Map<String, Object> options;
+        private ImmutableMap.Builder<String, Object> options;
 
         private String contentType = "text/plain; charset=utf-8";
 
         private boolean postProcess = true;
 
-        private ListMultimap<HtmlTag, String> contributions;
+        private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
 
         private int status = STATUS_OK;
 
+        private Builder()
         {
             clearHeaders();
             clearOptions();
             clearContributions();
         }
 
+        private Builder( final PortalResponse source )
+        {
+            this.body = source.body;
+            headers( source.headers );
+            options( source.options );
+            this.contentType = source.contentType;
+            this.postProcess = source.postProcess;
+            contributions( source.contributions );
+            this.status = source.status;
+        }
 
         public Builder body( final Object body )
         {
@@ -131,13 +140,17 @@ public final class PortalResponse
 
         public Builder headers( final Map<String, String> headers )
         {
-            this.headers = headers;
+            if ( this.headers == null )
+            {
+                clearHeaders();
+            }
+            this.headers.putAll( headers );
             return this;
         }
 
         public Builder header( final String key, final String value )
         {
-            if ( headers == null )
+            if ( this.headers == null )
             {
                 clearHeaders();
             }
@@ -147,13 +160,17 @@ public final class PortalResponse
 
         public Builder clearHeaders()
         {
-            headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+            headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
             return this;
         }
 
         public Builder options( final Map<String, Object> options )
         {
-            this.options = options;
+            if ( this.options == null )
+            {
+                clearOptions();
+            }
+            this.options.putAll( options );
             return this;
         }
 
@@ -161,7 +178,7 @@ public final class PortalResponse
         {
             if ( this.options == null )
             {
-                clearHeaders();
+                clearOptions();
             }
             this.options.put( key, value );
             return this;
@@ -169,7 +186,7 @@ public final class PortalResponse
 
         public Builder clearOptions()
         {
-            options = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+            options = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
             return this;
         }
 
@@ -194,7 +211,11 @@ public final class PortalResponse
 
         public Builder contributions( final ListMultimap<HtmlTag, String> contributions )
         {
-            this.contributions = contributions;
+            if ( this.contributions == null )
+            {
+                clearContributions();
+            }
+            this.contributions.putAll( contributions );
             return this;
         }
 
@@ -208,9 +229,19 @@ public final class PortalResponse
             return this;
         }
 
+        public Builder contributionsFrom( final PortalResponse portalResponse )
+        {
+            if ( this.contributions == null )
+            {
+                clearContributions();
+            }
+            this.contributions.putAll( portalResponse.contributions );
+            return this;
+        }
+
         public Builder clearContributions()
         {
-            this.contributions = ArrayListMultimap.create();
+            this.contributions = ImmutableListMultimap.builder();
             return this;
         }
 

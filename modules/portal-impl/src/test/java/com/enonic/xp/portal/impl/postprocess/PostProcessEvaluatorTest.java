@@ -11,6 +11,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
@@ -28,8 +29,9 @@ public class PostProcessEvaluatorTest
         evaluator.input = readResource( "postProcessEvalSource1.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = Collections.emptyList();
-        final String result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), result );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), result.getAsString() );
     }
 
     @Test
@@ -56,8 +58,9 @@ public class PostProcessEvaluatorTest
         evaluator.input = readResource( "postProcessEvalSource2.html" );
         evaluator.injections = Lists.newArrayList( contributionsInjection );
         evaluator.instructions = Collections.emptyList();
-        final String result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
     }
 
     @Test
@@ -95,8 +98,9 @@ public class PostProcessEvaluatorTest
         evaluator.input = readResource( "postProcessEvalSource4.html" );
         evaluator.injections = Lists.newArrayList( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
-        final String result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), result );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), result.getAsString() );
     }
 
     @Test
@@ -134,8 +138,9 @@ public class PostProcessEvaluatorTest
         evaluator.input = readResource( "postProcessEvalSource5.html" );
         evaluator.injections = Lists.newArrayList( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
-        final String result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), result );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), result.getAsString() );
     }
 
     @Test
@@ -145,14 +150,18 @@ public class PostProcessEvaluatorTest
         final PostProcessInstruction uppercaseInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "UPPERCASE" ) )
             {
-                return StringUtils.substringAfter( instruction, "UPPERCASE " ).toUpperCase();
+                return PortalResponse.create().
+                    body( StringUtils.substringAfter( instruction, "UPPERCASE " ).toUpperCase() ).
+                    build();
             }
             return null;
         };
         final PostProcessInstruction expandInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "EXPAND" ) )
             {
-                return "<!--#UPPERCASE " + StringUtils.substringAfter( instruction, "EXPAND " ) + "-->";
+                return PortalResponse.create().
+                    body( "<!--#UPPERCASE " + StringUtils.substringAfter( instruction, "EXPAND " ) + "-->" ).
+                    build();
             }
             return null;
         };
@@ -161,8 +170,9 @@ public class PostProcessEvaluatorTest
         evaluator.input = readResource( "postProcessEvalSource3.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = Lists.newArrayList( uppercaseInstruction, expandInstruction );
-        final String result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result );
+        evaluator.portalResponse = PortalResponse.create().build();
+        final PortalResponse result = evaluator.evaluate();
+        assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result.getAsString() );
     }
 
     private void assertEqualsTrimmed( final String expected, final String actual )
