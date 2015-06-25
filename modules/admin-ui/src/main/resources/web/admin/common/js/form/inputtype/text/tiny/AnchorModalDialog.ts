@@ -5,16 +5,13 @@ module api.form.inputtype.text.tiny {
 
     export class AnchorModalDialog extends ModalDialog {
 
-        private anchor: HTMLElement;
+        constructor(editor: TinyMceEditor) {
 
-        constructor(config: api.form.inputtype.text.TinyMCEAnchor) {
-            this.anchor = config.element;
-
-            super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
+            super(editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
         }
 
         protected getMainFormItems(): FormItem[] {
-            var nameField = this.createFormItem("name", "Name", Validators.required, this.getAnchorName());
+            var nameField = this.createFormItem("name", "Name", Validators.required);
 
             this.setFirstFocusField(nameField.getInput());
 
@@ -24,9 +21,9 @@ module api.form.inputtype.text.tiny {
         }
 
         protected initializeActions() {
-            this.addAction(new api.ui.Action(this.anchor ? "Update" : "Insert").onExecuted(() => {
+            this.addAction(new api.ui.Action("Insert").onExecuted(() => {
                 if (this.validate()) {
-                    this.createAnchor();
+                    this.insertAnchor();
                     this.close();
                 }
             }));
@@ -43,22 +40,13 @@ module api.form.inputtype.text.tiny {
             return anchorEl;
         }
 
-        private getAnchorName(): string {
-            return this.anchor ? this.anchor.getAttribute("id") : "";
-        }
-
         private getName(): string {
             return (<api.ui.text.TextInput>this.getFieldById("name")).getValue();
         }
 
-        private createAnchor(): void {
-            if (this.anchor) {
-                this.anchor.setAttribute("id", this.getName());
-            }
-            else {
-                var anchorEl = this.createAnchorEl();
-                this.getEditor().insertContent(anchorEl.toString());
-            }
+        private insertAnchor(): void {
+            var anchorEl = this.createAnchorEl();
+            this.getEditor().insertContent(anchorEl.toString());
         }
     }
 }

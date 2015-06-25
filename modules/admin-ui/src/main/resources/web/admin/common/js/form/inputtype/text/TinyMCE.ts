@@ -275,8 +275,8 @@ module api.form.inputtype.text {
             imageModalDialog.open();
         }
 
-        private openAnchorDialog(config: TinyMCEAnchor) {
-            var anchorModalDialog = new AnchorModalDialog(config);
+        private openAnchorDialog(editor: TinyMceEditor) {
+            var anchorModalDialog = new AnchorModalDialog(editor);
             anchorModalDialog.open();
         }
 
