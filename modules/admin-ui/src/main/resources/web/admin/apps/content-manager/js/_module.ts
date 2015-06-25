@@ -7,6 +7,7 @@
 ///<reference path='app/remove/_module.ts' />
 ///<reference path='app/create/_module.ts' />
 ///<reference path='app/view/_module.ts' />
+///<reference path='app/publish/_module.ts' />
 
 ///<reference path='app/wizard/action/_module.ts' />
 ///<reference path='app/wizard/page/contextwindow/insert/_module.ts' />

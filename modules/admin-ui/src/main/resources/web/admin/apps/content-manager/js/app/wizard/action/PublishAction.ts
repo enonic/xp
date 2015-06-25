@@ -21,7 +21,7 @@ module app.wizard.action {
                     wizard.updatePersistedItem().
                         then((content) => {
                             if (content) {
-                                new PublishContentRequest(new ContentId(content.getId())).send().done(PublishContentRequest.feedback);
+                                new app.browse.ContentPublishPromptEvent([content]).fire();
                             }
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason)

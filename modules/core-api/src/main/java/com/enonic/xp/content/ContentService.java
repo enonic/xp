@@ -36,6 +36,8 @@ public interface ContentService
 
     PushContentsResult push( PushContentParams params );
 
+    ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params );
+
     Content duplicate( DuplicateContentParams params );
 
     Content move( MoveContentParams params );

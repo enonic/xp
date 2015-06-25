@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.query.expr.OrderExpr;
 
 @Beta
 public class NodeVersionDiffQuery
@@ -14,6 +15,8 @@ public class NodeVersionDiffQuery
     private final Branch source;
 
     private final Branch target;
+
+    private final OrderExpr orderExpr;
 
     private final int size;
 
@@ -27,6 +30,7 @@ public class NodeVersionDiffQuery
         target = builder.target;
         size = builder.size;
         from = builder.from;
+        this.orderExpr = builder.orderExpr;
     }
 
     public static Builder create()
@@ -59,6 +63,11 @@ public class NodeVersionDiffQuery
         return nodePath;
     }
 
+    public OrderExpr getOrderExpr()
+    {
+        return orderExpr;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -72,6 +81,8 @@ public class NodeVersionDiffQuery
         private int size = -1;
 
         private int from = 0;
+
+        private OrderExpr orderExpr;
 
         private Builder()
         {
@@ -110,6 +121,12 @@ public class NodeVersionDiffQuery
         public Builder from( final int from )
         {
             this.from = from;
+            return this;
+        }
+
+        public Builder orderExpr( final OrderExpr orderExpr )
+        {
+            this.orderExpr = orderExpr;
             return this;
         }
 

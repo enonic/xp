@@ -6,6 +6,7 @@ import org.junit.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffQuery;
@@ -213,6 +214,74 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         //assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
+    }
+
+    @Test
+    public void assure_correct_diff_order_when_there_are_children()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "dddd" ) ).
+            parent( NodePath.ROOT ).
+            name( "dddd" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "ccc" ) ).
+            parent( node1.path() ).
+            name( "ccc" ).
+            build() );
+
+        final Node node1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "11" ) ).
+            parent( node1_1.path() ).
+            name( "11" ).
+            build() );
+
+        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "_a" ) ).
+            parent( node1_1_1.path() ).
+            name( "_a" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node1_1_1_1.id(), node1_1_1.id(), node1_1.id(), node2.id() );
+
+        CTX_OTHER.runWith( () -> doUpdateNode( node1_1_1_1 ) );
+        CTX_OTHER.runWith( () -> doUpdateNode( node1_1_1 ) );
+        CTX_OTHER.runWith( () -> doUpdateNode( node1_1 ) );
+        CTX_OTHER.runWith( () -> doUpdateNode( node1 ) );
+
+        NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1.path() );
+
+        assertEquals( 4, result.getNodesWithDifferences().getSize() );
+
+        int counter = 0;
+        for ( final NodeId nodeId : result.getNodesWithDifferences() )
+        {
+            if ( counter == 0 )
+            {
+                assertEquals( "dddd", nodeId.toString() );
+            }
+            else if ( counter == 1 )
+            {
+                assertEquals( "ccc", nodeId.toString() );
+            }
+            else if ( counter == 2 )
+            {
+                assertEquals( "11", nodeId.toString() );
+            }
+            else if ( counter == 3 )
+            {
+                assertEquals( "_a", nodeId.toString() );
+            }
+
+            counter++;
+        }
     }
 
     @Test
