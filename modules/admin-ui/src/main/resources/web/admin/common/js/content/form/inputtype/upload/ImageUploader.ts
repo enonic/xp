@@ -55,6 +55,12 @@ module api.content.form.inputtype.upload {
                 new api.content.GetContentByIdRequest(this.getContext().contentId).
                     sendAndParse().
                     then((content: api.content.Content) => {
+                        var metaData = content.getContentData().getProperty('metadata');
+                        if (metaData && ValueTypes.DATA.equals(metaData.getType())) {
+                            var width = metaData.getPropertySet().getProperty('imageWidth');
+                            var height = metaData.getPropertySet().getProperty('imageHeight');
+                            this.imageUploader.setOriginalDimensions(width ? width.getString() : '0', height ? height.getString() : '0');
+                        }
                         this.imageUploader.setValue(content.getId());
                         var focalPoint = this.getFocalPoint(content);
                         if (focalPoint) {

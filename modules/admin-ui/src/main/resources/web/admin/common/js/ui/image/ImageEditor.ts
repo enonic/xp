@@ -79,6 +79,7 @@ module api.ui.image {
         constructor(src?: string) {
             super('image-editor');
 
+            var toolbar = this.createToolbar();
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
@@ -86,6 +87,7 @@ module api.ui.image {
             this.image.onLoaded((event: UIEvent) => {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
+                    this.appendChild(toolbar);
                     this.updateImageDimensions();
                 }
             });
@@ -136,7 +138,7 @@ module api.ui.image {
 
             this.frame.appendChild(this.canvas);
 
-            this.appendChildren(this.frame, this.createToolbar());
+            this.appendChild(this.frame);
 
             if (src) {
                 this.setSrc(src);
@@ -164,6 +166,10 @@ module api.ui.image {
 
         getSrc(): string {
             return this.image.getSrc();
+        }
+
+        getImage(): ImgEl {
+            return this.image;
         }
 
         private setImageClipPath(path: string) {
