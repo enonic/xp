@@ -21,7 +21,10 @@ module api.form.inputtype.text.tiny {
         }
 
         protected initializeActions() {
-            this.addAction(new api.ui.Action("Insert").onExecuted(() => {
+            var submitAction = new api.ui.Action("Insert", "enter");
+            this.setSubmitAction(submitAction);
+
+            this.addAction(submitAction.onExecuted(() => {
                 if (this.validate()) {
                     this.insertAnchor();
                     this.close();

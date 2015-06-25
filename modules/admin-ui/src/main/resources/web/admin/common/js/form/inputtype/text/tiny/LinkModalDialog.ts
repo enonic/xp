@@ -191,7 +191,10 @@ module api.form.inputtype.text.tiny {
         }
 
         protected initializeActions() {
-            this.addAction(new api.ui.Action(this.link ? "Update" : "Insert").onExecuted(() => {
+            var submitAction = new api.ui.Action(this.link ? "Update" : "Insert", "enter");
+            this.setSubmitAction(submitAction);
+
+            this.addAction(submitAction.onExecuted(() => {
                 if (this.validate()) {
                     this.createLink();
                     this.close();
@@ -204,14 +207,24 @@ module api.form.inputtype.text.tiny {
         private createContentSelector(id: string, label: string, value: string,
                                       contentTypeNames?: api.schema.content.ContentTypeName[]): FormItem {
             var loader = new api.content.ContentSummaryLoader(),
-                contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
+                contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
+                contentSelectorComboBox = contentSelector.getComboBox();
 
             if (contentTypeNames) {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
 
-            contentSelector.getComboBox().onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustDropDown(contentSelector.getComboBox().getInput(), event.getDropdownElement().getEl());
+            contentSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+                this.adjustDropDown(contentSelectorComboBox.getInput(), event.getDropdownElement().getEl());
+            });
+
+
+            contentSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isEscKey(e) && !contentSelectorComboBox.isDropdownShown()) {
+                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
 
             return this.createFormItem(id, label, Validators.required, value, <api.dom.FormItemEl>contentSelector);

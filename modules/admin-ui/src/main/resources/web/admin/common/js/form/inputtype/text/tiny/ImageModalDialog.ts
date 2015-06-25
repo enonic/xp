@@ -77,7 +77,9 @@ module api.form.inputtype.text.tiny {
             });
 
             imageSelectorComboBox.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustSelectorDropDown(imageSelectorComboBox.getInput(), event.getDropdownElement().getEl());
+                if (event.isExpanded()) {
+                    this.adjustSelectorDropDown(imageSelectorComboBox.getInput(), event.getDropdownElement().getEl());
+                }
             });
 
             imageSelectorComboBox.onOptionDeselected(() => {
@@ -85,6 +87,14 @@ module api.form.inputtype.text.tiny {
                 this.removePreview();
                 this.uploader.show();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
+            });
+
+            imageSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isEscKey(e) && !imageSelectorComboBox.isDropdownShown()) {
+                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
 
             return formItem;
@@ -235,7 +245,9 @@ module api.form.inputtype.text.tiny {
         }
 
         protected initializeActions() {
-            this.addAction(new api.ui.Action(this.imageElement ? "Update" : "Insert").onExecuted(() => {
+            var submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert", "enter");
+            this.setSubmitAction(submitAction);
+            this.addAction(submitAction.onExecuted(() => {
                 if (this.validate()) {
                     this.createImageTag();
                     this.close();
