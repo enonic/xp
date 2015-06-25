@@ -248,7 +248,8 @@ module api.content.form.inputtype.image {
                 showResult: false,
                 maximumOccurrences: this.getRemainingOccurrences(),
                 allowMultiSelection: multiSelection,
-                scaleWidth: false
+                scaleWidth: false,
+                deferred: true
             });
 
             this.uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
