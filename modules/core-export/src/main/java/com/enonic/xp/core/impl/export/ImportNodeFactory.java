@@ -32,11 +32,11 @@ public class ImportNodeFactory
 
     public Node execute()
     {
-        // FIX INHERIT PERMISSIONS
         return Node.newNode( serializedNode ).
             parentPath( this.nodeImportPath.getParentPath() ).
             name( getNodeName() ).
-            inheritPermissions( true ).
+            inheritPermissions( serializedNode.inheritsPermissions() ).
+            permissions( serializedNode.getPermissions() ).
             id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
             manualOrderValue( getManualOrderValue() ).
             timestamp( serializedNode.getTimestamp() ).
@@ -101,7 +101,8 @@ public class ImportNodeFactory
             return this;
         }
 
-        private void validate() {
+        private void validate()
+        {
 
             Preconditions.checkNotNull( this.processNodeSettings, "ProcessNodeSettings cannot be null" );
             Preconditions.checkNotNull( this.importPath, "Importpath cannot be null" );

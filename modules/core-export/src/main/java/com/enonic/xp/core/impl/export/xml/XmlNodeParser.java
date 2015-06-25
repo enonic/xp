@@ -43,6 +43,7 @@ public final class XmlNodeParser
         assertTagName( root, "node" );
 
         final String id = root.getChildValue( "id" );
+
         if ( id != null )
         {
             this.builder.id( NodeId.from( id ) );
@@ -55,6 +56,7 @@ public final class XmlNodeParser
 
         this.builder.data( parseData( root.getChild( "data" ) ) );
         this.builder.indexConfigDocument( parseIndexConfigs( root.getChild( "indexConfigs" ) ) );
+        this.builder.permissions( XmlPermissionsParser.parse( root.getChild( "permissions" ) ) );
     }
 
     private PropertyTree parseData( final DomElement root )

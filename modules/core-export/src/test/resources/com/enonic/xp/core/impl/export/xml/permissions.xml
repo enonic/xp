@@ -1,0 +1,22 @@
+<permissions>
+  <principal key="role:system.admin">
+    <allow type="array">
+      <value>READ</value>
+      <value>CREATE</value>
+      <value>MODIFY</value>
+      <value>DELETE</value>
+      <value>PUBLISH</value>
+      <value>READ_PERMISSIONS</value>
+      <value>WRITE_PERMISSIONS</value>
+    </allow>
+    <deny type="array"/>
+  </principal>
+  <principal key="role:cms.admin">
+    <allow type="array">
+      <value>CREATE</value>
+    </allow>
+    <deny type="array">
+      <value>PUBLISH</value>
+    </deny>
+  </principal>
+</permissions>
