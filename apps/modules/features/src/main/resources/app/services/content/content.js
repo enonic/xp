@@ -1,4 +1,5 @@
 var portal = require('/lib/xp/portal');
+var contentSvc = require('/lib/xp/content');
 var stk = require('stk/stk');
 
 exports.post = handlePost;
@@ -13,7 +14,7 @@ function handlePost(req) {
     if(stk.content.exists(contentItem._path + '/content')) {
         saveLocation = contentItem._path + '/content';
     } else {
-        contentFolder = execute('content.create', {
+        contentFolder = contentSvc.create({
             name: 'content',
             parentPath: contentItem._path,
             displayName: 'Content',
@@ -28,7 +29,7 @@ function handlePost(req) {
 
     var contentName = 'Content-' + Math.floor((Math.random() * 1000000000) + 1);
 
-    var newContent = execute('content.create', {
+    var newContent = contentSvc.create({
         name: contentName,
         parentPath: saveLocation,
         displayName: contentName,

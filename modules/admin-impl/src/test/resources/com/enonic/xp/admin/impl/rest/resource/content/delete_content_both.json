@@ -1,6 +1,7 @@
 {
   "failures": [
     {
+      "id": "aaa",
       "name": "My Content",
       "reason": "Not able to delete content with path [/two]: Some reason"
     }
@@ -8,6 +9,7 @@
   "pendings": [],
   "successes": [
     {
+      "id": "123",
       "name": "one"
     }
   ]

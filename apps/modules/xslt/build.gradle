@@ -9,4 +9,5 @@ module {
 
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.libs:xslt:6.0.0-SNAPSHOT'
 }

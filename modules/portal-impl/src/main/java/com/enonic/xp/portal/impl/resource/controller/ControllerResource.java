@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.resource.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -21,6 +22,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public abstract class ControllerResource
     extends BaseResource
@@ -33,6 +35,9 @@ public abstract class ControllerResource
 
     @Context
     protected HttpHeaders httpHeaders;
+
+    @Context
+    protected HttpServletRequest httpServletRequest;
 
     protected Form form;
 
@@ -69,6 +74,12 @@ public abstract class ControllerResource
         portalRequest.setBranch( this.branch );
         portalRequest.getCookies().putAll( getCookieMap() );
         portalRequest.setUri( this.uriInfo.getRequestUri().toString() );
+
+        final String baseUrl = ServletRequestUrlHelper.createBaseUrl( this.httpServletRequest, this.baseUri, this.branch.getName(),
+                                                                      this.contentPath.toString() );
+        final String serverUrl = ServletRequestUrlHelper.createServerUrl( this.httpServletRequest );
+        portalRequest.setBaseUrl( baseUrl );
+        portalRequest.setServerUrl( serverUrl );
 
         final Multimap<String, String> contextHeaders = portalRequest.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );

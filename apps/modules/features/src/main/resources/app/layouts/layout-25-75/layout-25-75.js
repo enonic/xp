@@ -1,11 +1,11 @@
 var portal = require('/lib/xp/portal');
-var thymeleaf = require('/lib/view/thymeleaf');
+var thymeleaf = require('/lib/xp/thymeleaf');
 
 function handleGet(req) {
     var editMode = req.mode == 'edit';
 
-    var content = execute('portal.getContent');
-    var component = execute('portal.getComponent');
+    var content = portal.getContent();
+    var component = portal.getComponent();
 
     var view = resolve('layout-25-75.html');
     var body = thymeleaf.render(view, {

@@ -1,10 +1,12 @@
 {
   "failures": [
     {
+      "id": "aaa",
       "name": "My Content",
       "reason": "Content with path [/one] was not found in branch [draft]"
     },
     {
+      "id": "aaa",
       "name": "My Content",
       "reason": "Not able to delete content with path [/two]: Some reason"
     }
