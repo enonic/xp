@@ -19,6 +19,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -90,11 +94,29 @@ public class XmlNodeSerializerTest
         indexConfig.analyzer( "no" );
         indexConfig.add( "mydata", IndexConfig.FULLTEXT );
 
+        // Permissions
+        final Permission createPermission = Permission.CREATE;
+        final Permission publishPermission = Permission.PUBLISH;
+        final PrincipalKey systemPrincipalKey = PrincipalKey.from( "role:system.admin" );
+        final PrincipalKey cmsPrincipalKey = PrincipalKey.from( "role:cms.admin" );
+        final AccessControlEntry systemAccessControlEntry = AccessControlEntry.create().
+            principal( systemPrincipalKey ).
+            allowAll().
+            build();
+        final AccessControlEntry cmsAccessControlEntry = AccessControlEntry.create().
+            principal( cmsPrincipalKey ).
+            allow( createPermission ).
+            deny( publishPermission ).
+            build();
+        final AccessControlList accessControlList = AccessControlList.of( systemAccessControlEntry, cmsAccessControlEntry );
+
         return Node.newNode().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
             parentPath( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
+            permissions( accessControlList ).
+            inheritPermissions( true ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).
             indexConfigDocument( indexConfig.build() ).
