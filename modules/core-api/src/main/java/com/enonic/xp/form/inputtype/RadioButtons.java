@@ -9,24 +9,24 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
-final class SingleSelector
+final class RadioButtons
     extends InputType
 {
-    SingleSelector()
+    RadioButtons()
     {
-        super( SingleSelectorConfig.class, true );
+        super( RadioButtonsConfig.class, true );
     }
 
     @Override
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
-        return SingleSelectorConfigJsonSerializer.DEFAULT;
+        return RadioButtonsConfigJsonSerializer.DEFAULT;
     }
 
     @Override
     public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
-        return SingleSelectorConfigXmlSerializer.DEFAULT;
+        return RadioButtonsConfigXmlSerializer.DEFAULT;
     }
 
     @Override

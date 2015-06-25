@@ -2,7 +2,7 @@
 <mixin>
   <display-name>Norwegian counties</display-name>
   <items>
-    <input type="SingleSelector" name="norwegianCounty">
+    <input type="RadioButtons" name="norwegianCounty">
       <label>Norwegian county</label>
       <custom-text/>
       <help-text/>
@@ -86,7 +86,6 @@
             <value>20</value>
           </option>
         </options>
-        <selector-type>DROPDOWN</selector-type>
       </config>
     </input>
   </items>

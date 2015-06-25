@@ -45,7 +45,7 @@ public final class InputTypes
 
     public static final InputType CONTENT_SELECTOR = new ContentSelector();
 
-    public static final InputType SINGLE_SELECTOR = new SingleSelector();
+    public static final InputType RADIO_BUTTONS = new RadioButtons();
 
     public static final InputType TAG = new Tag();
 
@@ -78,7 +78,7 @@ public final class InputTypes
         add( MONEY ).
         add( PHONE ).
         add( CONTENT_SELECTOR ).
-        add( SINGLE_SELECTOR ).
+        add( RADIO_BUTTONS ).
         add( TAG ).
         add( TEXT_AREA ).
         add( TEXT_LINE ).

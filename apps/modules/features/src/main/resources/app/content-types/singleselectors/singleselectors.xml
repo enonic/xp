@@ -3,8 +3,8 @@
   <display-name>Single selectors</display-name>
   <super-type>base:structured</super-type>
   <form>
-    <input name="ss_radio" type="SingleSelector">
-      <label>Single Selector, radio</label>
+    <input name="ss_radio" type="RadioButtons">
+      <label>Radio Buttons</label>
       <indexed>true</indexed>
       <occurrences minimum="0" maximum="0"/>
       <config>
@@ -22,51 +22,6 @@
             <value>o3</value>
           </option>
         </options>
-        <selector-type>RADIO</selector-type>
-      </config>
-    </input>
-    <input name="ss_dropdown" type="SingleSelector">
-      <label>Single Selector, dropdown</label>
-      <indexed>true</indexed>
-      <occurrences minimum="0" maximum="0"/>
-      <config>
-        <options>
-          <option>
-            <label>myOption 1</label>
-            <value>o1</value>
-          </option>
-          <option>
-            <label>myOption 2</label>
-            <value>o2</value>
-          </option>
-          <option>
-            <label>myOption 3</label>
-            <value>o3</value>
-          </option>
-        </options>
-        <selector-type>DROPDOWN</selector-type>
-      </config>
-    </input>
-    <input name="ss_combobox" type="SingleSelector">
-      <label>Single Selector, combo-box</label>
-      <indexed>true</indexed>
-      <occurrences minimum="0" maximum="0"/>
-      <config>
-        <options>
-          <option>
-            <label>myOption 1</label>
-            <value>o1</value>
-          </option>
-          <option>
-            <label>myOption 2</label>
-            <value>o2</value>
-          </option>
-          <option>
-            <label>myOption 3</label>
-            <value>o3</value>
-          </option>
-        </options>
-        <selector-type>COMBOBOX</selector-type>
       </config>
     </input>
   </form>
