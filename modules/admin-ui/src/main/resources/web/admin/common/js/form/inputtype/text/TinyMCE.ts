@@ -383,6 +383,7 @@ module api.form.inputtype.text {
         editor: TinyMceEditor
         element: HTMLElement
         text: string
+        anchorList: string[]
     }
 
     export interface TinyMCEImage {

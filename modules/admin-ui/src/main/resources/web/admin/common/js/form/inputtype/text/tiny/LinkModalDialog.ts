@@ -5,17 +5,22 @@ module api.form.inputtype.text.tiny {
     import Panel = api.ui.panel.Panel;
     import DockedPanel = api.ui.panel.DockedPanel;
     import Validators = api.ui.form.Validators;
+    import Dropdown = api.ui.selector.dropdown.Dropdown;
+    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
+    import Option = api.ui.selector.Option;
 
     export class LinkModalDialog extends ModalDialog {
         private dockedPanel: DockedPanel;
         private link: HTMLElement;
         private linkText: string;
+        private anchorList: string[];
 
         private static tabNames: any = {
             content: "Content",
             url: "URL",
             download: "Download",
-            email: "Email"
+            email: "Email",
+            anchor: "Anchor"
         };
 
         private static contentPrefix = "content://";
@@ -26,8 +31,13 @@ module api.form.inputtype.text.tiny {
         constructor(config: api.form.inputtype.text.TinyMCEAnchor) {
             this.link = config.element;
             this.linkText = config.text;
+            this.anchorList = config.anchorList;
 
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"));
+        }
+
+        private getHref(): string {
+            return this.link ? this.link.getAttribute("href") : api.util.StringHelper.EMPTY_STRING;
         }
 
         private getLinkText(): string {
@@ -39,25 +49,24 @@ module api.form.inputtype.text.tiny {
         }
 
         private isContentLink(): boolean {
-            return this.link ? this.link.getAttribute("href").indexOf(LinkModalDialog.contentPrefix) === 0 : false;
+            return this.getHref().indexOf(LinkModalDialog.contentPrefix) === 0;
         }
 
         private getContentId(): string {
             if (this.link && this.isContentLink()) {
-                return this.link.getAttribute("href").replace(LinkModalDialog.contentPrefix, api.util.StringHelper.EMPTY_STRING);
+                return this.getHref().replace(LinkModalDialog.contentPrefix, api.util.StringHelper.EMPTY_STRING);
             }
             return api.util.StringHelper.EMPTY_STRING;
         }
 
         private isDownloadLink(): boolean {
-            return this.link ? this.link.getAttribute("href").indexOf(LinkModalDialog.downloadPrefix) === 0 : false;
+            return this.getHref().indexOf(LinkModalDialog.downloadPrefix) === 0;
         }
 
         private getDownloadId(): string {
-            if (this.isDownloadLink()) {
-                return this.link.getAttribute("href").replace(LinkModalDialog.downloadPrefix, api.util.StringHelper.EMPTY_STRING);
-            }
-            return api.util.StringHelper.EMPTY_STRING;
+            return this.isDownloadLink() ?
+                   this.getHref().replace(LinkModalDialog.downloadPrefix, api.util.StringHelper.EMPTY_STRING) :
+                   api.util.StringHelper.EMPTY_STRING;
         }
 
         private isUrl(): boolean {
@@ -65,26 +74,34 @@ module api.form.inputtype.text.tiny {
         }
 
         private getUrl(): string {
-            return this.isUrl() ? this.link.getAttribute("href") : api.util.StringHelper.EMPTY_STRING;
+            return this.isUrl() ? this.getHref() : api.util.StringHelper.EMPTY_STRING;
         }
 
         private isEmail(): boolean {
-            return this.link ? this.link.getAttribute("href").indexOf(LinkModalDialog.emailPrefix) === 0 : false;
+            return this.getHref().indexOf(LinkModalDialog.emailPrefix) === 0 ;
         }
 
         private getEmail(): string {
             if (!this.isEmail()) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-            var emailArr = this.link.getAttribute("href").split(LinkModalDialog.subjectPrefix);
+            var emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
             return emailArr[0].replace(LinkModalDialog.emailPrefix, api.util.StringHelper.EMPTY_STRING);
+        }
+
+        private isAnchor(): boolean {
+            return this.getHref().indexOf("#") === 0;
+        }
+
+        private getAnchor(): string {
+            return this.isAnchor() ? this.getHref() : api.util.StringHelper.EMPTY_STRING;
         }
 
         private getSubject(): string {
             if (!this.isEmail()) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
-            var emailArr = this.link.getAttribute("href").split(LinkModalDialog.subjectPrefix);
+            var emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
             return decodeURI(emailArr[1].replace(LinkModalDialog.subjectPrefix, api.util.StringHelper.EMPTY_STRING));
         }
 
@@ -95,15 +112,14 @@ module api.form.inputtype.text.tiny {
 
         private createContentPanel(): Panel {
             return this.createFormPanel([
-                <FormItem>this.createContentSelector("contentId", "Target", this.getContentId()),
+                this.createContentSelector("contentId", "Target", this.getContentId()),
                 this.createTargetCheckbox("contentTarget", this.isContentLink())
             ]);
         }
 
         private createDownloadPanel(): Panel {
             return this.createFormPanel([
-                <FormItem>this.createContentSelector("downloadId", "Target", this.getDownloadId(),
-                    api.schema.content.ContentTypeName.getMediaTypes())
+                this.createContentSelector("downloadId", "Target", this.getDownloadId(), api.schema.content.ContentTypeName.getMediaTypes())
             ]);
         }
 
@@ -111,6 +127,12 @@ module api.form.inputtype.text.tiny {
             return this.createFormPanel([
                 this.createFormItem("url", "Url", Validators.required, this.getUrl()),
                 this.createTargetCheckbox("urlTarget", this.isUrl())
+            ]);
+        }
+
+        private createAnchorPanel(): Panel {
+            return this.createFormPanel([
+                this.createAnchorDropdown()
             ]);
         }
 
@@ -123,7 +145,6 @@ module api.form.inputtype.text.tiny {
                 emailFormItem,
                 this.createFormItem("subject", "Subject", null, this.getSubject())
             ]);
-
         }
 
         private static validationRequiredEmail(input: api.dom.FormInputEl): string {
@@ -162,6 +183,9 @@ module api.form.inputtype.text.tiny {
             dockedPanel.addItem(LinkModalDialog.tabNames.url, true, this.createUrlPanel(), this.isUrl());
             dockedPanel.addItem(LinkModalDialog.tabNames.download, true, this.createDownloadPanel(), this.isDownloadLink());
             dockedPanel.addItem(LinkModalDialog.tabNames.email, true, this.createEmailPanel(), this.isEmail());
+            if (this.anchorList.length) {
+                dockedPanel.addItem(LinkModalDialog.tabNames.anchor, true, this.createAnchorPanel(), this.isAnchor());
+            }
 
             return dockedPanel;
         }
@@ -187,13 +211,31 @@ module api.form.inputtype.text.tiny {
             }
 
             contentSelector.getComboBox().onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
-                this.adjustSelectorDropDown(contentSelector.getComboBox().getInput(), event.getDropdownElement().getEl());
+                this.adjustDropDown(contentSelector.getComboBox().getInput(), event.getDropdownElement().getEl());
             });
 
             return this.createFormItem(id, label, Validators.required, value, <api.dom.FormItemEl>contentSelector);
         }
 
-        private adjustSelectorDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
+        private createAnchorDropdown(): FormItem {
+            var dropDown = new Dropdown<string>(name, <DropdownConfig<string>>{});
+
+            this.anchorList.forEach((anchor: string) => {
+                dropDown.addOption(<Option<string>>{ value: "#" + anchor, displayValue: anchor});
+            });
+
+            dropDown.onExpanded((event: api.ui.selector.DropdownExpandedEvent) => {
+                this.adjustDropDown(dropDown, event.getDropdownElement().getEl());
+            });
+
+            if (this.getAnchor()) {
+                dropDown.setValue(this.getAnchor());
+            }
+
+            return this.createFormItem("anchor", "Anchor", Validators.required, null, <api.dom.FormItemEl>dropDown);
+        }
+
+        private adjustDropDown(inputElement: api.dom.Element, dropDownElement: api.dom.ElementHelper) {
             var inputPosition = wemjq(inputElement.getHTMLElement()).offset();
 
             dropDownElement.setMaxWidthPx(inputElement.getEl().getWidthWithBorder());
@@ -243,6 +285,15 @@ module api.form.inputtype.text.tiny {
             return linkEl;
         }
 
+        private createAnchor(): api.dom.AEl {
+            var anchorName = (<api.ui.text.TextInput>this.getFieldById("anchor")).getValue();
+
+            var linkEl = new api.dom.AEl();
+            linkEl.setUrl(anchorName);
+
+            return linkEl;
+        }
+
         private createEmailLink(): api.dom.AEl {
             var email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue(),
                 subject = (<api.ui.text.TextInput>this.getFieldById("subject")).getValue();
@@ -253,26 +304,6 @@ module api.form.inputtype.text.tiny {
             return linkEl;
         }
 
-        updateLink(newLink: api.dom.AEl) {
-            var target, title;
-
-            if (title = newLink.getTitle()) {
-                this.link.setAttribute("title", title);
-            }
-            else {
-                this.link.removeAttribute("title");
-            }
-            if (target = newLink.getTarget()) {
-                this.link.setAttribute("target", target);
-            }
-            else {
-                this.link.removeAttribute("target");
-            }
-
-            this.link.setAttribute("href", newLink.getHref());
-            this.link["text"] = newLink.getText();
-        }
-
         private createLink(): void {
             var linkEl: api.dom.AEl,
                 deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck(),
@@ -281,18 +312,21 @@ module api.form.inputtype.text.tiny {
                 toolTip: string = (<api.ui.text.TextInput>this.getFieldById("toolTip")).getValue();
 
             switch (selectedTab.getLabel()) {
-            case (LinkModalDialog.tabNames.content):
-                linkEl = this.createContentLink();
-                break;
-            case (LinkModalDialog.tabNames.url):
-                linkEl = this.createUrlLink();
-                break;
-            case (LinkModalDialog.tabNames.download):
-                linkEl = this.createDownloadLink();
-                break;
-            case (LinkModalDialog.tabNames.email):
-                linkEl = this.createEmailLink();
-                break;
+                case (LinkModalDialog.tabNames.content):
+                    linkEl = this.createContentLink();
+                    break;
+                case (LinkModalDialog.tabNames.url):
+                    linkEl = this.createUrlLink();
+                    break;
+                case (LinkModalDialog.tabNames.download):
+                    linkEl = this.createDownloadLink();
+                    break;
+                case (LinkModalDialog.tabNames.email):
+                    linkEl = this.createEmailLink();
+                    break;
+                case (LinkModalDialog.tabNames.anchor):
+                    linkEl = this.createAnchor();
+                    break;
             }
 
             linkEl.setHtml(linkText);
@@ -301,7 +335,7 @@ module api.form.inputtype.text.tiny {
             }
 
             if (this.link) {
-                this.updateLink(linkEl);
+                this.link.parentElement.replaceChild(linkEl.getHTMLElement(), this.link);
             }
             else {
                 this.getEditor().insertContent(linkEl.toString());
