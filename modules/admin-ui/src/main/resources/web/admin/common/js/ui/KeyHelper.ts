@@ -60,5 +60,12 @@ module api.ui {
             return KeyHelper.isControlKey(event) || KeyHelper.isShiftKey(event) || KeyHelper.isAltKey(event) || KeyHelper.isMetaKey(event);
         }
 
+        static isEscKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 27;
+        }
+
+        static isEnterKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 13;
+        }
     }
 }
