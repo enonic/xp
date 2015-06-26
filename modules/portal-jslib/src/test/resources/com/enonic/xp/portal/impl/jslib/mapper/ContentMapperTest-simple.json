@@ -9,6 +9,7 @@
   "type": "base:unstructured",
   "displayName": "My Content",
   "hasChildren": false,
+  "language": "en",
   "valid": false,
   "data": {
     "boolean": [
