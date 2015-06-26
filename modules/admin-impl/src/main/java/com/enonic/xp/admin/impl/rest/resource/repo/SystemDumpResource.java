@@ -27,7 +27,6 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
@@ -42,8 +41,6 @@ public class SystemDumpResource
     implements AdminResource
 {
     private ExportService exportService;
-
-    private IndexService indexService;
 
     @POST
     @Path("dump")
@@ -108,12 +105,6 @@ public class SystemDumpResource
         this.exportService = exportService;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
 }
 
 
