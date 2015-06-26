@@ -44,6 +44,11 @@ module api.ui {
             return this;
         }
 
+        setDisabled(value: boolean): Checkbox {
+            this.checkbox.getEl().setDisabled(value);
+            return this;
+        }
+
         toggleChecked() {
             this.setChecked(!this.isChecked());
         }

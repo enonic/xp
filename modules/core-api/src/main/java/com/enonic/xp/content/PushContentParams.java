@@ -15,12 +15,15 @@ public class PushContentParams
 
     private final boolean allowPublishOutsideSelection;
 
+    private final boolean resolveDependencies;
+
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
         target = builder.target;
         includeChildren = builder.includeChildren;
         allowPublishOutsideSelection = builder.allowPublishOutsideSelection;
+        resolveDependencies = builder.resolveDependencies;
     }
 
     public static Builder create()
@@ -48,6 +51,11 @@ public class PushContentParams
         return allowPublishOutsideSelection;
     }
 
+    public boolean isResolveDependencies()
+    {
+        return resolveDependencies;
+    }
+
     public static final class Builder
     {
         private ContentIds contentIds;
@@ -57,6 +65,8 @@ public class PushContentParams
         private boolean includeChildren = true;
 
         private boolean allowPublishOutsideSelection = true;
+
+        private boolean resolveDependencies = true;
 
         private Builder()
         {
@@ -83,6 +93,12 @@ public class PushContentParams
         public Builder allowPublishOutsideSelection( boolean allowPublishOutsideSelection )
         {
             this.allowPublishOutsideSelection = allowPublishOutsideSelection;
+            return this;
+        }
+
+        public Builder resolveDependencies( final boolean resolveDependencies )
+        {
+            this.resolveDependencies = resolveDependencies;
             return this;
         }
 

@@ -50,6 +50,8 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -275,6 +277,22 @@ public class ContentServiceImpl
             strategy( params.isAllowPublishOutsideSelection()
                           ? PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION
                           : PushContentCommand.PushContentStrategy.STRICT ).
+            resolveDependencies( params.isResolveDependencies() ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ResolvePublishDependenciesResult resolvePublishDependencies( ResolvePublishDependenciesParams params )
+    {
+        return ResolvePublishDependenciesCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            contentIds( params.getContentIds() ).
+            target( params.getTarget() ).
+            includeChildren( params.isIncludeChildren() ).
             build().
             execute();
     }
