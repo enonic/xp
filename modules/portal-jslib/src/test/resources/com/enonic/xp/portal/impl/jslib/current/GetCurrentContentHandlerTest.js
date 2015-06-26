@@ -33,6 +33,7 @@ var expectedJson = {
     },
     "displayName": "My Content",
     "hasChildren": false,
+    "language": "en",
     "modifiedTime": "1970-01-01T00:00:00Z",
     "modifier": "user:system:admin",
     "page": {
