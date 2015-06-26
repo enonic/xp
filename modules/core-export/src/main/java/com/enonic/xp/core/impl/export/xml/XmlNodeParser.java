@@ -43,16 +43,24 @@ public final class XmlNodeParser
         assertTagName( root, "node" );
 
         final String id = root.getChildValue( "id" );
+
         if ( id != null )
         {
             this.builder.id( NodeId.from( id ) );
         }
+
+        this.builder.timestamp( root.getChildValue( "timestamp" ) != null ? Instant.parse( root.getChildValue( "timestamp" ) ) : null );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );
 
         this.builder.data( parseData( root.getChild( "data" ) ) );
         this.builder.indexConfigDocument( parseIndexConfigs( root.getChild( "indexConfigs" ) ) );
+
+        if ( root.getChild( "permissions" ) != null )
+        {
+            this.builder.permissions( XmlPermissionsParser.parse( root.getChild( "permissions" ) ) );
+        }
     }
 
     private PropertyTree parseData( final DomElement root )

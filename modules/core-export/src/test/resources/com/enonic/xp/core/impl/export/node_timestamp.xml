@@ -1,7 +1,8 @@
 <node>
-  <id>1234</id>
   <childOrder>_name DESC</childOrder>
   <nodeType>content</nodeType>
+  <id>1234</id>
+  <timestamp>2014-01-01T10:00:00Z</timestamp>
   <permissions/>
   <data>
     <string name="myString">myStringValue</string>

@@ -1,6 +1,7 @@
-<node xmlns="urn:enonic:xp:export:1.0">
+<node>
   <childOrder>_manualOrderValue DESC</childOrder>
   <nodeType>content</nodeType>
+  <permissions/>
   <data>
     <string name="myString">myStringValue</string>
     <boolean name="myBoolean">true</boolean>

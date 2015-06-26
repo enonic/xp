@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.version;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.NodeId;
@@ -14,11 +16,14 @@ public class NodeVersionDocument
 
     private final NodePath nodePath;
 
+    private final Instant timestamp;
+
     private NodeVersionDocument( final Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeId = builder.nodeId;
         this.nodePath = builder.nodePath;
+        this.timestamp = builder.timestamp;
     }
 
     public static Builder create()
@@ -41,6 +46,11 @@ public class NodeVersionDocument
         return nodePath;
     }
 
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
     public static class Builder
     {
         private NodeVersionId nodeVersionId;
@@ -48,6 +58,8 @@ public class NodeVersionDocument
         private NodeId nodeId;
 
         private NodePath nodePath;
+
+        private Instant timestamp;
 
         private Builder()
         {
@@ -68,6 +80,12 @@ public class NodeVersionDocument
         public Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
             return this;
         }
 

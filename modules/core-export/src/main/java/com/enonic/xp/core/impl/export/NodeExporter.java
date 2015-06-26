@@ -19,7 +19,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
 
-public class BatchedNodeExportCommand
+public class NodeExporter
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
@@ -35,21 +35,27 @@ public class BatchedNodeExportCommand
 
     private final Path targetDirectory;
 
+    private final String xpVersion;
+
     private final boolean dryRun;
 
     private final boolean exportNodeIds;
 
+    private final boolean exportTimestamp;
+
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
-    private BatchedNodeExportCommand( final Builder builder )
+    private NodeExporter( final Builder builder )
     {
         this.sourceNodePath = builder.sourceNodePath;
         this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
+        this.xpVersion = builder.xpVersion;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
+        this.exportTimestamp = builder.exportTimestamp;
     }
 
     public static Builder create()
@@ -78,6 +84,8 @@ public class BatchedNodeExportCommand
                 addRootNodeNotFoundError();
             }
         }
+
+        writeExportProperties();
 
         return result.build();
     }
@@ -207,6 +215,19 @@ public class BatchedNodeExportCommand
         }
     }
 
+    private void writeExportProperties()
+    {
+        if ( xpVersion != null )
+        {
+            final Path exportPropertiesPath = NodeExportPathResolver.resolveExportPropertiesPath( this.targetDirectory );
+
+            if ( !dryRun )
+            {
+                exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
+            }
+        }
+    }
+
     private double getNumberOfBatches( final NodePath nodePath )
     {
         final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
@@ -249,12 +270,22 @@ public class BatchedNodeExportCommand
 
         private Path targetDirectory;
 
+        private String xpVersion;
+
         private boolean dryRun = false;
 
         private boolean exportNodeIds = true;
 
+        private boolean exportTimestamp = true;
+
         private Builder()
         {
+        }
+
+        public Builder keepTimestamp( boolean keepTimestamp )
+        {
+            this.exportTimestamp = keepTimestamp;
+            return this;
         }
 
         public Builder sourceNodePath( NodePath exportRootNode )
@@ -287,6 +318,12 @@ public class BatchedNodeExportCommand
             return this;
         }
 
+        public Builder xpVersion( final String xpVersion )
+        {
+            this.xpVersion = xpVersion;
+            return this;
+        }
+
         public Builder dryRun( final boolean dryRun )
         {
             this.dryRun = dryRun;
@@ -299,9 +336,9 @@ public class BatchedNodeExportCommand
             return this;
         }
 
-        public BatchedNodeExportCommand build()
+        public NodeExporter build()
         {
-            return new BatchedNodeExportCommand( this );
+            return new NodeExporter( this );
         }
     }
 }

@@ -2,14 +2,14 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeVersionId;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
@@ -49,6 +49,7 @@ public class StoreNodeCommand
                 nodeId( node.id() ).
                 nodeVersionId( nodeVersionId ).
                 nodePath( node.path() ).
+                timestamp( node.getTimestamp() ).
                 build(), context.getRepositoryId() );
         }
         else

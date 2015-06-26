@@ -50,6 +50,36 @@ public class RenameNodeCommandTest
     }
 
     @Test
+    public void timestamp_updated()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node beforeRename = getNodeById( createdNode.id() );
+
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( createdNode.id() ).
+                nodeName( NodeName.from( "my-node-edited" ) ).
+                build() ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            branchService( this.branchService ).
+            queryService( this.queryService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+
+        final Node renamedNode = getNodeById( createdNode.id() );
+
+        assertTrue( beforeRename.getTimestamp().isBefore( renamedNode.getTimestamp() ) );
+    }
+
+
+    @Test
     public void rename_with_children()
         throws Exception
     {

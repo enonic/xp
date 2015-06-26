@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
@@ -21,6 +20,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.ImportNodeParams2;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -32,7 +32,7 @@ import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 import com.enonic.xp.xml.XmlException;
 
-public class NodeImportCommand
+public class NodeImporter
 {
     private static final Long IMPORT_NODE_ORDER_START_VALUE = 0L;
 
@@ -52,15 +52,18 @@ public class NodeImportCommand
 
     private final boolean importNodeIds;
 
+    private final boolean keepTimestamp;
+
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
 
-    private NodeImportCommand( final Builder builder )
+    private NodeImporter( final Builder builder )
     {
         this.nodeService = builder.nodeService;
         this.exportRoot = builder.exportRoot;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
+        this.keepTimestamp = builder.keepTimestamp;
     }
 
     public static Builder create()
@@ -135,7 +138,6 @@ public class NodeImportCommand
         return children;
     }
 
-
     private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
         try
@@ -163,8 +165,6 @@ public class NodeImportCommand
         {
             result.addError( "Could not import node in folder [" + nodeFolder.getPath().getPath() + "]: " + e.getMessage(), e );
         }
-
-
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
@@ -181,7 +181,7 @@ public class NodeImportCommand
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load source node [" + nodeSource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load source node [" + nodeSource.getUrl() + "]: ", e );
         }
 
         final Node newNode = newNodeBuilder.build();
@@ -219,24 +219,26 @@ public class NodeImportCommand
         return updatedNode;
     }
 
-    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node newNode,
+    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node serializedNode,
                              final NodePath importNodePath )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
-            processNodeSettings( processNodeSettings.build() ).
-            newNode( newNode ).
-            importPath( importNodePath ).
-            binaryAttachments( binaryAttachments ).
+        final Node importNode = ImportNodeFactory.create().
             importNodeIds( this.importNodeIds ).
-            dryRun( this.dryRun ).
+            serializedNode( serializedNode ).
+            importPath( importNodePath ).
+            processNodeSettings( processNodeSettings.build() ).
             build().
             execute();
 
-        CreateNodeParams validatedCreateNodeParams = validateImportData( createNodeParams );
+        final ImportNodeParams2 importNodeParams = ImportNodeParams2.create().
+            importNode( importNode ).
+            binaryAttachments( binaryAttachments ).
+            insertManualStrategy( processNodeSettings.build().getInsertManualStrategy() ).
+            build();
 
-        final Node createdNode = this.nodeService.create( validatedCreateNodeParams );
+        final Node createdNode = this.nodeService.importNode( importNodeParams );
 
         result.added( createdNode.path() );
 
@@ -329,6 +331,8 @@ public class NodeImportCommand
 
         private boolean importNodeIds = true;
 
+        private boolean keepTimestamp = true;
+
         private Builder()
         {
         }
@@ -363,9 +367,15 @@ public class NodeImportCommand
             return this;
         }
 
-        public NodeImportCommand build()
+        public Builder keepTimestamp( final boolean keepTimestamp )
         {
-            return new NodeImportCommand( this );
+            this.keepTimestamp = keepTimestamp;
+            return this;
+        }
+
+        public NodeImporter build()
+        {
+            return new NodeImporter( this );
         }
     }
 

@@ -1,7 +1,15 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.entity.dao.NodeDao;
+import com.enonic.wem.repo.internal.index.IndexServiceInternal;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -20,12 +28,6 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexServiceInternal;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 abstract class AbstractNodeCommand
 {
@@ -115,6 +117,17 @@ abstract class AbstractNodeCommand
             build().
             execute();
     }
+
+    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore, final Instant timestamp )
+    {
+        return CreateNodeCommand.create( this ).
+            params( params ).
+            timestamp( timestamp ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
+    }
+
 
     Node doUpdateNode( final UpdateNodeParams params, final BlobStore binaryBlobStore )
     {

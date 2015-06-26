@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -41,11 +42,14 @@ public final class CreateNodeCommand
 
     private final BlobStore binaryBlobStore;
 
+    private final Instant timestamp;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryBlobStore = builder.binaryBlobStore;
+        this.timestamp = builder.timestamp;
     }
 
     public static Builder create()
@@ -94,16 +98,13 @@ public final class CreateNodeCommand
             permissions( permissions ).
             inheritPermissions( params.inheritPermissions() ).
             nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION ).
-            attachedBinaries( attachedBinaries );
+            attachedBinaries( attachedBinaries ).
+            timestamp( this.timestamp != null ? this.timestamp : Instant.now() );
 
         final Node newNode = nodeBuilder.build();
 
-        if ( !this.params.isDryRun() )
-        {
-            return this.doStoreNode( newNode );
-        }
 
-        return newNode;
+            return this.doStoreNode( newNode );
     }
 
     private AttachedBinaries storeAndAttachBinaries()
@@ -125,11 +126,9 @@ public final class CreateNodeCommand
 
             try
             {
-                if ( !this.params.isDryRun() )
-                {
-                    final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
-                    builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
-                }
+                final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
+                builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
+
             }
             catch ( final IOException e )
             {
@@ -288,6 +287,8 @@ public final class CreateNodeCommand
 
         private BlobStore binaryBlobStore;
 
+        private Instant timestamp;
+
         private Builder()
         {
             super();
@@ -307,6 +308,12 @@ public final class CreateNodeCommand
         public Builder binaryBlobStore( final BlobStore blobStore )
         {
             this.binaryBlobStore = blobStore;
+            return this;
+        }
+
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
             return this;
         }
 

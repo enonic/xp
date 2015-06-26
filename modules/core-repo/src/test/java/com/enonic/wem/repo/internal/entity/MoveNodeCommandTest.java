@@ -28,6 +28,35 @@ public class MoveNodeCommandTest
     }
 
     @Test
+    public void timestamp_updated()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "mynode" ) ).
+            build() );
+
+        final Node beforeMove = getNodeById( node.id() );
+
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            branchService( this.branchService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( node.id() ).
+            newNodeName( NodeName.from( "mynode2" ) ).
+            newParent( node.parentPath() ).
+            build().
+            execute();
+
+        final Node movedNode = getNodeById( node.id() );
+
+        assertTrue( beforeMove.getTimestamp().isBefore( movedNode.getTimestamp() ) );
+    }
+
+    @Test
     public void new_name_only()
         throws Exception
     {

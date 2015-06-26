@@ -23,7 +23,7 @@ public class ExportServiceImpl
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
-        return BatchedNodeExportCommand.create().
+        return NodeExporter.create().
             sourceNodePath( params.getSourceNodePath() ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
@@ -37,7 +37,7 @@ public class ExportServiceImpl
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        return NodeImportCommand.create().
+        return NodeImporter.create().
             nodeService( this.nodeService ).
             sourceDirectory( params.getSource() ).
             targetNodePath( params.getTargetNodePath() ).
