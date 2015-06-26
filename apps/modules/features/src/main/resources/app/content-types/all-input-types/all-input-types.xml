@@ -59,8 +59,8 @@
         <relationship-type>system:reference</relationship-type>
       </config>
     </input>
-    <input name="mySingleSelectorAsDropdown" type="SingleSelector">
-      <label>SingleSelector as Dropdown</label>
+    <input name="myRadioButtons" type="RadioButtons">
+      <label>Radio Buttons</label>
       <occurrences minimum="0" maximum="0"/>
       <config>
         <options>
@@ -73,41 +73,6 @@
             <value>o2</value>
           </option>
         </options>
-        <selector-type>DROPDOWN</selector-type>
-      </config>
-    </input>
-    <input name="mySingleSelectorAsRadio" type="SingleSelector">
-      <label>SingleSelector as Radio</label>
-      <occurrences minimum="0" maximum="0"/>
-      <config>
-        <options>
-          <option>
-            <label>myOption 1</label>
-            <value>o1</value>
-          </option>
-          <option>
-            <label>myOption 2</label>
-            <value>o2</value>
-          </option>
-        </options>
-        <selector-type>RADIO</selector-type>
-      </config>
-    </input>
-    <input name="mySingleSelectorAsComboBox" type="SingleSelector">
-      <label>SingleSelector as ComboBox</label>
-      <occurrences minimum="0" maximum="0"/>
-      <config>
-        <options>
-          <option>
-            <label>myOption 1</label>
-            <value>o1</value>
-          </option>
-          <option>
-            <label>myOption 2</label>
-            <value>o2</value>
-          </option>
-        </options>
-        <selector-type>COMBOBOX</selector-type>
       </config>
     </input>
     <input name="myTag" type="Tag">

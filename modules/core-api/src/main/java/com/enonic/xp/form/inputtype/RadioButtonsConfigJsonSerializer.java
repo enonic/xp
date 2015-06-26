@@ -11,19 +11,18 @@ import com.google.common.annotations.Beta;
 
 
 @Beta
-public class SingleSelectorConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<SingleSelectorConfig>
+public class RadioButtonsConfigJsonSerializer
+    extends AbstractInputTypeConfigJsonSerializer<RadioButtonsConfig>
 {
-    public static final SingleSelectorConfigJsonSerializer DEFAULT = new SingleSelectorConfigJsonSerializer();
+    public static final RadioButtonsConfigJsonSerializer DEFAULT = new RadioButtonsConfigJsonSerializer();
 
     @Override
-    public JsonNode serializeConfig( final SingleSelectorConfig singleSelectorConfig, final ObjectMapper objectMapper )
+    public JsonNode serializeConfig( final RadioButtonsConfig radioButtonsConfig, final ObjectMapper objectMapper )
     {
         final ObjectNode jsonConfig = objectMapper.createObjectNode();
 
-        jsonConfig.put( "selectorType", singleSelectorConfig.getType().toString() );
         final ArrayNode jsonArray = jsonConfig.putArray( "options" );
-        for ( Option option : singleSelectorConfig.getOptions() )
+        for ( Option option : radioButtonsConfig.getOptions() )
         {
             final ObjectNode jsonOption = jsonArray.addObject();
             jsonOption.put( "label", option.getLabel() );
@@ -33,12 +32,10 @@ public class SingleSelectorConfigJsonSerializer
     }
 
     @Override
-    public SingleSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
+    public RadioButtonsConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
-        final SingleSelectorConfig.SelectorType selectorType =
-            SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", inputTypeConfigNode ) );
-        builder.type( selectorType );
+        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newRadioButtonsConfig();
+
         final JsonNode optionsNode = inputTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.elements();
         while ( optionIterator.hasNext() )
