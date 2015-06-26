@@ -35,6 +35,8 @@ public class NodeExporter
 
     private final Path targetDirectory;
 
+    private final String xpVersion;
+
     private final boolean dryRun;
 
     private final boolean exportNodeIds;
@@ -50,6 +52,7 @@ public class NodeExporter
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
+        this.xpVersion = builder.xpVersion;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
         this.exportTimestamp = builder.exportTimestamp;
@@ -81,6 +84,8 @@ public class NodeExporter
                 addRootNodeNotFoundError();
             }
         }
+
+        writeExportProperties();
 
         return result.build();
     }
@@ -210,6 +215,19 @@ public class NodeExporter
         }
     }
 
+    private void writeExportProperties()
+    {
+        if ( xpVersion != null )
+        {
+            final Path exportPropertiesPath = NodeExportPathResolver.resolveExportPropertiesPath( this.targetDirectory );
+
+            if ( !dryRun )
+            {
+                exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
+            }
+        }
+    }
+
     private double getNumberOfBatches( final NodePath nodePath )
     {
         final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
@@ -251,6 +269,8 @@ public class NodeExporter
         private ExportWriter exportWriter;
 
         private Path targetDirectory;
+
+        private String xpVersion;
 
         private boolean dryRun = false;
 
@@ -295,6 +315,12 @@ public class NodeExporter
         public Builder nodeExportWriter( ExportWriter exportWriter )
         {
             this.exportWriter = exportWriter;
+            return this;
+        }
+
+        public Builder xpVersion( final String xpVersion )
+        {
+            this.xpVersion = xpVersion;
             return this;
         }
 
