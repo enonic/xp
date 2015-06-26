@@ -212,6 +212,32 @@ public class NodeExporterTest
         assertFileExists( "/myExport/my-node/_/bin/image2.jpg" );
     }
 
+    @Test
+    public void export_properties()
+        throws Exception
+    {
+        NodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( new FileExportWriter() ).
+            sourceNodePath( NodePath.ROOT ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            build().
+            execute();
+
+        assertFileDoesNotExist( "/myExport/export.properties" );
+
+        NodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( new FileExportWriter() ).
+            sourceNodePath( NodePath.ROOT ).
+            xpVersion( "X.Y.Z-SNAPSHOT" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            build().
+            execute();
+
+        assertFileExists( "/myExport/export.properties" );
+    }
+
 
     private Node createNode( final String name, final NodePath root )
     {
@@ -226,6 +252,11 @@ public class NodeExporterTest
     private void assertFileExists( final String path )
     {
         assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+    }
+
+    private void assertFileDoesNotExist( final String path )
+    {
+        assertFalse( "file " + path + " found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
     }
 
     private void printPaths()
