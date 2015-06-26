@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.jslib;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -43,6 +44,7 @@ public final class ContentFixtures
         builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
         builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
