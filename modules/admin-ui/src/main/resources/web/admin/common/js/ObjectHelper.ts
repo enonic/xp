@@ -5,6 +5,17 @@ module api {
      */
     export class ObjectHelper {
 
+        /**
+         * Method to create an object of given class (useful when TS won't allow it, i.e new Event())
+         * @param constructor class to use for new object
+         * @param args arguments constructor arguments
+         * @returns {Object}
+         */
+        static create(constructor, ...args) {
+            var factory = constructor.bind.apply(constructor, arguments);
+            return new factory();
+        }
+
         static iFrameSafeInstanceOf(obj: any, fn: Function): boolean {
             if (!fn) {
                 console.warn('Undefined fn passed to iFrameSafeInstanceOf, returning false', obj, fn);

@@ -67,9 +67,7 @@ module api.content {
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
-                setSize(this.initialWidth).
                 setTimestamp(new Date()).
-                setScaleWidth(this.scaleWidth).
                 resolve();
 
             var imageEditor = new ImageEditor(imgUrl);
