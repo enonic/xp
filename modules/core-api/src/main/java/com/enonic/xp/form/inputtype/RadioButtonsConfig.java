@@ -11,10 +11,9 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.form.InvalidValueException;
 
 @Beta
-public class SingleSelectorConfig
+public class RadioButtonsConfig
     implements InputTypeConfig
 {
-    private SelectorType type;
 
     private List<Option> optionsAsList = new ArrayList<Option>();
 
@@ -25,10 +24,6 @@ public class SingleSelectorConfig
         return optionsAsList;
     }
 
-    public SelectorType getType()
-    {
-        return type;
-    }
 
     @Override
     public void checkValidity( final Property property )
@@ -56,7 +51,7 @@ public class SingleSelectorConfig
         return s.toString();
     }
 
-    public static Builder newSingleSelectorConfig()
+    public static Builder newRadioButtonsConfig()
     {
         return new Builder();
     }
@@ -64,29 +59,11 @@ public class SingleSelectorConfig
     public static class Builder
         implements OptionBuilder
     {
-        private SingleSelectorConfig config = new SingleSelectorConfig();
+        private RadioButtonsConfig config = new RadioButtonsConfig();
 
         Builder()
         {
             // protection
-        }
-
-        public Builder typeDropdown()
-        {
-            this.config.type = SelectorType.DROPDOWN;
-            return this;
-        }
-
-        public Builder typeRadio()
-        {
-            this.config.type = SelectorType.RADIO;
-            return this;
-        }
-
-        public Builder type( SelectorType value )
-        {
-            this.config.type = value;
-            return this;
         }
 
         @Override
@@ -97,16 +74,10 @@ public class SingleSelectorConfig
             return this;
         }
 
-        public SingleSelectorConfig build()
+        public RadioButtonsConfig build()
         {
-            Preconditions.checkNotNull( config.type, "type for SingleSelectorConfig cannot be null" );
             Preconditions.checkArgument( config.optionsAsList.size() > 0, "No options given" );
             return config;
         }
-    }
-
-    public enum SelectorType
-    {
-        DROPDOWN, RADIO, COMBOBOX;
     }
 }

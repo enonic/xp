@@ -221,7 +221,7 @@
         },
         {
             "Input": {
-                "name": "mySingleSelector",
+              "name": "myRadioButtons",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -233,9 +233,8 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "SingleSelector",
+                  "name": "RadioButtons",
                     "config": {
-                        "selectorType": "DROPDOWN",
                         "options": [
                             {
                                 "label": "myOption 1",

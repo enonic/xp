@@ -6,18 +6,17 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
-final class SingleSelectorConfigXmlSerializer
+final class RadioButtonsConfigXmlSerializer
     extends AbstractInputTypeConfigXmlSerializer
 {
-    public static final SingleSelectorConfigXmlSerializer DEFAULT = new SingleSelectorConfigXmlSerializer();
+    public static final RadioButtonsConfigXmlSerializer DEFAULT = new RadioButtonsConfigXmlSerializer();
 
     @Override
     protected void serializeConfig( final InputTypeConfig config, final DomBuilder builder )
     {
-        final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
-        builder.start( "selector-type" ).text( singleSelectorConfig.getType().toString() ).end();
+        final RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) config;
         builder.start( "options" );
-        for ( final Option option : singleSelectorConfig.getOptions() )
+        for ( final Option option : radioButtonsConfig.getOptions() )
         {
             builder.start( "option" );
             builder.start( "label" ).text( option.getLabel() ).end();
@@ -30,10 +29,7 @@ final class SingleSelectorConfigXmlSerializer
     @Override
     public InputTypeConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final SingleSelectorConfig.Builder builder = SingleSelectorConfig.newSingleSelectorConfig();
-
-        final Element selectorTypeEl = DomHelper.getChildElementByTagName( elem, "selector-type" );
-        builder.type( SingleSelectorConfig.SelectorType.valueOf( DomHelper.getTextValue( selectorTypeEl ) ) );
+        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newRadioButtonsConfig();
 
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
         for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )

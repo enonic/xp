@@ -68,7 +68,7 @@
       </options>
     </config>
   </input>
-  <input name="mySingleSelector" type="SingleSelector">
+  <input name="myRadioButtons" type="RadioButtons">
     <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
@@ -83,7 +83,6 @@
           <value>o2</value>
         </option>
       </options>
-      <selector-type>DROPDOWN</selector-type>
     </config>
   </input>
   <input name="myTag" type="Tag">
