@@ -9,7 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 
-class RepoPath
+public class RepoPath
 {
     private final static String SEPARATOR = ":";
 
