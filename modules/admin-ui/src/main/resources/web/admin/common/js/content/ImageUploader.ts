@@ -21,11 +21,18 @@ module api.content {
         private originalHeight: number;
         private originalWidth: number;
 
-        private scaleWidth: boolean = false; // parameter states if width of the image must be preferred over its height during resolving
+        private scaleWidth: boolean; // parameter states if width of the image must be preferred over its height during resolving
 
         constructor(config: ImageUploaderConfig) {
+            if (config.allowTypes == undefined) {
+                config.allowTypes = [
+                    {title: 'Image files', extensions: 'jpg,jpeg,gif,png'}
+                ];
+            }
+
             super(config);
 
+            this.scaleWidth = false;
             this.imageEditors = [];
             this.focalEditModeListeners = [];
             this.cropEditModeListeners = [];
