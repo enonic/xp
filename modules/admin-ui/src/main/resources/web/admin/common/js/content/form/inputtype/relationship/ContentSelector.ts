@@ -87,7 +87,7 @@ module api.content.form.inputtype.relationship {
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                                     this.propertyArray.set(0, value);
                                 }
-                                else {
+                                else if (!this.propertyArray.containsValue(value)) {
                                     this.propertyArray.add(value);
                                 }
 
