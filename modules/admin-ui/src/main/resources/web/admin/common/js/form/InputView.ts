@@ -63,6 +63,10 @@ module api.form {
                 this.addClass("no-label");
             }
 
+            if (this.input.isMaximizeUIInputWidth()) {
+                this.addClass("label-over-input");
+            }
+
             this.inputTypeView = this.createInputTypeView();
             this.inputTypeView.onEditContentRequest((content: api.content.ContentSummary) => {
                 this.notifyEditContentRequested(content);

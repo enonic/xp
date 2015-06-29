@@ -97,6 +97,7 @@ module api.form {
                     this.parentEl.appendChild(inputView);
                     this.formItemViews.push(inputView);
 
+
                     layoutPromises.push(inputView.layout());
                 }
             });

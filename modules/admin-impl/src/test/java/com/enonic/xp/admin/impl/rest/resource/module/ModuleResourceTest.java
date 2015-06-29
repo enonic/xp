@@ -113,7 +113,7 @@ public class ModuleResourceTest
     private Module createModule()
     {
         final Form config = Form.newForm().
-            addFormItem( Input.create().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         final Module module = Mockito.mock( Module.class );
