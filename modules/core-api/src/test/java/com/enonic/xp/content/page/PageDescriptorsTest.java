@@ -23,7 +23,7 @@ public class PageDescriptorsTest
     public void from()
     {
         final Form pageForm = Form.newForm().
-            addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
 

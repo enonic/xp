@@ -24,19 +24,19 @@ public class MixinTest
     @Test
     public void adding_a_formItemSetMixin_to_another_formItemSetMixin_throws_exception()
     {
-        Mixin ageMixin =
-            newMixin().name( "mymodule:age" ).addFormItem( Input.create().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+        Mixin ageMixin = newMixin().name( "mymodule:age" ).addFormItem(
+            Input.create().name( "age" ).label( "Age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final FormItemSet personFormItemSet = newFormItemSet().name( "person" ).addFormItem(
-            Input.create().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            Input.create().name( "name" ).label( "Name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInlineMixin( ageMixin ).build() ).build();
         Mixin personMixin = newMixin().name( "mymodule:person" ).addFormItem( personFormItemSet ).build();
 
         Mixin addressMixin = newMixin().name( MixinName.from(  ModuleKey.from("mymodule"), "address" ) ).addFormItem(
             newFormItemSet().name( "address" ).addFormItem(
-                Input.create().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
-                Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
-                Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
+                Input.create().inputType( InputTypes.TEXT_LINE ).name( "street" ).label( "Street" ).build() ).addFormItem(
+                Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).label( "Postal code" ).build() ).addFormItem(
+                Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).label( "Postal place" ).build() ).build() ).build();
 
         try
         {
@@ -53,7 +53,7 @@ public class MixinTest
     public void mixinBuilderTest()
     {
         FormItems formItems = new FormItems(  );
-        formItems.add( Input.create().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItems.add( Input.create().name( "name" ).label( "Name" ).inputType( InputTypes.TEXT_LINE ).build() );
         Mixin mixin1 = newMixin().name( MixinName.from("mymodule:my1") ).formItems( formItems ).build();
         Mixin mixin2 = newMixin( mixin1 ).build();
         assertEquals( mixin1.getFormItems(), mixin2.getFormItems() );

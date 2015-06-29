@@ -100,6 +100,7 @@ public final class XmlFormMapper
         builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );
         builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
         builder.inputTypeConfig( fromConfigXml( type, root.getChild( "config" ) ) );
+        builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, false ) );
 
         return builder.build();
     }

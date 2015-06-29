@@ -51,7 +51,7 @@ public class ValidateContentDataCommandTest
                 label( "My layout" ).
                 name( "myLayout" ).
                 addFormItem( FormItemSet.newFormItemSet().name( "mySet" ).required( true ).
-                    addFormItem( Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).
+                    addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).
                         build() ).
                     build() ).
                 build() ).
@@ -85,7 +85,7 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
-                Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:my_type" ).

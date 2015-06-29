@@ -24,10 +24,12 @@ public final class ContentTypeForms
             build() ).
         addFormItem( Input.create().
             name( "moduleConfig" ).
+            label( "Module config" ).
             helpText( "Configure modules needed for the Site" ).
             inputType( InputTypes.MODULE_CONFIGURATOR ).
             required( false ).
             multiple( true ).
+            maximizeUIInputWidth( true ).
             build() ).
         build();
 
@@ -58,6 +60,8 @@ public final class ContentTypeForms
     public static final Form MEDIA_IMAGE = Form.newForm().
 
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Image" ).
+            maximizeUIInputWidth( true ).
             inputType( InputTypes.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.create().name( "caption" ).
             inputType( InputTypes.TEXT_AREA ).
@@ -83,6 +87,7 @@ public final class ContentTypeForms
 
     public static final Form MEDIA_DEFAULT = Form.newForm().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Media" ).
             inputType( InputTypes.FILE_UPLOADER ).build() ).
         build();
 

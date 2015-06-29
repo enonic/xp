@@ -312,10 +312,12 @@ public class AbstractContentServiceTest
         final FormItemSet set = FormItemSet.newFormItemSet().
             name( "set" ).
             addFormItem( Input.create().
+                label( "String" ).
                 name( "setString" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
+                label( "Double" ).
                 name( "setDouble" ).
                 inputType( InputTypes.DOUBLE ).
                 build() ).
@@ -325,27 +327,33 @@ public class AbstractContentServiceTest
             superType( ContentTypeName.documentMedia() ).
             name( "myContentType" ).
             addFormItem( Input.create().
+                label( "Textline" ).
                 name( "textLine" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "stringArray" ).
+                label( "String array" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "double" ).
+                label( "Double" ).
                 inputType( InputTypes.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 name( "long" ).
+                label( "Long" ).
                 inputType( InputTypes.LONG ).
                 build() ).
             addFormItem( Input.create().
                 name( "color" ).
+                label( "Color" ).
                 inputType( InputTypes.COLOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "comboBox" ).
+                label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
                 inputTypeConfig( ComboBoxConfig.create().
                     addOption( "label1", "value1" ).
@@ -355,22 +363,27 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
+                label( "Checkbox" ).
                 inputType( InputTypes.CHECKBOX ).
                 build() ).
             addFormItem( Input.create().
                 name( "tinyMce" ).
+                label( "Tinymce" ).
                 inputType( InputTypes.TINY_MCE ).
                 build() ).
             addFormItem( Input.create().
                 name( "phone" ).
+                label( "Phone" ).
                 inputType( InputTypes.PHONE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
+                label( "Tag" ).
                 inputType( InputTypes.TAG ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentSelector" ).
+                label( "Content selector" ).
                 inputType( InputTypes.CONTENT_SELECTOR ).
                 inputTypeConfig( ContentSelectorConfig.create().
                     addAllowedContentType( ContentTypeName.folder() ).
@@ -379,34 +392,42 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
+                label( "Content type filter" ).
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
                 name( "moduleConfigurator" ).
+                label( "Module configurator" ).
                 inputType( InputTypes.MODULE_CONFIGURATOR ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).
+                label( "Date" ).
                 inputType( InputTypes.DATE ).
                 build() ).
             addFormItem( Input.create().
                 name( "time" ).
+                label( "Time" ).
                 inputType( InputTypes.TIME ).
                 build() ).
             addFormItem( Input.create().
                 name( "geoPoint" ).
+                label( "Geopoint" ).
                 inputType( InputTypes.GEO_POINT ).
                 build() ).
             addFormItem( Input.create().
                 name( "htmlArea" ).
+                label( "Htmlarea" ).
                 inputType( InputTypes.HTML_AREA ).
                 build() ).
             addFormItem( Input.create().
                 name( "xml" ).
+                label( "Xml" ).
                 inputType( InputTypes.XML ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).
+                label( "Local datetime" ).
                 inputType( InputTypes.DATE_TIME ).
                 inputTypeConfig( DateTimeConfig.create().
                     withTimezone( false ).
@@ -414,6 +435,7 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
+                label( "Datetime" ).
                 inputType( InputTypes.DATE_TIME ).
                 inputTypeConfig( DateTimeConfig.create().
                     withTimezone( true ).
