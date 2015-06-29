@@ -4,7 +4,7 @@
   <x-data mixin="mymodule:my-meta-mixin"/>
   <config>
     <input type="TextLine" name="some-name">
-      <label/>
+      <label>Textline</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
       <custom-text/>

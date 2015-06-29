@@ -34,13 +34,14 @@ public class InlineMixinsToFormItemsTransformTest
         Mixin mixin = Mixin.newMixin().
             name( "mymodule:my_mixin" ).
             addFormItem( Input.create().name( "input1" ).
+                label( "Input" ).
                 inputType( InputTypes.TEXT_LINE ).
                 helpText( "myHelpText" ).
                 build() ).
             build();
 
         Form form = newForm().
-            addFormItem( Input.create().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( InlineMixin.newInlineMixin().mixin( "mymodule:my_mixin" ).build() ).
             build();
 
@@ -68,7 +69,7 @@ public class InlineMixinsToFormItemsTransformTest
             Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         Form form = newForm().
-            addFormItem( Input.create().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInlineMixin( mixin ).build() ).
             build();
 

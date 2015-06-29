@@ -22,6 +22,7 @@
                         "name": "TextLine"
                     },
                     "label": "My text line",
+                  "maximizeUIInputWidth": false,
                     "name": "myTextLine",
                     "occurrences": {
                         "maximum": 1,
