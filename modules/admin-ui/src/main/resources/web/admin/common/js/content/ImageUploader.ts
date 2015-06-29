@@ -59,11 +59,14 @@ module api.content {
         }
 
         private getProportionalHeight(): number {
-            return this.initialWidth * this.originalHeight / this.originalWidth;
+            return Math.round(this.initialWidth * this.originalHeight / this.originalWidth);
         }
 
         createResultItem(value: string): api.dom.DivEl {
             this.initialWidth = this.getParentElement().getEl().getWidth();
+
+            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
+            this.getResultContainer().getEl().addClass("placeholder");
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
@@ -80,10 +83,8 @@ module api.content {
                 this.notifyCropEditModeChanged(edit, crop);
             });
 
-            this.getResultContainer().addClass("placeholder");
-            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
             imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.getResultContainer().removeClass("placeholder");
+                this.getResultContainer().getEl().removeClass("placeholder");
             });
 
             this.onFocus(() => {
