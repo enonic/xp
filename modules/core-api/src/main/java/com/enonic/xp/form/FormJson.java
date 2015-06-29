@@ -31,7 +31,7 @@ public class FormJson
     public FormJson( @JsonProperty("formItems") List<FormItemJson> items )
     {
         this.items = items;
-        final Form.Builder builder = Form.newForm();
+        final Form.Builder builder = Form.create();
         for ( FormItemJson formItemJson : items )
         {
             builder.addFormItem( formItemJson.getFormItem() );

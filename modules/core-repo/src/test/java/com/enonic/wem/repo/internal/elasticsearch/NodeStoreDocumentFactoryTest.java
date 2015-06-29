@@ -33,7 +33,7 @@ public class NodeStoreDocumentFactoryTest
     public void validate_given_no_id_then_exception()
         throws Exception
     {
-        Node node = Node.newNode().
+        Node node = Node.create().
             build();
 
         try
@@ -58,7 +58,7 @@ public class NodeStoreDocumentFactoryTest
     @Test
     public void validate_given_id_then_ok()
     {
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "abc" ) ).
             build();
 
@@ -77,7 +77,7 @@ public class NodeStoreDocumentFactoryTest
     public void index_node_document_created()
         throws Exception
     {
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "abc" ) ).
             build();
 
@@ -99,7 +99,7 @@ public class NodeStoreDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             id( NodeId.from( "abc" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
@@ -126,7 +126,7 @@ public class NodeStoreDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
@@ -159,7 +159,7 @@ public class NodeStoreDocumentFactoryTest
         rootDataSet.setDouble( "a.b.c", 2.0 );
         rootDataSet.setLocalDate( "a.b.d", LocalDate.now() );
 
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "myId" ) ).
             data( rootDataSet ).
             build();
@@ -186,7 +186,7 @@ public class NodeStoreDocumentFactoryTest
         rootDataSet.setDouble( "a.b.c", 2.0 );
         rootDataSet.setDouble( "a.b.c[1]", 3.0 );
 
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "myId" ) ).
             data( rootDataSet ).
             build();

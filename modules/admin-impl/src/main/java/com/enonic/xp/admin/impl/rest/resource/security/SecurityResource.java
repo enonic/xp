@@ -63,7 +63,6 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
-import static com.enonic.xp.security.PrincipalQuery.newQuery;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -112,7 +111,7 @@ public final class SecurityResource
     @Path("userstore/default")
     public UserStoreJson getDefaultUserStore()
     {
-        final UserStore userStore = UserStore.newUserStore().displayName( "" ).key( UserStoreKey.createDefault() ).build();
+        final UserStore userStore = UserStore.create().displayName( "" ).key( UserStoreKey.createDefault() ).build();
 
         final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
@@ -243,7 +242,7 @@ public final class SecurityResource
             throw new WebApplicationException( "Expected email parameter" );
         }
         final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : UserStoreKey.from( userStoreKeyParam );
-        final PrincipalQuery query = newQuery().email( email ).userStore( userStoreKey ).build();
+        final PrincipalQuery query = PrincipalQuery.create().email( email ).userStore( userStoreKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );
     }

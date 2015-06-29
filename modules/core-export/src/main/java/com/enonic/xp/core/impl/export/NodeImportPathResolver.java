@@ -14,7 +14,7 @@ class NodeImportPathResolver
 
         final VirtualFilePath relativePath = parentPath.subtractPath( exportRootPath );
 
-        final NodePath.Builder builder = NodePath.newPath( importRoot );
+        final NodePath.Builder builder = NodePath.create( importRoot );
 
         relativePath.getElements().forEach( builder::addElement );
 

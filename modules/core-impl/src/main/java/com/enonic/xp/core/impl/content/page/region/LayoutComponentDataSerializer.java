@@ -30,10 +30,10 @@ public class LayoutComponentDataSerializer
     @Override
     public LayoutComponent fromData( final PropertySet asData )
     {
-        final LayoutComponent.Builder component = LayoutComponent.newLayoutComponent();
+        final LayoutComponent.Builder component = LayoutComponent.create();
         applyComponentFromData( component, asData );
 
-        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.newLayoutRegions();
+        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.create();
         for ( final Property regionAsProp : asData.getProperties( "region" ) )
         {
             pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );

@@ -70,7 +70,7 @@ public class CreateContentHandlerTest
 
     private Content createContent( final CreateContentParams params )
     {
-        final Content.Builder builder = Content.newContent();
+        final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "123456" ) );
         builder.name( params.getName() );
         builder.parentPath( params.getParent() );

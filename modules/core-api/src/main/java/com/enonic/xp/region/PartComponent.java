@@ -15,12 +15,12 @@ public final class PartComponent
         super( builder );
     }
 
-    public static Builder newPartComponent()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newPartComponent( final PartComponent source )
+    public static Builder create( final PartComponent source )
     {
         return new Builder( source );
     }
@@ -28,7 +28,7 @@ public final class PartComponent
     @Override
     public Component copy()
     {
-        return newPartComponent( this ).build();
+        return create( this ).build();
     }
 
     @Override

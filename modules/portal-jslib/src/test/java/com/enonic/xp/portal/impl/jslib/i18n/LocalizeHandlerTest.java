@@ -37,7 +37,7 @@ public class LocalizeHandlerTest
         throws Exception
     {
         final PortalRequest context = new PortalRequest();
-        context.setSite( Site.newSite().
+        context.setSite( Site.create().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( DEFAULT_LOCALE ).

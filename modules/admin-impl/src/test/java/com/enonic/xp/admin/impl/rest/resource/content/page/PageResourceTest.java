@@ -20,6 +20,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.UpdatePageParams;
@@ -29,8 +30,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-
-import static com.enonic.xp.page.PageRegions.newPageRegions;
 
 public class PageResourceTest
     extends AbstractResourceTest
@@ -114,13 +113,13 @@ public class PageResourceTest
 
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.newPage().
+        Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
-            regions( newPageRegions().build() ).
+            regions( PageRegions.create().build() ).
             build();
 
-        return Content.newContent().
+        return Content.create().
             id( ContentId.from( id ) ).
             path( ContentPath.from( "/" + name ) ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
@@ -136,7 +135,7 @@ public class PageResourceTest
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().
+        return ContentType.create().
             superType( ContentTypeName.structured() ).
             displayName( "My type" ).
             name( name ).

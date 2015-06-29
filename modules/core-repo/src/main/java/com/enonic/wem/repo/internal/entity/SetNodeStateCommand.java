@@ -39,7 +39,7 @@ public class SetNodeStateCommand
 
     private Node setNodeState( final Node node, final NodeState nodeState, final SetNodeStateResult.Builder setNodeStateResultBuilder)
     {
-        final Node updatedNode = Node.newNode( node ).
+        final Node updatedNode = Node.create( node ).
             nodeState( this.params.getNodeState() ).
             build();
 

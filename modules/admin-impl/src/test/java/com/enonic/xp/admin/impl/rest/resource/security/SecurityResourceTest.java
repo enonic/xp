@@ -166,7 +166,7 @@ public class SecurityResourceTest
         final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.newUserStore().
+        final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
@@ -197,7 +197,7 @@ public class SecurityResourceTest
         final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
             UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.newUserStore().
+        final UserStore userStore = UserStore.create().
             key( UserStoreKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             build();
@@ -381,7 +381,7 @@ public class SecurityResourceTest
             login( "alice" ).
             build();
 
-        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().addPrincipal( user ).totalSize( 1 ).build();
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.create().addPrincipal( user ).totalSize( 1 ).build();
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
 
         String jsonString = request().
@@ -397,7 +397,7 @@ public class SecurityResourceTest
     public void isEmailAvailablePositive()
         throws Exception
     {
-        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().totalSize( 0 ).build();
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.create().totalSize( 0 ).build();
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
 
         String jsonString = request().
@@ -607,12 +607,12 @@ public class SecurityResourceTest
 
     private UserStores createUserStores()
     {
-        final UserStore userStore1 = UserStore.newUserStore().
+        final UserStore userStore1 = UserStore.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
             build();
 
-        final UserStore userStore2 = UserStore.newUserStore().
+        final UserStore userStore2 = UserStore.create().
             key( USER_STORE_2 ).
             displayName( "File based user store" ).
             build();

@@ -74,7 +74,7 @@ class NodeServiceMock
     @Override
     public Node create( final CreateNodeParams params )
     {
-        final Node.Builder builder = Node.newNode().
+        final Node.Builder builder = Node.create().
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
@@ -124,7 +124,7 @@ class NodeServiceMock
             return persistedNode;
         }
 
-        final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
+        final Node.Builder updateNodeBuilder = Node.create( editedNode ).
             permissions( persistedNode.getPermissions() );
 
         return updateNodeBuilder.build();

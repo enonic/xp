@@ -11,8 +11,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.LayoutComponent;
 
-import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
-
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutComponentJson
     extends DescriptorBasedComponentJson<LayoutComponent>
@@ -26,7 +24,7 @@ public class LayoutComponentJson
                                 @JsonProperty("config") final List<PropertyArrayJson> config,
                                 final @JsonProperty("regions") List<RegionJson> regions )
     {
-        super( newLayoutComponent().
+        super( LayoutComponent.create().
             name( name != null ? ComponentName.from( name ) : null ).
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).

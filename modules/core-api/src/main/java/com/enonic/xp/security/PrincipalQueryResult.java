@@ -31,7 +31,7 @@ public final class PrincipalQueryResult
         return principals.isEmpty();
     }
 
-    public static Builder newResult()
+    public static Builder create()
     {
         return new Builder();
     }

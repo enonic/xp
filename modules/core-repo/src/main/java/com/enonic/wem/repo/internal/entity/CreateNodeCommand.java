@@ -82,7 +82,7 @@ public final class CreateNodeCommand
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
-        final Node.Builder nodeBuilder = Node.newNode().
+        final Node.Builder nodeBuilder = Node.create().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             parentPath( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
@@ -271,7 +271,7 @@ public final class CreateNodeCommand
             }
         }
 
-        NodePath nodePath = NodePath.newNodePath( params.getParent(), params.getName() ).build();
+        NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
 
         Node existingNode = doGetByPath( nodePath, false );
 

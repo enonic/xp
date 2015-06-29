@@ -65,7 +65,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected final LayoutDescriptors getDescriptorsFromModules( final Modules modules )
     {
-        final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
+        final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
         for ( final Module module : modules )
         {
             readDescriptor( module, layoutDescriptors );
@@ -75,7 +75,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected final LayoutDescriptors getDescriptorsFromModule( final Module module )
     {
-        final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
+        final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
         readDescriptor( module, layoutDescriptors );
         return layoutDescriptors.build();
     }

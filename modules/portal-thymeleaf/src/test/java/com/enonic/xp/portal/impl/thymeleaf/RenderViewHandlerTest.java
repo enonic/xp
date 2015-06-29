@@ -40,7 +40,7 @@ public class RenderViewHandlerTest
         portalRequest.setModule( ModuleKey.from( "mymodule" ) );
         portalRequest.setBaseUri( "/portal" );
 
-        final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
+        final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();
         portalRequest.setContent( content );
         PortalRequestAccessor.set( portalRequest );
 

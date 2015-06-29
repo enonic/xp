@@ -10,6 +10,7 @@ import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.relationship.CreateRelationshipParams;
+import com.enonic.xp.relationship.Relationship;
 import com.enonic.xp.relationship.RelationshipId;
 import com.enonic.xp.relationship.RelationshipKey;
 import com.enonic.xp.relationship.RelationshipNotFoundException;
@@ -19,8 +20,6 @@ import com.enonic.xp.relationship.UpdateRelationshipFailureException;
 import com.enonic.xp.relationship.UpdateRelationshipParams;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static com.enonic.xp.relationship.Relationship.newRelationship;
-import static com.enonic.xp.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 import static org.mockito.Matchers.isA;
 
 public class RelationshipResourceTest
@@ -32,7 +31,7 @@ public class RelationshipResourceTest
     public void get_from_content_with_one_relationship()
         throws Exception
     {
-        Relationships relationships = Relationships.from( newRelationship().
+        Relationships relationships = Relationships.from( Relationship.create().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.REFERENCE ).
@@ -49,10 +48,10 @@ public class RelationshipResourceTest
     public void get_from_content_with_two_relationships()
         throws Exception
     {
-        Relationships relationships = Relationships.from( newRelationship().fromContent( ContentId.from( "111" ) ).
+        Relationships relationships = Relationships.from( Relationship.create().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.REFERENCE ).
-            build(), newRelationship().fromContent( ContentId.from( "111" ) ).
+            build(), Relationship.create().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "333" ) ).
             type( RelationshipTypeName.REFERENCE ).
             build() );
@@ -97,13 +96,14 @@ public class RelationshipResourceTest
     public void update_failure()
         throws Exception
     {
-        RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
+        RelationshipKey relationshipKey = RelationshipKey.create().
             type( RelationshipTypeName.REFERENCE ).
             fromContent( ContentId.from( "123" ) ).
             toContent( ContentId.from( "321" ) ).
             build();
 
-        UpdateRelationshipFailureException exception = newUpdateRelationshipsResult().relationshipKey( relationshipKey ).failure(
+        UpdateRelationshipFailureException exception =
+            UpdateRelationshipFailureException.create().relationshipKey( relationshipKey ).failure(
             new RelationshipNotFoundException( relationshipKey ) ).build();
 
         Mockito.doThrow( exception ).when( this.relationshipService ).update( isA( UpdateRelationshipParams.class ) );

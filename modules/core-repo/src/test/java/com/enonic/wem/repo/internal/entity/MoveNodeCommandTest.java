@@ -262,7 +262,7 @@ public class MoveNodeCommandTest
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );
 
-        assertNotNull( getNodeByPath( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( node.path(), child1.name().toString() ).build() ) );
 
         final Node movedNode = MoveNodeCommand.create().
             queryService( this.queryService ).
@@ -279,8 +279,8 @@ public class MoveNodeCommandTest
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );
 
-        assertNull( getNodeByPath( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
-        assertNotNull( getNodeByPath( NodePath.newNodePath( movedNode.path(), child1.name().toString() ).build() ) );
+        assertNull( getNodeByPath( NodePath.create( node.path(), child1.name().toString() ).build() ) );
+        assertNotNull( getNodeByPath( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
 
         final Node movedChild1 = getNodeById( child1.id() );
         final Node movedChild2 = getNodeById( child2.id() );

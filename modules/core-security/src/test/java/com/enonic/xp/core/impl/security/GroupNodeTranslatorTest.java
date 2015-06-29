@@ -57,7 +57,7 @@ public class GroupNodeTranslatorTest
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getUserStore().toString() );
 
-        final Node node = Node.newNode().
+        final Node node = Node.create().
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( groupKey ) ).
             data( rootDataSet ).

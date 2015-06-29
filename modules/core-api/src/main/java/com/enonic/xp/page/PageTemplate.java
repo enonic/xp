@@ -121,13 +121,13 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.newPage().
+                this.page = Page.create().
                     controller( descriptorKey ).
                     build();
             }
             else
             {
-                this.page = Page.newPage( this.page ).
+                this.page = Page.create( this.page ).
                     controller( descriptorKey ).
                     build();
             }
@@ -147,13 +147,13 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.newPage().
+                this.page = Page.create().
                     regions( value ).
                     build();
             }
             else
             {
-                this.page = Page.newPage( this.page ).
+                this.page = Page.create( this.page ).
                     regions( value ).
                     build();
             }
@@ -165,13 +165,13 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.newPage().
+                this.page = Page.create().
                     config( config ).
                     build();
             }
             else
             {
-                this.page = Page.newPage( this.page ).
+                this.page = Page.create( this.page ).
                     config( config ).
                     build();
             }

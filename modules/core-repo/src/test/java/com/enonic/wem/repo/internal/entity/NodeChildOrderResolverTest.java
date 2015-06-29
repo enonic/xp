@@ -31,7 +31,7 @@ public class NodeChildOrderResolverTest
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            nodePath( NodePath.newPath( "myPath" ).build() ).
+            nodePath( NodePath.create( "myPath" ).build() ).
             childOrder( childOrder ).
             build().
             resolve();
