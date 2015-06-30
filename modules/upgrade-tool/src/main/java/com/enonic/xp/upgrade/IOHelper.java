@@ -3,6 +3,7 @@ package com.enonic.xp.upgrade;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 import com.google.common.base.Charsets;
@@ -20,6 +21,19 @@ final class IOHelper
         catch ( Exception e )
         {
             throw new UpgradeException( "Failed to open file with path '" + path + "'", e );
+        }
+    }
+
+    public static void copy( final Path source, final Path target )
+    {
+        try
+        {
+            Files.createDirectories( target.getParent() );
+            Files.copy( source, target, StandardCopyOption.REPLACE_EXISTING );
+        }
+        catch ( IOException e )
+        {
+            throw new UpgradeException( "Failed to copy file with path '" + source + "' to '" + target + "'", e );
         }
     }
 

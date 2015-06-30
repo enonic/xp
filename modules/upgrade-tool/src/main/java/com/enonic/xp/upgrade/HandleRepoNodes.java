@@ -103,16 +103,25 @@ public final class HandleRepoNodes
     {
         CharSource source = IOHelper.getCharSource( path );
 
+        boolean modified = false;
         for ( final UpgradeModel upgradeModel : upgradeModels )
         {
             if ( upgradeModel.supports( path, repositoryName, branchName ) )
             {
                 final String upgraded = upgradeModel.upgrade( path, source );
                 source = CharSource.wrap( upgraded );
+                modified = true;
             }
         }
 
-        IOHelper.write( createTargetPath( path ), source );
+        if ( modified )
+        {
+            IOHelper.write( createTargetPath( path ), source );
+        }
+        else
+        {
+            IOHelper.copy( path, createTargetPath( path ) );
+        }
     }
 
     private Path createTargetPath( final Path path )
