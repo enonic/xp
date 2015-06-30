@@ -11,14 +11,14 @@ public final class UpgradeTool
     {
         if ( args.length != 1 )
         {
-            throw new com.enonic.xp.upgrade.UpgradeException( "source-path must be provided" );
+            throw new UpgradeException( "source-path must be provided" );
         }
 
         final File sourceRoot = new File( args[0] );
 
         if ( !sourceRoot.exists() )
         {
-            throw new com.enonic.xp.upgrade.UpgradeException( "Source-root does not exist" );
+            throw new UpgradeException( "Source-root does not exist" );
         }
 
         for ( final String arg : args )

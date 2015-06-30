@@ -19,7 +19,7 @@ final class IOHelper
         }
         catch ( Exception e )
         {
-            throw new com.enonic.xp.upgrade.UpgradeException( "Failed to open file with path '" + path + "'", e );
+            throw new UpgradeException( "Failed to open file with path '" + path + "'", e );
         }
     }
 
@@ -31,7 +31,7 @@ final class IOHelper
         }
         catch ( IOException e )
         {
-            throw new com.enonic.xp.upgrade.UpgradeException( "Failed to get children of path '" + path + "'", e );
+            throw new UpgradeException( "Failed to get children of path '" + path + "'", e );
         }
     }
 
@@ -51,7 +51,7 @@ final class IOHelper
         }
         catch ( IOException e )
         {
-            throw new com.enonic.xp.upgrade.UpgradeException( "Failed to write upgrade-file to path '" + path + "'", e );
+            throw new UpgradeException( "Failed to write upgrade-file to path '" + path + "'", e );
         }
     }
 }

@@ -21,8 +21,7 @@ abstract class AbstractXsltUpgradeModel
 
     private URL getResource( final String xsl )
     {
-
-        return Resources.getResource( UpgradeModel002.class, xsl );
+        return Resources.getResource( AbstractXsltUpgradeModel.class, xsl );
     }
 
     protected final String transform( final Path path, final CharSource source )
