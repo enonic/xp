@@ -29,6 +29,8 @@ include 'admin-ui'
 
 include 'itest-core'
 
+include 'upgrade-tool'
+
 include 'launcher'
 include 'distro'
 

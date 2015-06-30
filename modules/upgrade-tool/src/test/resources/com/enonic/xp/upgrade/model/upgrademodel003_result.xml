@@ -1,0 +1,157 @@
+<node>
+  <id>features</id>
+  <childOrder>modifiedtime DESC</childOrder>
+  <nodeType>content</nodeType>
+  <timestamp>2015-06-25T11:10:41.102Z</timestamp>
+  <permissions>
+    <principal key="user:system:anonymous">
+      <allow type="array">
+        <value>READ</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:system.authenticated">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:cms.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:system.everyone">
+      <allow type="array">
+        <value>READ</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data>
+    <boolean name="valid">true</boolean>
+    <string name="displayName">Features</string>
+    <string name="type">portal:site</string>
+    <dateTime name="modifiedTime">2015-06-25T11:10:41.098Z</dateTime>
+    <string name="modifier">user:system:anonymous</string>
+    <string name="creator">user:system:anonymous</string>
+    <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+    <property-set name="data">
+      <string name="description">The Features Site.</string>
+      <property-set name="siteConfig">
+        <string name="moduleKey">com.enonic.xp.modules.features</string>
+        <property-set name="config"/>
+      </property-set>
+    </property-set>
+    <property-set name="page">
+      <string isNull="true" name="controller"/>
+      <reference name="template">features:_templates:main</reference>
+      <property-set name="region">
+        <string name="name">main</string>
+        <property-set name="component">
+          <string name="type">TextComponent</string>
+          <property-set name="TextComponent">
+            <string name="name">Text</string>
+            <string name="text">Hello world!</string>
+          </property-set>
+        </property-set>
+      </property-set>
+      <property-set name="config"/>
+    </property-set>
+  </data>
+  <indexConfigs>
+    <analyzer>content_default</analyzer>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page.regions</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>attachment</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>x</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>site</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>type</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>
