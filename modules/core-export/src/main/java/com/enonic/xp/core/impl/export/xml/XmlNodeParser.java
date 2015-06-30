@@ -89,7 +89,8 @@ public final class XmlNodeParser
     {
         final String type = root.getTagName();
         final String name = root.getAttribute( "name" );
-        final boolean isNull = "true".equals( root.getAttribute( XML_SCHEMA_NS_KEY + ":nil" ) );
+        final boolean isNull =
+            "true".equals( root.getAttribute( XML_SCHEMA_NS_KEY + ":nil" ) ) || "true".equals( root.getAttribute( "isNull" ) );
 
         if ( type.equals( "property-set" ) )
         {
