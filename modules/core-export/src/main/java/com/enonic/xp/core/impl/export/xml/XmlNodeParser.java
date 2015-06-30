@@ -96,20 +96,21 @@ public final class XmlNodeParser
         }
 
         final String value = root.getValue();
+        final boolean isEmpty = "".equals( value );
 
         switch ( type )
         {
             case "boolean":
-                addBooleanProperty( set, name, value );
+                addBooleanProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "string":
                 addStringProperty( set, name, isNull ? null : value );
                 break;
             case "double":
-                addDoubleProperty( set, name, isNull ? null : value );
+                addDoubleProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "long":
-                addLongProperty( set, name, isNull ? null : value );
+                addLongProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "htmlPart":
                 addHtmlPartProperty( set, name, isNull ? null : value );
@@ -118,28 +119,28 @@ public final class XmlNodeParser
                 addXmlProperty( set, name, isNull ? null : value );
                 break;
             case "geoPoint":
-                addGeoPointProperty( set, name, isNull ? null : value );
+                addGeoPointProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "dateTime":
-                addInstantProperty( set, name, isNull ? null : value );
+                addInstantProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "localTime":
-                addLocalTimeProperty( set, name, isNull ? null : value );
+                addLocalTimeProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "localDate":
-                addLocalDateProperty( set, name, isNull ? null : value );
+                addLocalDateProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "localDateTime":
-                addLocalDateTimeProperty( set, name, isNull ? null : value );
+                addLocalDateTimeProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "reference":
-                addReferenceProperty( set, name, isNull ? null : value );
+                addReferenceProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             case "link":
                 addLinkProperty( set, name, isNull ? null : value );
                 break;
             case "binaryReference":
-                addBinaryReferenceProperty( set, name, isNull ? null : value );
+                addBinaryReferenceProperty( set, name, isNull || isEmpty ? null : value );
                 break;
             default:
                 throw new IllegalArgumentException( "Unknown property type [" + type + "]" );
@@ -160,7 +161,7 @@ public final class XmlNodeParser
 
     private void addBooleanProperty( final PropertySet set, final String name, final String value )
     {
-        set.addBoolean( name, "true".equals( value ) );
+        set.addBoolean( name, value != null ? Boolean.valueOf( value ) : null );
     }
 
     private void addStringProperty( final PropertySet set, final String name, final String value )
