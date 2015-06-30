@@ -33,6 +33,8 @@ public class NodeExporter
 
     private final ExportWriter exportWriter;
 
+    private final Path rootDirectory;
+
     private final Path targetDirectory;
 
     private final String xpVersion;
@@ -51,6 +53,7 @@ public class NodeExporter
         this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
+        this.rootDirectory = builder.rootDirectory;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = builder.xpVersion;
         this.dryRun = builder.dryRun;
@@ -219,7 +222,7 @@ public class NodeExporter
     {
         if ( xpVersion != null )
         {
-            final Path exportPropertiesPath = NodeExportPathResolver.resolveExportPropertiesPath( this.targetDirectory );
+            final Path exportPropertiesPath = NodeExportPathResolver.resolveExportPropertiesPath( this.rootDirectory );
 
             if ( !dryRun )
             {
@@ -268,6 +271,8 @@ public class NodeExporter
 
         private ExportWriter exportWriter;
 
+        private Path rootDirectory;
+
         private Path targetDirectory;
 
         private String xpVersion;
@@ -297,6 +302,12 @@ public class NodeExporter
         public Builder batchSize( int batchSize )
         {
             this.batchSize = batchSize;
+            return this;
+        }
+
+        public Builder rootDirectory( Path rootDirectory )
+        {
+            this.rootDirectory = rootDirectory;
             return this;
         }
 

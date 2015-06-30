@@ -231,11 +231,12 @@ public class NodeExporterTest
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             xpVersion( "X.Y.Z-SNAPSHOT" ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            rootDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot/myExport" ) ).
             build().
             execute();
 
-        assertFileExists( "/myExport/export.properties" );
+        assertFileExists( "/myRoot/export.properties" );
     }
 
 

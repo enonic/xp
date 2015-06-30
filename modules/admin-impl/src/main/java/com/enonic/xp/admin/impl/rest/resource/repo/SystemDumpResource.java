@@ -85,6 +85,7 @@ public class SystemDumpResource
 
         return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
             includeNodeIds( true ).
+            rootDirectory( targetRoot.toString() ).
             targetDirectory( exportPath.toString() ).
             sourceNodePath( NodePath.ROOT ).
             build() ) );

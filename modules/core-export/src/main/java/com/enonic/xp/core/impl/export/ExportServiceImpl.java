@@ -40,6 +40,7 @@ public class ExportServiceImpl
             sourceNodePath( params.getSourceNodePath() ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
+            rootDirectory( Paths.get( params.getRootDirectory() ) ).
             targetDirectory( Paths.get( params.getTargetDirectory() ) ).
             xpVersion( xpVersion ).
             dryRun( params.isDryRun() ).
