@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'java-base'
 
 allprojects {
-    group = 'com.enonic.xp.libs'
+    group = 'com.enonic.xp.lib'
 
     repositories {
         mavenLocal()

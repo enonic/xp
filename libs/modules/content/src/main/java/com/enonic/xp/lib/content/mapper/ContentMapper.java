@@ -35,6 +35,7 @@ public final class ContentMapper
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
+        gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
 
         serializeData( gen, value.getData() );
@@ -94,3 +95,4 @@ public final class ContentMapper
         serialize( gen, this.value );
     }
 }
+

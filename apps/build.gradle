@@ -16,7 +16,7 @@ allprojects {
     apply plugin: 'base'
 
     version = '6.0.0-SNAPSHOT'
-    group = 'com.enonic.xp.apps'
+    group = 'com.enonic.xp.app'
 }
 
 subprojects {

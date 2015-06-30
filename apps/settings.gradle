@@ -1,5 +1,5 @@
-include 'xslt'
-include 'features'
+include ':xslt'
+include ':features'
 
 rootProject.children.each { project ->
     String projectDirName = "modules/${project.name}"
