@@ -24,9 +24,11 @@ import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlObjectParser;
+import com.enonic.xp.xml.schema.SchemaNamespaces;
 
 public final class XmlNodeParser
     extends XmlObjectParser<XmlNodeParser>
+    implements SchemaNamespaces
 {
     private Node.Builder builder;
 
@@ -87,7 +89,7 @@ public final class XmlNodeParser
     {
         final String type = root.getTagName();
         final String name = root.getAttribute( "name" );
-        final boolean isNull = "true".equals( root.getAttribute( "isNull" ) );
+        final boolean isNull = "true".equals( root.getAttribute( XML_SCHEMA_NS_KEY + ":nil" ) );
 
         if ( type.equals( "property-set" ) )
         {
@@ -100,7 +102,7 @@ public final class XmlNodeParser
         switch ( type )
         {
             case "boolean":
-                addBooleanProperty( set, name, value );
+                addBooleanProperty( set, name, isNull ? null : value );
                 break;
             case "string":
                 addStringProperty( set, name, isNull ? null : value );
@@ -160,7 +162,7 @@ public final class XmlNodeParser
 
     private void addBooleanProperty( final PropertySet set, final String name, final String value )
     {
-        set.addBoolean( name, "true".equals( value ) );
+        set.addBoolean( name, value != null ? Boolean.valueOf( value ) : null );
     }
 
     private void addStringProperty( final PropertySet set, final String name, final String value )
