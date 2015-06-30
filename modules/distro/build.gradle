@@ -2,12 +2,14 @@ apply plugin: 'java-base'
 
 configurations {
     lib
+    toolbox
     bundle
     bundle.transitive = false
 }
 
 dependencies {
     lib project( ':launcher' )
+    toolbox project( ':toolbox' )
 }
 
 ext {
@@ -93,6 +95,15 @@ task copyResources( type: Copy ) {
             expand project.properties
         }
     }
+    into( 'toolbox' ) {
+        from( 'src/toolbox' ) {
+            include '*.sh'
+            fileMode 0755
+        }
+    }
+    into( 'toolbox/lib' ) {
+        from( configurations.toolbox )
+    }
     from( 'src' ) {
         include 'README.txt'
         expand project.properties
@@ -105,13 +116,6 @@ task copyResources( type: Copy ) {
 }
 
 task installDist( dependsOn: [copyResources, copyBundles] )
-
-task distTar( type: Tar, dependsOn: installDist ) {
-    compression = Compression.GZIP
-    extension = 'tar.gz'
-    from installDir
-    into archiveBase
-}
 
 task distZip( type: Zip, dependsOn: installDist ) {
     from installDir
@@ -141,7 +145,6 @@ task javadocZip( type: Zip ) {
 }
 
 artifacts {
-    archives distTar
     archives distZip
     archives javadocZip
 }
