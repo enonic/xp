@@ -61,6 +61,18 @@ module api.data {
             });
         }
 
+        containsValue(value: Value): boolean {
+            var result = false;
+
+            this.forEach((property: Property) => {
+                if (api.ObjectHelper.equals(property.getValue(), value)) {
+                    result = true;
+                }
+            });
+
+            return result;
+        }
+
         getTree(): PropertyTree {
             return this.tree;
         }
@@ -107,7 +119,6 @@ module api.data {
          * Module protected. Not to be used outside module.
          */
         addProperty(property: Property) {
-
             api.util.assert(property.getName() == this.name,
                 "Expected name of added Property to be [" + this.name + "], got: " + property.getName());
             api.util.assert(property.getType().equals(this.getType()),
