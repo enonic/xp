@@ -11,7 +11,8 @@
                     "inputType": {
                         "name": "TextLine"
                     },
-                    "label": null,
+                  "label": "some-label",
+                  "maximizeUIInputWidth": false,
                     "name": "some-name",
                     "occurrences": {
                         "maximum": 1,

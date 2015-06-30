@@ -22,6 +22,8 @@ module api.form {
 
         inputTypeConfig: any;
 
+        maximizeUIInputWidth: boolean;
+
         setName(value: string): InputBuilder {
             this.name = value;
             return this;
@@ -83,6 +85,7 @@ module api.form {
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
             this.inputTypeConfig = json.config;
+            this.maximizeUIInputWidth = json.maximizeUIInputWidth;
             return this;
         }
 
@@ -119,6 +122,8 @@ module api.form {
 
         private inputTypeConfig: any;
 
+        private maximizeUIInputWidth: boolean;
+
         constructor(builder: InputBuilder) {
             super(builder.name);
             this.inputType = builder.inputType;
@@ -130,6 +135,7 @@ module api.form {
             this.customText = builder.customText;
             this.validationRegex = builder.validationRegex;
             this.helpText = builder.helpText;
+            this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
         }
 
         static fromJson(json: api.form.json.InputJson): Input {
@@ -156,6 +162,10 @@ module api.form {
 
         isIndexed(): boolean {
             return this.indexed;
+        }
+
+        isMaximizeUIInputWidth(): boolean {
+            return this.maximizeUIInputWidth;
         }
 
         getCustomText(): string {
@@ -237,7 +247,8 @@ module api.form {
                 occurrences: this.getOccurrences().toJson(),
                 validationRegexp: this.getValidationRegex(),
                 inputType: this.getInputType().toJson(),
-                config: this.getInputTypeConfig()
+                config: this.getInputTypeConfig(),
+                maximizeUIInputWidth: this.isMaximizeUIInputWidth()
             }};
         }
     }

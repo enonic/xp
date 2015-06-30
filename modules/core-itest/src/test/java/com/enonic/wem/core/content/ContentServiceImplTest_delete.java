@@ -198,7 +198,7 @@ public class ContentServiceImplTest_delete
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
+            allowPublishOutsideSelection( true ).
             build();
 
         final PushContentsResult push = this.contentService.push( pushParams );

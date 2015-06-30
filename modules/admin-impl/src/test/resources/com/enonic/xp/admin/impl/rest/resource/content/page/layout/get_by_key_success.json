@@ -11,7 +11,8 @@
                     "inputType": {
                         "name": "Double"
                     },
-                    "label": null,
+                  "label": "Columns",
+                  "maximizeUIInputWidth": true,
                     "name": "columns",
                     "occurrences": {
                         "maximum": 1,
