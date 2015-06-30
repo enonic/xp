@@ -30,6 +30,7 @@ include 'admin-ui'
 include 'itest-core'
 
 include 'upgrade-tool'
+include 'toolbox'
 
 include 'launcher'
 include 'distro'
