@@ -85,8 +85,12 @@ public class XmlNodeSerializerTest
 
         // Nullable values
         propertyTree.addString( "myString", null );
+        propertyTree.addBoolean( "myBoolean", null );
+        propertyTree.addDouble( "myDouble", null );
+        propertyTree.addLong( "myLong", null );
         propertyTree.addHtmlPart( "myHtmlPart", null );
         propertyTree.addXml( "myXml", null );
+        propertyTree.addGeoPoint( "myGeoPoint", null );
         propertyTree.addSet( "nullSet", null );
 
         // Index configs
