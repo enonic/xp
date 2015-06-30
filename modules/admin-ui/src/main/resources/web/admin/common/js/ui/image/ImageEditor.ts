@@ -76,7 +76,7 @@ module api.ui.image {
 
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private cropEditModeListeners: {(edit: boolean, position: Rect): void}[] = [];
+        private cropEditModeListeners: {(edit: boolean, position: Rect, zoomPosition: Rect): void}[] = [];
 
         public static debug = false;
 
@@ -716,7 +716,9 @@ module api.ui.image {
                 this.revertZoomData = undefined;
             }
             // notify position updated in case we exit edit mode and apply changes
-            this.notifyCropModeChanged(edit, !edit && applyChanges ? this.getCropPosition() : undefined);
+            this.notifyCropModeChanged(edit,
+                !edit && applyChanges ? this.getCropPosition() : undefined,
+                !edit && applyChanges ? this.getZoomPosition() : undefined);
         }
 
         isCropEditMode(): boolean {
@@ -1358,7 +1360,7 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        onCropModeChanged(listener: (edit: boolean, position: Rect) => void) {
+        onCropModeChanged(listener: (edit: boolean, position: Rect, zoomPosition: Rect) => void) {
             this.cropEditModeListeners.push(listener);
         }
 
@@ -1374,14 +1376,14 @@ module api.ui.image {
             })
         }
 
-        private notifyCropModeChanged(edit: boolean, position: Rect) {
-            var normalizedPosition;
+        private notifyCropModeChanged(edit: boolean, position: Rect, zoomPosition: Rect) {
             if (position) {
                 // position can be undefined when auto positioned
-                normalizedPosition = this.normalizeRect(position);
+                debugger;
+                //normalizedPosition = this.denormalizeRect(position.x, position.y);
             }
             this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, normalizedPosition);
+                listener(edit, position, zoomPosition);
             })
         }
 
