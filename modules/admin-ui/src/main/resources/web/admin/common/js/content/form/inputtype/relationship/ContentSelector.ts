@@ -82,7 +82,7 @@ module api.content.form.inputtype.relationship {
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                                     this.getPropertyArray().set(0, value);
                                 }
-                                else {
+                                else if (!this.getPropertyArray().containsValue(value)) {
                                     this.getPropertyArray().add(value);
                                 }
 
