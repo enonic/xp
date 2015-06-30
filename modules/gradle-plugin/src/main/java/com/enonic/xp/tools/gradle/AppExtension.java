@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.gradle.api.Project;
 
-public class ModuleExtension
+public class AppExtension
 {
-    public final static String NAME = "module";
+    public final static String NAME = "app";
 
     private final Project project;
 
@@ -22,13 +22,13 @@ public class ModuleExtension
 
     private String vendorUrl;
 
-    private String systemVersion = "[5.0,6)";
+    private String systemVersion = "[6.0,7)";
 
     private Map<String, String> instructions;
 
     private File xpHome;
 
-    public ModuleExtension( final Project project )
+    public AppExtension( final Project project )
     {
         this.project = project;
         this.xpHome = findDefaultHomeDir();
@@ -130,14 +130,14 @@ public class ModuleExtension
         }
     }
 
-    public static ModuleExtension get( final Project project )
+    public static AppExtension get( final Project project )
     {
-        return project.getExtensions().getByType( ModuleExtension.class );
+        return project.getExtensions().getByType( AppExtension.class );
     }
 
-    public static ModuleExtension create( final Project project )
+    public static AppExtension create( final Project project )
     {
-        return project.getExtensions().create( NAME, ModuleExtension.class, project );
+        return project.getExtensions().create( NAME, AppExtension.class, project );
     }
 
     private static File findDefaultHomeDir()

@@ -11,15 +11,15 @@ import org.gradle.api.tasks.bundling.Jar;
 
 import com.enonic.xp.tools.gradle.watch.WatchTask;
 
-public class ModulePlugin
+public class AppPlugin
     extends BasePlugin
 {
-    private ModuleExtension ext;
+    private AppExtension ext;
 
     @Override
     protected void configure()
     {
-        this.ext = ModuleExtension.create( this.project );
+        this.ext = AppExtension.create( this.project );
         this.project.getPlugins().apply( BundlePlugin.class );
 
         this.project.afterEvaluate( project1 -> {
@@ -34,7 +34,7 @@ public class ModulePlugin
 
     private void configure( final BundleExtension bundle )
     {
-        new BundleConfigurator( this.project, bundle ).configure( ModulePlugin.this.ext );
+        new BundleConfigurator( this.project, bundle ).configure( AppPlugin.this.ext );
     }
 
     private void checkHomeDir()
@@ -62,8 +62,8 @@ public class ModulePlugin
     private void doApplyDeployTask()
     {
         final Copy task = this.project.getTasks().create( "deploy", Copy.class );
-        task.setGroup( "Module" );
-        task.setDescription( "Deploy module to XP_HOME directory." );
+        task.setGroup( "Application" );
+        task.setDescription( "Deploy application to XP_HOME directory." );
         task.dependsOn( this.project.getTasks().getByName( "build" ) );
         task.from( ( (Jar) this.project.getTasks().getByPath( "jar" ) ).getArchivePath() );
 
@@ -85,8 +85,8 @@ public class ModulePlugin
     private void applyWatcherTask()
     {
         final WatchTask task = this.project.getTasks().create( "watch", WatchTask.class );
-        task.setGroup( "Module" );
-        task.setDescription( "Watch for changes and re-deploy jar" );
+        task.setGroup( "Application" );
+        task.setDescription( "Watch for changes and re-deploy application jar" );
         task.setDir( new File( this.project.getProjectDir(), "src" ) );
         task.setTask( "deploy" );
     }

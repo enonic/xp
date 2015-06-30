@@ -1,6 +1,6 @@
-apply plugin: 'com.enonic.xp.module'
+apply plugin: 'com.enonic.xp.app'
 
-module {
+app {
     name = 'com.enonic.xp.modules.features'
     displayName = 'Features App'
     vendorName = 'Enonic AS'
