@@ -28,22 +28,34 @@
     <string name="myString">myStringValue</string>
     <string name="myString">myStringValue2</string>
     <string isNull="true" name="myString"/>
+    <string name="myEmptyString"/>
     <boolean name="myBoolean">true</boolean>
+    <boolean isNull="true" name="myBoolean"/>
     <double name="myDouble">123.1</double>
+    <double isNull="true" name="myDouble"/>
     <long name="myLong">111</long>
+    <long isNull="true" name="myLong"/>
     <htmlPart name="myHtmlPart">&lt;h1&gt;This is the title&lt;/h1&gt;&lt;h2&gt;This is the subheading&lt;/h2&gt;</htmlPart>
     <htmlPart isNull="true" name="myHtmlPart"/>
     <xml name="myXml">&lt;car&gt;&lt;color&gt;Arctic Grey&lt;color&gt;&lt;car&gt;</xml>
     <xml isNull="true" name="myXml"/>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
+    <geoPoint isNull="true" name="myGeoPoint"/>
     <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
+    <dateTime isNull="true" name="myInstant"/>
     <localTime name="myLocalTime">21:42:00.000Z</localTime>
+    <localTime isNull="true" name="myLocalTime"/>
     <localDate name="myLocalDate">2014-11-28Z</localDate>
+    <localDate isNull="true" name="myLocalDate"/>
     <localDateTime name="myLocalDateTime">2014-11-28T21:00:00.000Z</localDateTime>
+    <localDateTime isNull="true" name="myLocalDateTime"/>
     <reference name="myRef">abcd</reference>
+    <reference isNull="true" name="myRef"/>
     <link name="myLink">/root/parent/child</link>
+    <link isNull="true" name="myLink"/>
     <binaryReference name="myBinaryRef1">image.jpg</binaryReference>
     <binaryReference name="myBinaryRef2">image2.jpg</binaryReference>
+    <binaryReference isNull="true" name="myBinaryRef2"/>
     <property-set name="mySet">
       <string name="myString">myStringValue</string>
       <boolean name="myBoolean">true</boolean>
