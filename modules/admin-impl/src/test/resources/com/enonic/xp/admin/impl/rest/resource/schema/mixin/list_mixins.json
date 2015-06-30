@@ -20,6 +20,7 @@
                             "name": "TextLine"
                         },
                         "label": "Line Text 1",
+                      "maximizeUIInputWidth": false,
                         "name": "input_text_1",
                         "occurrences": {
                             "maximum": 1,
@@ -53,6 +54,7 @@
                             "name": "TextArea"
                         },
                         "label": "Text Area",
+                      "maximizeUIInputWidth": false,
                         "name": "text_area_2",
                         "occurrences": {
                             "maximum": 1,

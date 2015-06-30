@@ -22,6 +22,7 @@
                         "name": "TextLine"
                     },
                     "label": "My text line",
+                  "maximizeUIInputWidth": false,
                     "name": "myTextLine",
                     "occurrences": {
                         "maximum": 1,
@@ -41,6 +42,7 @@
                         "name": "custom:DummyCustomInputType"
                     },
                     "label": "My custom input",
+                  "maximizeUIInputWidth": false,
                     "name": "myCustomInput",
                     "occurrences": {
                         "maximum": 1,
@@ -63,6 +65,7 @@
                                     "name": "TextLine"
                                 },
                                 "label": "My text line",
+                              "maximizeUIInputWidth": false,
                                 "name": "myTextLine",
                                 "occurrences": {
                                     "maximum": 1,
@@ -93,6 +96,7 @@
                                     "name": "TextLine"
                                 },
                                 "label": "My text line",
+                              "maximizeUIInputWidth": false,
                                 "name": "myTextLine",
                                 "occurrences": {
                                     "maximum": 1,

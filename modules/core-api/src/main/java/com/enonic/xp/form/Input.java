@@ -38,14 +38,19 @@ public final class Input
 
     private final InputTypeConfig inputTypeConfig;
 
+    private final boolean maximizeUIInputWidth;
+
     private Input( Builder builder )
     {
         super( );
 
         Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
         Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
+
+        Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( builder.label ), "a label is required for a Input" );
 
         if ( builder.inputType.requiresConfig() )
         {
@@ -68,6 +73,7 @@ public final class Input
         this.validationRegexp = builder.validationRegexp;
         this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig;
+        this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
 
         this.type.validateOccurrences( this.occurrences );
     }
@@ -113,6 +119,11 @@ public final class Input
         return occurrences;
     }
 
+    public boolean isMaximizeUIInputWidth()
+    {
+        return maximizeUIInputWidth;
+    }
+
     public boolean isIndexed()
     {
         return indexed;
@@ -137,6 +148,7 @@ public final class Input
     {
         return inputTypeConfig;
     }
+
 
     public void checkValidityAccordingToInputType( final Property property )
     {
@@ -211,6 +223,7 @@ public final class Input
             Objects.equals( this.immutable, that.immutable ) &&
             Objects.equals( this.occurrences, that.occurrences ) &&
             Objects.equals( this.indexed, that.indexed ) &&
+            Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) &&
             Objects.equals( this.customText, that.customText ) &&
             Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.validationRegexp, that.validationRegexp ) &&
@@ -221,7 +234,7 @@ public final class Input
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), this.type, this.label, this.immutable, this.occurrences, this.indexed, this.customText,
-                             this.helpText, this.validationRegexp, this.inputTypeConfig );
+                             this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
     }
 
     public static Builder create()
@@ -256,6 +269,8 @@ public final class Input
 
         private InputTypeConfig inputTypeConfig;
 
+        private boolean maximizeUIInputWidth = false;
+
         public Builder()
         {
             // default
@@ -272,6 +287,7 @@ public final class Input
             this.validationRegexp = source.validationRegexp;
             this.helpText = source.helpText;
             this.inputTypeConfig = source.inputTypeConfig;
+            this.maximizeUIInputWidth = source.maximizeUIInputWidth;
         }
 
         public Builder name( String value )
@@ -332,6 +348,12 @@ public final class Input
             {
                 occurrences = newOccurrences( occurrences ).minimum( 0 ).build();
             }
+            return this;
+        }
+
+        public Builder maximizeUIInputWidth( boolean value )
+        {
+            this.maximizeUIInputWidth = value;
             return this;
         }
 

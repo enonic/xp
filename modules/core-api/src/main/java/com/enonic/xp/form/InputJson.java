@@ -24,7 +24,7 @@ public class InputJson
                       @JsonProperty("helpText") String helpText, @JsonProperty("validationRegexp") String validationRegexp,
                       @JsonProperty("immutable") boolean immutable, @JsonProperty("indexed") boolean indexed,
                       @JsonProperty("inputType") InputTypeJson inputType, @JsonProperty("occurrences") OccurrencesJson occurrences,
-                      @JsonProperty("config") ObjectNode configObject )
+                      @JsonProperty("config") ObjectNode configObject, @JsonProperty("maximizeUIInputWidth") boolean maximizeUIInputWidth )
     {
         this.occurrences = occurrences;
         this.inputType = inputType;
@@ -40,6 +40,7 @@ public class InputJson
         builder.validationRegexp( validationRegexp );
         builder.occurrences( occurrences.getOccurrences() );
         builder.inputType( inputType.getInputType() );
+        builder.maximizeUIInputWidth( maximizeUIInputWidth );
         if ( inputType.getInputType().hasConfig() && inputType.getInputType().getInputTypeConfigJsonSerializer() != null)
         {
             builder.inputTypeConfig( inputType.getInputType().getInputTypeConfigJsonSerializer().parseConfig( configObject ) );
@@ -101,6 +102,11 @@ public class InputJson
     public boolean isIndexed()
     {
         return input.isIndexed();
+    }
+
+    public boolean isMaximizeUIInputWidth()
+    {
+        return input.isMaximizeUIInputWidth();
     }
 
     public String getCustomText()
