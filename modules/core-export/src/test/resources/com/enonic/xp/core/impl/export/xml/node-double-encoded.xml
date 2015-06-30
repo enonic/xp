@@ -1,4 +1,4 @@
-<node>
+<node xmlns="urn:enonic:xp:export:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <id>abc</id>
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
@@ -27,15 +27,19 @@
   <data>
     <string name="myString">myStringValue</string>
     <string name="myString">myStringValue2</string>
-    <string isNull="true" name="myString"/>
+    <string name="myString" xsi:nil="true"/>
     <boolean name="myBoolean">true</boolean>
+    <boolean name="myBoolean" xsi:nil="true"/>
     <double name="myDouble">123.1</double>
+    <double name="myDouble" xsi:nil="true"/>
     <long name="myLong">111</long>
-    <htmlPart name="myHtmlPart">&lt;h1&gt;This is the title&lt;/h1&gt;&lt;h2&gt;This is the subheading&lt;/h2&gt;</htmlPart>
-    <htmlPart isNull="true" name="myHtmlPart"/>
-    <xml name="myXml">&lt;car&gt;&lt;color&gt;Arctic Grey&lt;color&gt;&lt;car&gt;</xml>
-    <xml isNull="true" name="myXml"/>
+    <long name="myLong" xsi:nil="true"/>
+    <htmlPart name="myHtmlPart">&amp;lt;h1&amp;gt;This is the title&amp;lt;/h1&amp;gt;&amp;lt;h2&amp;gt;This is the subheading&amp;lt;/h2&amp;gt;</htmlPart>
+    <htmlPart name="myHtmlPart" xsi:nil="true"/>
+    <xml name="myXml">&amp;lt;car&amp;gt;&amp;lt;color&amp;gt;Arctic Grey&amp;lt;color&amp;gt;&amp;lt;car&amp;gt;</xml>
+    <xml name="myXml" xsi:nil="true"/>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
+    <geoPoint name="myGeoPoint" xsi:nil="true"/>
     <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
     <localTime name="myLocalTime">21:42:00.000Z</localTime>
     <localDate name="myLocalDate">2014-11-28Z</localDate>
@@ -52,7 +56,7 @@
         <boolean name="myBoolean">true</boolean>
       </property-set>
     </property-set>
-    <property-set isNull="true" name="nullSet"/>
+    <property-set name="nullSet" xsi:nil="true"/>
   </data>
   <indexConfigs>
     <analyzer>no</analyzer>

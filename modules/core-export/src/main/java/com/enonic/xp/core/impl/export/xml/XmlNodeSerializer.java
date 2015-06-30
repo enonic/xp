@@ -31,7 +31,8 @@ public final class XmlNodeSerializer
 
     public XmlNodeSerializer()
     {
-        this.builder = DomBuilder.create( "node" );
+        this.builder = DomBuilder.create( EXPORT_NS, "node" );
+        this.builder.attribute( "xmlns:" + XML_SCHEMA_NS_KEY, XML_SCHEMA_NS );
     }
 
     public XmlNodeSerializer node( final Node value )
@@ -223,7 +224,7 @@ public final class XmlNodeSerializer
 
         if ( value == null )
         {
-            this.builder.attribute( "isNull", "true" );
+            this.builder.attribute( XML_SCHEMA_NS_KEY + ":nil", "true" );
         }
         else
         {
@@ -281,7 +282,7 @@ public final class XmlNodeSerializer
         final PropertySet data = value.getSet();
         if ( data == null )
         {
-            this.builder.attribute( "isNull", "true" );
+            this.builder.attribute( XML_SCHEMA_NS_KEY + ":nil", "true" );
         }
         else
         {

@@ -18,21 +18,21 @@
   <xs:complexType name="propertyTree">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:choice>
-        <xs:element name="localDateTime" type="localDateTimeProperty"/>
-        <xs:element name="string" type="stringProperty"/>
-        <xs:element name="double" type="doubleProperty"/>
-        <xs:element name="long" type="longProperty"/>
-        <xs:element name="geoPoint" type="geoPointProperty"/>
-        <xs:element name="boolean" type="booleanProperty"/>
-        <xs:element name="dateTime" type="dateTimeProperty"/>
-        <xs:element name="localDate" type="dateProperty"/>
-        <xs:element name="localTime" type="timeProperty"/>
-        <xs:element name="binaryReference" type="binaryReferenceProperty"/>
-        <xs:element name="reference" type="referenceProperty"/>
-        <xs:element name="link" type="linkProperty"/>
-        <xs:element name="htmlPart" type="htmlPartProperty"/>
-        <xs:element name="xml" type="xmlProperty"/>
-        <xs:element name="property-set" type="propertySet"/>
+        <xs:element name="localDateTime" type="localDateTimeProperty" nillable="true"/>
+        <xs:element name="string" type="stringProperty" nillable="true"/>
+        <xs:element name="double" type="doubleProperty" nillable="true"/>
+        <xs:element name="long" type="longProperty" nillable="true"/>
+        <xs:element name="geoPoint" type="geoPointProperty" nillable="true"/>
+        <xs:element name="boolean" type="booleanProperty" nillable="true"/>
+        <xs:element name="dateTime" type="dateTimeProperty" nillable="true"/>
+        <xs:element name="localDate" type="dateProperty" nillable="true"/>
+        <xs:element name="localTime" type="timeProperty" nillable="true"/>
+        <xs:element name="binaryReference" type="binaryReferenceProperty" nillable="true"/>
+        <xs:element name="reference" type="referenceProperty" nillable="true"/>
+        <xs:element name="link" type="linkProperty" nillable="true"/>
+        <xs:element name="htmlPart" type="htmlPartProperty" nillable="true"/>
+        <xs:element name="xml" type="xmlProperty" nillable="true"/>
+        <xs:element name="property-set" type="propertySet" nillable="true"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -41,15 +41,10 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:attributeGroup>
 
-  <xs:attributeGroup name="nullableValueProperty">
-    <xs:attributeGroup ref="property"/>
-    <xs:attribute name="isNull" type="xs:boolean" use="optional"/>
-  </xs:attributeGroup>
-
   <xs:complexType name="propertySet">
     <xs:complexContent>
       <xs:extension base="propertyTree">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -57,7 +52,7 @@
   <xs:complexType name="stringProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -65,7 +60,7 @@
   <xs:complexType name="geoPointProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -121,7 +116,7 @@
   <xs:complexType name="binaryReferenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -129,7 +124,7 @@
   <xs:complexType name="htmlPartProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -137,7 +132,7 @@
   <xs:complexType name="xmlProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -145,7 +140,7 @@
   <xs:complexType name="linkProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -153,7 +148,7 @@
   <xs:complexType name="referenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="nullableValueProperty"/>
+        <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
