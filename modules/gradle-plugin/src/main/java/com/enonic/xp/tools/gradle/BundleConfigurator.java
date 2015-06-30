@@ -29,7 +29,7 @@ final class BundleConfigurator
         this.ext = ext;
     }
 
-    public void configure( final ModuleExtension module )
+    public void configure( final AppExtension module )
     {
         final Map<String, String> instructions = new HashMap<>();
         instructions.putAll( module.getInstructions() );

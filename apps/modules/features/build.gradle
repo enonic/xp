@@ -1,6 +1,6 @@
-apply plugin: 'com.enonic.xp.module'
+apply plugin: 'com.enonic.xp.app'
 
-module {
+app {
     name = 'com.enonic.xp.modules.features'
     displayName = 'Features App'
     vendorName = 'Enonic AS'
@@ -10,9 +10,9 @@ module {
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
     compile 'com.enonic.xp:portal-api:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:portal:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:thymeleaf:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:xslt:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:mustache:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:i18n:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:portal:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:thymeleaf:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:xslt:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:mustache:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:i18n:6.0.0-SNAPSHOT'
 }

@@ -1,4 +1,4 @@
-(function ( log, execute, require, resolve, __) {
+(function (log, require, resolve, __) {
     var exports = {};
     var module = {};
     module.id = __.script.toString();

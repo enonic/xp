@@ -4,5 +4,6 @@ checkstyle {
     configFile = file( "$rootDir/gradle/config/checkstyle.xml" )
     ignoreFailures = true
     showViolations = false
+    toolVersion = "6.0"
 }
 

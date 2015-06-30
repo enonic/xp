@@ -8,7 +8,15 @@ module api.ui.mask {
             super("mask");
 
             this.masked = itemToMask;
+
             if (this.masked) {
+                // pass the mousewheel event to the masked element to be able to scroll
+                this.onMouseWheel((event: WheelEvent) => {
+
+                    var evt = this.cloneWheelEvent(event);
+                    this.masked.getHTMLElement().dispatchEvent(evt);
+                });
+
                 this.masked.onHidden((event) => {
                     this.hide();
                 });
@@ -25,16 +33,37 @@ module api.ui.mask {
             api.dom.Body.get().appendChild(this);
         }
 
+        private cloneWheelEvent(e: WheelEvent): WheelEvent {
+            return api.ObjectHelper.create(WheelEvent, e.type, {
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                cancelBubble: e.cancelBubble,
+                view: e.view,
+                detail: e.detail,
+                screenX: e.screenX,
+                screenY: e.screenY,
+                clientX: e.clientX,
+                clientY: e.clientY,
+                layerX: e.layerX,
+                layerY: e.layerY,
+                deltaX: e.deltaX,
+                deltaY: e.deltaY,
+                deltaZ: e.deltaZ,
+                deltaMode: e.deltaMode,
+                ctrlKey: e.ctrlKey,
+                altKey: e.altKey,
+                shiftKey: e.shiftKey,
+                metaKey: e.metaKey,
+                button: e.button,
+                relatedTarget: e.relatedTarget
+            });
+        }
+
         show() {
             super.show();
             if (this.masked) {
                 this.positionOver(this.masked);
             }
-        }
-
-        setTransparent(transparent: boolean): Mask {
-            this.toggleClass('transparent', transparent);
-            return this;
         }
 
         private positionOver(masked: api.dom.Element) {

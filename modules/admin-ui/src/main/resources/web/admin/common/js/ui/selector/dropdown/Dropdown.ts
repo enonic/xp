@@ -37,6 +37,8 @@ module api.ui.selector.dropdown {
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
+        private expandedListeners: {(event: api.ui.selector.DropdownExpandedEvent): void}[] = [];
+
         /**
          * Indicates if Dropdown currently has focus
          * @type {boolean}
@@ -157,12 +159,13 @@ module api.ui.selector.dropdown {
             this.input.show();
             this.dropdownHandle.show();
 
-
             this.doUpdateDropdownTopPositionAndWidth();
             this.dropdownList.showDropdown([this.getSelectedOption()]);
             this.dropdownHandle.down();
 
             this.dropdownList.renderDropdownGrid();
+
+            this.notifyExpanded();
         }
 
         hideDropdown() {
@@ -403,6 +406,17 @@ module api.ui.selector.dropdown {
             var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownList.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach((listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                listener(event);
+            });
+        }
+
+        onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {
+            this.expandedListeners.push(listener);
+        }
+
+        private notifyExpanded() {
+            var event = new api.ui.selector.DropdownExpandedEvent(this.dropdownList.getDropdownGrid().getElement(), true);
+            this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });
         }

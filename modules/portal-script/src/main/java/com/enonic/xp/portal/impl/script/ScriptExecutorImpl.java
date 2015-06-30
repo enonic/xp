@@ -16,7 +16,6 @@ import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
 import com.enonic.xp.portal.impl.script.function.ScriptFunctions;
-import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistry;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
@@ -26,8 +25,6 @@ final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private ScriptEngine engine;
-
-    private CommandInvoker invoker;
 
     private Map<String, Object> globalMap;
 
@@ -42,11 +39,6 @@ final class ScriptExecutorImpl
     public void setEngine( final ScriptEngine engine )
     {
         this.engine = engine;
-    }
-
-    public void setInvoker( final CommandInvoker invoker )
-    {
-        this.invoker = invoker;
     }
 
     public void setGlobalMap( final Map<String, Object> globalMap )
@@ -101,7 +93,7 @@ final class ScriptExecutorImpl
         try
         {
             final ScriptFunctions functions = new ScriptFunctions( script, this );
-            return func.call( null, functions.getLog(), functions.getExecute(), functions.getRequire(), functions.getResolve(), functions );
+            return func.call( null, functions.getLog(), functions.getRequire(), functions.getResolve(), functions );
         }
         catch ( final Exception e )
         {
@@ -140,12 +132,6 @@ final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
-    }
-
-    @Override
-    public CommandInvoker getInvoker()
-    {
-        return this.invoker;
     }
 
     @Override

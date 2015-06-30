@@ -4,6 +4,8 @@ module api.content {
 
         private ids: ContentId[] = [];
 
+        private includeChildren: boolean;
+
         constructor(contentId?: ContentId) {
             super();
             super.setMethod("POST");
@@ -17,6 +19,11 @@ module api.content {
             return this;
         }
 
+        setIncludeChildren(includeChildren: boolean): PublishContentRequest {
+            this.includeChildren = includeChildren;
+            return this;
+        }
+
         addId(contentId: ContentId): PublishContentRequest {
             this.ids.push(contentId);
             return this;
@@ -26,7 +33,8 @@ module api.content {
             return {
                 ids: this.ids.map((el) => {
                     return el.toString();
-                })
+                }),
+                includeChildren: this.includeChildren
             };
         }
 

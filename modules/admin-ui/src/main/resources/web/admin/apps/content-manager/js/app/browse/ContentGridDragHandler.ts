@@ -107,14 +107,13 @@ module app.browse {
             var draggableRow = args.rows[0];
 
             var rowDataId = dataView.getItem(draggableRow).getData().getContentId();
-            var moveBeforeRowDataId = (dataView.getLength() <= args.insertBefore)
+            var insertBefore = this.getCorrectedInsertBefore(args);
+            var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
                 ? null
-                : dataView.getItem(args.insertBefore).getData().getContentId();
+                : dataView.getItem(insertBefore).getData().getContentId();
             var extractedRow, left, right;
-            var insertBefore = <number>args.insertBefore;
             left = dataView.slick().getItems().slice(0, insertBefore);
             right = dataView.slick().getItems().slice(insertBefore, dataView.slick().getItems().length);
-
 
             extractedRow = dataView.slick().getItem(draggableRow);
 
@@ -131,12 +130,20 @@ module app.browse {
 
             // draggable count in new data
             var selectedRow = left.length - 1;
-            this.makeMovementInNodes(draggableRow, args.insertBefore, data);
+            this.makeMovementInNodes(draggableRow, insertBefore, data);
 
 
             this.contentGrid.getGrid().setSelectedRows([selectedRow]);
             this.movements.addChildMovement(new OrderChildMovement(rowDataId, moveBeforeRowDataId));
             this.notifyPositionChanged();
+        }
+
+        private getCorrectedInsertBefore(args: DragEventData) {
+            var result = <number>args.insertBefore;
+            if (result > 0) {
+                result = result - 1;
+            }
+            return result;
         }
 
         private makeMovementInNodes(draggableRow: number, insertBefore: number, data: TreeNode<ContentSummaryAndCompareStatus>[]) {

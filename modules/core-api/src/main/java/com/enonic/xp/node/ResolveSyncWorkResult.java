@@ -10,15 +10,18 @@ public class ResolveSyncWorkResult
 {
     private final NodePublishRequests nodePublishRequests;
 
-    private final NodeIds delete;
+    private final NodePublishRequests nodeDeleteRequests;
+
+    private final NodeId initialReasonNodeId;
 
     private final NodeIds conflict;
 
     private ResolveSyncWorkResult( Builder builder )
     {
         this.nodePublishRequests = builder.nodePublishRequests;
-        this.delete = NodeIds.from( builder.delete );
+        this.nodeDeleteRequests = builder.nodeDeleteRequests;
         this.conflict = NodeIds.from( builder.conflict );
+        this.initialReasonNodeId = builder.initialReasonNodeId;
     }
 
     public boolean hasConflicts()
@@ -36,9 +39,9 @@ public class ResolveSyncWorkResult
         return nodePublishRequests;
     }
 
-    public NodeIds getDelete()
+    public NodePublishRequests getNodeDeleteRequests()
     {
-        return delete;
+        return nodeDeleteRequests;
     }
 
     NodeIds getConflict()
@@ -46,6 +49,10 @@ public class ResolveSyncWorkResult
         return conflict;
     }
 
+    public NodeId getInitialReasonNodeId()
+    {
+        return initialReasonNodeId;
+    }
 
     public static Builder create()
     {
@@ -56,9 +63,11 @@ public class ResolveSyncWorkResult
     {
         private final NodePublishRequests nodePublishRequests = new NodePublishRequests();
 
-        private final Set<NodeId> delete = Sets.newHashSet();
+        private final NodePublishRequests nodeDeleteRequests = new NodePublishRequests();
 
         private final Set<NodeId> conflict = Sets.newHashSet();
+
+        private NodeId initialReasonNodeId;
 
         private Builder()
         {
@@ -76,21 +85,51 @@ public class ResolveSyncWorkResult
             return this;
         }
 
+        public Builder publishChildOf( final NodeId nodeId, final NodeId childOf )
+        {
+            this.nodePublishRequests.add( NodePublishRequest.childOf( nodeId, childOf ) );
+            return this;
+        }
+
         public Builder publishReferredFrom( final NodeId nodeId, final NodeId referredFrom )
         {
             this.nodePublishRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );
             return this;
         }
 
-        public Builder addDelete( final NodeId delete )
+        public Builder deleteRequested( final NodeId nodeId )
         {
-            this.delete.add( delete );
+            this.nodeDeleteRequests.add( NodePublishRequest.requested( nodeId ) );
+            return this;
+        }
+
+        public Builder deleteParentFor( final NodeId nodeId, final NodeId parentOf )
+        {
+            this.nodeDeleteRequests.add( NodePublishRequest.parentFor( nodeId, parentOf ) );
+            return this;
+        }
+
+        public Builder deleteChildOf( final NodeId nodeId, final NodeId childOf )
+        {
+            this.nodeDeleteRequests.add( NodePublishRequest.childOf( nodeId, childOf ) );
+            return this;
+        }
+
+        public Builder deleteReferredFrom( final NodeId nodeId, final NodeId referredFrom )
+        {
+            this.nodeDeleteRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );
             return this;
         }
 
         public Builder conflict( final NodeId nodeId )
         {
             this.conflict.add( nodeId );
+            return this;
+        }
+
+        public Builder setInitialReasonNodeId( final NodeId initialReasonNodeId )
+        {
+            this.initialReasonNodeId = initialReasonNodeId;
             return this;
         }
 

@@ -52,7 +52,7 @@ public class ComponentInstructionTest
         Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
         portalRequest.setSite( site );
 
-        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ).getAsString();
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -77,7 +77,7 @@ public class ComponentInstructionTest
         PageTemplate pageTemplate = createPageTemplate();
         portalRequest.setPageTemplate( pageTemplate );
 
-        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" );
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" ).getAsString();
         assertEquals( "<b>part content</b>", outputHtml );
     }
 

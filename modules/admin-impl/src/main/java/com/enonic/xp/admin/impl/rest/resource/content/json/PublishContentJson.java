@@ -4,7 +4,19 @@ import java.util.Set;
 
 public class PublishContentJson
 {
-    public Set<String> ids;
+    private Set<String> ids;
+
+    private boolean includeChildren;
+
+    public boolean isIncludeChildren()
+    {
+        return includeChildren;
+    }
+
+    public void setIncludeChildren( final boolean includeChildren )
+    {
+        this.includeChildren = includeChildren;
+    }
 
     public Set<String> getIds()
     {

@@ -13,6 +13,8 @@ module api.form.inputtype.text.tiny {
         private editor: TinyMceEditor;
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
+        private keyDownListener: {(KeyboardEvent): void};
+        private submitAction: api.ui.Action;
 
         constructor(editor: TinyMceEditor, title: api.ui.dialog.ModalDialogHeader) {
             super({
@@ -25,6 +27,23 @@ module api.form.inputtype.text.tiny {
 
             this.layout();
             this.initializeActions();
+
+            this.keyDownListener = (e: KeyboardEvent) => this.onDialogKeyDown(e);
+
+            api.dom.Body.get().onKeyDown(this.keyDownListener);
+        }
+
+        setSubmitAction(action: api.ui.Action) {
+            this.submitAction = action;
+        }
+
+        private onDialogKeyDown(e: KeyboardEvent) {
+            if (api.ui.KeyHelper.isEscKey(e)) {
+                this.getCancelAction().execute();
+            }
+            if (api.ui.KeyHelper.isEnterKey(e)) {
+                this.submitAction.execute();
+            }
         }
 
         protected getEditor(): TinyMceEditor {
@@ -64,7 +83,9 @@ module api.form.inputtype.text.tiny {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
-            this.focusFirstField();
+            if (this.firstFocusField) {
+                this.focusFirstField();
+            }
         }
 
         protected createForm(formItems: FormItem[]): Form {
@@ -168,6 +189,7 @@ module api.form.inputtype.text.tiny {
 
         close() {
             super.close();
+            api.dom.Body.get().unKeyDown(this.keyDownListener);
             this.editor.focus();
         }
     }

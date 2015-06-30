@@ -1,0 +1,252 @@
+.publish-dialog {
+
+  .dialog-content {
+
+    max-height: 400px;
+    overflow-y: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 250px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 150px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 80px;
+    }
+  }
+
+  .item-list {
+    padding: 0px;
+  }
+
+  .dependencies-toggle-label {
+    color: @admin-blue;
+    margin-top: 20px;
+    display: block;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .dialog-buttons {
+    .button {
+      &.publish-action {
+        .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
+        padding: 4px 19px 4px 19px;
+        margin-left: 11px;
+
+        &.spinner {
+          font-family: 'live-edit-font-icon';
+
+          &:after {
+            .animation(rotate360, .5s, .0s, linear);
+            content: "\e007";
+            color: white;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  .desc-message {
+    font-style: italic;
+    padding-top: 10px;
+    margin-bottom: -10px;
+    padding-left: 1px;
+  }
+
+  .include-child-check {
+    position: absolute;
+    bottom: 40px;
+
+    input[type="checkbox"] + label {
+      color: @admin-blue !important;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    @media screen and (max-height: 360px) {
+      bottom: 25px;
+    }
+  }
+
+  .publish-dialog-subheader {
+    margin-top: 20px;
+  }
+
+  .content-resolved-publish-viewer, .content-resolved-dependant-viewer {
+    &.pending-delete .names-and-icon-view .names-view {
+      .main-name, .sub-name, .name-span {
+        text-decoration: line-through;
+      }
+    }
+    &.invalid .names-and-icon-view .wrapper {
+      &:before {
+        content: "!";
+        background: #cb0300;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .initial-items {
+
+    &.item-list {
+
+      min-height: 40px;
+
+    }
+
+    .browse-selection-publish-item {
+      padding: 4px 0px 4px 0px;
+      margin: 0px;
+      overflow: hidden;
+
+      .viewer {
+        overflow: hidden;
+        display: inline;
+      }
+
+      .status {
+        margin-right: 5px;
+        margin-top: -33px;
+        display: inline-block;
+        float: right;
+
+        &.equal {
+          color: @admin-green;
+        }
+      }
+
+      .disabled.checkbox {
+
+        display: none;
+
+        label {
+          &:before {
+            background: url("../images/admin-unchecked.gif") -1px -2px no-repeat;
+          }
+        }
+
+        input[type="checkbox"] {
+
+          &:checked + label {
+            &:before {
+              background: url("../images/admin-checked.gif") -1px -2px no-repeat;
+            }
+          }
+        }
+      }
+
+      .toggle {
+        .icon-arrow-right3();
+      }
+
+      .toggle.collapse {
+        .icon-arrow-down2();
+      }
+
+      .toggle {
+        &.collapse {
+          .icon-arrow-down2();
+        }
+        &.expand {
+          .icon-arrow-right3();
+        }
+        display: inline;
+        float: left;
+        padding: 5px 5px 5px 0px;
+        margin-top: 7px;
+        cursor: pointer;
+      }
+
+      .remove {
+        height: 32px;
+        margin: 0 5px 0 0;
+        float: left;
+        font-size: 20px;
+        cursor: pointer;
+        clear: right;
+        font-weight: bold;
+        .icon-close2();
+
+        &:before {
+          position: relative;
+          display: block;
+          top: 50%;
+          margin: -10px 0 0;
+          font-size: 20px;
+        }
+      }
+
+    }
+  }
+
+  .dependant-items {
+
+    .browse-selection-publish-item {
+
+      display: block;
+
+      .content-resolved-dependant-viewer {
+        padding: 4px 0px 4px 0px;
+
+        &.pending-delete .names-and-icon-view {
+          .name-span {
+            text-decoration: line-through;
+          }
+        }
+      }
+
+      .viewer {
+
+        display: inline-block;
+
+        .names-and-icon-view {
+          .wrapper {
+            margin: 0px;
+            height: 16px;
+            width: 16px;
+            line-height: 16px;
+          }
+
+          .name-span {
+            margin: 0px 15px 0px 20px;
+            line-height: 16px;
+            display: block;
+          }
+
+        }
+      }
+
+      &.disabled {
+        .checkbox {
+
+          display: inherit;
+
+          input[type="checkbox"] {
+
+            &:checked + label {
+              &:before {
+                background: url("../images/link.png") -1px -2px no-repeat;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.modal-dialog._0-240.publish-dialog, .modal-dialog._240-360.publish-dialog {
+  .include-child-check {
+    bottom: auto;
+    right: 10px;
+  }
+}

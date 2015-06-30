@@ -17,17 +17,16 @@ include 'web-vhost'
 
 include 'portal-api'
 include 'portal-impl'
-include 'portal-jslib'
-include 'portal-mustache'
 include 'portal-script'
-include 'portal-thymeleaf'
-include 'portal-xslt'
 
 include 'admin-impl'
 include 'admin-event'
 include 'admin-ui'
 
 include 'itest-core'
+
+include 'upgrade-tool'
+include 'toolbox'
 
 include 'launcher'
 include 'distro'

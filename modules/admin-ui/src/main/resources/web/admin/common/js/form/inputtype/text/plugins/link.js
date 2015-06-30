@@ -28,6 +28,18 @@ tinymce.PluginManager.add('link', function (editor) {
             return true;
         }
 
+        function getAnchorList() {
+            var anchorList = [];
+
+            tinymce.each(editor.dom.select('a:not([href])'), function (anchor) {
+                if (anchor.id && anchorList.indexOf(anchor.id) === -1) {
+                    anchorList.push(anchor.id);
+                }
+            });
+
+            return anchorList;
+        }
+
         var selectedElm = editor.selection.getNode();
         var anchorElm = editor.dom.getParent(selectedElm, 'a[href]');
         var linkText = isOnlyTextSelected(anchorElm) ? editor.selection.getContent() : "";
@@ -35,7 +47,8 @@ tinymce.PluginManager.add('link', function (editor) {
         editor.execCommand("openLinkDialog", {
             editor: editor,
             element: anchorElm,
-            text: linkText
+            text: linkText,
+            anchorList: getAnchorList()
         });
     }
 

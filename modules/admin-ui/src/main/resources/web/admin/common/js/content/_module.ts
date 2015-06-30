@@ -62,6 +62,8 @@
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='PublishContentRequest.ts' />
 ///<reference path='PublishContentResult.ts' />
+///<reference path='ResolvePublishRequestedContentsRequest.ts' />
+///<reference path='ResolvePublishDependenciesRequest.ts' />
 ///<reference path='CompareContentRequest.ts' />
 ///<reference path='CompareContentResults.ts' />
 ///<reference path='CompareContentResult.ts' />

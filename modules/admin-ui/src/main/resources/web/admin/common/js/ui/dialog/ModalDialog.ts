@@ -130,7 +130,7 @@ module api.ui.dialog {
             this.buttonRow.focusDefaultAction();
         }
 
-        private centerMyself() {
+        protected centerMyself() {
             var el = this.getEl();
             el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
 

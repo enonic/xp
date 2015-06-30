@@ -1,6 +1,6 @@
-apply plugin: 'com.enonic.xp.module'
+apply plugin: 'com.enonic.xp.app'
 
-module {
+app {
     name = 'com.enonic.wem.apps.xslt'
     displayName = 'Xslt Sample App'
     vendorName = 'Enonic AS'
@@ -9,5 +9,5 @@ module {
 
 dependencies {
     compile 'com.enonic.xp:core-api:6.0.0-SNAPSHOT'
-    include 'com.enonic.xp.libs:xslt:6.0.0-SNAPSHOT'
+    include 'com.enonic.xp.lib:xslt:6.0.0-SNAPSHOT'
 }

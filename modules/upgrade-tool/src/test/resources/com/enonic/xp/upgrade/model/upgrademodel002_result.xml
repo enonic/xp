@@ -1,0 +1,39 @@
+<node>
+  <data>
+    <boolean name="valid">true</boolean>
+    <string name="displayName">Afghan_elder_and_his_cat_sit_outside_his_store.jpg</string>
+    <string name="type">media:image</string>
+    <dateTime name="modifiedTime">2015-06-24T09:13:05.092Z</dateTime>
+    <string name="modifier">user:system:su</string>
+    <string name="creator">user:system:anonymous</string>
+    <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+    <property-set name="data">
+      <string name="media">An_Afghan_elder_and_his_cat_sit_outside_his_store.jpg</string>
+      <string name="mimeType">image/jpeg</string>
+      <property-set name="metadata">
+        <string name="artist">Sgt. Teddy Wade</string>
+      </property-set>
+      <string isNull="true" name="caption"/>
+      <string isNull="true" name="copyright"/>
+    </property-set>
+    <property-set name="x">
+      <property-set name="media">
+        <property-set name="imageInfo">
+          <long isNull="true" name="pixelSize"/>
+        </property-set>
+        <property-set name="cameraInfo">
+          <localDateTime isNull="true" name="date"/>
+          <string isNull="true" name="make"/>
+        </property-set>
+      </property-set>
+      <property-set name="base">
+        <property-set name="gpsInfo">
+          <geoPoint isNull="true" name="geoPoint"/>
+          <string isNull="true" name="altitude"/>
+          <string isNull="true" name="direction"/>
+        </property-set>
+      </property-set>
+    </property-set>
+  </data>
+  <indexConfigs/>
+</node>
