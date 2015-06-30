@@ -16,7 +16,6 @@ import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.ModuleUpdatedEvent;
-import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptExports;
@@ -28,8 +27,6 @@ import com.enonic.xp.resource.ResourceKey;
 public final class ScriptServiceImpl
     implements ScriptService, EventListener
 {
-    private CommandInvoker invoker;
-
     private final Map<String, Object> globalMap;
 
     private final ConcurrentMap<ModuleKey, ScriptExecutor> executors;
@@ -69,7 +66,6 @@ public final class ScriptServiceImpl
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
-        executor.setInvoker( this.invoker );
         executor.setGlobalMap( this.globalMap );
         executor.setClassLoader( module.getClassLoader() );
         executor.setServiceRegistry( new ServiceRegistryImpl( module.getBundle().getBundleContext() ) );
@@ -89,12 +85,6 @@ public final class ScriptServiceImpl
         {
             invalidate( ( (ModuleUpdatedEvent) event ).getModuleKey() );
         }
-    }
-
-    @Reference
-    public void setInvoker( final CommandInvoker invoker )
-    {
-        this.invoker = invoker;
     }
 
     @Reference

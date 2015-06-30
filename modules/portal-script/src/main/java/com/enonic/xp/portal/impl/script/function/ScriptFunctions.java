@@ -42,11 +42,6 @@ public final class ScriptFunctions
         return new ScriptLogger( this.script );
     }
 
-    public ExecuteFunction getExecute()
-    {
-        return new ExecuteFunction( this.script, this.executor );
-    }
-
     public RequireFunction getRequire()
     {
         return new RequireFunction( this.script, this.executor );
