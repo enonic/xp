@@ -510,26 +510,6 @@ public class PropertyTreeTest
     }
 
     @Test
-    public void setHtmlPart()
-    {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-
-        String htmlData = "<p>This is the text of the test post</p>";
-        tree.setHtmlPart( "post", htmlData );
-        assertEquals( htmlData, tree.getProperty( "post" ).getString() );
-
-        String htmlData2 = "Test html post with no markup";
-        tree.setHtmlPart( PropertyPath.from( "post2" ), htmlData2 );
-        assertEquals( htmlData2, tree.getProperty( "post2" ).getString() );
-        assertEquals( 2, tree.getTotalSize() );
-
-        String htmlData3 = "<div id='Test html'>";
-        tree.setHtmlPart( "post", 0, htmlData3 );
-        assertEquals( htmlData3, tree.getProperty( "post" ).getString() );
-        assertEquals( 2, tree.getTotalSize() );
-    }
-
-    @Test
     public void setXml()
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );

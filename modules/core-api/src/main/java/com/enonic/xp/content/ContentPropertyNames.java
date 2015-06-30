@@ -2,6 +2,8 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.PropertyPath;
+
 @Beta
 public class ContentPropertyNames
 {
@@ -46,5 +48,7 @@ public class ContentPropertyNames
     public static final String CREATED_TIME = "createdTime";
 
     public static final String MODIFIED_TIME = "modifiedTime";
+
+    public static final String HTMLAREA_TEXT = DATA + PropertyPath.ELEMENT_DIVIDER + "htmlarea_text";
 
 }

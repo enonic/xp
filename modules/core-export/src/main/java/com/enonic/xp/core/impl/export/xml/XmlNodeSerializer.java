@@ -12,6 +12,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
@@ -107,6 +108,16 @@ public final class XmlNodeSerializer
         serializeValueElement( "nGram", value.isnGram() );
         serializeValueElement( "fulltext", value.isFulltext() );
         serializeValueElement( "includeInAllText", value.isIncludeInAllText() );
+
+        if ( !value.getIndexValueProcessors().isEmpty() )
+        {
+            this.builder.start( "indexValueProcessors" );
+            for ( IndexValueProcessor indexValueProcessor : value.getIndexValueProcessors() )
+            {
+                serializeValueElement( "indexValueProcessor", indexValueProcessor.getName() );
+            }
+            this.builder.end();
+        }
     }
 
     private void serialize( final PathIndexConfig value )
@@ -141,10 +152,6 @@ public final class XmlNodeSerializer
         else if ( type == ValueTypes.LONG )
         {
             serializeProperty( "long", name, value.getLong() );
-        }
-        else if ( type == ValueTypes.HTML_PART )
-        {
-            serializeProperty( "htmlPart", name, value.getString() );
         }
         else if ( type == ValueTypes.XML )
         {

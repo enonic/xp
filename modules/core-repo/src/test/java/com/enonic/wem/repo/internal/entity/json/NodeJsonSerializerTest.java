@@ -9,9 +9,11 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -64,6 +66,31 @@ public class NodeJsonSerializerTest
             build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
 
+        IndexValueProcessor indexValueProcessor = new IndexValueProcessor()
+        {
+            @Override
+            public Value process( final Value value )
+            {
+                return value;
+            }
+
+            @Override
+            public String getName()
+            {
+                return "indexValueProcessor";
+            }
+        };
+
+        IndexConfig indexConfig = IndexConfig.create().
+            enabled( true ).
+            fulltext( true ).
+            nGram( true ).
+            decideByType( false ).
+            includeInAllText( true ).
+            addIndexValueProcessor( indexValueProcessor ).
+            addIndexValueProcessor( indexValueProcessor ).
+            build();
+
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
@@ -71,7 +98,7 @@ public class NodeJsonSerializerTest
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).
-                add( "myPath", IndexConfig.FULLTEXT ).
+                add( "myPath", indexConfig ).
                 build() ).
             data( nodeData ).
             childOrder( ChildOrder.create().

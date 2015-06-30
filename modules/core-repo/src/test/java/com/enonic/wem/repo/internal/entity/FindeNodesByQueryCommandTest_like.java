@@ -60,7 +60,7 @@ public class FindeNodesByQueryCommandTest_like
         data.addString( "displayName", "Test post" );
         final PropertySet contentData = data.addSet( "data" );
         contentData.addString( "title", "Test post" );
-        contentData.addHtmlPart( "post", "<p>This is the text of the test post</p>" );
+        contentData.addString( "post", "<p>This is the text of the test post</p>" );
         contentData.addString( "category", "af4fb132-1565-4c2a-850d-a415566bba34" );
         contentData.addString( "author", "ec87335c-3ee2-45ef-8ece-90401e04af29" );
         contentData.addString( "tags", "test" );

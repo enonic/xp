@@ -397,33 +397,6 @@ public final class PropertyTree
         return this.root.addStrings( name, values );
     }
 
-    // setting html part
-
-    public Property setHtmlPart( final PropertyPath path, final String value )
-    {
-        return this.root.setHtmlPart( path, value );
-    }
-
-    public Property setHtmlPart( final String path, final String value )
-    {
-        return this.root.setHtmlPart( path, value );
-    }
-
-    public Property setHtmlPart( final String name, final int index, final String value )
-    {
-        return this.root.setHtmlPart( name, index, value );
-    }
-
-    public Property addHtmlPart( final String name, final String value )
-    {
-        return this.root.addHtmlPart( name, value );
-    }
-
-    public Property[] addHtmlParts( final String name, final String... value )
-    {
-        return this.root.addHtmlParts( name, value );
-    }
-
     // setting xml
 
     public Property setXml( final PropertyPath path, final String value )

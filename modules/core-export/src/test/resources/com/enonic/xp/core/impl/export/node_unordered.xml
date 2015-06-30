@@ -5,7 +5,6 @@
     <string name="myString">myStringValue</string>
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>
-    <htmlPart name="myHtmlPart">&amp;lt;h1&amp;gt;This is the title&amp;lt;/h1&amp;gt;&amp;lt;h2&amp;gt;This is the subheading&amp;lt;/h2&amp;gt;</htmlPart>
     <xml name="myXml">&amp;lt;car&amp;gt;&amp;lt;color&amp;gt;Arctic Grey&amp;lt;color&amp;gt;&amp;lt;car&amp;gt;</xml>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
     <dateTime name="myInstant">2014-11-28T15:16:00.000+01:00</dateTime>

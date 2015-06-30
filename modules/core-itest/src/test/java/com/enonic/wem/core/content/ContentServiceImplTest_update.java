@@ -336,12 +336,12 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addString( "htmlArea", "<p>paragraph</p>" );
+        invalidData.addXml( "htmlArea", "<p>paragraph</p>" );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addHtmlPart( "xml", "<elem>element</elem>" );
+        invalidData.addXml( "xml", "<elem>element</elem>" );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value

@@ -16,7 +16,6 @@ var expectedJson = {
         "doubles": [1.1, 2.2, 3.3],
         "geoPoint": "1.1,-1.1",
         "geoPoints": ["1.1,-1.1", "2.2,-2.2"],
-        "htmlPart": "<p>some<b>html</b></p>",
         "instant": "+1000000000-12-31T23:59:59.999999999Z",
         "link": "/my/content",
         "localDate": "2014-01-31",

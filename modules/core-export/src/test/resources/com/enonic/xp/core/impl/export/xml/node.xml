@@ -9,8 +9,6 @@
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>
     <long name="myLong">111</long>
-    <htmlPart name="myHtmlPart">&lt;h1&gt;This is the title&lt;/h1&gt;&lt;h2&gt;This is the subheading&lt;/h2&gt;</htmlPart>
-    <htmlPart isNull="true" name="myHtmlPart"/>
     <xml name="myXml">&lt;car&gt;&lt;color&gt;Arctic Grey&lt;color&gt;&lt;car&gt;</xml>
     <xml isNull="true" name="myXml"/>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
@@ -49,6 +47,10 @@
           <nGram>true</nGram>
           <fulltext>true</fulltext>
           <includeInAllText>true</includeInAllText>
+          <indexValueProcessors>
+            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
+            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
+          </indexValueProcessors>
         </indexConfig>
         <path>mydata</path>
       </pathIndexConfig>

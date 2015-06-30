@@ -32,7 +32,6 @@ public class PropertyTreeJsonTest
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         tree.addString( "singleString", "a" );
         tree.addString( "nullString", null );
-        tree.addString( "singleHtmlPart", "<h1>Hello</h1>" );
         tree.addXml( "singleXML", "<xml>Hello</xml>" );
         tree.addBoolean( "singleBoolean", true );
         tree.addLong( "singleLong", 1L );
@@ -51,7 +50,6 @@ public class PropertyTreeJsonTest
         setWithinSet.addLong( "long", 1L );
 
         tree.addStrings( "arrayString", "a", "b" );
-        tree.addHtmlParts( "arrayHtmlPart", "<h1>Hello</h1>", "<h1>World</h1>" );
         tree.addXmls( "arrayXML", "<xml>Hello</xml>", "<xml>World</xml>" );
         tree.addBooleans( "arrayBoolean", true, false );
         tree.addLongs( "arrayLong", 1L, 2L );
@@ -152,7 +150,6 @@ public class PropertyTreeJsonTest
         // verify
         assertEquals( "a", tree.getString( "singleString" ) );
         assertEquals( null, tree.getString( "nullString" ) );
-        assertEquals( "<h1>Hello</h1>", tree.getString( "singleHtmlPart" ) );
         assertEquals( "<xml>Hello</xml>", tree.getString( "singleXML" ) );
         assertEquals( true, tree.getBoolean( "singleBoolean" ) );
         assertEquals( Long.valueOf( 1L ), tree.getLong( "singleLong" ) );
