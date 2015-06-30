@@ -19,5 +19,7 @@ module api.form.json{
         inputType:InputTypeJson;
 
         config:any;
+
+        maximizeUIInputWidth: boolean;
     }
 }
