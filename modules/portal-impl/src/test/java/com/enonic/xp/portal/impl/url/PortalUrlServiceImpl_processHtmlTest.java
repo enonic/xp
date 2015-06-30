@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -48,7 +47,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    @Ignore("Need to fix this before 6.0 release")
     public void process_single_image()
     {
         //Creates a content
@@ -62,8 +60,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + content.getId() + "/" + content.getName() +
-                          ".jpeg?filter=scalewidth%28768%29\">Image</a>", processedHtml );
+        assertEquals( "<a href=\"/portal/draft/context/path/_/image/" + content.getId() + "/" + "width-768" + "/" + content.getName() +
+                          ".jpeg\">Image</a>", processedHtml );
     }
 
     @Test
