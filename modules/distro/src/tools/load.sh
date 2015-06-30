@@ -19,13 +19,13 @@ EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -t SOURCEPATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCEPATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
 
 PRETTY=""
 
 # Parse arguments
-while getopts '?u:h:p:r:b:s:n' OPTION
+while getopts '?u:h:p:b:s:n' OPTION
 	do
 		case $OPTION in
             u)

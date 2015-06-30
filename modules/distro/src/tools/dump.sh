@@ -12,7 +12,7 @@ This will not include blobs and files in the repository.
 
 	-?|--help			display this help and exit
 	-u USER:PASSWORD	user:password for basic authentication
-	-r TARGETPATH     	Target path
+	-t TARGETPATH     	Target path
 	-n                  enable nice format of output (requires python)
 
 EOF
@@ -25,7 +25,7 @@ echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -t TARGETPATH [-h HOSTNAME] [
 PRETTY=""
 
 # Parse arguments
-while getopts '?u:h:p:r:b:t:n' OPTION
+while getopts '?u:h:p:b:t:n' OPTION
 	do
 		case $OPTION in
             u)
