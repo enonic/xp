@@ -52,6 +52,7 @@ public class XmlNodeSerializerTest
 
         propertyTree.addString( "myString", "myStringValue" );
         propertyTree.addString( "myString", "myStringValue2" );
+        propertyTree.addString( "myEmptyString", "" );
         propertyTree.addBoolean( "myBoolean", true );
         propertyTree.addDouble( "myDouble", 123.1 );
         propertyTree.addLong( "myLong", 111L );
@@ -83,10 +84,22 @@ public class XmlNodeSerializerTest
         mySubSubset.setString( "myString", "myStringValue" );
         mySubSubset.setBoolean( "myBoolean", true );
 
-        // Nullable values
+        // Null values
         propertyTree.addString( "myString", null );
+        propertyTree.addBoolean( "myBoolean", null );
+        propertyTree.addDouble( "myDouble", null );
+        propertyTree.addLong( "myLong", null );
         propertyTree.addHtmlPart( "myHtmlPart", null );
         propertyTree.addXml( "myXml", null );
+        propertyTree.addGeoPoint( "myGeoPoint", null );
+        propertyTree.addInstant( "myInstant", null );
+        propertyTree.addLocalTime( "myLocalTime", null );
+        propertyTree.addLocalDate( "myLocalDate", null );
+        propertyTree.addLocalDateTime( "myLocalDateTime", null );
+        propertyTree.addReference( "myRef", null );
+        propertyTree.addLink( "myLink", null );
+        propertyTree.addBinaryReference( "myBinaryRef2", null );
+
         propertyTree.addSet( "nullSet", null );
 
         // Index configs
