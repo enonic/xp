@@ -19,7 +19,7 @@ public final class Main
     public static void main( final String... args )
     {
         final Cli.CliBuilder<Runnable> builder = Cli.builder( "toolbox" );
-        builder.withDescription( "Enonic XP CLI ToolBox" );
+        builder.withDescription( "Enonic XP ToolBox" );
         builder.withDefaultCommand( Help.class );
         builder.withCommand( Help.class );
         builder.withCommand( DumpCommand.class );
@@ -33,35 +33,14 @@ public final class Main
         builder.withCommand( DumpCommand.class );
 
         final Cli<Runnable> parser = builder.build();
+
         try
         {
             parser.parse( args ).run();
         }
-        catch ( ParseException e )
+        catch ( final ParseException e )
         {
             System.err.println( e.getMessage() );
-        }
-        catch ( ResponseException e )
-        {
-            if ( e.getResponseCode() == 403 )
-            {
-                System.err.println( "Authentication failed \r\n" + e.getMessage() );
-            }
-            else
-            {
-                System.err.println( "Response error: " + e.getMessage() );
-            }
-        }
-        catch ( RuntimeException e )
-        {
-            if ( e.getCause() instanceof java.net.ConnectException )
-            {
-                System.err.println( "Unable to connect to XP server: " + e.getMessage() );
-            }
-            else
-            {
-                System.err.println( "Unexpected error: " + e.getMessage() );
-            }
         }
     }
 }

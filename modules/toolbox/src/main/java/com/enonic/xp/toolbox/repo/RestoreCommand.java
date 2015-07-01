@@ -1,7 +1,11 @@
 package com.enonic.xp.toolbox.repo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
+
+import com.enonic.xp.toolbox.util.JsonHelper;
 
 @Command(name = "restore", description = "Stores a snapshot of the current state of the repository.")
 public final class RestoreCommand
@@ -19,12 +23,15 @@ public final class RestoreCommand
     protected void execute()
         throws Exception
     {
-        final RestoreSnapshotJsonRequest request = new RestoreSnapshotJsonRequest().
-            repositoryId( repository ).
-            snapshotName( snapshotName );
-        final String jsonRequest = new RequestJsonSerializer().serialize( request );
-        final String result = postRequest( RESTORE_SNAPSHOT_REST_PATH, jsonRequest );
-
+        final String result = postRequest( RESTORE_SNAPSHOT_REST_PATH, createJsonRequest() );
         System.out.println( result );
+    }
+
+    private ObjectNode createJsonRequest()
+    {
+        final ObjectNode json = JsonHelper.newObjectNode();
+        json.put( "repositoryId", this.repository );
+        json.put( "snapshotName", this.snapshotName );
+        return json;
     }
 }

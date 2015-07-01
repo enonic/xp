@@ -1,7 +1,11 @@
 package com.enonic.xp.toolbox.repo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
+
+import com.enonic.xp.toolbox.util.JsonHelper;
 
 @Command(name = "deleteSnapshots", description = "Deletes snapshots, either before a given timestamp or by name.")
 public final class DeleteSnapshotsCommand
@@ -16,10 +20,14 @@ public final class DeleteSnapshotsCommand
     protected void execute()
         throws Exception
     {
-        final DeleteSnapshotsJsonRequest request = new DeleteSnapshotsJsonRequest().beforeTimestamp( before );
-        final String jsonRequest = new RequestJsonSerializer().serialize( request );
-        final String result = postRequest( DELETE_SNAPSHOTS_REST_PATH, jsonRequest );
-
+        final String result = postRequest( DELETE_SNAPSHOTS_REST_PATH, createJsonRequest() );
         System.out.println( result );
+    }
+
+    private ObjectNode createJsonRequest()
+    {
+        final ObjectNode json = JsonHelper.newObjectNode();
+        json.put( "before", this.before );
+        return json;
     }
 }

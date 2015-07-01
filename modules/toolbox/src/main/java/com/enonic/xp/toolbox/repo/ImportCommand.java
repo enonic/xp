@@ -1,7 +1,11 @@
 package com.enonic.xp.toolbox.repo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
+
+import com.enonic.xp.toolbox.util.JsonHelper;
 
 @Command(name = "import", description = "Import nodes from an export into a repository branch.")
 public final class ImportCommand
@@ -22,13 +26,16 @@ public final class ImportCommand
     protected void execute()
         throws Exception
     {
-        final ImportJsonRequest request = new ImportJsonRequest().
-            targetRepoPath( targetRepoPath ).
-            sourceDirectory( sourceDir ).
-            importWithIds( importWithIds );
-        final String jsonRequest = new RequestJsonSerializer().serialize( request );
-        final String result = postRequest( IMPORT_REST_PATH, jsonRequest );
-
+        final String result = postRequest( IMPORT_REST_PATH, createJsonRequest() );
         System.out.println( result );
+    }
+
+    private ObjectNode createJsonRequest()
+    {
+        final ObjectNode json = JsonHelper.newObjectNode();
+        json.put( "sourceDirectory", this.sourceDir );
+        json.put( "targetRepoPath", this.targetRepoPath );
+        json.put( "importWithIds", this.importWithIds );
+        return json;
     }
 }

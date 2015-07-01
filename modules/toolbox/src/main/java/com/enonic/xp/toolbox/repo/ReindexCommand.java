@@ -2,8 +2,13 @@ package com.enonic.xp.toolbox.repo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
+
+import com.enonic.xp.toolbox.util.JsonHelper;
 
 @Command(name = "reindex", description = "Reindex content in search indices for the given repository and branches.")
 public final class ReindexCommand
@@ -24,13 +29,19 @@ public final class ReindexCommand
     protected void execute()
         throws Exception
     {
-        final ReindexJsonRequest request = new ReindexJsonRequest().
-            repositoryId( repository ).
-            branches( branches ).
-            initialize( initialize );
-        final String jsonRequest = new RequestJsonSerializer().serialize( request );
-        final String result = postRequest( REINDEX_REST_PATH, jsonRequest );
-
+        final String result = postRequest( REINDEX_REST_PATH, createJsonRequest() );
         System.out.println( result );
+    }
+
+    private ObjectNode createJsonRequest()
+    {
+        final ObjectNode json = JsonHelper.newObjectNode();
+        json.put( "repositoryId", this.repository );
+        json.put( "initialize", this.initialize );
+
+        final ArrayNode branchesNode = json.putArray( "branches" );
+        this.branches.forEach( branchesNode::add );
+
+        return json;
     }
 }

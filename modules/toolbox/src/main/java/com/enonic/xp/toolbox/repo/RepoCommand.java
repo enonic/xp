@@ -1,10 +1,6 @@
 package com.enonic.xp.toolbox.repo;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -16,6 +12,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.ResponseException;
 import com.enonic.xp.toolbox.ToolCommand;
+import com.enonic.xp.toolbox.util.JsonHelper;
 
 public abstract class RepoCommand
     extends ToolCommand
@@ -31,8 +28,14 @@ public abstract class RepoCommand
     @Option(name = "-p", description = "Port number for server (default is 8080).")
     public int port = 8080;
 
+    protected String postRequest( final String urlPath, final JsonNode json )
+        throws Exception
+    {
+        return postRequest( urlPath, JsonHelper.serialize( json ) );
+    }
+
     protected String postRequest( final String urlPath, final String json )
-        throws IOException
+        throws Exception
     {
         final RequestBody body = RequestBody.create( JSON, json );
 
@@ -47,7 +50,7 @@ public abstract class RepoCommand
     }
 
     protected String getRequest( final String urlPath )
-        throws IOException
+        throws Exception
     {
         final String url = "http://" + host + ":" + port + urlPath;
         final Request request = new Request.Builder().
@@ -60,18 +63,19 @@ public abstract class RepoCommand
     }
 
     private String executeRequest( final Request request )
-        throws IOException
+        throws Exception
     {
         final OkHttpClient client = new OkHttpClient();
         final Response response = client.newCall( request ).execute();
         if ( !response.isSuccessful() )
         {
             final String responseBody = response.body().string();
-            final String prettified = prettifyJson( responseBody );
+            final String prettified = JsonHelper.prettifyJson( responseBody );
             throw new ResponseException( prettified, response.code() );
         }
+
         final String responseBody = response.body().string();
-        return prettifyJson( responseBody );
+        return JsonHelper.prettifyJson( responseBody );
     }
 
     private String authCredentials()
@@ -81,19 +85,4 @@ public abstract class RepoCommand
         final String password = authParts.length > 1 ? authParts[1] : "";
         return Credentials.basic( userName, password );
     }
-
-    protected String prettifyJson( final String json )
-    {
-        final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        try
-        {
-            final Object jsonObject = mapper.readValue( json, Object.class );
-            return mapper.enable( SerializationFeature.INDENT_OUTPUT ).writeValueAsString( jsonObject );
-        }
-        catch ( IOException e )
-        {
-            return json;
-        }
-    }
-
 }
