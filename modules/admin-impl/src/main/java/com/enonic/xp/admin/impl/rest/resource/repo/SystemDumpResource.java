@@ -52,10 +52,11 @@ public class SystemDumpResource
 
     private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String targetRoot )
     {
-        final java.nio.file.Path exportPath = PathHelper.join( Paths.get( targetRoot ),  Paths.get( repoName ), Paths.get( branch ) );
+        final java.nio.file.Path exportPath = PathHelper.join( Paths.get( targetRoot ), Paths.get( repoName ), Paths.get( branch ) );
 
         return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
             includeNodeIds( true ).
+            rootDirectory( targetRoot.toString() ).
             targetDirectory( exportPath.toString() ).
             sourceNodePath( NodePath.ROOT ).
             build() ) );

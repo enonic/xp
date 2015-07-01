@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Paths;
 
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -18,7 +20,18 @@ import com.enonic.xp.node.NodeService;
 public class ExportServiceImpl
     implements ExportService
 {
+    private String xpVersion;
+
     private NodeService nodeService;
+
+    @Activate
+    public void activate( final ComponentContext context )
+    {
+        xpVersion = context.getBundleContext().
+            getBundle().
+            getVersion().
+            toString();
+    }
 
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
@@ -27,7 +40,9 @@ public class ExportServiceImpl
             sourceNodePath( params.getSourceNodePath() ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
+            rootDirectory( Paths.get( params.getRootDirectory() ) ).
             targetDirectory( Paths.get( params.getTargetDirectory() ) ).
+            xpVersion( xpVersion ).
             dryRun( params.isDryRun() ).
             exportNodeIds( params.isIncludeNodeIds() ).
             build().

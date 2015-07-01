@@ -8,6 +8,8 @@ import com.enonic.xp.node.NodePath;
 @Beta
 public class ExportNodesParams
 {
+    private final String rootDirectory;
+
     private final String targetDirectory;
 
     private final NodePath sourceNodePath;
@@ -18,6 +20,14 @@ public class ExportNodesParams
 
     private ExportNodesParams( Builder builder )
     {
+        if ( builder.rootDirectory == null )
+        {
+            this.rootDirectory = builder.targetDirectory;
+        }
+        else
+        {
+            this.rootDirectory = builder.rootDirectory;
+        }
         this.targetDirectory = builder.targetDirectory;
         this.sourceNodePath = builder.sourceNodePath;
         this.dryRun = builder.dryRun;
@@ -27,6 +37,11 @@ public class ExportNodesParams
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public String getRootDirectory()
+    {
+        return rootDirectory;
     }
 
     public String getTargetDirectory()
@@ -51,6 +66,8 @@ public class ExportNodesParams
 
     public static final class Builder
     {
+        private String rootDirectory;
+
         private String targetDirectory;
 
         private NodePath sourceNodePath;
@@ -63,9 +80,15 @@ public class ExportNodesParams
         {
         }
 
-        public Builder targetDirectory( final String exportName )
+        public Builder rootDirectory( final String rootDirectory )
         {
-            this.targetDirectory = exportName;
+            this.rootDirectory = rootDirectory;
+            return this;
+        }
+
+        public Builder targetDirectory( final String targetDirectory )
+        {
+            this.targetDirectory = targetDirectory;
             return this;
         }
 
