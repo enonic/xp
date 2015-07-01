@@ -5,6 +5,7 @@
 
   <xs:complexType name="node">
     <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="inheritPermissions" type="xs:boolean"/>
       <xs:element minOccurs="0" maxOccurs="1" name="permissions" type="permissions"/>
       <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
