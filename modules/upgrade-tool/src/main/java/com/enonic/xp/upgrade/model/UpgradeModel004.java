@@ -6,16 +6,16 @@ import java.nio.file.Paths;
 import com.google.common.io.CharSource;
 
 /**
- * Replace moduleConfig with siteConfig in Content data
+ * Remove pre-scaled image attachments (those with label="small", "medium", "large", "extra-large")
  */
-public final class UpgradeModel003
+public final class UpgradeModel004
     extends AbstractXsltUpgradeModel
 {
     private final static String SUPPORTED_REPO = "cms-repo";
 
-    public UpgradeModel003()
+    public UpgradeModel004()
     {
-        super( "UpgradeModel003.xsl" );
+        super( "UpgradeModel004.xsl" );
     }
 
     @Override

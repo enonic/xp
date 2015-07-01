@@ -8,6 +8,7 @@ import com.enonic.xp.upgrade.model.UpgradeModel;
 import com.enonic.xp.upgrade.model.UpgradeModel001;
 import com.enonic.xp.upgrade.model.UpgradeModel002;
 import com.enonic.xp.upgrade.model.UpgradeModel003;
+import com.enonic.xp.upgrade.model.UpgradeModel004;
 
 public final class UpgradeTaskLocator
 {
@@ -19,6 +20,7 @@ public final class UpgradeTaskLocator
         this.upgradeModels.add( new UpgradeModel001() );
         this.upgradeModels.add( new UpgradeModel002() );
         this.upgradeModels.add( new UpgradeModel003() );
+        this.upgradeModels.add( new UpgradeModel004() );
     }
 
     public List<UpgradeModel> getUpgradeModels()
