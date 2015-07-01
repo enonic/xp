@@ -31,9 +31,11 @@ module api.ui.image {
         private frame: DivEl;
         private canvas: DivEl;
         private image: ImgEl;
+        private imageWrapperDiv: DivEl;
         private clip: Element;
         private dragHandle: Element;
         private zoomSlider: Element;
+        private zoomSliderHeight: number = 200;
         private zoomLine: Element;
         private zoomKnob: Element;
         private focusClipPath: Element;
@@ -96,6 +98,9 @@ module api.ui.image {
                 }
             });
 
+            this.imageWrapperDiv = new DivEl('image-bg-wrapper');
+            this.imageWrapperDiv.appendChild(this.image);
+
             var myId = this.getId();
 
             var clipHtml = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' +
@@ -121,7 +126,7 @@ module api.ui.image {
                            '            <use xlink:href="#' + myId + '-dragTriangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
                            '        </svg>' +
                            '        <svg id="' + myId + '-zoomSlider" class="zoom-slider">' +
-                           '            <rect x="0" y="0" width="40" height="200" rx="20" ry="20"/>' +
+                           '            <rect x="0" y="0" width="40" height="' + this.zoomSliderHeight + '" rx="20" ry="20"/>' +
                            '            <line id="' + myId + '-zoomLine" x1="20" y1="20" x2="20" y2="180"/>' +
                            '            <circle id="' + myId + '-zoomKnob" cx="20" cy="-1" r="8"/>' +
                            '        </svg>' +
@@ -142,7 +147,7 @@ module api.ui.image {
                 return false
             };
 
-            this.canvas.appendChildren(this.image, this.clip);
+            this.canvas.appendChildren(this.imageWrapperDiv, this.clip);
 
             this.frame.appendChild(this.canvas);
 
@@ -295,6 +300,7 @@ module api.ui.image {
             }
 
             this.frame.getEl().setWidthPx(this.frameW).setHeightPx(this.frameH);
+            this.image.getEl().setHeightPx(this.frameH);
 
             if (this.revertZoomData) {
                 // zoom was set while images was not yet loaded (saved in px);
@@ -747,6 +753,11 @@ module api.ui.image {
         }
 
         private setCropPositionPx(crop: Rect, updateAuto: boolean = true) {
+
+            if(this.isCropAreaSmallerThanZoomSlider(crop.h)) {
+                return;
+            }
+
             var oldX = this.cropData.x,
                 oldY = this.cropData.y,
                 oldW = this.cropData.w,
@@ -761,6 +772,8 @@ module api.ui.image {
             this.cropData.h = this.restrainCropH(crop.h);
             this.cropData.x = this.restrainCropX(crop.x);
             this.cropData.y = this.restrainCropY(crop.y);
+
+            this.hideImageBgBeyondBottom();
 
             if (updateAuto) {
                 this.setCropAutoPositioned(false);
@@ -858,6 +871,8 @@ module api.ui.image {
             rect.setAttribute('y', this.cropData.y.toString());
             rect.setAttribute('width', this.cropData.w.toString());
             rect.setAttribute('height', this.cropData.h.toString());
+
+            this.updateFrameHeight();
 
             // 16 is the half-size of drag
             drag.setAttribute('x', (this.cropData.x + this.cropData.w / 2 - 16).toString());
@@ -1218,6 +1233,8 @@ module api.ui.image {
                 setLeftPx(this.zoomData.x).
                 setTopPx(this.zoomData.y);
 
+            this.image.getEl().setHeightPx(this.zoomData.h);
+
             this.zoomSlider.setVisible(!this.imageSmallerThanFrame);
 
             if (this.imageSmallerThanFrame) {
@@ -1235,6 +1252,19 @@ module api.ui.image {
                 knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
 
             zoomKnobEl.setAttribute('cy', knobNewY.toString());
+        }
+
+        private isCropAreaSmallerThanZoomSlider(height: number): boolean {
+            return height - this.zoomSliderHeight < 0;
+        }
+
+        private updateFrameHeight() {  // making bottom border and everything underneath the image draggable
+            this.frame.getEl().setHeightPx(this.cropData.h);
+            wemjq(this.frame.getHTMLElement()).closest(".result-container").height(this.cropData.h);
+        }
+
+        private hideImageBgBeyondBottom() { // not showing image background after bottom border
+            this.imageWrapperDiv.getEl().setHeightPx(this.cropData.h + this.cropData.y);
         }
 
         /**
