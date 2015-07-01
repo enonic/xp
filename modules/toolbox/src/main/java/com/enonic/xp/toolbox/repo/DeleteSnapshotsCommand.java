@@ -3,7 +3,7 @@ package com.enonic.xp.toolbox.repo;
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
-@Command(name = "deleteSnapshots", description = "Delete snapshots")
+@Command(name = "deleteSnapshots", description = "Deletes snapshots, either before a given timestamp or by name.")
 public final class DeleteSnapshotsCommand
     extends RepoCommand
 {

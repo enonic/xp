@@ -3,7 +3,7 @@ package com.enonic.xp.toolbox.repo;
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
-@Command(name = "restore", description = "Restore snapshot...")
+@Command(name = "restore", description = "Stores a snapshot of the current state of the repository.")
 public final class RestoreCommand
     extends RepoCommand
 {

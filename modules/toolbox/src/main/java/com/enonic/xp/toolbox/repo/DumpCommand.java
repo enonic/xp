@@ -3,7 +3,7 @@ package com.enonic.xp.toolbox.repo;
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
-@Command(name = "dump", description = "Data dump tool")
+@Command(name = "dump", description = "Export every branch in specified repository.")
 public final class DumpCommand
     extends RepoCommand
 {
