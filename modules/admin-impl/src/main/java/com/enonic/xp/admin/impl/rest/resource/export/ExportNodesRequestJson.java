@@ -9,14 +9,14 @@ class ExportNodesRequestJson
 
     private final String targetDirectory;
 
-    private final boolean includeIds;
+    private final boolean exportWithIds;
 
     private final boolean dryRun;
 
 
     public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
                                    @JsonProperty("targetDirectory") final String targetDirectory, //
-                                   @JsonProperty("importWithIds") final Boolean includeIds, //
+                                   @JsonProperty("exportWithIds") final Boolean exportWithIds, //
                                    @JsonProperty("dryRun") final Boolean dryRun )
     {
         Preconditions.checkNotNull( sourceRepoPath, "sourceRepoPath not given" );
@@ -24,7 +24,7 @@ class ExportNodesRequestJson
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.targetDirectory = targetDirectory;
-        this.includeIds = includeIds != null ? includeIds : true;
+        this.exportWithIds = exportWithIds != null ? exportWithIds : true;
         this.dryRun = dryRun != null ? dryRun : false;
     }
 
@@ -38,9 +38,9 @@ class ExportNodesRequestJson
         return targetDirectory;
     }
 
-    public boolean isIncludeIds()
+    public boolean isExportWithIds()
     {
-        return includeIds;
+        return exportWithIds;
     }
 
     public boolean isDryRun()
