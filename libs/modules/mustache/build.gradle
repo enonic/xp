@@ -1,4 +1,0 @@
-dependencies {
-    compile 'com.samskivert:jmustache:1.10'
-    testCompile 'junit:junit:4.10'
-}

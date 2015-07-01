@@ -34,6 +34,13 @@ include 'distro'
 include 'testing'
 include 'gradle-plugin'
 
+include 'lib-content'
+include 'lib-i18n'
+include 'lib-portal'
+include 'lib-mustache'
+include 'lib-xslt'
+include 'lib-thymeleaf'
+
 rootProject.name = 'xp'
 
 rootProject.children.each { project ->
