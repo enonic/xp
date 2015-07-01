@@ -1,5 +1,6 @@
 package com.enonic.xp.toolbox.repo;
 
+import org.junit.After;
 import org.junit.Before;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +24,13 @@ public abstract class RepoCommandTest
         this.server.start();
     }
 
+    @After
+    public final void shutdown()
+        throws Exception
+    {
+        this.server.shutdown();
+    }
+
     protected final void configure( final RepoCommand command )
     {
         command.host = this.server.getHostName();
@@ -30,18 +38,20 @@ public abstract class RepoCommandTest
         command.auth = "user:password";
     }
 
-    protected final void addResponse( final JsonNode json )
+    protected final MockResponse addResponse( final JsonNode json )
         throws Exception
     {
-        addResponse( JsonHelper.serialize( json ) );
+        return addResponse( JsonHelper.serialize( json ) ).
+            addHeader( "Content-Type", "application/json; charset=utf-8" );
     }
 
-    protected final void addResponse( final String json )
+    protected final MockResponse addResponse( final String json )
         throws Exception
     {
         final MockResponse response = new MockResponse();
         response.setBody( json );
         this.server.enqueue( response );
+        return response;
     }
 
     protected final RecordedRequest takeRequest()
