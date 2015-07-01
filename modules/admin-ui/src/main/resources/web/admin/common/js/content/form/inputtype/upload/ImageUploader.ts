@@ -143,7 +143,6 @@ module api.content.form.inputtype.upload {
                 container = property.getPropertySet();
                 break;
             case ValueTypes.STRING:
-                debugger;
                 // save in new format always no matter what was the format originally
                 container = new api.data.PropertyTree();
                 container.setString('attachment', 0, property.getString());
