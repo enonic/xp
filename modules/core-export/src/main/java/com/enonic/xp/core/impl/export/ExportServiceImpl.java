@@ -58,6 +58,7 @@ public class ExportServiceImpl
             targetNodePath( params.getTargetNodePath() ).
             dryRun( params.isDryRun() ).
             importNodeIds( params.isImportNodeids() ).
+            importPermissions( params.isImportPermissions() ).
             build().
             execute();
     }

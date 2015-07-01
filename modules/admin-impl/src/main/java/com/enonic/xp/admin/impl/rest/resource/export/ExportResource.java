@@ -60,6 +60,7 @@ public class ExportResource
                 targetNodePath( request.getTargetRepoPath().getNodePath() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).
+                includePermissions( request.isImportWithPermissions() ).
                 build() ) );
 
         return NodeImportResultJson.from( result );
