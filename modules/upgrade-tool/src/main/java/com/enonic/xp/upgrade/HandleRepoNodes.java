@@ -12,11 +12,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharSource;
 
+import com.enonic.xp.upgrade.model.UpgradeExportProperties;
 import com.enonic.xp.upgrade.model.UpgradeModel;
 
 public final class HandleRepoNodes
 {
-    private final static ImmutableSet<String> IGNORE_FILES = ImmutableSet.of( ".DS_Store" );
+    private final static String EXPORT_PROPERTIES_FILENAME = "export.properties";
+
+    private final static ImmutableSet<String> IGNORE_FILES = ImmutableSet.of( ".DS_Store", EXPORT_PROPERTIES_FILENAME );
 
     private static final Predicate<Path> IGNORE_FILES_FILTER = ( repo ) -> !IGNORE_FILES.contains( repo.getFileName().toString() );
 
@@ -44,6 +47,25 @@ public final class HandleRepoNodes
     {
         verifyRoot();
         processRepositories( root );
+        processExportProperties( root );
+    }
+
+    private void processExportProperties( final Path path )
+    {
+        final Path exportPropertiesPath = Paths.get( path.toString(), EXPORT_PROPERTIES_FILENAME );
+
+        if ( Files.exists( exportPropertiesPath ) )
+        {
+            LOG.info( "Process " + EXPORT_PROPERTIES_FILENAME );
+
+            CharSource source = IOHelper.getCharSource( exportPropertiesPath );
+
+            UpgradeModel upgradeModel = new UpgradeExportProperties();
+            final String upgraded = upgradeModel.upgrade( path, source );
+            source = CharSource.wrap( upgraded );
+
+            IOHelper.write( createTargetPath( exportPropertiesPath ), source );
+        }
     }
 
     private void processRepositories( final Path path )
