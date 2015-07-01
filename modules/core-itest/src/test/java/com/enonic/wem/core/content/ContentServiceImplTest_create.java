@@ -111,7 +111,7 @@ public class ContentServiceImplTest_create
         final Content storedContent = this.contentService.getById( content.getId() );
 
         final Attachments attachments = storedContent.getAttachments();
-        assertEquals( 4, attachments.getSize() ); // original, small, medium, large
+        assertEquals( 1, attachments.getSize() );
     }
 
     @Test

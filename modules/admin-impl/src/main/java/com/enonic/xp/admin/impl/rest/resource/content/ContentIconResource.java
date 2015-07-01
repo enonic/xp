@@ -99,8 +99,11 @@ public final class ContentIconResource
             if ( binary != null )
             {
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                final ImageParams imageParams =
-                    ImageParams.newImageParams().size( size ).cropRequired( crop ).orientation( imageOrientation ).build();
+                final ImageParams imageParams = ImageParams.newImageParams().
+                    size( size ).
+                    cropRequired( crop ).
+                    orientation( imageOrientation ).
+                    build();
 
                 final BufferedImage thumbnailImage = helper.readAndRotateImage( binary, imageParams );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
@@ -111,14 +114,17 @@ public final class ContentIconResource
 
     private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size, final boolean crop )
     {
-        final Attachment imageAttachment = media.getBestFitImageAttachment( size );
+        final Attachment imageAttachment = media.getMediaAttachment();
         if ( imageAttachment != null )
         {
             final ByteSource attachmentBinary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
             if ( attachmentBinary != null )
             {
-                final ImageParams imageParams = ImageParams.newImageParams().size( size ).cropRequired( crop ).orientation(
-                    getSourceAttachmentOrientation( media ) ).build();
+                final ImageParams imageParams = ImageParams.newImageParams().
+                    size( size ).
+                    cropRequired( crop ).
+                    orientation( getSourceAttachmentOrientation( media ) ).
+                    build();
 
                 final BufferedImage contentImage = helper.readAndRotateImage( attachmentBinary, imageParams );
                 return new ResolvedImage( contentImage, imageAttachment.getMimeType() );

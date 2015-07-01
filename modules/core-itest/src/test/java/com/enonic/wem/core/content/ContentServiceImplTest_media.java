@@ -46,7 +46,7 @@ public class ContentServiceImplTest_media
         assertNotNull( storedContent.getModifier() );
         assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
         final Attachments attachments = storedContent.getAttachments();
-        assertEquals( 4, attachments.getSize() ); // original, small, medium, large
+        assertEquals( 1, attachments.getSize() );
     }
 
 
@@ -76,7 +76,7 @@ public class ContentServiceImplTest_media
         final Attachments attachments = updatedContent.getAttachments();
 
         assertNotNull( attachments );
-        assertEquals( 3, attachments.getSize() );
+        assertEquals( 1, attachments.getSize() );
 
         for ( final Attachment attachment : attachments )
         {
