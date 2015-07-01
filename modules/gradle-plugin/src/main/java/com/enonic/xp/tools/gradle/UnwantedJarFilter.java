@@ -19,7 +19,9 @@ public final class UnwantedJarFilter
         final Configuration result = this.config.copy();
 
         addExclude( result, "org.slf4j", null );
-        addExclude( result, "com.enonic.xp", null );
+        addExclude( result, "com.enonic.xp", "core-api" );
+        addExclude( result, "com.enonic.xp", "web-api" );
+        addExclude( result, "com.enonic.xp", "portal-api" );
         addExclude( result, "com.google.guava", "guava" );
 
         return result;
