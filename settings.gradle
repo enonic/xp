@@ -27,6 +27,7 @@ include 'admin-impl'
 include 'admin-event'
 include 'admin-ui'
 
+include 'toolbox'
 include 'launcher'
 include 'distro'
 

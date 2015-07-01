@@ -2,12 +2,14 @@ apply plugin: 'java-base'
 
 configurations {
     lib
+    toolbox
     bundle
     bundle.transitive = false
 }
 
 dependencies {
     lib project( ':launcher' )
+    toolbox project( ':toolbox' )
 }
 
 ext {
@@ -92,6 +94,15 @@ task copyResources( type: Copy ) {
         from( bundlesFile ) {
             expand project.properties
         }
+    }
+    into( 'toolbox' ) {
+        from( 'src/toolbox' ) {
+            include '*.sh'
+            fileMode 0755
+        }
+    }
+    into( 'toolbox/lib' ) {
+        from( configurations.toolbox )
     }
     from( 'src' ) {
         include 'README.txt'
