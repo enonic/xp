@@ -1394,11 +1394,6 @@ module api.ui.image {
         }
 
         private notifyCropModeChanged(edit: boolean, position: Rect, zoomPosition: Rect) {
-            if (position) {
-                // position can be undefined when auto positioned
-                debugger;
-                //normalizedPosition = this.denormalizeRect(position.x, position.y);
-            }
             this.cropEditModeListeners.forEach((listener) => {
                 listener(edit, position, zoomPosition);
             })
