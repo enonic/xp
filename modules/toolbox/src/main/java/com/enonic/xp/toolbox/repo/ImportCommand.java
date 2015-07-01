@@ -3,7 +3,7 @@ package com.enonic.xp.toolbox.repo;
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
-@Command(name = "import", description = "Import...")
+@Command(name = "import", description = "Import nodes from an export into a repository branch.")
 public final class ImportCommand
     extends RepoCommand
 {
