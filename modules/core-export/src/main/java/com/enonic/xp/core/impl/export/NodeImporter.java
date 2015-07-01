@@ -52,6 +52,8 @@ public class NodeImporter
 
     private final boolean importNodeIds;
 
+    private final boolean importPermissions;
+
     private final boolean keepTimestamp;
 
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
@@ -63,6 +65,7 @@ public class NodeImporter
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
+        this.importPermissions = builder.importPermissions;
         this.keepTimestamp = builder.keepTimestamp;
     }
 
@@ -226,6 +229,7 @@ public class NodeImporter
 
         final Node importNode = ImportNodeFactory.create().
             importNodeIds( this.importNodeIds ).
+            importPermissions( this.importPermissions ).
             serializedNode( serializedNode ).
             importPath( importNodePath ).
             processNodeSettings( processNodeSettings.build() ).
@@ -331,6 +335,8 @@ public class NodeImporter
 
         private boolean importNodeIds = true;
 
+        private boolean importPermissions = true;
+
         private boolean keepTimestamp = true;
 
         private Builder()
@@ -364,6 +370,12 @@ public class NodeImporter
         public Builder importNodeIds( final boolean importNodeIds )
         {
             this.importNodeIds = importNodeIds;
+            return this;
+        }
+
+        public Builder importPermissions( final boolean importPermissions )
+        {
+            this.importPermissions = importPermissions;
             return this;
         }
 

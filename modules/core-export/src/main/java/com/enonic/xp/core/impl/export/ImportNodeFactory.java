@@ -6,6 +6,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public class ImportNodeFactory
 {
@@ -17,12 +18,15 @@ public class ImportNodeFactory
 
     private final boolean importNodeIds;
 
+    private final boolean importPermissions;
+
     private ImportNodeFactory( Builder builder )
     {
         this.serializedNode = builder.serializedNode;
         this.nodeImportPath = builder.importPath;
         this.processNodeSettings = builder.processNodeSettings;
         this.importNodeIds = builder.importNodeIds;
+        this.importPermissions = builder.importPermissions;
     }
 
     public static Builder create()
@@ -35,8 +39,8 @@ public class ImportNodeFactory
         return Node.newNode( serializedNode ).
             parentPath( this.nodeImportPath.getParentPath() ).
             name( getNodeName() ).
-            inheritPermissions( serializedNode.inheritsPermissions() ).
-            permissions( serializedNode.getPermissions() ).
+            inheritPermissions( importPermissions ? serializedNode.inheritsPermissions() : true ).
+            permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
             id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
             manualOrderValue( getManualOrderValue() ).
             timestamp( serializedNode.getTimestamp() ).
@@ -73,6 +77,8 @@ public class ImportNodeFactory
 
         private boolean importNodeIds = true;
 
+        private boolean importPermissions = true;
+
         private Builder()
         {
         }
@@ -98,6 +104,13 @@ public class ImportNodeFactory
         public Builder importNodeIds( final boolean importNodeIds )
         {
             this.importNodeIds = importNodeIds;
+            return this;
+        }
+
+
+        public Builder importPermissions( final boolean importPermissions )
+        {
+            this.importPermissions = importPermissions;
             return this;
         }
 

@@ -14,13 +14,15 @@ Import nodes from an export into a repository branch
 	-s SOURCE_DIR			path to exported files
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
+	-i [true|false]		Include ids in data when importing
+	-P [true|false]		Include permissions when importing
 	-n                  		enable nice format of output (requires python)
 
 EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-P true|false] [-n]"
 }
 
 args=("$@")
@@ -35,7 +37,7 @@ done
 PRETTY=""
 
 # Parse arguments
-while getopts '?u:h:p:t:s:i:n' OPTION
+while getopts '?u:h:p:t:s:i:P:n' OPTION
 	do
 		case $OPTION in
             u)
@@ -53,6 +55,10 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 			i)
 				iflag=1
 				INCLUDEIDS="$OPTARG"
+				;;
+			P)
+				Pflag=1
+				INCLUDE_PERMISIONS="$OPTARG"
 				;;
 			p)
 				pflag=1
@@ -97,6 +103,11 @@ then
 	INCLUDEIDS=true
 fi
 
+if [[ -z $INCLUDE_PERMISIONS ]]
+then
+	INCLUDE_PERMISIONS=true
+fi
+
 if [[ -z $HOST ]]
 then
      HOST="localhost"
@@ -109,7 +120,8 @@ fi
 
 SOURCE_DIR=`cd "$SOURCE_DIR"; pwd`
 
-JSON="{\"sourceDirectory\": \"$SOURCE_DIR\", \"targetRepoPath\": \"$TARGET_REPO_PATH\", \"importWithIds\": $INCLUDEIDS}"
+JSON="{\"sourceDirectory\": \"$SOURCE_DIR\", \"targetRepoPath\": \"$TARGET_REPO_PATH\", \"importWithIds\": $INCLUDEIDS,
+		\"importWithPermissions\": $INCLUDE_PERMISIONS}"
 
 echo "Importing from directory $SOURCE_DIR to $TARGET_REPO_PATH"
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/import' -d '$JSON' $PRETTY"

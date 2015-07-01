@@ -15,12 +15,14 @@ public class ImportNodesParamsTest
     {
         ImportNodesParams.Builder builder = ImportNodesParams.create();
 
-        builder.dryRun( true ).includeNodeIds( true ).targetNodePath( NodePath.ROOT ).source( Mockito.mock( VirtualFile.class ) );
+        builder.dryRun( true ).includeNodeIds( true ).includePermissions( true ).targetNodePath( NodePath.ROOT ).source(
+            Mockito.mock( VirtualFile.class ) );
 
         ImportNodesParams result = builder.build();
 
         assertTrue( result.isDryRun() );
         assertTrue( result.isImportNodeids() );
+        assertTrue( result.isImportPermissions() );
         assertTrue( result.getTargetNodePath().isRoot() );
         assertNotNull( result.getSource() );
     }

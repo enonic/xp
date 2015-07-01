@@ -16,12 +16,15 @@ public class ImportNodesParams
 
     private final boolean importNodeids;
 
+    private final boolean importPermissions;
+
     private ImportNodesParams( final Builder builder )
     {
         this.targetNodePath = builder.targetNodePath;
         this.source = builder.source;
         this.dryRun = builder.dryRun;
         this.importNodeids = builder.importNodeIds;
+        this.importPermissions = builder.importPermissions;
     }
 
     public static Builder create()
@@ -49,6 +52,11 @@ public class ImportNodesParams
         return importNodeids;
     }
 
+    public boolean isImportPermissions()
+    {
+        return importPermissions;
+    }
+
     public static final class Builder
     {
         private NodePath targetNodePath;
@@ -58,6 +66,8 @@ public class ImportNodesParams
         private boolean dryRun = false;
 
         private boolean importNodeIds;
+
+        private boolean importPermissions;
 
         private Builder()
         {
@@ -84,6 +94,12 @@ public class ImportNodesParams
         public Builder includeNodeIds( final boolean importNodeIds )
         {
             this.importNodeIds = importNodeIds;
+            return this;
+        }
+
+        public Builder includePermissions( final boolean importPermissions )
+        {
+            this.importPermissions = importPermissions;
             return this;
         }
 
