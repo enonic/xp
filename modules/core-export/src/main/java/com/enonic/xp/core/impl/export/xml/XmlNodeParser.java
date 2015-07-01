@@ -57,6 +57,7 @@ public final class XmlNodeParser
         this.builder.data( parseData( root.getChild( "data" ) ) );
         this.builder.indexConfigDocument( parseIndexConfigs( root.getChild( "indexConfigs" ) ) );
 
+        this.builder.inheritPermissions( root.getChildValueAs( "inheritPermissions", Boolean.class, Boolean.TRUE ) );
         if ( root.getChild( "permissions" ) != null )
         {
             this.builder.permissions( XmlPermissionsParser.parse( root.getChild( "permissions" ) ) );
