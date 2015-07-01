@@ -43,7 +43,7 @@ public class ExportResource
                 sourceNodePath( request.getSourceRepoPath().getNodePath() ).
                 targetDirectory( request.getTargetDirectory() ).
                 dryRun( request.isDryRun() ).
-                includeNodeIds( request.isIncludeIds() ).
+                includeNodeIds( request.isExportWithIds() ).
                 build() ) );
 
         return NodeExportResultJson.from( result );
