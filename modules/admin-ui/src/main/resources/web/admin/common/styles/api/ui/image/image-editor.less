@@ -55,6 +55,60 @@
     }
   }
 
+  &.edit-mode.selected {
+    .image-frame .image-canvas .buttons-container {
+      display: none;
+    }
+  }
+
+  &.selected {
+    .image-frame .image-canvas .buttons-container {
+      display: block;
+      text-align: center;
+      position: absolute;
+      top: 40%;
+      display: block;
+      width: inherit;
+      height: 100px;
+      background-color: rgba(255, 255, 255, .6);
+
+      .button {
+        background-color: #6C6A73;
+        font-size: 32px;
+        width: 50px;
+        height: 50px;
+        margin: 25px 15px 0 15px;
+        padding: 0 0 0 8px;
+        -webkit-filter: contrast(1.5);
+        filter: contrast(1.5);
+      }
+
+      .button-focal:before {
+        display: table-caption;
+        content: "\e149";
+        color: white;
+      }
+
+      .button-mask:before {
+        display: table-caption;
+        content: "\e02b";
+        color: white;
+      }
+
+      .button-upload {
+        &:before {
+          color: transparent;
+        }
+        background-image: url("../../common/images/upload_white.png");
+        background-repeat: no-repeat;
+        background-size: 30px;
+        background-position: 10px;
+        vertical-align: top;
+      }
+    }
+
+  }
+
   .image-frame {
     overflow: hidden;
     position: relative;
@@ -63,6 +117,10 @@
     .image-canvas {
       position: absolute;
       border: 1px solid @admin-white;
+
+      .buttons-container {
+        display: none;
+      }
 
       .image-bg {
         vertical-align: top; // to remove padding below the image
@@ -157,7 +215,7 @@
     position: relative;
     z-index: @z-index-mask + 1;
     .clearfix();
-
+/*
     .buttons-container {
 
       button {
@@ -176,7 +234,7 @@
       }
 
     }
-
+*/
     .edit-container {
       text-align: center;
 

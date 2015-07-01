@@ -67,6 +67,7 @@ module api.content {
 
             this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
             this.getResultContainer().getEl().addClass("placeholder");
+            this.setResetVisible(false);
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
@@ -75,11 +76,11 @@ module api.content {
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
-                this.setResetVisible(!edit);
+                imageEditor.removeClass('selected');
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
             imageEditor.onCropModeChanged((edit, crop) => {
-                this.setResetVisible(!edit);
+                imageEditor.removeClass('selected');
                 this.notifyCropEditModeChanged(edit, crop);
             });
 
@@ -95,15 +96,22 @@ module api.content {
                 }, 150);
             });
 
-            this.onBlur((event) => {
-                var targetEl = event.relatedTarget ? api.dom.Element.fromHtmlElement(<HTMLElement>event.relatedTarget) : null,
-                    resetButtonEl = api.dom.Element.fromHtmlElement(this.getResetButton().getHTMLElement());
-                if (imageEditor.hasClass('selected') && (!targetEl || (targetEl.getId() !== resetButtonEl.getId()))) {
+            imageEditor.getLastButtonInContainer().onBlur(() => {
+                this.toggleSelected(imageEditor);
+            });
+
+            this.onBlur((event: FocusEvent) => {
+                if (event.relatedTarget && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.relatedTarget)) {
+                    this.toggleSelected(imageEditor);
+                }
+
+            });
+
+            this.onClicked((event: MouseEvent) => {
+                if (event.target && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.target)) {
                     this.toggleSelected(imageEditor);
                 }
             });
-
-            this.onClicked((event: MouseEvent) => this.toggleSelected(imageEditor));
 
             this.imageEditors.push(imageEditor);
 
@@ -111,9 +119,6 @@ module api.content {
                 this.imageEditors.forEach((editor) => {
                     if (editor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
                         editor.removeClass('selected');
-                        if (wemjq(this.getHTMLElement()).has(editor.getHTMLElement()).length) {
-                            this.setResetVisible(false);
-                        }
                     }
                 });
             });
@@ -123,7 +128,6 @@ module api.content {
 
         private toggleSelected(imageEditor: ImageEditor) {
             imageEditor.toggleClass('selected');
-            this.setResetVisible(imageEditor.hasClass('selected'));
         }
 
         setFocalPoint(x: number, y: number) {
