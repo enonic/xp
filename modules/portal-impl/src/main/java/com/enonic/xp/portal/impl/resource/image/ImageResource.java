@@ -35,17 +35,7 @@ public final class ImageResource
             throw notFound( "Image [%s] not found for content [%s]", name, id );
         }
 
-        final Attachment attachment;
-        final int requiredImageSize = scaleParams.getRequiredImageSize();
-        if ( requiredImageSize > 0 )
-        {
-            attachment = imageContent.getBestFitImageAttachment( requiredImageSize );
-        }
-        else
-        {
-            attachment = imageContent.getMediaAttachment();
-        }
-
+        final Attachment attachment = imageContent.getMediaAttachment();
         if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );

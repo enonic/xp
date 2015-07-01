@@ -4,7 +4,6 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -86,40 +85,6 @@ public class Media
         }
 
         return new FocalPoint( focalX, focalY );
-    }
-
-    public Attachment getBestFitImageAttachment( int requiredImageSize )
-    {
-        if ( isImage() )
-        {
-            switch ( getAttachments().getSize() )
-            {
-                case 0:
-                    return null;
-                case 1:
-                    return getSourceAttachment();
-                default:
-                    for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
-                    {
-                        if ( requiredImageSize <= scale.getSize() )
-                        {
-                            if ( getAttachments().byLabel( scale.getLabel() ) != null )
-                            {
-                                return getAttachments().byLabel( scale.getLabel() );
-                            }
-                            else
-                            {
-                                return getSourceAttachment();
-                            }
-                        }
-                    }
-                    return getSourceAttachment();
-            }
-        }
-        else
-        {
-            return null;
-        }
     }
 
     public Attachment getSourceAttachment()

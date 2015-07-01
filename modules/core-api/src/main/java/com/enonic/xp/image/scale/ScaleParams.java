@@ -31,26 +31,6 @@ public final class ScaleParams
         return this.name + "(" + Stream.of( this.args ).map( this::encode ).collect( joining( "," ) ) + ")";
     }
 
-    public int getRequiredImageSize()
-    {
-        if ( args.length == 0 )
-        {
-            return -1;
-        }
-
-        if ( args.length == 1 )
-        {
-            return args[0] instanceof Integer ? (int) args[0] : -1;
-        }
-
-        if ( args.length > 1 && args[0] instanceof Integer && args[1] instanceof Integer )
-        {
-            return Math.max( (int) args[0], (int) args[1] );
-        }
-
-        return -1;
-    }
-
     private String encode( Object arg )
     {
         if ( arg == null )

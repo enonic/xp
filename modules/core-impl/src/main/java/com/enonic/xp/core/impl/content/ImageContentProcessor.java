@@ -1,18 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.attachment.ImageAttachmentScale;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
@@ -24,8 +19,6 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -33,7 +26,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
 
 public final class ImageContentProcessor
@@ -66,18 +58,7 @@ public final class ImageContentProcessor
 
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
-        final BufferedImage sourceImage;
-        try (final InputStream inputStream = sourceAttachment.getByteSource().openStream())
-        {
-            sourceImage = ImageHelper.toBufferedImage( inputStream );
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-
         final Mixins contentMixins = mixinService.getByContentType( contentType );
-
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
@@ -86,35 +67,10 @@ public final class ImageContentProcessor
 
         final CreateAttachments.Builder builder = CreateAttachments.builder();
         builder.add( sourceAttachment );
-        builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
         return CreateContentParams.create( params ).
             createAttachments( builder.build() ).extraDatas( extraDatas ).
             build();
-    }
-
-    private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
-    {
-        final CreateAttachments.Builder attachments = CreateAttachments.builder();
-        for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
-        {
-            final boolean doScale = scale.getSize() < sourceImage.getWidth();
-            if ( doScale )
-            {
-                final BufferedImage scaledImage = new ScaleWidthFunction( scale.getSize() ).scale( sourceImage );
-                final String imageFormat = sourceAttachment.getExtension();
-                final ByteSource scaledImageBytes = ImageHelper.toByteSource( scaledImage, imageFormat );
-                final String name = sourceAttachment.getNameWithoutExtension() + "_" + scale.getLabel() + "." + sourceAttachment.getExtension();
-                final CreateAttachment scaledImageAttachment = CreateAttachment.create().
-                    mimeType( sourceAttachment.getMimeType() ).
-                    name( name ).
-                    label( scale.getLabel() ).
-                    byteSource( scaledImageBytes ).
-                    build();
-                attachments.add( scaledImageAttachment ).build();
-            }
-        }
-        return attachments.build();
     }
 
     public ProcessUpdateResult processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
@@ -123,19 +79,8 @@ public final class ImageContentProcessor
         if ( createAttachments != null && createAttachments.getSize() == 1 )
         {
             final CreateAttachment sourceAttachment = createAttachments.first();
-            final BufferedImage sourceImage;
-            try (final InputStream inputStream = sourceAttachment.getByteSource().openStream())
-            {
-                sourceImage = ImageHelper.toBufferedImage( inputStream );
-            }
-            catch ( IOException e )
-            {
-                throw Exceptions.unchecked( e );
-            }
-
             final CreateAttachments.Builder builder = CreateAttachments.builder();
             builder.add( sourceAttachment );
-            builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
             processedCreateAttachments = builder.build();
         }
@@ -150,8 +95,7 @@ public final class ImageContentProcessor
             editor = editable -> {
 
                 Mixins contentMixins = mixinService.getByContentType( contentType );
-                ExtraDatas extraDatas = extractMetadata( mediaInfo, contentMixins );
-                editable.extraDatas = extraDatas;
+                editable.extraDatas = extractMetadata( mediaInfo, contentMixins );
 
             };
         }
@@ -193,7 +137,7 @@ public final class ImageContentProcessor
                         if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
                         {
                             extraData.getData().addLocalDateTime( formItemName,
-                                                                 ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
+                                                                  ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
                         }
                         else
                         {
