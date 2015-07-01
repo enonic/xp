@@ -37,9 +37,7 @@ public class FileExportWriter
 
         try
         {
-            final Path exportFile = Files.createFile( itemPath );
-
-            Files.write( exportFile, export.getBytes( StandardCharsets.UTF_8 ) );
+            Files.write( itemPath, export.getBytes( StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {
