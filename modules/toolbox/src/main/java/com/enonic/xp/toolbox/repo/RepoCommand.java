@@ -34,21 +34,35 @@ public abstract class RepoCommand
     protected String postRequest( final String urlPath, final String json )
         throws IOException
     {
-        final String[] authParts = auth.split( ":" );
-        final String userName = authParts.length > 0 ? authParts[0] : "";
-        final String password = authParts.length > 1 ? authParts[1] : "";
-        final String credential = Credentials.basic( userName, password );
-        final OkHttpClient client = new OkHttpClient();
-
         final RequestBody body = RequestBody.create( JSON, json );
 
         final String url = "http://" + host + ":" + port + urlPath;
         final Request request = new Request.Builder().
             url( url ).
             post( body ).
-            header( "Authorization", credential ).
+            header( "Authorization", authCredentials() ).
             build();
 
+        return executeRequest( request );
+    }
+
+    protected String getRequest( final String urlPath )
+        throws IOException
+    {
+        final String url = "http://" + host + ":" + port + urlPath;
+        final Request request = new Request.Builder().
+            url( url ).
+            get().
+            header( "Authorization", authCredentials() ).
+            build();
+
+        return executeRequest( request );
+    }
+
+    private String executeRequest( final Request request )
+        throws IOException
+    {
+        final OkHttpClient client = new OkHttpClient();
         final Response response = client.newCall( request ).execute();
         if ( !response.isSuccessful() )
         {
@@ -58,6 +72,14 @@ public abstract class RepoCommand
         }
         final String responseBody = response.body().string();
         return prettifyJson( responseBody );
+    }
+
+    private String authCredentials()
+    {
+        final String[] authParts = auth.split( ":" );
+        final String userName = authParts.length > 0 ? authParts[0] : "";
+        final String password = authParts.length > 1 ? authParts[1] : "";
+        return Credentials.basic( userName, password );
     }
 
     protected String prettifyJson( final String json )
