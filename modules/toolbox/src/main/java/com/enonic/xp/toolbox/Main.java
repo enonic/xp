@@ -1,7 +1,9 @@
 package com.enonic.xp.toolbox;
 
+
 import io.airlift.airline.Cli;
 import io.airlift.airline.Help;
+import io.airlift.airline.ParseException;
 
 import com.enonic.xp.toolbox.repo.DeleteSnapshotsCommand;
 import com.enonic.xp.toolbox.repo.DumpCommand;
@@ -16,10 +18,11 @@ public final class Main
 {
     public static void main( final String... args )
     {
-        final Cli.CliBuilder<Runnable> builder = Cli.<Runnable>builder( "toolbox" );
+        final Cli.CliBuilder<Runnable> builder = Cli.builder( "toolbox" );
         builder.withDescription( "Enonic XP CLI ToolBox" );
         builder.withDefaultCommand( Help.class );
         builder.withCommand( Help.class );
+        builder.withCommand( DumpCommand.class );
         builder.withCommand( ExportCommand.class );
         builder.withCommand( ImportCommand.class );
         builder.withCommand( ReindexCommand.class );
@@ -30,6 +33,35 @@ public final class Main
         builder.withCommand( DumpCommand.class );
 
         final Cli<Runnable> parser = builder.build();
-        parser.parse( args ).run();
+        try
+        {
+            parser.parse( args ).run();
+        }
+        catch ( ParseException e )
+        {
+            System.err.println( e.getMessage() );
+        }
+        catch ( ResponseException e )
+        {
+            if ( e.getResponseCode() == 403 )
+            {
+                System.err.println( "Authentication failed \r\n" + e.getMessage() );
+            }
+            else
+            {
+                System.err.println( "Response error: " + e.getMessage() );
+            }
+        }
+        catch ( RuntimeException e )
+        {
+            if ( e.getCause() instanceof java.net.ConnectException )
+            {
+                System.err.println( "Unable to connect to XP server: " + e.getMessage() );
+            }
+            else
+            {
+                System.err.println( "Unexpected error: " + e.getMessage() );
+            }
+        }
     }
 }
