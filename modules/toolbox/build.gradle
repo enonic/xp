@@ -4,4 +4,5 @@ dependencies {
     compile 'io.airlift:airline:0.7'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.1'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.4.0'
 }
