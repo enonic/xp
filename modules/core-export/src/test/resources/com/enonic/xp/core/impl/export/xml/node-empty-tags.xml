@@ -2,6 +2,7 @@
   <id>abc</id>
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
+  <inheritPermissions>false</inheritPermissions>
   <permissions>
     <principal key="role:system.admin">
       <allow type="array">
