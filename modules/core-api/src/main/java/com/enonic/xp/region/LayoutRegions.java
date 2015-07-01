@@ -11,19 +11,19 @@ public final class LayoutRegions
         super( builder );
     }
 
-    public static Builder newLayoutRegions()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newLayoutRegions( final LayoutRegions source )
+    public static Builder create( final LayoutRegions source )
     {
         return new Builder( source );
     }
 
     public LayoutRegions copy()
     {
-        return LayoutRegions.newLayoutRegions( this ).build();
+        return LayoutRegions.create( this ).build();
     }
 
     public static class Builder

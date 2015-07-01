@@ -46,7 +46,7 @@ public class FieldSet
     @Override
     public FieldSet copy()
     {
-        return newFieldSet( this ).build();
+        return create( this ).build();
     }
 
     public void addFormItem( final FormItem formItem )
@@ -98,12 +98,12 @@ public class FieldSet
         return Objects.hash( super.hashCode(), this.label, this.formItems );
     }
 
-    public static Builder newFieldSet()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newFieldSet( final FieldSet fieldSet )
+    public static Builder create( final FieldSet fieldSet )
     {
         return new Builder( fieldSet );
     }

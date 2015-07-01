@@ -22,7 +22,7 @@ abstract class TimezoneConfigXmlSerializer<T extends TimezoneConfig>
     @Override
     public T parseConfig( final ModuleKey currentModule, final Element elem )
     {
-        final T.Builder builder = T.newTimezoneConfig();
+        final T.Builder builder = T.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "with-timezone" );
 
         final String text = DomHelper.getTextValue( relationshipTypeEl );

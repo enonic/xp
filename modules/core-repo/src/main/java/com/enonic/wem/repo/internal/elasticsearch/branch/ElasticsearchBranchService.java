@@ -179,7 +179,7 @@ public class ElasticsearchBranchService
             Preconditions.checkNotNull( stateValue, "Expected value '" + BranchIndexPath.STATE.getPath() + "' in getResult " );
 
             return new NodeReturnValue( Instant.parse( timestamp.getValue().toString() ),
-                                        NodePath.newPath( nodePathValue.getValue().toString() ).build(),
+                                        NodePath.create( nodePathValue.getValue().toString() ).build(),
                                         NodeVersionId.from( nodeVersionIdValue.getValue().toString() ),
                                         NodeState.from( stateValue.getValue().toString() ) );
         }

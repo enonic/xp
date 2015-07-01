@@ -102,12 +102,12 @@ public final class Attachment
         return s.toString();
     }
 
-    public static Builder newAttachment()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newAttachment( final Attachment source )
+    public static Builder create( final Attachment source )
     {
         return new Builder( source );
     }

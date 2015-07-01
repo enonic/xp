@@ -88,7 +88,7 @@ public final class Mixins
         }
     }
 
-    public static Builder newMixins()
+    public static Builder create()
     {
         return new Builder();
     }

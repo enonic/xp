@@ -22,7 +22,7 @@ public class XmlRelationshipTypeParserTest
         this.parser = new XmlRelationshipTypeParser();
         this.parser.currentModule( ModuleKey.from( "mymodule" ) );
 
-        this.builder = RelationshipType.newRelationshipType();
+        this.builder = RelationshipType.create();
         this.builder.name( "mymodule:name" );
         this.parser.builder( this.builder );
     }

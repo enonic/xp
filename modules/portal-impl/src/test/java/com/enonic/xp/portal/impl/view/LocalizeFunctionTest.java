@@ -25,7 +25,7 @@ public class LocalizeFunctionTest
     @Before
     public final void setupTest()
     {
-        Site site = Site.newSite().
+        Site site = Site.create().
             description( "This is my site" ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).

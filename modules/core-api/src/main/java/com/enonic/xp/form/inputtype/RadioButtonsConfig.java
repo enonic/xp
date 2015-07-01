@@ -51,7 +51,7 @@ public class RadioButtonsConfig
         return s.toString();
     }
 
-    public static Builder newRadioButtonsConfig()
+    public static Builder create()
     {
         return new Builder();
     }

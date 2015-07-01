@@ -171,7 +171,7 @@ public class NodeImporter
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final Node.Builder newNodeBuilder = Node.newNode();
+        final Node.Builder newNodeBuilder = Node.create();
         try
         {
             final XmlNodeParser parser = new XmlNodeParser();

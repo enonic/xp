@@ -119,12 +119,12 @@ public final class Relationship
         return managingData;
     }
 
-    public static Builder newRelationship()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newRelationship( final Relationship relationship )
+    public static Builder create( final Relationship relationship )
     {
         return new Builder( relationship );
     }

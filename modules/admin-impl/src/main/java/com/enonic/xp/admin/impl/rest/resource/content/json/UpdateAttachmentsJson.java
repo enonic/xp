@@ -18,7 +18,7 @@ public class UpdateAttachmentsJson
     public UpdateAttachmentsJson( @JsonProperty("contentId") final String contentId, //
                                   @JsonProperty("attachments") final List<AttachmentJson> attachments )
     {
-        final UpdateAttachmentsParams.Builder builder = UpdateAttachmentsParams.newUpdateAttachments( ContentId.from( contentId ) );
+        final UpdateAttachmentsParams.Builder builder = UpdateAttachmentsParams.create( ContentId.from( contentId ) );
 
         for ( final AttachmentJson attachmentJson : attachments )
         {

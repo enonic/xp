@@ -29,7 +29,7 @@ public final class ImageSelectorConfig
 
     }
 
-    public static Builder newImageSelectorConfig()
+    public static Builder create()
     {
         return new Builder();
     }

@@ -114,7 +114,7 @@ public class Content
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
     }
 
-    public static Builder newContent( final ContentTypeName type )
+    public static Builder create( final ContentTypeName type )
     {
         if ( type.isPageTemplate() )
         {
@@ -124,7 +124,7 @@ public class Content
         }
         else if ( type.isSite() )
         {
-            Site.Builder builder = Site.newSite();
+            Site.Builder builder = Site.create();
             builder.type( type );
             return builder;
         }
@@ -136,18 +136,18 @@ public class Content
         }
         else
         {
-            Builder builder = Content.newContent();
+            Builder builder = Content.create();
             builder.type( type );
             return builder;
         }
     }
 
-    public static Builder newContent()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newContent( final Content source )
+    public static Builder create( final Content source )
     {
         if ( source instanceof PageTemplate )
         {

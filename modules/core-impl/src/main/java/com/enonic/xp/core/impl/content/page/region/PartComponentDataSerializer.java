@@ -19,7 +19,7 @@ public class PartComponentDataSerializer
     @Override
     public PartComponent fromData( final PropertySet asData )
     {
-        PartComponent.Builder component = PartComponent.newPartComponent();
+        PartComponent.Builder component = PartComponent.create();
         applyComponentFromData( component, asData );
         return component.build();
     }

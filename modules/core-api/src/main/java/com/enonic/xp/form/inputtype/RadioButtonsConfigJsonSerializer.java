@@ -34,7 +34,7 @@ public class RadioButtonsConfigJsonSerializer
     @Override
     public RadioButtonsConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.newRadioButtonsConfig();
+        final RadioButtonsConfig.Builder builder = RadioButtonsConfig.create();
 
         final JsonNode optionsNode = inputTypeConfigNode.get( "options" );
         final Iterator<JsonNode> optionIterator = optionsNode.elements();

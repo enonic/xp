@@ -42,7 +42,7 @@ public final class CreateContentJson
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         paramsBuilder.contentData( contentData );
 
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( ExtraDataJson extraDataJson : extraDataJsonList )
         {
             extradatasBuilder.add( extraDataJson.getExtraData() );
