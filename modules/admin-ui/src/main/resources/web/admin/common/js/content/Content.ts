@@ -1,6 +1,7 @@
 module api.content {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertyPath = api.data.PropertyPath;
     import PropertyIdProvider = api.data.PropertyIdProvider;
@@ -45,6 +46,10 @@ module api.content {
 
         getAllExtraData(): ExtraData[] {
             return this.extraData;
+        }
+
+        getProperty(propertyName: string): Property {
+            return !!propertyName ? this.data.getProperty(propertyName) : null;
         }
 
         getPageMode(): api.content.page.PageMode {
