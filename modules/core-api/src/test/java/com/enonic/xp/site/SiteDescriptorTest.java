@@ -32,6 +32,7 @@ public class SiteDescriptorTest
         //Builds a Form
         final FormItem formItem = Input.create().
             name( "input" ).
+            label( "Input" ).
             inputType( InputTypes.DOUBLE ).
             build();
 

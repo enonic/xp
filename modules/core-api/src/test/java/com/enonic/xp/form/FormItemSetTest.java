@@ -15,7 +15,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
 
@@ -63,7 +63,7 @@ public class FormItemSetTest
     {
         // exercise
         FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
+        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // verify
         assertEquals( "parent.child", parent.getInput( "child" ).getPath().toString() );
@@ -74,7 +74,7 @@ public class FormItemSetTest
     {
 
         FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
+        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet newParent = newFormItemSet().name( "newParent" ).label( "New Parent" ).build();
@@ -107,7 +107,8 @@ public class FormItemSetTest
     public void toFormItemSet_given_FormItem_of_type_Input_then_exception_is_thrown()
     {
         // setup
-        FormItem formItem = Input.create().name( "myFieldSet" ).inputType( InputTypes.DATE ).label( "My label" ).build();
+        FormItem formItem =
+            Input.create().name( "myFieldSet" ).label( "field set" ).inputType( InputTypes.DATE ).label( "My label" ).build();
 
         // exercise
         try
@@ -127,7 +128,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet copy = formItemSet.copy();

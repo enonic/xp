@@ -14,7 +14,7 @@ public class InputTest
     public void copy()
     {
         // setup
-        Input original = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
+        Input original = Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build();
 
         // exercise
         Input copy = original.copy();
@@ -32,7 +32,7 @@ public class InputTest
     public void toInput_given_FormItem_of_type_Input_then_Input_is_returned()
     {
         // setup
-        FormItem formItem = Input.create().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
+        FormItem formItem = Input.create().label( "Input" ).name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build();
 
         // exercise
         Input input = formItem.toInput();

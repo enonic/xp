@@ -27,7 +27,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -43,7 +43,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( Input.create().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).addFormItem( layout ).build();
@@ -64,7 +64,7 @@ public class ContentTypeTest
         ContentType contentType = newContentType().
             superType( ContentTypeName.structured() ).
             name( "mymodule:test" ).
-            addFormItem( Input.create().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
 
@@ -82,12 +82,14 @@ public class ContentTypeTest
             name( "top-set" ).
             addFormItem( Input.create().
                 name( "myInput" ).
+                label( "Input" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             addFormItem( newFormItemSet().
                 name( "inner-set" ).
                 addFormItem( Input.create().
                     name( "myInnerInput" ).
+                    label( "Inner input" ).
                     inputType( InputTypes.TEXT_LINE ).
                     build() ).
                 build() ).

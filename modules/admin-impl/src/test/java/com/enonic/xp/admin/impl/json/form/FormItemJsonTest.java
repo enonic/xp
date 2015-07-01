@@ -37,6 +37,7 @@ public class FormItemJsonTest
             label( "My TextLine" ).
             immutable( true ).
             indexed( true ).
+            maximizeUIInputWidth( true ).
             validationRegexp( "script" ).
             customText( "Custom text" ).
             helpText( "Help text" ).
@@ -95,8 +96,8 @@ public class FormItemJsonTest
             customText( "Custom text" ).
             helpText( "Help text" ).
             occurrences( 0, 10 ).
-            addFormItem( Input.create().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.create().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
+            addFormItem( Input.create().name( "myTextLine" ).label( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
         // serialize from object
@@ -118,8 +119,8 @@ public class FormItemJsonTest
         FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.newFieldSet().
             name( "myFieldSet" ).
             label( "My field set" ).
-            addFormItem( Input.create().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.create().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
+            addFormItem( Input.create().name( "myTextLine" ).label( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
         // serialize from object

@@ -102,7 +102,7 @@ public class ModuleResourceTest
     private SiteDescriptor createSiteDescriptor()
     {
         final Form config = Form.newForm().
-            addFormItem( Input.create().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         return SiteDescriptor.create().form( config ).build();
     }

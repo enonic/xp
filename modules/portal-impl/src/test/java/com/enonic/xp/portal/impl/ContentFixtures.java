@@ -153,7 +153,7 @@ public final class ContentFixtures
     public static PageDescriptor newPageDescriptor()
     {
         Form pageForm = Form.newForm().
-            addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "Pause" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         return PageDescriptor.create().

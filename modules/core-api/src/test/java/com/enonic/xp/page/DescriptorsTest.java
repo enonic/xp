@@ -18,7 +18,7 @@ public class DescriptorsTest
     public void pageDescriptor()
     {
         final Form pageForm = Form.newForm().
-            addFormItem( Input.create().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
 
@@ -37,7 +37,7 @@ public class DescriptorsTest
     public void partDescriptor()
     {
         final Form partForm = Form.newForm().
-            addFormItem( Input.create().name( "width" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().
@@ -57,7 +57,7 @@ public class DescriptorsTest
     public void layoutDescriptor()
     {
         final Form layoutForm = Form.newForm().
-            addFormItem( Input.create().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "columns" ).label( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
