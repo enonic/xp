@@ -7,7 +7,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "restore", description = "Stores a snapshot of the current state of the repository.")
+@Command(name = "restore", description = "Restores a snapshot of a previous state of the repository.")
 public final class RestoreCommand
     extends RepoCommand
 {
