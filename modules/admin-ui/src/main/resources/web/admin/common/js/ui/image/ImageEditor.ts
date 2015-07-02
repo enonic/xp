@@ -69,6 +69,7 @@ module api.ui.image {
 
         private focalPointButton: Button;
         private cropButton: Button;
+        private uploadButton: api.dom.ButtonEl;
 
         private focusPositionChangedListeners: {(position: Point): void}[] = [];
         private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
@@ -87,6 +88,10 @@ module api.ui.image {
             var toolbar = this.createToolbar();
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
+
+            this.buttonsContainer = this.createButtonsContainer();
+
+            this.canvas.appendChild(this.buttonsContainer);
 
             this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => {
@@ -155,6 +160,38 @@ module api.ui.image {
 
             this.setFocusAutoPositioned(true);
             this.setCropAutoPositioned(true);
+        }
+
+        getButtonsContainer(): DivEl {
+            return this.buttonsContainer;
+        }
+
+        isElementInsideButtonsContainer(el: HTMLElement): boolean {
+            return this.buttonsContainer.getHTMLElement().contains(el);
+        }
+
+        getLastButtonInContainer(): Element {
+            return (<api.dom.Element>this.buttonsContainer).getLastChild();
+        }
+
+        createButtonsContainer(): DivEl {
+            var toolbar = new DivEl('buttons-container');
+
+            this.focalPointButton = new Button();
+            this.focalPointButton.addClass('button-focal icon-center_focus_strong').onClicked((event: MouseEvent) => this.setFocusEditMode(true));
+
+            this.cropButton = new Button();
+            this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.setCropEditMode(true));
+
+            this.uploadButton = new Button();
+            this.uploadButton.addClass('button-upload').onClicked((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+
+            toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
+
+            return toolbar;
         }
 
         remove(): ImageEditor {
@@ -353,20 +390,11 @@ module api.ui.image {
         private createToolbar(): DivEl {
             var toolbar = new DivEl('image-toolbar');
 
-            this.focalPointButton = new Button();
-            this.focalPointButton.addClass('no-bg icon-center_focus_strong').onClicked((event: MouseEvent) => this.setFocusEditMode(true));
-
-            this.cropButton = new Button();
-            this.cropButton.addClass('no-bg icon-crop').onClicked((event: MouseEvent) => this.setCropEditMode(true));
-
-            this.buttonsContainer = new DivEl('buttons-container');
-            this.buttonsContainer.appendChildren(this.focalPointButton, this.cropButton);
-
             this.focalButtonsContainer = this.createFocalButtonsContainer();
 
             this.cropButtonsContainer = this.createCropButtonsContainer();
 
-            toolbar.appendChildren(this.buttonsContainer, this.focalButtonsContainer, this.cropButtonsContainer);
+            toolbar.appendChildren(this.focalButtonsContainer, this.cropButtonsContainer);
 
             return toolbar;
         }
@@ -385,7 +413,6 @@ module api.ui.image {
             this.setImageClipPath(this.focusClipPath);
             this.setShaderVisible(edit);
 
-            this.buttonsContainer.setVisible(!edit);
             this.focalButtonsContainer.setVisible(edit);
 
             if (edit) {
@@ -683,7 +710,6 @@ module api.ui.image {
             this.setImageClipPath(this.cropClipPath);
             this.setShaderVisible(edit);
 
-            this.buttonsContainer.setVisible(!edit);
             this.cropButtonsContainer.setVisible(edit);
 
             if (edit) {

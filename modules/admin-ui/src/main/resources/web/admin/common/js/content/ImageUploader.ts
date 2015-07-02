@@ -67,6 +67,7 @@ module api.content {
 
             this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
             this.getResultContainer().getEl().addClass("placeholder");
+            this.setResetVisible(false);
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
@@ -79,8 +80,8 @@ module api.content {
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
             imageEditor.onCropModeChanged((edit, crop, zoom) => {
-                this.setResetVisible(!edit);
-                this.notifyCropEditModeChanged(edit, crop, zoom);
+                    imageEditor.removeClass('selected');
+                    this.notifyCropEditModeChanged(edit, crop, zoom);
             });
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
@@ -95,15 +96,21 @@ module api.content {
                 }, 150);
             });
 
-            this.onBlur((event) => {
-                var targetEl = event.relatedTarget ? api.dom.Element.fromHtmlElement(<HTMLElement>event.relatedTarget) : null,
-                    resetButtonEl = api.dom.Element.fromHtmlElement(this.getResetButton().getHTMLElement());
-                if (imageEditor.hasClass('selected') && (!targetEl || (targetEl.getId() !== resetButtonEl.getId()))) {
+            imageEditor.getLastButtonInContainer().onBlur(() => {
+                this.toggleSelected(imageEditor);
+            });
+
+            this.onBlur((event: FocusEvent) => {
+                if (event.relatedTarget && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.relatedTarget)) {
                     this.toggleSelected(imageEditor);
                 }
             });
 
-            this.onClicked((event: MouseEvent) => this.toggleSelected(imageEditor));
+            this.onClicked((event: MouseEvent) => {
+                if (event.target && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.target)) {
+                    this.toggleSelected(imageEditor);
+                }
+            });
 
             this.imageEditors.push(imageEditor);
 
