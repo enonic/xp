@@ -19,7 +19,7 @@ public class ImportCommandTest
     {
         final ImportCommand command = new ImportCommand();
         configure( command );
-        command.exportName = "export-name";
+        command.exportName = "myexport";
         command.targetRepoPath = "<draft>:<master>:<root/node1>";
 
         addResponse( createResponseJson() );
@@ -35,7 +35,7 @@ public class ImportCommandTest
     private ObjectNode createRequestJson()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "exportName", "export-name" );
+        json.put( "exportName", "myexport" );
         json.put( "targetRepoPath", "<draft>:<master>:<root/node1>" );
         json.put( "importWithIds", false );
         return json;
