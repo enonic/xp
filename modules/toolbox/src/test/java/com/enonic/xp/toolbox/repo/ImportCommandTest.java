@@ -37,7 +37,7 @@ public class ImportCommandTest
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "exportName", "myexport" );
         json.put( "targetRepoPath", "<draft>:<master>:<root/node1>" );
-        json.put( "importWithIds", false );
+        json.put( "importWithIds", true );
         return json;
     }
 

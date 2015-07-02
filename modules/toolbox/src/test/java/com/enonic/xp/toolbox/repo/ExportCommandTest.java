@@ -37,7 +37,7 @@ public class ExportCommandTest
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "sourceRepoPath", "<draft>:<master>:<root/node1>" );
         json.put( "exportName", "myexport" );
-        json.put( "exportWithIds", false );
+        json.put( "exportWithIds", true );
         return json;
     }
 

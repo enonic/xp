@@ -19,8 +19,8 @@ public final class ImportCommand
     @Option(name = "-s", description = "A named export to import.", required = true)
     public String exportName;
 
-    @Option(name = "-i", description = "Flag that includes ids.", required = false)
-    public boolean importWithIds = false;
+    @Option(name = "--skipids", description = "Flag that skips ids.", required = false)
+    public boolean skipids = false;
 
     @Override
     protected void execute()
@@ -35,7 +35,7 @@ public final class ImportCommand
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "exportName", this.exportName );
         json.put( "targetRepoPath", this.targetRepoPath );
-        json.put( "importWithIds", this.importWithIds );
+        json.put( "importWithIds", !this.skipids );
         return json;
     }
 }

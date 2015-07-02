@@ -19,8 +19,8 @@ public final class ExportCommand
     @Option(name = "-s", description = "Path of data to export. Format: <repo-name>:<branch-name>:<node-path>.", required = true)
     public String sourceRepoPath;
 
-    @Option(name = "-i", description = "Flag that includes ids in data when exporting.", required = false)
-    public boolean exportWithIds = false;
+    @Option(name = "--skipids", description = "Flag that skips ids in data when exporting.", required = false)
+    public boolean skipids = false;
 
     @Override
     protected void execute()
@@ -35,7 +35,7 @@ public final class ExportCommand
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "sourceRepoPath", this.sourceRepoPath );
         json.put( "exportName", this.exportName );
-        json.put( "exportWithIds", this.exportWithIds );
+        json.put( "exportWithIds", !this.skipids );
         return json;
     }
 }
