@@ -91,7 +91,7 @@ module api.ui.image {
 
             this.buttonsContainer = this.createButtonsContainer();
 
-            this.canvas.appendChild(this.buttonsContainer);
+            this.frame.appendChild(this.buttonsContainer);
 
             this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => {

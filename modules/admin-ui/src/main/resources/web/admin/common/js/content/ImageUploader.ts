@@ -76,12 +76,12 @@ module api.content {
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
-                this.setResetVisible(!edit);
+                imageEditor.removeClass('selected');
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
             imageEditor.onCropModeChanged((edit, crop, zoom) => {
-                    imageEditor.removeClass('selected');
-                    this.notifyCropEditModeChanged(edit, crop, zoom);
+                imageEditor.removeClass('selected');
+                this.notifyCropEditModeChanged(edit, crop, zoom);
             });
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
@@ -118,9 +118,6 @@ module api.content {
                 this.imageEditors.forEach((editor) => {
                     if (editor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
                         editor.removeClass('selected');
-                        if (wemjq(this.getHTMLElement()).has(editor.getHTMLElement()).length) {
-                            this.setResetVisible(false);
-                        }
                     }
                 });
             });
@@ -130,7 +127,6 @@ module api.content {
 
         private toggleSelected(imageEditor: ImageEditor) {
             imageEditor.toggleClass('selected');
-            this.setResetVisible(imageEditor.hasClass('selected'));
         }
 
         setFocalPoint(x: number, y: number) {
