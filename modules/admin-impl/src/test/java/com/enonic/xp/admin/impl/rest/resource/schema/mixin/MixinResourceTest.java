@@ -115,7 +115,7 @@ public class MixinResourceTest
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
             icon( icon ).
-            addFormItem( Input.create().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
@@ -134,7 +134,7 @@ public class MixinResourceTest
         Mixin mixin = newMixin().
             name( "mymodule:postal_code" ).
             displayName( "My content type" ).
-            addFormItem( Input.create().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 

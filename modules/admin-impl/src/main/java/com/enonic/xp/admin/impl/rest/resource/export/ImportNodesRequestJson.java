@@ -14,10 +14,13 @@ public class ImportNodesRequestJson
 
     private final boolean importWithIds;
 
+    private final boolean importWithPermissions;
+
     @JsonCreator
     public ImportNodesRequestJson( @JsonProperty("sourceDirectory") final String sourceDirectory, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
+                                   @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
                                    @JsonProperty("dryRun") final Boolean dryRun )
 
     {
@@ -29,6 +32,7 @@ public class ImportNodesRequestJson
         this.sourceDirectory = sourceDirectory;
         this.dryRun = dryRun != null ? dryRun : false;
         this.importWithIds = importWithIds != null ? importWithIds : true;
+        this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
     }
 
     public RepoPath getTargetRepoPath()
@@ -49,6 +53,11 @@ public class ImportNodesRequestJson
     public boolean isImportWithIds()
     {
         return importWithIds;
+    }
+
+    public boolean isImportWithPermissions()
+    {
+        return importWithPermissions;
     }
 }
 

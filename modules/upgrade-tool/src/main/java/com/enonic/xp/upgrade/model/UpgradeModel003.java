@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import com.google.common.io.CharSource;
 
 /**
- * Replace moduleConfig with siteConfig
+ * Replace moduleConfig with siteConfig in Content data
  */
 public final class UpgradeModel003
     extends AbstractXsltUpgradeModel

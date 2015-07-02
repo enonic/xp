@@ -112,7 +112,7 @@ public class ContentServiceImplTest_update
         final Content storedContent = this.contentService.getById( content.getId() );
 
         final Attachments attachments = storedContent.getAttachments();
-        assertEquals( 3, attachments.getSize() ); // original, small, medium
+        assertEquals( 1, attachments.getSize() );
     }
 
     // TODO: This test should run, to be fixed
@@ -402,6 +402,7 @@ public class ContentServiceImplTest_update
         final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
+                label( "Mixed in" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             build();

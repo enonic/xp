@@ -16,7 +16,7 @@ module api.content {
         private images: api.dom.ImgEl[];
         private imageEditors: ImageEditor[];
         private focalEditModeListeners: {(edit: boolean, position: Point): void}[];
-        private cropEditModeListeners: {(edit: boolean, crop: Rect): void}[];
+        private cropEditModeListeners: {(edit: boolean, crop: Rect, zoom: Rect): void}[];
 
         private initialWidth: number;
         private originalHeight: number;
@@ -76,12 +76,12 @@ module api.content {
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
-                imageEditor.removeClass('selected');
+                this.setResetVisible(!edit);
                 this.notifyFocalPointEditModeChanged(edit, position);
             });
-            imageEditor.onCropModeChanged((edit, crop) => {
-                imageEditor.removeClass('selected');
-                this.notifyCropEditModeChanged(edit, crop);
+            imageEditor.onCropModeChanged((edit, crop, zoom) => {
+                    imageEditor.removeClass('selected');
+                    this.notifyCropEditModeChanged(edit, crop, zoom);
             });
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
@@ -104,7 +104,6 @@ module api.content {
                 if (event.relatedTarget && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.relatedTarget)) {
                     this.toggleSelected(imageEditor);
                 }
-
             });
 
             this.onClicked((event: MouseEvent) => {
@@ -119,6 +118,9 @@ module api.content {
                 this.imageEditors.forEach((editor) => {
                     if (editor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
                         editor.removeClass('selected');
+                        if (wemjq(this.getHTMLElement()).has(editor.getHTMLElement()).length) {
+                            this.setResetVisible(false);
+                        }
                     }
                 });
             });
@@ -128,6 +130,7 @@ module api.content {
 
         private toggleSelected(imageEditor: ImageEditor) {
             imageEditor.toggleClass('selected');
+            this.setResetVisible(imageEditor.hasClass('selected'));
         }
 
         setFocalPoint(x: number, y: number) {
@@ -136,9 +139,15 @@ module api.content {
             })
         }
 
-        setCrop(x: number, y: number, w: number, h: number) {
+        setCrop(crop: Rect) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setCropPosition(x, y, w, h);
+                editor.setCropPosition(crop.x, crop.y, crop.w, crop.h);
+            })
+        }
+
+        setZoom(zoom: Rect) {
+            this.imageEditors.forEach((editor: ImageEditor) => {
+                editor.setZoomPosition(zoom.x, zoom.y, zoom.w, zoom.h);
             })
         }
 
@@ -154,19 +163,19 @@ module api.content {
             })
         }
 
-        onCropEditModeChanged(listener: (edit: boolean, crop: Rect) => void) {
+        onCropEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect) => void) {
             this.cropEditModeListeners.push(listener);
         }
 
-        unCropEditModeChanged(listener: (edit: boolean, crop: Rect) => void) {
+        unCropEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect) => void) {
             this.cropEditModeListeners = this.cropEditModeListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyCropEditModeChanged(edit: boolean, crop: Rect) {
+        private notifyCropEditModeChanged(edit: boolean, crop: Rect, zoom: Rect) {
             this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, crop);
+                listener(edit, crop, zoom);
             })
         }
 

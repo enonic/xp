@@ -13,8 +13,8 @@ public abstract class AbstractUpgradeModelTest
     protected void assertResult( final String upgraded, final String fileName )
         throws Exception
     {
-        assertEquals( DomHelper.serialize( DomHelper.parse( upgraded ) ),
-                      DomHelper.serialize( DomHelper.parse( getSource( fileName ).openStream() ) ) );
+        assertEquals( DomHelper.serialize( DomHelper.parse( getSource( fileName ).openStream() ) ),
+                      DomHelper.serialize( DomHelper.parse( upgraded ) ) );
     }
 
     protected CharSource getSource( final String name )

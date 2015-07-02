@@ -108,7 +108,7 @@ final class BundleConfigurator
     private String getFileName( final ResolvedArtifact artifact )
     {
         final ModuleVersionIdentifier id = artifact.getModuleVersion().getId();
-        String name = id.getGroup() + "/" + id.getName() + "-" + id.getVersion();
+        String name = id.getName() + "-" + id.getVersion();
 
         if ( artifact.getClassifier() != null )
         {

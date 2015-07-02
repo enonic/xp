@@ -75,6 +75,7 @@ public class SystemDumpResource
             source( VirtualFiles.from( Paths.get( source, repoName, branch ) ) ).
             targetNodePath( NodePath.ROOT ).
             includeNodeIds( true ).
+            includePermissions( true ).
             build() ) );
     }
 

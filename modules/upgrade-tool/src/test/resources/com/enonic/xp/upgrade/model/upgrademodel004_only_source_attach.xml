@@ -1,0 +1,172 @@
+<node>
+  <id>3d37979c-3269-48b3-ab02-9e7efe69e744</id>
+  <childOrder>modifiedtime DESC</childOrder>
+  <nodeType>content</nodeType>
+  <timestamp>2015-06-30T11:13:45.328Z</timestamp>
+  <permissions>
+    <principal key="user:system:anonymous">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:system.authenticated">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:cms.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:system.everyone">
+      <allow type="array">
+        <value>READ</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data>
+    <boolean name="valid">true</boolean>
+    <string name="displayName">Castillo_de_Petrela_Petrela_Albania_2014-04-17_DD_09.JPG</string>
+    <dateTime name="modifiedTime">2015-02-11T11:01:56.747Z</dateTime>
+    <string name="modifier">user:system:su</string>
+    <string name="creator">user:system:anonymous</string>
+    <dateTime name="createdTime">2015-02-11T11:01:56.747Z</dateTime>
+    <string name="type">media:image</string>
+    <property-set name="data">
+      <string name="media">Castillo_de_Petrela_Petrela_Albania_2014-04-17_DD_09.JPG</string>
+      <string name="mimeType">image/jpeg</string>
+    </property-set>
+    <property-set name="attachment">
+      <string name="name">Castillo_de_Petrela_Petrela_Albania_2014-04-17_DD_09.JPG</string>
+      <string name="label">source</string>
+      <binaryReference name="binary">Castillo_de_Petrela_Petrela_Albania_2014-04-17_DD_09.JPG</binaryReference>
+      <string name="mimeType">image/jpeg</string>
+      <long name="size">9194532</long>
+    </property-set>
+  </data>
+  <indexConfigs>
+    <analyzer>content_default</analyzer>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data.metadata.media</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data.metadata</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>draft</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>attachment</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>form</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>site</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>type</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>

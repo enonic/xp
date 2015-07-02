@@ -45,6 +45,7 @@ public class ContentTypeServiceImpl_getAllTest
         final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
+                label( "Mixed in" ).
                 inputType( InputTypes.TEXT_LINE ).
                 build() ).
             build();

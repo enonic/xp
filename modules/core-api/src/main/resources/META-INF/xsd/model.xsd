@@ -50,7 +50,7 @@
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:sequence>
-          <xs:element minOccurs="0" name="label" type="xs:string"/>
+          <xs:element minOccurs="1" name="label" type="xs:string"/>
           <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
           <xs:element minOccurs="0" name="indexed" type="xs:boolean"/>
           <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
@@ -58,6 +58,7 @@
           <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+          <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>

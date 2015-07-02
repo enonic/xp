@@ -34,6 +34,7 @@ module api.ui.image {
         private clip: Element;
         private dragHandle: Element;
         private zoomSlider: Element;
+        private zoomSliderHeight: number = 200;
         private zoomLine: Element;
         private zoomKnob: Element;
         private focusClipPath: Element;
@@ -77,7 +78,7 @@ module api.ui.image {
 
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private cropEditModeListeners: {(edit: boolean, position: Rect): void}[] = [];
+        private cropEditModeListeners: {(edit: boolean, position: Rect, zoomPosition: Rect): void}[] = [];
 
         public static debug = false;
 
@@ -126,7 +127,7 @@ module api.ui.image {
                            '            <use xlink:href="#' + myId + '-dragTriangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
                            '        </svg>' +
                            '        <svg id="' + myId + '-zoomSlider" class="zoom-slider">' +
-                           '            <rect x="0" y="0" width="40" height="200" rx="20" ry="20"/>' +
+                           '            <rect x="0" y="0" width="40" height="' + this.zoomSliderHeight + '" rx="20" ry="20"/>' +
                            '            <line id="' + myId + '-zoomLine" x1="20" y1="20" x2="20" y2="180"/>' +
                            '            <circle id="' + myId + '-zoomKnob" cx="20" cy="-1" r="8"/>' +
                            '        </svg>' +
@@ -742,7 +743,9 @@ module api.ui.image {
                 this.revertZoomData = undefined;
             }
             // notify position updated in case we exit edit mode and apply changes
-            this.notifyCropModeChanged(edit, !edit && applyChanges ? this.getCropPosition() : undefined);
+            this.notifyCropModeChanged(edit,
+                !edit && applyChanges ? this.getCropPosition() : undefined,
+                !edit && applyChanges ? this.getZoomPosition() : undefined);
         }
 
         isCropEditMode(): boolean {
@@ -773,6 +776,11 @@ module api.ui.image {
         }
 
         private setCropPositionPx(crop: Rect, updateAuto: boolean = true) {
+
+            if(this.isCropAreaSmallerThanZoomSlider(crop.h)) {
+                return;
+            }
+
             var oldX = this.cropData.x,
                 oldY = this.cropData.y,
                 oldW = this.cropData.w,
@@ -787,6 +795,8 @@ module api.ui.image {
             this.cropData.h = this.restrainCropH(crop.h);
             this.cropData.x = this.restrainCropX(crop.x);
             this.cropData.y = this.restrainCropY(crop.y);
+
+            this.updateFrameHeight();
 
             if (updateAuto) {
                 this.setCropAutoPositioned(false);
@@ -1263,6 +1273,15 @@ module api.ui.image {
             zoomKnobEl.setAttribute('cy', knobNewY.toString());
         }
 
+        private isCropAreaSmallerThanZoomSlider(height: number): boolean {
+            return height < this.zoomSliderHeight;
+        }
+
+        private updateFrameHeight() {  // making bottom border and everything underneath the image draggable
+            this.frame.getEl().setHeightPx(this.cropData.h);
+            wemjq(this.frame.getHTMLElement()).closest(".result-container").height(this.cropData.h);
+        }
+
         /**
          * Zoom coordinates system starts in the top left corner of the original image
          * @param x
@@ -1384,7 +1403,7 @@ module api.ui.image {
          *  - edit - tells if we enter or exit edit mode
          *  - position - will be supplied if we exit edit mode and apply changes
          */
-        onCropModeChanged(listener: (edit: boolean, position: Rect) => void) {
+        onCropModeChanged(listener: (edit: boolean, position: Rect, zoomPosition: Rect) => void) {
             this.cropEditModeListeners.push(listener);
         }
 
@@ -1400,14 +1419,9 @@ module api.ui.image {
             })
         }
 
-        private notifyCropModeChanged(edit: boolean, position: Rect) {
-            var normalizedPosition;
-            if (position) {
-                // position can be undefined when auto positioned
-                normalizedPosition = this.normalizeRect(position);
-            }
+        private notifyCropModeChanged(edit: boolean, position: Rect, zoomPosition: Rect) {
             this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, normalizedPosition);
+                listener(edit, position, zoomPosition);
             })
         }
 

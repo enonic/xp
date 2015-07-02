@@ -62,10 +62,9 @@ module api.content.form.inputtype.upload {
                             this.imageUploader.setOriginalDimensions(width ? width.getString() : '0', height ? height.getString() : '0');
                         }
                         this.imageUploader.setValue(content.getId());
-                        var focalPoint = this.getFocalPoint(content);
-                        if (focalPoint) {
-                            this.imageUploader.setFocalPoint(focalPoint.x, focalPoint.y);
-                        }
+
+                        this.configEditorsProperties(content);
+
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     }).done();
@@ -74,36 +73,51 @@ module api.content.form.inputtype.upload {
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 var value = this.imageUploader.getMediaValue(event.getUploadItem().getModel());
 
-                switch (property.getType()) {
+                switch (this.property.getType()) {
                 case ValueTypes.DATA:
                     // update the attachment name, and reset the focal point data
-                    var set = property.getPropertySet();
+                    var set = this.property.getPropertySet();
                     set.setProperty('attachment', 0, value);
                     set.removeProperty('focalPoint', 0);
                     break;
                 case ValueTypes.STRING:
-                    property.setValue(value);
+                    this.property.setValue(value);
                     break;
                 }
             });
 
             this.imageUploader.onUploadReset(() => {
-                switch (property.getType()) {
+                switch (this.property.getType()) {
                 case ValueTypes.DATA:
                     // reset both attachment name and focal point data
-                    var set = property.getPropertySet();
+                    var set = this.property.getPropertySet();
                     set.setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
                     set.removeProperty('focalPoint', 0);
                     break;
                 case ValueTypes.STRING:
-                    property.setValue(ValueTypes.STRING.newNullValue());
+                    this.property.setValue(ValueTypes.STRING.newNullValue());
                     break;
                 }
             });
 
-            this.imageUploader.onCropEditModeChanged((edit: boolean, crop: Rect) => {
+            this.imageUploader.onCropEditModeChanged((edit: boolean, crop: Rect, zoom: Rect) => {
                 this.validate(false);
                 this.toggleClass('standout', edit);
+
+                if (!edit && crop) {
+                    var container = this.getPropertyContainer(this.property);
+                    if (container) {
+                        container.setDoubleByPath('cropPosition.x', crop.x);
+                        container.setDoubleByPath('cropPosition.y', crop.y);
+                        container.setDoubleByPath('cropPosition.w', crop.w);
+                        container.setDoubleByPath('cropPosition.h', crop.h);
+
+                        container.setDoubleByPath('zoomPosition.x', zoom.x);
+                        container.setDoubleByPath('zoomPosition.y', zoom.y);
+                        container.setDoubleByPath('zoomPosition.w', zoom.w);
+                        container.setDoubleByPath('zoomPosition.h', zoom.h);
+                    }
+                }
             });
 
             this.imageUploader.onFocalPointEditModeChanged((edit: boolean, position: Point) => {
@@ -111,41 +125,43 @@ module api.content.form.inputtype.upload {
                 this.toggleClass('standout', edit);
 
                 if (!edit && position) {
-                    var tree;
-                    switch (property.getType()) {
-                    case ValueTypes.DATA:
-                        tree = property.getPropertySet();
-                        break;
-                    case ValueTypes.STRING:
-                        // save in new format always no matter what was the format originally
-                        tree = new api.data.PropertyTree();
-                        tree.setString('attachment', 0, property.getString());
-                        var propertyParent = property.getParent();
-                        var propertyName = property.getName();
-                        // remove old string property and set the new property set
-                        propertyParent.removeProperty(propertyName, 0);
-                        propertyParent.setPropertySet(propertyName, 0, tree.getRoot());
-                        // update local property reference
-                        property = propertyParent.getProperty(propertyName);
-                        break;
+                    var container = this.getPropertyContainer(this.property);
+                    if (container) {
+                        container.setDoubleByPath('focalPoint.x', position.x);
+                        container.setDoubleByPath('focalPoint.y', position.y);
                     }
-
-                    tree.setDoubleByPath('focalPoint.x', position.x);
-                    tree.setDoubleByPath('focalPoint.y', position.y);
                 }
             });
 
             return wemQ<void>(null);
         }
 
-        private getFocalPoint(content: Content): {x: number; y: number} {
-            var mediaProperty = content.getContentData().getProperty('media');
-            if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
-                return null;
+        private getPropertyContainer(property: Property) {
+            var container;
+            switch (property.getType()) {
+            case ValueTypes.DATA:
+                container = property.getPropertySet();
+                break;
+            case ValueTypes.STRING:
+                // save in new format always no matter what was the format originally
+                container = new api.data.PropertyTree();
+                container.setString('attachment', 0, property.getString());
+                var propertyParent = property.getParent();
+                var propertyName = property.getName();
+                // remove old string property and set the new property set
+                propertyParent.removeProperty(propertyName, 0);
+                propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                // update local property reference
+                this.property = propertyParent.getProperty(propertyName);
+                break;
             }
+            return container;
+        }
 
-            var focalProperty = mediaProperty.getPropertySet().getProperty('focalPoint');
-            if (!focalProperty || !ValueTypes.DATA.equals(focalProperty.getType())) {
+        private getFocalPoint(content: Content): Point {
+            var focalProperty = this.getMediaProperty(content, 'focalPoint');
+
+            if (!focalProperty) {
                 return null;
             }
 
@@ -160,6 +176,57 @@ module api.content.form.inputtype.upload {
             return {
                 x: x,
                 y: y
+            }
+        }
+
+        private getRectFromProperty(content: Content, propertyName: string): Rect {
+            var property = this.getMediaProperty(content, propertyName);
+
+            if (!property) {
+                return null;
+            }
+
+            var cropPositionSet = property.getPropertySet(),
+                x = cropPositionSet.getDouble('x'),
+                y = cropPositionSet.getDouble('y'),
+                w = cropPositionSet.getDouble('w'),
+                h = cropPositionSet.getDouble('h');
+
+            return {
+                x: x,
+                y: y,
+                w: w,
+                h: h
+            };
+        }
+
+        private getMediaProperty(content: Content, propertyName: string) {
+            var mediaProperty = content.getProperty('media');
+            if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
+                return null;
+            }
+
+            var resultProperty = mediaProperty.getPropertySet().getProperty(propertyName);
+            if (!resultProperty || !ValueTypes.DATA.equals(resultProperty.getType())) {
+                return null;
+            }
+            return resultProperty;
+        }
+
+        private configEditorsProperties(content: Content) {
+            var focalPoint = this.getFocalPoint(content);
+            if (focalPoint) {
+                this.imageUploader.setFocalPoint(focalPoint.x, focalPoint.y);
+            }
+
+            var cropPosition = this.getRectFromProperty(content, 'cropPosition');
+            if (cropPosition) {
+                this.imageUploader.setCrop(cropPosition);
+            }
+
+            var zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
+            if (zoomPosition) {
+                this.imageUploader.setZoom(zoomPosition);
             }
         }
 

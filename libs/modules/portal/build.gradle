@@ -1,4 +1,0 @@
-dependencies {
-    compile project(':content')
-    testCompile 'junit:junit:4.10'
-}
