@@ -194,6 +194,10 @@ module api.ui.image {
             return this.image;
         }
 
+        getUploadButton(): api.dom.ButtonEl {
+            return this.uploadButton;
+        }
+
         private setImageClipPath(path: Element) {
             var image = this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('clip-path', 'url(#' + path.getId() + ')');
@@ -636,10 +640,7 @@ module api.ui.image {
             this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.setCropEditMode(true));
 
             this.uploadButton = new Button();
-            this.uploadButton.addClass('button-upload').onClicked((event: MouseEvent) => {
-                event.preventDefault();
-                event.stopPropagation();
-            });
+            this.uploadButton.addClass('button-upload');
 
             toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
 

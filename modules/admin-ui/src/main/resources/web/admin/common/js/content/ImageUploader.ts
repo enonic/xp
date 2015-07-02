@@ -13,7 +13,6 @@ module api.content {
 
     export class ImageUploader extends MediaUploader {
 
-        private images: api.dom.ImgEl[];
         private imageEditors: ImageEditor[];
         private focalEditModeListeners: {(edit: boolean, position: Point): void}[];
         private cropEditModeListeners: {(edit: boolean, crop: Rect, zoom: Rect): void}[];
@@ -27,7 +26,6 @@ module api.content {
         constructor(config: ImageUploaderConfig) {
             super(config);
 
-            this.images = [];
             this.imageEditors = [];
             this.focalEditModeListeners = [];
             this.cropEditModeListeners = [];
@@ -46,33 +44,89 @@ module api.content {
 
             this.initialWidth = 0;
             this.onShown(() => {
+                this.setResetVisible(false);
+
                 if (this.getEl().getWidth() == 0) {
                     this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
                     this.getEl().setMaxWidthPx(this.initialWidth);
                 }
             });
+
+            this.onUploadStarted(() => {
+                this.imageEditors.forEach((imageEditor: ImageEditor) => {
+                    imageEditor.remove();
+                });
+               this.imageEditors = [];
+            });
+
+            this.onFocus(() => {
+                setTimeout(() => {
+                    if (this.imageEditors.length && !this.imageEditors[0].hasClass('selected')) {
+                        this.toggleSelected(this.imageEditors[0]);
+                    }
+                }, 150);
+            });
+
+            this.onBlur((event: FocusEvent) => {
+                this.imageEditors.forEach((imageEditor: ImageEditor) => {
+                    if (event.relatedTarget && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.relatedTarget)) {
+                        this.toggleSelected(imageEditor);
+                    }
+                });
+            });
+
+            this.onClicked((event: MouseEvent) => {
+                this.imageEditors.forEach((imageEditor: ImageEditor) => {
+                    if (event.target && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.target)) {
+                        this.toggleSelected(imageEditor);
+                    }
+                });
+            });
+
+            api.dom.Body.get().onClicked((event: MouseEvent) => {
+                this.imageEditors.forEach((imageEditor: ImageEditor) => {
+                    if (imageEditor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
+                        imageEditor.removeClass('selected');
+                    }
+                });
+            });
         }
 
-        setOriginalDimensions(width: string, height: string) {
-            this.originalWidth = parseInt(width);
-            this.originalHeight = parseInt(height);
+        private getSizeValue(content: api.content.Content, propertyName: string): number {
+            var value = 0,
+                metaData = content.getContentData().getProperty('metadata');
+
+            if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
+                value = parseInt(metaData.getPropertySet().getProperty(propertyName).getString());
+            }
+            else {
+                var allExtraData = content.getAllExtraData();
+                allExtraData.forEach((extraData: ExtraData) => {
+                    if (!value && extraData.getData().getProperty(propertyName)) {
+                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString());
+                    }
+                });
+            }
+
+            return value;
+        }
+
+        setOriginalDimensions(content: api.content.Content) {
+            this.originalWidth = this.getSizeValue(content, "imageWidth") || this.initialWidth;
+            this.originalHeight = this.getSizeValue(content, "imageHeight");
         }
 
         private getProportionalHeight(): number {
+            if (!this.originalHeight || !this.originalWidth) {
+                return 0;
+            }
             return Math.round(this.initialWidth * this.originalHeight / this.originalWidth);
         }
 
-        createResultItem(value: string): api.dom.DivEl {
-            this.initialWidth = this.getParentElement().getEl().getWidth();
+        private createImageEditor(imgUrl: string): ImageEditor {
 
             this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
             this.getResultContainer().getEl().addClass("placeholder");
-            this.setResetVisible(false);
-
-            var imgUrl = new ContentImageUrlResolver().
-                setContentId(new api.content.ContentId(value)).
-                setTimestamp(new Date()).
-                resolve();
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
@@ -88,39 +142,30 @@ module api.content {
                 this.getResultContainer().getEl().removeClass("placeholder");
             });
 
-            this.onFocus(() => {
-                setTimeout(() => {
-                    if (!imageEditor.hasClass('selected')) {
-                        this.toggleSelected(imageEditor);
-                    }
-                }, 150);
+            imageEditor.getUploadButton().onClicked(() => {
+                wemjq(this.getDropzone().getEl().getHTMLElement()).simulate("click");
             });
 
             imageEditor.getLastButtonInContainer().onBlur(() => {
                 this.toggleSelected(imageEditor);
             });
 
-            this.onBlur((event: FocusEvent) => {
-                if (event.relatedTarget && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.relatedTarget)) {
-                    this.toggleSelected(imageEditor);
-                }
-            });
+            return imageEditor;
+        }
 
-            this.onClicked((event: MouseEvent) => {
-                if (event.target && !imageEditor.isElementInsideButtonsContainer(<HTMLElement>event.target)) {
-                    this.toggleSelected(imageEditor);
-                }
-            });
+        createResultItem(value: string): api.dom.DivEl {
+            if (!this.initialWidth) {
+                this.initialWidth = this.getParentElement().getEl().getWidth();
+            }
+
+            var imgUrl = new ContentImageUrlResolver().
+                setContentId(new api.content.ContentId(value)).
+                setTimestamp(new Date()).
+                resolve();
+
+            var imageEditor = this.createImageEditor(imgUrl);
 
             this.imageEditors.push(imageEditor);
-
-            api.dom.Body.get().onClicked((event: MouseEvent) => {
-                this.imageEditors.forEach((editor) => {
-                    if (editor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
-                        editor.removeClass('selected');
-                    }
-                });
-            });
 
             return imageEditor;
         }

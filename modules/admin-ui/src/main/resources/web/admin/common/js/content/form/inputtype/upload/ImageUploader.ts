@@ -55,12 +55,7 @@ module api.content.form.inputtype.upload {
                 new api.content.GetContentByIdRequest(this.getContext().contentId).
                     sendAndParse().
                     then((content: api.content.Content) => {
-                        var metaData = content.getContentData().getProperty('metadata');
-                        if (metaData && ValueTypes.DATA.equals(metaData.getType())) {
-                            var width = metaData.getPropertySet().getProperty('imageWidth');
-                            var height = metaData.getPropertySet().getProperty('imageHeight');
-                            this.imageUploader.setOriginalDimensions(width ? width.getString() : '0', height ? height.getString() : '0');
-                        }
+                        this.imageUploader.setOriginalDimensions(content);
                         this.imageUploader.setValue(content.getId());
 
                         this.configEditorsProperties(content);
@@ -71,7 +66,10 @@ module api.content.form.inputtype.upload {
             }
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                var value = this.imageUploader.getMediaValue(event.getUploadItem().getModel());
+                var content = event.getUploadItem().getModel(),
+                    value = this.imageUploader.getMediaValue(content);
+
+                this.imageUploader.setOriginalDimensions(content);
 
                 switch (this.property.getType()) {
                 case ValueTypes.DATA:

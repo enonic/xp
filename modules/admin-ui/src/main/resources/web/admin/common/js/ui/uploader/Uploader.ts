@@ -121,7 +121,7 @@ module api.ui.uploader {
             this.appendChild(this.resetBtn);
 
             this.onKeyPressed((event: KeyboardEvent) => {
-                if (event.keyCode == 13) {
+                if (this.dropzoneContainer.isVisible() && event.keyCode == 13) {
                     wemjq(this.dropzone.getEl().getHTMLElement()).simulate("click");
                 }
             });
@@ -613,6 +613,10 @@ module api.ui.uploader {
 
         getDropzoneContainer(): api.dom.DivEl {
             return this.dropzoneContainer;
+        }
+
+        getDropzone(): api.dom.AEl {
+            return this.dropzone;
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {
