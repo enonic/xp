@@ -56,14 +56,14 @@
   }
 
   &.edit-mode.selected {
-    .image-frame .image-canvas .buttons-container {
+    .image-frame .buttons-container {
       display: none;
     }
   }
 
   &.selected {
-    .image-frame .image-canvas .buttons-container {
-      display: block;
+    .image-frame .buttons-container {
+      z-index: 10;
       text-align: center;
       position: absolute;
       top: 40%;
@@ -81,18 +81,20 @@
         padding: 0 0 0 8px;
         -webkit-filter: contrast(1.5);
         filter: contrast(1.5);
+        .button-foreground(@admin-white);
+        &.manual {
+          .button-foreground(@admin-input-blue);
+        }
       }
 
       .button-focal:before {
         display: table-caption;
         content: "\e149";
-        color: white;
       }
 
       .button-mask:before {
         display: table-caption;
         content: "\e02b";
-        color: white;
       }
 
       .button-upload {
@@ -114,13 +116,13 @@
     position: relative;
     box-shadow: none;
 
+    .buttons-container {
+      display: none;
+    }
+
     .image-canvas {
       position: absolute;
       border: 1px solid @admin-white;
-
-      .buttons-container {
-        display: none;
-      }
 
       .image-bg {
         vertical-align: top; // to remove padding below the image
@@ -215,26 +217,7 @@
     position: relative;
     z-index: @z-index-mask + 1;
     .clearfix();
-/*
-    .buttons-container {
 
-      button {
-        font-size: 32px;
-        padding: 0;
-        .button-foreground(@admin-font-gray2);
-
-        &.manual {
-          .button-foreground(@admin-blue);
-        }
-
-        span {
-          display: none;
-        }
-
-      }
-
-    }
-*/
     .edit-container {
       text-align: center;
 
