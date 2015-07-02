@@ -110,17 +110,17 @@
     var yesButton = new ButtonEl();
     yesButton.setHtml('Yes');
     yesButton.onClicked(function () {
-        focalEditor.setFocusEditMode(true);
+        focalEditor.enableFocusEditMode();
     });
     var saveButton = new ButtonEl();
     saveButton.setHtml('Save');
     saveButton.onClicked(function () {
-        focalEditor.setFocusEditMode(false);
+        focalEditor.disableFocusEditMode();
     });
     var cancelButton = new ButtonEl();
     cancelButton.setHtml('Cancel');
     cancelButton.onClicked(function () {
-        focalEditor.setFocusEditMode(false, false);
+        focalEditor.disableFocusEditMode(false);
     });
     var resetButton = new ButtonEl();
     resetButton.setHtml('Reset');
