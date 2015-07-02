@@ -653,6 +653,7 @@ module api.ui.image {
 
             var resetButton = new Button('Reset');
             resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
+                this.disableFocusEditMode();
                 this.resetFocusPosition();
                 this.updateRevertFocusData();
             });
@@ -705,7 +706,7 @@ module api.ui.image {
          *  Crop related methods
          */
 
-        enableCropEditMode(applyChanges: boolean = true) {
+        private enableCropEditMode(applyChanges: boolean = true) {
             this.bindCropMouseListeners();
             this.updateRevertCropData();
             this.updateRevertZoomData();
@@ -716,7 +717,7 @@ module api.ui.image {
             this.setCropEditMode(true, applyChanges);
         }
 
-        disableCropEditMode(applyChanges: boolean = true) {
+        private disableCropEditMode(applyChanges: boolean = true) {
             this.unbindCropMouseListeners();
             if (!applyChanges) {
                 this.setZoomPositionPx(this.revertZoomData, false);
@@ -861,6 +862,7 @@ module api.ui.image {
 
             var resetButton = new Button('Reset');
             resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
+                this.disableCropEditMode();
                 this.resetZoomPosition();
                 this.resetCropPosition();
                 this.resetFocusPosition();
