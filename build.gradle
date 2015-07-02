@@ -1,7 +1,6 @@
 apply plugin: 'java-base'
 apply from: "$rootDir/gradle/check.gradle"
 apply from: "$rootDir/gradle/sonar.gradle"
-apply plugin: 'build-dashboard'
 
 allprojects {
     group = 'com.enonic.xp'
@@ -17,7 +16,6 @@ allprojects {
     buildDir = 'target'
 }
 
-
 ext {
     javaProjects = subprojects - project( ':distro' )
     mavenProjects = subprojects
@@ -25,9 +23,13 @@ ext {
 
 configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
-    apply from: "$rootDir/gradle/checkstyle.gradle"
+}
+
+configure( osgiProjects ) {
+    apply from: "$rootDir/gradle/osgi.gradle"
 }
 
 configure( mavenProjects ) {
     apply from: "$rootDir/gradle/maven.gradle"
 }
+

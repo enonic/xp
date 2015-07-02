@@ -8,7 +8,7 @@ public class ImportNodesRequestJson
 {
     private final RepoPath targetRepoPath;
 
-    private final String sourceDirectory;
+    private final String exportName;
 
     private final boolean dryRun;
 
@@ -17,7 +17,7 @@ public class ImportNodesRequestJson
     private final boolean importWithPermissions;
 
     @JsonCreator
-    public ImportNodesRequestJson( @JsonProperty("sourceDirectory") final String sourceDirectory, //
+    public ImportNodesRequestJson( @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
                                    @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
@@ -25,11 +25,11 @@ public class ImportNodesRequestJson
 
     {
 
-        Preconditions.checkNotNull( sourceDirectory, "sourceDirectory not given" );
+        Preconditions.checkNotNull( exportName, "exportName not given" );
         Preconditions.checkNotNull( targetRepoPath, "targetRepoPath not given" );
 
         this.targetRepoPath = RepoPath.from( targetRepoPath );
-        this.sourceDirectory = sourceDirectory;
+        this.exportName = exportName;
         this.dryRun = dryRun != null ? dryRun : false;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
@@ -40,9 +40,9 @@ public class ImportNodesRequestJson
         return targetRepoPath;
     }
 
-    public String getSourceDirectory()
+    public String getExportName()
     {
-        return sourceDirectory;
+        return exportName;
     }
 
     public boolean isDryRun()
@@ -60,5 +60,3 @@ public class ImportNodesRequestJson
         return importWithPermissions;
     }
 }
-
-

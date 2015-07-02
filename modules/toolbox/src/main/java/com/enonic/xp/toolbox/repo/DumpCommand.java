@@ -7,27 +7,27 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "snapshot", description = "Stores a snapshot of the current state of the repository.")
-public final class SnapshotCommand
+@Command(name = "dump", description = "Export every branch in specified repository.")
+public final class DumpCommand
     extends RepoCommand
 {
-    public static final String SNAPSHOT_REST_PATH = "/admin/rest/repo/snapshot";
+    public static final String SYSTEM_DUMP_REST_PATH = "/admin/rest/system/dump";
 
-    @Option(name = "-r", description = "the name of the repository to snapshot.", required = true)
-    public String repository;
+    @Option(name = "-t", description = "Dump name.", required = true)
+    public String target;
 
     @Override
     protected void execute()
         throws Exception
     {
-        final String result = postRequest( SNAPSHOT_REST_PATH, createJsonRequest() );
+        final String result = postRequest( SYSTEM_DUMP_REST_PATH, createJsonRequest() );
         System.out.println( result );
     }
 
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", this.repository );
+        json.put( "name", this.target );
         return json;
     }
 }
