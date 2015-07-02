@@ -18,7 +18,6 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.export.NodeExportResultsJson;
 import com.enonic.xp.admin.impl.rest.resource.export.NodeImportResultsJson;
-import com.enonic.xp.admin.impl.rest.resource.export.NodeExportResultJson;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -28,15 +27,11 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.util.PathHelper;
-import com.enonic.xp.vfs.VirtualFiles;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "system")
 @Produces(MediaType.APPLICATION_JSON)
