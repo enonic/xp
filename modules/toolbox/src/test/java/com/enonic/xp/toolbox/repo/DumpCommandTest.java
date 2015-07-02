@@ -34,7 +34,7 @@ public class DumpCommandTest
     private ObjectNode createRequestJson()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "targetDirectory", "target-path" );
+        json.put( "name", "target-path" );
         return json;
     }
 

@@ -19,7 +19,7 @@ public class ExportCommandTest
     {
         final ExportCommand command = new ExportCommand();
         configure( command );
-        command.targetDir = "target-directory";
+        command.exportName = "export-name";
         command.sourceRepoPath = "<draft>:<master>:<root/node1>";
 
         addResponse( createResponseJson() );
@@ -36,7 +36,7 @@ public class ExportCommandTest
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "sourceRepoPath", "<draft>:<master>:<root/node1>" );
-        json.put( "targetDirectory", "target-directory" );
+        json.put( "exportName", "export-name" );
         json.put( "exportWithIds", false );
         return json;
     }
