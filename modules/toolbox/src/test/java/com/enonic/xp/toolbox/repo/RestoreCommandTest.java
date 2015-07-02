@@ -35,7 +35,7 @@ public class RestoreCommandTest
     private ObjectNode createRequestJson()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", "master" );
+        json.put( "repository", "master" );
         json.put( "snapshotName", "snapshot-name" );
         return json;
     }

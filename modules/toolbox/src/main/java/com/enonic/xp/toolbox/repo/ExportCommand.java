@@ -13,8 +13,8 @@ public final class ExportCommand
 {
     public static final String EXPORT_REST_PATH = "/admin/rest/export/export";
 
-    @Option(name = "-t", description = "Target directory to save export.", required = true)
-    public String targetDir;
+    @Option(name = "-t", description = "Target name to save export.", required = true)
+    public String exportName;
 
     @Option(name = "-s", description = "Path of data to export. Format: <repo-name>:<branch-name>:<node-path>.", required = true)
     public String sourceRepoPath;
@@ -34,7 +34,7 @@ public final class ExportCommand
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "sourceRepoPath", this.sourceRepoPath );
-        json.put( "targetDirectory", this.targetDir );
+        json.put( "exportName", this.exportName );
         json.put( "exportWithIds", this.exportWithIds );
         return json;
     }

@@ -16,8 +16,8 @@ public final class ImportCommand
     @Option(name = "-t", description = "Target path for import. Format: <repo-name>:<branch-name>:<node-path>. e.g 'cms-repo:draft:/'", required = true)
     public String targetRepoPath;
 
-    @Option(name = "-s", description = "Path to exported files.", required = true)
-    public String sourceDir;
+    @Option(name = "-s", description = "A named export to import.", required = true)
+    public String exportName;
 
     @Option(name = "-i", description = "Flag that includes ids.", required = false)
     public boolean importWithIds = false;
@@ -33,7 +33,7 @@ public final class ImportCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "sourceDirectory", this.sourceDir );
+        json.put( "exportName", this.exportName );
         json.put( "targetRepoPath", this.targetRepoPath );
         json.put( "importWithIds", this.importWithIds );
         return json;

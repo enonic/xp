@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Charsets;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -38,11 +37,9 @@ public class ReindexCommandTest
     private ObjectNode createRequestJson()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", "draft" );
+        json.put( "repository", "draft" );
         json.put( "initialize", false );
-
-        final ArrayNode branchesNode = json.putArray( "branches" );
-        Arrays.asList( "draft", "master" ).forEach( branchesNode::add );
+        json.put( "branches", "draft,master" );
         return json;
     }
 

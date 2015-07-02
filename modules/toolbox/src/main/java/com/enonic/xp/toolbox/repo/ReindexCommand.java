@@ -2,8 +2,8 @@ package com.enonic.xp.toolbox.repo;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Joiner;
 
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
@@ -36,12 +36,9 @@ public final class ReindexCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", this.repository );
+        json.put( "repository", this.repository );
         json.put( "initialize", this.initialize );
-
-        final ArrayNode branchesNode = json.putArray( "branches" );
-        this.branches.forEach( branchesNode::add );
-
+        json.put( "branches", Joiner.on( "," ).skipNulls().join( this.branches ) );
         return json;
     }
 }

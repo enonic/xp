@@ -30,7 +30,7 @@ public final class RestoreCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "repositoryId", this.repository );
+        json.put( "repository", this.repository );
         json.put( "snapshotName", this.snapshotName );
         return json;
     }

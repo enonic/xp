@@ -2,7 +2,7 @@ package com.enonic.xp.toolbox.repo;
 
 import io.airlift.airline.Command;
 
-@Command(name = "listSnapshots", description = "Returns a list of existing snapshots with name and status.")
+@Command(name = "list-snapshots", description = "Returns a list of existing snapshots with name and status.")
 public final class ListSnapshotsCommand
     extends RepoCommand
 {

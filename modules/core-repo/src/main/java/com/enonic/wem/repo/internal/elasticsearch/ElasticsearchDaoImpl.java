@@ -413,7 +413,7 @@ public class ElasticsearchDaoImpl
 
     private void registerRepository()
     {
-        final Path SNAPSHOT_PATH = Paths.get( HomeDir.get().toString(), "snapshots" );
+        final Path SNAPSHOT_PATH = Paths.get( HomeDir.get().toString(), "data", "snapshot" );
 
         final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
             setName( SNAPSHOT_REPOSITORY_NAME ).

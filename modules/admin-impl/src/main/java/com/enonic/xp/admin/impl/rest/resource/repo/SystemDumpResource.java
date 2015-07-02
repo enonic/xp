@@ -21,11 +21,10 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeExportResult;
-import com.enonic.xp.index.IndexService;
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.util.PathHelper;
 
 @Path(ResourceConstants.REST_ROOT + "system")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,7 +35,10 @@ public class SystemDumpResource
 {
     private ExportService exportService;
 
-    private IndexService indexService;
+    private java.nio.file.Path getDumpDirectory( final String name )
+    {
+        return Paths.get( HomeDir.get().toString(), "data", "dump", name ).toAbsolutePath();
+    }
 
     @POST
     @Path("dump")
@@ -45,18 +47,19 @@ public class SystemDumpResource
     {
         // TODO: Fix result and clean this shit up
 
-        exportRepoBranch( "cms-repo", "draft", request.getTargetDirectory() );
-        exportRepoBranch( "cms-repo", "master", request.getTargetDirectory() );
-        return NodeExportResultJson.from( exportRepoBranch( "system-repo", "master", request.getTargetDirectory() ) );
+        exportRepoBranch( "cms-repo", "draft", request.getName() );
+        exportRepoBranch( "cms-repo", "master", request.getName() );
+        return NodeExportResultJson.from( exportRepoBranch( "system-repo", "master", request.getName() ) );
     }
 
-    private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String targetRoot )
+    private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String dumpName )
     {
-        final java.nio.file.Path exportPath = PathHelper.join( Paths.get( targetRoot ), Paths.get( repoName ), Paths.get( branch ) );
+        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
+        final java.nio.file.Path exportPath = rootDir.resolve( repoName ).resolve( branch );
 
         return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
             includeNodeIds( true ).
-            rootDirectory( targetRoot.toString() ).
+            rootDirectory( rootDir.toString() ).
             targetDirectory( exportPath.toString() ).
             sourceNodePath( NodePath.ROOT ).
             build() ) );
@@ -76,13 +79,4 @@ public class SystemDumpResource
     {
         this.exportService = exportService;
     }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
 }
-
-

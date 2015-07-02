@@ -21,6 +21,7 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.vfs.VirtualFiles;
 
@@ -33,6 +34,11 @@ public class ExportResource
 {
     private ExportService exportService;
 
+    private java.nio.file.Path getExportDirectory( final String exportName )
+    {
+        return Paths.get( HomeDir.get().toString(), "data", "export", exportName ).toAbsolutePath();
+    }
+
     @POST
     @Path("export")
     public NodeExportResultJson exportNodes( final ExportNodesRequestJson request )
@@ -41,7 +47,7 @@ public class ExportResource
         final NodeExportResult result =
             getContext( request.getSourceRepoPath() ).callWith( () -> this.exportService.exportNodes( ExportNodesParams.create().
                 sourceNodePath( request.getSourceRepoPath().getNodePath() ).
-                targetDirectory( request.getTargetDirectory() ).
+                targetDirectory( getExportDirectory( request.getExportName() ).toString() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isExportWithIds() ).
                 build() ) );
@@ -56,7 +62,7 @@ public class ExportResource
     {
         final NodeImportResult result =
             getContext( request.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-                source( VirtualFiles.from( Paths.get( request.getSourceDirectory() ) ) ).
+                source( VirtualFiles.from( getExportDirectory( request.getExportName() ) ) ).
                 targetNodePath( request.getTargetRepoPath().getNodePath() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).

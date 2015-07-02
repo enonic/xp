@@ -7,7 +7,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "deleteSnapshots", description = "Deletes snapshots, either before a given timestamp or by name.")
+@Command(name = "delete-snapshots", description = "Deletes snapshots, either before a given timestamp or by name.")
 public final class DeleteSnapshotsCommand
     extends RepoCommand
 {

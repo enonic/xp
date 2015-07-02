@@ -13,7 +13,7 @@ public final class DumpCommand
 {
     public static final String SYSTEM_DUMP_REST_PATH = "/admin/rest/system/dump";
 
-    @Option(name = "-t", description = "Target path.", required = true)
+    @Option(name = "-t", description = "Dump name.", required = true)
     public String target;
 
     @Override
@@ -27,7 +27,7 @@ public final class DumpCommand
     private ObjectNode createJsonRequest()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "targetDirectory", this.target );
+        json.put( "name", this.target );
         return json;
     }
 }

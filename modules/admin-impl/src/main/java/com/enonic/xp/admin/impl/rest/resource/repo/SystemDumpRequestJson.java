@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SystemDumpRequestJson
 {
-    private final String targetDirectory;
+    private final String name;
 
-    public SystemDumpRequestJson( @JsonProperty("targetDirectory") final String targetDirectory )
+    public SystemDumpRequestJson( @JsonProperty("name") final String name )
     {
-        this.targetDirectory = targetDirectory;
+        this.name = name;
     }
 
-    public String getTargetDirectory()
+    public String getName()
     {
-        return targetDirectory;
+        return name;
     }
 }
