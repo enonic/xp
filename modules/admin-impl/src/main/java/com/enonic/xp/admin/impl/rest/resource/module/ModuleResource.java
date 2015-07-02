@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.module;
 
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,6 +31,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
@@ -41,10 +46,23 @@ public final class ModuleResource
 
     @GET
     @Path("list")
-    public ListModuleJson list()
+    public ListModuleJson list( @QueryParam("query") final String query )
     {
-        final Modules modules = this.moduleService.getAllModules();
+        Modules modules = this.moduleService.getAllModules();
         final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            modules = Modules.from( modules.stream().
+                filter( ( module ) -> containsIgnoreCase( module.getDisplayName(), query ) ||
+                    containsIgnoreCase( module.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( module.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( module.getSystemVersion(), query ) ||
+                    containsIgnoreCase( module.getUrl(), query ) ||
+                    containsIgnoreCase( module.getVendorName(), query ) ||
+                    containsIgnoreCase( module.getVendorUrl(), query ) ).
+                collect( Collectors.toList() ) );
+        }
+
         for ( Module module : modules )
         {
             siteDescriptors.add( this.siteService.getDescriptor( module.getKey() ) );
