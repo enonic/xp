@@ -162,36 +162,12 @@ module api.ui.image {
             this.setCropAutoPositioned(true);
         }
 
-        getButtonsContainer(): DivEl {
-            return this.buttonsContainer;
-        }
-
         isElementInsideButtonsContainer(el: HTMLElement): boolean {
             return this.buttonsContainer.getHTMLElement().contains(el);
         }
 
         getLastButtonInContainer(): Element {
             return (<api.dom.Element>this.buttonsContainer).getLastChild();
-        }
-
-        createButtonsContainer(): DivEl {
-            var toolbar = new DivEl('buttons-container');
-
-            this.focalPointButton = new Button();
-            this.focalPointButton.addClass('button-focal icon-center_focus_strong').onClicked((event: MouseEvent) => this.setFocusEditMode(true));
-
-            this.cropButton = new Button();
-            this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.setCropEditMode(true));
-
-            this.uploadButton = new Button();
-            this.uploadButton.addClass('button-upload').onClicked((event: MouseEvent) => {
-                event.preventDefault();
-                event.stopPropagation();
-            });
-
-            toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
-
-            return toolbar;
         }
 
         remove(): ImageEditor {
@@ -648,6 +624,26 @@ module api.ui.image {
 
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
+        }
+
+        private createButtonsContainer(): DivEl {
+            var toolbar = new DivEl('buttons-container');
+
+            this.focalPointButton = new Button();
+            this.focalPointButton.addClass('button-focal icon-center_focus_strong').onClicked((event: MouseEvent) => this.setFocusEditMode(true));
+
+            this.cropButton = new Button();
+            this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.setCropEditMode(true));
+
+            this.uploadButton = new Button();
+            this.uploadButton.addClass('button-upload').onClicked((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+
+            toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
+
+            return toolbar;
         }
 
         private createFocalButtonsContainer(): DivEl {
