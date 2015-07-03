@@ -311,6 +311,7 @@ module app.publish {
                 resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
+                    this.countItemsToPublishAndUpdateCounterElements();
                 }).done();
             } else {
                 this.renderResolvedDependenciesItems();
@@ -386,10 +387,9 @@ module app.publish {
                 childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
 
             //subheader
-            this.subheaderMessage.setHtml("Your changes are ready for publishing");
+            this.updateSubheaderMessage();
 
             // publish button
-            this.cleanPublishButtonText();
             this.updatePublishButton(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
 
             // dependencies label
@@ -431,13 +431,63 @@ module app.publish {
             return result;
         }
 
+        private updateSubheaderMessage() {
+            if (this.allResolvedItemsAreValid()) {
+                this.subheaderMessage.setHtml("Your changes are ready for publishing");
+                this.subheaderMessage.removeClass("invalid");
+            } else {
+                this.subheaderMessage.setHtml("Invalid content(s) prevent publish");
+                this.subheaderMessage.addClass("invalid");
+            }
+        }
+
         private updatePublishButton(count: number) {
+
+            this.cleanPublishButtonText();
+
             this.publishButton.setLabel("Publish Now (" + count + ")");
-            if (count > 0) {
+            if (count > 0 && this.allResolvedItemsAreValid()) {
                 this.publishButton.setEnabled(true);
             } else {
                 this.publishButton.setEnabled(false);
             }
+        }
+
+        private allResolvedItemsAreValid(): boolean {
+            var result = true;
+
+            var pushRequestedItems: ContentPublishRequestedItem[] = this.initialContentsResolvedWithoutChildren.getContentsResolved(),
+                dependenciesItems: ContentPublishDependencyItem[] = this.dependenciesContentsResolvedWithoutChildren.getContentsResolved();
+
+            if (this.includeChildItemsCheck.isChecked()) {
+                pushRequestedItems = this.initialContentsResolvedWithChildren.getContentsResolved();
+                dependenciesItems = this.dependenciesContentsResolvedWithChildren.getContentsResolved();
+            }
+
+            pushRequestedItems.forEach((content: ContentPublishRequestedItem) => {
+                var contentName = content.getName(),
+                    invalid = !content.isValid() || !content.getDisplayName() || contentName.isUnnamed();
+                if (invalid) {
+                    result = false;
+                    return;
+                }
+            });
+
+            if (!result) {
+                return result;
+            }
+
+            // append dependencies to view
+            dependenciesItems.forEach((dependency: ContentPublishDependencyItem)  => {
+                var contentName = dependency.getName(),
+                    invalid = !dependency.isValid() || !dependency.getDisplayName() || contentName.isUnnamed();
+                if (invalid) {
+                    result = false;
+                    return;
+                }
+            });
+
+            return result;
         }
 
         private showLoadingSpinner() {

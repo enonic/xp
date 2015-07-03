@@ -78,6 +78,9 @@
 
   .publish-dialog-subheader {
     margin-top: 20px;
+    &.invalid {
+      color: @admin-red;
+    }
   }
 
   .content-resolved-publish-viewer, .content-resolved-dependant-viewer {
@@ -214,6 +217,17 @@
             height: 16px;
             width: 16px;
             line-height: 16px;
+          }
+
+          &.small {
+            .wrapper:before {
+              left: 8px;
+              width: 8px;
+              height: 8px;
+              line-height: 8px;
+              border-radius: 15px;
+              font-size: 12px;
+            }
           }
 
           .name-span {

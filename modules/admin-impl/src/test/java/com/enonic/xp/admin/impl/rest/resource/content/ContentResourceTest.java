@@ -725,7 +725,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            addPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -751,7 +751,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            addPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).

@@ -71,7 +71,8 @@ module app.publish {
         }
 
         resolveDisplayName(object: M): string {
-            var invalid = !object.isValid(),
+            var contentName = object.getName(),
+                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
                 pendingDelete = CompareStatus.PENDING_DELETE == object.getCompareStatus() ? true : false;
             this.toggleClass("invalid", invalid);
             this.toggleClass("pending-delete", pendingDelete);
