@@ -51,6 +51,7 @@ public final class ImageResource
         resource.name = name;
         resource.scaleParams = scaleParams;
         resource.focalPoint = imageContent.getFocalPoint();
+        resource.cropping = imageContent.getCropping();
         return resource;
     }
 

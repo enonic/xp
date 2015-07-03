@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
@@ -46,13 +47,16 @@ public final class ImageHandleResource
 
     protected FocalPoint focalPoint = FocalPoint.DEFAULT;
 
+    protected Cropping cropping;
+
     @GET
     public Response handle()
         throws Exception
     {
         final BufferedImage contentImage = toBufferedImage( this.binary );
         final String format = getFormat( this.name );
-        BufferedImage image = applyScaling( contentImage );
+        BufferedImage image = applyCropping( contentImage );
+        image = applyScaling( image );
         image = applyFilters( image, format );
 
         final byte[] imageData = serializeImage( image, format );
@@ -91,6 +95,15 @@ public final class ImageHandleResource
         final BufferedImage targetImage = imageScaleFunction.scale( sourceImage );
 
         return targetImage;
+    }
+
+    private BufferedImage applyCropping( final BufferedImage sourceImage )
+    {
+        if ( this.cropping == null )
+        {
+            return sourceImage;
+        }
+        return sourceImage.getSubimage( cropping.left(), cropping.top(), cropping.width(), cropping.height() );
     }
 
     private BufferedImage toBufferedImage( final ByteSource byteSource )

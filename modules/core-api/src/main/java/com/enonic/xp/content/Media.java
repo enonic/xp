@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 
 @Beta
@@ -85,6 +86,45 @@ public class Media
         }
 
         return new FocalPoint( focalX, focalY );
+    }
+
+    public Cropping getCropping()
+    {
+        final PropertyTree contentData = getData();
+        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
+        if ( mediaProperty == null )
+        {
+            return null;
+        }
+
+        final ValueType mediaPropertyType = mediaProperty.getType();
+        if ( !mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
+        {
+            return null;
+        }
+
+        final PropertySet mediaData = getData().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet croppingData = mediaData.getSet( ContentPropertyNames.MEDIA_CROPPING );
+        if ( croppingData == null )
+        {
+            return null;
+        }
+
+        final Long top = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_TOP );
+        final Long left = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_LEFT );
+        final Long bottom = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_BOTTOM );
+        final Long right = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_RIGHT );
+        if ( left == null || top == null || bottom == null || right == null )
+        {
+            return null;
+        }
+
+        return Cropping.create().
+            top( top.intValue() ).
+            left( left.intValue() ).
+            bottom( bottom.intValue() ).
+            right( right.intValue() ).
+            build();
     }
 
     public Attachment getSourceAttachment()
