@@ -11,6 +11,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.Weigher;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.image.Cropping;
@@ -24,9 +27,13 @@ import com.enonic.xp.portal.impl.resource.base.BaseResource;
 public final class ImageHandleResource
     extends BaseResource
 {
+    private final static int LOADING_CACHE_MAX_WEIGHT = 10000000;
+
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
     private final static int DEFAULT_QUALITY = 85;
+
+    private final static Cache<ImageHandleResourceKey, byte[]> IMAGE_HANDLE_RESOURCE_KEY_CACHE = createImageHandleResourceKeyCache();
 
     @QueryParam("filter")
     protected String filterParam;
@@ -36,6 +43,8 @@ public final class ImageHandleResource
 
     @QueryParam("background")
     protected String background;
+
+    protected String path;
 
     protected ByteSource binary;
 
@@ -49,17 +58,40 @@ public final class ImageHandleResource
 
     protected Cropping cropping;
 
+    private static Cache<ImageHandleResourceKey, byte[]> createImageHandleResourceKeyCache()
+    {
+        return CacheBuilder.newBuilder().
+            maximumWeight( LOADING_CACHE_MAX_WEIGHT ).
+            weigher( new Weigher<ImageHandleResourceKey, byte[]>()
+            {
+                @Override
+                public int weigh( final ImageHandleResourceKey key, final byte[] value )
+                {
+                    return value.length;
+                }
+            } ).
+            build();
+    }
+
     @GET
     public Response handle()
         throws Exception
     {
-        final BufferedImage contentImage = toBufferedImage( this.binary );
-        final String format = getFormat( this.name );
-        BufferedImage image = applyCropping( contentImage );
-        image = applyScaling( image );
-        image = applyFilters( image, format );
+        final ImageHandleResourceKey imageHandleResourceKey =
+            ImageHandleResourceKey.from( this.path, this.filterParam, this.quality, this.background );
+        byte[] imageData = IMAGE_HANDLE_RESOURCE_KEY_CACHE.getIfPresent( imageHandleResourceKey );
 
-        final byte[] imageData = serializeImage( image, format );
+        if ( imageData == null )
+        {
+            final BufferedImage contentImage = toBufferedImage( this.binary );
+            final String format = getFormat( this.name );
+            BufferedImage image = applyCropping( contentImage );
+            image = applyScaling( image );
+            image = applyFilters( image, format );
+
+            imageData = serializeImage( image, format );
+            IMAGE_HANDLE_RESOURCE_KEY_CACHE.put( imageHandleResourceKey, imageData );
+        }
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
     }
 
