@@ -5,18 +5,19 @@ module api.module {
 
     export class ModuleLoader extends api.util.loader.BaseLoader<ModuleListResult, Module> {
 
-        private preservedSearchString: string;
+        private listModulesRequest: ListModulesRequest;
+
         private filterObject: Object;
 
         constructor(delay: number = 500, filterObject: Object = null) {
-            super(new ListModulesRequest());
+            super(this.listModulesRequest = new ListModulesRequest());
             if (filterObject) {
                 this.filterObject = filterObject;
             }
         }
 
         search(searchString: string): wemQ.Promise<Module[]> {
-
+            this.listModulesRequest.setSearchQuery(searchString);
             return this.load();
         }
 
@@ -30,10 +31,7 @@ module api.module {
                         modules = modules.filter(me.filterResults, me);
                     }
                     me.notifyLoadedData(modules);
-                    if (me.preservedSearchString) {
-                        me.search(me.preservedSearchString);
-                        me.preservedSearchString = null;
-                    }
+
                     return modules;
                 });
         }

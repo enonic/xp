@@ -2,13 +2,22 @@ module api.module {
 
     export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult, Module[]> {
 
+        private searchQuery: string;
+
         constructor() {
             super();
             super.setMethod("GET");
         }
 
         getParams(): Object {
-            return {};
+            return {
+                "query": this.searchQuery
+            }
+        }
+
+        setSearchQuery(query: string): ListModulesRequest {
+            this.searchQuery = query;
+            return this;
         }
 
         getRequestPath(): api.rest.Path {
