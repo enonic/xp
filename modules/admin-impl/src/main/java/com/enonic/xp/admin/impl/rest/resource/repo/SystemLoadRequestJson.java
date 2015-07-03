@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SystemLoadRequestJson
 {
-    private final String sourceDirectory;
+    private final String name;
 
-    public SystemLoadRequestJson( @JsonProperty("sourceDirectory") final String sourceDirectory )
+    public SystemLoadRequestJson( @JsonProperty("name") final String name )
     {
-        this.sourceDirectory = sourceDirectory;
+        this.name = name;
     }
 
-    public String getSourceDirectory()
+    public String getName()
     {
-        return sourceDirectory;
+        return name;
     }
 }

@@ -10,6 +10,7 @@ import com.enonic.xp.toolbox.repo.DumpCommand;
 import com.enonic.xp.toolbox.repo.ExportCommand;
 import com.enonic.xp.toolbox.repo.ImportCommand;
 import com.enonic.xp.toolbox.repo.ListSnapshotsCommand;
+import com.enonic.xp.toolbox.repo.LoadCommand;
 import com.enonic.xp.toolbox.repo.ReindexCommand;
 import com.enonic.xp.toolbox.repo.RestoreCommand;
 import com.enonic.xp.toolbox.repo.SnapshotCommand;
@@ -23,6 +24,7 @@ public final class Main
         builder.withDefaultCommand( Help.class );
         builder.withCommand( Help.class );
         builder.withCommand( DumpCommand.class );
+        builder.withCommand( LoadCommand.class );
         builder.withCommand( ExportCommand.class );
         builder.withCommand( ImportCommand.class );
         builder.withCommand( ReindexCommand.class );
@@ -30,7 +32,6 @@ public final class Main
         builder.withCommand( RestoreCommand.class );
         builder.withCommand( DeleteSnapshotsCommand.class );
         builder.withCommand( ListSnapshotsCommand.class );
-        builder.withCommand( DumpCommand.class );
 
         final Cli<Runnable> parser = builder.build();
 

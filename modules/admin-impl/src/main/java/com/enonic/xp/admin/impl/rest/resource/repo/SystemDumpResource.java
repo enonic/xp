@@ -67,17 +67,20 @@ public class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        results.add( importRepoBranch( "cms-repo", "draft", request.getSourceDirectory() ) );
-        results.add( importRepoBranch( "cms-repo", "master", request.getSourceDirectory() ) );
-        results.add( importRepoBranch( "system-repo", "master", request.getSourceDirectory() ) );
+        results.add( importRepoBranch( "cms-repo", "draft", request.getName() ) );
+        results.add( importRepoBranch( "cms-repo", "master", request.getName() ) );
+        results.add( importRepoBranch( "system-repo", "master", request.getName() ) );
 
         return NodeImportResultsJson.from( results );
     }
 
-    private NodeImportResult importRepoBranch( final String repoName, final String branch, final String source )
+    private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
     {
+        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
+        final java.nio.file.Path importPath = rootDir.resolve( repoName ).resolve( branch );
+
         return getContext( branch, repoName ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-            source( VirtualFiles.from( Paths.get( source, repoName, branch ) ) ).
+            source( VirtualFiles.from( importPath ) ).
             targetNodePath( NodePath.ROOT ).
             includeNodeIds( true ).
             includePermissions( true ).
