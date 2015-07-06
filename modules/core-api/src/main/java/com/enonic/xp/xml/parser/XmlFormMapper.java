@@ -34,7 +34,7 @@ public final class XmlFormMapper
 
     public Form buildForm( final DomElement root )
     {
-        final Form.Builder builder = Form.newForm();
+        final Form.Builder builder = Form.create();
         if ( root != null )
         {
             buildForm( root, builder );
@@ -107,7 +107,7 @@ public final class XmlFormMapper
 
     private FieldSet buildFieldSetItem( final DomElement root )
     {
-        final FieldSet.Builder builder = FieldSet.newFieldSet();
+        final FieldSet.Builder builder = FieldSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
         builder.addFormItems( buildItems( root.getChild( "items" ) ) );
@@ -116,14 +116,14 @@ public final class XmlFormMapper
 
     private InlineMixin buildInlineItem( final DomElement root )
     {
-        final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
+        final InlineMixin.Builder builder = InlineMixin.create();
         builder.mixin( new ModuleRelativeResolver( this.currentModule ).toMixinName( root.getAttribute( "mixin" ) ) );
         return builder.build();
     }
 
     private FormItemSet buildFormItemSetItem( final DomElement root )
     {
-        final FormItemSet.Builder builder = FormItemSet.newFormItemSet();
+        final FormItemSet.Builder builder = FormItemSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
         builder.customText( root.getChildValue( "custom-text" ) );
@@ -136,7 +136,7 @@ public final class XmlFormMapper
 
     private Occurrences buildOccurrence( final DomElement root )
     {
-        final Occurrences.Builder builder = Occurrences.newOccurrences();
+        final Occurrences.Builder builder = Occurrences.create();
         builder.minimum( root.getAttributeAs( "minimum", Integer.class, 0 ) );
         builder.maximum( root.getAttributeAs( "maximum", Integer.class, 0 ) );
         return builder.build();

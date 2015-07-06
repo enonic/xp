@@ -53,7 +53,7 @@ final class NodeJson
 
     public Node fromJson()
     {
-        return Node.newNode().
+        return Node.create().
             id( NodeId.from( this.id ) ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).

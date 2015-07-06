@@ -32,7 +32,7 @@ final class RemoveRelationshipPropertiesEditor
             }
         }
 
-        final Relationship.Builder builder = Relationship.newRelationship( relationship );
+        final Relationship.Builder builder = Relationship.create( relationship );
         builder.properties( properties );
         return builder.build();
     }

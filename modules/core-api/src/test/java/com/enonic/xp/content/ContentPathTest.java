@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static com.enonic.xp.content.ContentPath.newPath;
 import static org.junit.Assert.*;
 
 public class ContentPathTest
@@ -47,9 +46,9 @@ public class ContentPathTest
     public void test_toString()
         throws Exception
     {
-        assertEquals( "/parent/child", ContentPath.newPath().elements( "parent", "child" ).build().toString() );
-        assertEquals( "/", ContentPath.newPath().build().toString() );
-        assertEquals( "", ContentPath.newPath().absolute( false ).build().toString() );
+        assertEquals( "/parent/child", ContentPath.create().elements( "parent", "child" ).build().toString() );
+        assertEquals( "/", ContentPath.create().build().toString() );
+        assertEquals( "", ContentPath.create().absolute( false ).build().toString() );
     }
 
     @Test
@@ -57,9 +56,9 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "/" ), ContentPath.from( "/first" ).getParentPath() );
-        assertEquals( ContentPath.from( "/first" ), ContentPath.newPath().elements( "first", "second" ).build().getParentPath() );
-        assertEquals( newPath().elements( "first", "second" ).build(),
-                      newPath().elements( "first", "second", "third" ).build().getParentPath() );
+        assertEquals( ContentPath.from( "/first" ), ContentPath.create().elements( "first", "second" ).build().getParentPath() );
+        assertEquals( ContentPath.create().elements( "first", "second" ).build(),
+                      ContentPath.create().elements( "first", "second", "third" ).build().getParentPath() );
     }
 
     @Test
@@ -83,7 +82,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "a" ), ContentPath.from( "a" ) );
-        assertEquals( newPath().elements( "a", "b" ).build(), ContentPath.from( "/a/b" ) );
+        assertEquals( ContentPath.create().elements( "a", "b" ).build(), ContentPath.from( "/a/b" ) );
     }
 
     @Test

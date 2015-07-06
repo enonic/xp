@@ -167,7 +167,7 @@ public class FormItemSet
     @Override
     public FormItemSet copy()
     {
-        return newFormItemSet( this ).build();
+        return create( this ).build();
     }
 
     public FormItem getFormItem( final String path )
@@ -215,12 +215,12 @@ public class FormItemSet
         return formItems.getLayout( FormItemPath.from( name ) );
     }
 
-    public static Builder newFormItemSet()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newFormItemSet( final FormItemSet formItemSet )
+    public static Builder create( final FormItemSet formItemSet )
     {
         return new Builder( formItemSet );
     }
@@ -233,7 +233,7 @@ public class FormItemSet
 
         private boolean immutable;
 
-        private Occurrences occurrences = Occurrences.newOccurrences().minimum( 0 ).maximum( 1 ).build();
+        private Occurrences occurrences = Occurrences.create().minimum( 0 ).maximum( 1 ).build();
 
         private String customText;
 
@@ -287,19 +287,19 @@ public class FormItemSet
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences = Occurrences.newOccurrences().minimum( minOccurrences ).maximum( maxOccurrences ).build();
+            occurrences = Occurrences.create().minimum( minOccurrences ).maximum( maxOccurrences ).build();
             return this;
         }
 
         public Builder minimumOccurrences( int value )
         {
-            occurrences = Occurrences.newOccurrences( occurrences ).minimum( value ).build();
+            occurrences = Occurrences.create( occurrences ).minimum( value ).build();
             return this;
         }
 
         public Builder maximumOccurrences( int value )
         {
-            occurrences = Occurrences.newOccurrences( occurrences ).maximum( value ).build();
+            occurrences = Occurrences.create( occurrences ).maximum( value ).build();
             return this;
         }
 
@@ -307,11 +307,11 @@ public class FormItemSet
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.newOccurrences( occurrences ).minimum( 1 ).build();
+                occurrences = Occurrences.create( occurrences ).minimum( 1 ).build();
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.newOccurrences( occurrences ).minimum( 0 ).build();
+                occurrences = Occurrences.create( occurrences ).minimum( 0 ).build();
             }
             return this;
         }
@@ -320,11 +320,11 @@ public class FormItemSet
         {
             if ( value )
             {
-                occurrences = Occurrences.newOccurrences( occurrences ).maximum( 0 ).build();
+                occurrences = Occurrences.create( occurrences ).maximum( 0 ).build();
             }
             else
             {
-                occurrences = Occurrences.newOccurrences( occurrences ).maximum( 1 ).build();
+                occurrences = Occurrences.create( occurrences ).maximum( 1 ).build();
             }
             return this;
         }

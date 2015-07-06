@@ -98,7 +98,7 @@ public class JsonToPropertyTreeTranslatorTest
 
     private Form createFormForAllInputTypes()
     {
-        final FormItemSet set = FormItemSet.newFormItemSet().
+        final FormItemSet set = FormItemSet.create().
             name( "set" ).
             addFormItem( Input.create().
                 name( "setString" ).
@@ -112,7 +112,7 @@ public class JsonToPropertyTreeTranslatorTest
                 build() ).
             build();
 
-        return Form.newForm().
+        return Form.create().
             addFormItem( Input.create().
                 name( "textLine" ).
                 label( "Textline" ).

@@ -18,14 +18,14 @@ public class ImportNodeFactoryTest
         throws Exception
     {
 
-        final Node serializedNode = Node.newNode().
+        final Node serializedNode = Node.create().
             data( new PropertyTree() ).
             timestamp( Instant.parse( "2010-01-01T10:00:00Z" ) ).
             build();
 
         final Node importNode = ImportNodeFactory.create().
             serializedNode( serializedNode ).
-            importPath( NodePath.newPath( "/test" ).build() ).
+            importPath( NodePath.create( "/test" ).build() ).
             processNodeSettings( ProcessNodeSettings.create().build() ).
             build().
             execute();

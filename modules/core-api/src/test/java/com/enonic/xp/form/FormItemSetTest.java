@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.form.inputtype.InputTypes;
 
-import static com.enonic.xp.form.FormItemSet.newFormItemSet;
 import static org.junit.Assert.*;
 
 public class FormItemSetTest
@@ -14,7 +13,7 @@ public class FormItemSetTest
     public void getInput()
     {
         // setup
-        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
         formItemSet.add( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
@@ -28,8 +27,8 @@ public class FormItemSetTest
     public void getInlineMixin()
     {
         // setup
-        FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( InlineMixin.newInlineMixin().mixin( "mymodule:mymixin" ).build() );
+        FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
+        formItemSet.add( InlineMixin.create().mixin( "mymodule:mymixin" ).build() );
 
         // exercise
 
@@ -43,9 +42,9 @@ public class FormItemSetTest
     public void getFormItemSet()
     {
         // setup
-        FormItemSet myOuterSet = newFormItemSet().name( "myOuterSet" ).label( "Label" ).multiple( true ).build();
-        FormItemSet myInnerSet = newFormItemSet().name( "myInnerSet" ).label( "Label" ).multiple( true ).build();
-        FormItemSet myInnermostSet = newFormItemSet().name( "myInnermostSet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet myOuterSet = FormItemSet.create().name( "myOuterSet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet myInnerSet = FormItemSet.create().name( "myInnerSet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet myInnermostSet = FormItemSet.create().name( "myInnermostSet" ).label( "Label" ).multiple( true ).build();
         myInnerSet.add( myInnermostSet );
         myOuterSet.add( myInnerSet );
 
@@ -62,7 +61,7 @@ public class FormItemSetTest
     public void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned()
     {
         // exercise
-        FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
+        FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
         parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // verify
@@ -73,11 +72,11 @@ public class FormItemSetTest
     public void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned2()
     {
 
-        FormItemSet parent = newFormItemSet().name( "parent" ).label( "Parent" ).build();
+        FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
         parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise
-        FormItemSet newParent = newFormItemSet().name( "newParent" ).label( "New Parent" ).build();
+        FormItemSet newParent = FormItemSet.create().name( "newParent" ).label( "New Parent" ).build();
         try
         {
             newParent.add( parent.getInput( "child" ) );
@@ -94,7 +93,7 @@ public class FormItemSetTest
     public void toFormItemSet_given_FormItem_of_type_FormItemSet_then_FormItemSet_is_returned()
     {
         // setup
-        FormItem formItem = newFormItemSet().name( "myFieldSet" ).label( "My label" ).build();
+        FormItem formItem = FormItemSet.create().name( "myFieldSet" ).label( "My label" ).build();
 
         // exercise
         FormItemSet formItemSet = formItem.toFormItemSet();
@@ -127,7 +126,7 @@ public class FormItemSetTest
     public void copy()
     {
         // setup
-        FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
+        FormItemSet formItemSet = FormItemSet.create().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
         formItemSet.add( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         // exercise

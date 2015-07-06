@@ -8,9 +8,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 
-import static com.enonic.xp.page.Page.newPage;
-import static com.enonic.xp.region.LayoutComponent.newLayoutComponent;
-import static com.enonic.xp.region.PartComponent.newPartComponent;
 import static org.junit.Assert.*;
 
 public class ComponentsTest
@@ -22,10 +19,10 @@ public class ComponentsTest
         PropertyTree pageConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         pageConfig.addLong( "pause", 200L );
 
-        Page page = newPage().
+        Page page = Page.create().
             template( PageTemplateKey.from( "pageTemplateName" ) ).
             config( pageConfig ).
-            regions( PageRegions.newPageRegions().build() ).
+            regions( PageRegions.create().build() ).
             build();
 
         assertEquals( "pageTemplateName", page.getTemplate().toString() );
@@ -37,7 +34,7 @@ public class ComponentsTest
         PropertyTree partConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         partConfig.addLong( "width", 150L );
 
-        PartComponent partComponent = newPartComponent().
+        PartComponent partComponent = PartComponent.create().
             name( "my-part" ).
             descriptor( DescriptorKey.from( "mainmodule:partTemplateName" ) ).
             config( partConfig ).
@@ -55,7 +52,7 @@ public class ComponentsTest
         PropertyTree layoutConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         layoutConfig.addLong( "columns", 2L );
 
-        LayoutComponent layoutComponent = newLayoutComponent().
+        LayoutComponent layoutComponent = LayoutComponent.create().
             name( "my-template" ).
             descriptor( DescriptorKey.from( "mainmodule:layoutTemplateName" ) ).
             config( layoutConfig ).

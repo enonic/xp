@@ -87,7 +87,7 @@ public final class ContentTypes
         }
     }
 
-    public static Builder newContentTypes()
+    public static Builder create()
     {
         return new Builder();
     }

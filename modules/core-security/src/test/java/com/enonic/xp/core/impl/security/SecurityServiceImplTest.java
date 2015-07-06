@@ -53,7 +53,6 @@ import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 
-import static com.enonic.xp.security.PrincipalQuery.newQuery;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.UserStoreAccess.WRITE_USERS;
@@ -757,8 +756,7 @@ public class SecurityServiceImplTest
                 password( "123456" ).
                 build();
 
-
-            final PrincipalQuery query = newQuery().userStore( UserStoreKey.system() ).build();
+            final PrincipalQuery query = PrincipalQuery.create().userStore( UserStoreKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
             queryResult = securityService.query( query );

@@ -130,7 +130,7 @@ public final class ModifyContentHandler
             return null;
         }
 
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
             final ModuleKey moduleKey = ExtraData.fromModulePrefix( modulePrefix );

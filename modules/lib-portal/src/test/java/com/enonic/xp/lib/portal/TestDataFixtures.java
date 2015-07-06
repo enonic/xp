@@ -33,7 +33,7 @@ public final class TestDataFixtures
 {
     public static Content newContent()
     {
-        final Content.Builder builder = Content.newContent();
+        final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "123456" ) );
         builder.name( "mycontent" );
         builder.displayName( "My Content" );
@@ -92,7 +92,7 @@ public final class TestDataFixtures
 
     public static Page newPage()
     {
-        final Page.Builder builder = Page.newPage();
+        final Page.Builder builder = Page.create();
         builder.config( newTinyPropertyTree() );
         builder.controller( DescriptorKey.from( "mymodule:mycontroller" ) );
         builder.regions( newPageRegions() );
@@ -101,14 +101,14 @@ public final class TestDataFixtures
 
     public static PageRegions newPageRegions()
     {
-        final PageRegions.Builder builder = PageRegions.newPageRegions();
+        final PageRegions.Builder builder = PageRegions.create();
         builder.add( newTopRegion() );
         return builder.build();
     }
 
     public static Region newTopRegion()
     {
-        final Region.Builder builder = Region.newRegion();
+        final Region.Builder builder = Region.create();
         builder.name( "top" );
         builder.add( newPartComponent() );
         builder.add( newLayoutComponent() );
@@ -117,7 +117,7 @@ public final class TestDataFixtures
 
     public static Region newBottomRegion()
     {
-        final Region.Builder builder = Region.newRegion();
+        final Region.Builder builder = Region.create();
         builder.name( "bottom" );
         builder.add( newPartComponent() );
         return builder.build();
@@ -125,7 +125,7 @@ public final class TestDataFixtures
 
     public static Component newPartComponent()
     {
-        final PartComponent.Builder builder = PartComponent.newPartComponent();
+        final PartComponent.Builder builder = PartComponent.create();
         builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "mymodule:mypart" ) );
@@ -134,21 +134,21 @@ public final class TestDataFixtures
 
     public static LayoutComponent newLayoutComponent()
     {
-        final LayoutComponent.Builder builder = LayoutComponent.newLayoutComponent();
+        final LayoutComponent.Builder builder = LayoutComponent.create();
         builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "mymodule:mylayout" ) );
         builder.regions( newLayoutRegions() );
         final LayoutComponent layout = builder.build();
 
-        final Region parentRegion = Region.newRegion().name( "main" ).build();
+        final Region parentRegion = Region.create().name( "main" ).build();
         layout.setRegion( parentRegion );
         return layout;
     }
 
     public static LayoutRegions newLayoutRegions()
     {
-        final LayoutRegions.Builder builder = LayoutRegions.newLayoutRegions();
+        final LayoutRegions.Builder builder = LayoutRegions.create();
         builder.add( newBottomRegion() );
         return builder.build();
     }
@@ -158,12 +158,12 @@ public final class TestDataFixtures
         final PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "Field", 42l );
 
-        final SiteConfig siteConfig = SiteConfig.newSiteConfig().
+        final SiteConfig siteConfig = SiteConfig.create().
             module( ModuleKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 
-        final Site.Builder site = Site.newSite();
+        final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
         site.siteConfigs( SiteConfigs.from( siteConfig ) );
         site.name( "my-content" );
