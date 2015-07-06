@@ -559,6 +559,9 @@ module api.ui.image {
             var autoChanged = this.focusData.auto != auto;
             this.focusData.auto = auto;
             this.focalPointButton.toggleClass('manual', !auto);
+
+            this.toggleClass('focused', !auto);
+
             if (autoChanged) {
                 this.notifyFocusAutoPositionedChanged(auto);
             }
