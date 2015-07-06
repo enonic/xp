@@ -99,6 +99,8 @@ module api.ui.time {
 
         private selectedDateTimeChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
+        private dateParsingFailed: boolean;
+
         constructor(builder: DateTimePickerBuilder) {
             super('date-time-picker');
 
@@ -181,6 +183,7 @@ module api.ui.time {
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
+                this.dateParsingFailed = false;
                 this.setTime(hours, minutes);
                 this.input.setValue(this.formatDate(this.selectedDate) + " " + this.formatTime(hours, minutes));
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
@@ -193,6 +196,7 @@ module api.ui.time {
                     return;
                 }
                 var typedDateTime = this.input.getValue();
+                this.dateParsingFailed = false;
                 if (api.util.StringHelper.isEmpty(typedDateTime)) {
                     this.calendar.selectDate(null);
                     this.selectedDate = null;
@@ -214,6 +218,7 @@ module api.ui.time {
                     } else {
                         this.selectedDate = null;
                         this.validUserInput = false;
+                        this.dateParsingFailed = true;
                         this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     }
                 }
@@ -337,6 +342,10 @@ module api.ui.time {
 
         private updateInputStyling() {
             this.input.updateValidationStatusOnUserInput(this.validUserInput);
+        }
+
+        isDateParsingFailed(): boolean {
+            return this.dateParsingFailed;
         }
 
         giveFocus(): boolean {

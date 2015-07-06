@@ -71,6 +71,8 @@ module api.ui.time {
 
         private validUserInput: boolean;
 
+        private dateParsingFailed: boolean;
+
         private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
         constructor(builder: DatePickerBuilder) {
@@ -134,6 +136,8 @@ module api.ui.time {
                 if (builder.closeOnSelect) {
                     this.popup.hide();
                 }
+
+                this.dateParsingFailed = false;
                 this.selectedDate = e.getDate();
                 this.input.setValue(this.formatDate(e.getDate()));
                 this.notifySelectedDateChanged(e);
@@ -142,7 +146,9 @@ module api.ui.time {
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
+
                 var typedDate = this.input.getValue();
+                this.dateParsingFailed = false;
 
                 if (api.util.StringHelper.isEmpty(typedDate)) {
                     this.calendar.selectDate(null);
@@ -165,6 +171,7 @@ module api.ui.time {
                     else {
                         this.selectedDate = null;
                         this.validUserInput = false;
+                        this.dateParsingFailed = true;
                         this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                     }
                 }
@@ -204,6 +211,10 @@ module api.ui.time {
             if (builder.closeOnOutsideClick){
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
             }
+        }
+
+        isDateParsingFailed(): boolean {
+            return this.dateParsingFailed;
         }
 
         // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
