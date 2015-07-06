@@ -211,6 +211,12 @@ module api.data {
             return array;
         }
 
+        removeProperties(properties: Property[]) {
+            properties.forEach((property) => {
+                this.removeProperty(property.getName(), property.getIndex());
+            });
+        }
+
         removeProperty(name: string, index: number) {
             var array: PropertyArray = this.propertyArrayByName[name];
             if (array) {
@@ -258,22 +264,26 @@ module api.data {
         }
 
         private doRemoveEmptyValues(propertySet: api.data.PropertySet) {
+            var toRemove = [];
             propertySet.forEach((property) => {
                 var type = property.getType();
                 if (property.hasNullValue()) {
-                    propertySet.removeProperty(property.getName(), property.getIndex())
+                    toRemove.push(property);
                 }
                 else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
-                    propertySet.removeProperty(property.getName(), property.getIndex())
+                    toRemove.push(property);
                 }
                 else if (type.equals(api.data.ValueTypes.DATA)) {
                     var propertySetValue = property.getValue().getPropertySet();
                     this.doRemoveEmptyValues(propertySetValue);
                     if (propertySetValue.isEmpty()) {
-                        propertySet.removeProperty(property.getName(), property.getIndex())
+                        toRemove.push(property);
                     }
+                } else if (type.equals(api.data.ValueTypes.BOOLEAN) && (property.getValue().getBoolean() == false)) {
+                    toRemove.push(property);
                 }
             });
+            this.removeProperties(toRemove);
             this.removeEmptyArrays();
         }
 
