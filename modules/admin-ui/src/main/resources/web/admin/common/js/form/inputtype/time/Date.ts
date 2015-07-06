@@ -37,8 +37,7 @@ module api.content.form.inputtype.time {
             }
             var datePicker = datePickerBuilder.build();
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var changedValue = new Value(event.getDate(), ValueTypes.LOCAL_DATE);
-                property.setValue(changedValue);
+                this.onValueChanged(property, event.getDate(), ValueTypes.LOCAL_DATE);
             });
             return datePicker;
         }

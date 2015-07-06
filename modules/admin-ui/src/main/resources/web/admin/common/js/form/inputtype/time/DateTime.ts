@@ -71,8 +71,7 @@ module api.content.form.inputtype.time {
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var newValue = new Value(event.getDate(), valueType);
-                property.setValue(newValue);
+                this.onValueChanged(property, event.getDate(), valueType);
             });
             return dateTimePicker;
         }
@@ -94,12 +93,10 @@ module api.content.form.inputtype.time {
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var newValue = new Value(event.getDate() == null ? null : api.util.DateTime.fromDate(event.getDate()), valueType);
-                property.setValue(newValue);
+                this.onValueChanged(property, event.getDate() == null ? null : api.util.DateTime.fromDate(event.getDate()), valueType);
             });
             return dateTimePicker;
         }
-
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("DateTime", DateTime));
 
