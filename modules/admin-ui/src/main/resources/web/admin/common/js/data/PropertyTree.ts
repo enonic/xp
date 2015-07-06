@@ -161,6 +161,10 @@ module api.data {
             return this.root.setProperty(name, index, value);
         }
 
+        removeProperties(properties: Property[]) {
+            this.root.removeProperties(properties);
+        }
+
         removeProperty(name: string, index: number) {
             this.root.removeProperty(name, index);
         }
