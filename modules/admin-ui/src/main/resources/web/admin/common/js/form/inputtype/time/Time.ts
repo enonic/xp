@@ -34,6 +34,7 @@ module api.content.form.inputtype.time {
             localTimeEl.onTimeChanged((hours: number, minutes: number) => {
                 var changedValue: Value = ValueTypes.LOCAL_TIME.newValue(hours + ":" + minutes);
                 property.setValue(changedValue);
+                this.validate(false);
             });
 
             return localTimeEl;

@@ -6,6 +6,8 @@ module api.form.inputtype {
 
         private breaksMaximumOccurrences: boolean;
 
+        private additionalValidationRecord: AdditionalValidationRecord;
+
         constructor() {
             this.breaksMinimumOccurrences = false;
             this.breaksMaximumOccurrences = false;
@@ -23,12 +25,20 @@ module api.form.inputtype {
             this.breaksMaximumOccurrences = value;
         }
 
+        setAdditionalValidationRecord(value: AdditionalValidationRecord) {
+            this.additionalValidationRecord = value;
+        }
+
         isMinimumOccurrencesBreached(): boolean {
             return this.breaksMinimumOccurrences;
         }
 
         isMaximumOccurrencesBreached(): boolean {
             return this.breaksMaximumOccurrences;
+        }
+
+        getAdditionalValidationRecord(): AdditionalValidationRecord {
+            return this.additionalValidationRecord;
         }
 
         equals(that: InputValidationRecording): boolean {
@@ -38,6 +48,10 @@ module api.form.inputtype {
             }
 
             if (this.breaksMaximumOccurrences != that.breaksMaximumOccurrences) {
+                return false;
+            }
+
+            if (this.additionalValidationRecord != that.additionalValidationRecord) {
                 return false;
             }
 

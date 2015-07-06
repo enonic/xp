@@ -198,7 +198,7 @@ module api.form {
                 this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording, validationRecordingPath));
             }
 
-            this.renderValidationErrors(recording);
+            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
 
             this.previousValidityRecording = recording;
             return recording;
@@ -235,7 +235,7 @@ module api.form {
             });
         }
 
-        private renderValidationErrors(recording: ValidationRecording) {
+        private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
             if (recording.isValid()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
@@ -247,8 +247,8 @@ module api.form {
 
             this.validationViewer.setObject(recording);
 
-            if (recording.isValid()) {
-
+            if (additionalValidationRecord && additionalValidationRecord.isOverwriteDefault()) {
+                this.validationViewer.appendValidationMessage(additionalValidationRecord.getMessage());
             }
         }
 
