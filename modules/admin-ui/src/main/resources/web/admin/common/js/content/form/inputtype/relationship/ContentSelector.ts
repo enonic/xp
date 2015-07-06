@@ -16,15 +16,11 @@ module api.content.form.inputtype.relationship {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>;
 
-        private input: api.form.Input;
-
-        private propertyArray: PropertyArray;
-
         private relationshipTypeName: api.schema.relationshiptype.RelationshipTypeName;
 
         private contentComboBox: api.content.ContentComboBox;
 
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
+        private draggingIndex: number;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>) {
             super("relationship");
@@ -49,8 +45,7 @@ module api.content.form.inputtype.relationship {
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.input = input;
-            this.propertyArray = propertyArray;
+            super.layout(input, propertyArray);
 
             var relationshipLoader = new ContentSelectorLoader();
 
@@ -85,21 +80,27 @@ module api.content.form.inputtype.relationship {
 
                                 var value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                                    this.propertyArray.set(0, value);
+                                    this.getPropertyArray().set(0, value);
                                 }
                                 else if (!this.getPropertyArray().containsValue(value)) {
                                     this.getPropertyArray().add(value);
                                 }
 
+                                this.refreshSortable();
+                                this.updateSelectedOptionStyle();
                                 this.validate(false);
                             });
 
                             this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
-                                this.propertyArray.remove(removed.getIndex());
+                                this.getPropertyArray().remove(removed.getIndex());
+                                this.updateSelectedOptionStyle();
                                 this.validate(false);
                             });
 
+                            this.setupSortable();
+
+                            this.setLayoutInProgress(false);
                         });
                 });
         }
@@ -122,26 +123,53 @@ module api.content.form.inputtype.relationship {
 
         }
 
-        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+        private setupSortable() {
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
+                axis: "y",
+                containment: 'parent',
+                handle: '.drag-control',
+                tolerance: 'pointer',
+                start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
+                update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
+            });
 
-            var recording = new api.form.inputtype.InputValidationRecording();
+            this.updateSelectedOptionStyle();
+        }
 
-            var numberOfValids = this.contentComboBox.countSelected();
-            if (numberOfValids < this.input.getOccurrences().getMinimum()) {
-                recording.setBreaksMinimumOccurrences(true);
+        private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
+
+            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            this.draggingIndex = draggedElement.getSiblingIndex();
+
+            ui.placeholder.html("Drop form item set here");
+        }
+
+        private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
+
+            if (this.draggingIndex >= 0) {
+                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                var draggedToIndex = draggedElement.getSiblingIndex();
+                this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
-            if (this.input.getOccurrences().maximumBreached(numberOfValids)) {
-                recording.setBreaksMaximumOccurrences(true);
-            }
 
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
-            }
+            this.draggingIndex = -1;
+        }
 
-            this.previousValidationRecording = recording;
-            return recording;
+        private updateSelectedOptionStyle() {
+            if (this.getPropertyArray().getSize() > 1) {
+                this.addClass("multiple-occurrence").removeClass("single-occurrence");
+            }
+            else {
+                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+            }
+        }
+
+        private refreshSortable() {
+            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+        }
+
+        protected getNumberOfValids(): number {
+            return this.contentComboBox.countSelected();
         }
 
         giveFocus(): boolean {
