@@ -42,4 +42,5 @@
 ///<reference path='OccurrenceRenderedEvent.ts' />
 
 ///<reference path='ValidationRecordingViewer.ts' />
+///<reference path='AdditionalValidationRecord.ts' />
 

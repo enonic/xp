@@ -194,7 +194,10 @@ module api.form.inputtype.support {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
+            var additionalValidation: api.form.AdditionalValidationRecord = this.getSpecialValidation();
+            recording.setAdditionalValidationRecord(additionalValidation);
             if (!silent) {
+
                 if (recording.validityChanged(this.previousValidationRecording)) {
                     this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
                 }
@@ -202,6 +205,42 @@ module api.form.inputtype.support {
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        getSpecialValidation(): api.form.AdditionalValidationRecord {
+            var result = api.form.AdditionalValidationRecord.create().setOverwriteDefault(false).build();
+
+            this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: api.form.inputtype.support.InputOccurrenceView) => {
+                var picker;
+
+                debugger;
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DatePicker)) {
+                    picker = <api.ui.time.DatePicker>(occurrenceView.getInputElement());
+                }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.DateTimePicker)) {
+                    picker = <api.ui.time.DateTimePicker>(occurrenceView.getInputElement())
+                }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(occurrenceView.getInputElement(), api.ui.time.LocalTime)) {
+                    picker = (<api.ui.time.LocalTime>(occurrenceView.getInputElement())).getTimePicker();
+                }
+
+                if (picker && !picker.hasValidUserInput()) {
+                    result = api.form.AdditionalValidationRecord.create().
+                        setOverwriteDefault(true).
+                        setMessage("Incorrect value entered").
+                        build();
+                    return;
+                }
+            });
+
+            return result;
+        }
+
+        protected onValueChanged(property: Property, value: Object, type: ValueType) {
+            var newValue = new Value(value, type);
+            property.setValue(newValue);
+            this.validate(false);
         }
 
         notifyRequiredContractBroken(state: boolean, index: number) {

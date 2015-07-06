@@ -23,6 +23,13 @@ module api.form {
             })
         }
 
+        appendValidationMessage(message: string, removeExisting: boolean = true) {
+            if (removeExisting) {
+                this.list.removeChildren();
+            }
+            this.list.appendChild(new api.dom.LiEl().setHtml(message));
+        }
+
         setError(text: string) {
             this.list.removeChildren();
             if (text) {
