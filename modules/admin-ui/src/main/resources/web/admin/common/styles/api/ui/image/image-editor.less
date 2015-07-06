@@ -109,6 +109,16 @@
       }
     }
 
+    &.focused&:not(.edit-mode) {
+      .image-frame .image-canvas {
+        > svg {
+          display: block;
+          .focus-group {
+            display: block;
+          }
+        }
+      }
+    }
   }
 
   .image-frame {
