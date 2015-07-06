@@ -211,6 +211,12 @@ module api.data {
             return array;
         }
 
+        removeProperties(properties: Property[]) {
+            properties.forEach((property) => {
+                this.removeProperty(property.getName(), property.getIndex());
+            });
+        }
+
         removeProperty(name: string, index: number) {
             var array: PropertyArray = this.propertyArrayByName[name];
             if (array) {
@@ -261,7 +267,6 @@ module api.data {
             var toRemove = [];
             propertySet.forEach((property) => {
                 var type = property.getType();
-                debugger;
                 if (property.hasNullValue()) {
                     toRemove.push(property);
                 }
@@ -278,9 +283,7 @@ module api.data {
                     toRemove.push(property);
                 }
             });
-            toRemove.forEach((property) => {
-                propertySet.removeProperty(property.getName(), property.getIndex());
-            });
+            this.removeProperties(toRemove);
             this.removeEmptyArrays();
         }
 
