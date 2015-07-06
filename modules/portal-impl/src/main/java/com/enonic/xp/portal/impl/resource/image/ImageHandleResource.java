@@ -27,7 +27,7 @@ import com.enonic.xp.portal.impl.resource.base.BaseResource;
 public final class ImageHandleResource
     extends BaseResource
 {
-    private final static int LOADING_CACHE_MAX_WEIGHT = 10000000;
+    private final static int LOADING_CACHE_MAX_WEIGHT = 52428800; //50 Mio
 
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
