@@ -25,6 +25,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentType;
@@ -52,7 +53,8 @@ public final class ContentImageResource
     @GET
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size,
-                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth )
+                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
+                                     @QueryParam("source") @DefaultValue("false") final boolean source )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -71,7 +73,7 @@ public final class ContentImageResource
 
         if ( content instanceof Media )
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth );
+            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source );
             if ( resolvedImage.isOK() )
             {
                 final CacheControl cacheControl = new CacheControl();
@@ -92,7 +94,8 @@ public final class ContentImageResource
     }
 
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth )
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth,
+                                                                     final boolean source )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -101,9 +104,11 @@ public final class ContentImageResource
             if ( binary != null )
             {
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
+                final Cropping sourceCropping = source ? null : media.getCropping();
                 final ImageParams imageParams = ImageParams.newImageParams().
                     size( size ).
                     orientation( imageOrientation ).
+                    sourceCropping( sourceCropping ).
                     scaleWidth( scaleWidth ).
                     build();
 
