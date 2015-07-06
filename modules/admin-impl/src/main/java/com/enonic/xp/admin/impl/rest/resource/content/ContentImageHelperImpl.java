@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Component;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.filter.ScaleMaxFunction;
 import com.enonic.xp.image.filter.ScaleSquareFunction;
@@ -47,7 +48,14 @@ public final class ContentImageHelperImpl
 
     private BufferedImage readImage( final InputStream inputStream, final ImageParams imageParams, final boolean scaleWidth )
     {
-        final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
+        BufferedImage image = ImageHelper.toBufferedImage( inputStream );
+
+        final Cropping sourceCropping = imageParams.getSourceCropping();
+        if ( sourceCropping != null )
+        {
+            image = image.getSubimage( sourceCropping.left(), sourceCropping.top(), sourceCropping.width(), sourceCropping.height() );
+        }
+
         if ( imageParams.getSize() > 0 && ( image.getWidth() >= imageParams.getSize() ) )
         {
             if ( imageParams.isCropRequired() )

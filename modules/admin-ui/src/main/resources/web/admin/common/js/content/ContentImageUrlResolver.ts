@@ -10,6 +10,8 @@ module api.content {
 
         private scaleWidth: string = null; // parameter states if width of the image must be preferred over its height
 
+        private source: string = null; // parameter states if the source image should be used (without source cropping)
+
         setContentId(value: ContentId): ContentImageUrlResolver {
             this.contentId = value;
             return this;
@@ -30,6 +32,11 @@ module api.content {
             return this;
         }
 
+        setSource(value: boolean): ContentImageUrlResolver {
+            this.source = "" + value;
+            return this;
+        }
+
         resolve(): string {
 
             var url = "content/image/" + this.contentId.toString();
@@ -41,6 +48,9 @@ module api.content {
             }
             if (this.scaleWidth) {
                 url = this.appendParam("scaleWidth", this.scaleWidth, url);
+            }
+            if (this.source) {
+                url = this.appendParam("source", this.source, url);
             }
 
             return api.util.UriHelper.getRestUri(url);
