@@ -275,9 +275,9 @@ public class PushContentCommand
 
     private void appendPushNodesResult( final PushNodesResult pushNodesResult )
     {
-        this.resultBuilder.setPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+        this.resultBuilder.addPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
 
-        this.resultBuilder.setChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
+        this.resultBuilder.addChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
 
         for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
         {

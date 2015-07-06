@@ -725,7 +725,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            addPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -747,11 +747,43 @@ public class ContentResourceTest
     }
 
     @Test
+    public void publish_content_success2()
+        throws Exception
+    {
+        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
+            addPushedContent( Contents.from( newContent().
+                id( ContentId.from( "my-content" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content" ).
+                build() ) ).
+            addPushedContent( Contents.from( newContent().
+                id( ContentId.from( "my-content2" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content 2" ).
+                build() ) ).
+            addFailed( newContent().
+                id( ContentId.from( "my-content3" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content" ).
+                build(), PushContentsResult.FailedReason.PARENT_NOT_EXISTS ).
+            build() );
+
+        String jsonString = request().path( "content/publish" ).
+            entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "publish_content_a few_success.json", jsonString );
+    }
+
+    @Test
     public void publish_content_deleted()
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            setPushedContent( Contents.from( newContent().
+            addPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
