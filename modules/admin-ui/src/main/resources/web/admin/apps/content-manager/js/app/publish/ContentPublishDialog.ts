@@ -82,10 +82,6 @@ module app.publish {
         initAndOpen() {
             this.resolvePublishRequestedContentsAndUpdateView().then(() => {
                 this.updateDependenciesLabel();
-                if ((this.getChildrenEligibleForPublishCount() + this.getDependantsEligibleForPublishCount()) <= 0) {
-                    // item list won't change if there are no children, so don't trigger anything
-                    this.includeChildItemsCheck.unValueChanged(this.includeChildrenCheckedListener);
-                }
                 this.centerMyself();
             }).done();
             this.open();
@@ -146,7 +142,7 @@ module app.publish {
             };
 
             this.includeChildItemsCheck = new api.ui.Checkbox();
-            this.includeChildItemsCheck.setChecked(true);
+            this.includeChildItemsCheck.setChecked(false);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
         }
