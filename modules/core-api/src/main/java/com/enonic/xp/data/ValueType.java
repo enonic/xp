@@ -128,21 +128,6 @@ public abstract class ValueType<T>
         }
     }
 
-    static class HtmlPart
-        extends ValueType<java.lang.String>
-    {
-        HtmlPart()
-        {
-            super( "HtmlPart", JavaTypeConverters.STRING );
-        }
-
-        @Override
-        Value fromJsonValue( final Object object )
-        {
-            return new Value.HtmlPart( convertNullSafe( object ) );
-        }
-    }
-
     static class Xml
         extends ValueType<java.lang.String>
     {

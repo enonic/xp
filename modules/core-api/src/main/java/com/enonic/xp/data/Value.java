@@ -59,10 +59,16 @@ public abstract class Value
         return this.type == ValueTypes.GEO_POINT;
     }
 
+    public boolean isText()
+    {
+        return type == ValueTypes.STRING || type == ValueTypes.XML;
+    }
+
     public boolean isJavaType( final Class javaType )
     {
         return javaType.isInstance( this.object );
     }
+
 
     public ValueType getType()
     {
@@ -274,11 +280,6 @@ public abstract class Value
         return new Xml( value );
     }
 
-    public static Value newHtmlPart( final java.lang.String value )
-    {
-        return new HtmlPart( value );
-    }
-
     public static Value newGeoPoint( final com.enonic.xp.util.GeoPoint value )
     {
         return new GeoPoint( value );
@@ -352,26 +353,6 @@ public abstract class Value
         Value copy( final PropertyTree tree )
         {
             return new String( this );
-        }
-    }
-
-    static class HtmlPart
-        extends Value
-    {
-        HtmlPart( final java.lang.String value )
-        {
-            super( ValueTypes.HTML_PART, value );
-        }
-
-        HtmlPart( final HtmlPart source )
-        {
-            super( ValueTypes.HTML_PART, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new HtmlPart( this );
         }
     }
 

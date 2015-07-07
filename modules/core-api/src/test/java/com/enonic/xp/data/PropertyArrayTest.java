@@ -30,8 +30,8 @@ public class PropertyArrayTest
                 final PropertyArray propertyArray1 = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.STRING );
                 propertyArray1.addValue( Value.newString( "otherValue" ) );
 
-                final PropertyArray propertyArray2 = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.HTML_PART );
-                propertyArray2.addValue( Value.newHtmlPart( "otherValue" ) );
+                final PropertyArray propertyArray2 = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.XML );
+                propertyArray2.addValue( Value.newXml( "otherValue" ) );
 
                 return new Object[]{propertyArray1, propertyArray2};
             }

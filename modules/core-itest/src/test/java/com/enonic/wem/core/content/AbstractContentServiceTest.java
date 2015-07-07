@@ -293,7 +293,7 @@ public class AbstractContentServiceTest
         data.addString( "color", "FFFFFF" );
         data.addString( "comboBox", "value3" );
         data.addBoolean( "checkbox", false );
-        data.addHtmlPart( "tinyMce", "<p>paragraph</p>" );
+        data.addString( "tinyMce", "<p>paragraph</p>" );
         data.addString( "phone", "012345678" );
         data.addString( "tag", "tag" );
         data.addReference( "contentSelector", reference );
@@ -302,7 +302,7 @@ public class AbstractContentServiceTest
         data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
         data.addLocalTime( "time", LocalTime.NOON );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
-        data.addHtmlPart( "htmlArea", "<p>paragraph</p>" );
+        data.addString( "htmlArea", "<p>paragraph</p>" );
         data.addString( "xml", "<elem>paragraph</elem>" );
         data.addLocalDateTime( "localDateTime", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
         data.addInstant( "dateTime", Instant.now() );

@@ -52,7 +52,7 @@ public class PropertySetJsonTest
         dataSet.setLong( "Long", 1L );
         dataSet.setDouble( "Double", 1.1 );
         dataSet.setLocalDate( "DateMidnight", LocalDate.of( 2012, 12, 12 ) );
-        dataSet.setHtmlPart( "HtmlPart", "<div></div>" );
+        dataSet.setXml( "Xml", "<div></div>" );
         PropertyArrayJson dataSetJson = PropertyArrayJson.toJson( tree.getRoot().getPropertyArray( "mySet" ) );
 
         // serialize from object

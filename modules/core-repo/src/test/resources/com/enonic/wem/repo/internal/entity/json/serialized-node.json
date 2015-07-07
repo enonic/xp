@@ -111,6 +111,10 @@
           "enabled": true,
           "fulltext": true,
           "includeInAllText": true,
+          "indexValueProcessors": [
+            "indexValueProcessor",
+            "indexValueProcessor"
+          ],
           "nGram": true
         },
         "path": "myPath"

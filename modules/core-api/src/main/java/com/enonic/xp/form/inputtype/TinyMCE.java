@@ -31,15 +31,15 @@ final class TinyMCE
     public void checkTypeValidity( final Property property )
         throws InvalidTypeException
     {
-        if ( !ValueTypes.HTML_PART.equals( property.getType() ) )
+        if ( !ValueTypes.STRING.equals( property.getType() ) )
         {
-            throw new InvalidTypeException( property, ValueTypes.HTML_PART );
+            throw new InvalidTypeException( property, ValueTypes.STRING );
         }
     }
 
     @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
-        return Value.newHtmlPart( value );
+        return Value.newString( value );
     }
 }

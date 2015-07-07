@@ -121,7 +121,6 @@ public final class TestDataFixtures
         tree.setString( "stringNull", null );
         tree.setString( "set.property", "value" );
         tree.addXml( "xml", "<xml><my-xml hello='world'/></xml>" );
-        tree.addHtmlPart( "htmlPart", "<p>some<b>html</b></p>" );
         tree.addBinaryReference( "binaryReference", BinaryReference.from( "abc" ) );
         tree.addLink( "link", Link.from( ContentPath.from( "/my/content" ).toString() ) );
         tree.addGeoPoint( "geoPoint", new GeoPoint( 1.1, -1.1 ) );
