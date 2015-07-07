@@ -304,6 +304,8 @@ module app.publish {
                     return new api.content.ContentId(el.getId());
                 }), this.includeChildItemsCheck.isChecked());
 
+                this.addSpinnerClass();
+
                 resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
@@ -314,16 +316,26 @@ module app.publish {
             }
         }
 
-        private renderResolvedDependenciesItems() {
+        private addSpinnerClass() {
+            this.dependenciesItemsView.addClass("spinner");
+            this.dependenciesLabel.addClass("spinner");
+        }
 
+        private removeSpinnerClass() {
+            this.dependenciesItemsView.removeClass("spinner");
+            this.dependenciesLabel.removeClass("spinner");
+        }
+
+        private renderResolvedDependenciesItems() {
             this.dependenciesItemsView.clear();
 
             if (this.dependenciesExpanded()) {
-                var dependenciesItems: ContentsResolved<ContentPublishDependencyItem> = this.dependenciesContentsResolvedWithoutChildren;
+                var dependenciesItems: ContentsResolved<ContentPublishDependencyItem> =
+                    this.includeChildItemsCheck.isChecked() ?
+                    this.dependenciesContentsResolvedWithChildren :
+                    this.dependenciesContentsResolvedWithoutChildren;
 
-                if (this.includeChildItemsCheck.isChecked()) {
-                    dependenciesItems = this.dependenciesContentsResolvedWithChildren;
-                }
+                this.removeSpinnerClass();
 
                 // append dependencies to view
                 dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishDependencyItem)  => {
