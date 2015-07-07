@@ -47,6 +47,7 @@ public final class ImageResource
             throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContentId );
         }
 
+        resource.path = id + "/" + scale + "/" + name;
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
         resource.scaleParams = scaleParams;
@@ -73,6 +74,7 @@ public final class ImageResource
             throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContent.getId() );
         }
 
+        resource.path = name;
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
         return resource;
