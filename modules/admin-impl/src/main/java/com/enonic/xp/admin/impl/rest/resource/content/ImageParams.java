@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.media.ImageOrientation;
 
 public final class ImageParams
@@ -7,6 +8,8 @@ public final class ImageParams
     private final int size;
 
     private final ImageOrientation orientation;
+
+    private final Cropping sourceCropping;
 
     private final boolean cropRequired;
 
@@ -16,6 +19,7 @@ public final class ImageParams
     {
         this.size = builder.size;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
+        this.sourceCropping = builder.sourceCropping;
         this.cropRequired = builder.cropRequired;
         this.scaleWidth = builder.scaleWidth;
     }
@@ -35,6 +39,11 @@ public final class ImageParams
         return orientation;
     }
 
+    public Cropping getSourceCropping()
+    {
+        return sourceCropping;
+    }
+
     public boolean isScaleWidth()
     {
         return scaleWidth;
@@ -50,6 +59,8 @@ public final class ImageParams
         private int size;
 
         private ImageOrientation orientation;
+
+        private Cropping sourceCropping;
 
         private boolean cropRequired;
 
@@ -68,6 +79,12 @@ public final class ImageParams
         public Builder orientation( ImageOrientation orientation )
         {
             this.orientation = orientation;
+            return this;
+        }
+
+        public Builder sourceCropping( Cropping sourceCropping )
+        {
+            this.sourceCropping = sourceCropping;
             return this;
         }
 

@@ -63,7 +63,7 @@ module api.content {
                 this.imageEditors.forEach((imageEditor: ImageEditor) => {
                     imageEditor.remove();
                 });
-               this.imageEditors = [];
+                this.imageEditors = [];
             });
 
             this.onFocus(() => {
@@ -168,6 +168,7 @@ module api.content {
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
                 setTimestamp(new Date()).
+                setSource(true).
                 resolve();
 
             var imageEditor = this.createImageEditor(imgUrl);
