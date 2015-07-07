@@ -51,7 +51,9 @@ module app.view {
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(item.getModel().getContentId()).
                 setTimestamp(item.getModel().getModifiedTime()).
-                setSize(imgSize).resolve();
+                setSize(imgSize).
+                setSource(true).
+                resolve();
             this.image.setSrc(imgUrl);
         }
 
