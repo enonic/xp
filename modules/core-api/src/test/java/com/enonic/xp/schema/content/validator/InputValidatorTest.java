@@ -58,7 +58,7 @@ public class InputValidatorTest
         data.addString( "color", "#12345" );
         data.addString( "comboBox", "value3" );
         data.addBoolean( "checkbox", true );
-        data.addHtmlPart( "tinyMce", "<stuff>staff</stuff>" );
+        data.addString( "tinyMce", "<stuff>staff</stuff>" );
         data.addString( "phone", "+4797773223" );
         data.addString( "tag", "myTag" );
         data.addReference( "contentSelector", new Reference( new NodeId() ) );
@@ -72,7 +72,7 @@ public class InputValidatorTest
         data.addLocalDate( "date", LocalDate.parse( "2015-01-15" ) );
         data.addLocalTime( "time", LocalTime.parse( "10:00:32.123" ) );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "-45,34" ) );
-        data.addHtmlPart( "htmlArea", "<h1>test</h1>" );
+        data.addString( "htmlArea", "<h1>test</h1>" );
         data.addString( "xml", "<xml><car><color>blue</color></car></xml>" );
 
         //Validates the correct data
@@ -183,12 +183,12 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addString( "htmlArea", "<p>paragraph</p>" );
+        invalidData.addXml( "htmlArea", "<p>paragraph</p>" );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addHtmlPart( "xml", "<elem>element</elem>" );
+        invalidData.addXml( "xml", "<elem>element</elem>" );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value

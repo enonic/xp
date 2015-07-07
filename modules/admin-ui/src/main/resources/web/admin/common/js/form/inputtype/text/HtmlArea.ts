@@ -13,11 +13,11 @@ module api.form.inputtype.text {
         }
 
         getValueType(): ValueType {
-            return ValueTypes.HTML_PART;
+            return ValueTypes.STRING;
         }
 
         newInitialValue(): Value {
-            return ValueTypes.HTML_PART.newValue("");
+            return ValueTypes.STRING.newValue("");
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -34,11 +34,11 @@ module api.form.inputtype.text {
         }
 
         private newValue(s: string): Value {
-            return new Value(s, ValueTypes.HTML_PART);
+            return new Value(s, ValueTypes.STRING);
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.HTML_PART) ||
+            return value.isNull() || !value.getType().equals(ValueTypes.STRING) ||
                    api.util.StringHelper.isBlank(value.getString());
         }
 

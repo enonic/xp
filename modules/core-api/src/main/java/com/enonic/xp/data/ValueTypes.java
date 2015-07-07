@@ -22,8 +22,6 @@ public final class ValueTypes
 
     public static final ValueType<String> STRING = new ValueType.String();
 
-    public static final ValueType<String> HTML_PART = new ValueType.HtmlPart();
-
     public static final ValueType<String> XML = new ValueType.Xml();
 
     public static final ValueType<LocalDate> LOCAL_DATE = new ValueType.LocalDate();
@@ -54,7 +52,6 @@ public final class ValueTypes
     {
         register( PROPERTY_SET );
         register( STRING );
-        register( HTML_PART );
         register( XML );
         register( LOCAL_DATE );
         register( LOCAL_TIME );

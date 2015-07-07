@@ -11,6 +11,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexValueProcessorRegistry;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -56,7 +57,6 @@ public class XmlNodeSerializerTest
         propertyTree.addBoolean( "myBoolean", true );
         propertyTree.addDouble( "myDouble", 123.1 );
         propertyTree.addLong( "myLong", 111L );
-        propertyTree.addHtmlPart( "myHtmlPart", "<h1>This is the title</h1><h2>This is the subheading</h2>" );
         propertyTree.addXml( "myXml", "<car><color>Arctic Grey<color><car>" );
         propertyTree.addGeoPoint( "myGeoPoint", GeoPoint.from( "8,4" ) );
 
@@ -89,7 +89,6 @@ public class XmlNodeSerializerTest
         propertyTree.addBoolean( "myBoolean", null );
         propertyTree.addDouble( "myDouble", null );
         propertyTree.addLong( "myLong", null );
-        propertyTree.addHtmlPart( "myHtmlPart", null );
         propertyTree.addXml( "myXml", null );
         propertyTree.addGeoPoint( "myGeoPoint", null );
         propertyTree.addInstant( "myInstant", null );
@@ -103,9 +102,18 @@ public class XmlNodeSerializerTest
         propertyTree.addSet( "nullSet", null );
 
         // Index configs
-        final PatternIndexConfigDocument.Builder indexConfig = PatternIndexConfigDocument.create();
-        indexConfig.analyzer( "no" );
-        indexConfig.add( "mydata", IndexConfig.FULLTEXT );
+        final IndexConfig indexConfig = IndexConfig.create().
+            enabled( true ).
+            fulltext( true ).
+            nGram( true ).
+            decideByType( false ).
+            includeInAllText( true ).
+            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
+            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
+            build();
+        final PatternIndexConfigDocument.Builder indexConfigDocumentBuilder = PatternIndexConfigDocument.create();
+        indexConfigDocumentBuilder.analyzer( "no" );
+        indexConfigDocumentBuilder.add( "mydata", indexConfig );
 
         // Permissions
         final Permission createPermission = Permission.CREATE;
@@ -130,7 +138,7 @@ public class XmlNodeSerializerTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).
-            indexConfigDocument( indexConfig.build() ).
+            indexConfigDocument( indexConfigDocumentBuilder.build() ).
             permissions( accessControlList ).
             inheritPermissions( false ).
             attachedBinaries( AttachedBinaries.create().
