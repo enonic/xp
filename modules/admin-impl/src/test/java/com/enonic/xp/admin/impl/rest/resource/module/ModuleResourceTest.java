@@ -43,6 +43,40 @@ public class ModuleResourceTest
     }
 
     @Test
+    public void get_module_list_with_query()
+        throws Exception
+    {
+        final Module module = createModule();
+        final Modules modules = Modules.from( module, createEmptyModule() );
+        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+
+        String response = request().
+            path( "module/list" ).
+            queryParam( "query", "Enonic" ).
+            get().getAsString();
+        assertJson( "get_module_list_success.json", response );
+    }
+
+    @Test
+    public void get_module_list_with_invalid_query()
+        throws Exception
+    {
+        final Module module = createModule();
+        final Modules modules = Modules.from( module, createEmptyModule() );
+        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+
+        String response = request().
+            path( "module/list" ).
+            queryParam( "query", "invalid query" ).
+            get().getAsString();
+        assertJson( "get_module_list_with_invalid_query.json", response );
+    }
+
+    @Test
     public void get_module_by_key()
         throws Exception
     {
@@ -95,6 +129,15 @@ public class ModuleResourceTest
         Mockito.when( module.getMaxSystemVersion() ).thenReturn( "5.1" );
         Mockito.when( module.isStarted() ).thenReturn( true );
         Mockito.when( module.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+
+        return module;
+    }
+
+    private Module createEmptyModule()
+    {
+        final Module module = Mockito.mock( Module.class );
+        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "empty_testmodule" ) );
+        Mockito.when( module.getDisplayName() ).thenReturn( "empty name" );
 
         return module;
     }
