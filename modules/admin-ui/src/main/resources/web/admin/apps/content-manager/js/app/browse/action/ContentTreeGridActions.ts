@@ -36,9 +36,9 @@ module app.browse.action {
 
             this.actions.push(
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION,
-                this.PREVIEW_CONTENT, this.EDIT_CONTENT,
-                this.DELETE_CONTENT, this.DUPLICATE_CONTENT,
-                this.MOVE_CONTENT, this.SORT_CONTENT,
+                this.EDIT_CONTENT, this.DELETE_CONTENT,
+                this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
+                this.SORT_CONTENT, this.PREVIEW_CONTENT,
                 this.PUBLISH_CONTENT
             );
 

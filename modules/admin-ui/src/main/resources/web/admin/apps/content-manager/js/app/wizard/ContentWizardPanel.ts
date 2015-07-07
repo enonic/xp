@@ -142,10 +142,10 @@ module app.wizard {
 
             var mainToolbar = new ContentWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
-                duplicateAction: this.wizardActions.getDuplicateAction(),
                 deleteAction: this.wizardActions.getDeleteAction(),
-                publishAction: this.wizardActions.getPublishAction(),
+                duplicateAction: this.wizardActions.getDuplicateAction(),
                 previewAction: this.wizardActions.getPreviewAction(),
+                publishAction: this.wizardActions.getPublishAction(),
                 showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
                 showFormAction: this.wizardActions.getShowFormAction(),
                 showSplitEditAction: this.wizardActions.getShowSplitEditAction()
