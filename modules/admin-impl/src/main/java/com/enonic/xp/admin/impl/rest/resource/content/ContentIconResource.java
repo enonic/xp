@@ -124,6 +124,7 @@ public final class ContentIconResource
                     size( size ).
                     cropRequired( crop ).
                     orientation( getSourceAttachmentOrientation( media ) ).
+                    sourceCropping( media.getCropping() ).
                     build();
 
                 final BufferedImage contentImage = helper.readAndRotateImage( attachmentBinary, imageParams );
