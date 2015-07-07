@@ -843,7 +843,7 @@ module api.ui.image {
 
         resetCropPosition() {
             this.setCropPositionPx(this.denormalizeRect(0, 0, 1, 1), false);
-            this.setCropAutoPositioned(true);
+            this.resetZoomPosition();
         }
 
         private setCropAutoPositioned(auto: boolean) {
@@ -1035,9 +1035,11 @@ module api.ui.image {
                 } else if (dragMouseDown) {
 
                     var deltaY = this.getOffsetY(event) - lastPos.y,
-                        newH = this.cropData.h + deltaY;
+                        distBetweenCropAndZoomBottoms = this.zoomData.h - this.cropData.h - this.cropData.y,
+                        newH = this.cropData.h +
+                               (deltaY > distBetweenCropAndZoomBottoms ? distBetweenCropAndZoomBottoms : deltaY);
 
-                    if (newH > 0) {
+                    if (newH > 0 && newH != this.cropData.h) {
 
                         this.setCropPositionPx({
                             x: this.cropData.x,
@@ -1331,7 +1333,7 @@ module api.ui.image {
         }
 
         private restrainZoomY(y: number) {
-            var deltaH = this.frameH - this.zoomData.h;
+            var deltaH = this.cropData.h - this.zoomData.h;
             return Math.max(this.imageSmallerThanFrame ? 0 : deltaH,
                 Math.min(this.imageSmallerThanFrame ? deltaH : 0, y));
         }
