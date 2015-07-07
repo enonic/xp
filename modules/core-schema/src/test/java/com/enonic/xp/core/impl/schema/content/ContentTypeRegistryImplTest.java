@@ -117,10 +117,6 @@ public class ContentTypeRegistryImplTest
         assertNotNull( contentTypes );
         assertTrue( contentTypes.getSize() > 20 );
 
-        contentTypes = service.getByModule( ModuleKey.SYSTEM );
-        assertNotNull( contentTypes );
-        assertTrue( contentTypes.getSize() > 20 );
-
         ContentType contentType = service.get( ContentTypeName.folder() );
         assertNotNull( contentType );
 

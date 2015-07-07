@@ -49,13 +49,6 @@ public final class BuiltinMixinsLoader
 
     private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, PHOTO_METADATA, GPS_METADATA );
 
-    private final Mixins mixins;
-
-    public BuiltinMixinsLoader()
-    {
-        this.mixins = Mixins.from( generateSystemMixins() );
-    }
-
     private static FormItems createImageInfoMixinForm()
     {
         final FormItems formItems = new FormItems();
@@ -129,28 +122,35 @@ public final class BuiltinMixinsLoader
 
     private List<Mixin> generateSystemMixins()
     {
-        final List<Mixin> mixins = Lists.newArrayList();
-        for ( Mixin mixin : MIXINS )
+        return generateSystemMixins( MIXINS );
+    }
+
+    private List<Mixin> generateSystemMixins( Iterable<Mixin> systemMixins )
+    {
+        final List<Mixin> generatedSystemMixins = Lists.newArrayList();
+        for ( Mixin mixin : systemMixins )
         {
             mixin = Mixin.newMixin( mixin ).
                 icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().getLocalName() ) ).
                 build();
-            mixins.add( mixin );
+            generatedSystemMixins.add( mixin );
         }
-        return mixins;
+        return generatedSystemMixins;
     }
 
     public Mixins load()
     {
-        return this.mixins;
+        final List<Mixin> generatedSystemMixins = generateSystemMixins();
+        return Mixins.from( generatedSystemMixins );
     }
 
     public Mixins loadByModule( final ModuleKey moduleKey )
     {
-        final List<Mixin> mixinList = mixins.stream().
+        final List<Mixin> systemMixinsByModuleKey = MIXINS.stream().
             filter( mixin -> mixin.getName().getModuleKey().equals( moduleKey ) ).
             collect( Collectors.toList() );
-        return Mixins.from( mixinList );
+        final List<Mixin> generatedSystemMixins = generateSystemMixins( systemMixinsByModuleKey );
+        return Mixins.from( generatedSystemMixins );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

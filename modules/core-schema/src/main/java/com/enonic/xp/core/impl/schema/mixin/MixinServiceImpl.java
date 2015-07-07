@@ -75,9 +75,14 @@ public final class MixinServiceImpl
     {
         final Set<Mixin> mixinList = Sets.newLinkedHashSet();
 
-        final Mixins systemMixins = getByModule( ModuleKey.SYSTEM );
-        mixinList.addAll( systemMixins.getList() );
+        //Gets builtin mixins
+        for ( ModuleKey systemReservedModuleKey : ModuleKey.SYSTEM_RESERVED_MODULE_KEYS )
+        {
+            final Mixins mixins = getByModule( systemReservedModuleKey );
+            mixinList.addAll( mixins.getList() );
+        }
 
+        //Gets modules mixins
         for ( Module module : this.moduleService.getAllModules() )
         {
             final Mixins mixins = getByModule( module.getKey() );
@@ -97,11 +102,7 @@ public final class MixinServiceImpl
     {
         Mixins mixins = null;
 
-        if ( ModuleKey.SYSTEM.equals( moduleKey ) )
-        {
-            mixins = new BuiltinMixinsLoader().load();
-        }
-        else if ( ModuleKey.isSystemReservedModuleKey( moduleKey ) )
+        if ( ModuleKey.SYSTEM_RESERVED_MODULE_KEYS.contains( moduleKey ) )
         {
             mixins = new BuiltinMixinsLoader().loadByModule( moduleKey );
         }

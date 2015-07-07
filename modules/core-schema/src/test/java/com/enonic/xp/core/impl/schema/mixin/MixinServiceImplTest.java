@@ -154,9 +154,9 @@ public class MixinServiceImplTest
         assertNotNull( mixins );
         assertEquals( 3, mixins.getSize() );
 
-        mixins = service.getByModule( ModuleKey.SYSTEM );
+        mixins = service.getByModule( ModuleKey.MEDIA_MOD );
         assertNotNull( mixins );
-        assertEquals( 3, mixins.getSize() );
+        assertEquals( 2, mixins.getSize() );
 
         Mixin mixin = service.getByName( BuiltinMixinsLoader.GPS_INFO_METADATA_NAME );
         assertNotNull( mixin );

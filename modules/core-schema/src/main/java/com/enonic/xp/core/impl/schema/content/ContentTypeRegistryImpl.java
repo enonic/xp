@@ -67,11 +67,7 @@ public final class ContentTypeRegistryImpl
     {
         ContentTypes contentTypes = null;
 
-        if ( ModuleKey.SYSTEM.equals( moduleKey ) )
-        {
-            contentTypes = new BuiltinContentTypeLoader().load();
-        }
-        else if ( ModuleKey.isSystemReservedModuleKey( moduleKey ) )
+        if ( ModuleKey.SYSTEM_RESERVED_MODULE_KEYS.contains( moduleKey ) )
         {
             contentTypes = new BuiltinContentTypeLoader().loadByModule( moduleKey );
         }
@@ -98,9 +94,14 @@ public final class ContentTypeRegistryImpl
     {
         final Set<ContentType> contentTypeList = Sets.newLinkedHashSet();
 
-        final ContentTypes systemContentTypes = getByModule( ModuleKey.SYSTEM );
-        contentTypeList.addAll( systemContentTypes.getList() );
+        //Gets builtin content types
+        for ( ModuleKey systemReservedModuleKey : ModuleKey.SYSTEM_RESERVED_MODULE_KEYS )
+        {
+            final ContentTypes contentTypes = getByModule( systemReservedModuleKey );
+            contentTypeList.addAll( contentTypes.getList() );
+        }
 
+        //Gets module content types
         for ( Module module : this.moduleService.getAllModules() )
         {
             final ContentTypes contentTypes = getByModule( module.getKey() );
