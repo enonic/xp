@@ -757,7 +757,12 @@ public class ContentResourceTest
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addDeleted( ContentId.from( "myContentId" ) ).
+            addDeleted( Contents.from( newContent().
+                id( ContentId.from( "myContentId" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My deleted content" ).
+                build() ) ).
             build() );
 
         String jsonString = request().path( "content/publish" ).

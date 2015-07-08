@@ -60,7 +60,7 @@ module api.content {
                 } else if (failed === 1) {
                     api.notify.showError('\"' + result.failures[0].name + '\" failed, reason: ' + result.failures[0].reason);
                 } else {
-                    api.notify.showSuccess('\"' + result.deleted[0] + '\" deleted');
+                    api.notify.showSuccess('\"' + result.deleted[0].name + '\" deleted');
                 }
                 break;
             default: // > 1

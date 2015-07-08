@@ -17,7 +17,7 @@ public class PushContentsResult
 
     private final PushContentRequests pushContentRequests;
 
-    private final ContentIds deleted;
+    private final Contents deleted;
 
     private PushContentsResult( final Builder builder )
     {
@@ -25,7 +25,7 @@ public class PushContentsResult
         this.childrenPushedContent = Contents.from( builder.childrenPushedContent );
         this.failed = ImmutableSet.copyOf( builder.failed );
         this.pushContentRequests = builder.pushContentRequests;
-        this.deleted = ContentIds.from( builder.deleted );
+        this.deleted = Contents.from( builder.deleted );
     }
 
     public PushContentRequests getPushContentRequests()
@@ -48,7 +48,7 @@ public class PushContentsResult
         return failed;
     }
 
-    public ContentIds getDeleted()
+    public Contents getDeleted()
     {
         return deleted;
     }
@@ -110,7 +110,7 @@ public class PushContentsResult
 
         private final Set<Failed> failed = Sets.newHashSet();
 
-        private final Set<ContentId> deleted = Sets.newHashSet();
+        private final Set<Content> deleted = Sets.newHashSet();
 
         private PushContentRequests pushContentRequests;
 
@@ -130,9 +130,9 @@ public class PushContentsResult
             return this;
         }
 
-        public Builder addDeleted( final ContentId contentId )
+        public Builder addDeleted( final Contents contents )
         {
-            this.deleted.add( contentId );
+            this.deleted.addAll( contents.getSet() );
             return this;
         }
 
