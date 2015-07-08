@@ -22,6 +22,9 @@ public final class ImportCommand
     @Option(name = "--skipids", description = "Flag that skips ids.", required = false)
     public boolean skipids = false;
 
+    @Option(name = "--skip-permissions", description = "Flag that skips permissions.", required = false)
+    public boolean skipPermissions = false;
+
     @Override
     protected void execute()
         throws Exception
@@ -36,6 +39,7 @@ public final class ImportCommand
         json.put( "exportName", this.exportName );
         json.put( "targetRepoPath", this.targetRepoPath );
         json.put( "importWithIds", !this.skipids );
+        json.put( "importWithPermissions", !this.skipPermissions );
         return json;
     }
 }

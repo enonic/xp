@@ -38,6 +38,7 @@ public class ImportCommandTest
         json.put( "exportName", "myexport" );
         json.put( "targetRepoPath", "<draft>:<master>:<root/node1>" );
         json.put( "importWithIds", true );
+        json.put( "importWithPermissions", true );
         return json;
     }
 
