@@ -128,6 +128,21 @@ module app.publish {
             return array;
         }
 
+        /**
+         * Builds array of ContentPublishItem[] from content summaries.
+         */
+        static buildPublishItemsFromContentSummaries(items: ContentSummary[]): ContentPublishItem[] {
+            var array: ContentPublishItem[] = [];
+            items.forEach((obj: ContentSummary) => {
+                array.push(new ContentPublishItemBuilder().fromContentSummary(obj).build());
+            });
+            return array;
+        }
+
+        static buildPublishItemFromContentSummary(item: ContentSummary): ContentPublishItem {
+            return new ContentPublishItemBuilder().fromContentSummary(item).build();
+        }
+
     }
 
     export class ContentPublishItemBuilder {
@@ -172,6 +187,21 @@ module app.publish {
             this.name = ContentName.fromString(json.name);
             this.type = new ContentTypeName(json.type);
             this.valid = json.valid;
+
+            return this;
+        }
+
+        fromContentSummary(contentSummary: ContentSummary): ContentPublishItemBuilder {
+            this.id = contentSummary.getId();
+            this.path = contentSummary.getPath();
+            this.compareStatus = contentSummary.getContentState().isDefault() ? CompareStatus.NEW : CompareStatus.PENDING_DELETE;
+
+            this.displayName = contentSummary.getDisplayName();
+            this.iconUrl = contentSummary.getIconUrl();
+
+            this.name = contentSummary.getName();
+            this.type = contentSummary.getType();
+            this.valid = contentSummary.isValid();
 
             return this;
         }

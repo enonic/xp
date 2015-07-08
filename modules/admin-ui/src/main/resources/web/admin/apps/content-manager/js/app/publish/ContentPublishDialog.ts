@@ -65,10 +65,10 @@ module app.publish {
             this.appendChildToContentPanel(this.dependenciesItemsView);
             this.renderDependenciesLabel();
 
-            this.subheaderMessage.addClass("publish-dialog-subheader");
-            this.appendChildToTitle(this.subheaderMessage);
+            this.initSubheaderMessage();
 
             this.publishButton = this.setPublishAction(new ContentPublishDialogAction());
+            this.publishButton.setEnabled(false);
 
             this.getPublishAction().onExecuted(() => {
                 this.doPublish();
@@ -80,6 +80,7 @@ module app.publish {
         }
 
         initAndOpen() {
+            this.renderSelectedContentsWhileItemsGettingResolved();
             this.resolvePublishRequestedContentsAndUpdateView().then(() => {
                 this.updateDependenciesLabel();
                 this.centerMyself();
@@ -114,6 +115,22 @@ module app.publish {
             this.selectedContents = contents;
         }
 
+        private renderSelectedContentsWhileItemsGettingResolved() {
+
+            var pushRequestedItems: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaries(this.selectedContents.slice(0,
+                15));
+
+            pushRequestedItems.forEach((content: ContentPublishItem) => {
+                var item: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
+                    setViewer(new app.publish.ResolvedPublishContentViewer<ContentPublishItem>()).
+                    setContent(content).
+                    setIsCheckBoxEnabled(false).
+                    setRemovable(true).
+                    build();
+                this.initialItemsView.appendChild(item);
+            });
+        }
+
         // inits selection items and appends them to display view
         renderResolvedPublishItems() {
             this.initSelectionItems();
@@ -126,6 +143,12 @@ module app.publish {
             });
 
             this.renderDependenciesLabel()
+        }
+
+        private initSubheaderMessage() {
+            this.subheaderMessage.addClass("publish-dialog-subheader");
+            this.appendChildToTitle(this.subheaderMessage);
+            this.subheaderMessage.setHtml("Resolving items...");
         }
 
         private initIncludeChildrenCheckbox() {
@@ -145,6 +168,7 @@ module app.publish {
             this.includeChildItemsCheck.setChecked(false);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
+            this.includeChildItemsCheck.setLabel('Include child items');
         }
 
         private initDependenciesLabel() {
@@ -402,9 +426,6 @@ module app.publish {
 
             // dependencies label
             this.updateDependenciesLabel();
-
-            // includeChildren link
-            this.includeChildItemsCheck.setLabel('Include child items');
         }
 
         // counts number of children that can be published with given selections upon pressing publish button
