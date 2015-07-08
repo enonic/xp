@@ -1,5 +1,10 @@
 {
-  "deleted": ["myContentId"],
+  "deleted": [
+    {
+      "id": "myContentId",
+      "name": "My deleted content"
+    }
+  ],
   "failures": [],
   "successes": [
     {

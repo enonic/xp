@@ -14,7 +14,7 @@ public class PublishContentResultJson
 
     private final List<Failure> failures = new ArrayList<>();
 
-    private final List<String> deleted = new ArrayList<>();
+    private final List<Deleted> deleted = new ArrayList<>();
 
     @SuppressWarnings("unused")
     public List<Success> getSuccesses()
@@ -29,7 +29,7 @@ public class PublishContentResultJson
     }
 
     @SuppressWarnings("unused")
-    public List<String> getDeleted()
+    public List<Deleted> getDeleted()
     {
         return deleted;
     }
@@ -52,9 +52,9 @@ public class PublishContentResultJson
             json.failures.add( new Failure( failed.getContent().getName().toString(), failed.getFailedReason().getMessage() ) );
         }
 
-        for ( final ContentId deleted : pushContentsResult.getDeleted() )
+        for ( final Content content : pushContentsResult.getDeleted() )
         {
-            json.deleted.add( deleted.toString() );
+            json.deleted.add( new Deleted( content.getId(), content.getDisplayName() ) );
         }
 
         return json;
@@ -67,6 +67,29 @@ public class PublishContentResultJson
         private final String name;
 
         public Success( final ContentId contentId, final String displayName )
+        {
+            this.id = contentId.toString();
+            this.name = displayName;
+        }
+
+        public String getId()
+        {
+            return id;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+    }
+
+    public static class Deleted {
+        private final String id;
+
+
+        private final String name;
+
+        public Deleted( final ContentId contentId, final String displayName )
         {
             this.id = contentId.toString();
             this.name = displayName;

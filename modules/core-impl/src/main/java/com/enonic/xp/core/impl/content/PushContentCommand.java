@@ -175,6 +175,9 @@ public class PushContentCommand
     {
         final Context currentContext = ContextAccessor.current();
 
+        final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToDelete ) ) );
+        this.resultBuilder.addDeleted( contents );
+
         final List<ContentPath> deletedContents = new ArrayList<>();
         deletedContents.addAll( deleteNodesInContext( nodesToDelete, currentContext ) );
 
@@ -182,10 +185,6 @@ public class PushContentCommand
             branch( target ).
             build() ) );
 
-        for ( final NodeId nodeId : nodesToDelete )
-        {
-            this.resultBuilder.addDeleted( ContentId.from( nodeId.toString() ) );
-        }
 
         if ( !deletedContents.isEmpty() )
         {
@@ -213,17 +212,16 @@ public class PushContentCommand
     {
         final Context currentContext = ContextAccessor.current();
 
+        final Contents contents =
+            getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( result.getNodeDeleteRequests().getNodeIds() ) ) );
+        this.resultBuilder.addDeleted( contents );
+
         final List<ContentPath> deletedContents = new ArrayList<>();
         deletedContents.addAll( deleteNodesInContext( result, currentContext ) );
 
         deletedContents.addAll( deleteNodesInContext( result, ContextBuilder.from( currentContext ).
             branch( target ).
             build() ) );
-
-        for ( final NodePublishRequest publishRequest : result.getNodeDeleteRequests() )
-        {
-            this.resultBuilder.addDeleted( ContentId.from( publishRequest.getNodeId().toString() ) );
-        }
 
         if ( !deletedContents.isEmpty() )
         {
