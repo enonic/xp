@@ -22,10 +22,10 @@ module app.wizard {
         constructor(params: ContentWizardToolbarParams) {
             super();
             super.addAction(params.saveAction);
-            super.addAction(params.duplicateAction);
             super.addAction(params.deleteAction);
-            super.addAction(params.publishAction);
+            super.addAction(params.duplicateAction);
             super.addAction(params.previewAction);
+            super.addAction(params.publishAction);
             super.addGreedySpacer();
 
             this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showLiveEditAction, params.showFormAction);

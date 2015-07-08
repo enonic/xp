@@ -23,7 +23,7 @@ module app.wizard.action {
         private showSplitEditAction: api.ui.Action;
 
         constructor(wizardPanel: app.wizard.ContentWizardPanel) {
-            this.save = new api.app.wizard.SaveAction(wizardPanel);
+            this.save = new api.app.wizard.SaveAction(wizardPanel, "Save draft");
             this.duplicate = new DuplicateContentAction(wizardPanel);
             this.delete = new DeleteContentAction(wizardPanel);
             this.close = new api.app.wizard.CloseAction(wizardPanel);
@@ -34,8 +34,8 @@ module app.wizard.action {
             this.showFormAction = new ShowFormAction(wizardPanel);
             this.showSplitEditAction = new ShowSplitEditAction(wizardPanel);
 
-            super(this.save, this.duplicate, this.delete,
-                this.close, this.publish, this.preview,
+            super(this.save, this.delete, this.duplicate,
+                this.preview, this.publish, this.close,
                 this.showLiveEditAction, this.showFormAction,
                 this.showSplitEditAction, this.saveAndClose);
         }
