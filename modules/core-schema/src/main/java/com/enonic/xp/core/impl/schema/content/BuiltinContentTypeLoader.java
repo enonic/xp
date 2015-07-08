@@ -115,17 +115,10 @@ public final class BuiltinContentTypeLoader
         createSystemType( ContentTypeName.unknownMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_DEFAULT ).build();
 
-    private static final ContentType[] SYSTEM_TYPES =
-        {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
-            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, MEDIA_UNKNOWN, SITE,
-            TEMPLATE_FOLDER, PAGE_TEMPLATE};
-
-    private final ContentTypes types;
-
-    public BuiltinContentTypeLoader()
-    {
-        this.types = ContentTypes.from( generateSystemContentTypes() );
-    }
+    private static final ContentTypes CONTENT_TYPES =
+        ContentTypes.from( UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
+                           MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE,
+                           MEDIA_UNKNOWN, SITE, TEMPLATE_FOLDER, PAGE_TEMPLATE );
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
@@ -138,28 +131,35 @@ public final class BuiltinContentTypeLoader
 
     private List<ContentType> generateSystemContentTypes()
     {
-        final List<ContentType> systemContentTypes = Lists.newArrayList();
-        for ( ContentType contentType : SYSTEM_TYPES )
+        return generateSystemContentTypes( CONTENT_TYPES );
+    }
+
+    private List<ContentType> generateSystemContentTypes( Iterable<ContentType> contentTypes )
+    {
+        final List<ContentType> generatedSystemContentTypes = Lists.newArrayList();
+        for ( ContentType contentType : contentTypes )
         {
             contentType = newContentType( contentType ).
                 icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().getLocalName() ) ).
                 build();
-            systemContentTypes.add( contentType );
+            generatedSystemContentTypes.add( contentType );
         }
-        return systemContentTypes;
+        return generatedSystemContentTypes;
     }
 
     public ContentTypes load()
     {
-        return this.types;
+        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes();
+        return ContentTypes.from( generatedSystemContentTypes );
     }
 
     public ContentTypes loadByModule( final ModuleKey moduleKey )
     {
-        final List<ContentType> contentTypeList = types.stream().
+        final List<ContentType> systemContentTypesByModuleKey = CONTENT_TYPES.stream().
             filter( contentType -> contentType.getName().getModuleKey().equals( moduleKey ) ).
             collect( Collectors.toList() );
-        return ContentTypes.from( contentTypeList );
+        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes( systemContentTypesByModuleKey );
+        return ContentTypes.from( generatedSystemContentTypes );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

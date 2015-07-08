@@ -9,15 +9,15 @@ import com.google.common.base.Preconditions;
 @Beta
 public final class ModuleKey
 {
-    private static final String SYSTEM_MODULE_NAME = "system";
-
-    public final static ModuleKey SYSTEM = new ModuleKey( SYSTEM_MODULE_NAME );
+    public final static ModuleKey SYSTEM = ModuleKey.from( "system" );
 
     public static final ModuleKey MEDIA_MOD = ModuleKey.from( "media" );
 
     public static final ModuleKey PORTAL = ModuleKey.from( "portal" );
 
     public static final ModuleKey BASE = ModuleKey.from( "base" );
+
+    public static final ModuleKeys SYSTEM_RESERVED_MODULE_KEYS = ModuleKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
 
     private final String name;
 
@@ -26,11 +26,6 @@ public final class ModuleKey
         Preconditions.checkNotNull( name, "ModuleKey cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "ModuleKey cannot be blank" );
         this.name = name;
-    }
-
-    public static boolean isSystemReservedModuleKey( final ModuleKey moduleKey )
-    {
-        return moduleKey.equals( MEDIA_MOD ) || moduleKey.equals( PORTAL ) || moduleKey.equals( BASE );
     }
 
     public String getName()
