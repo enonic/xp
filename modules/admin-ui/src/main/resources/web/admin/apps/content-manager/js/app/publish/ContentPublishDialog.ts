@@ -33,7 +33,7 @@ module app.publish {
 
         private includeChildItemsCheck: api.ui.Checkbox;
 
-        private subheaderMessage = new api.dom.H6El();
+        private subheaderMessage: api.dom.H6El = new api.dom.H6El();
 
         private selectedContents: ContentSummary[];
 
@@ -45,7 +45,7 @@ module app.publish {
 
         private dependenciesContentsResolvedWithoutChildren: ContentsResolved<ContentPublishDependencyItem> = new ContentsResolved<ContentPublishDependencyItem>();
 
-        private dependenciesLabel: api.dom.LabelEl;
+        private dependenciesLabel: api.dom.H6El = new api.dom.H6El();
 
         private includeChildrenCheckedListener: () => void;
 
@@ -57,13 +57,13 @@ module app.publish {
             this.modelName = "item";
 
             this.initDependenciesLabel();
+
             this.initIncludeChildrenCheckbox();
 
             this.getEl().addClass("publish-dialog");
 
             this.appendChildToContentPanel(this.initialItemsView);
             this.appendChildToContentPanel(this.dependenciesItemsView);
-            this.renderDependenciesLabel();
 
             this.subheaderMessage.addClass("publish-dialog-subheader");
             this.appendChildToTitle(this.subheaderMessage);
@@ -84,11 +84,8 @@ module app.publish {
                 this.updateDependenciesLabel();
                 this.centerMyself();
             }).done();
+            this.resolveAllDependenciesIfNeededAndUpdateView();
             this.open();
-        }
-
-        renderDependenciesLabel() {
-            this.initialItemsView.appendChild(this.dependenciesLabel);
         }
 
         show() {
@@ -114,6 +111,7 @@ module app.publish {
             this.selectedContents = contents;
         }
 
+
         // inits selection items and appends them to display view
         renderResolvedPublishItems() {
             this.initSelectionItems();
@@ -125,7 +123,27 @@ module app.publish {
                 }
             });
 
-            this.renderDependenciesLabel()
+            this.renderDependenciesLabel();
+        }
+
+        private initDependenciesLabel() {
+
+            this.dependenciesLabel.setHtml("Other items that will be published");
+            this.dependenciesLabel.addClass("dependencies-toggle-label");
+            this.dependenciesLabel.setVisible(false);
+
+        }
+
+        private renderDependenciesLabel() {
+            this.initialItemsView.appendChild(this.dependenciesLabel);
+        }
+
+        private updateDependenciesLabel() {
+            if ((this.getChildrenEligibleForPublishCount() + this.getDependantsEligibleForPublishCount()) > 0) {
+                this.dependenciesLabel.setVisible(true);
+            } else {
+                this.dependenciesLabel.setVisible(false);
+            }
         }
 
         private initIncludeChildrenCheckbox() {
@@ -145,36 +163,6 @@ module app.publish {
             this.includeChildItemsCheck.setChecked(false);
             this.includeChildItemsCheck.addClass('include-child-check');
             this.includeChildItemsCheck.onValueChanged(this.includeChildrenCheckedListener);
-        }
-
-        private initDependenciesLabel() {
-
-            this.dependenciesLabel = new api.dom.LabelEl("");
-            this.dependenciesLabel.addClass("dependencies-toggle-label");
-            this.dependenciesLabel.setVisible(false);
-
-            this.dependenciesLabel.onClicked((event) => {
-                this.dependenciesLabel.toggleClass("expanded");
-                this.resolveAllDependenciesIfNeededAndUpdateView();
-                this.updateDependenciesLabel();
-            });
-        }
-
-        private updateDependenciesLabel() {
-            if ((this.getChildrenEligibleForPublishCount() + this.getDependantsEligibleForPublishCount()) > 0) {
-                this.dependenciesLabel.setVisible(true);
-            } else {
-                this.dependenciesLabel.setVisible(false);
-            }
-            if (this.dependenciesExpanded()) {
-                this.dependenciesLabel.setValue("Hide dependencies and child items to be published");
-            } else {
-                this.dependenciesLabel.setValue("Show dependencies and child items to be published");
-            }
-        }
-
-        private dependenciesExpanded(): boolean {
-            return this.dependenciesLabel.hasClass("expanded");
         }
 
         /**
@@ -329,27 +317,26 @@ module app.publish {
         private renderResolvedDependenciesItems() {
             this.dependenciesItemsView.clear();
 
-            if (this.dependenciesExpanded()) {
-                var dependenciesItems: ContentsResolved<ContentPublishDependencyItem> =
-                    this.includeChildItemsCheck.isChecked() ?
-                    this.dependenciesContentsResolvedWithChildren :
-                    this.dependenciesContentsResolvedWithoutChildren;
+            var dependenciesItems: ContentsResolved<ContentPublishDependencyItem> =
+                this.includeChildItemsCheck.isChecked() ?
+                this.dependenciesContentsResolvedWithChildren :
+                this.dependenciesContentsResolvedWithoutChildren;
 
-                this.removeSpinnerClass();
+            this.removeSpinnerClass();
 
-                // append dependencies to view
-                dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishDependencyItem)  => {
-                    var dependencyView: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
-                        setViewer(new app.publish.ResolvedDependantContentViewer<ContentPublishItem>()).
-                        setContent(dependency).
-                        setIsCheckBoxEnabled(false).
-                        setIsCheckboxHidden(true).
-                        setShowStatus(false).
-                        build();
+            // append dependencies to view
+            dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishDependencyItem)  => {
+                var dependencyView: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
+                    setViewer(new app.publish.ResolvedDependantContentViewer<ContentPublishItem>()).
+                    setContent(dependency).
+                    setIsCheckBoxEnabled(false).
+                    setIsCheckboxHidden(true).
+                    setShowStatus(false).
+                    build();
 
-                    this.dependenciesItemsView.appendDependency(dependencyView);
-                });
-            }
+                this.dependenciesItemsView.appendDependency(dependencyView);
+            });
+
         }
 
         /**
