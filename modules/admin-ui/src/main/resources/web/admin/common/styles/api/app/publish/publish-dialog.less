@@ -23,23 +23,9 @@
   }
 
   .dependencies-toggle-label {
-    color: @admin-blue;
     margin-top: 20px;
+    margin-bottom: 5px;
     display: block;
-    &:hover {
-      cursor: pointer;
-    }
-
-    &.spinner:after {
-      font-family: 'live-edit-font-icon';
-
-      .animation(rotate360, .5s, .0s, linear);
-      content: "\e007";
-      color: @admin-bg-dark-gray;
-      display: inline-block;
-      margin-left: 10px;
-      font-size: 16px;
-    }
   }
 
   .dialog-buttons {
@@ -206,6 +192,17 @@
 
     &.spinner .browse-selection-publish-item {
       opacity: 0.3;
+    }
+
+    &.spinner:after {
+      font-family: 'live-edit-font-icon';
+
+      .animation(rotate360, .5s, .0s, linear);
+      content: "\e007";
+      color: @admin-bg-dark-gray;
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 16px;
     }
 
     .browse-selection-publish-item {
