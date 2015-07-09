@@ -81,12 +81,6 @@ task copyResources( type: Copy ) {
             fileMode 0755
         }
     }
-    into( 'tools' ) {
-        from( 'src/tools' ) {
-            include '*.sh'
-            fileMode 0755
-        }
-    }
     into( 'lib' ) {
         from( configurations.lib )
     }
