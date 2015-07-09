@@ -8,12 +8,17 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.base.Preconditions;
 
 public class FilesHelper
 {
-    private static final Map<Path, Object> test = new HashMap<>();
+    private static final Lock LOCK = new ReentrantLock();
+
+    private static final Map<Path, Condition> CONDITION_MAP = new HashMap<>();
 
     public static void write( Path path, byte[] bytes )
         throws IOException
@@ -34,36 +39,47 @@ public class FilesHelper
     private static void lock( Path path )
     {
         boolean canWrite = false;
-        while ( !canWrite )
+
+        LOCK.lock();
+        try
         {
-            synchronized ( test )
+            while ( !canWrite )
             {
-                if ( test.get( path ) == null )
+                final Condition condition = CONDITION_MAP.get( path );
+                if ( condition == null )
                 {
                     canWrite = true;
-                    test.put( path, new Object() );
+                    CONDITION_MAP.put( path, LOCK.newCondition() );
                 }
                 else
                 {
                     try
                     {
-                        test.wait();
+                        condition.await();
                     }
                     catch ( InterruptedException e )
                     {
                     }
                 }
             }
-
+        }
+        finally
+        {
+            LOCK.unlock();
         }
     }
 
     private static void unlock( Path path )
     {
-        synchronized ( test )
+        LOCK.lock();
+        try
         {
-            test.remove( path );
-            test.notifyAll();
+            final Condition condition = CONDITION_MAP.remove( path );
+            condition.signalAll();
+        }
+        finally
+        {
+            LOCK.unlock();
         }
     }
 
@@ -79,11 +95,7 @@ public class FilesHelper
             while ( rem > 0 )
             {
                 int n = Math.min( rem, 8192 );
-                synchronized ( System.out )
-                {
-                    System.out.println( "writing rem" + rem );
-                    System.out.flush();
-                }
+                System.out.println( "writing rem" + rem );
                 out.write( bytes, ( len - rem ), n );
                 rem -= n;
             }
