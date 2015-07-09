@@ -288,8 +288,6 @@ module app.publish {
                 var resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.getSelectedContentsIds(),
                     this.includeChildItemsCheck.isChecked());
 
-                this.addSpinnerClass();
-
                 resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
@@ -300,14 +298,6 @@ module app.publish {
             }
         }
 
-        private addSpinnerClass() {
-            this.dependenciesItemsView.addClass("spinner");
-        }
-
-        private removeSpinnerClass() {
-            this.dependenciesItemsView.removeClass("spinner");
-        }
-
         private renderResolvedDependenciesItems() {
             this.dependenciesItemsView.clear();
 
@@ -315,8 +305,6 @@ module app.publish {
                 this.includeChildItemsCheck.isChecked() ?
                 this.dependenciesContentsResolvedWithChildren :
                 this.dependenciesContentsResolvedWithoutChildren;
-
-            this.removeSpinnerClass();
 
             if (dependenciesItems.getContentsResolved().length > 0) {
                 var dependenciesHeader: api.dom.H6El = new api.dom.H6El("dependencies-header");
