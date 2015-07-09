@@ -10,7 +10,7 @@ import com.enonic.xp.upgrade.model.UpgradeModel002;
 import com.enonic.xp.upgrade.model.UpgradeModel003;
 import com.enonic.xp.upgrade.model.UpgradeModel004;
 
-public final class UpgradeTaskLocator
+final class UpgradeTaskLocator
 {
     private final List<UpgradeModel> upgradeModels;
 

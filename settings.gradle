@@ -25,7 +25,7 @@ include 'admin-ui'
 
 include 'itest-core'
 
-include 'upgrade-tool'
+include 'upgrade'
 include 'toolbox'
 
 include 'launcher'

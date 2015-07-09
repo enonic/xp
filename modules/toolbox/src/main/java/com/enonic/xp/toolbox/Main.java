@@ -14,6 +14,7 @@ import com.enonic.xp.toolbox.repo.LoadCommand;
 import com.enonic.xp.toolbox.repo.ReindexCommand;
 import com.enonic.xp.toolbox.repo.RestoreCommand;
 import com.enonic.xp.toolbox.repo.SnapshotCommand;
+import com.enonic.xp.toolbox.upgrade.UpgradeCommand;
 
 public final class Main
 {
@@ -32,6 +33,7 @@ public final class Main
         builder.withCommand( RestoreCommand.class );
         builder.withCommand( DeleteSnapshotsCommand.class );
         builder.withCommand( ListSnapshotsCommand.class );
+        builder.withCommand( UpgradeCommand.class );
 
         final Cli<Runnable> parser = builder.build();
 

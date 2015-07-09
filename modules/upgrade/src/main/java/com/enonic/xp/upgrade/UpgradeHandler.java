@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
 
-final class UpgradeHandler
+public final class UpgradeHandler
 {
     private final Path root;
 
@@ -18,8 +18,8 @@ final class UpgradeHandler
 
     private UpgradeHandler( Builder builder )
     {
-        root = builder.root;
-        upgradeTaskLocator = builder.upgradeTaskLocator;
+        this.root = builder.root;
+        this.upgradeTaskLocator = new UpgradeTaskLocator();
     }
 
     public static Builder create()
@@ -58,8 +58,6 @@ final class UpgradeHandler
     {
         private Path root;
 
-        private UpgradeTaskLocator upgradeTaskLocator;
-
         private Builder()
         {
         }
@@ -70,16 +68,9 @@ final class UpgradeHandler
             return this;
         }
 
-        public Builder upgradeModels( final UpgradeTaskLocator upgradeTaskLocator )
-        {
-            this.upgradeTaskLocator = upgradeTaskLocator;
-            return this;
-        }
-
         private void validate()
         {
             Preconditions.checkNotNull( this.root );
-            Preconditions.checkNotNull( this.upgradeTaskLocator );
         }
 
         public UpgradeHandler build()
