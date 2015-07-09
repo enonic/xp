@@ -20,46 +20,80 @@ public class FilesHelper
 
     private static final Map<Path, Condition> CONDITION_MAP = new HashMap<>();
 
+    private static final Map<Path, Integer> READER_COUNTER_MAP = new HashMap<>();
+
+    private enum LOCK_TYPE
+    {
+        READ,
+        WRITE
+    }
+
     public static void write( Path path, byte[] bytes )
         throws IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
         Preconditions.checkNotNull( bytes, "bytes are required" );
 
-        lock( path );
+        lock( path, LOCK_TYPE.WRITE );
 
         Files.createDirectories( path.getParent() );
         writefilesWithLog( path, bytes );
         //Files.write( path, bytes );
         System.out.println( "writing " + path );
 
-        unlock( path );
+        unlock( path, LOCK_TYPE.WRITE );
     }
 
-    private static void lock( Path path )
+    private static void lock( Path path, LOCK_TYPE lockType )
     {
-        boolean canWrite = false;
+        boolean pathLocked = false;
 
         LOCK.lock();
         try
         {
-            while ( !canWrite )
+            while ( !pathLocked )
             {
                 final Condition condition = CONDITION_MAP.get( path );
+
+                //If this path is not used
                 if ( condition == null )
                 {
-                    canWrite = true;
+                    //Marks this path as used
+                    pathLocked = true;
                     CONDITION_MAP.put( path, LOCK.newCondition() );
+
+                    //If I am a reader
+                    if ( LOCK_TYPE.READ == lockType )
+                    {
+                        //Marks this path as used by one writer
+                        READER_COUNTER_MAP.put( path, 1 );
+                    }
                 }
+
+                //Else this path is already used
                 else
                 {
-                    try
+                    //If I am a reader and this path is already used by readers
+                    final Integer readerCounter = READER_COUNTER_MAP.get( path );
+                    if ( LOCK_TYPE.READ == lockType && readerCounter != null )
                     {
-                        condition.await();
+                        //Marks this path as used by one more writer
+                        pathLocked = true;
+                        READER_COUNTER_MAP.put( path, readerCounter + 1 );
                     }
-                    catch ( InterruptedException e )
+                    //Else
+                    else
                     {
+                        //Waits for the last reader or the writer
+                        try
+                        {
+                            condition.await();
+                        }
+                        catch ( InterruptedException e )
+                        {
+                        }
                     }
+
                 }
             }
         }
@@ -69,13 +103,40 @@ public class FilesHelper
         }
     }
 
-    private static void unlock( Path path )
+    private static void unlock( Path path, LOCK_TYPE lockType )
     {
         LOCK.lock();
         try
         {
-            final Condition condition = CONDITION_MAP.remove( path );
-            condition.signalAll();
+            boolean lastReader = false;
+
+            //If I am a reader
+            if ( LOCK_TYPE.READ == lockType )
+            {
+                //If I am the last reader
+                final Integer readerCounter = READER_COUNTER_MAP.get( path );
+                if ( readerCounter == 1 )
+                {
+                    //Removes the reader counter
+                    lastReader = true;
+                    READER_COUNTER_MAP.remove( path );
+                }
+                //Else
+                else
+                {
+                    //Decrements the reader counter
+                    READER_COUNTER_MAP.put( path, readerCounter - 1 );
+                }
+            }
+
+            //If I am the last reader or a writer
+            if ( lastReader || LOCK_TYPE.WRITE == lockType )
+            {
+                //Marks the path as free
+                final Condition condition = CONDITION_MAP.remove( path );
+                //Wakes up the waiters
+                condition.signalAll();
+            }
         }
         finally
         {
@@ -109,14 +170,16 @@ public class FilesHelper
     {
         Preconditions.checkNotNull( path, "path is required" );
 
+        lock( path, LOCK_TYPE.READ );
+
+        byte[] bytes = null;
         if ( Files.exists( path ) )
         {
-            return Files.readAllBytes( path );
-        }
-        else
-        {
-            return null;
+            bytes = Files.readAllBytes( path );
         }
 
+        unlock( path, LOCK_TYPE.READ );
+
+        return bytes;
     }
 }
