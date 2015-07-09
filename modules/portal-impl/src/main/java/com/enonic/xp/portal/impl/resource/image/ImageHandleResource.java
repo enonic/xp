@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.resource.image;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
@@ -11,11 +13,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.Weigher;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
@@ -23,17 +23,14 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageScaleFunction;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
+import com.enonic.xp.util.FilesHelper;
 
 public final class ImageHandleResource
     extends BaseResource
 {
-    private final static int LOADING_CACHE_MAX_WEIGHT = 52428800; //50 Mio
-
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
     private final static int DEFAULT_QUALITY = 85;
-
-    private final static Cache<ImageHandleResourceKey, byte[]> IMAGE_HANDLE_RESOURCE_KEY_CACHE = createImageHandleResourceKeyCache();
 
     @QueryParam("filter")
     protected String filterParam;
@@ -58,29 +55,12 @@ public final class ImageHandleResource
 
     protected Cropping cropping;
 
-    private static Cache<ImageHandleResourceKey, byte[]> createImageHandleResourceKeyCache()
-    {
-        return CacheBuilder.newBuilder().
-            maximumWeight( LOADING_CACHE_MAX_WEIGHT ).
-            weigher( new Weigher<ImageHandleResourceKey, byte[]>()
-            {
-                @Override
-                public int weigh( final ImageHandleResourceKey key, final byte[] value )
-                {
-                    return value.length;
-                }
-            } ).
-            build();
-    }
-
     @GET
     public Response handle()
         throws Exception
     {
-        final ImageHandleResourceKey imageHandleResourceKey =
-            ImageHandleResourceKey.from( this.path, this.filterParam, this.quality, this.background );
-        byte[] imageData = IMAGE_HANDLE_RESOURCE_KEY_CACHE.getIfPresent( imageHandleResourceKey );
-
+        final Path cachedImagePath = getCachedImagePath();
+        byte[] imageData = FilesHelper.readAllBytes( cachedImagePath );
         if ( imageData == null )
         {
             final BufferedImage contentImage = toBufferedImage( this.binary );
@@ -90,7 +70,7 @@ public final class ImageHandleResource
             image = applyFilters( image, format );
 
             imageData = serializeImage( image, format );
-            IMAGE_HANDLE_RESOURCE_KEY_CACHE.put( imageHandleResourceKey, imageData );
+            FilesHelper.write( cachedImagePath, imageData );
         }
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
     }
@@ -184,5 +164,17 @@ public final class ImageHandleResource
         {
             return DEFAULT_BACKGROUND;
         }
+    }
+
+    private Path getCachedImagePath()
+    {
+        final String homeDir = HomeDir.get().toString();
+        final String filter = this.filterParam != null ? this.filterParam : "no-filter";
+        final String quality = Integer.toString( this.quality );
+        final String background = this.background != null ? this.background : "no-background";
+        final String path = this.path;
+
+        return Paths.get( homeDir, "work", "cache", "img", filter, quality, background, path ).
+            toAbsolutePath();
     }
 }
