@@ -1,13 +1,10 @@
 package com.enonic.xp.util;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -37,11 +34,27 @@ public class FilesHelper
         lock( path, LOCK_TYPE.WRITE );
 
         Files.createDirectories( path.getParent() );
-        writefilesWithLog( path, bytes );
-        //Files.write( path, bytes );
-        System.out.println( "writing " + path );
+        Files.write( path, bytes );
 
         unlock( path, LOCK_TYPE.WRITE );
+    }
+
+    public static byte[] readAllBytes( Path path )
+        throws IOException
+    {
+        Preconditions.checkNotNull( path, "path is required" );
+
+        lock( path, LOCK_TYPE.READ );
+
+        byte[] bytes = null;
+        if ( Files.exists( path ) )
+        {
+            bytes = Files.readAllBytes( path );
+        }
+
+        unlock( path, LOCK_TYPE.READ );
+
+        return bytes;
     }
 
     private static void lock( Path path, LOCK_TYPE lockType )
@@ -142,44 +155,5 @@ public class FilesHelper
         {
             LOCK.unlock();
         }
-    }
-
-    public static Path writefilesWithLog( Path path, byte[] bytes, OpenOption... options )
-        throws IOException
-    {
-        Objects.requireNonNull( bytes );
-
-        try (OutputStream out = Files.newOutputStream( path, options ))
-        {
-            int len = bytes.length;
-            int rem = len;
-            while ( rem > 0 )
-            {
-                int n = Math.min( rem, 8192 );
-                System.out.println( "writing rem" + rem );
-                out.write( bytes, ( len - rem ), n );
-                rem -= n;
-            }
-        }
-        return path;
-    }
-
-
-    public static byte[] readAllBytes( Path path )
-        throws IOException
-    {
-        Preconditions.checkNotNull( path, "path is required" );
-
-        lock( path, LOCK_TYPE.READ );
-
-        byte[] bytes = null;
-        if ( Files.exists( path ) )
-        {
-            bytes = Files.readAllBytes( path );
-        }
-
-        unlock( path, LOCK_TYPE.READ );
-
-        return bytes;
     }
 }
