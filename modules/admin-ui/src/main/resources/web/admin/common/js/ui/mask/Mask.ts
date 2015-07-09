@@ -4,10 +4,14 @@ module api.ui.mask {
 
         private masked: api.dom.Element;
 
+        private isFirefox: boolean;
+
         constructor(itemToMask?: api.dom.Element) {
             super("mask");
 
             this.masked = itemToMask;
+
+            this.isFirefox = this.isBrowserFirefox();
 
             if (this.masked) {
                 // pass the mousewheel event to the masked element to be able to scroll
@@ -15,6 +19,11 @@ module api.ui.mask {
 
                     var evt = this.cloneWheelEvent(event);
                     this.masked.getHTMLElement().dispatchEvent(evt);
+
+                    if(this.isFirefox) { //scrolling manually ff as dispatch event not working
+                        this.triggerScroll(event);
+                    }
+
                 });
 
                 this.masked.onHidden((event) => {
@@ -119,6 +128,17 @@ module api.ui.mask {
                 setHeight(maskedDimensions.height);
         }
 
+        private isBrowserFirefox(): boolean {
+            return /Firefox/i.test(navigator.userAgent);
+        }
+
+        private triggerScroll(event: WheelEvent) {
+            wemjq(this.masked.getHTMLElement()).stop().animate({
+                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
+            }, 600/Math.abs(event.deltaY), 'linear');
+        }
+
     }
+
 
 }

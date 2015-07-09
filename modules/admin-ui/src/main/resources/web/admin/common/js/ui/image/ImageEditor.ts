@@ -965,6 +965,13 @@ module api.ui.image {
             this.zoomKnob.onMouseDown(this.knobMouseDownListener);
 
             this.mouseWheelListener = (event: WheelEvent) => {
+                var x = this.getOffsetX(event),
+                    y = this.getOffsetY(event);
+
+                if(!this.isInsideCrop(x,y)) {
+                    return;
+                }
+
                 event.preventDefault();
                 event.stopPropagation();
 
