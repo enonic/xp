@@ -392,7 +392,7 @@ module app.publish {
                 childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
 
             //subheader
-            this.updateSubheaderMessage();
+            this.updateSubheaderMessage(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
 
             // publish button
             this.updatePublishButton(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
@@ -430,9 +430,10 @@ module app.publish {
             return result;
         }
 
-        private updateSubheaderMessage() {
+        private updateSubheaderMessage(count: number) {
             var allValid = this.allResolvedItemsAreValid();
-            this.subheaderMessage.setHtml(allValid ? "Your changes are ready for publishing" : "Invalid content(s) prevent publish");
+            this.subheaderMessage.setHtml(count == 0 ? "No items to publish" :
+                                          allValid ? "Your changes are ready for publishing" : "Invalid content(s) prevent publish");
             this.subheaderMessage.toggleClass("invalid", !allValid);
         }
 
