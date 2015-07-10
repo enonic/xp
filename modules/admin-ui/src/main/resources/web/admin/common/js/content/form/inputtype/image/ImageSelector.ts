@@ -103,7 +103,9 @@ module api.content.form.inputtype.image {
         }
 
         availableSizeChanged() {
-            this.selectedOptionsView.updateLayout();
+            if(this.selectedOptionsView) {
+                this.selectedOptionsView.updateLayout();
+            }
         }
 
         getValueType(): ValueType {
@@ -168,11 +170,15 @@ module api.content.form.inputtype.image {
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached
-                this.uploader.hide();
+                if(this.uploader) {
+                    this.uploader.hide();
+                }
             });
             comboBox.onShown((event: api.dom.ElementShownEvent) => {
                 // shown on occurrences between min and max
-                this.uploader.show();
+                if(this.uploader) {
+                    this.uploader.show();
+                }
             });
             comboBox.setInputIconUrl(inputIconUrl);
 
