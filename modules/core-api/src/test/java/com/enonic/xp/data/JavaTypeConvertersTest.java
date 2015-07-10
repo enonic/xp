@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
@@ -75,7 +74,6 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    @Ignore
     public void convertToInstant()
     {
         assertEquals( Instant.class, JavaTypeConverters.DATE_TIME.convertFrom( LocalDate.now() ).getClass() );

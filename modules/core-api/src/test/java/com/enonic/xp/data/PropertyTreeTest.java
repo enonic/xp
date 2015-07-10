@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -289,7 +288,6 @@ public class PropertyTreeTest
     }
 
     @Test
-    @Ignore
     public void tostring_single_property_of_type_PropertySet()
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
@@ -301,8 +299,8 @@ public class PropertyTreeTest
         expected += "[\n";
         expected += "  mySet: [\n";
         expected += "    [\n";
-        expected += "      longs: [1, 2],\n";
-        expected += "      strings: [\"a\", \"b\"]\n";
+        expected += "        longs: [1, 2],\n";
+        expected += "        strings: [a, b]\n";
         expected += "    ]\n";
         expected += "  ]\n";
         expected += "]";
@@ -310,7 +308,6 @@ public class PropertyTreeTest
     }
 
     @Test
-    @Ignore
     public void tostring_propertyArray_of_type_PropertySet()
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
@@ -326,12 +323,12 @@ public class PropertyTreeTest
         expected += "[\n";
         expected += "  mySet: [\n";
         expected += "    [\n";
-        expected += "      longs: [1, 2],\n";
-        expected += "      strings: [\"a\", \"b\"]\n";
+        expected += "        longs: [1, 2],\n";
+        expected += "        strings: [a, b]\n";
         expected += "    ],\n";
         expected += "    [\n";
-        expected += "      longs: [1, 2],\n";
-        expected += "      strings: [\"a\", \"b\"]\n";
+        expected += "        longs: [1, 2],\n";
+        expected += "        strings: [a, b]\n";
         expected += "    ]\n";
         expected += "  ]\n";
         expected += "]";
@@ -339,7 +336,6 @@ public class PropertyTreeTest
     }
 
     @Test
-    @Ignore
     public void tostring_PropertySet_within_PropertySet()
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
@@ -354,8 +350,8 @@ public class PropertyTreeTest
         expected += "[\n";
         expected += "  mySet: [\n";
         expected += "    [\n";
-        expected += "      a: [1, 1, 1],\n";
-        expected += "      b: [2, 2, 2],\n";
+        expected += "        a: [1, 1, 1],\n";
+        expected += "        b: [2, 2, 2],\n";
         expected += "      subSet: [\n";
         expected += "        [\n";
         expected += "          c: [3, 3, 3],\n";

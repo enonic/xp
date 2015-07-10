@@ -1,8 +1,9 @@
 package com.enonic.xp.vfs;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,7 +11,6 @@ import static org.junit.Assert.*;
 /**
  * http://docs.jboss.org/osgi/jboss-osgi-1.0.0/apidocs/org/jboss/osgi/vfs/VirtualFile.html
  */
-@Ignore
 public class PathBasedVirtualFileTest
     extends AbstractVirtualFileTest
 {
@@ -78,9 +78,11 @@ public class PathBasedVirtualFileTest
         assertNotNull( children );
         assertEquals( 3, children.size() );
 
-        assertEquals( "dir3", children.get( 0 ).getName() );
-        assertEquals( "file1.txt", children.get( 1 ).getName() );
-        assertEquals( "file2.log", children.get( 2 ).getName() );
+        final Set<String> names = children.stream().map( VirtualFile::getName ).collect( Collectors.toSet() );
+
+        assertTrue( names.contains( "dir3" ) );
+        assertTrue( names.contains( "file1.txt" ) );
+        assertTrue( names.contains( "file2.log" ) );
     }
 
     @Test
