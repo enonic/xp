@@ -420,5 +420,15 @@ module api.ui.grid {
                 this.rowManagerPlugin.onMoveRows.subscribe(callback);
             }
         }
+
+        subscribeOnScroll(callback: (e) => void) {
+            if (this.getHTMLElement().addEventListener) {
+                this.getHTMLElement().addEventListener('DOMMouseScroll', callback, false); //firefox
+                this.getHTMLElement().addEventListener('mousewheel', callback, false); //chrome
+            }
+            else {
+                this.getHTMLElement().attachEvent("onmousewheel", callback); //ie
+            }
+        }
     }
 }

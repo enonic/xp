@@ -459,6 +459,10 @@ module api.ui.selector.combobox {
                 this.setOnBlurListener();
             });
 
+            this.onScroll((event: WheelEvent) => {
+                event.stopPropagation();
+            });
+
             this.input.onClicked((event: MouseEvent) => {
                 this.input.setReadOnly(false);
             });
@@ -760,6 +764,10 @@ module api.ui.selector.combobox {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.input.unBlur(listener);
+        }
+
+        onScroll(listener: (event: WheelEvent) => void) {
+            this.comboBoxDropdown.getDropdownGrid().getElement().subscribeOnScroll(listener);
         }
     }
 
