@@ -128,10 +128,10 @@ module app.publish {
 
         private renderSelectedContentsWhileItemsGettingResolved() {
 
-            var pushRequestedItems: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaries(this.selectedContents.slice(0,
-                15));
+            var initiallySelectedContents: ContentPublishItem[] = ContentPublishItem.buildPublishItemsFromContentSummaries(
+                this.sortContentSummariesArrayByPath(this.selectedContents).slice(0, 15));
 
-            pushRequestedItems.forEach((content: ContentPublishItem) => {
+            initiallySelectedContents.forEach((content: ContentPublishItem) => {
                 var item: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
                     setViewer(new app.publish.ResolvedPublishContentViewer<ContentPublishItem>()).
                     setContent(content).
@@ -140,6 +140,15 @@ module app.publish {
                     build();
                 this.initialItemsView.appendChild(item);
             });
+        }
+
+        private sortContentSummariesArrayByPath(arrayToSort: ContentSummary[]): ContentSummary[] {
+            arrayToSort.sort((contentA, contentB) => {
+                var pathA = contentA.getPath().toString(),
+                    pathB = contentB.getPath().toString();
+                return (pathA < pathB) ? -1 : (pathA > pathB) ? 1 : 0;
+            });
+            return arrayToSort;
         }
 
         // inits selection items and appends them to display view
