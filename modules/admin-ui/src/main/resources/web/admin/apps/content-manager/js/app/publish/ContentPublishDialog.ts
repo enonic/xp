@@ -78,11 +78,29 @@ module app.publish {
 
         initAndOpen() {
             this.renderSelectedContentsWhileItemsGettingResolved();
-            this.resolvePublishRequestedContentsAndUpdateView().then(() => {
+
+            this.runResolveTasks(this.getResolveTasks(), () => {
                 this.centerMyself();
-            }).done();
-            this.resolveAllDependenciesIfNeededAndUpdateView();
+            })
             this.open();
+        }
+
+        private runResolveTasks(resolveTasks: wemQ.Promise<any>[], doneCallback?: () => void) {
+
+            this.showLoadingSpinnerAtButton();
+            this.publishButton.setEnabled(false);
+
+            wemQ.all(resolveTasks).done(() => {
+                if (doneCallback) {
+                    doneCallback();
+                }
+                this.hideLoadingSpinnerAtButton();
+                this.countItemsToPublishAndUpdateCounterElements();
+            });
+        }
+
+        private getResolveTasks(): wemQ.Promise<any>[] {
+            return [this.resolvePublishRequestedContentsAndUpdateView(), this.resolveAllDependenciesIfNeededAndUpdateView()];
         }
 
         show() {
@@ -143,15 +161,18 @@ module app.publish {
 
         private initIncludeChildrenCheckbox() {
 
+            var resolveTasks: wemQ.Promise<any>[] = [];
+
             this.includeChildrenCheckedListener = () => {
                 if ((this.includeChildItemsCheck.isChecked() && !this.initialContentsResolvedWithChildren.isAlreadyResolved()) ||
                     (!this.includeChildItemsCheck.isChecked() && !this.initialContentsResolvedWithoutChildren.isAlreadyResolved())) {
-                    this.resolvePublishRequestedContentsAndUpdateView();
+                    resolveTasks.push(this.resolvePublishRequestedContentsAndUpdateView());
                 } else {
                     this.renderResolvedPublishItems();
                     this.countItemsToPublishAndUpdateCounterElements();
                 }
-                this.resolveAllDependenciesIfNeededAndUpdateView();
+                resolveTasks.push(this.resolveAllDependenciesIfNeededAndUpdateView());
+                this.runResolveTasks(resolveTasks);
             };
 
             this.includeChildItemsCheck = new api.ui.Checkbox();
@@ -193,8 +214,7 @@ module app.publish {
                         this.initialContentsResolvedWithoutChildren.setAlreadyResolved(false);
                         this.dependenciesContentsResolvedWithChildren.setAlreadyResolved(false);
                         this.dependenciesContentsResolvedWithoutChildren.setAlreadyResolved(false);
-                        this.resolvePublishRequestedContentsAndUpdateView();
-                        this.resolveAllDependenciesIfNeededAndUpdateView();
+                        this.runResolveTasks(this.getResolveTasks());
                     }).
                     build();
                 this.selectionItems.push(item);
@@ -261,9 +281,7 @@ module app.publish {
         /**
          * Perform request to resolve publish items, init and render results.
          */
-        private resolvePublishRequestedContentsAndUpdateView(): wemQ.Promise<void> {
-
-            this.showLoadingSpinner();
+        private resolvePublishRequestedContentsAndUpdateView(): wemQ.Promise<any> {
 
             var resolvePublishRequestedContentsRequest = new api.content.ResolvePublishRequestedContentsRequest(this.getSelectedContentsIds(),
                 this.includeChildItemsCheck.isChecked());
@@ -271,16 +289,13 @@ module app.publish {
             return resolvePublishRequestedContentsRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
                 this.initResolvedPublishItems(jsonResponse.getResult());
                 this.renderResolvedPublishItems();
-                this.countItemsToPublishAndUpdateCounterElements();
-            }).finally(() => {
-                this.hideLoadingSpinner();
             });
         }
 
         /**
          * Perform request to resolve dependency items of passed item.
          */
-        private resolveAllDependenciesIfNeededAndUpdateView() {
+        private resolveAllDependenciesIfNeededAndUpdateView(): wemQ.Promise<any> {
 
             if ((this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithChildren.isAlreadyResolved()) ||
                 (!this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithoutChildren.isAlreadyResolved())) {
@@ -288,13 +303,13 @@ module app.publish {
                 var resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.getSelectedContentsIds(),
                     this.includeChildItemsCheck.isChecked());
 
-                resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
+                return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
-                    this.countItemsToPublishAndUpdateCounterElements();
-                }).done();
+                });
             } else {
                 this.renderResolvedDependenciesItems();
+                return wemQ<any>(null);
             }
         }
 
@@ -453,11 +468,11 @@ module app.publish {
             return true;
         }
 
-        private showLoadingSpinner() {
+        private showLoadingSpinnerAtButton() {
             this.publishButton.addClass("spinner");
         }
 
-        private hideLoadingSpinner() {
+        private hideLoadingSpinnerAtButton() {
             this.publishButton.removeClass("spinner");
         }
 
