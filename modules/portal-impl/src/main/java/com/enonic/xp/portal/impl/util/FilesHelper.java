@@ -1,4 +1,4 @@
-package com.enonic.xp.util;
+package com.enonic.xp.portal.impl.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,26 +33,36 @@ public class FilesHelper
 
         lock( path, LOCK_TYPE.WRITE );
 
-        Files.createDirectories( path.getParent() );
-        Files.write( path, bytes );
-
-        unlock( path, LOCK_TYPE.WRITE );
+        try
+        {
+            Files.createDirectories( path.getParent() );
+            Files.write( path, bytes );
+        }
+        finally
+        {
+            unlock( path, LOCK_TYPE.WRITE );
+        }
     }
 
     public static byte[] readAllBytes( Path path )
         throws IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
+        byte[] bytes = null;
 
         lock( path, LOCK_TYPE.READ );
-
-        byte[] bytes = null;
-        if ( Files.exists( path ) )
+        
+        try
         {
-            bytes = Files.readAllBytes( path );
+            if ( Files.exists( path ) )
+            {
+                bytes = Files.readAllBytes( path );
+            }
         }
-
-        unlock( path, LOCK_TYPE.READ );
+        finally
+        {
+            unlock( path, LOCK_TYPE.READ );
+        }
 
         return bytes;
     }

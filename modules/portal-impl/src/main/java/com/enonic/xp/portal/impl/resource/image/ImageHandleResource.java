@@ -23,7 +23,7 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageScaleFunction;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
-import com.enonic.xp.util.FilesHelper;
+import com.enonic.xp.portal.impl.util.FilesHelper;
 
 public final class ImageHandleResource
     extends BaseResource
