@@ -2,7 +2,6 @@ package com.enonic.xp.vfs;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,7 +9,6 @@ import static org.junit.Assert.*;
 /**
  * http://docs.jboss.org/osgi/jboss-osgi-1.0.0/apidocs/org/jboss/osgi/vfs/VirtualFile.html
  */
-@Ignore
 public class PathBasedVirtualFileTest
     extends AbstractVirtualFileTest
 {
