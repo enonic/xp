@@ -78,6 +78,10 @@ module app.publish {
 
         initAndOpen() {
             this.renderSelectedContentsWhileItemsGettingResolved();
+            if (!this.atLeastOneInitialItemHasChild()) {
+                this.includeChildItemsCheck.setVisible(false);
+                this.getButtonRow().addClass("no-checkbox");
+            }
 
             this.runResolveTasks(this.getResolveTasks(), () => {
                 this.centerMyself();
@@ -190,13 +194,9 @@ module app.publish {
 
             this.selectionItems = [];
 
-            var pushRequestedItems: ContentPublishRequestedItem[];
-
-            if (this.includeChildItemsCheck.isChecked()) {
-                pushRequestedItems = this.initialContentsResolvedWithChildren.getContentsResolved();
-            } else {
-                pushRequestedItems = this.initialContentsResolvedWithoutChildren.getContentsResolved();
-            }
+            var pushRequestedItems: ContentPublishRequestedItem[] = this.includeChildItemsCheck.isChecked()
+                ? this.initialContentsResolvedWithChildren.getContentsResolved()
+                : this.initialContentsResolvedWithoutChildren.getContentsResolved();
 
             pushRequestedItems.forEach((content: ContentPublishRequestedItem) => {
                 var item: SelectionPublishItem<ContentPublishRequestedItem> = new SelectionPublishItemBuilder<ContentPublishRequestedItem>().create().
@@ -448,6 +448,12 @@ module app.publish {
             });
 
             return result;
+        }
+
+        private atLeastOneInitialItemHasChild(): boolean {
+            return this.selectedContents.some((obj: ContentSummary) => {
+                return obj.hasChildren();
+            });
         }
 
         private allResolvedItemsAreValid(): boolean {
