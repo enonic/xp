@@ -24,14 +24,4 @@ public final class VirtualFiles
     {
         return new BundleResource( bundle, path );
     }
-
-    public static VirtualFile from( final ClassLoader classLoader )
-    {
-        return new ClassLoaderFile( classLoader, "/", true );
-    }
-
-    public static VirtualFile from( final Class clazz )
-    {
-        return from( clazz.getClassLoader() );
-    }
 }
