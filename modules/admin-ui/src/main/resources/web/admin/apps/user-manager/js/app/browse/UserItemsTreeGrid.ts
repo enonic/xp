@@ -27,14 +27,32 @@ module app.browse {
 
         constructor() {
 
-            var nameColumn = new GridColumnBuilder<TreeNode<UserTreeGridItem>>().
+            this.treeGridActions = new UserTreeGridActions(this);
+            super(new TreeGridBuilder<UserTreeGridItem>().
+                    setColumns([
+                        this.getNameColumn(), this.getModifiedTimeColumn()
+                    ]).
+                    setShowContextMenu(new TreeGridContextMenu(this.treeGridActions)).
+                    setPartialLoadEnabled(true).
+                    setLoadBufferSize(20). // rows count
+                    prependClasses("user-tree-grid")
+            );
+
+            this.subscribeEvents();
+        }
+
+        private getNameColumn(): GridColumn<TreeNode<UserTreeGridItem>> {
+            return new GridColumnBuilder<TreeNode<UserTreeGridItem>>().
                 setName("Name").
                 setId("name").
                 setField("displayName").
                 setFormatter(this.nameFormatter).
                 setMinWidth(250).
                 build();
-            var modifiedTimeColumn = new GridColumnBuilder<TreeNode<UserTreeGridItem>>().
+        }
+
+        private getModifiedTimeColumn(): GridColumn<TreeNode<UserTreeGridItem>> {
+            return new GridColumnBuilder<TreeNode<UserTreeGridItem>>().
                 setName("ModifiedTime").
                 setId("modifiedTime").
                 setField("modifiedTime").
@@ -43,21 +61,10 @@ module app.browse {
                 setMaxWidth(170).
                 setFormatter(DateTimeFormatter.format).
                 build();
+        }
 
-            this.treeGridActions = new UserTreeGridActions(this);
-            super(new TreeGridBuilder<UserTreeGridItem>().
-                    setColumns([
-                        nameColumn, modifiedTimeColumn
-                    ]).
-                    setShowContextMenu(new TreeGridContextMenu(this.treeGridActions)).
-                    setPartialLoadEnabled(true).
-                    setLoadBufferSize(20). // rows count
-                    prependClasses("user-tree-grid")
-            );
-
+        private subscribeEvents() {
             UserItemBrowseSearchEvent.on((event) => {
-                var principals = event.getPrincipals();
-
                 var items = event.getPrincipals().map((principal: Principal) => {
                     return new app.browse.UserTreeGridItemBuilder().
                         setPrincipal(principal).
@@ -76,6 +83,26 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
+            this.getGrid().subscribeOnDblClick((event, data) => {
+
+                if (this.isActive()) {
+                    var node = this.getGrid().getDataView().getItem(data.row);
+                    if (this.isUserItemEditable(node.getData())) {
+                        new app.browse.EditPrincipalEvent([node.getData()]).fire();
+                    }
+                }
+            });
+        }
+
+        private isUserItemEditable(userItem: UserTreeGridItem): boolean {
+
+            var type: UserTreeGridItemType = userItem.getType();
+
+            if (type == UserTreeGridItemType.ROLES || type == UserTreeGridItemType.GROUPS || type == UserTreeGridItemType.USERS) {
+                return false;
+            }
+
+            return true;
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<UserTreeGridItem>) {
