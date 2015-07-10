@@ -15,6 +15,11 @@ module api.ui.mask {
 
                     var evt = this.cloneWheelEvent(event);
                     this.masked.getHTMLElement().dispatchEvent(evt);
+
+                    if(this.isBrowserFirefox()) { //scrolling manually ff as dispatch event not working
+                        this.triggerScroll(event);
+                    }
+
                 });
 
                 this.masked.onHidden((event) => {
@@ -119,6 +124,17 @@ module api.ui.mask {
                 setHeight(maskedDimensions.height);
         }
 
+        private isBrowserFirefox(): boolean {
+            return /Firefox/i.test(navigator.userAgent);
+        }
+
+        private triggerScroll(event: WheelEvent) {
+            wemjq(this.masked.getHTMLElement()).stop().animate({
+                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
+            }, 600/Math.abs(event.deltaY), 'linear');
+        }
+
     }
+
 
 }
