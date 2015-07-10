@@ -147,6 +147,9 @@ module api.ui.dialog {
             return new DialogButton(this.getCancelAction());
         }
 
+        getButtonRow(): ModalDialogButtonRow {
+            return this.buttonRow;
+        }
 
         hide() {
             super.hide();
