@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.resource.image;
 
 import java.time.Instant;
 
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -32,6 +33,8 @@ public abstract class ImageBaseResourceTest
 
     private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
+    private TemporaryFolder temporaryFolder;
+
     protected ContentService contentService;
 
     @Override
@@ -40,6 +43,9 @@ public abstract class ImageBaseResourceTest
     {
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
         this.imageScaleFunctionBuilder = Mockito.mock( ImageScaleFunctionBuilder.class );
+        this.temporaryFolder = new TemporaryFolder();
+        this.temporaryFolder.create();
+        System.setProperty( "xp.home", this.temporaryFolder.getRoot().getPath() );
         this.services.setImageFilterBuilder( this.imageFilterBuilder );
         this.services.setImageScaleFunctionBuilder( this.imageScaleFunctionBuilder );
 
