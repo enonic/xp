@@ -41,7 +41,9 @@ public final class ImageHandleResource
     @QueryParam("background")
     protected String background;
 
-    protected String path;
+    protected String id;
+
+    protected String binaryRef;
 
     protected ByteSource binary;
 
@@ -169,12 +171,15 @@ public final class ImageHandleResource
     private Path getCachedImagePath()
     {
         final String homeDir = HomeDir.get().toString();
+        final String scale = this.scaleParams != null ? this.scaleParams.toString() : "no-scale";
+        final String focal = this.focalPoint != null ? this.focalPoint.toString() : "no-focal";
+        final String cropping = this.cropping != null ? this.cropping.toString() : "no-cropping";
         final String filter = this.filterParam != null ? this.filterParam : "no-filter";
         final String quality = Integer.toString( this.quality );
         final String background = this.background != null ? this.background : "no-background";
-        final String path = this.path;
 
-        return Paths.get( homeDir, "work", "cache", "img", filter, quality, background, path ).
+        return Paths.get( homeDir, "work", "cache", "img", this.id, this.binaryRef, scale, focal, cropping, filter, quality, background,
+                          name ).
             toAbsolutePath();
     }
 }

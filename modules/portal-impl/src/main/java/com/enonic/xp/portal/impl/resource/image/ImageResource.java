@@ -41,13 +41,14 @@ public final class ImageResource
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
         }
 
+        resource.binaryRef = attachment.getBinaryReference().toString();
         resource.binary = this.services.getContentService().getBinary( imageContentId, attachment.getBinaryReference() );
         if ( resource.binary == null )
         {
             throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContentId );
         }
 
-        resource.path = id + "/" + scale + "/" + name;
+        resource.id = id;
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
         resource.scaleParams = scaleParams;
@@ -68,13 +69,14 @@ public final class ImageResource
             throw notFound( "Image [%s] not found for content [%s]", name, this.contentPath );
         }
 
+        resource.binaryRef = attachment.getBinaryReference().toString();
         resource.binary = this.services.getContentService().getBinary( imageContent.getId(), attachment.getBinaryReference() );
         if ( resource.binary == null )
         {
             throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContent.getId() );
         }
 
-        resource.path = name;
+        resource.id = imageContent.getId().toString();
         resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
         resource.name = name;
         return resource;
