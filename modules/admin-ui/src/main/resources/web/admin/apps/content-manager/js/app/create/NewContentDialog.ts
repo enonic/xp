@@ -296,7 +296,7 @@ module app.create {
                          parentSite: Site) => {
 
                     this.listItems = this.createListOfContentTypeItems(contentTypes, parentSite);
-                    this.mostPopularItems = this.createMostPopularItemList(contentTypes, directChilds.getContents());
+                    this.mostPopularItems = this.createMostPopularItemList(this.listItems.map((el) => el.getContentType()), directChilds.getContents());
 
                     this.resetNewContentDialogContent();
                     this.toggleMostPopularBlockShown();
@@ -495,16 +495,16 @@ module app.create {
             return aggregatedList;
         }
 
-        private createMostPopularItemList(allContentTypes: ContentTypeSummary[],
+        private createMostPopularItemList(allowedContentTypes: ContentTypeSummary[],
                                           directChildContents: api.content.ContentSummary[]): MostPopularItem[] {
             var mostPopularItems: MostPopularItem[] = [],
                 filteredList: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
-                    return !content.getType().isMedia() && !content.getType().isDescendantOfMedia();
+                    return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() && Boolean(this.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
                 }),
                 aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(filteredList);
 
             for (var i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
-                var contentType: ContentTypeSummary = this.findElementByFieldValue(allContentTypes, "name", aggregatedList[i].contentType);
+                var contentType: ContentTypeSummary = this.findElementByFieldValue(allowedContentTypes, "name", aggregatedList[i].contentType);
                 mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
             }
 
