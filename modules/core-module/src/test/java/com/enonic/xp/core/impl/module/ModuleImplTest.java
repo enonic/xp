@@ -50,20 +50,6 @@ public class ModuleImplTest
     }
 
     @Test
-    public void testGetResource()
-    {
-        final ModuleImpl module = new ModuleImpl();
-        module.moduleKey = ModuleKey.from( "mymodule" );
-        module.moduleVersion = ModuleVersion.from( "1.0.0" );
-        module.bundle = this.bundle;
-
-        assertNotNull( module.getResource( "app/site.xml" ) );
-        assertNotNull( module.getResource( "app/parts/mypart/part.xml" ) );
-        assertNull( module.getResource( "part" ) );
-        assertNull( module.getResource( "not/found.txt" ) );
-    }
-
-    @Test
     public void testGetResourcePaths()
     {
         final ModuleImpl module = new ModuleImpl();

@@ -33,27 +33,14 @@ public class AssetResourceTest
     }
 
     @Test
-    public void getAssetResource_moduleNotFound()
-        throws Exception
-    {
-        final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/asset/demo/css/main.css" );
-        final MockHttpServletResponse response = executeRequest( request );
-
-        assertEquals( 404, response.getStatus() );
-        assertTrue( response.getContentAsString().contains( "Module [demo] not found" ) );
-    }
-
-    @Test
     public void getAssetResource_fileNotFound()
         throws Exception
     {
-        addModule( "demo" );
-
         final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
-        assertTrue( response.getContentAsString().contains( "File [css/main.css] not found in module [demo]" ) );
+        assertTrue( response.getContentAsString().contains( "Module [demo] or file [css/main.css] in it not found" ) );
     }
 
     @Test

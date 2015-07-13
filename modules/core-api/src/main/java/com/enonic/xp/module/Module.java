@@ -1,6 +1,5 @@
 package com.enonic.xp.module;
 
-import java.net.URL;
 import java.time.Instant;
 import java.util.Set;
 
@@ -28,8 +27,6 @@ public interface Module
     String getVendorName();
 
     String getVendorUrl();
-
-    URL getResource( String path );
 
     Set<String> getResourcePaths();
 
