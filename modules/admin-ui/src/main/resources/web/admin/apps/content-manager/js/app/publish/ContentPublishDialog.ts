@@ -387,52 +387,31 @@ module app.publish {
 
         private countItemsToPublishAndUpdateCounterElements() {
 
-            var checkedRequested = this.getSelectedItemsEligibleForPublishCount(),
-                dependantsEligibleForPublish = this.getDependantsEligibleForPublishCount(),
-                childrenEligibleForPublish = this.getChildrenEligibleForPublishCount();
+            var totalCountToPublish = this.getTotalCountToPublish();
 
             //subheader
-            this.updateSubheaderMessage();
+            this.updateSubheaderMessage(totalCountToPublish);
 
             // publish button
-            this.updatePublishButton(checkedRequested + dependantsEligibleForPublish + childrenEligibleForPublish);
+            this.updatePublishButton(totalCountToPublish);
         }
 
-        // counts number of children that can be published with given selections upon pressing publish button
-        private getChildrenEligibleForPublishCount(): number {
+        private getTotalCountToPublish(): number {
             var result = 0;
             this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
-                result += item.getBrowseItem().getModel().getChildrenCount();
-            });
-            return result;
-        }
-
-        // counts number of dependants that can be published with given selections upon pressing publish button
-        private getDependantsEligibleForPublishCount(): number {
-            var result = 0;
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
-                result += item.getBrowseItem().getModel().getDependantsCount();
-            });
-            return result;
-        }
-
-        private getSelectedItemsCount(): number {
-            return this.selectionItems.length;
-        }
-
-        private getSelectedItemsEligibleForPublishCount(): number {
-            var result = 0;
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
-                if (item.getBrowseItem().getModel().getCompareStatus() != api.content.CompareStatus.EQUAL) {
+                var model: ContentPublishRequestedItem = item.getBrowseItem().getModel();
+                result += model.getChildrenCount() + model.getDependantsCount();
+                if (model.getCompareStatus() != api.content.CompareStatus.EQUAL) {
                     result++;
                 }
             });
             return result;
         }
 
-        private updateSubheaderMessage() {
+        private updateSubheaderMessage(count: number) {
             var allValid = this.allResolvedItemsAreValid();
-            this.subheaderMessage.setHtml(allValid ? "Your changes are ready for publishing" : "Invalid content(s) prevent publish");
+            this.subheaderMessage.setHtml(count == 0 ? "No items to publish" :
+                                          allValid ? "Your changes are ready for publishing" : "Invalid content(s) prevent publish");
             this.subheaderMessage.toggleClass("invalid", !allValid);
         }
 
