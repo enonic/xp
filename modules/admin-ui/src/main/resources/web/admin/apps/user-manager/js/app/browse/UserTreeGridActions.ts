@@ -74,7 +74,10 @@ module app.browse {
                 this.DELETE.setEnabled(false);
             }
 
-            this.DUPLICATE.setEnabled((principalsSelected === 1) && (totalSelection === 1));
+            if (this.DUPLICATE.isVisible()) {
+                this.DUPLICATE.setVisible(false);
+            }
+            // this.DUPLICATE.setEnabled((principalsSelected === 1) && (totalSelection === 1));
             this.SYNCH.setEnabled(anyUserStore);
 
             var deferred = wemQ.defer<BrowseItem<UserTreeGridItem>[]>();
