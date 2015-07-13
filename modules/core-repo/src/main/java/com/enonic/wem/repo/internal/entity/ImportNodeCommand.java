@@ -75,7 +75,7 @@ public class ImportNodeCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             dryRun( this.dryRun ).
             id( existingNode.id() ).
-            setBinaryAttachments( binaryAttachments ).
+            setBinaryAttachments( this.binaryAttachments ).
             editor( editableNode -> editableNode.data = this.importNode.data() ).build();
 
         return doUpdateNode( updateNodeParams, this.binaryBlobStore );
