@@ -2,6 +2,7 @@ package com.enonic.xp.upgrade;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
@@ -10,7 +11,7 @@ public final class UpgradeHandler
 {
     private final Path root;
 
-    private final static String TARGET = "upgraded";
+    private final static Path TARGET = Paths.get( "upgraded" ).toAbsolutePath();
 
     private final UpgradeTaskLocator upgradeTaskLocator;
 
@@ -33,7 +34,7 @@ public final class UpgradeHandler
 
         LOG.info( "Starting upgrade..." );
 
-        HandleRepoNodes.create().
+        RepoNodesHandler.create().
             sourceRoot( root ).
             upgradeModels( this.upgradeTaskLocator.getUpgradeModels() ).
             target( TARGET ).

@@ -4,9 +4,24 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class UpgradeModel004Test
     extends AbstractUpgradeModelTest
 {
+
+
+    @Test
+    public void testSupports()
+        throws Exception
+    {
+        final UpgradeModel004 upgradeModel = new UpgradeModel004();
+
+        assertTrue( upgradeModel.supports( Paths.get( "test", "_", "node.xml" ), "cms-repo", "draft" ) );
+        assertTrue( upgradeModel.supports( Paths.get( "test", "test", "_", "node.xml" ), "cms-repo", "draft" ) );
+        assertFalse( upgradeModel.supports( Paths.get( "test", "test", "_", "node.xml" ), "system-repo", "draft" ) );
+
+    }
 
     @Test
     public void remove_pre_scaled_attachments()

@@ -15,7 +15,7 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.upgrade.model.UpgradeExportProperties;
 import com.enonic.xp.upgrade.model.UpgradeModel;
 
-public final class HandleRepoNodes
+public final class RepoNodesHandler
 {
     private final static String EXPORT_PROPERTIES_FILENAME = "export.properties";
 
@@ -25,13 +25,13 @@ public final class HandleRepoNodes
 
     private final Path root;
 
-    private final String target;
+    private final Path target;
 
     private final List<UpgradeModel> upgradeModels;
 
-    private final Logger LOG = Logger.getLogger( HandleRepoNodes.class.getName() );
+    private final Logger LOG = Logger.getLogger( RepoNodesHandler.class.getName() );
 
-    private HandleRepoNodes( Builder builder )
+    private RepoNodesHandler( Builder builder )
     {
         this.root = builder.root;
         this.upgradeModels = builder.upgradeModels;
@@ -148,7 +148,7 @@ public final class HandleRepoNodes
 
     private Path createTargetPath( final Path path )
     {
-        return Paths.get( this.target, PathHelper.subtractPath( path, root ).toString() );
+        return Paths.get( this.target.toString(), PathHelper.subtractPath( path, root ).toString() );
     }
 
     private void verifyRoot()
@@ -168,7 +168,7 @@ public final class HandleRepoNodes
     {
         private Path root;
 
-        private String target;
+        private Path target;
 
         private List<UpgradeModel> upgradeModels;
 
@@ -176,7 +176,7 @@ public final class HandleRepoNodes
         {
         }
 
-        public Builder target( final String target )
+        public Builder target( final Path target )
         {
             this.target = target;
             return this;
@@ -200,9 +200,9 @@ public final class HandleRepoNodes
             Preconditions.checkNotNull( this.upgradeModels );
         }
 
-        public HandleRepoNodes build()
+        public RepoNodesHandler build()
         {
-            return new HandleRepoNodes( this );
+            return new RepoNodesHandler( this );
         }
     }
 }

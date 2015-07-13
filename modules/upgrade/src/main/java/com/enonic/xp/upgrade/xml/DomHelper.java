@@ -1,6 +1,5 @@
 package com.enonic.xp.upgrade.xml;
 
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -48,11 +47,6 @@ public final class DomHelper
     public static Document parse( final String xml )
     {
         return parse( new StringReader( xml ) );
-    }
-
-    public static Document parse( final InputStream in )
-    {
-        return parse( new InputSource( in ) );
     }
 
     public static Document parse( final Reader in )

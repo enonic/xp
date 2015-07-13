@@ -28,7 +28,6 @@ public final class UpgradeModel001
     @Override
     public String upgrade( final Path path, final CharSource source )
     {
-
         return this.transform( path, source );
     }
 }
