@@ -11,10 +11,11 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.GZIP;
 
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.primitives.Ints.checkedCast;
@@ -22,8 +23,6 @@ import static com.google.common.primitives.Ints.checkedCast;
 public final class AssetResource
     extends BaseSubResource
 {
-    private Module module;
-
     private URL resourceUrl;
 
     @GET
@@ -32,28 +31,21 @@ public final class AssetResource
     public Response handle( @PathParam("module") final String module, @PathParam("path") final String path )
         throws Exception
     {
-        resolveModule( module );
-        resolveResourceUrl( path );
+        resolveResourceUrl( module, path );
         return doHandle();
     }
 
-    private void resolveModule( final String key )
+    private void resolveResourceUrl( final String key, final String path )
     {
         final ModuleKey moduleKey = ModuleKey.from( key );
-        this.module = this.services.getModuleService().getModule( moduleKey );
-        if ( this.module == null )
-        {
-            throw notFound( "Module [%s] not found", moduleKey );
-        }
-    }
+        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( moduleKey, "app/assets/" + path ) );
 
-    private void resolveResourceUrl( final String path )
-    {
-        this.resourceUrl = this.module.getResource( "app/assets/" + path );
-        if ( this.resourceUrl == null )
+        if ( resource == null )
         {
-            throw notFound( "File [%s] not found in module [%s]", path, this.module.getKey().toString() );
+            throw notFound( "Module [%s] or file [%s] in it not found", key, path );
         }
+
+        this.resourceUrl = resource.getUrl();
     }
 
     private void setCacheHeaders( final Response.ResponseBuilder response )
