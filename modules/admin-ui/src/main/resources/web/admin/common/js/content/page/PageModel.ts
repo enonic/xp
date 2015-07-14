@@ -119,7 +119,7 @@ module api.content.page {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
                     if (this.mode == PageMode.AUTOMATIC) {
                         var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
-                        this.setTemplate(setTemplate);
+                        this.setTemplate(setTemplate, true);
                     }
                 }
             };

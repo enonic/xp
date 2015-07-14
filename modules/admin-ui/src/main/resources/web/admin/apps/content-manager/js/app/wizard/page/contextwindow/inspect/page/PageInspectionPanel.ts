@@ -133,7 +133,7 @@ module app.wizard.page.contextwindow.inspect.page {
             throw new Error("Must be implemented by inheritors");
         }
 
-        refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
+        refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree, context: FormContext) {
             if (this.configForm) {
                 this.configForm.remove();
                 this.configForm = null;
@@ -143,7 +143,8 @@ module app.wizard.page.contextwindow.inspect.page {
                 return;
             }
 
-            this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
+            this.configForm =
+            new FormView(context ? context : new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
             this.pageInspectionPanel.appendChild(this.configForm);
             this.pageModel.setIgnorePropertyChanges(true);
             this.configForm.layout().catch((reason: any) => {
@@ -167,7 +168,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.pageControllerForm.getSelector().setModel(liveEditModel);
             this.pageControllerForm.show();
 
-            this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+            this.refreshConfigForm(pageModel.getController(), pageModel.getConfig(), liveEditModel.getFormContext());
 
 
             pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
@@ -175,7 +176,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
                     this.pageControllerForm.show();
 
-                    this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+                    this.refreshConfigForm(pageModel.getController(), pageModel.getConfig(), liveEditModel.getFormContext());
                 }
                 else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
 
@@ -183,7 +184,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
                     var controller = pageModel.getController();
                     if (controller) {
-                        this.refreshConfigForm(controller, pageModel.getConfig());
+                        this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
                     }
                 }
             });
@@ -199,10 +200,10 @@ module app.wizard.page.contextwindow.inspect.page {
             var pageMode = pageModel.getMode();
 
             if (pageMode == PageMode.FORCED_TEMPLATE) {
-                this.showPageConfig(pageModel);
+                this.showPageConfig(pageModel, liveEditModel.getFormContext());
             }
             else if (pageMode == PageMode.AUTOMATIC) {
-                this.showDefaultPageTemplateConfig(pageModel);
+                this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
             }
             else {
                 throw new Error("Unsupported PageMode: " + pageMode);
@@ -217,7 +218,7 @@ module app.wizard.page.contextwindow.inspect.page {
                 pageModel.unPropertyChanged(this.propertyChangedListener);
             }
 
-            this.initListener(pageModel);
+            this.initListener(pageModel, liveEditModel);
 
             var pageMode = pageModel.getMode();
 
@@ -225,10 +226,10 @@ module app.wizard.page.contextwindow.inspect.page {
             this.pageTemplateForm.show();
 
             if (pageMode == PageMode.FORCED_TEMPLATE) {
-                this.showPageConfig(pageModel);
+                this.showPageConfig(pageModel, liveEditModel.getFormContext());
             }
             else if (pageMode == PageMode.AUTOMATIC) {
-                this.showDefaultPageTemplateConfig(pageModel);
+                this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
             }
             else {
                 throw new Error("Unsupported PageMode: " + pageMode);
@@ -237,7 +238,7 @@ module app.wizard.page.contextwindow.inspect.page {
             pageModel.onPropertyChanged(this.propertyChangedListener);
         }
 
-        private initListener(pageModel: PageModel) {
+        private initListener(pageModel: PageModel, liveEditModel: LiveEditModel) {
             this.propertyChangedListener = (event: PropertyChangedEvent) => {
                 if (event.getPropertyName() == "controller" && this !== event.getSource()) {
 
@@ -245,7 +246,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
                     var controller = pageModel.getController();
                     if (controller) {
-                        this.refreshConfigForm(controller, pageModel.getConfig());
+                        this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
                     }
                 }
                 else if (event.getPropertyName() == PageModel.PROPERTY_CONFIG && this !== event.getSource()) {
@@ -253,25 +254,25 @@ module app.wizard.page.contextwindow.inspect.page {
                     this.pageTemplateForm.show();
 
                     if (pageModel.getMode() == PageMode.AUTOMATIC) {
-                        this.showDefaultPageTemplateConfig(pageModel);
+                        this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
                     }
                     else {
-                        this.showPageConfig(pageModel);
+                        this.showPageConfig(pageModel, liveEditModel.getFormContext());
                     }
                 }
             };
         }
 
-        private showPageConfig(pageModel: PageModel) {
+        private showPageConfig(pageModel: PageModel, formContext: FormContext) {
 
-            this.refreshConfigForm(pageModel.getTemplateDescriptor(), pageModel.getConfig());
+            this.refreshConfigForm(pageModel.getTemplateDescriptor(), pageModel.getConfig(), formContext);
         }
 
-        private showDefaultPageTemplateConfig(pageModel: PageModel) {
+        private showDefaultPageTemplateConfig(pageModel: PageModel, formContext: FormContext) {
 
             var controller = pageModel.getDefaultPageTemplateController();
             var config = pageModel.getConfig();
-            this.refreshConfigForm(controller, config);
+            this.refreshConfigForm(controller, config, formContext);
         }
     }
 }

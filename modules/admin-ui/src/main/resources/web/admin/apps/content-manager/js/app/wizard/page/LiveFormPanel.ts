@@ -231,8 +231,7 @@ module app.wizard.page {
                 else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
                     // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
-                    if (!(this.pageModel.getTemplate() == this.pageModel.getDefaultPageTemplate() && !event.getOldValue())) {
-
+                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue())) {
                         this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
                         this.lockPageAfterProxyLoad = true;
                         this.saveAndReloadPage(false);
