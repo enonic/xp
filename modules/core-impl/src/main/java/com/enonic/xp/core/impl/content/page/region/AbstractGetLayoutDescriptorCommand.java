@@ -1,11 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Collections2;
 
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
@@ -17,15 +13,21 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.Resources;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "app/layouts/([^/]+)/\\1.xml" );
+    private final static String PATH = "/app/layouts";
+
+    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     protected ModuleService moduleService;
+
+    protected ResourceService resourceService;
 
     private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
 
@@ -82,28 +84,19 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     private void readDescriptor( final Module module, final LayoutDescriptors.Builder layoutDescriptors )
     {
-        final Set<String> resources = module.getResourcePaths();
-        final Collection<String> componentNames = Collections2.transform( resources, input -> {
-            final Matcher matcher = PATTERN.matcher( input );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
+
+        for ( final Resource resource : resources )
+        {
+            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
             if ( matcher.matches() )
             {
-                return matcher.group( 1 );
-            }
-
-            return null;
-        } );
-
-        for ( final String componentName : componentNames )
-        {
-            if ( componentName == null )
-            {
-                continue;
-            }
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), componentName );
-            final LayoutDescriptor layoutDescriptor = getDescriptor( key );
-            if ( layoutDescriptor != null )
-            {
-                layoutDescriptors.add( layoutDescriptor );
+                final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
+                final LayoutDescriptor layoutDescriptor = getDescriptor( key );
+                if ( layoutDescriptor != null )
+                {
+                    layoutDescriptors.add( layoutDescriptor );
+                }
             }
         }
     }
@@ -119,6 +112,13 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     public final T mixinService( final MixinService mixinService )
     {
         this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return (T) this;
     }
 }

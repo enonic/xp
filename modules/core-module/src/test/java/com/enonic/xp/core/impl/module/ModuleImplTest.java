@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,20 +46,6 @@ public class ModuleImplTest
         assertEquals( "http://enonic.net", module.getUrl() );
         assertEquals( "Enonic", module.getVendorName() );
         assertEquals( "https://www.enonic.com", module.getVendorUrl() );
-    }
-
-    @Test
-    public void testGetResourcePaths()
-    {
-        final ModuleImpl module = new ModuleImpl();
-        module.moduleKey = ModuleKey.from( "mymodule" );
-        module.moduleVersion = ModuleVersion.from( "1.0.0" );
-        module.bundle = this.bundle;
-
-        final Set<String> set = module.getResourcePaths();
-        assertNotNull( set );
-        assertEquals( 3, set.size() );
-        assertTrue( set.contains( "app/parts/mypart/part.xml" ) );
     }
 
     private Bundle mockBundle( final String... resourcePaths )

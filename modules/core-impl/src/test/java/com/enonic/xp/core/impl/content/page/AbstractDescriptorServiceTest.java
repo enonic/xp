@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -11,7 +12,6 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.module.Module;
@@ -19,8 +19,11 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
+import com.enonic.xp.resource.Resources;
 
 public abstract class AbstractDescriptorServiceTest
 {
@@ -31,6 +34,8 @@ public abstract class AbstractDescriptorServiceTest
 
     protected ModuleService moduleService;
 
+    protected ResourceService resourceService;
+
     @Before
     public final void setup()
         throws Exception
@@ -38,6 +43,7 @@ public abstract class AbstractDescriptorServiceTest
         this.modulesDir = this.temporaryFolder.newFolder( "modules" );
         ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
         this.moduleService = Mockito.mock( ModuleService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
     }
 
     protected final void createFile( final ResourceKey key, final String content )
@@ -99,8 +105,15 @@ public abstract class AbstractDescriptorServiceTest
         return modules;
     }
 
-    protected final void mockResourcePaths( final Module module, final String... paths )
+    protected final void mockResources( final Module module, final String rootPath, final String filePattern, final String... paths )
     {
-        Mockito.when( module.getResourcePaths() ).thenReturn( Sets.newHashSet( paths ) );
+        List<Resource> resourceList = new ArrayList<Resource>();
+        for ( final String path : paths )
+        {
+            resourceList.add( Resource.from( ResourceKey.from( module.getKey(), path ) ) );
+        }
+        Resources resources = Resources.from( resourceList );
+
+        Mockito.when( this.resourceService.findResources( module.getKey(), rootPath, filePattern ) ).thenReturn( resources );
     }
 }

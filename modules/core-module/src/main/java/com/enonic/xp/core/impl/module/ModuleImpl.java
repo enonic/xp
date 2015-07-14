@@ -8,7 +8,6 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
@@ -96,18 +95,6 @@ final class ModuleImpl
     public Bundle getBundle()
     {
         return this.bundle;
-    }
-
-    @Override
-    public Set<String> getResourcePaths()
-    {
-        if ( this.bundle.getState() != Bundle.ACTIVE )
-        {
-            return Sets.newHashSet();
-        }
-        final Set<String> set = Sets.newHashSet();
-        findResourcePaths( set, this.bundle, "/" );
-        return set;
     }
 
     @Override

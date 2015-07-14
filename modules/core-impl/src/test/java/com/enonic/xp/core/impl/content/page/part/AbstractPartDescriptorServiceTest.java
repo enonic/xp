@@ -17,6 +17,7 @@ public abstract class AbstractPartDescriptorServiceTest
     {
         this.service = new PartDescriptorServiceImpl();
         this.service.setModuleService( this.moduleService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
@@ -39,7 +38,7 @@ public class ResourceServiceImpl
     }
 
     @Override
-    public Resources findResources( final ModuleKey moduleKey, final String pattern )
+    public Resources findResources( final ModuleKey moduleKey, final String path, final String filePattern )
     {
         Resources resources = null;
         final Module module = getActiveModule( moduleKey );
@@ -47,16 +46,19 @@ public class ResourceServiceImpl
         if ( module != null )
         {
             Bundle bundle = module.getBundle();
-            final Pattern compiledPattern = Pattern.compile( pattern );
-            final Enumeration<String> entryPaths = bundle.getEntryPaths( "/" );
 
-            final List<Resource> resourceList = Collections.list( entryPaths ).
-                stream().
-                filter( resourcePath -> compiledPattern.matcher( resourcePath ).matches() ).
-                map( resourcePath -> getResource( bundle, ResourceKey.from( module.getKey(), resourcePath ) ) ).
-                collect( Collectors.toList() );
+            final Enumeration<URL> entries = bundle.findEntries( path, filePattern, true );
 
-            resources = Resources.from( resourceList );
+            if ( entries != null )
+            {
+                final List<Resource> resourceList = Collections.list( entries ).
+                    stream().
+                    map( resourceUrl -> new Resource( ResourceKey.from( moduleKey, resourceUrl.getPath() ), resourceUrl ) ).
+                    collect( Collectors.toList() );
+
+                resources = Resources.from( resourceList );
+            }
+
         }
 
         if ( resources == null )

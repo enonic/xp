@@ -6,5 +6,5 @@ public interface ResourceService
 {
     Resource getResource( ResourceKey resourceKey );
 
-    Resources findResources( ModuleKey moduleKey, String pattern );
+    Resources findResources( ModuleKey moduleKey, String path, String filePattern );
 }

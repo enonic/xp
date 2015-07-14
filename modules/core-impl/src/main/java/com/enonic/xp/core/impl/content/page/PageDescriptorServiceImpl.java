@@ -10,6 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
@@ -19,6 +20,8 @@ public final class PageDescriptorServiceImpl
     private ModuleService moduleService;
 
     private MixinService mixinService;
+
+    private ResourceService resourceService;
 
     @Override
     public PageDescriptor getByKey( final DescriptorKey key )
@@ -34,6 +37,7 @@ public final class PageDescriptorServiceImpl
         return new GetPageDescriptorsByModuleCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKey( moduleKey ).execute();
     }
 
@@ -43,6 +47,7 @@ public final class PageDescriptorServiceImpl
         return new GetPageDescriptorsByModulesCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKeys( moduleKeys ).execute();
     }
 
@@ -56,5 +61,11 @@ public final class PageDescriptorServiceImpl
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }
