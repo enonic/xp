@@ -17,6 +17,7 @@ public abstract class AbstractLayoutDescriptorServiceTest
     {
         this.service = new LayoutDescriptorServiceImpl();
         this.service.setModuleService( this.moduleService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Override

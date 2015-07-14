@@ -10,6 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component
@@ -19,6 +20,8 @@ public final class LayoutDescriptorServiceImpl
     private ModuleService moduleService;
 
     private MixinService mixinService;
+
+    private ResourceService resourceService;
 
     @Override
     public LayoutDescriptor getByKey( final DescriptorKey key )
@@ -35,6 +38,7 @@ public final class LayoutDescriptorServiceImpl
         return new GetLayoutDescriptorsByModuleCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKey( moduleKey ).execute();
     }
 
@@ -44,6 +48,7 @@ public final class LayoutDescriptorServiceImpl
         return new GetLayoutDescriptorsByModulesCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKeys( moduleKeys ).execute();
     }
 
@@ -57,5 +62,11 @@ public final class LayoutDescriptorServiceImpl
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }

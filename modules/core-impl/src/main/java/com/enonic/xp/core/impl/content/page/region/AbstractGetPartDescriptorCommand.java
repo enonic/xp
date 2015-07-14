@@ -1,11 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Collections2;
 
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
@@ -17,15 +13,19 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.Resources;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "app/parts/([^/]+)/\\1.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "/app/parts/([^/]+)/\\1.xml" );
 
     protected ModuleService moduleService;
+
+    protected ResourceService resourceService;
 
     private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
 
@@ -83,28 +83,19 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private void readDescriptor( final Module module, final PartDescriptors.Builder partDescriptors )
     {
-        final Set<String> resources = module.getResourcePaths();
-        final Collection<String> componentNames = Collections2.transform( resources, input -> {
-            final Matcher matcher = PATTERN.matcher( input );
-            if ( matcher.matches() )
-            {
-                return matcher.group( 1 );
-            }
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATTERN.toString() );
 
-            return null;
-        } );
-
-        for ( final String componentName : componentNames )
+        for ( final Resource resource : resources )
         {
-            if ( componentName == null )
+            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
+            if(matcher.matches())
             {
-                continue;
-            }
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), componentName );
-            final PartDescriptor partDescriptor = getDescriptor( key );
-            if ( partDescriptor != null )
-            {
-                partDescriptors.add( partDescriptor );
+                final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
+                final PartDescriptor partDescriptor = getDescriptor( key );
+                if ( partDescriptor != null )
+                {
+                    partDescriptors.add( partDescriptor );
+                }
             }
         }
     }
@@ -120,6 +111,13 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     public final T mixinService( final MixinService mixinService )
     {
         this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return (T) this;
     }
 }

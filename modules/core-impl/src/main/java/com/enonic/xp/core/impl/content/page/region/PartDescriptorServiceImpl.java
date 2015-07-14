@@ -10,6 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component
@@ -19,6 +20,8 @@ public final class PartDescriptorServiceImpl
     private ModuleService moduleService;
 
     private MixinService mixinService;
+
+    private ResourceService resourceService;
 
     @Override
     public PartDescriptor getByKey( final DescriptorKey key )
@@ -35,6 +38,7 @@ public final class PartDescriptorServiceImpl
         return new GetPartDescriptorsByModuleCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKey( moduleKey ).execute();
     }
 
@@ -44,6 +48,7 @@ public final class PartDescriptorServiceImpl
         return new GetPartDescriptorsByModulesCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
+            resourceService( this.resourceService ).
             moduleKeys( moduleKeys ).execute();
     }
 
@@ -57,5 +62,11 @@ public final class PartDescriptorServiceImpl
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }

@@ -18,7 +18,7 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
         final Module module = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-layout-descr" );
 
-        mockResourcePaths( module, "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        mockResources( module, "/app/layouts/([^/]+)/\\1.xml", "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
         final LayoutDescriptors result = this.service.getByModule( module.getKey() );
 
         Assert.assertNotNull( result );
@@ -32,10 +32,8 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-layout-descr", "barmodule:barmodule-layout-descr" );
 
-        mockResourcePaths( modules.getModule( ModuleKey.from( "foomodule" ) ),
-                           "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        mockResourcePaths( modules.getModule( ModuleKey.from( "barmodule" ) ),
-                           "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
+        mockResources( modules.getModule( ModuleKey.from( "foomodule" ) ), "/app/layouts/([^/]+)/\\1.xml", "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        mockResources( modules.getModule( ModuleKey.from( "barmodule" ) ), "/app/layouts/([^/]+)/\\1.xml", "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
 
         final LayoutDescriptors result = this.service.getByModules( modules.getModuleKeys() );
 

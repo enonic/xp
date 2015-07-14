@@ -1,7 +1,6 @@
 package com.enonic.xp.module;
 
 import java.time.Instant;
-import java.util.Set;
 
 import org.osgi.framework.Bundle;
 
@@ -27,8 +26,6 @@ public interface Module
     String getVendorName();
 
     String getVendorUrl();
-
-    Set<String> getResourcePaths();
 
     Bundle getBundle();
 
