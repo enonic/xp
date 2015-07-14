@@ -9,7 +9,7 @@ import com.enonic.xp.toolbox.ToolCommand;
 import com.enonic.xp.upgrade.UpgradeException;
 import com.enonic.xp.upgrade.UpgradeHandler;
 
-@Command(name = "upgrade", description = "Upgrade an existing dump.")
+@Command(name = "upgrade", description = "Upgrade a dump to the current version. The upgraded dump will be written to a 'upgraded' folder")
 public final class UpgradeCommand
     extends ToolCommand
 {
