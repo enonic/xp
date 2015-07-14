@@ -7,7 +7,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "dump", description = "Export every branch in specified repository.")
+@Command(name = "dump", description = "Export all nodes.")
 public final class DumpCommand
     extends RepoCommand
 {
