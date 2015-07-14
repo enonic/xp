@@ -61,11 +61,11 @@ public abstract class AbstractControllerTest
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( ModuleKey.from( "mymodule" ) ) ).thenReturn( module );
+        Mockito.when( moduleService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();
         scriptService.setModuleService( moduleService );

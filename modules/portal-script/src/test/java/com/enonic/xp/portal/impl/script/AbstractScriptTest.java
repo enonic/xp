@@ -32,11 +32,11 @@ public abstract class AbstractScriptTest
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( MYMODULE_KEY ) ).thenReturn( module );
+        Mockito.when( moduleService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setModuleService( moduleService );
     }
