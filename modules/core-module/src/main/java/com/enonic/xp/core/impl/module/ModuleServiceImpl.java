@@ -53,6 +53,12 @@ public final class ModuleServiceImpl
     }
 
     @Override
+    public ClassLoader getClassLoader( final Module module )
+    {
+        return new BundleClassLoader( module.getBundle() );
+    }
+
+    @Override
     public void startModule( final ModuleKey key )
     {
         startModule( getModule( key ) );

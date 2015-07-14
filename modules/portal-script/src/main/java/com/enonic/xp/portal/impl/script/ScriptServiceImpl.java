@@ -62,12 +62,13 @@ public final class ScriptServiceImpl
     private ScriptExecutor createExecutor( final ModuleKey key )
     {
         final Module module = this.moduleService.getModule( key );
-        final ScriptEngine engine = NashornHelper.getScriptEngine( module.getClassLoader(), "-strict" );
+        ClassLoader classLoader = moduleService.getClassLoader( module );
+        final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
         executor.setGlobalMap( this.globalMap );
-        executor.setClassLoader( module.getClassLoader() );
+        executor.setClassLoader( classLoader );
         executor.setServiceRegistry( new ServiceRegistryImpl( module.getBundle().getBundleContext() ) );
         executor.initialize();
         return executor;

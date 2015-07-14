@@ -12,6 +12,8 @@ public interface ModuleService
 
     Modules getAllModules();
 
+    ClassLoader getClassLoader(Module module);
+
     void startModule( ModuleKey key );
 
     void stopModule( ModuleKey key );

@@ -59,7 +59,6 @@ public class ModuleBuilderTest
         assertEquals( "Enonic AS", module.getVendorName() );
         assertEquals( "http://enonic.com", module.getVendorUrl() );
         assertEquals( "[5.0,6.0)", module.getSystemVersion() );
-        assertNotNull( module.getClassLoader() );
     }
 
     private Bundle newBundle( final String name, final Map<String, String> headers )

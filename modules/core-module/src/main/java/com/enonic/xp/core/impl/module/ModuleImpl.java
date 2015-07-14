@@ -122,12 +122,6 @@ final class ModuleImpl
         return this.bundle.getState() == Bundle.ACTIVE;
     }
 
-    @Override
-    public ClassLoader getClassLoader()
-    {
-        return this.classLoader;
-    }
-
     private void findResourcePaths( final Set<String> set, final Bundle bundle, final String parentPath )
     {
         final Enumeration<URL> paths = bundle.findEntries( parentPath, "*", true );

@@ -45,11 +45,11 @@ public abstract class ScriptTestSupport
         Mockito.when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
 
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
         Mockito.when( moduleService.getModule( getModuleKey() ) ).thenReturn( module );
+        Mockito.when( moduleService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setModuleService( moduleService );
         this.portalRequest = new PortalRequest();
