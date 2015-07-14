@@ -7,7 +7,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "load", description = "Import every branch in specified repository.")
+@Command(name = "load", description = "Import nodes from a dump.")
 public final class LoadCommand
     extends RepoCommand
 {
