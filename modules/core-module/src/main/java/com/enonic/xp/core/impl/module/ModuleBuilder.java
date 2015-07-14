@@ -41,7 +41,6 @@ final class ModuleBuilder
         module.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
         module.vendorUrl = getHeader( this.bundle, X_VENDOR_URL, null );
         module.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
-        module.classLoader = new BundleClassLoader( this.bundle );
 
         return module;
     }

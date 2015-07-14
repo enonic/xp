@@ -34,8 +34,6 @@ final class ModuleImpl
 
     protected Bundle bundle;
 
-    protected ClassLoader classLoader;
-
     @Override
     public ModuleKey getKey()
     {
