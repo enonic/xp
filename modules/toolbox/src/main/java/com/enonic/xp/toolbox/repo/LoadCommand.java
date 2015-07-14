@@ -7,7 +7,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "load", description = "Import nodes from a dump.")
+@Command(name = "load", description = "Import data from a dump.")
 public final class LoadCommand
     extends RepoCommand
 {
