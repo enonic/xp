@@ -18,7 +18,9 @@ import com.enonic.xp.resource.Resources;
 final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "/app/pages/([^/]+)/\\1.xml" );
+    private final static String PATH = "/app/pages";
+
+    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     private ModuleKey moduleKey;
 
@@ -53,12 +55,12 @@ final class GetPageDescriptorsByModuleCommand
     private PageDescriptors getDescriptorsFromModule( final Module module )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATTERN.toString() );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
 
         for ( final Resource resource : resources )
         {
             Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if(matcher.matches())
+            if ( matcher.matches() )
             {
                 final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
                 final PageDescriptor pageDescriptor = getDescriptor( key );

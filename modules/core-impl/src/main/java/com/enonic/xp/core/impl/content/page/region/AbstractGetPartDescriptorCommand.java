@@ -21,7 +21,9 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "/app/parts/([^/]+)/\\1.xml" );
+    private final static String PATH = "/app/parts";
+
+    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     protected ModuleService moduleService;
 
@@ -83,12 +85,12 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private void readDescriptor( final Module module, final PartDescriptors.Builder partDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATTERN.toString() );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
 
         for ( final Resource resource : resources )
         {
             Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if(matcher.matches())
+            if ( matcher.matches() )
             {
                 final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
                 final PartDescriptor partDescriptor = getDescriptor( key );

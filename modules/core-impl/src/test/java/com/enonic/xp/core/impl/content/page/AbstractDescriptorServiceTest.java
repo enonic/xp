@@ -43,7 +43,7 @@ public abstract class AbstractDescriptorServiceTest
         this.modulesDir = this.temporaryFolder.newFolder( "modules" );
         ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
         this.moduleService = Mockito.mock( ModuleService.class );
-        this.resourceService = Mockito.mock( ResourceService.class);
+        this.resourceService = Mockito.mock( ResourceService.class );
     }
 
     protected final void createFile( final ResourceKey key, final String content )
@@ -105,14 +105,15 @@ public abstract class AbstractDescriptorServiceTest
         return modules;
     }
 
-    protected final void mockResources( final Module module, final String pattern, final String... paths )
+    protected final void mockResources( final Module module, final String rootPath, final String filePattern, final String... paths )
     {
         List<Resource> resourceList = new ArrayList<Resource>();
-        for( final String path : paths ) {
+        for ( final String path : paths )
+        {
             resourceList.add( Resource.from( ResourceKey.from( module.getKey(), path ) ) );
         }
         Resources resources = Resources.from( resourceList );
 
-        Mockito.when( this.resourceService.findResources( module.getKey(), pattern ) ).thenReturn( resources );
+        Mockito.when( this.resourceService.findResources( module.getKey(), rootPath, filePattern ) ).thenReturn( resources );
     }
 }

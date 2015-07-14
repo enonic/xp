@@ -18,7 +18,7 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Module module = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-part-descr" );
 
-        mockResources( module, "/app/parts/([^/]+)/\\1.xml", "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
+        mockResources( module, "/app/parts", "*.xml", "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
         final PartDescriptors result = this.service.getByModule( module.getKey() );
 
         Assert.assertNotNull( result );
@@ -32,8 +32,10 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResources( modules.getModule( ModuleKey.from( "foomodule" ) ), "/app/parts/([^/]+)/\\1.xml", "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
-        mockResources( modules.getModule( ModuleKey.from( "barmodule" ) ), "/app/parts/([^/]+)/\\1.xml", "app/parts/barmodule-part-descr/barmodule-part-descr.xml" );
+        mockResources( modules.getModule( ModuleKey.from( "foomodule" ) ), "/app/parts", "*.xml",
+                       "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
+        mockResources( modules.getModule( ModuleKey.from( "barmodule" ) ), "/app/parts", "*.xml",
+                       "app/parts/barmodule-part-descr/barmodule-part-descr.xml" );
 
         final PartDescriptors result = this.service.getByModules( modules.getModuleKeys() );
 

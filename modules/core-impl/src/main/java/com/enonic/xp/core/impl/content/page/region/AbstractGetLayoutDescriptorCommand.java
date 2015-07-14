@@ -21,7 +21,9 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "/app/layouts/([^/]+)/\\1.xml" );
+    private final static String PATH = "/app/layouts";
+
+    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     protected ModuleService moduleService;
 
@@ -82,12 +84,12 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     private void readDescriptor( final Module module, final LayoutDescriptors.Builder layoutDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATTERN.toString() );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
 
         for ( final Resource resource : resources )
         {
             Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if(matcher.matches())
+            if ( matcher.matches() )
             {
                 final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
                 final LayoutDescriptor layoutDescriptor = getDescriptor( key );
