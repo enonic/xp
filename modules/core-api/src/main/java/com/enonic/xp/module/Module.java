@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -28,7 +29,7 @@ public class Module
 
     private ModuleKey moduleKey;
 
-    private ModuleVersion moduleVersion;
+    private Version moduleVersion;
 
     private String displayName;
 
@@ -45,7 +46,7 @@ public class Module
     private Module( final Bundle bundle ) {
         this.bundle = bundle;
         this.moduleKey = ModuleKey.from( bundle );
-        this.moduleVersion = ModuleVersion.from( this.bundle.getVersion().toString() );
+        this.moduleVersion = this.bundle.getVersion();
         this.displayName = getHeader( this.bundle, Constants.BUNDLE_NAME, this.getKey().toString() );
         this.url = getHeader( this.bundle, X_MODULE_URL, null );
         this.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
@@ -63,7 +64,7 @@ public class Module
         return this.moduleKey;
     }
 
-    public ModuleVersion getVersion()
+    public Version getVersion()
     {
         return moduleVersion;
     }
