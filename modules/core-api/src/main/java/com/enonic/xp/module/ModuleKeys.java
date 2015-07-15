@@ -8,28 +8,29 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public final class ModuleKeys
-    extends AbstractImmutableEntityList<ModuleKey>
+    extends AbstractImmutableEntityList<ApplicationKey>
 {
-    private ModuleKeys( final ImmutableList<ModuleKey> list )
+    private ModuleKeys( final ImmutableList<ApplicationKey> list )
     {
         super( list );
     }
 
-    public static ModuleKeys from( final ModuleKey... moduleKeys )
+    public static ModuleKeys from( final ApplicationKey... applicationKeys )
+    {
+        return new ModuleKeys( ImmutableList.copyOf( applicationKeys ) );
+    }
+
+    public static ModuleKeys from( final Iterable<? extends ApplicationKey> moduleKeys )
     {
         return new ModuleKeys( ImmutableList.copyOf( moduleKeys ) );
     }
 
-    public static ModuleKeys from( final Iterable<? extends ModuleKey> moduleKeys )
-    {
-        return new ModuleKeys( ImmutableList.copyOf( moduleKeys ) );
-    }
-
-    public static ModuleKeys from( final Collection<? extends ModuleKey> moduleKeys )
+    public static ModuleKeys from( final Collection<? extends ApplicationKey> moduleKeys )
     {
         return new ModuleKeys( ImmutableList.copyOf( moduleKeys ) );
     }
@@ -41,23 +42,23 @@ public final class ModuleKeys
 
     public static ModuleKeys empty()
     {
-        return new ModuleKeys( ImmutableList.<ModuleKey>of() );
+        return new ModuleKeys( ImmutableList.<ApplicationKey>of() );
     }
 
-    private static ImmutableList<ModuleKey> parseModuleKeys( final String... moduleKeys )
+    private static ImmutableList<ApplicationKey> parseModuleKeys( final String... moduleKeys )
     {
         final Collection<String> list = Lists.newArrayList( moduleKeys );
-        final Collection<ModuleKey> moduleKeyList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableList.copyOf( moduleKeyList );
+        final Collection<ApplicationKey> applicationKeyList = Collections2.transform( list, new ParseFunction() );
+        return ImmutableList.copyOf( applicationKeyList );
     }
 
     private final static class ParseFunction
-        implements Function<String, ModuleKey>
+        implements Function<String, ApplicationKey>
     {
         @Override
-        public ModuleKey apply( final String value )
+        public ApplicationKey apply( final String value )
         {
-            return ModuleKey.from( value );
+            return ApplicationKey.from( value );
         }
     }
 

@@ -15,8 +15,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -27,7 +27,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 public final class RelationshipTypeServiceImpl
     implements RelationshipTypeService, BundleListener
 {
-    private final Map<ModuleKey, RelationshipTypes> relationshipTypesMap;
+    private final Map<ApplicationKey, RelationshipTypes> relationshipTypesMap;
 
     private ModuleService moduleService;
 
@@ -54,7 +54,7 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipType getByName( final RelationshipTypeName name )
     {
-        final RelationshipTypes relationshipTypes = getByModule( name.getModuleKey() );
+        final RelationshipTypes relationshipTypes = getByModule( name.getApplicationKey() );
         return relationshipTypes.get( name );
     }
 
@@ -64,7 +64,7 @@ public final class RelationshipTypeServiceImpl
         final Set<RelationshipType> relationshipTypeList = Sets.newLinkedHashSet();
 
         //Gets the default RelationshipTypes
-        final RelationshipTypes systemRelationshipTypes = getByModule( ModuleKey.SYSTEM );
+        final RelationshipTypes systemRelationshipTypes = getByModule( ApplicationKey.SYSTEM );
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
         //Gets for each module the RelationshipTypes
@@ -78,17 +78,17 @@ public final class RelationshipTypeServiceImpl
     }
 
     @Override
-    public RelationshipTypes getByModule( final ModuleKey moduleKey )
+    public RelationshipTypes getByModule( final ApplicationKey applicationKey )
     {
-        return relationshipTypesMap.computeIfAbsent( moduleKey, this::loadByModule );
+        return relationshipTypesMap.computeIfAbsent( applicationKey, this::loadByModule );
     }
 
-    private RelationshipTypes loadByModule( final ModuleKey moduleKey )
+    private RelationshipTypes loadByModule( final ApplicationKey applicationKey )
     {
         RelationshipTypes relationshipTypes = null;
 
         //If the module is the default module
-        if ( ModuleKey.SYSTEM.equals( moduleKey ) )
+        if ( ApplicationKey.SYSTEM.equals( applicationKey ) )
         {
             //loads the default relationship types
             final BuiltinRelationshipTypeLoader builtinRelationshipTypeLoader = new BuiltinRelationshipTypeLoader();
@@ -97,7 +97,7 @@ public final class RelationshipTypeServiceImpl
         else
         {
             //Else, loads the corresponding bundle relation types
-            final Module module = this.moduleService.getModule( moduleKey );
+            final Module module = this.moduleService.getModule( applicationKey );
             if ( module != null )
             {
                 final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( module.getBundle() );
@@ -124,7 +124,7 @@ public final class RelationshipTypeServiceImpl
     {
         if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
         {
-            this.relationshipTypesMap.remove( ModuleKey.from( event.getBundle() ) );
+            this.relationshipTypesMap.remove( ApplicationKey.from( event.getBundle() ) );
         }
     }
 }

@@ -17,7 +17,7 @@ import org.osgi.service.url.URLStreamHandlerService;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 
 import static org.osgi.framework.BundleEvent.INSTALLED;
@@ -47,13 +47,13 @@ public final class ModuleURLStreamHandler
         }
 
         final ResourceKey key = ResourceKey.from( path );
-        final Bundle bundle = getBundle( key.getModule() );
+        final Bundle bundle = getBundle( key.getApplicationKey() );
 
         final URL resolvedUrl = bundle.getResource( key.getPath() );
         return resolvedUrl != null ? resolvedUrl.openConnection() : null;
     }
 
-    private Bundle getBundle( final ModuleKey key )
+    private Bundle getBundle( final ApplicationKey key )
         throws IOException
     {
         final String moduleName = key.toString();

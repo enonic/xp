@@ -6,6 +6,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
+
 import static org.junit.Assert.*;
 
 public class ModulesTest
@@ -21,9 +23,9 @@ public class ModulesTest
 
         Mockito.when( module1.getDisplayName() ).thenReturn( "aaa" );
 
-        Mockito.when( module1.getKey() ).thenReturn( ModuleKey.from( "aaa" ) );
-        Mockito.when( module2.getKey() ).thenReturn( ModuleKey.from( "bbb" ) );
-        Mockito.when( module3.getKey() ).thenReturn( ModuleKey.from( "ccc" ) );
+        Mockito.when( module1.getKey() ).thenReturn( ApplicationKey.from( "aaa" ) );
+        Mockito.when( module2.getKey() ).thenReturn( ApplicationKey.from( "bbb" ) );
+        Mockito.when( module3.getKey() ).thenReturn( ApplicationKey.from( "ccc" ) );
 
         ModulesTest.list.add( module1 );
         ModulesTest.list.add( module2 );
@@ -44,9 +46,9 @@ public class ModulesTest
 
         assertEquals( 3, modules.getSize() );
         assertEquals( "aaa", modules.first().getDisplayName() );
-        assertNotNull( modules.getModule( ModuleKey.from( "aaa" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "bbb" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "ccc" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test
@@ -56,9 +58,9 @@ public class ModulesTest
 
         assertEquals( 3, modules.getSize() );
         assertEquals( "aaa", modules.first().getDisplayName() );
-        assertNotNull( modules.getModule( ModuleKey.from( "aaa" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "bbb" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "ccc" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test
@@ -68,9 +70,9 @@ public class ModulesTest
 
         assertEquals( 3, modules.getSize() );
         assertEquals( "aaa", modules.first().getDisplayName() );
-        assertNotNull( modules.getModule( ModuleKey.from( "aaa" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "bbb" ) ) );
-        assertNotNull( modules.getModule( ModuleKey.from( "ccc" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( modules.getModule( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test

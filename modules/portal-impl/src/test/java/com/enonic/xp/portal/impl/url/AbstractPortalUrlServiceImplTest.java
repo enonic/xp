@@ -3,10 +3,10 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 
 public abstract class AbstractPortalUrlServiceImplTest
@@ -22,7 +22,7 @@ public abstract class AbstractPortalUrlServiceImplTest
     {
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
         this.portalRequest.setBaseUri( "/portal" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 

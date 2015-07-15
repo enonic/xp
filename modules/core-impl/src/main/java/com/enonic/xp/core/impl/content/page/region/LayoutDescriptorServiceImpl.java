@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
@@ -33,13 +33,13 @@ public final class LayoutDescriptorServiceImpl
     }
 
     @Override
-    public LayoutDescriptors getByModule( final ModuleKey moduleKey )
+    public LayoutDescriptors getByModule( final ApplicationKey applicationKey )
     {
         return new GetLayoutDescriptorsByModuleCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            moduleKey( moduleKey ).execute();
+            applicationKey( applicationKey ).execute();
     }
 
     @Override

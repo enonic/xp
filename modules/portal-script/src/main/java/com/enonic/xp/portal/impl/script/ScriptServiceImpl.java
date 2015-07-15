@@ -10,10 +10,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
@@ -29,7 +29,7 @@ public final class ScriptServiceImpl
 {
     private final Map<String, Object> globalMap;
 
-    private final ConcurrentMap<ModuleKey, ScriptExecutor> executors;
+    private final ConcurrentMap<ApplicationKey, ScriptExecutor> executors;
 
     private ModuleService moduleService;
 
@@ -47,19 +47,19 @@ public final class ScriptServiceImpl
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final ScriptExecutor executor = getExecutor( script.getModule() );
+        final ScriptExecutor executor = getExecutor( script.getApplicationKey() );
 
         final Object exports = executor.executeRequire( script );
         final ScriptValue value = executor.newScriptValue( exports );
         return new ScriptExportsImpl( script, value, exports );
     }
 
-    private ScriptExecutor getExecutor( final ModuleKey key )
+    private ScriptExecutor getExecutor( final ApplicationKey key )
     {
         return this.executors.computeIfAbsent( key, this::createExecutor );
     }
 
-    private ScriptExecutor createExecutor( final ModuleKey key )
+    private ScriptExecutor createExecutor( final ApplicationKey key )
     {
         final Module module = this.moduleService.getModule( key );
         ClassLoader classLoader = moduleService.getClassLoader( module );
@@ -74,7 +74,7 @@ public final class ScriptServiceImpl
         return executor;
     }
 
-    private void invalidate( final ModuleKey key )
+    private void invalidate( final ApplicationKey key )
     {
         this.executors.remove( key );
     }
@@ -84,7 +84,7 @@ public final class ScriptServiceImpl
     {
         if ( event instanceof ModuleUpdatedEvent )
         {
-            invalidate( ( (ModuleUpdatedEvent) event ).getModuleKey() );
+            invalidate( ( (ModuleUpdatedEvent) event ).getApplicationKey() );
         }
     }
 

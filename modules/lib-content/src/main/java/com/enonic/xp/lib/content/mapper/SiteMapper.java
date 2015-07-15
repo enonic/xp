@@ -38,7 +38,7 @@ public final class SiteMapper
 
     private void serializeSiteConfig( final MapGenerator gen, final SiteConfig siteConfig )
     {
-        gen.map( siteConfig.getModule().toString() );
+        gen.map( siteConfig.getApplicationKey().toString() );
         new PropertyTreeMapper( siteConfig.getConfig() ).serialize( gen );
         gen.end();
     }

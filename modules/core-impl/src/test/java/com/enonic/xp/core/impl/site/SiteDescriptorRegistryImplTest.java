@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.ResourceTestHelper;
 
 public class SiteDescriptorRegistryImplTest
@@ -67,8 +67,8 @@ public class SiteDescriptorRegistryImplTest
     {
         siteDescriptorRegistry.start( componentContext );
 
-        Assert.assertNotNull( siteDescriptorRegistry.get( ModuleKey.from( EXISTING_SITE_BUNDLE_SYMBOLIC_NAME ) ) );
-        Assert.assertEquals( null, siteDescriptorRegistry.get( ModuleKey.from( EXISTING_NON_SITE_BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertNotNull( siteDescriptorRegistry.get( ApplicationKey.from( EXISTING_SITE_BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertEquals( null, siteDescriptorRegistry.get( ApplicationKey.from( EXISTING_NON_SITE_BUNDLE_SYMBOLIC_NAME ) ) );
     }
 
     @Test
@@ -83,15 +83,15 @@ public class SiteDescriptorRegistryImplTest
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
         siteDescriptorRegistry.start( componentContext );
-        Assert.assertEquals( null, siteDescriptorRegistry.get( ModuleKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertEquals( null, siteDescriptorRegistry.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         siteDescriptorRegistry.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
-        Assert.assertNotNull( siteDescriptorRegistry.get( ModuleKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertNotNull( siteDescriptorRegistry.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         siteDescriptorRegistry.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
-        Assert.assertEquals( null, siteDescriptorRegistry.get( ModuleKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertEquals( null, siteDescriptorRegistry.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         siteDescriptorRegistry.bundleChanged( new BundleEvent( BundleEvent.UPDATED, bundle ) );
-        Assert.assertNotNull( siteDescriptorRegistry.get( ModuleKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        Assert.assertNotNull( siteDescriptorRegistry.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
     }
 }

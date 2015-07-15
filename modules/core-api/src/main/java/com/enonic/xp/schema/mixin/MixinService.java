@@ -2,7 +2,7 @@ package com.enonic.xp.schema.mixin;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentType;
 
 @Beta
@@ -14,7 +14,7 @@ public interface MixinService
 
     Mixins getAll();
 
-    Mixins getByModule( ModuleKey moduleKey );
+    Mixins getByModule( ApplicationKey applicationKey );
 
     Mixins getByContentType( ContentType contentType );
 }

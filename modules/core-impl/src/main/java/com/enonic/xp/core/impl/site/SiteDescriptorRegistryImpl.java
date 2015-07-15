@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
 
 @Component(immediate = true)
@@ -22,7 +22,7 @@ public final class SiteDescriptorRegistryImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( SiteDescriptorRegistryImpl.class );
 
-    private final Map<ModuleKey, SiteDescriptor> siteDescriptorMap;
+    private final Map<ApplicationKey, SiteDescriptor> siteDescriptorMap;
 
     public SiteDescriptorRegistryImpl()
     {
@@ -71,9 +71,9 @@ public final class SiteDescriptorRegistryImpl
     }
 
     @Override
-    public SiteDescriptor get( final ModuleKey moduleKey )
+    public SiteDescriptor get( final ApplicationKey applicationKey )
     {
-        return this.siteDescriptorMap.get( moduleKey );
+        return this.siteDescriptorMap.get( applicationKey );
     }
 
     private boolean isSite( final Bundle bundle )
@@ -99,22 +99,22 @@ public final class SiteDescriptorRegistryImpl
         builder.bundle( bundle );
 
         final SiteDescriptor siteDescriptor = builder.build();
-        installSiteDescriptor( ModuleKey.from( bundle ), siteDescriptor );
+        installSiteDescriptor( ApplicationKey.from( bundle ), siteDescriptor );
     }
 
-    private void installSiteDescriptor( final ModuleKey moduleKey, final SiteDescriptor siteDescriptor )
+    private void installSiteDescriptor( final ApplicationKey applicationKey, final SiteDescriptor siteDescriptor )
     {
-        this.siteDescriptorMap.put( moduleKey, siteDescriptor );
+        this.siteDescriptorMap.put( applicationKey, siteDescriptor );
     }
 
     private void removeBundle( final Bundle bundle )
     {
-        final ModuleKey moduleKey = ModuleKey.from( bundle );
-        uninstallSiteDescriptor( moduleKey );
+        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+        uninstallSiteDescriptor( applicationKey );
     }
 
-    private void uninstallSiteDescriptor( final ModuleKey moduleKey )
+    private void uninstallSiteDescriptor( final ApplicationKey applicationKey )
     {
-        this.siteDescriptorMap.remove( moduleKey );
+        this.siteDescriptorMap.remove( applicationKey );
     }
 }

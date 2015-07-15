@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 @Beta
 public abstract class BaseSchemaName
@@ -14,22 +14,22 @@ public abstract class BaseSchemaName
 
     private final String refString;
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
     private final String localName;
 
     protected BaseSchemaName( final String name )
     {
-        this.moduleKey = ModuleKey.from( StringUtils.substringBefore( name, SEPARATOR ) );
+        this.applicationKey = ApplicationKey.from( StringUtils.substringBefore( name, SEPARATOR ) );
         this.localName = StringUtils.substringAfter( name, SEPARATOR );
-        this.refString = Joiner.on( SEPARATOR ).join( this.moduleKey.toString(), this.localName );
+        this.refString = Joiner.on( SEPARATOR ).join( this.applicationKey.toString(), this.localName );
     }
 
-    protected BaseSchemaName( final ModuleKey moduleKey, final String localName )
+    protected BaseSchemaName( final ApplicationKey applicationKey, final String localName )
     {
-        this.moduleKey = moduleKey;
+        this.applicationKey = applicationKey;
         this.localName = localName;
-        this.refString = Joiner.on( SEPARATOR ).join( this.moduleKey.toString(), this.localName );
+        this.refString = Joiner.on( SEPARATOR ).join( this.applicationKey.toString(), this.localName );
     }
 
     public String getLocalName()
@@ -37,9 +37,9 @@ public abstract class BaseSchemaName
         return localName;
     }
 
-    public ModuleKey getModuleKey()
+    public ApplicationKey getApplicationKey()
     {
-        return moduleKey;
+        return applicationKey;
     }
 
     @Override

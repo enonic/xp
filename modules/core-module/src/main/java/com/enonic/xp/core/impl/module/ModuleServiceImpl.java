@@ -5,8 +5,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.module.ModuleService;
@@ -20,7 +20,7 @@ public final class ModuleServiceImpl
     private ModuleRegistry registry;
 
     @Override
-    public Module getModule( final ModuleKey key )
+    public Module getModule( final ApplicationKey key )
         throws ModuleNotFoundException
     {
         final Module module = this.registry.get( key );
@@ -35,7 +35,7 @@ public final class ModuleServiceImpl
     public Modules getModules( final ModuleKeys keys )
     {
         final ImmutableList.Builder<Module> moduleList = ImmutableList.builder();
-        for ( final ModuleKey key : keys )
+        for ( final ApplicationKey key : keys )
         {
             final Module module = this.registry.get( key );
             if ( module != null )
@@ -59,14 +59,14 @@ public final class ModuleServiceImpl
     }
 
     @Override
-    public void startModule( final ModuleKey key )
+    public void startModule( final ApplicationKey key )
     {
         startModule( getModule( key ) );
 
     }
 
     @Override
-    public void stopModule( final ModuleKey key )
+    public void stopModule( final ApplicationKey key )
     {
         stopModule( getModule( key ) );
     }

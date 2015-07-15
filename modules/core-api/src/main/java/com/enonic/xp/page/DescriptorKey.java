@@ -6,29 +6,29 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 @Beta
 public final class DescriptorKey
 {
     protected static final String SEPARATOR = ":";
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
     private final String name;
 
     private final String refString;
 
-    public DescriptorKey( final ModuleKey moduleKey, final String name )
+    public DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
-        this.moduleKey = moduleKey;
+        this.applicationKey = applicationKey;
         this.name = name;
-        this.refString = moduleKey.toString() + SEPARATOR + name;
+        this.refString = applicationKey.toString() + SEPARATOR + name;
     }
 
-    public ModuleKey getModuleKey()
+    public ApplicationKey getApplicationKey()
     {
-        return moduleKey;
+        return applicationKey;
     }
 
     public String getName()
@@ -67,13 +67,13 @@ public final class DescriptorKey
 
     public static DescriptorKey from( final String s )
     {
-        final String moduleKey = StringUtils.substringBefore( s, SEPARATOR );
+        final String applicationKey = StringUtils.substringBefore( s, SEPARATOR );
         final String descriptorName = StringUtils.substringAfter( s, SEPARATOR );
-        return new DescriptorKey( ModuleKey.from( moduleKey ), descriptorName );
+        return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
     }
 
-    public static DescriptorKey from( final ModuleKey moduleKey, final String descriptorName )
+    public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName )
     {
-        return new DescriptorKey( moduleKey, descriptorName );
+        return new DescriptorKey( applicationKey, descriptorName );
     }
 }

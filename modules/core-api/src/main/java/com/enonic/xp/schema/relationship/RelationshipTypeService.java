@@ -2,7 +2,7 @@ package com.enonic.xp.schema.relationship;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 @Beta
 public interface RelationshipTypeService
@@ -11,6 +11,6 @@ public interface RelationshipTypeService
 
     RelationshipType getByName( RelationshipTypeName name );
 
-    RelationshipTypes getByModule( ModuleKey moduleKey );
+    RelationshipTypes getByModule( ApplicationKey applicationKey );
 
 }

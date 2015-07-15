@@ -53,7 +53,7 @@ public final class ComponentResource
         }
 
         resource.renderer = this.services.getRendererFactory().getRenderer( resource.component );
-        resource.moduleKey = pageTemplate.getController().getModuleKey();
+        resource.applicationKey = pageTemplate.getController().getApplicationKey();
 
         return resource;
     }

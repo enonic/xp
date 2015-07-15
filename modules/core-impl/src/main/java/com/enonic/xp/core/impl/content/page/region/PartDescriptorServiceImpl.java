@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
@@ -33,13 +33,13 @@ public final class PartDescriptorServiceImpl
     }
 
     @Override
-    public PartDescriptors getByModule( final ModuleKey moduleKey )
+    public PartDescriptors getByModule( final ApplicationKey applicationKey )
     {
         return new GetPartDescriptorsByModuleCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            moduleKey( moduleKey ).execute();
+            applicationKey( applicationKey ).execute();
     }
 
     @Override

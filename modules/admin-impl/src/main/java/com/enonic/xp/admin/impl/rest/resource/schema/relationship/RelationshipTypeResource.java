@@ -23,8 +23,8 @@ import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -79,9 +79,9 @@ public final class RelationshipTypeResource
 
     @GET
     @Path("byModule")
-    public RelationshipTypeListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    public RelationshipTypeListJson getByModule( @QueryParam("moduleKey") final String applicationKey )
     {
-        final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ModuleKey.from( moduleKey ) );
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ApplicationKey.from( applicationKey ) );
 
         return new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
     }

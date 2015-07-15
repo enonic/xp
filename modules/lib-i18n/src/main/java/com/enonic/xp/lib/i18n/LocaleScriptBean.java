@@ -5,9 +5,9 @@ import java.util.Locale;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
@@ -22,10 +22,10 @@ public final class LocaleScriptBean
 
     public String localize( final String key, final String locale, final ScriptValue values )
     {
-        final ModuleKey moduleKey = this.request.getModule();
+        final ApplicationKey applicationKey = this.request.getApplicationKey();
         final Locale resolvedLocale = resolveLocale( locale );
 
-        final MessageBundle bundle = this.localeService.getBundle( moduleKey, resolvedLocale );
+        final MessageBundle bundle = this.localeService.getBundle( applicationKey, resolvedLocale );
         return bundle.localize( key, toArray( values ) );
     }
 

@@ -2,12 +2,12 @@ package com.enonic.xp.schema.mixin;
 
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.ModuleKey;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +25,7 @@ public class MixinTest
             InlineMixin.create( ageMixin ).build() ).build();
         Mixin personMixin = Mixin.create().name( "mymodule:person" ).addFormItem( personFormItemSet ).build();
 
-        Mixin addressMixin = Mixin.create().name( MixinName.from(  ModuleKey.from("mymodule"), "address" ) ).addFormItem(
+        Mixin addressMixin = Mixin.create().name( MixinName.from(  ApplicationKey.from("mymodule"), "address" ) ).addFormItem(
             FormItemSet.create().name( "address" ).addFormItem(
                 Input.create().inputType( InputTypes.TEXT_LINE ).name( "street" ).label( "Street" ).build() ).addFormItem(
                 Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).label( "Postal code" ).build() ).addFormItem(

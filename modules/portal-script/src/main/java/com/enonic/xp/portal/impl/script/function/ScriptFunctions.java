@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script.function;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
@@ -32,9 +32,9 @@ public final class ScriptFunctions
         return this.script;
     }
 
-    public ModuleKey getModule()
+    public ApplicationKey getModule()
     {
-        return this.script.getModule();
+        return this.script.getApplicationKey();
     }
 
     public ScriptLogger getLog()

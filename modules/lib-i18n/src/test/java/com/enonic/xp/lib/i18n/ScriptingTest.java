@@ -9,11 +9,11 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
@@ -34,7 +34,7 @@ public class ScriptingTest
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
-        Mockito.when( localeService.getBundle( Mockito.any( ModuleKey.class ), Mockito.any( Locale.class ) ) ).
+        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ) ) ).
             thenAnswer( mock -> bundle );
 
         addService( LocaleService.class, localeService );

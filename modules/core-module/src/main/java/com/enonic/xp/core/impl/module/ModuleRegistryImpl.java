@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleEventType;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
 @Component(immediate = true)
@@ -27,7 +27,7 @@ public final class ModuleRegistryImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( ModuleRegistryImpl.class );
 
-    private final Map<ModuleKey, Module> modules;
+    private final Map<ApplicationKey, Module> modules;
 
     private EventPublisher eventPublisher;
 
@@ -92,9 +92,9 @@ public final class ModuleRegistryImpl
 
     private void publishModuleChangeEvent( final BundleEvent event )
     {
-        final ModuleKey moduleKey = ModuleKey.from( event.getBundle() );
+        final ApplicationKey applicationKey = ApplicationKey.from( event.getBundle() );
         final ModuleEventType state = ModuleEventType.fromBundleEvent( event );
-        this.eventPublisher.publish( new ModuleUpdatedEvent( moduleKey, state ) );
+        this.eventPublisher.publish( new ModuleUpdatedEvent( applicationKey, state ) );
     }
 
     private void addBundle( final Bundle bundle )
@@ -111,8 +111,8 @@ public final class ModuleRegistryImpl
 
     private void removeBundle( final Bundle bundle )
     {
-        final ModuleKey moduleKey = ModuleKey.from( bundle );
-        uninstallModule( moduleKey );
+        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+        uninstallModule( applicationKey );
     }
 
     private void installModule( final Bundle bundle )
@@ -122,7 +122,7 @@ public final class ModuleRegistryImpl
     }
 
     @Override
-    public Module get( final ModuleKey key )
+    public Module get( final ApplicationKey key )
     {
         return this.modules.get( key );
     }
@@ -133,7 +133,7 @@ public final class ModuleRegistryImpl
         return this.modules.values();
     }
 
-    private void uninstallModule( final ModuleKey key )
+    private void uninstallModule( final ApplicationKey key )
     {
         this.modules.remove( key );
     }

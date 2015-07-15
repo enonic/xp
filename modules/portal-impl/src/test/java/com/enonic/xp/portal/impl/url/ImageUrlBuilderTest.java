@@ -6,13 +6,13 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.HashMultimap;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
@@ -34,7 +34,7 @@ public class ImageUrlBuilderTest
     {
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
         portalRequest.setBaseUri( "/portal" );
         portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 

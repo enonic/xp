@@ -2,9 +2,9 @@ package com.enonic.xp.site;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 
 @Beta
 public final class Site
@@ -20,9 +20,9 @@ public final class Site
         return this.getData().getString( "description" );
     }
 
-    public PropertyTree getSiteConfig( final ModuleKey moduleKey )
+    public PropertyTree getSiteConfig( final ApplicationKey applicationKey )
     {
-        final SiteConfig siteConfig = this.getSiteConfigs().get( moduleKey );
+        final SiteConfig siteConfig = this.getSiteConfigs().get( applicationKey );
         if ( siteConfig == null )
         {
             return null;

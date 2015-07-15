@@ -3,10 +3,10 @@ package com.enonic.xp.site;
 
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +46,7 @@ public class SiteTest
     public void builder()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -64,7 +64,7 @@ public class SiteTest
     public void siteConfigs()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -76,7 +76,7 @@ public class SiteTest
         SiteConfigs siteConfigs = site.getSiteConfigs();
         assertNotNull( siteConfigs );
         assertEquals( 1, siteConfigs.getSize() );
-        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ModuleKey.from( "mymodule" ) ) );
+        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ApplicationKey.from( "mymodule" ) ) );
         assertNotNull( siteConfigs.get( "mymodule" ) );
         assertTrue( SiteConfigs.empty().getSize() == 0 );
         assertTrue( SiteConfigs.from( siteConfig ).getSize() == 1 );
@@ -86,11 +86,11 @@ public class SiteTest
     public void siteConfigEquals()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         SiteConfig siteConfig1 = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
 

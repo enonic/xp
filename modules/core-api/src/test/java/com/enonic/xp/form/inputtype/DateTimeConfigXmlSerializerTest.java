@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class DateTimeConfigXmlSerializerTest
 {
-    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+    private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
 
     private XmlTestHelper xmlHelper;
 

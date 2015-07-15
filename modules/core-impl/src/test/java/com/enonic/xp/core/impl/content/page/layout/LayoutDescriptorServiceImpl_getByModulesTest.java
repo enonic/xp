@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.page.layout;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.region.LayoutDescriptors;
 
@@ -32,9 +32,9 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-layout-descr", "barmodule:barmodule-layout-descr" );
 
-        mockResources( modules.getModule( ModuleKey.from( "foomodule" ) ), "/app/layouts", "*.xml",
+        mockResources( modules.getModule( ApplicationKey.from( "foomodule" ) ), "/app/layouts", "*.xml",
                        "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        mockResources( modules.getModule( ModuleKey.from( "barmodule" ) ), "/app/layouts", "*.xml",
+        mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/layouts", "*.xml",
                        "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
 
         final LayoutDescriptors result = this.service.getByModules( modules.getModuleKeys() );

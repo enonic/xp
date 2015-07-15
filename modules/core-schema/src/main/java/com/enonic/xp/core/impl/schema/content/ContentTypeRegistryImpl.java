@@ -15,8 +15,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -31,7 +31,7 @@ public final class ContentTypeRegistryImpl
 
     private BundleContext context;
 
-    private final Map<ModuleKey, ContentTypes> map;
+    private final Map<ApplicationKey, ContentTypes> map;
 
     @Activate
     public void start( final ComponentContext context )
@@ -54,26 +54,26 @@ public final class ContentTypeRegistryImpl
     @Override
     public ContentType get( final ContentTypeName name )
     {
-        return getByModule( name.getModuleKey() ).getContentType( name );
+        return getByModule( name.getApplicationKey() ).getContentType( name );
     }
 
     @Override
-    public ContentTypes getByModule( final ModuleKey moduleKey )
+    public ContentTypes getByModule( final ApplicationKey applicationKey )
     {
-        return this.map.computeIfAbsent( moduleKey, this::loadByModule );
+        return this.map.computeIfAbsent( applicationKey, this::loadByModule );
     }
 
-    private ContentTypes loadByModule( final ModuleKey moduleKey )
+    private ContentTypes loadByModule( final ApplicationKey applicationKey )
     {
         ContentTypes contentTypes = null;
 
-        if ( ModuleKey.SYSTEM_RESERVED_MODULE_KEYS.contains( moduleKey ) )
+        if ( ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS.contains( applicationKey ) )
         {
-            contentTypes = new BuiltinContentTypeLoader().loadByModule( moduleKey );
+            contentTypes = new BuiltinContentTypeLoader().loadByModule( applicationKey );
         }
         else
         {
-            final Module module = this.moduleService.getModule( moduleKey );
+            final Module module = this.moduleService.getModule( applicationKey );
             if ( module != null )
             {
                 final ContentTypeLoader mixinLoader = new ContentTypeLoader( module.getBundle() );
@@ -95,9 +95,9 @@ public final class ContentTypeRegistryImpl
         final Set<ContentType> contentTypeList = Sets.newLinkedHashSet();
 
         //Gets builtin content types
-        for ( ModuleKey systemReservedModuleKey : ModuleKey.SYSTEM_RESERVED_MODULE_KEYS )
+        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS )
         {
-            final ContentTypes contentTypes = getByModule( systemReservedModuleKey );
+            final ContentTypes contentTypes = getByModule( systemReservedApplicationKey );
             contentTypeList.addAll( contentTypes.getList() );
         }
 
@@ -122,7 +122,7 @@ public final class ContentTypeRegistryImpl
     {
         if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
         {
-            this.map.remove( ModuleKey.from( event.getBundle() ) );
+            this.map.remove( ApplicationKey.from( event.getBundle() ) );
         }
     }
 }

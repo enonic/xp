@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.site;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.support.SerializingTestHelper;
 
@@ -30,10 +30,10 @@ public class XmlSiteParserTest
         final String xml = loadTestXml( "serialized-site.xml" );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
-        ModuleKey moduleKey = ModuleKey.from( "mymodule" );
+        ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
 
         this.parser.source( xml ).
-            moduleKey( moduleKey ).
+            applicationKey( applicationKey ).
             siteDescriptorBuilder( siteDescriptorBuilder ).
             parse();
 
@@ -49,10 +49,10 @@ public class XmlSiteParserTest
         final String xml = loadTestXml( "empty-site.xml" );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
-        ModuleKey moduleKey = ModuleKey.from( "mymodule" );
+        ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
 
         this.parser.source( xml ).
-            moduleKey( moduleKey ).
+            applicationKey( applicationKey ).
             siteDescriptorBuilder( siteDescriptorBuilder ).
             parse();
 

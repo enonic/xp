@@ -5,6 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
@@ -17,7 +18,6 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -133,7 +133,7 @@ public final class ModifyContentHandler
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
-            final ModuleKey moduleKey = ExtraData.fromModulePrefix( modulePrefix );
+            final ApplicationKey applicationKey = ExtraData.fromModulePrefix( modulePrefix );
             final Object metadatasObject = value.get( modulePrefix );
             if ( !( metadatasObject instanceof Map ) )
             {
@@ -144,7 +144,7 @@ public final class ModifyContentHandler
 
             for ( final String metadataName : metadatas.keySet() )
             {
-                final MixinName mixinName = MixinName.from( moduleKey, metadataName );
+                final MixinName mixinName = MixinName.from( applicationKey, metadataName );
                 final ExtraData item = createExtraData( mixinName, metadatas.get( metadataName ) );
                 if ( item != null )
                 {

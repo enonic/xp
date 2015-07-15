@@ -5,7 +5,7 @@ import org.w3c.dom.Element;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.xml.DomBuilder;
 
 @Beta
@@ -20,10 +20,10 @@ public abstract class AbstractInputTypeConfigXmlSerializer<T extends InputTypeCo
 
     protected abstract void serializeConfig( T config, DomBuilder builder );
 
-    public final T parseConfig( ModuleKey currentModule, final Document doc )
+    public final T parseConfig( ApplicationKey currentApp, final Document doc )
     {
-        return parseConfig( currentModule, doc.getDocumentElement() );
+        return parseConfig( currentApp, doc.getDocumentElement() );
     }
 
-    public abstract T parseConfig( ModuleKey currentModule, Element elem );
+    public abstract T parseConfig( ApplicationKey currentApp, Element elem );
 }

@@ -9,11 +9,11 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
@@ -21,11 +21,11 @@ import com.enonic.xp.schema.mixin.Mixins;
 @Component(immediate = true)
 public final class BuiltinMixinsLoader
 {
-    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.MEDIA_MOD, "image-info" );
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "image-info" );
 
-    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.MEDIA_MOD, "photo-info" );
+    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "photo-info" );
 
-    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.BASE, "gps-info" );
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, "gps-info" );
 
     private static final String MIXINS_FOLDER = "mixins";
 
@@ -144,12 +144,12 @@ public final class BuiltinMixinsLoader
         return Mixins.from( generatedSystemMixins );
     }
 
-    public Mixins loadByModule( final ModuleKey moduleKey )
+    public Mixins loadByModule( final ApplicationKey applicationKey )
     {
-        final List<Mixin> systemMixinsByModuleKey = MIXINS.stream().
-            filter( mixin -> mixin.getName().getModuleKey().equals( moduleKey ) ).
+        final List<Mixin> systemMixinsByApplicationKey = MIXINS.stream().
+            filter( mixin -> mixin.getName().getApplicationKey().equals( applicationKey ) ).
             collect( Collectors.toList() );
-        final List<Mixin> generatedSystemMixins = generateSystemMixins( systemMixinsByModuleKey );
+        final List<Mixin> generatedSystemMixins = generateSystemMixins( systemMixinsByApplicationKey );
         return Mixins.from( generatedSystemMixins );
     }
 

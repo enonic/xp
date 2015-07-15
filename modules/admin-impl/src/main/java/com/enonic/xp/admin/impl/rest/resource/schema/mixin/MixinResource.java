@@ -23,8 +23,8 @@ import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -72,9 +72,9 @@ public final class MixinResource
 
     @GET
     @Path("byModule")
-    public MixinListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    public MixinListJson getByModule( @QueryParam("moduleKey") final String applicationKey )
     {
-        final Mixins mixins = mixinService.getByModule( ModuleKey.from( moduleKey ) );
+        final Mixins mixins = mixinService.getByModule( ApplicationKey.from( applicationKey ) );
         return new MixinListJson( mixins, this.mixinIconUrlResolver );
     }
 

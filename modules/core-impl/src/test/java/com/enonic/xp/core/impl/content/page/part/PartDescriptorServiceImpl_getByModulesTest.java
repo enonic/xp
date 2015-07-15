@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.page.part;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.region.PartDescriptors;
 
@@ -32,9 +32,9 @@ public class PartDescriptorServiceImpl_getByModulesTest
         final Modules modules = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResources( modules.getModule( ModuleKey.from( "foomodule" ) ), "/app/parts", "*.xml",
+        mockResources( modules.getModule( ApplicationKey.from( "foomodule" ) ), "/app/parts", "*.xml",
                        "app/parts/foomodule-part-descr/foomodule-part-descr.xml" );
-        mockResources( modules.getModule( ModuleKey.from( "barmodule" ) ), "/app/parts", "*.xml",
+        mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/parts", "*.xml",
                        "app/parts/barmodule-part-descr/barmodule-part-descr.xml" );
 
         final PartDescriptors result = this.service.getByModules( modules.getModuleKeys() );

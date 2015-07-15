@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 
 public class LocalizeParams
@@ -35,9 +35,9 @@ public class LocalizeParams
         this.key = key;
     }
 
-    public ModuleKey getModuleKey()
+    public ApplicationKey getApplicationKey()
     {
-        return this.request.getModule();
+        return this.request.getApplicationKey();
     }
 
     private void locale( final String locale )

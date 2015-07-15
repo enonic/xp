@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
@@ -20,7 +21,6 @@ import com.enonic.xp.core.impl.content.page.PageDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
@@ -198,8 +198,8 @@ public final class ContentDataSerializer
                 final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
                 for ( final String metadataLocalName : xDataModule.getPropertyNames() )
                 {
-                    final ModuleKey moduleKey = ExtraData.fromModulePrefix( metadataModulePrefix );
-                    final MixinName metadataName = MixinName.from( moduleKey, metadataLocalName );
+                    final ApplicationKey applicationKey = ExtraData.fromModulePrefix( metadataModulePrefix );
+                    final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
                     extradatasBuilder.add( new ExtraData( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
                 }
             }

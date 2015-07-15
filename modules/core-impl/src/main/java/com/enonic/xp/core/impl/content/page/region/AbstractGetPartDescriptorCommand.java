@@ -3,9 +3,9 @@ package com.enonic.xp.core.impl.content.page.region;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
@@ -41,7 +41,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         try
         {
-            parseXml( resourceKey.getModule(), builder, descriptorXml );
+            parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
         }
         catch ( final Exception e )
         {
@@ -56,11 +56,11 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
             build();
     }
 
-    private void parseXml( final ModuleKey moduleKey, final PartDescriptor.Builder builder, final String xml )
+    private void parseXml( final ApplicationKey applicationKey, final PartDescriptor.Builder builder, final String xml )
     {
         final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( moduleKey );
+        parser.currentModule( applicationKey );
         parser.source( xml );
         parser.parse();
     }

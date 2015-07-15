@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.site;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
@@ -23,13 +23,13 @@ final class XmlSiteParser
 
     private static final String MIXIN_ATTRIBUTE_NAME = "mixin";
 
-    private ModuleKey moduleKey;
+    private ApplicationKey applicationKey;
 
     private SiteDescriptor.Builder siteDescriptorBuilder;
 
-    public XmlSiteParser moduleKey( final ModuleKey moduleKey )
+    public XmlSiteParser applicationKey( final ApplicationKey applicationKey )
     {
-        this.moduleKey = moduleKey;
+        this.applicationKey = applicationKey;
         return this;
     }
 
@@ -45,7 +45,7 @@ final class XmlSiteParser
     {
         assertTagName( root, ROOT_TAG_NAME );
 
-        final XmlFormMapper formMapper = new XmlFormMapper( moduleKey );
+        final XmlFormMapper formMapper = new XmlFormMapper( applicationKey );
         this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) ) );
         this.siteDescriptorBuilder.metaSteps( MixinNames.from( parseMetaSteps( root ) ) );
     }
@@ -57,7 +57,7 @@ final class XmlSiteParser
 
     private MixinName toMixinName( final DomElement metaStep )
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( moduleKey );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( applicationKey );
         final String name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         return resolver.toMixinName( name );
     }

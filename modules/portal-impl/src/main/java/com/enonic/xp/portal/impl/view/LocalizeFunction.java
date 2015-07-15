@@ -31,11 +31,11 @@ public final class LocalizeFunction
     {
         final LocalizeParams localizeParams = new LocalizeParams( PortalRequestAccessor.get() ).setAsMap( params.getArgs() );
 
-        final MessageBundle bundle = this.localeService.getBundle( localizeParams.getModuleKey(), localizeParams.getLocale() );
+        final MessageBundle bundle = this.localeService.getBundle( localizeParams.getApplicationKey(), localizeParams.getLocale() );
 
         if ( bundle == null )
         {
-            return MessageFormat.format( NO_MATCHING_BUNDLE, localizeParams.getModuleKey() );
+            return MessageFormat.format( NO_MATCHING_BUNDLE, localizeParams.getApplicationKey() );
         }
 
         return bundle.localize( localizeParams.getKey(), localizeParams.getParams() );

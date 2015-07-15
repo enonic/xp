@@ -2,13 +2,11 @@ package com.enonic.xp.portal.impl.script.bean2;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
-import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
-import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class BeanContextImpl
@@ -19,9 +17,9 @@ public final class BeanContextImpl
     private ScriptExecutor executor;
 
     @Override
-    public ModuleKey getModule()
+    public ApplicationKey getModule()
     {
-        return this.resource.getModule();
+        return this.resource.getApplicationKey();
     }
 
     @Override

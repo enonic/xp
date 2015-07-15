@@ -23,7 +23,7 @@ public final class ServiceControllerResource
     {
         portalRequest.setContent( this.content );
         portalRequest.setSite( this.site );
-        portalRequest.setModule( this.scriptDir.getModule() );
+        portalRequest.setApplicationKey( this.scriptDir.getApplicationKey() );
     }
 
     @Override

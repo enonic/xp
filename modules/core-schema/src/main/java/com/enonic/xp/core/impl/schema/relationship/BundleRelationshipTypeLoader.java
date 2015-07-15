@@ -15,8 +15,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.IconLoader;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
@@ -35,14 +35,14 @@ final class BundleRelationshipTypeLoader
 
     private final Bundle bundle;
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
     private final IconLoader iconLoader;
 
     public BundleRelationshipTypeLoader( final Bundle bundle )
     {
         this.bundle = bundle;
-        this.moduleKey = ModuleKey.from( this.bundle );
+        this.applicationKey = ApplicationKey.from( this.bundle );
         this.iconLoader = new IconLoader( this.bundle );
     }
 
@@ -136,7 +136,7 @@ final class BundleRelationshipTypeLoader
     private RelationshipTypeName getNameFromPath( final String path )
     {
         final Matcher matcher = PATTERN.matcher( path );
-        return matcher.matches() ? RelationshipTypeName.from( this.moduleKey, matcher.group( 1 ) ) : null;
+        return matcher.matches() ? RelationshipTypeName.from( this.applicationKey, matcher.group( 1 ) ) : null;
     }
 
     private RelationshipType.Builder parse( final String str )
@@ -146,7 +146,7 @@ final class BundleRelationshipTypeLoader
         final XmlRelationshipTypeParser parser = new XmlRelationshipTypeParser();
         parser.builder( builder );
         parser.source( str );
-        parser.currentModule( this.moduleKey );
+        parser.currentModule( this.applicationKey );
         parser.parse();
 
         return builder;

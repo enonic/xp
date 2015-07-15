@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -22,7 +22,7 @@ final class GetPageDescriptorsByModuleCommand
 
     private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
-    private ModuleKey moduleKey;
+    private ApplicationKey applicationKey;
 
     private ModuleService moduleService;
 
@@ -30,13 +30,13 @@ final class GetPageDescriptorsByModuleCommand
 
     public PageDescriptors execute()
     {
-        final Module module = this.moduleService.getModule( this.moduleKey );
+        final Module module = this.moduleService.getModule( this.applicationKey );
         return getDescriptorsFromModule( module );
     }
 
-    public GetPageDescriptorsByModuleCommand moduleKey( final ModuleKey moduleKey )
+    public GetPageDescriptorsByModuleCommand applicationKey( final ApplicationKey applicationKey )
     {
-        this.moduleKey = moduleKey;
+        this.applicationKey = applicationKey;
         return this;
     }
 

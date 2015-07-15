@@ -4,8 +4,8 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
@@ -14,7 +14,7 @@ import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 public abstract class AbstractScriptTest
 {
-    private final static ModuleKey MYMODULE_KEY = ModuleKey.from( "mymodule" );
+    private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "mymodule" );
 
     protected final ScriptServiceImpl scriptService;
 
@@ -35,7 +35,7 @@ public abstract class AbstractScriptTest
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( MYMODULE_KEY ) ).thenReturn( module );
+        Mockito.when( moduleService.getModule( APPLICATION_KEY ) ).thenReturn( module );
         Mockito.when( moduleService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setModuleService( moduleService );
@@ -43,7 +43,7 @@ public abstract class AbstractScriptTest
 
     protected final ScriptExports runTestScript( final String name )
     {
-        return runTestScript( ResourceKey.from( MYMODULE_KEY, name ) );
+        return runTestScript( ResourceKey.from( APPLICATION_KEY, name ) );
     }
 
     protected final ScriptExports runTestScript( final ResourceKey key )

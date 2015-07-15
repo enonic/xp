@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 
 import static org.junit.Assert.*;
 
@@ -33,11 +32,11 @@ public class ApplicationsTest
         throws Exception
     {
         final Module module1 = Mockito.mock( Module.class );
-        Mockito.when( module1.getKey() ).thenReturn( ModuleKey.from( APPLICATION1 ) );
+        Mockito.when( module1.getKey() ).thenReturn( ApplicationKey.from( APPLICATION1 ) );
         final Module module2 = Mockito.mock( Module.class );
-        Mockito.when( module2.getKey() ).thenReturn( ModuleKey.from( APPLICATION2 ) );
+        Mockito.when( module2.getKey() ).thenReturn( ApplicationKey.from( APPLICATION2 ) );
         final Module module3 = Mockito.mock( Module.class );
-        Mockito.when( module3.getKey() ).thenReturn( ModuleKey.from( APPLICATION3 ) );
+        Mockito.when( module3.getKey() ).thenReturn( ApplicationKey.from( APPLICATION3 ) );
         application1 = new Application( module1 );
         application2 = new Application( module2 );
         application3 = new Application( module3 );

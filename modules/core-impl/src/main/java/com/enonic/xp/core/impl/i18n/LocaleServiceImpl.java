@@ -9,9 +9,9 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
@@ -27,23 +27,23 @@ public final class LocaleServiceImpl
     private static final String DELIMITER = "_";
 
     @Override
-    public MessageBundle getBundle( final ModuleKey module, final Locale locale )
+    public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
     {
-        if ( module == null )
+        if ( applicationKey == null )
         {
             return null;
         }
 
-        return createMessageBundle( module, locale );
+        return createMessageBundle( applicationKey, locale );
     }
 
-    private MessageBundle createMessageBundle( final ModuleKey module, final Locale locale )
+    private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale )
     {
         final Properties props = new Properties();
 
         if ( locale == null )
         {
-            props.putAll( loadBundle( module, "" ) );
+            props.putAll( loadBundle( applicationKey, "" ) );
             return new MessageBundleImpl( props );
         }
 
@@ -51,33 +51,33 @@ public final class LocaleServiceImpl
         String country = locale.getCountry();
         String variant = locale.getVariant();
 
-        props.putAll( loadBundle( module, "" ) );
+        props.putAll( loadBundle( applicationKey, "" ) );
 
         if ( StringUtils.isNotEmpty( lang ) )
         {
             lang = lang.toLowerCase();
-            props.putAll( loadBundle( module, DELIMITER + lang ) );
+            props.putAll( loadBundle( applicationKey, DELIMITER + lang ) );
         }
 
         if ( StringUtils.isNotEmpty( country ) )
         {
-            props.putAll( loadBundle( module, DELIMITER + lang + DELIMITER + country ) );
+            props.putAll( loadBundle( applicationKey, DELIMITER + lang + DELIMITER + country ) );
         }
 
         if ( StringUtils.isNotEmpty( variant ) )
         {
             variant = variant.toLowerCase();
-            props.putAll( loadBundle( module, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
+            props.putAll( loadBundle( applicationKey, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
         }
 
         return new MessageBundleImpl( props );
     }
 
-    private Properties loadBundle( final ModuleKey module, final String bundleExtension )
+    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension )
     {
-        Properties properties = getOrCreateProperties( module );
+        Properties properties = getOrCreateProperties( applicationKey );
 
-        final ResourceKey resourceKey = ResourceKey.from( module, PHRASE_FOLDER + bundleExtension + ".properties" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, PHRASE_FOLDER + bundleExtension + ".properties" );
         try
         {
             final Resource resource = Resource.from( resourceKey );
@@ -90,7 +90,7 @@ public final class LocaleServiceImpl
                 }
                 catch ( final IOException e )
                 {
-                    throw new LocalizationException( "Not able to load resource for: " + module.toString(), e );
+                    throw new LocalizationException( "Not able to load resource for: " + applicationKey.toString(), e );
                 }
             }
         }
@@ -102,7 +102,7 @@ public final class LocaleServiceImpl
         return properties;
     }
 
-    private Properties getOrCreateProperties( final ModuleKey module )
+    private Properties getOrCreateProperties( final ApplicationKey applicationKey )
     {
         Properties properties = null /*getFromCache( module )*/;
 

@@ -8,7 +8,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 
@@ -22,30 +21,30 @@ public class ApplicationServiceImplTest
     @Before
     public void setup()
     {
-        final ModuleKey appModuleKey = ModuleKey.from( "myapp" );
-        final ModuleKey app2ModuleKey = ModuleKey.from( "otherapp" );
-        final ModuleKey module1Key = ModuleKey.from( "somemodule" );
-        final ModuleKey module2Key = ModuleKey.from( "othermodule" );
+        final ApplicationKey appApplicationKey = ApplicationKey.from( "myapp" );
+        final ApplicationKey app2ApplicationKey = ApplicationKey.from( "otherapp" );
+        final ApplicationKey application1Key = ApplicationKey.from( "somemodule" );
+        final ApplicationKey application2Key = ApplicationKey.from( "othermodule" );
 
         final Module appModule = Mockito.mock( Module.class );
-        Mockito.when( appModule.getKey() ).thenReturn( appModuleKey );
+        Mockito.when( appModule.getKey() ).thenReturn( appApplicationKey );
         Mockito.when( appModule.isApplication() ).thenReturn( true );
 
         final Module app2Module = Mockito.mock( Module.class );
-        Mockito.when( app2Module.getKey() ).thenReturn( app2ModuleKey );
+        Mockito.when( app2Module.getKey() ).thenReturn( app2ApplicationKey );
         Mockito.when( app2Module.isApplication() ).thenReturn( true );
 
         final Module module1 = Mockito.mock( Module.class );
-        Mockito.when( module1.getKey() ).thenReturn( module1Key );
+        Mockito.when( module1.getKey() ).thenReturn( application1Key );
         Mockito.when( module1.isApplication() ).thenReturn( false );
 
         final Module module2 = Mockito.mock( Module.class );
-        Mockito.when( module2.getKey() ).thenReturn( module2Key );
+        Mockito.when( module2.getKey() ).thenReturn( application2Key );
         Mockito.when( module2.isApplication() ).thenReturn( false );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( appModuleKey ) ).thenReturn( appModule );
-        Mockito.when( moduleService.getModule( app2ModuleKey ) ).thenReturn( app2Module );
+        Mockito.when( moduleService.getModule( appApplicationKey ) ).thenReturn( appModule );
+        Mockito.when( moduleService.getModule( app2ApplicationKey ) ).thenReturn( app2Module );
         final Modules allModules = Modules.from( appModule, app2Module, module1, module2 );
         Mockito.when( moduleService.getAllModules() ).thenReturn( allModules );
 

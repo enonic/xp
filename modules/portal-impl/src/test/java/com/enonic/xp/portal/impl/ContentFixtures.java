@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl;
 
 import java.time.Instant;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -11,7 +12,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -137,7 +137,7 @@ public final class ContentFixtures
         siteConfigConfig.setLong( "Field", 42l );
 
         final SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 

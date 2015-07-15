@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.mapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.script.AbstractMapSerializableTest;
@@ -31,7 +31,7 @@ public class PortalRequestMapperTest
         this.portalRequest.getHeaders().put( "header3", "value3-A" );
         this.portalRequest.getHeaders().put( "header3", "value3-B" );
 
-        this.portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
         this.portalRequest.setContent( ContentFixtures.newContent() );
         this.portalRequest.setSite( ContentFixtures.newSite() );
         this.portalRequest.setPageDescriptor( ContentFixtures.newPageDescriptor() );

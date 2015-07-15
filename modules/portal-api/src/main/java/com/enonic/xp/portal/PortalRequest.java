@@ -7,11 +7,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Component;
@@ -55,7 +55,7 @@ public final class PortalRequest
 
     private Component component;
 
-    private ModuleKey module;
+    private ApplicationKey applicationKey;
 
     private PageDescriptor pageDescriptor;
 
@@ -174,14 +174,14 @@ public final class PortalRequest
         this.component = component;
     }
 
-    public ModuleKey getModule()
+    public ApplicationKey getApplicationKey()
     {
-        return this.module;
+        return this.applicationKey;
     }
 
-    public void setModule( final ModuleKey module )
+    public void setApplicationKey( final ApplicationKey applicationKey )
     {
-        this.module = module;
+        this.applicationKey = applicationKey;
     }
 
     public PageDescriptor getPageDescriptor()

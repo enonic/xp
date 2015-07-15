@@ -6,7 +6,7 @@ module api.module {
 
     export interface ModuleUpdatedEventJson {
         eventType: string;
-        moduleKey: string;
+        applicationKey: string;
     }
 
     export class ModuleUpdatedEvent extends api.event.Event {
@@ -45,7 +45,7 @@ module api.module {
         }
 
         static fromJson(json: ModuleUpdatedEventJson): ModuleUpdatedEvent {
-            var moduleKey = api.module.ModuleKey.fromString(json.moduleKey);
+            var moduleKey = api.module.ModuleKey.fromString(json.applicationKey);
             var eventType = ModuleUpdatedEventType[json.eventType];
             return new ModuleUpdatedEvent(moduleKey, eventType);
         }

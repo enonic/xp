@@ -3,6 +3,7 @@ package com.enonic.xp.module;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
 @Beta
@@ -11,12 +12,12 @@ public final class ModuleUpdatedEvent
 {
     private final ModuleEventType eventType;
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
-    public ModuleUpdatedEvent( final ModuleKey key, final ModuleEventType eventType )
+    public ModuleUpdatedEvent( final ApplicationKey key, final ModuleEventType eventType )
     {
         this.eventType = eventType;
-        this.moduleKey = key;
+        this.applicationKey = key;
     }
 
     public ModuleEventType getEventType()
@@ -24,9 +25,9 @@ public final class ModuleUpdatedEvent
         return eventType;
     }
 
-    public ModuleKey getModuleKey()
+    public ApplicationKey getApplicationKey()
     {
-        return moduleKey;
+        return applicationKey;
     }
 
     @Override
@@ -34,7 +35,7 @@ public final class ModuleUpdatedEvent
     {
         return MoreObjects.toStringHelper( this ).
             add( "eventType", this.eventType ).
-            add( "moduleKey", this.moduleKey ).
+            add( "moduleKey", this.applicationKey ).
             omitNullValues().
             toString();
     }

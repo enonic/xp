@@ -14,6 +14,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.ApplicationKey;
+
 @Beta
 public class Module
 {
@@ -27,7 +29,7 @@ public class Module
 
     private static final String SITE_XML = "app/site.xml";
 
-    private ModuleKey moduleKey;
+    private ApplicationKey applicationKey;
 
     private Version moduleVersion;
 
@@ -45,7 +47,7 @@ public class Module
 
     private Module( final Bundle bundle ) {
         this.bundle = bundle;
-        this.moduleKey = ModuleKey.from( bundle );
+        this.applicationKey = ApplicationKey.from( bundle );
         this.moduleVersion = this.bundle.getVersion();
         this.displayName = getHeader( this.bundle, Constants.BUNDLE_NAME, this.getKey().toString() );
         this.url = getHeader( this.bundle, X_MODULE_URL, null );
@@ -59,9 +61,9 @@ public class Module
         return module;
     }
 
-    public ModuleKey getKey()
+    public ApplicationKey getKey()
     {
-        return this.moduleKey;
+        return this.applicationKey;
     }
 
     public Version getVersion()
@@ -153,7 +155,7 @@ public class Module
             return;
         }
 
-        throw new ModuleNotStartedException( this.moduleKey );
+        throw new ModuleNotStartedException( this.applicationKey );
     }
 
     public boolean isApplication()
@@ -181,7 +183,7 @@ public class Module
     public String toString()
     {
         return MoreObjects.toStringHelper( this ).
-            add( "moduleKey", moduleKey ).
+            add( "moduleKey", applicationKey ).
             add( "displayName", displayName ).
             add( "url", url ).
             add( "vendorName", vendorName ).
