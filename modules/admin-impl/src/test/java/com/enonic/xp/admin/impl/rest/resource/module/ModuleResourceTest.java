@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Version;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.form.Form;
@@ -14,7 +15,6 @@ import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
-import com.enonic.xp.module.ModuleVersion;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -120,7 +120,7 @@ public class ModuleResourceTest
     {
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "testmodule" ) );
-        Mockito.when( module.getVersion() ).thenReturn( ModuleVersion.from( "1.0.0" ) );
+        Mockito.when( module.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
         Mockito.when( module.getDisplayName() ).thenReturn( "module display name" );
         Mockito.when( module.getUrl() ).thenReturn( "http://enonic.net" );
         Mockito.when( module.getVendorName() ).thenReturn( "Enonic" );
