@@ -11,7 +11,6 @@ module app.browse {
         public NEW: Action;
         public EDIT: Action;
         public DELETE: Action;
-        public DUPLICATE: Action;
         public SYNCH: Action;
 
         private actions: api.ui.Action[] = [];
@@ -20,10 +19,9 @@ module app.browse {
             this.NEW = new app.browse.action.NewPrincipalAction(grid);
             this.EDIT = new app.browse.action.EditPrincipalAction(grid);
             this.DELETE = new app.browse.action.DeletePrincipalAction(grid);
-            this.DUPLICATE = new app.browse.action.DuplicatePrincipalAction(grid);
             this.SYNCH = new app.browse.action.SynchPrincipalAction(grid);
 
-            this.actions.push(this.NEW, this.EDIT, this.DELETE, this.DUPLICATE, this.SYNCH);
+            this.actions.push(this.NEW, this.EDIT, this.DELETE, this.SYNCH);
         }
 
         getAllActions(): api.ui.Action[] {
@@ -74,10 +72,6 @@ module app.browse {
                 this.DELETE.setEnabled(false);
             }
 
-            if (this.DUPLICATE.isVisible()) {
-                this.DUPLICATE.setVisible(false);
-            }
-            // this.DUPLICATE.setEnabled((principalsSelected === 1) && (totalSelection === 1));
             this.SYNCH.setEnabled(anyUserStore);
 
             var deferred = wemQ.defer<BrowseItem<UserTreeGridItem>[]>();
