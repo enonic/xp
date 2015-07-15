@@ -37,13 +37,28 @@ public class ModuleTest
         final Module module = Module.from( bundle );
 
         assertEquals( "mymodule", module.getKey().toString() );
+        assertEquals( "1.2.0", module.getVersion().toString() );
         assertEquals( "mymodule", module.getDisplayName() );
+        assertEquals( "[1.2,2)", module.getSystemVersion() );
+        assertEquals( "5.1", module.getMaxSystemVersion() );
+        assertEquals( "5.0", module.getMinSystemVersion() );
         assertEquals( "http://enonic.com/path/to/module", module.getUrl() );
         assertEquals( "Enonic AS", module.getVendorName() );
         assertEquals( "http://enonic.com", module.getVendorUrl() );
+        assertEquals( bundle, module.getBundle() );
+        assertEquals( 3, module.getResourcePaths().size() );
+        assertEquals( 3l, module.getModifiedTime().toEpochMilli() );
+        assertTrue( module.isStarted() );
+        module.checkIfStarted();
+        assertTrue( module.isApplication() );
+        assertFalse( module.isSystem() );
+        assertTrue( Module.isModule( bundle ) );
+        assertEquals( "Module{moduleKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/module, " +
+                          "vendorName=Enonic AS, vendorUrl=http://enonic.com}", module.toString() );
     }
 
     private Bundle mockBundle( final String... resourcePaths )
+        throws Exception
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
         final List<URL> urlList = Lists.newArrayList();
@@ -62,6 +77,8 @@ public class ModuleTest
         }
         final Enumeration<URL> bundleEntries = Collections.enumeration( urlList );
         Mockito.when( bundle.findEntries( isA( String.class ), isA( String.class ), isA( Boolean.class ) ) ).thenReturn( bundleEntries );
+        Mockito.when( bundle.getEntry( "app/site.xml" ) ).thenReturn( new URL( "http://109.0:1/app/site.xml" ) );
+        Mockito.when( bundle.getLastModified() ).thenReturn( 3l );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "mymodule" );
         Mockito.when( bundle.getVersion() ).thenReturn( new Version( 1, 2, 0 ) );
@@ -69,10 +86,12 @@ public class ModuleTest
         return bundle;
     }
 
-    private Dictionary<String, String> createBundleHeaders() {
-        Dictionary<String, String> headers = new Hashtable<String, String>(  );
+    private Dictionary<String, String> createBundleHeaders()
+    {
+        Dictionary<String, String> headers = new Hashtable<String, String>();
         headers.put( Constants.BUNDLE_NAME, "mymodule" );
         headers.put( Module.X_MODULE_URL, "http://enonic.com/path/to/module" );
+        headers.put( Module.X_SYSTEM_VERSION, "[1.2,2)" );
         headers.put( Module.X_VENDOR_NAME, "Enonic AS" );
         headers.put( Module.X_VENDOR_URL, "http://enonic.com" );
 
