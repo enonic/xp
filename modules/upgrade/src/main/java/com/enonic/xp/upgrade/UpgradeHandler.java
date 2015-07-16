@@ -37,7 +37,7 @@ public final class UpgradeHandler
         RepoNodesHandler.create().
             sourceRoot( root ).
             upgradeModels( this.upgradeTaskLocator.getUpgradeModels() ).
-            target( TARGET ).
+            target( TARGET.resolve( root.getFileName() ) ).
             build().
             execute();
     }
