@@ -1,6 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.repo;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -36,7 +38,12 @@ public class SnapshotResource
 
     private static String createSnapshotName( final RepositoryId repositoryId )
     {
-        return ( repositoryId + Instant.now().toString() ).toLowerCase();
+        return ( repositoryId + getDateTimeFormatter().format( Instant.now() ) ).toLowerCase();
+    }
+
+    private static DateTimeFormatter getDateTimeFormatter()
+    {
+        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneId.of( "UTC" ) );
     }
 
     @POST
