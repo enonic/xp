@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -113,25 +112,6 @@ public class ContentServiceImplTest_update
 
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
-    }
-
-    // TODO: This test should run, to be fixed
-    @Ignore
-    @Test
-    public void propertiesTransformedAccordingToContentTypeDefinition()
-        throws Exception
-    {
-        final Content createdContent = createContentWithTransform();
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( createdContent.getId() ).
-            editor( edit -> {
-                final PropertyTree editData = edit.data;
-                editData.setString( "myReference", "newValue" );
-            } );
-
-        this.contentService.update( updateContentParams );
     }
 
     private Content createContentWithTransform()
