@@ -9,12 +9,12 @@ public class AttachmentTest
     @Test
     public void getNameWithoutExtension()
     {
-        assertEquals( "MyImage", Attachment.newAttachment().
+        assertEquals( "MyImage", Attachment.create().
             mimeType( "image/jpg" ).
             name( "MyImage.jpg" ).
             build().getNameWithoutExtension() );
 
-        assertEquals( "MyImage.something", Attachment.newAttachment().
+        assertEquals( "MyImage.something", Attachment.create().
             mimeType( "image/gif" ).
             name( "MyImage.something.gif" ).
             build().getNameWithoutExtension() );
@@ -23,12 +23,12 @@ public class AttachmentTest
     @Test
     public void getBinaryReference()
     {
-        assertEquals( "MyImage.jpg", Attachment.newAttachment().
+        assertEquals( "MyImage.jpg", Attachment.create().
             mimeType( "image/jpg" ).
             name( "MyImage.jpg" ).
             build().getBinaryReference().toString() );
 
-        assertEquals( "MyImage.something.gif", Attachment.newAttachment().
+        assertEquals( "MyImage.something.gif", Attachment.create().
             mimeType( "image/gif" ).
             name( "MyImage.something.gif" ).
             build().getBinaryReference().toString() );
@@ -37,27 +37,27 @@ public class AttachmentTest
     @Test
     public void getExtension()
     {
-        assertEquals( "jpg", Attachment.newAttachment().
+        assertEquals( "jpg", Attachment.create().
             mimeType( "image/jpg" ).
             name( "MyImage.jpg" ).
             build().getExtension() );
 
-        assertEquals( "gif", Attachment.newAttachment().
+        assertEquals( "gif", Attachment.create().
             mimeType( "image/gif" ).
             name( "MyImage.gif" ).
             build().getExtension() );
 
-        assertEquals( "jpeg", Attachment.newAttachment().
+        assertEquals( "jpeg", Attachment.create().
             mimeType( "image/jpeg" ).
             name( "MyImage.jpeg" ).
             build().getExtension() );
 
-        assertEquals( "png", Attachment.newAttachment().
+        assertEquals( "png", Attachment.create().
             mimeType( "image/png" ).
             name( "MyImage.png" ).
             build().getExtension() );
 
-        assertEquals( "jpg", Attachment.newAttachment().
+        assertEquals( "jpg", Attachment.create().
             mimeType( "image/jpg" ).
             name( "MyImage.something.jpg" ).
             build().getExtension() );
@@ -67,7 +67,7 @@ public class AttachmentTest
     @Test
     public void serializeAttachment()
     {
-        Attachment a1 = Attachment.newAttachment().
+        Attachment a1 = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1024 ).
             label( "My Image 1" ).
@@ -81,14 +81,14 @@ public class AttachmentTest
     @Test
     public void compareAttachments()
     {
-        Attachment a1 = Attachment.newAttachment().
+        Attachment a1 = Attachment.create().
             mimeType( "image/jpg" ).
             size( 1024 ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
 
-        Attachment.Builder a2Builder = Attachment.newAttachment( a1 );
+        Attachment.Builder a2Builder = Attachment.create( a1 );
 
         assertTrue( a1.equals( a1 ) );
 

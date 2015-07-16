@@ -134,6 +134,6 @@ public class RelationshipTypeServiceImplTest
 
     private RelationshipType createType( final String name )
     {
-        return RelationshipType.newRelationshipType().name( name ).build();
+        return RelationshipType.create().name( name ).build();
     }
 }

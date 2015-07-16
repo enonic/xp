@@ -69,7 +69,7 @@ public final class ThymeleafProcessor
     {
         final int lineNumber = e.getLineNumber() != null ? e.getLineNumber() : 0;
         final ResourceKey resource = e.getTemplateName() != null ? ResourceKey.from( e.getTemplateName() ) : null;
-        return ResourceProblemException.newBuilder().
+        return ResourceProblemException.create().
             lineNumber( lineNumber ).
             resource( resource ).
             cause( e ).

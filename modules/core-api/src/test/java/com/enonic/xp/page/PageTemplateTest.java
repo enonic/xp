@@ -23,7 +23,7 @@ public class PageTemplateTest
             canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).
             controller( DescriptorKey.from( ModuleKey.from( "mainmodule" ), "landing-page" ) ).
             config( pageTemplateConfig ).
-            regions( PageRegions.newPageRegions().build() );
+            regions( PageRegions.create().build() );
         builder.displayName( "Main page template" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );

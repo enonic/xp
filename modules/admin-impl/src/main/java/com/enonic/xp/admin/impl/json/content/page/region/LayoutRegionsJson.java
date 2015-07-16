@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 
-import static com.enonic.xp.region.LayoutRegions.newLayoutRegions;
-
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutRegionsJson
 {
@@ -40,7 +38,7 @@ public class LayoutRegionsJson
     public LayoutRegionsJson( final List<RegionJson> regionJsons )
     {
         this.regionsJson = regionJsons;
-        final LayoutRegions.Builder builder = newLayoutRegions();
+        final LayoutRegions.Builder builder = LayoutRegions.create();
         for ( RegionJson region : regionJsons )
         {
             builder.add( region.getRegion() );

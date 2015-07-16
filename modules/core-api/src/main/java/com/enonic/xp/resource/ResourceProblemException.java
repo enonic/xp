@@ -132,7 +132,7 @@ public final class ResourceProblemException
         }
     }
 
-    public static Builder newBuilder()
+    public static Builder create()
     {
         return new Builder();
     }

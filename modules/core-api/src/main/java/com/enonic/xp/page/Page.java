@@ -110,19 +110,19 @@ public final class Page
         return Objects.hash( controller, template, regions, config );
     }
 
-    public static Builder newPage()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newPage( final Page source )
+    public static Builder create( final Page source )
     {
         return new Builder( source );
     }
 
     public Page copy()
     {
-        return newPage( this ).build();
+        return create( this ).build();
     }
 
     public static class Builder

@@ -36,8 +36,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
-import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_update
@@ -138,7 +136,7 @@ public class ContentServiceImplTest_update
 
     private ContentType createTestContentType()
     {
-        return newContentType().
+        return ContentType.create().
             superType( ContentTypeName.documentMedia() ).
             name( "myContentType" ).
             addFormItem( Input.create().
@@ -379,7 +377,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
+        final Mixin mixin = Mixin.create().name( "mymodule:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).

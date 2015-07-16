@@ -19,7 +19,7 @@ public class RelationshipTest
     public void build()
     {
         // setup
-        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        final Relationship.Builder relationBuilder = Relationship.create();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.createdTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
@@ -47,7 +47,7 @@ public class RelationshipTest
     public void getKey_having_relationship_with_mangingData()
     {
         // setup
-        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        final Relationship.Builder relationBuilder = Relationship.create();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:reference" ) );
@@ -67,7 +67,7 @@ public class RelationshipTest
     public void getKey_having_relationship_without_mangingData()
     {
         // setup
-        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        final Relationship.Builder relationBuilder = Relationship.create();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:reference" ) );
@@ -86,7 +86,7 @@ public class RelationshipTest
     public void given_property_with_null_value_when_build_then_NullPointerExpception_is_thrown()
     {
         // setup
-        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        final Relationship.Builder relationBuilder = Relationship.create();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:reference" ) );
@@ -100,7 +100,7 @@ public class RelationshipTest
     public void given_property_with_null_key_when_build_then_NullPointerExpception_is_thrown()
     {
         // setup
-        final Relationship.Builder relationBuilder = Relationship.newRelationship();
+        final Relationship.Builder relationBuilder = Relationship.create();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:reference" ) );

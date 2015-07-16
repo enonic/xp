@@ -7,14 +7,12 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static com.enonic.xp.schema.content.validator.ContentTypeValidationResult.newContentTypeValidationResult;
-
 @Beta
 public class ContentTypeSuperTypeValidator
 {
     private final ContentTypeService contentTypeService;
 
-    private final ContentTypeValidationResult.Builder resultBuilder = newContentTypeValidationResult();
+    private final ContentTypeValidationResult.Builder resultBuilder = ContentTypeValidationResult.create();
 
     private ContentTypeSuperTypeValidator( final ContentTypeService contentTypeService )
     {
@@ -41,7 +39,7 @@ public class ContentTypeSuperTypeValidator
         }
     }
 
-    public static Builder newContentTypeSuperTypeValidator()
+    public static Builder create()
     {
         return new Builder();
     }

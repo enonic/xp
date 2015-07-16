@@ -99,7 +99,7 @@ final class ApplyNodePermissionsCommand
 
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
     {
-        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
+        final Node.Builder updateNodeBuilder = Node.create( persistedNode ).
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();

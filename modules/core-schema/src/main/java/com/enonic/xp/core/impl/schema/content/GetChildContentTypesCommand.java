@@ -17,7 +17,7 @@ final class GetChildContentTypesCommand
 
     private ContentTypes doExecute()
     {
-        final ContentTypes.Builder builder = ContentTypes.newContentTypes();
+        final ContentTypes.Builder builder = ContentTypes.create();
         final ContentTypes allContentTypes = registry.getAll();
 
         for ( final ContentType contentType : allContentTypes )

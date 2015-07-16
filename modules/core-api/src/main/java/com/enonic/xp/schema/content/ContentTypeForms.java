@@ -14,7 +14,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 @Beta
 public final class ContentTypeForms
 {
-    public static final Form SITE = Form.newForm().
+    public static final Form SITE = Form.create().
         addFormItem( Input.create().
             name( "description" ).
             label( "Description" ).
@@ -33,7 +33,7 @@ public final class ContentTypeForms
             build() ).
         build();
 
-    public static final Form PAGE_TEMPLATE = Form.newForm().
+    public static final Form PAGE_TEMPLATE = Form.create().
         addFormItem( Input.create().
             name( "supports" ).
             label( "Supports" ).
@@ -46,7 +46,7 @@ public final class ContentTypeForms
 
     public static final String SHORTCUT_TARGET_PROPERTY = "target";
 
-    public static final Form SHORTCUT = Form.newForm().
+    public static final Form SHORTCUT = Form.create().
         addFormItem( Input.create().
             name( SHORTCUT_TARGET_PROPERTY ).
             label( "Target" ).
@@ -57,7 +57,7 @@ public final class ContentTypeForms
             build() ).
         build();
 
-    public static final Form MEDIA_IMAGE = Form.newForm().
+    public static final Form MEDIA_IMAGE = Form.create().
 
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Image" ).
@@ -85,7 +85,7 @@ public final class ContentTypeForms
             build() ).
         build();
 
-    public static final Form MEDIA_DEFAULT = Form.newForm().
+    public static final Form MEDIA_DEFAULT = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
             inputType( InputTypes.FILE_UPLOADER ).build() ).

@@ -7,8 +7,8 @@ import org.junit.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.region.RegionDescriptors;
 
-import static com.enonic.xp.region.RegionDescriptors.newRegionDescriptors;
 import static org.junit.Assert.*;
 
 public class PageDescriptorsTest
@@ -22,7 +22,7 @@ public class PageDescriptorsTest
     @Test
     public void from()
     {
-        final Form pageForm = Form.newForm().
+        final Form pageForm = Form.create().
             addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
@@ -30,14 +30,14 @@ public class PageDescriptorsTest
         final PageDescriptor pageDescriptor1 = PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
-            regions( newRegionDescriptors().build() ).
+            regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
         final PageDescriptor pageDescriptor2 = PageDescriptor.create().
             displayName( "Log out" ).
             config( pageForm ).
-            regions( newRegionDescriptors().build() ).
+            regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:logout-page" ) ).
             build();
 

@@ -65,7 +65,7 @@ public final class ImageContentProcessor
             extraDatas = extractMetadata( mediaInfo, contentMixins );
         }
 
-        final CreateAttachments.Builder builder = CreateAttachments.builder();
+        final CreateAttachments.Builder builder = CreateAttachments.create();
         builder.add( sourceAttachment );
 
         return CreateContentParams.create( params ).
@@ -79,7 +79,7 @@ public final class ImageContentProcessor
         if ( createAttachments != null && createAttachments.getSize() == 1 )
         {
             final CreateAttachment sourceAttachment = createAttachments.first();
-            final CreateAttachments.Builder builder = CreateAttachments.builder();
+            final CreateAttachments.Builder builder = CreateAttachments.create();
             builder.add( sourceAttachment );
 
             processedCreateAttachments = builder.build();
@@ -109,7 +109,7 @@ public final class ImageContentProcessor
     private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
 
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
 
         Map<MixinName, ExtraData> metadataMap = new HashMap<>();
 

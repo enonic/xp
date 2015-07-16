@@ -69,20 +69,20 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         //Creates a content with attachments
         final Attachment thumb = Attachment.
-            newAttachment().
+            create().
             label( "thumb" ).
             name( "a1.jpg" ).
             mimeType( "image/jpg" ).
             build();
         final Attachment source = Attachment.
-            newAttachment().
+            create().
             label( "source" ).
             name( "a2.jpg" ).
             mimeType( "image/jpg" ).
             build();
         final Attachments attachments = Attachments.from( thumb, source );
         final Content content = Content.
-            newContent( ContentFixtures.newContent() ).
+            create( ContentFixtures.newContent() ).
             attachments( attachments ).
             build();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -127,20 +127,20 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         //Creates a content with attachments
         final Attachment thumb = Attachment.
-            newAttachment().
+            create().
             label( "thumb" ).
             name( "a1.jpg" ).
             mimeType( "image/jpg" ).
             build();
         final Attachment source = Attachment.
-            newAttachment().
+            create().
             label( "source" ).
             name( "a2.jpg" ).
             mimeType( "image/jpg" ).
             build();
         final Attachments attachments = Attachments.from( thumb, source );
         final Content content = Content.
-            newContent( ContentFixtures.newContent() ).
+            create( ContentFixtures.newContent() ).
             attachments( attachments ).
             build();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );

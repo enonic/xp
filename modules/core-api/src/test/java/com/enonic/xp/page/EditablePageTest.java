@@ -41,24 +41,24 @@ public class EditablePageTest
         final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         config1.addString( "some", "config" );
 
-        final Region region1 = Region.newRegion().
+        final Region region1 = Region.create().
             name( "main" ).
-            add( PartComponent.newPartComponent().
+            add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
                 config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
                 build() ).
-            add( PartComponent.newPartComponent().
+            add( PartComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
                 config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
                 build() ).
             build();
 
-        return Page.newPage().
+        return Page.create().
             config( config1 ).
             template( PageTemplateKey.from( "template-x" ) ).
-            regions( PageRegions.newPageRegions().add( region1 ).build() ).
+            regions( PageRegions.create().add( region1 ).build() ).
             build();
     }
 }

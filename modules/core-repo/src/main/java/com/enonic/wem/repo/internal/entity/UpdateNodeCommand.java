@@ -78,7 +78,7 @@ public final class UpdateNodeCommand
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( Node.newNode( editedNode ).
+        final Node updatedNode = createUpdatedNode( Node.create( editedNode ).
             timestamp( Instant.now() ).
             attachedBinaries( updatedBinaries ).
             build() );
@@ -104,7 +104,7 @@ public final class UpdateNodeCommand
         final AccessControlList permissions =
             evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
 
-        final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
+        final Node.Builder updateNodeBuilder = Node.create( editedNode ).
             permissions( permissions );
         return updateNodeBuilder.build();
     }

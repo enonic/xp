@@ -91,7 +91,7 @@ public class NodeJsonSerializerTest
             addIndexValueProcessor( indexValueProcessor ).
             build();
 
-        Node node = Node.newNode().
+        Node node = Node.create().
             id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
@@ -121,7 +121,7 @@ public class NodeJsonSerializerTest
 
         final Node deSerializedNode = this.serializer.toNode( expectedStr );
 
-        assertEquals( node, Node.newNode( deSerializedNode ).
+        assertEquals( node, Node.create( deSerializedNode ).
             name( node.name() ).
             parentPath( node.parentPath() ).
             build() );

@@ -19,7 +19,7 @@ public final class LayoutComponent
         super( builder );
         if ( builder.regions == null )
         {
-            this.regions = LayoutRegions.newLayoutRegions().build();
+            this.regions = LayoutRegions.create().build();
         }
         else
         {
@@ -32,12 +32,12 @@ public final class LayoutComponent
         }
     }
 
-    public static Builder newLayoutComponent()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newLayoutComponent( final LayoutComponent source )
+    public static Builder create( final LayoutComponent source )
     {
         return new Builder( source );
     }
@@ -45,7 +45,7 @@ public final class LayoutComponent
     @Override
     public LayoutComponent copy()
     {
-        return newLayoutComponent( this ).build();
+        return create( this ).build();
     }
 
     @Override

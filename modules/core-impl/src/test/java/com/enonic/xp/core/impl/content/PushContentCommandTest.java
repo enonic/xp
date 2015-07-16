@@ -245,16 +245,16 @@ public class PushContentCommandTest
 
     private Node createNode( final String id, final String name, final String path )
     {
-        return Node.newNode().
+        return Node.create().
             id( NodeId.from( id ) ).
             name( name ).
-            parentPath( NodePath.newPath( path ).build() ).
+            parentPath( NodePath.create( path ).build() ).
             build();
     }
 
     private Content createContent( final String id, final String name, final ContentPath path, boolean valid )
     {
-        return Content.newContent().
+        return Content.create().
             id( ContentId.from( id ) ).
             name( name ).
             parentPath( path ).

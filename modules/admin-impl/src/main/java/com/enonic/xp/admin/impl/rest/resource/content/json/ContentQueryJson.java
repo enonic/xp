@@ -27,7 +27,7 @@ public class ContentQueryJson
                       @JsonProperty("queryFilters") final List<FilterJson> queryFilters )
     {
 
-        final ContentQuery.Builder builder = ContentQuery.newContentQuery().
+        final ContentQuery.Builder builder = ContentQuery.create().
             from( from ).
             size( size ).
             queryExpr( QueryParser.parse( queryExprString ) ).

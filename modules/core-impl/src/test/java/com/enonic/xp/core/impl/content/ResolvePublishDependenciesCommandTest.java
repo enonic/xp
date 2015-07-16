@@ -199,7 +199,7 @@ public class ResolvePublishDependenciesCommandTest
 
     private Content createContent( final String id, final String name, final ContentPath path, boolean valid )
     {
-        return Content.newContent().
+        return Content.create().
             id( ContentId.from( id ) ).
             name( name ).
             parentPath( path ).

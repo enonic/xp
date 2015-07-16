@@ -27,7 +27,7 @@ public class RelationshipKeys
         return new RelationshipKeys( ImmutableSet.copyOf( keys ) );
     }
 
-    public static Builder newRelationshipKeys()
+    public static Builder create()
     {
         return new Builder();
     }

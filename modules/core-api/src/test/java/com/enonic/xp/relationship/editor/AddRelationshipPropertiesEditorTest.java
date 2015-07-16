@@ -22,7 +22,7 @@ public class AddRelationshipPropertiesEditorTest
         addProperties.put( "prop4", "v4" );
         AddRelationshipPropertiesEditor editor = new AddRelationshipPropertiesEditor( addProperties );
 
-        Relationship relationship = Relationship.newRelationship().
+        Relationship relationship = Relationship.create().
             property( "prop1", "v1" ).
             property( "prop2", "v2" ).
             property( "prop3", "v3" ).

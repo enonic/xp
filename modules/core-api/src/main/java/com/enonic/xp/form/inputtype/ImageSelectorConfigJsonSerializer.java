@@ -33,7 +33,7 @@ public class ImageSelectorConfigJsonSerializer
     @Override
     public ImageSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        final ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         final JsonNode relationshipTypeNode = inputTypeConfigNode.get( "relationshipType" );
         if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
         {

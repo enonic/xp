@@ -18,7 +18,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 public class MixinServiceImplTest
@@ -106,7 +105,7 @@ public class MixinServiceImplTest
         Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
         Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
 
-        ContentType contentType = newContentType().
+        ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( "module2:mixin1" ).
             metadata( MixinNames.from( "module2:mixin1", "module2:mixin2" ) ).
@@ -176,7 +175,7 @@ public class MixinServiceImplTest
 
     private Mixin createMixin( final String name )
     {
-        return Mixin.newMixin().name( name ).build();
+        return Mixin.create().name( name ).build();
     }
 
 }

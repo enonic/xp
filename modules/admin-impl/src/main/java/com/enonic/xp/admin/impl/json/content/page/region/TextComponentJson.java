@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.TextComponent;
 
-import static com.enonic.xp.region.TextComponent.newTextComponent;
-
 @SuppressWarnings("UnusedDeclaration")
 public class TextComponentJson
     extends ComponentJson<TextComponent>
@@ -23,7 +21,7 @@ public class TextComponentJson
     @JsonCreator
     public TextComponentJson( @JsonProperty("name") final String name, @JsonProperty("text") final String text )
     {
-        super( newTextComponent().
+        super( TextComponent.create().
             name( name != null ? ComponentName.from( name ) : null ).
             text( text ).
             build() );
