@@ -14,11 +14,14 @@ import com.enonic.xp.query.aggregation.BucketAggregationQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.xp.query.aggregation.DistanceRange;
+import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
+import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.query.aggregation.HistogramAggregationQuery.Order.COUNT_ASC;
 import static com.enonic.xp.query.aggregation.HistogramAggregationQuery.Order.COUNT_DESC;
@@ -27,6 +30,7 @@ import static com.enonic.xp.query.aggregation.HistogramAggregationQuery.Order.KE
 import static com.enonic.xp.query.aggregation.TermsAggregationQuery.Direction.ASC;
 import static com.enonic.xp.query.aggregation.TermsAggregationQuery.Direction.DESC;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 @SuppressWarnings("unchecked")
 final class QueryAggregationParams
@@ -101,6 +105,13 @@ final class QueryAggregationParams
             final Map<String, Object> dateRangeParamsMap = (Map<String, Object>) aggregationQueryMap.get( "stats" );
             final StatsAggregationQuery.Builder statsRangeAggregationQuery = statsAggregationFromParams( name, dateRangeParamsMap );
             return statsRangeAggregationQuery.build();
+        }
+        else if ( aggregationQueryMap.containsKey( "geo_distance" ) )
+        {
+            final Map<String, Object> geoDistanceParamsMap = (Map<String, Object>) aggregationQueryMap.get( "geo_distance" );
+            final GeoDistanceAggregationQuery.Builder geoDistanceAggregationQuery =
+                geoDistanceAggregationFromParams( name, geoDistanceParamsMap );
+            return geoDistanceAggregationQuery.build();
         }
 
         return null;
@@ -229,6 +240,46 @@ final class QueryAggregationParams
             setRanges( ranges );
     }
 
+    private GeoDistanceAggregationQuery.Builder geoDistanceAggregationFromParams( final String name, final Map<String, Object> params )
+    {
+        final String fieldName = (String) params.get( "field" );
+        final String unit = (String) params.get( "unit" );
+        final Map<String, Object> originCoordinates = (Map<String, Object>) params.getOrDefault( "origin", emptyMap() );
+        final Double lat = Double.parseDouble( (String) originCoordinates.get( "lat" ) );
+        final Double lon = Double.parseDouble( (String) originCoordinates.get( "lon" ) );
+        final GeoPoint origin = new GeoPoint( lat, lon );
+        final List<Map<String, Object>> rangeListParams = (List<Map<String, Object>>) params.getOrDefault( "ranges", emptyList() );
+        final List<DistanceRange> ranges = new ArrayList<>();
+        for ( Map<String, Object> rangeParams : rangeListParams )
+        {
+            Double from, to;
+            if ( rangeParams.getOrDefault( "from", null ) != null )
+            {
+                from = ( (Integer) rangeParams.getOrDefault( "from", null ) ).doubleValue();
+            }
+            else
+            {
+                from = null;
+            }
+            if ( rangeParams.getOrDefault( "to", null ) != null )
+            {
+                to = ( (Integer) rangeParams.getOrDefault( "to", null ) ).doubleValue();
+            }
+            else
+            {
+                to = null;
+            }
+            final DistanceRange range = DistanceRange.create().from( from ).to( to ).build();
+            ranges.add( range );
+        }
+
+        return GeoDistanceAggregationQuery.create( name ).
+            fieldName( fieldName ).
+            origin( origin ).
+            unit( unit ).
+            setRanges( ranges );
+    }
+
     private StatsAggregationQuery.Builder statsAggregationFromParams( final String name, final Map<String, Object> paramsMap )
     {
         final String fieldName = (String) paramsMap.get( "field" );
@@ -248,3 +299,4 @@ final class QueryAggregationParams
         return value != null && value instanceof Number ? ( (Number) value ).doubleValue() : null;
     }
 }
+
