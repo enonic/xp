@@ -4,7 +4,7 @@ module api.content.page {
 
         private static SEPARATOR = ":";
 
-        private moduleKey: api.module.ModuleKey;
+        private applicationKey: api.module.ApplicationKey;
 
         private name: DescriptorName;
 
@@ -16,20 +16,20 @@ module api.content.page {
                 throw new Error("DescriptorKey must contain separator '" + DescriptorKey.SEPARATOR + "':" + str);
             }
 
-            var moduleKey = str.substring(0, sepIndex);
+            var applicationKey = str.substring(0, sepIndex);
             var name = str.substring(sepIndex + 1, str.length);
 
-            return new DescriptorKey(api.module.ModuleKey.fromString(moduleKey), new DescriptorName(name));
+            return new DescriptorKey(api.module.ApplicationKey.fromString(applicationKey), new DescriptorName(name));
         }
 
-        constructor(moduleKey: api.module.ModuleKey, name: DescriptorName) {
-            this.moduleKey = moduleKey;
+        constructor(applicationKey: api.module.ApplicationKey, name: DescriptorName) {
+            this.applicationKey = applicationKey;
             this.name = name;
-            this.refString = moduleKey.toString() + DescriptorKey.SEPARATOR + name.toString();
+            this.refString = applicationKey.toString() + DescriptorKey.SEPARATOR + name.toString();
         }
 
-        getModuleKey(): api.module.ModuleKey {
-            return this.moduleKey;
+        getApplicationKey(): api.module.ApplicationKey {
+            return this.applicationKey;
         }
 
         getName(): DescriptorName {

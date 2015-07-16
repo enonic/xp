@@ -42,7 +42,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.siteModel = model.getSiteModel();
             this.pageModel = model.getPageModel();
 
-            this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
+            this.getPageDescriptorsByModulesRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
             this.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
 
                 if (this.pageModel.hasController()) {
@@ -53,7 +53,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
+                    this.getPageDescriptorsByModulesRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
                     this.load();
                 }
             });

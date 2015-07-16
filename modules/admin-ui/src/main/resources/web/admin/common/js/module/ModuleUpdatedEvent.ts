@@ -11,18 +11,18 @@ module api.module {
 
     export class ModuleUpdatedEvent extends api.event.Event {
 
-        private moduleKey: api.module.ModuleKey;
+        private applicationKey: api.module.ApplicationKey;
 
         private eventType: ModuleUpdatedEventType;
 
-        constructor(moduleKey: api.module.ModuleKey, eventType: ModuleUpdatedEventType) {
+        constructor(applicationKey: api.module.ApplicationKey, eventType: ModuleUpdatedEventType) {
             super();
-            this.moduleKey = moduleKey;
+            this.applicationKey = applicationKey;
             this.eventType = eventType;
         }
 
-        public getModuleKey(): api.module.ModuleKey {
-            return this.moduleKey;
+        public getApplicationKey(): api.module.ApplicationKey {
+            return this.applicationKey;
         }
 
         public getEventType(): ModuleUpdatedEventType {
@@ -45,9 +45,9 @@ module api.module {
         }
 
         static fromJson(json: ModuleUpdatedEventJson): ModuleUpdatedEvent {
-            var moduleKey = api.module.ModuleKey.fromString(json.applicationKey);
+            var applicationKey = api.module.ApplicationKey.fromString(json.applicationKey);
             var eventType = ModuleUpdatedEventType[json.eventType];
-            return new ModuleUpdatedEvent(moduleKey, eventType);
+            return new ModuleUpdatedEvent(applicationKey, eventType);
         }
     }
 

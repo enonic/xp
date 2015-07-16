@@ -87,7 +87,7 @@ public class ModuleResourceTest
 
         String response = request().
             path( "module" ).
-            queryParam( "moduleKey", "testmodule" ).
+            queryParam( "applicationKey", "testmodule" ).
             get().getAsString();
         assertJson( "get_module_by_key_success.json", response );
     }

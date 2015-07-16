@@ -42,7 +42,7 @@ public final class PartDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public PartDescriptorsJson getByModule( @QueryParam("moduleKey") final String applicationKey )
+    public PartDescriptorsJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
         final PartDescriptors descriptors = partDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
         return new PartDescriptorsJson( descriptors );

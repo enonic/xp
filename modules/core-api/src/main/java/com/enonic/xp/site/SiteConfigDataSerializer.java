@@ -12,14 +12,14 @@ public class SiteConfigDataSerializer
     public void toData( final SiteConfig siteConfig, PropertySet parentSet )
     {
         final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
-        siteConfigAsSet.addString( "moduleKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
         siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
     }
 
     SiteConfig fromData( final PropertySet siteConfigAsSet )
     {
         return SiteConfig.create().
-            module( ApplicationKey.from( siteConfigAsSet.getString( "moduleKey" ) ) ).
+            module( ApplicationKey.from( siteConfigAsSet.getString( "applicationKey" ) ) ).
             config( siteConfigAsSet.getSet( "config" ).toTree() ).
             build();
     }

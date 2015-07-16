@@ -1,17 +1,17 @@
 module api.content.site {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class ModuleRemovedEvent {
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
-        constructor(moduleKey: ModuleKey) {
-            this.moduleKey = moduleKey;
+        constructor(applicationKey: ApplicationKey) {
+            this.applicationKey = applicationKey;
         }
 
-        getModuleKey(): ModuleKey {
-            return this.moduleKey;
+        getApplicationKey(): ApplicationKey {
+            return this.applicationKey;
         }
     }
 }

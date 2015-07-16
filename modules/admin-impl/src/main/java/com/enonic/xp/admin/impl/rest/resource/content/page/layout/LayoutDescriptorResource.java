@@ -42,7 +42,7 @@ public final class LayoutDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public LayoutDescriptorsJson getByModules( @QueryParam("moduleKey") final String applicationKey )
+    public LayoutDescriptorsJson getByModules( @QueryParam("applicationKey") final String applicationKey )
     {
         final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
         return new LayoutDescriptorsJson( descriptors );

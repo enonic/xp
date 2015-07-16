@@ -183,7 +183,7 @@ public class Module
     public String toString()
     {
         return MoreObjects.toStringHelper( this ).
-            add( "moduleKey", applicationKey ).
+            add( "applicationKey", applicationKey ).
             add( "displayName", displayName ).
             add( "url", url ).
             add( "vendorName", vendorName ).

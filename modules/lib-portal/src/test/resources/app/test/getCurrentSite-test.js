@@ -11,7 +11,7 @@ var expectedJson = {
             "config": {
                 "Field": 42
             },
-            "moduleKey": "mymodule"
+            "applicationKey": "mymodule"
         }
     },
     "hasChildren": false,

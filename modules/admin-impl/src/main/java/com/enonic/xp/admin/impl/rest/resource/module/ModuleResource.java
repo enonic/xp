@@ -72,7 +72,7 @@ public final class ModuleResource
     }
 
     @GET
-    public ModuleJson getByKey( @QueryParam("moduleKey") String applicationKey )
+    public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
         final Module module = this.moduleService.getModule( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );

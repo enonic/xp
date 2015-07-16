@@ -1,7 +1,7 @@
 module api.content.page {
 
     import Module = api.module.Module;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import ModuleCaches = api.module.ModuleCaches;
     import ModuleBasedCache = api.module.ModuleBasedCache;
 
@@ -27,8 +27,8 @@ module api.content.page {
             super();
         }
 
-        loadByModule(moduleKey: ModuleKey) {
-            new GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse().catch((reason: any) => {
+        loadByModule(applicationKey: ApplicationKey) {
+            new GetPageDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }
@@ -36,11 +36,11 @@ module api.content.page {
         put(descriptor: PageDescriptor) {
             api.util.assertNotNull(descriptor, "a PageDescriptor must be given");
 
-            super.put(descriptor, descriptor.getKey().getModuleKey());
+            super.put(descriptor, descriptor.getKey().getApplicationKey());
         }
 
         getByKey(key: DescriptorKey): PageDescriptor {
-            return super.getByKey(key, key.getModuleKey());
+            return super.getByKey(key, key.getApplicationKey());
         }
 
         createModuleCache(): PageDescriptorModuleCache {

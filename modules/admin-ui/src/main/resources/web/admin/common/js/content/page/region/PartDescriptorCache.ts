@@ -1,7 +1,7 @@
 module api.content.page.region {
 
     import Module = api.module.Module;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import ModuleCaches = api.module.ModuleCaches;
     import ModuleBasedCache = api.module.ModuleBasedCache;
     import DescriptorKey = api.content.page.DescriptorKey;
@@ -28,8 +28,8 @@ module api.content.page.region {
             super();
         }
 
-        loadByModule(moduleKey: ModuleKey) {
-            new GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse().catch((reason: any) => {
+        loadByModule(applicationKey: ApplicationKey) {
+            new GetPartDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }
@@ -37,11 +37,11 @@ module api.content.page.region {
         put(descriptor: PartDescriptor) {
             api.util.assertNotNull(descriptor, "a PartDescriptor must be given");
 
-            super.put(descriptor, descriptor.getKey().getModuleKey());
+            super.put(descriptor, descriptor.getKey().getApplicationKey());
         }
 
         getByKey(key: DescriptorKey): PartDescriptor {
-            return super.getByKey(key, key.getModuleKey());
+            return super.getByKey(key, key.getApplicationKey());
         }
 
         createModuleCache(): PartDescriptorModuleCache {

@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class GetLayoutDescriptorByKeyRequest extends LayoutDescriptorResourceRequest<LayoutDescriptorJson,LayoutDescriptor> {
 
@@ -26,7 +26,7 @@ module api.content.page.region {
         sendAndParse(): wemQ.Promise<LayoutDescriptor> {
             var deferred = wemQ.defer<LayoutDescriptor>();
 
-            new GetLayoutDescriptorsByModuleRequest(this.key.getModuleKey()).sendAndParse().then((descriptors: LayoutDescriptor[]) => {
+            new GetLayoutDescriptorsByModuleRequest(this.key.getApplicationKey()).sendAndParse().then((descriptors: LayoutDescriptor[]) => {
                 descriptors.forEach((descriptor: LayoutDescriptor) => {
                     if (this.key.equals(descriptor.getKey())) {
                         deferred.resolve(descriptor);

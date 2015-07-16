@@ -79,7 +79,7 @@ public final class RelationshipTypeResource
 
     @GET
     @Path("byModule")
-    public RelationshipTypeListJson getByModule( @QueryParam("moduleKey") final String applicationKey )
+    public RelationshipTypeListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ApplicationKey.from( applicationKey ) );
 

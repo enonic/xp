@@ -81,41 +81,41 @@ module app.browse {
         }
 
         fetch(node: TreeNode<Module>): wemQ.Promise<api.module.Module> {
-            return this.fetchByKey(node.getData().getModuleKey());
+            return this.fetchByKey(node.getData().getApplicationKey());
         }
 
-        private fetchByKey(moduleKey: api.module.ModuleKey): wemQ.Promise<api.module.Module> {
+        private fetchByKey(applicationKey: api.module.ApplicationKey): wemQ.Promise<api.module.Module> {
             var deferred = wemQ.defer<api.module.Module>();
-            new api.module.GetModuleRequest(moduleKey, true).sendAndParse().then((modulee: api.module.Module)=> {
+            new api.module.GetModuleRequest(applicationKey, true).sendAndParse().then((modulee: api.module.Module)=> {
                 deferred.resolve(modulee);
             });
 
             return deferred.promise;
         }
 
-        updateModuleNode(moduleKey: api.module.ModuleKey) {
+        updateModuleNode(applicationKey: api.module.ApplicationKey) {
             var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Module>) => {
                 var curModule: Module = child.getData();
-                if (curModule.getModuleKey().toString() == moduleKey.toString()) {
+                if (curModule.getApplicationKey().toString() == applicationKey.toString()) {
                     this.updateNode(curModule);
                 }
             });
         }
 
-        deleteModuleNode(moduleKey: api.module.ModuleKey) {
+        deleteModuleNode(applicationKey: api.module.ApplicationKey) {
             var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Module>) => {
                 var curModule: Module = child.getData();
-                if (curModule.getModuleKey().toString() == moduleKey.toString()) {
+                if (curModule.getApplicationKey().toString() == applicationKey.toString()) {
                     this.deleteNode(curModule);
                 }
             });
         }
 
-        appendModuleNode(moduleKey: api.module.ModuleKey) {
+        appendModuleNode(applicationKey: api.module.ApplicationKey) {
 
-            this.fetchByKey(moduleKey)
+            this.fetchByKey(applicationKey)
                 .then((data: api.module.Module) => {
                this.appendNode(data, true);
             }).catch((reason: any) => {
@@ -124,7 +124,7 @@ module app.browse {
         }
 
         refreshNodeData(parentNode: TreeNode<Module>): wemQ.Promise<TreeNode<Module>> {
-            return this.fetchByKey(parentNode.getData().getModuleKey()).then((curModule: Module) => {
+            return this.fetchByKey(parentNode.getData().getApplicationKey()).then((curModule: Module) => {
                 parentNode.setData(curModule);
                 this.refreshNode(parentNode);
                 return parentNode;

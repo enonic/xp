@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class GetPartDescriptorByKeyRequest extends PartDescriptorResourceRequest<PartDescriptorJson,PartDescriptor> {
 
@@ -26,7 +26,7 @@ module api.content.page.region {
         sendAndParse(): wemQ.Promise<PartDescriptor> {
             var deferred = wemQ.defer<PartDescriptor>();
 
-            new GetPartDescriptorsByModuleRequest(this.key.getModuleKey()).sendAndParse().then((descriptors: PartDescriptor[]) => {
+            new GetPartDescriptorsByModuleRequest(this.key.getApplicationKey()).sendAndParse().then((descriptors: PartDescriptor[]) => {
                 descriptors.forEach((descriptor: PartDescriptor) => {
                     if (this.key.equals(descriptor.getKey())) {
                         deferred.resolve(descriptor);

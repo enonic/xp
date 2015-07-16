@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleCache extends api.cache.Cache<Module, ModuleKey> {
+    export class ModuleCache extends api.cache.Cache<Module, ApplicationKey> {
 
         private static instance: ModuleCache;
 
@@ -8,8 +8,8 @@ module api.module {
             super();
 
             ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
-                console.log("ModuleCache on ModuleUpdatedEvent, deleting: " + event.getModuleKey().toString());
-                this.deleteByKey(event.getModuleKey());
+                console.log("ModuleCache on ModuleUpdatedEvent, deleting: " + event.getApplicationKey().toString());
+                this.deleteByKey(event.getApplicationKey());
             });
         }
 
@@ -17,11 +17,11 @@ module api.module {
             return new ModuleBuilder(object).build();
         }
 
-        getKeyFromObject(object: Module): ModuleKey {
-            return object.getModuleKey();
+        getKeyFromObject(object: Module): ApplicationKey {
+            return object.getApplicationKey();
         }
 
-        getKeyAsString(key: ModuleKey): string {
+        getKeyAsString(key: ApplicationKey): string {
             return key.toString();
         }
 

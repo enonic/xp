@@ -5,7 +5,7 @@ module api.module {
         static STATE_STARTED = 'started';
         static STATE_STOPPED = 'stopped';
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
         private displayName: string;
 
@@ -21,7 +21,7 @@ module api.module {
 
         private config: api.form.Form;
 
-        private moduleDependencies: api.module.ModuleKey[] = [];
+        private moduleDependencies: api.module.ApplicationKey[] = [];
 
         private contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
 
@@ -33,7 +33,7 @@ module api.module {
 
         constructor(builder: ModuleBuilder) {
             super(builder);
-            this.moduleKey = builder.moduleKey;
+            this.applicationKey = builder.applicationKey;
             this.displayName = builder.displayName;
             this.vendorName = builder.vendorName;
             this.vendorUrl = builder.vendorUrl;
@@ -52,8 +52,8 @@ module api.module {
             return this.displayName;
         }
 
-        getModuleKey(): ModuleKey {
-            return this.moduleKey;
+        getApplicationKey(): ApplicationKey {
+            return this.applicationKey;
         }
 
         getVersion(): string {
@@ -61,7 +61,7 @@ module api.module {
         }
 
         getName(): string {
-            return this.moduleKey.getName();
+            return this.applicationKey.getName();
         }
 
         getVendorName(): string {
@@ -100,7 +100,7 @@ module api.module {
             return this.maxSystemVersion;
         }
 
-        getModuleDependencies(): api.module.ModuleKey[] {
+        getModuleDependencies(): api.module.ApplicationKey[] {
             return this.moduleDependencies;
         }
 
@@ -130,7 +130,7 @@ module api.module {
             }
             var other = <Module>o;
 
-            return this.moduleKey.equals(other.moduleKey) &&
+            return this.applicationKey.equals(other.applicationKey) &&
                    this.displayName == other.displayName &&
                    this.vendorName == other.vendorName &&
                    this.vendorUrl == other.vendorUrl &&
@@ -147,7 +147,7 @@ module api.module {
 
     export class ModuleBuilder extends api.item.BaseItemBuilder {
 
-        moduleKey: ModuleKey;
+        applicationKey: ApplicationKey;
 
         displayName: string;
 
@@ -163,7 +163,7 @@ module api.module {
 
         config: api.form.Form;
 
-        moduleDependencies: api.module.ModuleKey[];
+        moduleDependencies: api.module.ApplicationKey[];
 
         contentTypeDependencies: api.schema.content.ContentTypeName[];
 
@@ -180,7 +180,7 @@ module api.module {
             this.metaSteps;
             if (source) {
                 super(source);
-                this.moduleKey = source.getModuleKey();
+                this.applicationKey = source.getApplicationKey();
                 this.displayName = source.getDisplayName();
                 this.vendorName = source.getVendorName();
                 this.vendorUrl = source.getVendorUrl();
@@ -200,7 +200,7 @@ module api.module {
 
             super.fromBaseItemJson(json, 'key');
 
-            this.moduleKey = ModuleKey.fromString(json.key);
+            this.applicationKey = ApplicationKey.fromString(json.key);
             this.displayName = json.displayName;
             this.vendorName = json.vendorName;
             this.vendorUrl = json.vendorUrl;
@@ -214,7 +214,7 @@ module api.module {
 
             if (json.moduleDependencies != null) {
                 json.moduleDependencies.forEach((dependency: string) => {
-                    this.moduleDependencies.push(api.module.ModuleKey.fromString(dependency));
+                    this.moduleDependencies.push(api.module.ApplicationKey.fromString(dependency));
                 });
             }
 

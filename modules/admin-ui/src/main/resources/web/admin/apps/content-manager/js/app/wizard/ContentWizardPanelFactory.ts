@@ -1,6 +1,5 @@
 module app.wizard {
 
-    import ModuleKey = api.module.ModuleKey;
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Content = api.content.Content;
@@ -156,7 +155,7 @@ module app.wizard {
                 return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
                     siteId: site.getContentId(),
                     contentType: contentType,
-                    modules: site.getModuleKeys()
+                    applications: site.getApplicationKeys()
                 });
             }
             else {

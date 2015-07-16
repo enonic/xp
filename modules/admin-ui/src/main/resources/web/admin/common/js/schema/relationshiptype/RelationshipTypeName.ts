@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class RelationshipTypeName extends api.module.ModuleBasedName {
 
@@ -9,7 +9,7 @@ module api.schema.relationshiptype {
         constructor(name:string) {
             api.util.assertNotNull(name, "RelationshipType name can't be null");
             var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
-            super(ModuleKey.fromString(parts[0]), parts[1]);
+            super(ApplicationKey.fromString(parts[0]), parts[1]);
         }
 
     }

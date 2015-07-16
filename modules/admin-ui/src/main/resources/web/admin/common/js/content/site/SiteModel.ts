@@ -1,6 +1,6 @@
 module api.content.site {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class SiteModel {
 
@@ -36,11 +36,11 @@ module api.content.site {
             this.site.getContentData().onPropertyRemoved((event: api.data.PropertyRemovedEvent) => {
                 var property: api.data.Property = event.getProperty();
                 if (property.getName() == "siteConfig") {
-                    var moduleKey = ModuleKey.fromString(property.getPropertySet().getString("moduleKey"));
+                    var applicationKey = ApplicationKey.fromString(property.getPropertySet().getString("applicationKey"));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
-                            !siteConfig.getModuleKey().equals(moduleKey)
+                            !siteConfig.getApplicationKey().equals(applicationKey)
                     );
-                    this.notifyModuleRemoved(moduleKey);
+                    this.notifyModuleRemoved(applicationKey);
                 }
             });
 
@@ -55,8 +55,8 @@ module api.content.site {
             return this.site.getContentId();
         }
 
-        getModuleKeys(): ModuleKey[] {
-            return this.siteConfigs.map((sc: SiteConfig) => sc.getModuleKey());
+        getApplicationKeys(): ApplicationKey[] {
+            return this.siteConfigs.map((sc: SiteConfig) => sc.getApplicationKey());
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
@@ -106,8 +106,8 @@ module api.content.site {
                 });
         }
 
-        private notifyModuleRemoved(moduleKey: ModuleKey) {
-            var event = new ModuleRemovedEvent(moduleKey);
+        private notifyModuleRemoved(applicationKey: ApplicationKey) {
+            var event = new ModuleRemovedEvent(applicationKey);
             this.moduleRemovedListeners.forEach((listener: (event: ModuleRemovedEvent)=>void) => {
                 listener(event);
             })

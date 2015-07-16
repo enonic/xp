@@ -13,7 +13,7 @@
           "id": "2",
           "set": [
             {
-              "name": "moduleKey",
+              "name": "applicationKey",
               "type": "String",
               "values": [
                 {

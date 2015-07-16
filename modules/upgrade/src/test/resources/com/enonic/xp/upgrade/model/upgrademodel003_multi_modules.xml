@@ -52,14 +52,14 @@
     <property-set name="data">
       <string name="description">The Features Site.</string>
       <property-set name="moduleConfig">
-        <string name="moduleKey">com.enonic.xp.modules.features</string>
+        <string name="applicationKey">com.enonic.xp.modules.features</string>
         <property-set name="config"/>
       </property-set>
       <property-set name="anotherProperty">
         <string name="moduleConfig">do not change this</string>
       </property-set>
       <property-set name="moduleConfig">
-        <string name="moduleKey">com.enonic.xp.other.module</string>
+        <string name="applicationKey">com.enonic.xp.other.module</string>
         <property-set name="config"/>
       </property-set>
     </property-set>

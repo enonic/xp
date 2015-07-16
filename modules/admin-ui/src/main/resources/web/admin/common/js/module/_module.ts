@@ -1,5 +1,5 @@
 ///<reference path='ResourcePath.ts' />
-///<reference path='ModuleKey.ts' />
+///<reference path='ApplicationKey.ts' />
 ///<reference path='ModuleResourceKey.ts' />
 ///<reference path='Module.ts' />
 ///<reference path='ModuleResourceRequest.ts' />

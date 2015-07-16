@@ -1,7 +1,7 @@
 {
     "modules": [
         {
-            "moduleKey": "testmodule",
+            "applicationKey": "testmodule",
             "version": "1.0.0",
             "displayName": "Test Module",
             "url": "http://test-module.com",
@@ -12,7 +12,7 @@
             "minSystemVersion": "1.0.0"
         },
         {
-            "moduleKey": "gruntmodule-2.0.0",
+            "applicationKey": "gruntmodule-2.0.0",
             "version": "2.0.0",
             "displayName": "Grunt Module",
             "url": "http://grunt-module.com",

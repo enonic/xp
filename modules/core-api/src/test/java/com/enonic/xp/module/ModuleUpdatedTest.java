@@ -26,13 +26,13 @@ public class ModuleUpdatedTest
     public void testToString()
     {
         ModuleUpdatedEvent event = new ModuleUpdatedEvent( ApplicationKey.from( "mymodule" ), ModuleEventType.INSTALLED );
-        assertEquals( event.toString(), "ModuleUpdatedEvent{eventType=INSTALLED, moduleKey=mymodule}" );
+        assertEquals( event.toString(), "ModuleUpdatedEvent{eventType=INSTALLED, applicationKey=mymodule}" );
 
         event = new ModuleUpdatedEvent( null, ModuleEventType.INSTALLED );
         assertEquals( event.toString(), "ModuleUpdatedEvent{eventType=INSTALLED}" );
 
         event = new ModuleUpdatedEvent( ApplicationKey.from( "mymodule" ), null );
-        assertEquals( event.toString(), "ModuleUpdatedEvent{moduleKey=mymodule}" );
+        assertEquals( event.toString(), "ModuleUpdatedEvent{applicationKey=mymodule}" );
 
         event = new ModuleUpdatedEvent( null, null );
         assertEquals( event.toString(), "ModuleUpdatedEvent{}" );

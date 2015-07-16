@@ -42,11 +42,11 @@ describe("api.data.PropertyPathTest", function () {
 
     describe("test for PropertyPath.fromString() function", function () {
 
-        it("moduleKey", function () {
-            var path = PropertyPath.fromString('moduleKey');
+        it("applicationKey", function () {
+            var path = PropertyPath.fromString('applicationKey');
 
             expect(path.elementCount()).toBe(1);
-            expect(path.toString()).toBe('moduleKey');
+            expect(path.toString()).toBe('applicationKey');
         });
 
         it("checks if path is absolute and splits elements", function () {

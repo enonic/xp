@@ -2,12 +2,12 @@ module api.module {
 
     export class StopModuleRequest extends ModuleResourceRequest<void, void> {
 
-        private moduleKeys: ModuleKey[];
+        private applicationKeys: ApplicationKey[];
 
-        constructor(moduleKeys: ModuleKey[]) {
+        constructor(applicationKeys: ApplicationKey[]) {
             super();
             super.setMethod("POST");
-            this.moduleKeys = moduleKeys;
+            this.applicationKeys = applicationKeys;
         }
 
         getRequestPath(): api.rest.Path {
@@ -16,7 +16,7 @@ module api.module {
 
         getParams(): Object {
             return {
-                key: ModuleKey.toStringArray(this.moduleKeys)
+                key: ApplicationKey.toStringArray(this.applicationKeys)
             };
         }
 

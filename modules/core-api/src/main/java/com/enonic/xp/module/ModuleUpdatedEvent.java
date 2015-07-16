@@ -35,7 +35,7 @@ public final class ModuleUpdatedEvent
     {
         return MoreObjects.toStringHelper( this ).
             add( "eventType", this.eventType ).
-            add( "moduleKey", this.applicationKey ).
+            add( "applicationKey", this.applicationKey ).
             omitNullValues().
             toString();
     }

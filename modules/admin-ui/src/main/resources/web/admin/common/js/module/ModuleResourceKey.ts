@@ -4,7 +4,7 @@ module api.module{
 
         private static SEPARATOR = ":";
 
-        private moduleKey:ModuleKey;
+        private applicationKey:ApplicationKey;
 
         private path:ResourcePath;
 
@@ -16,20 +16,20 @@ module api.module{
                 throw new Error("ModuleResourceKey must contain separator '" + ModuleResourceKey.SEPARATOR + "':" + str);
             }
 
-            var moduleKey = str.substring(0, sepIndex);
+            var applicationKey = str.substring(0, sepIndex);
             var path = str.substring(sepIndex+1, str.length);
 
-            return new ModuleResourceKey(ModuleKey.fromString(moduleKey), ResourcePath.fromString(path));
+            return new ModuleResourceKey(ApplicationKey.fromString(applicationKey), ResourcePath.fromString(path));
         }
 
-        constructor(moduleKey:ModuleKey, path:ResourcePath) {
-            this.moduleKey = moduleKey;
+        constructor(applicationKey:ApplicationKey, path:ResourcePath) {
+            this.applicationKey = applicationKey;
             this.path = path;
-            this.refString = moduleKey.toString() + ModuleResourceKey.SEPARATOR  + path.toString();
+            this.refString = applicationKey.toString() + ModuleResourceKey.SEPARATOR  + path.toString();
         }
 
-        getModuleKey():ModuleKey {
-            return this.moduleKey;
+        getApplicationKey():ApplicationKey {
+            return this.applicationKey;
         }
 
         getPath():ResourcePath {
