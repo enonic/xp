@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.repo;
 
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
@@ -11,9 +12,11 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.export.NodeExportResultJson;
+import com.enonic.xp.admin.impl.rest.resource.export.NodeExportResultsJson;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -42,14 +45,16 @@ public class SystemDumpResource
 
     @POST
     @Path("dump")
-    public NodeExportResultJson dump( final SystemDumpRequestJson request )
+    public NodeExportResultsJson dump( final SystemDumpRequestJson request )
         throws Exception
     {
-        // TODO: Fix result and clean this shit up
+        final List<NodeExportResult> results = Lists.newArrayList();
 
-        exportRepoBranch( "cms-repo", "draft", request.getName() );
-        exportRepoBranch( "cms-repo", "master", request.getName() );
-        return NodeExportResultJson.from( exportRepoBranch( "system-repo", "master", request.getName() ) );
+        results.add( exportRepoBranch( "cms-repo", "draft", request.getName() ) );
+        results.add( exportRepoBranch( "cms-repo", "master", request.getName() ) );
+        results.add( exportRepoBranch( "system-repo", "master", request.getName() ) );
+
+        return NodeExportResultsJson.from( results );
     }
 
     private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String dumpName )
