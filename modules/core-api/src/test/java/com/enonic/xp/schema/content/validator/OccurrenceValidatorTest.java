@@ -350,8 +350,8 @@ public class OccurrenceValidatorTest
 
         FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
         contentType.form().addFormItem( crimes );
-        crimes.add( Input.create().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
-        crimes.add( Input.create().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
+        crimes.add( Input.create().name( "description" ).label( "Description" ).inputType( InputTypes.TEXT_LINE ).build() );
+        crimes.add( Input.create().name( "year" ).label( "Year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
