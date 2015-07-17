@@ -9,6 +9,13 @@
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template
+      match="/node/data/property-set[@name='data' and ..//string[@name='type']= 'portal:site']/property-set[@name='moduleConfig']/string[@name='moduleKey']/@name">
+    <xsl:attribute name="name">
+      <xsl:value-of select="'applicationKey'"/>
+    </xsl:attribute>
+  </xsl:template>
+
   <!--Identity template,
           provides default behavior that copies all content into the output -->
   <xsl:template match="@*|node()">
