@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class ImportNodeParams2
+public class ImportNodeParams
 {
     private final BinaryAttachments binaryAttachments;
 
@@ -10,7 +10,7 @@ public class ImportNodeParams2
 
     private final boolean dryRun;
 
-    private ImportNodeParams2( Builder builder )
+    private ImportNodeParams( Builder builder )
     {
         binaryAttachments = builder.binaryAttachments;
         node = builder.node;
@@ -82,9 +82,9 @@ public class ImportNodeParams2
             return this;
         }
 
-        public ImportNodeParams2 build()
+        public ImportNodeParams build()
         {
-            return new ImportNodeParams2( this );
+            return new ImportNodeParams( this );
         }
     }
 }

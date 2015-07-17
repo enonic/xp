@@ -84,7 +84,7 @@ public interface NodeService
 
     RootNode getRoot();
 
-    Node importNode(final ImportNodeParams2 params);
+    Node importNode( final ImportNodeParams params );
 
     boolean nodeExists( final NodeId nodeId );
 
