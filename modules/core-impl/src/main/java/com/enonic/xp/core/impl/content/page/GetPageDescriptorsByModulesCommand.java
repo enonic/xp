@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
@@ -28,8 +28,8 @@ final class GetPageDescriptorsByModulesCommand
 
     public PageDescriptors execute()
     {
-        final Modules modules = this.applicationService.getModules( this.applicationKeys );
-        return getDescriptorsFromModules( modules );
+        final Applications applications = this.applicationService.getModules( this.applicationKeys );
+        return getDescriptorsFromModules( applications );
     }
 
     public GetPageDescriptorsByModulesCommand applicationKeys( final ApplicationKeys applicationKeys )
@@ -50,10 +50,10 @@ final class GetPageDescriptorsByModulesCommand
         return this;
     }
 
-    private PageDescriptors getDescriptorsFromModules( final Modules modules )
+    private PageDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        for ( final Module module : modules )
+        for ( final Module module : applications )
         {
             final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
 

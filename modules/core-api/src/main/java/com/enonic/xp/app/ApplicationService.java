@@ -4,7 +4,6 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleNotFoundException;
-import com.enonic.xp.module.Modules;
 
 @Beta
 public interface ApplicationService
@@ -12,9 +11,9 @@ public interface ApplicationService
     Module getModule( ApplicationKey key )
         throws ModuleNotFoundException;
 
-    Modules getModules( ApplicationKeys keys );
+    Applications getModules( ApplicationKeys keys );
 
-    Modules getAllModules();
+    Applications getAllModules();
 
     ClassLoader getClassLoader(Module module);
 

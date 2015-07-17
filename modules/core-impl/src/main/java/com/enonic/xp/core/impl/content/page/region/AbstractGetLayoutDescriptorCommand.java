@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
@@ -65,10 +65,10 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         parser.parse();
     }
 
-    protected final LayoutDescriptors getDescriptorsFromModules( final Modules modules )
+    protected final LayoutDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
-        for ( final Module module : modules )
+        for ( final Module module : applications )
         {
             readDescriptor( module, layoutDescriptors );
         }

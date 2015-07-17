@@ -9,9 +9,9 @@ import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
@@ -54,7 +54,7 @@ public class RelationshipTypeServiceImplTest
 
         //Mocks the module service
         applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
 
         //Mocks the ComponentContext
         final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
@@ -86,8 +86,8 @@ public class RelationshipTypeServiceImplTest
     @Test
     public void test_add_removal_module()
     {
-        Modules modules = Modules.from( myModule );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( modules );
+        Applications applications = Applications.from( myModule );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
         Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myModule );
 
         RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
@@ -101,7 +101,7 @@ public class RelationshipTypeServiceImplTest
         RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
         assertNotNull( relationshipType );
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
         Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
         relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 

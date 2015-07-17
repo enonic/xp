@@ -16,8 +16,8 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -91,7 +91,7 @@ public abstract class AbstractDescriptorServiceTest
         return module;
     }
 
-    protected final Modules createModules( final String... keys )
+    protected final Applications createModules( final String... keys )
     {
         final List<Module> list = Lists.newArrayList();
         for ( final String key : keys )
@@ -99,10 +99,10 @@ public abstract class AbstractDescriptorServiceTest
             list.add( createModule( key ) );
         }
 
-        final Modules modules = Modules.from( list );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
-        Mockito.when( this.applicationService.getModules( modules.getApplicationKeys() ) ).thenReturn( modules );
-        return modules;
+        final Applications applications = Applications.from( list );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getModules( applications.getApplicationKeys() ) ).thenReturn( applications );
+        return applications;
     }
 
     protected final void mockResources( final Module module, final String rootPath, final String filePattern, final boolean recurse,

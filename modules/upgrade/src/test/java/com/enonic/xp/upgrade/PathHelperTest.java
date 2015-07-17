@@ -12,7 +12,7 @@ public class PathHelperTest
     public void subtractPath()
         throws Exception
     {
-        assertEquals( "b/c", PathHelper.subtractPath( Paths.get( "a", "b", "c" ), Paths.get( "a" ) ).toString() );
+        assertEquals( "b\\c", PathHelper.subtractPath( Paths.get( "a", "b", "c" ), Paths.get( "a" ) ).toString() );
 
         assertEquals( "c", PathHelper.subtractPath( Paths.get( "a", "b", "c" ), Paths.get( "a", "b" ) ).toString() );
 

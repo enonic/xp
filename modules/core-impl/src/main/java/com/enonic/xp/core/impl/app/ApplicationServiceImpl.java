@@ -8,9 +8,9 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleNotFoundException;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -32,7 +32,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Modules getModules( final ApplicationKeys keys )
+    public Applications getModules( final ApplicationKeys keys )
     {
         final ImmutableList.Builder<Module> moduleList = ImmutableList.builder();
         for ( final ApplicationKey key : keys )
@@ -43,13 +43,13 @@ public final class ApplicationServiceImpl
                 moduleList.add( module );
             }
         }
-        return Modules.from( moduleList.build() );
+        return Applications.from( moduleList.build() );
     }
 
     @Override
-    public Modules getAllModules()
+    public Applications getAllModules()
     {
-        return Modules.from( this.registry.getAll() );
+        return Applications.from( this.registry.getAll() );
     }
 
     @Override

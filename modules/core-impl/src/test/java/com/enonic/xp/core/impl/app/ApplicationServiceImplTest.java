@@ -21,9 +21,9 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleNotFoundException;
-import com.enonic.xp.module.Modules;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
@@ -70,7 +70,7 @@ public class ApplicationServiceImplTest
         final Module module = createModule( "foomodule" );
         Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( module ) );
 
-        final Modules result = this.service.getAllModules();
+        final Applications result = this.service.getAllModules();
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( module, result.get( 0 ) );
@@ -82,7 +82,7 @@ public class ApplicationServiceImplTest
         final Module module = createModule( "foomodule" );
         Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
 
-        final Modules result = this.service.getModules( ApplicationKeys.from( "foomodule", "othermodule" ) );
+        final Applications result = this.service.getModules( ApplicationKeys.from( "foomodule", "othermodule" ) );
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( module, result.get( 0 ) );

@@ -25,8 +25,8 @@ import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -48,11 +48,11 @@ public final class ModuleResource
     @Path("list")
     public ListModuleJson list( @QueryParam("query") final String query )
     {
-        Modules modules = this.applicationService.getAllModules();
+        Applications applications = this.applicationService.getAllModules();
         final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
         if ( StringUtils.isNotBlank( query ) )
         {
-            modules = Modules.from( modules.stream().
+            applications = Applications.from( applications.stream().
                 filter( ( module ) -> containsIgnoreCase( module.getDisplayName(), query ) ||
                     containsIgnoreCase( module.getMaxSystemVersion(), query ) ||
                     containsIgnoreCase( module.getMinSystemVersion(), query ) ||
@@ -63,12 +63,12 @@ public final class ModuleResource
                 collect( Collectors.toList() ) );
         }
 
-        for ( Module module : modules )
+        for ( Module module : applications )
         {
             siteDescriptors.add( this.siteService.getDescriptor( module.getKey() ) );
         }
 
-        return new ListModuleJson( modules, siteDescriptors.build() );
+        return new ListModuleJson( applications, siteDescriptors.build() );
     }
 
     @GET

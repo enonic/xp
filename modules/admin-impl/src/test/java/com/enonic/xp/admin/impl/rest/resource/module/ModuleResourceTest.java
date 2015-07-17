@@ -11,11 +11,11 @@ import org.osgi.framework.Version;
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -31,8 +31,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        final Modules modules = Modules.from( module );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
+        final Applications applications = Applications.from( module );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -47,8 +47,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        final Modules modules = Modules.from( module, createEmptyModule() );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
+        final Applications applications = Applications.from( module, createEmptyModule() );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -64,8 +64,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        final Modules modules = Modules.from( module, createEmptyModule() );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
+        final Applications applications = Applications.from( module, createEmptyModule() );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 

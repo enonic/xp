@@ -3,9 +3,9 @@ package com.enonic.xp.core.impl.content.page.region;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
@@ -70,10 +70,10 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         parser.parse();
     }
 
-    protected final PartDescriptors getDescriptorsFromModules( final Modules modules )
+    protected final PartDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
-        for ( final Module module : modules )
+        for ( final Module module : applications )
         {
             readDescriptor( module, partDescriptors );
         }
