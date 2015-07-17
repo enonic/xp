@@ -3,11 +3,11 @@ package com.enonic.xp.core.impl.content.page.region;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
@@ -68,30 +68,30 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     protected final LayoutDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
-        for ( final Module module : applications )
+        for ( final Application application : applications )
         {
-            readDescriptor( module, layoutDescriptors );
+            readDescriptor( application, layoutDescriptors );
         }
         return layoutDescriptors.build();
     }
 
-    protected final LayoutDescriptors getDescriptorsFromModule( final Module module )
+    protected final LayoutDescriptors getDescriptorsFromModule( final Application application )
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
-        readDescriptor( module, layoutDescriptors );
+        readDescriptor( application, layoutDescriptors );
         return layoutDescriptors.build();
     }
 
-    private void readDescriptor( final Module module, final LayoutDescriptors.Builder layoutDescriptors )
+    private void readDescriptor( final Application application, final LayoutDescriptors.Builder layoutDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml", true );
+        final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*.xml", true );
 
         for ( final Resource resource : resources )
         {
             Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
             if ( matcher.matches() )
             {
-                final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
+                final DescriptorKey key = DescriptorKey.from( application.getKey(), matcher.group( 1 ) );
                 final LayoutDescriptor layoutDescriptor = getDescriptor( key );
                 if ( layoutDescriptor != null )
                 {

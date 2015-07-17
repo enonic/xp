@@ -19,10 +19,10 @@ import org.osgi.framework.Version;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleNotFoundException;
 
 import static org.junit.Assert.*;
@@ -30,32 +30,32 @@ import static org.mockito.Matchers.isA;
 
 public class ApplicationServiceImplTest
 {
-    private ModuleRegistry registry;
+    private ApplicationRegistry registry;
 
     private ApplicationServiceImpl service;
 
     @Before
     public void setup()
     {
-        this.registry = Mockito.mock( ModuleRegistry.class );
+        this.registry = Mockito.mock( ApplicationRegistry.class );
         this.service = new ApplicationServiceImpl();
         this.service.setRegistry( this.registry );
     }
 
-    private Module createModule( final String key )
+    private Application createModule( final String key )
     {
-        final Module module = Module.from( mockBundle( key ) );
-        return module;
+        final Application application = Application.from( mockBundle( key ) );
+        return application;
     }
 
     @Test
     public void testGetModule()
     {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+        final Application application = createModule( "foomodule" );
+        Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
-        final Module result = this.service.getModule( ApplicationKey.from( "foomodule" ) );
-        assertSame( module, result );
+        final Application result = this.service.getModule( ApplicationKey.from( "foomodule" ) );
+        assertSame( application, result );
     }
 
     @Test(expected = ModuleNotFoundException.class)
@@ -67,47 +67,47 @@ public class ApplicationServiceImplTest
     @Test
     public void testGetAllModules()
     {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( module ) );
+        final Application application = createModule( "foomodule" );
+        Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( application ) );
 
         final Applications result = this.service.getAllModules();
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
-        assertSame( module, result.get( 0 ) );
+        assertSame( application, result.get( 0 ) );
     }
 
     @Test
     public void testGetModules()
     {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+        final Application application = createModule( "foomodule" );
+        Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
         final Applications result = this.service.getModules( ApplicationKeys.from( "foomodule", "othermodule" ) );
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
-        assertSame( module, result.get( 0 ) );
+        assertSame( application, result.get( 0 ) );
     }
 
     @Test
     public void testStartModule()
         throws Exception
     {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+        final Application application = createModule( "foomodule" );
+        Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
-        this.service.startModule( module.getKey() );
-        Mockito.verify( module.getBundle() ).start();
+        this.service.startModule( application.getKey() );
+        Mockito.verify( application.getBundle() ).start();
     }
 
     @Test
     public void testStopModule()
         throws Exception
     {
-        final Module module = createModule( "foomodule" );
-        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+        final Application application = createModule( "foomodule" );
+        Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
-        this.service.stopModule( module.getKey() );
-        Mockito.verify( module.getBundle() ).stop();
+        this.service.stopModule( application.getKey() );
+        Mockito.verify( application.getBundle() ).stop();
     }
 
     private Bundle mockBundle( final String key )
@@ -141,9 +141,9 @@ public class ApplicationServiceImplTest
     private Dictionary<String, String> createBundleHeaders() {
         Dictionary<String, String> headers = new Hashtable<String, String>(  );
         headers.put( Constants.BUNDLE_NAME, "mymodule" );
-        headers.put( Module.X_MODULE_URL, "http://enonic.com/path/to/module" );
-        headers.put( Module.X_VENDOR_NAME, "Enonic AS" );
-        headers.put( Module.X_VENDOR_URL, "http://enonic.com" );
+        headers.put( Application.X_MODULE_URL, "http://enonic.com/path/to/module" );
+        headers.put( Application.X_VENDOR_NAME, "Enonic AS" );
+        headers.put( Application.X_VENDOR_URL, "http://enonic.com" );
 
         return headers;
     }

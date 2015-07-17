@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.content.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
@@ -53,14 +53,14 @@ final class GetPageDescriptorsByModulesCommand
     private PageDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        for ( final Module module : applications )
+        for ( final Application application : applications )
         {
-            final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
+            final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );
 
             for ( final Resource resource : resources )
             {
                 final String descriptorName = resource.getKey().getName();
-                final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+                final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
                 final PageDescriptor pageDescriptor = getDescriptor( key );
                 if ( pageDescriptor != null )
                 {

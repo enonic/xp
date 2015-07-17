@@ -9,17 +9,17 @@ import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
-public class ModuleResourceTest
+public class ApplicationResourceTest
     extends AbstractResourceTest
 {
     private ApplicationService applicationService;
@@ -30,8 +30,8 @@ public class ModuleResourceTest
     public void get_module_list()
         throws Exception
     {
-        final Module module = createModule();
-        final Applications applications = Applications.from( module );
+        final Application application = createModule();
+        final Applications applications = Applications.from( application );
         Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
@@ -46,8 +46,8 @@ public class ModuleResourceTest
     public void get_module_list_with_query()
         throws Exception
     {
-        final Module module = createModule();
-        final Applications applications = Applications.from( module, createEmptyModule() );
+        final Application application = createModule();
+        final Applications applications = Applications.from( application, createEmptyModule() );
         Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
@@ -63,8 +63,8 @@ public class ModuleResourceTest
     public void get_module_list_with_invalid_query()
         throws Exception
     {
-        final Module module = createModule();
-        final Applications applications = Applications.from( module, createEmptyModule() );
+        final Application application = createModule();
+        final Applications applications = Applications.from( application, createEmptyModule() );
         Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
@@ -80,8 +80,8 @@ public class ModuleResourceTest
     public void get_module_by_key()
         throws Exception
     {
-        final Module module = createModule();
-        Mockito.when( this.applicationService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( module );
+        final Application application = createModule();
+        Mockito.when( this.applicationService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -116,30 +116,30 @@ public class ModuleResourceTest
         Mockito.verify( this.applicationService ).stopModule( ApplicationKey.from( "testmodule" ) );
     }
 
-    private Module createModule()
+    private Application createModule()
     {
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "testmodule" ) );
-        Mockito.when( module.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
-        Mockito.when( module.getDisplayName() ).thenReturn( "module display name" );
-        Mockito.when( module.getUrl() ).thenReturn( "http://enonic.net" );
-        Mockito.when( module.getVendorName() ).thenReturn( "Enonic" );
-        Mockito.when( module.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
-        Mockito.when( module.getMinSystemVersion() ).thenReturn( "5.0" );
-        Mockito.when( module.getMaxSystemVersion() ).thenReturn( "5.1" );
-        Mockito.when( module.isStarted() ).thenReturn( true );
-        Mockito.when( module.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testmodule" ) );
+        Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
+        Mockito.when( application.getDisplayName() ).thenReturn( "module display name" );
+        Mockito.when( application.getUrl() ).thenReturn( "http://enonic.net" );
+        Mockito.when( application.getVendorName() ).thenReturn( "Enonic" );
+        Mockito.when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
+        Mockito.when( application.getMinSystemVersion() ).thenReturn( "5.0" );
+        Mockito.when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
+        Mockito.when( application.isStarted() ).thenReturn( true );
+        Mockito.when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
 
-        return module;
+        return application;
     }
 
-    private Module createEmptyModule()
+    private Application createEmptyModule()
     {
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "empty_testmodule" ) );
-        Mockito.when( module.getDisplayName() ).thenReturn( "empty name" );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testmodule" ) );
+        Mockito.when( application.getDisplayName() ).thenReturn( "empty name" );
 
-        return module;
+        return application;
     }
 
     private SiteDescriptor createSiteDescriptor()

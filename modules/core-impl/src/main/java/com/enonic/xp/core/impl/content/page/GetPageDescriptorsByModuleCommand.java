@@ -3,9 +3,9 @@ package com.enonic.xp.core.impl.content.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
@@ -26,8 +26,8 @@ final class GetPageDescriptorsByModuleCommand
 
     public PageDescriptors execute()
     {
-        final Module module = this.applicationService.getModule( this.applicationKey );
-        return getDescriptorsFromModule( module );
+        final Application application = this.applicationService.getModule( this.applicationKey );
+        return getDescriptorsFromModule( application );
     }
 
     public GetPageDescriptorsByModuleCommand applicationKey( final ApplicationKey applicationKey )
@@ -48,15 +48,15 @@ final class GetPageDescriptorsByModuleCommand
         return this;
     }
 
-    private PageDescriptors getDescriptorsFromModule( final Module module )
+    private PageDescriptors getDescriptorsFromModule( final Application application )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
+        final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );
 
         for ( final Resource resource : resources )
         {
             final String descriptorName = resource.getKey().getName();
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
             final PageDescriptor pageDescriptor = getDescriptor( key );
             if ( pageDescriptor != null )
             {

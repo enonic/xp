@@ -3,9 +3,9 @@ package com.enonic.xp.core.impl.content.page.layout;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.region.LayoutDescriptors;
 
 public class LayoutDescriptorServiceImpl_getByModulesTest
@@ -15,11 +15,11 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
     public void getDescriptorsFromSingleModule()
         throws Exception
     {
-        final Module module = createModule( "foomodule" );
+        final Application application = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-layout-descr" );
 
-        mockResources( module, "/app/layouts", "*.xml", true, "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        final LayoutDescriptors result = this.service.getByModule( module.getKey() );
+        mockResources( application, "/app/layouts", "*.xml", true, "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        final LayoutDescriptors result = this.service.getByModule( application.getKey() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 1, result.getSize() );

@@ -15,23 +15,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleEventType;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
 @Component(immediate = true)
-public final class ModuleRegistryImpl
-    implements ModuleRegistry, SynchronousBundleListener
+public final class ApplicationRegistryImpl
+    implements ApplicationRegistry, SynchronousBundleListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ModuleRegistryImpl.class );
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationRegistryImpl.class );
 
-    private final Map<ApplicationKey, Module> modules;
+    private final Map<ApplicationKey, Application> modules;
 
     private EventPublisher eventPublisher;
 
-    public ModuleRegistryImpl()
+    public ApplicationRegistryImpl()
     {
         this.modules = Maps.newConcurrentMap();
     }
@@ -87,7 +87,7 @@ public final class ModuleRegistryImpl
 
     private boolean isModule( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && Module.isModule( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && Application.isModule( bundle );
     }
 
     private void publishModuleChangeEvent( final BundleEvent event )
@@ -117,18 +117,18 @@ public final class ModuleRegistryImpl
 
     private void installModule( final Bundle bundle )
     {
-        final Module module = Module.from( bundle );
-        installModule( module );
+        final Application application = Application.from( bundle );
+        installModule( application );
     }
 
     @Override
-    public Module get( final ApplicationKey key )
+    public Application get( final ApplicationKey key )
     {
         return this.modules.get( key );
     }
 
     @Override
-    public Collection<Module> getAll()
+    public Collection<Application> getAll()
     {
         return this.modules.values();
     }
@@ -138,9 +138,9 @@ public final class ModuleRegistryImpl
         this.modules.remove( key );
     }
 
-    private void installModule( final Module module )
+    private void installModule( final Application application )
     {
-        this.modules.put( module.getKey(), module );
+        this.modules.put( application.getKey(), application );
     }
 
     @Reference

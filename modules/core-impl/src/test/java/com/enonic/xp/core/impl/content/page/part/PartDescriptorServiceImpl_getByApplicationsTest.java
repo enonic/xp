@@ -3,23 +3,23 @@ package com.enonic.xp.core.impl.content.page.part;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.region.PartDescriptors;
 
-public class PartDescriptorServiceImpl_getByModulesTest
+public class PartDescriptorServiceImpl_getByApplicationsTest
     extends AbstractPartDescriptorServiceTest
 {
     @Test
     public void getDescriptorsFromSingleModule()
         throws Exception
     {
-        final Module module = createModule( "foomodule" );
+        final Application application = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-part-descr" );
 
-        mockResources( module, "/app/parts", "*", false, "app/parts/foomodule-part-descr" );
-        final PartDescriptors result = this.service.getByModule( module.getKey() );
+        mockResources( application, "/app/parts", "*", false, "app/parts/foomodule-part-descr" );
+        final PartDescriptors result = this.service.getByModule( application.getKey() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 1, result.getSize() );

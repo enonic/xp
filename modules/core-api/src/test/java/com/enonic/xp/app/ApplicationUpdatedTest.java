@@ -1,12 +1,13 @@
-package com.enonic.xp.module;
+package com.enonic.xp.app;
 
 import org.junit.Test;
 
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.module.ModuleEventType;
+import com.enonic.xp.module.ModuleUpdatedEvent;
 
 import static org.junit.Assert.*;
 
-public class ModuleUpdatedTest
+public class ApplicationUpdatedTest
 {
     @Test
     public void getEventType()

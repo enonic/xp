@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
@@ -60,11 +60,11 @@ public abstract class AbstractControllerTest
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( module );
+        Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();

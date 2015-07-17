@@ -14,10 +14,10 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -80,20 +80,20 @@ public abstract class AbstractDescriptorServiceTest
 
     protected abstract String toDescriptorXml( DescriptorKey key );
 
-    protected final Module createModule( final String key )
+    protected final Application createModule( final String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( applicationKey );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( applicationKey );
 
-        Mockito.when( this.applicationService.getModule( applicationKey ) ).thenReturn( module );
-        return module;
+        Mockito.when( this.applicationService.getModule( applicationKey ) ).thenReturn( application );
+        return application;
     }
 
     protected final Applications createModules( final String... keys )
     {
-        final List<Module> list = Lists.newArrayList();
+        final List<Application> list = Lists.newArrayList();
         for ( final String key : keys )
         {
             list.add( createModule( key ) );
@@ -105,13 +105,13 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Module module, final String rootPath, final String filePattern, final boolean recurse,
+    protected final void mockResources( final Application module, final String rootPath, final String filePattern, final boolean recurse,
                                         final String... paths )
     {
         List<Resource> resourceList = new ArrayList<Resource>();
         for ( final String path : paths )
         {
-            resourceList.add( Resource.from( ResourceKey.from( module.getKey(), path ) ) );
+            resourceList.add( Resource.from( ResourceKey.from( application.getKey(), path ) ) );
         }
         Resources resources = Resources.from( resourceList );
 

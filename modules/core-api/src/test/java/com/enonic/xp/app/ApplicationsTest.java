@@ -6,30 +6,28 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.module.Module;
-
 import static org.junit.Assert.*;
 
 public class ApplicationsTest
 {
-    private static ArrayList<Module> list = new ArrayList();
+    private static ArrayList<Application> list = new ArrayList();
 
     @BeforeClass
     public static void initList()
     {
-        final Module module1 = Mockito.mock( Module.class );
-        final Module module2 = Mockito.mock( Module.class );
-        final Module module3 = Mockito.mock( Module.class );
+        final Application application1 = Mockito.mock( Application.class );
+        final Application application2 = Mockito.mock( Application.class );
+        final Application application3 = Mockito.mock( Application.class );
 
-        Mockito.when( module1.getDisplayName() ).thenReturn( "aaa" );
+        Mockito.when( application1.getDisplayName() ).thenReturn( "aaa" );
 
-        Mockito.when( module1.getKey() ).thenReturn( ApplicationKey.from( "aaa" ) );
-        Mockito.when( module2.getKey() ).thenReturn( ApplicationKey.from( "bbb" ) );
-        Mockito.when( module3.getKey() ).thenReturn( ApplicationKey.from( "ccc" ) );
+        Mockito.when( application1.getKey() ).thenReturn( ApplicationKey.from( "aaa" ) );
+        Mockito.when( application2.getKey() ).thenReturn( ApplicationKey.from( "bbb" ) );
+        Mockito.when( application3.getKey() ).thenReturn( ApplicationKey.from( "ccc" ) );
 
-        ApplicationsTest.list.add( module1 );
-        ApplicationsTest.list.add( module2 );
-        ApplicationsTest.list.add( module3 );
+        ApplicationsTest.list.add( application1 );
+        ApplicationsTest.list.add( application2 );
+        ApplicationsTest.list.add( application3 );
     }
 
     @Test
@@ -42,7 +40,7 @@ public class ApplicationsTest
     @Test
     public void fromIterable()
     {
-        final Applications applications = Applications.from( (Iterable<Module>) ApplicationsTest.list );
+        final Applications applications = Applications.from( (Iterable<Application>) ApplicationsTest.list );
 
         assertEquals( 3, applications.getSize() );
         assertEquals( "aaa", applications.first().getDisplayName() );

@@ -5,11 +5,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.util.Exceptions;
 
@@ -17,30 +17,30 @@ import com.enonic.xp.util.Exceptions;
 public final class ApplicationServiceImpl
     implements ApplicationService
 {
-    private ModuleRegistry registry;
+    private ApplicationRegistry registry;
 
     @Override
-    public Module getModule( final ApplicationKey key )
+    public Application getModule( final ApplicationKey key )
         throws ModuleNotFoundException
     {
-        final Module module = this.registry.get( key );
-        if ( module == null )
+        final Application application = this.registry.get( key );
+        if ( application == null )
         {
             throw new ModuleNotFoundException( key );
         }
-        return module;
+        return application;
     }
 
     @Override
     public Applications getModules( final ApplicationKeys keys )
     {
-        final ImmutableList.Builder<Module> moduleList = ImmutableList.builder();
+        final ImmutableList.Builder<Application> moduleList = ImmutableList.builder();
         for ( final ApplicationKey key : keys )
         {
-            final Module module = this.registry.get( key );
-            if ( module != null )
+            final Application application = this.registry.get( key );
+            if ( application != null )
             {
-                moduleList.add( module );
+                moduleList.add( application );
             }
         }
         return Applications.from( moduleList.build() );
@@ -53,9 +53,9 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public ClassLoader getClassLoader( final Module module )
+    public ClassLoader getClassLoader( final Application application )
     {
-        return new BundleClassLoader( module.getBundle() );
+        return new BundleClassLoader( application.getBundle() );
     }
 
     @Override
@@ -71,11 +71,11 @@ public final class ApplicationServiceImpl
         stopModule( getModule( key ) );
     }
 
-    private void startModule( final Module module )
+    private void startModule( final Application application )
     {
         try
         {
-            module.getBundle().start();
+            application.getBundle().start();
         }
         catch ( final Exception e )
         {
@@ -83,11 +83,11 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void stopModule( final Module module )
+    private void stopModule( final Application application )
     {
         try
         {
-            module.getBundle().stop();
+            application.getBundle().stop();
         }
         catch ( final Exception e )
         {
@@ -96,7 +96,7 @@ public final class ApplicationServiceImpl
     }
 
     @Reference
-    public void setRegistry( final ModuleRegistry registry )
+    public void setRegistry( final ApplicationRegistry registry )
     {
         this.registry = registry;
     }

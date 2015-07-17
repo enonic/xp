@@ -15,9 +15,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -68,9 +68,9 @@ public final class RelationshipTypeServiceImpl
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
         //Gets for each module the RelationshipTypes
-        for ( Module module : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllModules() )
         {
-            final RelationshipTypes relationshipTypes = getByModule( module.getKey() );
+            final RelationshipTypes relationshipTypes = getByModule( application.getKey() );
             relationshipTypeList.addAll( relationshipTypes.getList() );
         }
 
@@ -97,10 +97,10 @@ public final class RelationshipTypeServiceImpl
         else
         {
             //Else, loads the corresponding bundle relation types
-            final Module module = this.applicationService.getModule( applicationKey );
-            if ( module != null )
+            final Application application = this.applicationService.getModule( applicationKey );
+            if ( application != null )
             {
-                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( module.getBundle() );
+                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( application.getBundle() );
                 relationshipTypes = bundleRelationshipTypeLoader.load();
             }
         }

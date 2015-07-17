@@ -23,10 +23,10 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -63,9 +63,9 @@ public final class ModuleResource
                 collect( Collectors.toList() ) );
         }
 
-        for ( Module module : applications )
+        for ( Application application : applications )
         {
-            siteDescriptors.add( this.siteService.getDescriptor( module.getKey() ) );
+            siteDescriptors.add( this.siteService.getDescriptor( application.getKey() ) );
         }
 
         return new ListModuleJson( applications, siteDescriptors.build() );
@@ -74,9 +74,9 @@ public final class ModuleResource
     @GET
     public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Module module = this.applicationService.getModule( ApplicationKey.from( applicationKey ) );
+        final Application application = this.applicationService.getModule( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ModuleJson( module, siteDescriptor );
+        return new ModuleJson( application, siteDescriptor );
     }
 
     @POST

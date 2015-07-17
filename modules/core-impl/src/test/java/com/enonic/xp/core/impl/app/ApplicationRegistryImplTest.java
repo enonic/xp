@@ -19,19 +19,19 @@ import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
 import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleEventType;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
 import static org.junit.Assert.*;
 
-public class ModuleRegistryImplTest
+public class ApplicationRegistryImplTest
 {
     private PojoServiceRegistry serviceRegistry;
 
-    private ModuleRegistryImpl registry;
+    private ApplicationRegistryImpl registry;
 
     private List<Event> events;
 
@@ -54,7 +54,7 @@ public class ModuleRegistryImplTest
     {
         final BundleContext bundleContext = this.serviceRegistry.getBundleContext();
 
-        this.registry = new ModuleRegistryImpl();
+        this.registry = new ApplicationRegistryImpl();
         this.registry.setEventPublisher( this.events::add );
         this.registry.start( bundleContext );
     }
@@ -65,10 +65,10 @@ public class ModuleRegistryImplTest
     {
         startRegistry();
 
-        final Module module = this.registry.get( ApplicationKey.from( "bundle1" ) );
-        assertNull( module );
+        final Application application = this.registry.get( ApplicationKey.from( "bundle1" ) );
+        assertNull( application );
 
-        final Collection<Module> result = this.registry.getAll();
+        final Collection<Application> result = this.registry.getAll();
         assertNotNull( result );
         assertEquals( 0, result.size() );
         assertEquals( 0, this.events.size() );
@@ -93,13 +93,13 @@ public class ModuleRegistryImplTest
         assertEvent( 0, ModuleEventType.STARTED, ApplicationKey.from( "bundle1" ) );
         assertEvent( 1, ModuleEventType.STARTED, ApplicationKey.from( "bundle3" ) );
 
-        final Module module1 = this.registry.get( ApplicationKey.from( "bundle1" ) );
-        assertNotNull( module1 );
-        assertEquals( "Bundle 1", module1.getDisplayName() );
+        final Application application1 = this.registry.get( ApplicationKey.from( "bundle1" ) );
+        assertNotNull( application1 );
+        assertEquals( "Bundle 1", application1.getDisplayName() );
 
-        final Module module2 = this.registry.get( ApplicationKey.from( "bundle3" ) );
-        assertNotNull( module2 );
-        assertEquals( "Bundle 3", module2.getDisplayName() );
+        final Application application2 = this.registry.get( ApplicationKey.from( "bundle3" ) );
+        assertNotNull( application2 );
+        assertEquals( "Bundle 3", application2.getDisplayName() );
     }
 
     @Test
@@ -109,19 +109,19 @@ public class ModuleRegistryImplTest
         startBundles( newBundle( "bundle1", "Bundle 1" ) );
         startRegistry();
 
-        final Module module = this.registry.get( ApplicationKey.from( "bundle1" ) );
-        assertNotNull( module );
+        final Application application = this.registry.get( ApplicationKey.from( "bundle1" ) );
+        assertNotNull( application );
         assertEquals( 1, this.registry.getAll().size() );
         assertEquals( 1, this.events.size() );
         assertEvent( 0, ModuleEventType.STARTED, ApplicationKey.from( "bundle1" ) );
 
-        this.registry.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, module.getBundle() ) );
+        this.registry.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, application.getBundle() ) );
         assertEquals( 0, this.registry.getAll().size() );
         assertNull( this.registry.get( ApplicationKey.from( "bundle1" ) ) );
         assertEquals( 2, this.events.size() );
         assertEvent( 1, ModuleEventType.UNINSTALLED, ApplicationKey.from( "bundle1" ) );
 
-        this.registry.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, module.getBundle() ) );
+        this.registry.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, application.getBundle() ) );
         assertEquals( 1, this.registry.getAll().size() );
         assertNotNull( this.registry.get( ApplicationKey.from( "bundle1" ) ) );
         assertEquals( 3, this.events.size() );

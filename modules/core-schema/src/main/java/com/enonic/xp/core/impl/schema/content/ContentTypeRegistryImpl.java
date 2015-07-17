@@ -15,9 +15,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
@@ -73,10 +73,10 @@ public final class ContentTypeRegistryImpl
         }
         else
         {
-            final Module module = this.applicationService.getModule( applicationKey );
-            if ( module != null )
+            final Application application = this.applicationService.getModule( applicationKey );
+            if ( application != null )
             {
-                final ContentTypeLoader mixinLoader = new ContentTypeLoader( module.getBundle() );
+                final ContentTypeLoader mixinLoader = new ContentTypeLoader( application.getBundle() );
                 contentTypes = mixinLoader.load();
             }
         }
@@ -102,9 +102,9 @@ public final class ContentTypeRegistryImpl
         }
 
         //Gets module content types
-        for ( Module module : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllModules() )
         {
-            final ContentTypes contentTypes = getByModule( module.getKey() );
+            final ContentTypes contentTypes = getByModule( application.getKey() );
             contentTypeList.addAll( contentTypes.getList() );
         }
 

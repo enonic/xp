@@ -4,9 +4,9 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceUrlRegistry;
@@ -31,11 +31,11 @@ public abstract class AbstractScriptTest
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( APPLICATION_KEY ) ).thenReturn( module );
+        Mockito.when( applicationService.getModule( APPLICATION_KEY ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setApplicationService( applicationService );
