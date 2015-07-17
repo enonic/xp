@@ -20,7 +20,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.ImportNodeParams2;
+import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -232,7 +232,7 @@ public class NodeImporter
             build().
             execute();
 
-        final ImportNodeParams2 importNodeParams = ImportNodeParams2.create().
+        final ImportNodeParams importNodeParams = ImportNodeParams.create().
             importNode( importNode ).
             binaryAttachments( binaryAttachments ).
             insertManualStrategy( processNodeSettings.build().getInsertManualStrategy() ).
