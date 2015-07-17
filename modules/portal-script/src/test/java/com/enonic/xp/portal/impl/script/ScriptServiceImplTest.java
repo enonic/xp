@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.script;
 
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleEventType;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
@@ -120,12 +120,12 @@ public class ScriptServiceImplTest
         assertNotNull( exports2 );
         assertSame( exports1.getRawValue(), exports2.getRawValue() );
 
-        this.scriptService.onEvent( new ModuleUpdatedEvent( ApplicationKey.from( "othermodule" ), ModuleEventType.UPDATED ) );
+        this.scriptService.onEvent( new ModuleUpdatedEvent( ApplicationKey.from( "othermodule" ), ApplicationEventType.UPDATED ) );
 
         final ScriptExports exports3 = runTestScript( script );
         assertSame( exports1.getRawValue(), exports3.getRawValue() );
 
-        this.scriptService.onEvent( new ModuleUpdatedEvent( script.getApplicationKey(), ModuleEventType.UPDATED ) );
+        this.scriptService.onEvent( new ModuleUpdatedEvent( script.getApplicationKey(), ApplicationEventType.UPDATED ) );
 
         final ScriptExports exports4 = runTestScript( script );
         assertNotSame( exports1.getRawValue(), exports4.getRawValue() );

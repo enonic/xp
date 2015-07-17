@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.module.ModuleEventType;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
 @Component(immediate = true)
@@ -93,7 +93,7 @@ public final class ApplicationRegistryImpl
     private void publishModuleChangeEvent( final BundleEvent event )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( event.getBundle() );
-        final ModuleEventType state = ModuleEventType.fromBundleEvent( event );
+        final ApplicationEventType state = ApplicationEventType.fromBundleEvent( event );
         this.eventPublisher.publish( new ModuleUpdatedEvent( applicationKey, state ) );
     }
 

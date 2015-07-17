@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleEvent;
 
-import com.enonic.xp.module.ModuleEventType;
-
 
 public class ApplicationEventTypeTest
 {
@@ -16,6 +14,6 @@ public class ApplicationEventTypeTest
         final BundleEvent bundleEvent = Mockito.mock( BundleEvent.class );
         Mockito.when( bundleEvent.getType() ).thenReturn( BundleEvent.INSTALLED );
 
-        Assert.assertEquals( ModuleEventType.fromBundleEvent( bundleEvent ), ModuleEventType.INSTALLED );
+        Assert.assertEquals( ApplicationEventType.fromBundleEvent( bundleEvent ), ApplicationEventType.INSTALLED );
     }
 }

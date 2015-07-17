@@ -3,6 +3,7 @@ package com.enonic.xp.module;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 
@@ -10,17 +11,17 @@ import com.enonic.xp.event.Event;
 public final class ModuleUpdatedEvent
     implements Event
 {
-    private final ModuleEventType eventType;
+    private final ApplicationEventType eventType;
 
     private final ApplicationKey applicationKey;
 
-    public ModuleUpdatedEvent( final ApplicationKey key, final ModuleEventType eventType )
+    public ModuleUpdatedEvent( final ApplicationKey key, final ApplicationEventType eventType )
     {
         this.eventType = eventType;
         this.applicationKey = key;
     }
 
-    public ModuleEventType getEventType()
+    public ApplicationEventType getEventType()
     {
         return eventType;
     }
