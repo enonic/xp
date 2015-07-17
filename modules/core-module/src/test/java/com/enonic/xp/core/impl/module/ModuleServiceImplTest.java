@@ -20,8 +20,8 @@ import org.osgi.framework.Version;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.module.Modules;
 
@@ -82,7 +82,7 @@ public class ModuleServiceImplTest
         final Module module = createModule( "foomodule" );
         Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
 
-        final Modules result = this.service.getModules( ModuleKeys.from( "foomodule", "othermodule" ) );
+        final Modules result = this.service.getModules( ApplicationKeys.from( "foomodule", "othermodule" ) );
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( module, result.get( 0 ) );

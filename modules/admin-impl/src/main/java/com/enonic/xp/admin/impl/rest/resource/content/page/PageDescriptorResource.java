@@ -18,7 +18,7 @@ import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByModulesParams;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -56,8 +56,8 @@ public final class PageDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public PageDescriptorListJson getByModules( final GetByModulesParams params )
     {
-        final ModuleKeys moduleKeys = ModuleKeys.from( params.getModuleKeys() );
-        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModules( moduleKeys );
+        final ApplicationKeys applicationKeys = ApplicationKeys.from( params.getApplicationKeys() );
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModules( applicationKeys );
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
     }
 

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 
 import static org.junit.Assert.*;
 
@@ -76,13 +77,13 @@ public class ModulesTest
     }
 
     @Test
-    public void getModuleKeys()
+    public void getApplicationKeys()
     {
         final Modules modules = Modules.from( ModulesTest.list );
 
-        final ModuleKeys moduleKeys = ModuleKeys.from( "aaa", "bbb", "ccc" );
+        final ApplicationKeys applicationKeys = ApplicationKeys.from( "aaa", "bbb", "ccc" );
 
-        assertEquals( moduleKeys, modules.getModuleKeys() );
+        assertEquals( applicationKeys, modules.getApplicationKeys() );
     }
 
 }

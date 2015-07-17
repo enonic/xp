@@ -3,7 +3,7 @@ package com.enonic.xp.page;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 
 @Beta
 public interface PageDescriptorService
@@ -12,6 +12,6 @@ public interface PageDescriptorService
 
     PageDescriptors getByModule( final ApplicationKey applicationKey );
 
-    PageDescriptors getByModules( final ModuleKeys moduleKeys );
+    PageDescriptors getByModules( final ApplicationKeys applicationKeys );
 
 }

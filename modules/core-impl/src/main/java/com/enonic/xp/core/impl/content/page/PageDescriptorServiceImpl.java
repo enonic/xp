@@ -4,7 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -42,13 +42,13 @@ public final class PageDescriptorServiceImpl
     }
 
     @Override
-    public PageDescriptors getByModules( final ModuleKeys moduleKeys )
+    public PageDescriptors getByModules( final ApplicationKeys applicationKeys )
     {
         return new GetPageDescriptorsByModulesCommand().
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            moduleKeys( moduleKeys ).execute();
+            applicationKeys( applicationKeys ).execute();
     }
 
     @Reference

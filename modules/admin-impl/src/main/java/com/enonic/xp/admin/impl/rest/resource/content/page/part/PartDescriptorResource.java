@@ -54,7 +54,7 @@ public final class PartDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public PartDescriptorsJson getByModules( final GetByModulesParams params )
     {
-        final PartDescriptors descriptors = partDescriptorService.getByModules( params.getModuleKeys() );
+        final PartDescriptors descriptors = partDescriptorService.getByModules( params.getApplicationKeys() );
         return new PartDescriptorsJson( descriptors );
     }
 

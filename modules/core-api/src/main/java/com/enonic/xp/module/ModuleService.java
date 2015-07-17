@@ -3,6 +3,7 @@ package com.enonic.xp.module;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 
 @Beta
 public interface ModuleService
@@ -10,7 +11,7 @@ public interface ModuleService
     Module getModule( ApplicationKey key )
         throws ModuleNotFoundException;
 
-    Modules getModules( ModuleKeys keys );
+    Modules getModules( ApplicationKeys keys );
 
     Modules getAllModules();
 

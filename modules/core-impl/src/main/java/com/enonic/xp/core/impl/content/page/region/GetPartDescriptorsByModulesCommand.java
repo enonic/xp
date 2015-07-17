@@ -1,23 +1,23 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.region.PartDescriptors;
 
 final class GetPartDescriptorsByModulesCommand
     extends AbstractGetPartDescriptorCommand<GetPartDescriptorsByModulesCommand>
 {
-    private ModuleKeys moduleKeys;
+    private ApplicationKeys applicationKeys;
 
     public PartDescriptors execute()
     {
-        final Modules modules = this.moduleService.getModules( this.moduleKeys );
+        final Modules modules = this.moduleService.getModules( this.applicationKeys );
         return getDescriptorsFromModules( modules );
     }
 
-    public GetPartDescriptorsByModulesCommand moduleKeys( final ModuleKeys moduleKeys )
+    public GetPartDescriptorsByModulesCommand applicationKeys( final ApplicationKeys applicationKeys )
     {
-        this.moduleKeys = moduleKeys;
+        this.applicationKeys = applicationKeys;
         return this;
     }
 }

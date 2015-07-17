@@ -37,7 +37,7 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
         mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/layouts", "*.xml",
                        "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
 
-        final LayoutDescriptors result = this.service.getByModules( modules.getModuleKeys() );
+        final LayoutDescriptors result = this.service.getByModules( modules.getApplicationKeys() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

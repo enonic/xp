@@ -1,9 +1,12 @@
 package com.enonic.xp.app;
 
-import java.util.Arrays;
+import java.util.Collection;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -26,6 +29,11 @@ public final class ApplicationKeys
         return new ApplicationKeys( ImmutableList.copyOf( applicationKeys ) );
     }
 
+    public static ApplicationKeys from( final Collection<? extends ApplicationKey> applicationKeys )
+    {
+        return new ApplicationKeys( ImmutableList.copyOf( applicationKeys ) );
+    }
+
     public static ApplicationKeys from( final String... applicationKeys )
     {
         return new ApplicationKeys( parseApplicationKeys( applicationKeys ) );
@@ -38,10 +46,19 @@ public final class ApplicationKeys
 
     private static ImmutableList<ApplicationKey> parseApplicationKeys( final String... applicationKeys )
     {
-        final ApplicationKey[] applicationKeyList = Arrays.stream( applicationKeys ).
-            map( ApplicationKey::from ).
-            toArray( ApplicationKey[]::new );
+        final Collection<String> list = Lists.newArrayList( applicationKeys );
+        final Collection<ApplicationKey> applicationKeyList = Collections2.transform( list, new ParseFunction() );
         return ImmutableList.copyOf( applicationKeyList );
+    }
+
+    private final static class ParseFunction
+        implements Function<String, ApplicationKey>
+    {
+        @Override
+        public ApplicationKey apply( final String value )
+        {
+            return ApplicationKey.from( value );
+        }
     }
 
 }

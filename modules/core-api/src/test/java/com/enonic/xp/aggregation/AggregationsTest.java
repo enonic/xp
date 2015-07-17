@@ -15,7 +15,7 @@ public class AggregationsTest
     private static ArrayList<Aggregation> list = new ArrayList();
 
     @BeforeClass
-    public static void initModuleKeys()
+    public static void initApplicationKeys()
     {
         AggregationsTest.list.add( Aggregation.bucketAggregation( "aaa" ).build() );
         AggregationsTest.list.add( Aggregation.bucketAggregation( "bbb" ).build() );

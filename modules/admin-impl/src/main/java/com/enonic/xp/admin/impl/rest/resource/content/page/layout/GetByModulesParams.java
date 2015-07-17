@@ -8,22 +8,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 
 public class GetByModulesParams
 {
 
-    private ModuleKeys moduleKeys;
+    private ApplicationKeys applicationKeys;
 
     @JsonCreator
-    public GetByModulesParams( @JsonProperty("moduleKeys") List<String> moduleKeysAsStringList )
+    public GetByModulesParams( @JsonProperty("moduleKeys") List<String> applicationKeysAsStringList )
     {
-        this.moduleKeys = ModuleKeys.from( Iterables.toArray( moduleKeysAsStringList, String.class ) );
+        this.applicationKeys = ApplicationKeys.from( Iterables.toArray( applicationKeysAsStringList, String.class ) );
     }
 
     @JsonIgnore
-    public ModuleKeys getModuleKeys()
+    public ApplicationKeys getApplicationKeys()
     {
-        return moduleKeys;
+        return applicationKeys;
     }
 }

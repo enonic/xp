@@ -6,8 +6,6 @@ import org.osgi.framework.FrameworkUtil;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.module.ModuleKeys;
-
 @Beta
 public final class ApplicationKey
 {
@@ -19,7 +17,7 @@ public final class ApplicationKey
 
     public static final ApplicationKey BASE = ApplicationKey.from( "base" );
 
-    public static final ModuleKeys SYSTEM_RESERVED_MODULE_KEYS = ModuleKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
+    public static final ApplicationKeys SYSTEM_RESERVED_MODULE_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
 
     private final String name;
 
