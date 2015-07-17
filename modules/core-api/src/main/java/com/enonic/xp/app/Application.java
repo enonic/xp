@@ -14,8 +14,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.module.ModuleNotStartedException;
-
 @Beta
 public class Application
 {
@@ -155,7 +153,7 @@ public class Application
             return;
         }
 
-        throw new ModuleNotStartedException( this.applicationKey );
+        throw new ApplicationNotStartedException( this.applicationKey );
     }
 
     public boolean isApplication()

@@ -8,9 +8,9 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.util.Exceptions;
 
 @Component
@@ -21,12 +21,12 @@ public final class ApplicationServiceImpl
 
     @Override
     public Application getModule( final ApplicationKey key )
-        throws ModuleNotFoundException
+        throws ApplicationNotFoundException
     {
         final Application application = this.registry.get( key );
         if ( application == null )
         {
-            throw new ModuleNotFoundException( key );
+            throw new ApplicationNotFoundException( key );
         }
         return application;
     }

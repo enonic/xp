@@ -22,8 +22,8 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.ModuleNotFoundException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
@@ -58,7 +58,7 @@ public class ApplicationServiceImplTest
         assertSame( application, result );
     }
 
-    @Test(expected = ModuleNotFoundException.class)
+    @Test(expected = ApplicationNotFoundException.class)
     public void testGetModule_notFound()
     {
         this.service.getModule( ApplicationKey.from( "foomodule" ) );
