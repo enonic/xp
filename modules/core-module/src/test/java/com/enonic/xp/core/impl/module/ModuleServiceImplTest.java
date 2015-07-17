@@ -19,8 +19,8 @@ import org.osgi.framework.Version;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.module.Modules;
@@ -54,14 +54,14 @@ public class ModuleServiceImplTest
         final Module module = createModule( "foomodule" );
         Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
 
-        final Module result = this.service.getModule( ModuleKey.from( "foomodule" ) );
+        final Module result = this.service.getModule( ApplicationKey.from( "foomodule" ) );
         assertSame( module, result );
     }
 
     @Test(expected = ModuleNotFoundException.class)
     public void testGetModule_notFound()
     {
-        this.service.getModule( ModuleKey.from( "foomodule" ) );
+        this.service.getModule( ApplicationKey.from( "foomodule" ) );
     }
 
     @Test

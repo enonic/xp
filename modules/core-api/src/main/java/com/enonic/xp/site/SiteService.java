@@ -1,8 +1,8 @@
 package com.enonic.xp.site;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 public interface SiteService
 {
-    SiteDescriptor getDescriptor( ModuleKey moduleKey );
+    SiteDescriptor getDescriptor( ApplicationKey applicationKey );
 }

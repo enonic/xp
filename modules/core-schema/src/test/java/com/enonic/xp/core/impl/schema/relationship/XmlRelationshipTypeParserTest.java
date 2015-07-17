@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.relationship;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
@@ -20,7 +20,7 @@ public class XmlRelationshipTypeParserTest
     public void setup()
     {
         this.parser = new XmlRelationshipTypeParser();
-        this.parser.currentModule( ModuleKey.from( "mymodule" ) );
+        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
 
         this.builder = RelationshipType.create();
         this.builder.name( "mymodule:name" );

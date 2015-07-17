@@ -2,12 +2,12 @@ package com.enonic.xp.portal.impl.resource.render;
 
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -177,9 +177,9 @@ public abstract class RenderBaseResourceTest
     private PageDescriptor createDescriptor()
         throws Exception
     {
-        final ModuleKey module = ModuleKey.from( "mainmodule" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "mainmodule" );
         final String name = "mypage";
-        final DescriptorKey key = DescriptorKey.from( module, name );
+        final DescriptorKey key = DescriptorKey.from( applicationKey, name );
 
         final String xml = "<?xml version=\"1.0\"?>\n" +
             "<page>\n" +
@@ -188,7 +188,7 @@ public abstract class RenderBaseResourceTest
             "</page>";
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
-        parseXml( module, builder, xml );
+        parseXml( applicationKey, builder, xml );
 
         return builder.
             key( key ).
@@ -196,11 +196,11 @@ public abstract class RenderBaseResourceTest
             build();
     }
 
-    private void parseXml( final ModuleKey moduleKey, final PageDescriptor.Builder builder, final String xml )
+    private void parseXml( final ApplicationKey applicationKey, final PageDescriptor.Builder builder, final String xml )
     {
         final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( moduleKey );
+        parser.currentModule( applicationKey );
         parser.source( xml );
         parser.parse();
     }

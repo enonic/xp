@@ -4,7 +4,7 @@ module api.content.site.inputtype.siteconfigurator {
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
     import Module = api.module.Module;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
     import ModuleViewer = api.module.ModuleViewer;
     import ModuleLoader = api.module.ModuleLoader;
@@ -27,7 +27,7 @@ module api.content.site.inputtype.siteconfigurator {
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
             builder.
                 setMaximumOccurrences(maxOccurrences).
-                setIdentifierMethod('getModuleKey').
+                setIdentifierMethod('getApplicationKey').
                 setComboBoxName("moduleSelector").
                 setLoader(new ModuleLoader(500, filterObject)).
                 setSelectedOptionsView(this.siteConfiguratorSelectedOptionsView).
@@ -45,11 +45,11 @@ module api.content.site.inputtype.siteconfigurator {
             return views;
         }
 
-        onSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+        onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfiguratorSelectedOptionsView.onSiteConfigFormDisplayed(listener);
         }
 
-        unSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+        unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfiguratorSelectedOptionsView.unSiteConfigFormDisplayed(listener);
         }
     }
@@ -58,7 +58,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigProvider: SiteConfigProvider;
 
-        private siteConfigFormDisplayedListeners: {(moduleKey: ModuleKey, formView: FormView) : void}[] = [];
+        private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey, formView: FormView) : void}[] = [];
 
         private formContext: api.content.form.ContentFormContext;
 
@@ -69,26 +69,26 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
-            var siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getModuleKey());
+            var siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
             var optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
-            optionView.onSiteConfigFormDisplayed((moduleKey: ModuleKey) => {
-                this.notifySiteConfigFormDisplayed(moduleKey, optionView.getFormView());
+            optionView.onSiteConfigFormDisplayed((applicationKey: ApplicationKey) => {
+                this.notifySiteConfigFormDisplayed(applicationKey, optionView.getFormView());
             });
 
             return new SelectedOption<Module>(optionView, this.count());
         }
 
-        onSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+        onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfigFormDisplayedListeners.push(listener);
         }
 
-        unSiteConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+        unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfigFormDisplayedListeners =
             this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySiteConfigFormDisplayed(moduleKey: ModuleKey, formView: FormView) {
-            this.siteConfigFormDisplayedListeners.forEach((listener) => listener(moduleKey, formView));
+        private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey, formView: FormView) {
+            this.siteConfigFormDisplayedListeners.forEach((listener) => listener(applicationKey, formView));
         }
 
     }

@@ -2,7 +2,7 @@ package com.enonic.xp.form.inputtype;
 
 import org.w3c.dom.Element;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
@@ -27,7 +27,7 @@ final class RadioButtonsConfigXmlSerializer
     }
 
     @Override
-    public InputTypeConfig parseConfig( final ModuleKey currentModule, final Element elem )
+    public InputTypeConfig parseConfig( final ApplicationKey currentModule, final Element elem )
     {
         final RadioButtonsConfig.Builder builder = RadioButtonsConfig.create();
 

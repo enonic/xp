@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             super.setModel(liveEditModel);
 
-            var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
+            var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getApplicationKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             loader.setComparator(new DescriptorByDisplayNameComparator());
             this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});
@@ -69,7 +69,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    descriptorsRequest.setModuleKeys(liveEditModel.getSiteModel().getModuleKeys());
+                    descriptorsRequest.setApplicationKeys(liveEditModel.getSiteModel().getApplicationKeys());
                     loader.load();
                 }
             });

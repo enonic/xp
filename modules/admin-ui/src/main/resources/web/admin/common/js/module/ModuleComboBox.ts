@@ -38,7 +38,7 @@ module api.module {
         }
 
         resolveSubTitle(content: api.module.Module): string {
-            return content.getModuleKey().toString();
+            return content.getApplicationKey().toString();
         }
 
     }

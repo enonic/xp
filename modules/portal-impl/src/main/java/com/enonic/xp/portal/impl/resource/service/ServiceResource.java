@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.resource.service;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.resource.ResourceKey;
@@ -19,8 +19,8 @@ public final class ServiceResource
     @Path("{module}/{service}")
     public ServiceControllerResource controller( @PathParam("module") final String module, @PathParam("service") final String service )
     {
-        final ModuleKey moduleKey = ModuleKey.from( module );
-        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "app/services/" + service );
+        final ApplicationKey applicationKey = ApplicationKey.from( module );
+        final ResourceKey scriptDir = ResourceKey.from( applicationKey, "app/services/" + service );
 
         final ServiceControllerResource resource = initResource( new ServiceControllerResource() );
         resource.scriptDir = scriptDir;

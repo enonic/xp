@@ -2,6 +2,7 @@ package com.enonic.xp.module;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -9,9 +10,9 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 @Beta
 public final class ModuleRelativeResolver
 {
-    private final ModuleKey current;
+    private final ApplicationKey current;
 
-    public ModuleRelativeResolver( final ModuleKey current )
+    public ModuleRelativeResolver( final ApplicationKey current )
     {
         this.current = current;
     }

@@ -3,21 +3,21 @@ module api.content.site {
     import Property = api.data.Property;
     import PropertySet = api.data.PropertySet;
     import PropertyTree = api.data.PropertyTree;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class SiteConfig implements api.Equitable, api.Cloneable {
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
         private config: PropertySet;
 
         constructor(builder: SiteConfigBuilder) {
-            this.moduleKey = builder.moduleKey;
+            this.applicationKey = builder.applicationKey;
             this.config = builder.config;
         }
 
-        getModuleKey(): api.module.ModuleKey {
-            return this.moduleKey;
+        getApplicationKey(): api.module.ApplicationKey {
+            return this.applicationKey;
         }
 
         getConfig(): PropertySet {
@@ -26,7 +26,7 @@ module api.content.site {
 
         toJson(): Object {
             return {
-                moduleKey: this.moduleKey.toString(),
+                applicationKey: this.applicationKey.toString(),
                 config: this.config.toJson()
             }
         }
@@ -39,7 +39,7 @@ module api.content.site {
 
             var other = <SiteConfig>o;
 
-            if (!api.ObjectHelper.equals(this.moduleKey, other.moduleKey)) {
+            if (!api.ObjectHelper.equals(this.applicationKey, other.applicationKey)) {
                 return false;
             }
 
@@ -62,13 +62,13 @@ module api.content.site {
 
     export class SiteConfigBuilder {
 
-        moduleKey: ModuleKey;
+        applicationKey: ApplicationKey;
 
         config: PropertySet;
 
         constructor(source?: SiteConfig) {
             if (source) {
-                this.moduleKey = source.getModuleKey();
+                this.applicationKey = source.getApplicationKey();
                 if (source.getConfig()) {
                     var newTree = new PropertyTree(source.getConfig().getTree().getIdProvider(), source.getConfig());
                     this.config = newTree.getRoot();
@@ -78,15 +78,15 @@ module api.content.site {
 
         fromData(propertySet: PropertySet): SiteConfigBuilder {
             api.util.assertNotNull(propertySet, "data cannot be null");
-            var moduleKey = ModuleKey.fromString(propertySet.getString("moduleKey"));
+            var applicationKey = ApplicationKey.fromString(propertySet.getString("applicationKey"));
             var siteConfig = propertySet.getPropertySet("config");
-            this.setModuleKey(moduleKey);
+            this.setApplicationKey(applicationKey);
             this.setConfig(siteConfig);
             return this;
         }
 
-        setModuleKey(value: api.module.ModuleKey): SiteConfigBuilder {
-            this.moduleKey = value;
+        setApplicationKey(value: api.module.ApplicationKey): SiteConfigBuilder {
+            this.applicationKey = value;
             return this;
         }
 

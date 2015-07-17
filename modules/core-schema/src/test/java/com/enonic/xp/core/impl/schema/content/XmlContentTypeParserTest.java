@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
@@ -21,7 +21,7 @@ public class XmlContentTypeParserTest
     public void setup()
     {
         this.parser = new XmlContentTypeParser();
-        this.parser.currentModule( ModuleKey.from( "mymodule" ) );
+        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
 
         this.builder = ContentType.create();
         this.builder.name( ContentTypeName.from( "mymodule:mytype" ) );

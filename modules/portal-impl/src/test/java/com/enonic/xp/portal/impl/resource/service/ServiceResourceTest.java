@@ -118,7 +118,7 @@ public class ServiceResourceTest
         Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
-        assertNotNull( portalRequest.getModule() );
+        assertNotNull( portalRequest.getApplicationKey() );
         assertNotNull( portalRequest.getSite() );
         assertNotNull( portalRequest.getContent() );
     }

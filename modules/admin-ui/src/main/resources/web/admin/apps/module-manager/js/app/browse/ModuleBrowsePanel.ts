@@ -1,6 +1,6 @@
 module app.browse {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import Module = api.module.Module;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
@@ -67,25 +67,25 @@ module app.browse {
 
         private registerEvents() {
             StopModuleEvent.on((event: StopModuleEvent) => {
-                var moduleKeys = ModuleKey.fromModules(event.getModules());
-                new StopModuleRequest(moduleKeys).sendAndParse()
+                var applicationKeys = ApplicationKey.fromModules(event.getModules());
+                new StopModuleRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
             StartModuleEvent.on((event: StartModuleEvent) => {
-                var moduleKeys = ModuleKey.fromModules(event.getModules());
-                new StartModuleRequest(moduleKeys).sendAndParse()
+                var applicationKeys = ApplicationKey.fromModules(event.getModules());
+                new StartModuleRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
 
             api.module.ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
                 if (ModuleUpdatedEventType.INSTALLED == event.getEventType()) {
-                    this.moduleTreeGrid.appendModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.appendModuleNode(event.getApplicationKey());
                 } else if (ModuleUpdatedEventType.UNINSTALLED == event.getEventType()) {
-                    this.moduleTreeGrid.deleteModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.deleteModuleNode(event.getApplicationKey());
                 } else if (event.isNeedToUpdateModule()){
-                    this.moduleTreeGrid.updateModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.updateModuleNode(event.getApplicationKey());
                 }
             });
 

@@ -47,7 +47,7 @@ public class LocalizeParamsTest
 
         LocalizeParams params = new LocalizeParams( this.request ).setAsMap( viewParams.getArgs() );
 
-        params.getModuleKey();
+        params.getApplicationKey();
 
     }
 }

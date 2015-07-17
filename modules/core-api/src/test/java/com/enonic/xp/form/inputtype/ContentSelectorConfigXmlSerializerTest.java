@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.XmlTestHelper;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 public class ContentSelectorConfigXmlSerializerTest
 {
-    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+    private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
 
     private XmlTestHelper xmlHelper;
 

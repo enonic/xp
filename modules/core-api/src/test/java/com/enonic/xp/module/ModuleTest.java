@@ -53,7 +53,7 @@ public class ModuleTest
         assertTrue( module.isApplication() );
         assertFalse( module.isSystem() );
         assertTrue( Module.isModule( bundle ) );
-        assertEquals( "Module{moduleKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/module, " +
+        assertEquals( "Module{applicationKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/module, " +
                           "vendorName=Enonic AS, vendorUrl=http://enonic.com}", module.toString() );
     }
 

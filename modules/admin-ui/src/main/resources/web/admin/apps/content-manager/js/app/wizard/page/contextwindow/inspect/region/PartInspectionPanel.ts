@@ -40,7 +40,7 @@ module app.wizard.page.contextwindow.inspect.region {
         setModel(liveEditModel: LiveEditModel) {
             super.setModel(liveEditModel);
 
-            var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
+            var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getApplicationKeys());
             var loader = new PartDescriptorLoader(descriptorsRequest);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.partSelector = new PartDescriptorDropdown("", {loader: loader});

@@ -2,17 +2,17 @@ module api.content.page.region {
 
     export class GetPartDescriptorsByModuleRequest extends PartDescriptorsResourceRequest {
 
-        private moduleKey: api.module.ModuleKey;
+        private applicationKey: api.module.ApplicationKey;
 
-        constructor(moduleKey: api.module.ModuleKey) {
+        constructor(applicationKey: api.module.ApplicationKey) {
             super();
             super.setMethod("GET");
-            this.moduleKey = moduleKey;
+            this.applicationKey = applicationKey;
         }
 
         getParams(): Object {
             return {
-                moduleKey: this.moduleKey.toString()
+                applicationKey: this.applicationKey.toString()
             };
         }
 
@@ -22,7 +22,7 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var cached = this.cache.getByModule(this.moduleKey);
+            var cached = this.cache.getByModule(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
             }

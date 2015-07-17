@@ -2,7 +2,7 @@ package com.enonic.xp.schema.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
 
 @Beta
@@ -11,58 +11,58 @@ public final class ContentTypeName
     implements Comparable<ContentTypeName>
 {
     // base:
-    private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( ModuleKey.BASE, "unstructured" );
+    private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( ApplicationKey.BASE, "unstructured" );
 
-    private static final ContentTypeName STRUCTURED = new ContentTypeName( ModuleKey.BASE, "structured" );
+    private static final ContentTypeName STRUCTURED = new ContentTypeName( ApplicationKey.BASE, "structured" );
 
-    private static final ContentTypeName FOLDER = new ContentTypeName( ModuleKey.BASE, "folder" );
+    private static final ContentTypeName FOLDER = new ContentTypeName( ApplicationKey.BASE, "folder" );
 
-    private static final ContentTypeName SHORTCUT = new ContentTypeName( ModuleKey.BASE, "shortcut" );
+    private static final ContentTypeName SHORTCUT = new ContentTypeName( ApplicationKey.BASE, "shortcut" );
 
-    private static final ContentTypeName MEDIA = new ContentTypeName( ModuleKey.BASE, "media" );
+    private static final ContentTypeName MEDIA = new ContentTypeName( ApplicationKey.BASE, "media" );
 
     // portal:
-    private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( ModuleKey.PORTAL, "page-template" );
+    private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( ApplicationKey.PORTAL, "page-template" );
 
-    private static final ContentTypeName TEMPLATE_FOLDER = new ContentTypeName( ModuleKey.PORTAL, "template-folder" );
+    private static final ContentTypeName TEMPLATE_FOLDER = new ContentTypeName( ApplicationKey.PORTAL, "template-folder" );
 
-    private static final ContentTypeName SITE = new ContentTypeName( ModuleKey.PORTAL, "site" );
+    private static final ContentTypeName SITE = new ContentTypeName( ApplicationKey.PORTAL, "site" );
 
     // media:
-    private static final ContentTypeName MEDIA_TEXT = new ContentTypeName( ModuleKey.MEDIA_MOD, "text" );
+    private static final ContentTypeName MEDIA_TEXT = new ContentTypeName( ApplicationKey.MEDIA_MOD, "text" );
 
-    private static final ContentTypeName MEDIA_DATA = new ContentTypeName( ModuleKey.MEDIA_MOD, "data" );
+    private static final ContentTypeName MEDIA_DATA = new ContentTypeName( ApplicationKey.MEDIA_MOD, "data" );
 
-    private static final ContentTypeName MEDIA_AUDIO = new ContentTypeName( ModuleKey.MEDIA_MOD, "audio" );
+    private static final ContentTypeName MEDIA_AUDIO = new ContentTypeName( ApplicationKey.MEDIA_MOD, "audio" );
 
-    private static final ContentTypeName MEDIA_VIDEO = new ContentTypeName( ModuleKey.MEDIA_MOD, "video" );
+    private static final ContentTypeName MEDIA_VIDEO = new ContentTypeName( ApplicationKey.MEDIA_MOD, "video" );
 
-    private static final ContentTypeName MEDIA_IMAGE = new ContentTypeName( ModuleKey.MEDIA_MOD, "image" );
+    private static final ContentTypeName MEDIA_IMAGE = new ContentTypeName( ApplicationKey.MEDIA_MOD, "image" );
 
-    private static final ContentTypeName MEDIA_VECTOR = new ContentTypeName( ModuleKey.MEDIA_MOD, "vector" );
+    private static final ContentTypeName MEDIA_VECTOR = new ContentTypeName( ApplicationKey.MEDIA_MOD, "vector" );
 
-    private static final ContentTypeName MEDIA_ARCHIVE = new ContentTypeName( ModuleKey.MEDIA_MOD, "archive" );
+    private static final ContentTypeName MEDIA_ARCHIVE = new ContentTypeName( ApplicationKey.MEDIA_MOD, "archive" );
 
-    private static final ContentTypeName MEDIA_DOCUMENT = new ContentTypeName( ModuleKey.MEDIA_MOD, "document" );
+    private static final ContentTypeName MEDIA_DOCUMENT = new ContentTypeName( ApplicationKey.MEDIA_MOD, "document" );
 
-    private static final ContentTypeName MEDIA_SPREADSHEET = new ContentTypeName( ModuleKey.MEDIA_MOD, "spreadsheet" );
+    private static final ContentTypeName MEDIA_SPREADSHEET = new ContentTypeName( ApplicationKey.MEDIA_MOD, "spreadsheet" );
 
-    private static final ContentTypeName MEDIA_PRESENTATION = new ContentTypeName( ModuleKey.MEDIA_MOD, "presentation" );
+    private static final ContentTypeName MEDIA_PRESENTATION = new ContentTypeName( ApplicationKey.MEDIA_MOD, "presentation" );
 
-    private static final ContentTypeName MEDIA_CODE = new ContentTypeName( ModuleKey.MEDIA_MOD, "code" );
+    private static final ContentTypeName MEDIA_CODE = new ContentTypeName( ApplicationKey.MEDIA_MOD, "code" );
 
-    private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( ModuleKey.MEDIA_MOD, "executable" );
+    private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( ApplicationKey.MEDIA_MOD, "executable" );
 
-    private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( ModuleKey.MEDIA_MOD, "unknown" );
+    private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( ApplicationKey.MEDIA_MOD, "unknown" );
 
     private ContentTypeName( final String name )
     {
         super( name );
     }
 
-    private ContentTypeName( final ModuleKey moduleKey, final String localName )
+    private ContentTypeName( final ApplicationKey applicationKey, final String localName )
     {
-        super( moduleKey, localName );
+        super( applicationKey, localName );
     }
 
     public static ContentTypeName structured()
@@ -298,9 +298,9 @@ public final class ContentTypeName
         return this.toString().compareTo( that.toString() );
     }
 
-    public static ContentTypeName from( final ModuleKey moduleKey, final String localName )
+    public static ContentTypeName from( final ApplicationKey applicationKey, final String localName )
     {
-        return new ContentTypeName( moduleKey, localName );
+        return new ContentTypeName( applicationKey, localName );
     }
 
     public static ContentTypeName from( final String contentTypeName )

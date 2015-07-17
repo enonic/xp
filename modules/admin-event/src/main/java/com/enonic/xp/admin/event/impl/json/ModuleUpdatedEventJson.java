@@ -7,12 +7,12 @@ public final class ModuleUpdatedEventJson
 {
     private final String eventType;
 
-    private final String moduleKey;
+    private final String applicationKey;
 
     public ModuleUpdatedEventJson( final ModuleUpdatedEvent event )
     {
         this.eventType = event.getEventType().name();
-        this.moduleKey = event.getModuleKey().toString();
+        this.applicationKey = event.getApplicationKey().toString();
     }
 
     public String getEventType()
@@ -20,8 +20,8 @@ public final class ModuleUpdatedEventJson
         return eventType;
     }
 
-    public String getModuleKey()
+    public String getApplicationKey()
     {
-        return moduleKey;
+        return applicationKey;
     }
 }

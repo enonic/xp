@@ -44,9 +44,9 @@ public abstract class AbstractContentTypeServiceTest
         final ContentTypes contentTypes = ContentTypes.from( types );
         contentTypes.stream().forEach( elem -> {
             Mockito.when( registryImpl.get( elem.getName() ) ).thenReturn( elem );
-            Mockito.when( registryImpl.getByModule( elem.getName().getModuleKey() ) ).
+            Mockito.when( registryImpl.getByModule( elem.getName().getApplicationKey() ) ).
                 thenReturn( ContentTypes.from( contentTypes.stream().
-                    filter( e -> e.getName().getModuleKey().equals( elem.getName().getModuleKey() ) ).
+                    filter( e -> e.getName().getApplicationKey().equals( elem.getName().getApplicationKey() ) ).
                     collect( Collectors.toList() ) ) );
         } );
         Mockito.when( registryImpl.getAll() ).thenReturn( contentTypes );

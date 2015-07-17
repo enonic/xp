@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.postprocess.instruction;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -62,7 +62,7 @@ public class ComponentInstructionTest
         ComponentService componentService = Mockito.mock( ComponentService.class );
 
         Component component = createPartComponent();
-        doReturn( component ).when( componentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
+        doReturn( component ).when( componentService ).getByName( isA( ApplicationKey.class ), isA( ComponentName.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );

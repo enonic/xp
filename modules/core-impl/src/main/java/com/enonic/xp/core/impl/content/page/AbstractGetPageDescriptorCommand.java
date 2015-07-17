@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.resource.Resource;
@@ -24,7 +24,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
 
         try
         {
-            parseXml( resourceKey.getModule(), builder, descriptorXml );
+            parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
         }
         catch ( final Exception e )
         {
@@ -40,11 +40,11 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
             build();
     }
 
-    private void parseXml( final ModuleKey moduleKey, final PageDescriptor.Builder builder, final String xml )
+    private void parseXml( final ApplicationKey applicationKey, final PageDescriptor.Builder builder, final String xml )
     {
         final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( moduleKey );
+        parser.currentModule( applicationKey );
         parser.source( xml );
         parser.parse();
     }

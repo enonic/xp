@@ -42,7 +42,7 @@ public final class PageDescriptor
 
     public ResourceKey getResourceKey()
     {
-        return ResourceKey.from( key.getModuleKey(), "app/pages/" + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), "app/pages/" + key.getName() );
     }
 
     public String getDisplayName()
@@ -62,7 +62,7 @@ public final class PageDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "app/pages/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "app/pages/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static PageDescriptor.Builder create()

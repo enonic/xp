@@ -52,17 +52,17 @@ module app.view {
             var infoGroup = new ItemDataGroup("Info", "info");
             infoGroup.addDataList("Build date", "TBA");
             infoGroup.addDataList("Version", currentModule.getVersion());
-            infoGroup.addDataList("Key", currentModule.getModuleKey().toString());
+            infoGroup.addDataList("Key", currentModule.getApplicationKey().toString());
             infoGroup.addDataList("System Required",
                 ">= " + currentModule.getMinSystemVersion() + " and <=" + currentModule.getMaxSystemVersion());
 
             var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
-            var moduleKey = currentModule.getModuleKey();
+            var applicationKey = currentModule.getApplicationKey();
             var schemaPromises = [
-                new api.schema.content.GetContentTypesByModuleRequest(moduleKey).sendAndParse(),
-                new api.schema.mixin.GetMixinsByModuleRequest(moduleKey).sendAndParse(),
-                new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(moduleKey).sendAndParse()
+                new api.schema.content.GetContentTypesByModuleRequest(applicationKey).sendAndParse(),
+                new api.schema.mixin.GetMixinsByModuleRequest(applicationKey).sendAndParse(),
+                new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(applicationKey).sendAndParse()
             ];
 
             wemQ.all(schemaPromises).
@@ -81,9 +81,9 @@ module app.view {
 
             var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
             var descriptorPromises = [
-                new api.content.page.GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse(),
-                new api.content.page.region.GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse(),
-                new api.content.page.region.GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse()
+                new api.content.page.GetPageDescriptorsByModuleRequest(applicationKey).sendAndParse(),
+                new api.content.page.region.GetPartDescriptorsByModuleRequest(applicationKey).sendAndParse(),
+                new api.content.page.region.GetLayoutDescriptorsByModuleRequest(applicationKey).sendAndParse()
             ];
 
             wemQ.all(descriptorPromises).

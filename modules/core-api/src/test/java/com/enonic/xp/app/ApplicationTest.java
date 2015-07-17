@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +15,7 @@ public class ApplicationTest
     {
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getDisplayName() ).thenReturn( "My App" );
-        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "myapplication" ) );
+        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
 
         final Application application = new Application( module );
 
@@ -30,7 +29,7 @@ public class ApplicationTest
     {
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getDisplayName() ).thenReturn( "My App" );
-        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "myapplication" ) );
+        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
 
         final Application application = new Application( module );
 

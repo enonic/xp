@@ -2,8 +2,6 @@ package com.enonic.xp.app;
 
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
-
 import static org.junit.Assert.*;
 
 public class ApplicationKeyTest
@@ -28,9 +26,6 @@ public class ApplicationKeyTest
     @Test
     public void testFromModuleKey()
     {
-        final ModuleKey module = ModuleKey.from( "mymodule" );
-        ApplicationKey applicationKey = ApplicationKey.from( module );
-
-        assertEquals( ApplicationKey.from( "mymodule" ).getName(), applicationKey.getName() );
+        assertEquals( "mymodule", ApplicationKey.from( "mymodule" ).getName() );
     }
 }

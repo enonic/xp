@@ -2,13 +2,13 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
 final class ServiceUrlBuilder
     extends PortalUrlBuilder<ServiceUrlParams>
 {
-    private ModuleKey getModule()
+    private ApplicationKey getModule()
     {
         return new ModuleResolver().
             portalRequest( this.portalRequest ).

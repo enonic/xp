@@ -42,7 +42,7 @@ module app.wizard {
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
     import Module = api.module.Module;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import Mixin = api.schema.mixin.Mixin;
     import MixinName = api.schema.mixin.MixinName;
     import MixinNames = api.schema.mixin.MixinNames;
@@ -283,8 +283,8 @@ module app.wizard {
 
         private createSteps(): wemQ.Promise<Mixin[]> {
 
-            var moduleKeys = this.site ? this.site.getModuleKeys() : [];
-            var modulePromises = moduleKeys.map((key: ModuleKey) => this.fetchModule(key));
+            var applicationKeys = this.site ? this.site.getApplicationKeys() : [];
+            var modulePromises = applicationKeys.map((key: ApplicationKey) => this.fetchModule(key));
 
             return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
                 this.checkSecurityWizardStepFormAllowed(loginResult);
@@ -356,7 +356,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private fetchModule(key: ModuleKey): wemQ.Promise<Module> {
+        private fetchModule(key: ApplicationKey): wemQ.Promise<Module> {
             var deferred = wemQ.defer<Module>();
             new api.module.GetModuleRequest(key).sendAndParse().
                 then((mod) => {
@@ -584,7 +584,7 @@ module app.wizard {
 
         private initSiteModelListeners() {
             this.siteModel.onModuleAdded((event: api.content.site.ModuleAddedEvent) => {
-                this.addMetadataStepForms(event.getModuleKey());
+                this.addMetadataStepForms(event.getApplicationKey());
             });
 
             this.siteModel.onModuleRemoved((event: api.content.site.ModuleRemovedEvent) => {
@@ -593,8 +593,8 @@ module app.wizard {
         }
 
         private removeMetadataStepForms() {
-            var moduleKeys = this.siteModel.getModuleKeys();
-            var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var applicationKeys = this.siteModel.getApplicationKeys();
+            var modulePromises = applicationKeys.map((key: ApplicationKey) => new api.module.GetModuleRequest(key).sendAndParse());
 
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
@@ -632,8 +632,8 @@ module app.wizard {
                 }).done();
         }
 
-        private addMetadataStepForms(moduleKey: ModuleKey) {
-            new api.module.GetModuleRequest(moduleKey).sendAndParse().
+        private addMetadataStepForms(applicationKey: ApplicationKey) {
+            new api.module.GetModuleRequest(applicationKey).sendAndParse().
                 then((currentModule: Module) => {
 
                     var mixinNames = currentModule.getMetaSteps();

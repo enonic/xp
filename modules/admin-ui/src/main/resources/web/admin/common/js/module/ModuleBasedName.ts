@@ -6,22 +6,22 @@ module api.module {
 
         private refString: string;
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
         private localName: string;
 
-        constructor(moduleKey: ModuleKey, localName: string) {
-            this.moduleKey = moduleKey;
+        constructor(applicationKey: ApplicationKey, localName: string) {
+            this.applicationKey = applicationKey;
             this.localName = localName;
-            this.refString = moduleKey.toString() ? moduleKey.toString() + ModuleBasedName.SEPARATOR + localName : localName;
+            this.refString = applicationKey.toString() ? applicationKey.toString() + ModuleBasedName.SEPARATOR + localName : localName;
         }
 
         getLocalName(): string {
             return this.localName;
         }
 
-        getModuleKey(): ModuleKey {
-            return this.moduleKey;
+        getApplicationKey(): ApplicationKey {
+            return this.applicationKey;
         }
 
         toString(): string {

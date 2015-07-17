@@ -10,8 +10,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -29,7 +29,7 @@ public class ResourceServiceImpl
     public Resource getResource( final ResourceKey resourceKey )
     {
         Resource resource = null;
-        final Module module = getActiveModule( resourceKey.getModule() );
+        final Module module = getActiveModule( resourceKey.getApplicationKey() );
         if ( module != null )
         {
             resource = getResource( module.getBundle(), resourceKey );
@@ -38,10 +38,10 @@ public class ResourceServiceImpl
     }
 
     @Override
-    public Resources findResources( final ModuleKey moduleKey, final String path, final String filePattern )
+    public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern )
     {
         Resources resources = null;
-        final Module module = getActiveModule( moduleKey );
+        final Module module = getActiveModule( applicationKey );
 
         if ( module != null )
         {
@@ -53,7 +53,7 @@ public class ResourceServiceImpl
             {
                 final List<Resource> resourceList = Collections.list( entries ).
                     stream().
-                    map( resourceUrl -> new Resource( ResourceKey.from( moduleKey, resourceUrl.getPath() ), resourceUrl ) ).
+                    map( resourceUrl -> new Resource( ResourceKey.from( applicationKey, resourceUrl.getPath() ), resourceUrl ) ).
                     collect( Collectors.toList() );
 
                 resources = Resources.from( resourceList );
@@ -69,11 +69,11 @@ public class ResourceServiceImpl
         return resources;
     }
 
-    private Module getActiveModule( ModuleKey moduleKey )
+    private Module getActiveModule( ApplicationKey applicationKey )
     {
         Module activeModule = null;
 
-        final Module module = moduleService.getModule( moduleKey );
+        final Module module = moduleService.getModule( applicationKey );
         if ( module != null && module.getBundle().getState() == Bundle.ACTIVE )
         {
             activeModule = module;

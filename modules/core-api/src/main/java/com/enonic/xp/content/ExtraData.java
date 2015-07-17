@@ -5,8 +5,8 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
 
 @Beta
@@ -41,12 +41,12 @@ public final class ExtraData
 
     public String getModulePrefix()
     {
-        return name.getModuleKey() == null ? "" : name.getModuleKey().toString().replace( '.', '-' );
+        return name.getApplicationKey() == null ? "" : name.getApplicationKey().toString().replace( '.', '-' );
     }
 
-    public static ModuleKey fromModulePrefix( final String modulePrefix )
+    public static ApplicationKey fromModulePrefix( final String modulePrefix )
     {
-        return ModuleKey.from( modulePrefix.replace( '-', '.' ) );
+        return ApplicationKey.from( modulePrefix.replace( '-', '.' ) );
     }
 
     public void setName( final MixinName name )

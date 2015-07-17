@@ -10,9 +10,9 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinsLoader;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeForms;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -151,12 +151,12 @@ public final class BuiltinContentTypeLoader
         return ContentTypes.from( generatedSystemContentTypes );
     }
 
-    public ContentTypes loadByModule( final ModuleKey moduleKey )
+    public ContentTypes loadByModule( final ApplicationKey applicationKey )
     {
-        final List<ContentType> systemContentTypesByModuleKey = CONTENT_TYPES.stream().
-            filter( contentType -> contentType.getName().getModuleKey().equals( moduleKey ) ).
+        final List<ContentType> systemContentTypesByApplicationKey = CONTENT_TYPES.stream().
+            filter( contentType -> contentType.getName().getApplicationKey().equals( applicationKey ) ).
             collect( Collectors.toList() );
-        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes( systemContentTypesByModuleKey );
+        final List<ContentType> generatedSystemContentTypes = generateSystemContentTypes( systemContentTypesByApplicationKey );
         return ContentTypes.from( generatedSystemContentTypes );
     }
 

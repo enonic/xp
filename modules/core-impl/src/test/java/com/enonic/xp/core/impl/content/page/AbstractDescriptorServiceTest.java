@@ -14,8 +14,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
@@ -49,7 +49,7 @@ public abstract class AbstractDescriptorServiceTest
     protected final void createFile( final ResourceKey key, final String content )
         throws Exception
     {
-        final String path = key.getModule().toString() + key.getPath();
+        final String path = key.getApplicationKey().toString() + key.getPath();
         final File file = new File( this.modulesDir, path );
         Assert.assertTrue( file.getParentFile().mkdirs() );
 
@@ -82,12 +82,12 @@ public abstract class AbstractDescriptorServiceTest
 
     protected final Module createModule( final String key )
     {
-        final ModuleKey moduleKey = ModuleKey.from( key );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
 
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( moduleKey );
+        Mockito.when( module.getKey() ).thenReturn( applicationKey );
 
-        Mockito.when( this.moduleService.getModule( moduleKey ) ).thenReturn( module );
+        Mockito.when( this.moduleService.getModule( applicationKey ) ).thenReturn( module );
         return module;
     }
 

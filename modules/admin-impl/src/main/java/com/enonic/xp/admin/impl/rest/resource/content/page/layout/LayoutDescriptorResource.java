@@ -16,7 +16,7 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -42,9 +42,9 @@ public final class LayoutDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public LayoutDescriptorsJson getByModules( @QueryParam("moduleKey") final String moduleKey )
+    public LayoutDescriptorsJson getByModules( @QueryParam("applicationKey") final String applicationKey )
     {
-        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ModuleKey.from( moduleKey ) );
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
         return new LayoutDescriptorsJson( descriptors );
     }
 

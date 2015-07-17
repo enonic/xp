@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.mixin;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
@@ -21,7 +21,7 @@ public class XmlMixinParserTest
     public void setup()
     {
         this.parser = new XmlMixinParser();
-        this.parser.currentModule( ModuleKey.from( "mymodule" ) );
+        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
 
         this.builder = Mixin.create();
         this.builder.name( MixinName.from( "mymodule:mymixin" ) );

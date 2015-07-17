@@ -2,7 +2,7 @@ package com.enonic.xp.schema.mixin;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
 
 @Beta
@@ -15,14 +15,14 @@ public final class MixinName
         super( name );
     }
 
-    private MixinName( final ModuleKey moduleKey, final String localName )
+    private MixinName( final ApplicationKey applicationKey, final String localName )
     {
-        super( moduleKey, localName );
+        super( applicationKey, localName );
     }
 
-    public static MixinName from( final ModuleKey moduleKey, final String localName )
+    public static MixinName from( final ApplicationKey applicationKey, final String localName )
     {
-        return new MixinName( moduleKey, localName );
+        return new MixinName( applicationKey, localName );
     }
 
     public static MixinName from( final String mixinName )

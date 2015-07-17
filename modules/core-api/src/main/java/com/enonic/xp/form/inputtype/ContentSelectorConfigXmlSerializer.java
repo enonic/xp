@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.DomBuilder;
@@ -39,7 +39,7 @@ final class ContentSelectorConfigXmlSerializer
     }
 
     @Override
-    public ContentSelectorConfig parseConfig( final ModuleKey currentModule, final Element elem )
+    public ContentSelectorConfig parseConfig( final ApplicationKey currentModule, final Element elem )
     {
         final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
 

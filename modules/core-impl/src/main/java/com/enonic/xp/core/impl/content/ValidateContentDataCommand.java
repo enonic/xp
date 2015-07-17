@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -92,11 +92,11 @@ final class ValidateContentDataCommand
 
                 for ( final SiteConfig siteConfig : siteConfigs )
                 {
-                    final ModuleKey moduleKey = siteConfig.getModule();
+                    final ApplicationKey applicationKey = siteConfig.getApplicationKey();
 
                     if ( siteService != null )
                     {
-                        final SiteDescriptor siteDescriptor = siteService.getDescriptor( moduleKey );
+                        final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
 
                         if ( siteDescriptor != null )
                         {

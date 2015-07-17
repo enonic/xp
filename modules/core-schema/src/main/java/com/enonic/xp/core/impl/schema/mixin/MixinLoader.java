@@ -15,8 +15,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.IconLoader;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
@@ -35,14 +35,14 @@ final class MixinLoader
 
     private final Bundle bundle;
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
     private final IconLoader iconLoader;
 
     public MixinLoader( final Bundle bundle )
     {
         this.bundle = bundle;
-        this.moduleKey = ModuleKey.from( this.bundle );
+        this.applicationKey = ApplicationKey.from( this.bundle );
         this.iconLoader = new IconLoader( this.bundle );
     }
 
@@ -136,7 +136,7 @@ final class MixinLoader
     private MixinName getMixinNameFromPath( final String path )
     {
         final Matcher matcher = MIXIN_PATTERN.matcher( path );
-        return matcher.matches() ? MixinName.from( this.moduleKey, matcher.group( 1 ) ) : null;
+        return matcher.matches() ? MixinName.from( this.applicationKey, matcher.group( 1 ) ) : null;
     }
 
     private Mixin.Builder parseMixinXml( final String serializedMixin )
@@ -146,7 +146,7 @@ final class MixinLoader
         final XmlMixinParser parser = new XmlMixinParser();
         parser.builder( builder );
         parser.source( serializedMixin );
-        parser.currentModule( this.moduleKey );
+        parser.currentModule( this.applicationKey );
         parser.parse();
 
         return builder;

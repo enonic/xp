@@ -5,6 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -12,7 +13,6 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -103,7 +103,7 @@ public final class CreateContentHandler
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
-            final ModuleKey moduleKey = ExtraData.fromModulePrefix( modulePrefix );
+            final ApplicationKey applicationKey = ExtraData.fromModulePrefix( modulePrefix );
             final Object extradatasObject = value.get( modulePrefix );
             if ( !( extradatasObject instanceof Map ) )
             {
@@ -113,7 +113,7 @@ public final class CreateContentHandler
             final Map<?, ?> extradatas = (Map<?, ?>) extradatasObject;
             for ( final Map.Entry<?, ?> entry : extradatas.entrySet() )
             {
-                final MixinName mixinName = MixinName.from( moduleKey, entry.getKey().toString() );
+                final MixinName mixinName = MixinName.from( applicationKey, entry.getKey().toString() );
                 final ExtraData item = createExtraData( mixinName, entry.getValue() );
                 if ( item != null )
                 {

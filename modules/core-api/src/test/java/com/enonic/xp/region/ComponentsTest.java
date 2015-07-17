@@ -42,7 +42,7 @@ public class ComponentsTest
 
         assertEquals( "my-part", partComponent.getName().toString() );
         assertEquals( "partTemplateName", partComponent.getDescriptor().getName().toString() );
-        assertEquals( "mainmodule", partComponent.getDescriptor().getModuleKey().toString() );
+        assertEquals( "mainmodule", partComponent.getDescriptor().getApplicationKey().toString() );
         assertEquals( PartComponentType.INSTANCE, partComponent.getType() );
     }
 
@@ -60,6 +60,6 @@ public class ComponentsTest
 
         assertEquals( "my-template", layoutComponent.getName().toString() );
         assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName().toString() );
-        assertEquals( "mainmodule", layoutComponent.getDescriptor().getModuleKey().toString() );
+        assertEquals( "mainmodule", layoutComponent.getDescriptor().getApplicationKey().toString() );
     }
 }

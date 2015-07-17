@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class PageTemplateContentTypeLoader extends api.util.loader.BaseLoader<api.schema.content.ContentTypeSummaryListJson, ContentTypeSummary> {
 
@@ -22,9 +22,9 @@ module api.schema.content {
                         ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
                             typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
                         });
-                    var siteModules: {[key:string]: ModuleKey} = {};
-                    parentSite.getModuleKeys().forEach((moduleKey: ModuleKey) => {
-                        siteModules[moduleKey.toString()] = moduleKey;
+                    var siteModules: {[key:string]: ApplicationKey} = {};
+                    parentSite.getApplicationKeys().forEach((applicationKey: ApplicationKey) => {
+                        siteModules[applicationKey.toString()] = applicationKey;
                     });
 
                     var results = contentTypeArray.filter((item: ContentTypeSummary) => {
@@ -38,7 +38,7 @@ module api.schema.content {
                         else if (typesAllowedEverywhere[contentTypeName.toString()]) {
                             return true;
                         }
-                        else if (siteModules[contentTypeName.getModuleKey().toString()]) {
+                        else if (siteModules[contentTypeName.getApplicationKey().toString()]) {
                             return true;
                         }
                         else {

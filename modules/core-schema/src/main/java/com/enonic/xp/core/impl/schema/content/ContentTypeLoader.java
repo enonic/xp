@@ -15,8 +15,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.IconLoader;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -35,14 +35,14 @@ final class ContentTypeLoader
 
     private final Bundle bundle;
 
-    private final ModuleKey moduleKey;
+    private final ApplicationKey applicationKey;
 
     private final IconLoader iconLoader;
 
     public ContentTypeLoader( final Bundle bundle )
     {
         this.bundle = bundle;
-        this.moduleKey = ModuleKey.from( this.bundle );
+        this.applicationKey = ApplicationKey.from( this.bundle );
         this.iconLoader = new IconLoader( this.bundle );
     }
 
@@ -136,7 +136,7 @@ final class ContentTypeLoader
     private ContentTypeName getNameFromPath( final String path )
     {
         final Matcher matcher = PATTERN.matcher( path );
-        return matcher.matches() ? ContentTypeName.from( this.moduleKey, matcher.group( 1 ) ) : null;
+        return matcher.matches() ? ContentTypeName.from( this.applicationKey, matcher.group( 1 ) ) : null;
     }
 
     private ContentType.Builder parse( final String str )
@@ -144,7 +144,7 @@ final class ContentTypeLoader
         final ContentType.Builder builder = ContentType.create();
 
         final XmlContentTypeParser parser = new XmlContentTypeParser();
-        parser.currentModule( this.moduleKey );
+        parser.currentModule( this.applicationKey );
         parser.source( str );
         parser.builder( builder );
         parser.parse();

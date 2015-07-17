@@ -17,8 +17,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -30,7 +30,7 @@ import com.enonic.xp.schema.mixin.Mixins;
 public final class MixinServiceImpl
     implements MixinService, BundleListener
 {
-    private final Map<ModuleKey, Mixins> map;
+    private final Map<ApplicationKey, Mixins> map;
 
     private ModuleService moduleService;
 
@@ -57,7 +57,7 @@ public final class MixinServiceImpl
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return getByModule( name.getModuleKey() ).getMixin( name );
+        return getByModule( name.getApplicationKey() ).getMixin( name );
     }
 
     @Override
@@ -76,9 +76,9 @@ public final class MixinServiceImpl
         final Set<Mixin> mixinList = Sets.newLinkedHashSet();
 
         //Gets builtin mixins
-        for ( ModuleKey systemReservedModuleKey : ModuleKey.SYSTEM_RESERVED_MODULE_KEYS )
+        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS )
         {
-            final Mixins mixins = getByModule( systemReservedModuleKey );
+            final Mixins mixins = getByModule( systemReservedApplicationKey );
             mixinList.addAll( mixins.getList() );
         }
 
@@ -93,22 +93,22 @@ public final class MixinServiceImpl
     }
 
     @Override
-    public Mixins getByModule( final ModuleKey moduleKey )
+    public Mixins getByModule( final ApplicationKey applicationKey )
     {
-        return this.map.computeIfAbsent( moduleKey, this::loadByModule );
+        return this.map.computeIfAbsent( applicationKey, this::loadByModule );
     }
 
-    private Mixins loadByModule( final ModuleKey moduleKey )
+    private Mixins loadByModule( final ApplicationKey applicationKey )
     {
         Mixins mixins = null;
 
-        if ( ModuleKey.SYSTEM_RESERVED_MODULE_KEYS.contains( moduleKey ) )
+        if ( ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS.contains( applicationKey ) )
         {
-            mixins = new BuiltinMixinsLoader().loadByModule( moduleKey );
+            mixins = new BuiltinMixinsLoader().loadByModule( applicationKey );
         }
         else
         {
-            final Module module = this.moduleService.getModule( moduleKey );
+            final Module module = this.moduleService.getModule( applicationKey );
             if ( module != null )
             {
                 final MixinLoader mixinLoader = new MixinLoader( module.getBundle() );
@@ -129,7 +129,7 @@ public final class MixinServiceImpl
     {
         if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
         {
-            this.map.remove( ModuleKey.from( event.getBundle() ) );
+            this.map.remove( ApplicationKey.from( event.getBundle() ) );
         }
     }
 

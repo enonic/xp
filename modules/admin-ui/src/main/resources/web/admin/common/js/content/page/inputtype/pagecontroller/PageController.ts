@@ -31,8 +31,8 @@ module api.content.page.inputtype.pagecontroller {
 
         createInputOccurrenceElement(index: number, property: Property): Element {
             var context = <ContentInputTypeViewContext<any>>this.getContext(),
-                moduleKeys = context.site.getModuleKeys(),
-                request = new GetPageDescriptorsByModulesRequest(moduleKeys),
+                applicationKeys = context.site.getApplicationKeys(),
+                request = new GetPageDescriptorsByModulesRequest(applicationKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 
             var dropdown = new PageDescriptorDropdown('page-controller[' + index + ']', {

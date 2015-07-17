@@ -19,6 +19,7 @@ import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -57,7 +58,6 @@ import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -263,7 +263,7 @@ public class ContentResourceTest
         PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "A", 1L );
         SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 

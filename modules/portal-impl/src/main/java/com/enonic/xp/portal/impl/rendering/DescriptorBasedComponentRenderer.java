@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -47,12 +47,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
-        final ModuleKey previousModule = portalRequest.getModule();
+        final ApplicationKey previousModule = portalRequest.getApplicationKey();
 
         try
         {
             portalRequest.setComponent( component );
-            portalRequest.setModule( descriptor.getKey().getModuleKey() );
+            portalRequest.setApplicationKey( descriptor.getKey().getApplicationKey() );
             final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
@@ -73,7 +73,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         finally
         {
             portalRequest.setComponent( previousComponent );
-            portalRequest.setModule( previousModule );
+            portalRequest.setApplicationKey( previousModule );
         }
     }
 

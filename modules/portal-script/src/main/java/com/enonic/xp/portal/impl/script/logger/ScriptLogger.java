@@ -16,7 +16,7 @@ public final class ScriptLogger
     public ScriptLogger( final ResourceKey source )
     {
         this.source = source;
-        this.log = LoggerFactory.getLogger( this.source.getModule().toString() );
+        this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
     }
 
     public void debug( final String message, final Object... args )

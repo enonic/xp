@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.resource.render;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
@@ -18,7 +18,7 @@ public abstract class RendererControllerResource
 
     protected Site site;
 
-    protected ModuleKey moduleKey;
+    protected ApplicationKey applicationKey;
 
     protected PageTemplate pageTemplate;
 
@@ -30,7 +30,7 @@ public abstract class RendererControllerResource
         portalRequest.setContent( this.content );
         portalRequest.setComponent( this.component );
         portalRequest.setSite( this.site );
-        portalRequest.setModule( this.moduleKey );
+        portalRequest.setApplicationKey( this.applicationKey );
         portalRequest.setPageDescriptor( this.pageDescriptor );
         portalRequest.setPageTemplate( this.pageTemplate );
     }

@@ -7,8 +7,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
@@ -76,7 +76,7 @@ public final class ComponentInstruction
         {
             final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
             final ComponentName componentName = name != null ? new ComponentName( name ) : null;
-            final ModuleKey currentModule = portalRequest.getPageTemplate().getController().getModuleKey();
+            final ApplicationKey currentModule = portalRequest.getPageTemplate().getController().getApplicationKey();
             component = componentService.getByName( currentModule, componentName );
         }
         return renderComponent( portalRequest, component );

@@ -22,8 +22,8 @@ import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -85,9 +85,9 @@ public final class ContentTypeResource
 
     @GET
     @Path("byModule")
-    public ContentTypeSummaryListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    public ContentTypeSummaryListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
-        final ContentTypes contentTypes = contentTypeService.getByModule( ModuleKey.from( moduleKey ) );
+        final ContentTypes contentTypes = contentTypeService.getByModule( ApplicationKey.from( applicationKey ) );
         return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
     }
 

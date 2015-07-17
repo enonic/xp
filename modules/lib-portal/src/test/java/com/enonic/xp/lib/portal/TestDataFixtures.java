@@ -5,13 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -158,7 +158,7 @@ public final class TestDataFixtures
         siteConfigConfig.setLong( "Field", 42l );
 
         final SiteConfig siteConfig = SiteConfig.create().
-            module( ModuleKey.from( "mymodule" ) ).
+            module( ApplicationKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 

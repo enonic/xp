@@ -6,11 +6,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -24,7 +24,7 @@ import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
 public abstract class ScriptTestSupport
 {
-    private final static ModuleKey DEFAULT_MODULE_KEY = ModuleKey.from( "mymodule" );
+    private final static ApplicationKey DEFAULT_MODULE_KEY = ApplicationKey.from( "mymodule" );
 
     protected final ScriptServiceImpl scriptService;
 
@@ -48,7 +48,7 @@ public abstract class ScriptTestSupport
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( getModuleKey() ) ).thenReturn( module );
+        Mockito.when( moduleService.getModule( getApplicationKey() ) ).thenReturn( module );
         Mockito.when( moduleService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setModuleService( moduleService );
@@ -59,7 +59,7 @@ public abstract class ScriptTestSupport
     {
         this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setModule( ModuleKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
         this.portalRequest.setBaseUri( "/portal" );
 
         final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();
@@ -78,7 +78,7 @@ public abstract class ScriptTestSupport
 
     protected final ScriptExports runTestScript( final String path )
     {
-        return runTestScript( ResourceKey.from( getModuleKey(), path ) );
+        return runTestScript( ResourceKey.from( getApplicationKey(), path ) );
     }
 
     private ScriptExports runTestScript( final ResourceKey key )
@@ -96,7 +96,7 @@ public abstract class ScriptTestSupport
         return exports.executeMethod( funcName );
     }
 
-    protected ModuleKey getModuleKey()
+    protected ApplicationKey getApplicationKey()
     {
         return DEFAULT_MODULE_KEY;
     }

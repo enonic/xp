@@ -14,8 +14,8 @@ module api.schema.content {
                     || ModuleUpdatedEventType.STOPPED == event.getEventType()
                         || ModuleUpdatedEventType.UPDATED == event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent - removing cached content types... " +
-                                event.getModuleKey().toString());
-                    this.getCachedByModuleKey(event.getModuleKey()).forEach((contentType: ContentType) => {
+                                event.getApplicationKey().toString());
+                    this.getCachedByApplicationKey(event.getApplicationKey()).forEach((contentType: ContentType) => {
                         this.deleteByKey(this.getKeyFromObject(contentType));
                         console.log("Removed cached content type: " + contentType.getName());
                     });
@@ -35,10 +35,10 @@ module api.schema.content {
             return key.toString();
         }
 
-        private getCachedByModuleKey(moduleKey: api.module.ModuleKey): ContentType[] {
+        private getCachedByApplicationKey(applicationKey: api.module.ApplicationKey): ContentType[] {
             var result: ContentType[] = [];
             this.getAll().forEach((contentType: ContentType) => {
-                if(moduleKey.equals(this.getKeyFromObject(contentType).getModuleKey())) {
+                if(applicationKey.equals(this.getKeyFromObject(contentType).getApplicationKey())) {
                     result.push(contentType);
                 }
             });

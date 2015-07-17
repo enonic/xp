@@ -23,8 +23,8 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.security.RoleKeys;
@@ -72,10 +72,10 @@ public final class ModuleResource
     }
 
     @GET
-    public ModuleJson getByKey( @QueryParam("moduleKey") String moduleKey )
+    public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Module module = this.moduleService.getModule( ModuleKey.from( moduleKey ) );
-        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ModuleKey.from( moduleKey ) );
+        final Module module = this.moduleService.getModule( ApplicationKey.from( applicationKey ) );
+        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
         return new ModuleJson( module, siteDescriptor );
     }
 
@@ -85,7 +85,7 @@ public final class ModuleResource
     public ModuleSuccessJson start( final ModuleListParams params )
         throws Exception
     {
-        params.getModuleKeys().forEach( this.moduleService::startModule );
+        params.getApplicationKeys().forEach( this.moduleService::startModule );
         return new ModuleSuccessJson();
     }
 
@@ -95,7 +95,7 @@ public final class ModuleResource
     public ModuleSuccessJson stop( final ModuleListParams params )
         throws Exception
     {
-        params.getModuleKeys().forEach( this.moduleService::stopModule );
+        params.getApplicationKeys().forEach( this.moduleService::stopModule );
         return new ModuleSuccessJson();
     }
 

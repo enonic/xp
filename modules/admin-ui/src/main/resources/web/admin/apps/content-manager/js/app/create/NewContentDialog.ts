@@ -12,7 +12,7 @@ module app.create {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentType = api.schema.content.ContentType;
     import Site = api.content.site.Site;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
     import ListContentByPathRequest = api.content.ListContentByPathRequest;
@@ -222,8 +222,8 @@ module app.create {
             this.contentList.setItems(filteredItems);
         }
 
-        private filterByParentContent(items: NewContentDialogListItem[], siteModuleKeys: ModuleKey[]): NewContentDialogListItem[] {
-            var createContentFilter = new api.content.CreateContentFilter().siteModulesFilter(siteModuleKeys);
+        private filterByParentContent(items: NewContentDialogListItem[], siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
+            var createContentFilter = new api.content.CreateContentFilter().siteModulesFilter(siteApplicationKeys);
             return items.filter((item: NewContentDialogListItem) =>
                     createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
             );
@@ -447,7 +447,7 @@ module app.create {
 
         private createListOfContentTypeItems(allContentTypes: ContentTypeSummary[], parentSite: Site): NewContentDialogListItem[] {
             var allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
-            var siteModules: ModuleKey[] = parentSite ? parentSite.getModuleKeys() : [];
+            var siteModules: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
             return this.filterByParentContent(allListItems, siteModules);
         }
 

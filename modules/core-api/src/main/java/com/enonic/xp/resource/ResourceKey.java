@@ -6,24 +6,24 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 @Beta
 public final class ResourceKey
 {
-    private final static String URL_PROTOCOL_PREFIX = "module";
+    private final static String URL_PROTOCOL_PREFIX = "applicationKey";
 
     private final String uri;
 
-    private final ModuleKey module;
+    private final ApplicationKey applicationKey;
 
     private final String path;
 
-    private ResourceKey( final ModuleKey module, final String path )
+    private ResourceKey( final ApplicationKey applicationKey, final String path )
     {
-        this.module = module;
+        this.applicationKey = applicationKey;
         this.path = normalizePath( path );
-        this.uri = this.module.toString() + ":" + this.path;
+        this.uri = this.applicationKey.toString() + ":" + this.path;
     }
 
     public String getUri()
@@ -31,9 +31,9 @@ public final class ResourceKey
         return this.uri;
     }
 
-    public ModuleKey getModule()
+    public ApplicationKey getApplicationKey()
     {
-        return this.module;
+        return this.applicationKey;
     }
 
     public String getPath()
@@ -73,9 +73,9 @@ public final class ResourceKey
         // absolute path
         if ( relPath.startsWith( "/" ) )
         {
-            return new ResourceKey( this.module, relPath );
+            return new ResourceKey( this.applicationKey, relPath );
         }
-        return new ResourceKey( this.module, this.path + "/" + relPath );
+        return new ResourceKey( this.applicationKey, this.path + "/" + relPath );
     }
 
     @Override
@@ -106,22 +106,22 @@ public final class ResourceKey
         Preconditions.checkNotNull( uri );
 
         final int pos = uri.indexOf( ':' );
-        Preconditions.checkArgument( pos > 0, "Invalid module file key uri specification." );
+        Preconditions.checkArgument( pos > 0, "Invalid applicationKey file key uri specification." );
 
-        return from( ModuleKey.from( uri.substring( 0, pos ) ), uri.substring( pos + 1 ) );
+        return from( ApplicationKey.from( uri.substring( 0, pos ) ), uri.substring( pos + 1 ) );
     }
 
-    public static ResourceKey from( final ModuleKey module, final String path )
+    public static ResourceKey from( final ApplicationKey application, final String path )
     {
-        Preconditions.checkNotNull( module );
+        Preconditions.checkNotNull( application );
         Preconditions.checkNotNull( path );
 
-        return new ResourceKey( module, path );
+        return new ResourceKey( application, path );
     }
 
     public static ResourceKey from( final URL url )
     {
-        Preconditions.checkArgument( URL_PROTOCOL_PREFIX.equals( url.getProtocol() ), "Invalid module resource key URL." );
+        Preconditions.checkArgument( URL_PROTOCOL_PREFIX.equals( url.getProtocol() ), "Invalid applicationKey resource key URL." );
         return ResourceKey.from( url.getPath() );
     }
 }

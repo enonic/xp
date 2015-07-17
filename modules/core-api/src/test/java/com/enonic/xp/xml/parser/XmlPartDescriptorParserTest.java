@@ -3,8 +3,8 @@ package com.enonic.xp.xml.parser;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 
@@ -22,7 +22,7 @@ public class XmlPartDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlPartDescriptorParser();
-        this.parser.currentModule( ModuleKey.from( "mymodule" ) );
+        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
 
         this.builder = PartDescriptor.create();
         this.builder.key( DescriptorKey.from( "mymodule:mypart" ) );

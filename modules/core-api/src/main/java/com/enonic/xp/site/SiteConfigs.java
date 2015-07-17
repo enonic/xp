@@ -8,14 +8,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public class SiteConfigs
     extends AbstractImmutableEntityList<SiteConfig>
 {
-    private final ImmutableMap<ModuleKey, SiteConfig> modulesByName;
+    private final ImmutableMap<ApplicationKey, SiteConfig> modulesByName;
 
     private SiteConfigs( final ImmutableList<SiteConfig> list )
     {
@@ -23,14 +23,14 @@ public class SiteConfigs
         this.modulesByName = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public SiteConfig get( final ModuleKey moduleKey )
+    public SiteConfig get( final ApplicationKey applicationKey )
     {
-        return this.modulesByName.get( moduleKey );
+        return this.modulesByName.get( applicationKey );
     }
 
-    public SiteConfig get( final String moduleKey )
+    public SiteConfig get( final String applicationKey )
     {
-        return get( ModuleKey.from( moduleKey ) );
+        return get( ApplicationKey.from( applicationKey ) );
     }
 
     public static SiteConfigs empty()
@@ -76,12 +76,12 @@ public class SiteConfigs
     }
 
     private final static class ToNameFunction
-        implements Function<SiteConfig, ModuleKey>
+        implements Function<SiteConfig, ApplicationKey>
     {
         @Override
-        public ModuleKey apply( final SiteConfig value )
+        public ApplicationKey apply( final SiteConfig value )
         {
-            return value.getModule();
+            return value.getApplicationKey();
         }
     }
 }

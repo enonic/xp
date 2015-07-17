@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -14,7 +14,7 @@ final class AssetUrlBuilder
     extends PortalUrlBuilder<AssetUrlParams>
 {
 
-    private ModuleKey getModule()
+    private ApplicationKey getModule()
     {
         return new ModuleResolver().
             portalRequest( this.portalRequest ).

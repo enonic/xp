@@ -3,7 +3,7 @@ package com.enonic.xp.resource;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 public class ResourceKeyTest
 {
@@ -29,7 +29,7 @@ public class ResourceKeyTest
         Assert.assertEquals( uri, key.getUri() );
         Assert.assertEquals( path, key.getPath() );
         Assert.assertEquals( ext, key.getExtension() );
-        Assert.assertEquals( module, key.getModule().toString() );
+        Assert.assertEquals( module, key.getApplicationKey().toString() );
         Assert.assertEquals( root, key.isRoot() );
         Assert.assertEquals( name, key.getName() );
     }
@@ -48,15 +48,15 @@ public class ResourceKeyTest
 
     private void fromModuleAndPath( final String input, final String uri, final String path, final String ext, final boolean root )
     {
-        final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
-        final ResourceKey key = ResourceKey.from( module, input );
+        final ApplicationKey applicationKey = ApplicationKey.from( "mymodule-1.0.0" );
+        final ResourceKey key = ResourceKey.from( applicationKey, input );
 
         Assert.assertNotNull( key );
         Assert.assertEquals( uri, key.toString() );
         Assert.assertEquals( uri, key.getUri() );
         Assert.assertEquals( path, key.getPath() );
         Assert.assertEquals( ext, key.getExtension() );
-        Assert.assertEquals( module.toString(), key.getModule().toString() );
+        Assert.assertEquals( applicationKey.toString(), key.getApplicationKey().toString() );
         Assert.assertEquals( root, key.isRoot() );
     }
 

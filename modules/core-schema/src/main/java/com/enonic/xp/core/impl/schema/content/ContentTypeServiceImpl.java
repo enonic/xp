@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.content;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -49,9 +49,9 @@ public final class ContentTypeServiceImpl
     }
 
     @Override
-    public ContentTypes getByModule( final ModuleKey moduleKey )
+    public ContentTypes getByModule( final ApplicationKey applicationKey )
     {
-        return this.registry.getByModule( moduleKey );
+        return this.registry.getByModule( applicationKey );
     }
 
     @Override

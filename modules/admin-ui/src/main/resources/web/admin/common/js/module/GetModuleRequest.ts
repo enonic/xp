@@ -2,20 +2,20 @@ module api.module {
 
     export class GetModuleRequest extends ModuleResourceRequest<json.ModuleJson, Module> {
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
         private skipCache: boolean;
 
-        constructor(moduleKey: ModuleKey, skipCache: boolean = false) {
+        constructor(applicationKey: ApplicationKey, skipCache: boolean = false) {
             super();
             super.setMethod("GET");
-            this.moduleKey = moduleKey;
+            this.applicationKey = applicationKey;
             this.skipCache = skipCache;
         }
 
         getParams(): Object {
             return {
-                moduleKey: this.moduleKey.toString()
+                applicationKey: this.applicationKey.toString()
             };
         }
 
@@ -26,7 +26,7 @@ module api.module {
         sendAndParse(): wemQ.Promise<Module> {
 
             var cache = ModuleCache.get();
-            var moduleObj = this.skipCache ? null : cache.getByKey(this.moduleKey);
+            var moduleObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
             if (moduleObj) {
                 return wemQ(moduleObj);
             }

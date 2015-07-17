@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -30,7 +30,7 @@ public class ResourceServiceImplTest
     private static final String RESOURCE_2_PATH = "/a/" + RESOURCE_2_FILE_NAME;
 
 
-    private ModuleKey moduleKey;
+    private ApplicationKey applicationKey;
 
     private URL resourceUrl;
 
@@ -43,7 +43,7 @@ public class ResourceServiceImplTest
     @Before
     public void before()
     {
-        moduleKey = ModuleKey.from( "mymodule" );
+        applicationKey = ApplicationKey.from( "mymodule" );
 
         ResourceTestHelper resourceTestHelper = new ResourceTestHelper( this );
         resourceUrl = resourceTestHelper.getResource( RESOURCE_FILE_NAME );
@@ -55,11 +55,11 @@ public class ResourceServiceImplTest
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
         Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( moduleKey );
+        Mockito.when( module.getKey() ).thenReturn( applicationKey );
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
         final ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( moduleKey ) ).thenReturn( module );
+        Mockito.when( moduleService.getModule( applicationKey ) ).thenReturn( module );
 
         resourceService = new ResourceServiceImpl();
         resourceService.setModuleService( moduleService );
@@ -72,20 +72,20 @@ public class ResourceServiceImplTest
         Resource resource;
 
         //Retrieves a resource
-        resourceKey = ResourceKey.from( moduleKey, RESOURCE_PATH );
+        resourceKey = ResourceKey.from( applicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
         assertNotNull( resource );
         assertEquals( resourceKey, resource.getKey() );
         assertEquals( resourceUrl, resource.getUrl() );
 
         //Retrieves a resource with an incorrect module key
-        ModuleKey incorrectModuleKey = ModuleKey.from( "othermodule" );
-        resourceKey = ResourceKey.from( incorrectModuleKey, RESOURCE_PATH );
+        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "othermodule" );
+        resourceKey = ResourceKey.from( incorrectApplicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
         assertNull( resource );
 
         //Retrieves a resource with an incorrect resource path
-        resourceKey = ResourceKey.from( moduleKey, "c/resource.txt" );
+        resourceKey = ResourceKey.from( applicationKey, "c/resource.txt" );
         resource = resourceService.getResource( resourceKey );
         assertNull( resource );
     }
@@ -101,20 +101,20 @@ public class ResourceServiceImplTest
             Collections.enumeration( Arrays.asList( resourceUrl, resource2Url ) ) );
 
         //Finds resources for a specific path
-        resources = resourceService.findResources( moduleKey, "/", RESOURCE_FILE_NAME );
+        resources = resourceService.findResources( applicationKey, "/", RESOURCE_FILE_NAME );
         assertEquals( 1, resources.getSize() );
 
         //Finds all text resources in a specific folder
-        resources = resourceService.findResources( moduleKey, "/a", "*" );
+        resources = resourceService.findResources( applicationKey, "/a", "*" );
         assertEquals( 2, resources.getSize() );
 
         //Finds all resources in an non existing folder
-        resources = resourceService.findResources( moduleKey, "/b", "*" );
+        resources = resourceService.findResources( applicationKey, "/b", "*" );
         assertEquals( 0, resources.getSize() );
 
         //Finds all resources for an incorrect module key
-        ModuleKey incorrectModuleKey = ModuleKey.from( "othermodule" );
-        resources = resourceService.findResources( incorrectModuleKey, "/", RESOURCE_FILE_NAME );
+        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "othermodule" );
+        resources = resourceService.findResources( incorrectApplicationKey, "/", RESOURCE_FILE_NAME );
         assertEquals( 0, resources.getSize() );
     }
 }

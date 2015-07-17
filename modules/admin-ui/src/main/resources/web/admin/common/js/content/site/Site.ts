@@ -2,7 +2,7 @@ module api.content.site {
 
     import Property = api.data.Property;
     import PropertyIdProvider = api.data.PropertyIdProvider;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import ValueTypes = api.data.ValueTypes;
 
     export class Site extends api.content.Content implements api.Equitable, api.Cloneable {
@@ -33,8 +33,8 @@ module api.content.site {
             return siteConfigs;
         }
 
-        getModuleKeys(): ModuleKey[] {
-            return this.getSiteConfigs().map((config: SiteConfig) => config.getModuleKey());
+        getApplicationKeys(): ApplicationKey[] {
+            return this.getSiteConfigs().map((config: SiteConfig) => config.getApplicationKey());
         }
 
         equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {

@@ -5,10 +5,10 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
@@ -54,15 +54,15 @@ public final class ContentMapper
     {
         gen.map( "x" );
 
-        final ListMultimap<ModuleKey, ExtraData> extradatasByModule = ArrayListMultimap.create();
+        final ListMultimap<ApplicationKey, ExtraData> extradatasByModule = ArrayListMultimap.create();
         for ( ExtraData extraData : values )
         {
-            extradatasByModule.put( extraData.getName().getModuleKey(), extraData );
+            extradatasByModule.put( extraData.getName().getApplicationKey(), extraData );
         }
 
-        for ( final ModuleKey moduleKey : extradatasByModule.keys() )
+        for ( final ApplicationKey applicationKey : extradatasByModule.keys() )
         {
-            final List<ExtraData> extraDatas = extradatasByModule.get( moduleKey );
+            final List<ExtraData> extraDatas = extradatasByModule.get( applicationKey );
             if ( extraDatas.isEmpty() )
             {
                 continue;

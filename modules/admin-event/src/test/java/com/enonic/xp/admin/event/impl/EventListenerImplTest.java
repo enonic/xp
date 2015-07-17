@@ -3,8 +3,8 @@ package com.enonic.xp.admin.event.impl;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 
 import static com.enonic.xp.module.ModuleEventType.INSTALLED;
@@ -35,7 +35,7 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module" ), INSTALLED );
+        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ApplicationKey.from( "module" ), INSTALLED );
         eventListener.onEvent( event );
 
         verify( this.webSocketManager, atLeastOnce() ).sendToAll( anyString() );

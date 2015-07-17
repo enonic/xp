@@ -11,13 +11,13 @@ public final class Application
 {
     private final Module module;
 
-    private final ApplicationKey appKey;
+    private final ApplicationKey applicationKey;
 
     public Application( final Module module )
     {
         Preconditions.checkNotNull( module, "Module cannot be null" );
         this.module = module;
-        this.appKey = ApplicationKey.from( module.getKey() );
+        this.applicationKey = ApplicationKey.from( module.getKey().getName() );
     }
 
     public Module getModule()
@@ -27,14 +27,14 @@ public final class Application
 
     public ApplicationKey getKey()
     {
-        return appKey;
+        return applicationKey;
     }
 
     @Override
     public String toString()
     {
         return MoreObjects.toStringHelper( this ).
-            add( "key", appKey ).
+            add( "key", applicationKey ).
             add( "module", module ).
             toString();
     }

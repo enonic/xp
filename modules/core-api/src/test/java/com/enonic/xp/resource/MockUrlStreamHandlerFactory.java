@@ -17,13 +17,13 @@ final class MockUrlStreamHandlerFactory
     @Override
     public URL getUrl( final ResourceKey resourceKey )
     {
-        URL url = resolveUrl( resourceKey.getModule().toString() + resourceKey.getPath() );
+        URL url = resolveUrl( resourceKey.getApplicationKey().toString() + resourceKey.getPath() );
         if ( url != null )
         {
             return url;
         }
 
-        url = resolveUrl( "modules/" + resourceKey.getModule().toString() + resourceKey.getPath() );
+        url = resolveUrl( "modules/" + resourceKey.getApplicationKey().toString() + resourceKey.getPath() );
         if ( url != null )
         {
             return url;

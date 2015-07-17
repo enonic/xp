@@ -20,8 +20,8 @@ module api.liveedit {
             this.addClass("page-placeholder");
             this.pageView = pageView;
 
-            var moduleKeys = pageView.liveEditModel.getSiteModel().getModuleKeys(),
-                request = new GetPageDescriptorsByModulesRequest(moduleKeys),
+            var applicationKeys = pageView.liveEditModel.getSiteModel().getApplicationKeys(),
+                request = new GetPageDescriptorsByModulesRequest(applicationKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 
             this.controllerDropdown = new PageDescriptorDropdown('page-controller', {
@@ -45,7 +45,7 @@ module api.liveedit {
 
             pageView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setModuleKeys(pageView.liveEditModel.getSiteModel().getModuleKeys());
+                    request.setApplicationKeys(pageView.liveEditModel.getSiteModel().getApplicationKeys());
                     loader.load();
                 }
             });

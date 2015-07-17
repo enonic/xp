@@ -73,7 +73,7 @@ public final class PageResource
 
         if ( resource.pageDescriptor != null )
         {
-            resource.moduleKey = resource.pageDescriptor.getKey().getModuleKey();
+            resource.applicationKey = resource.pageDescriptor.getKey().getApplicationKey();
         }
 
         final Page effectivePage = new EffectivePageResolver( resource.content, resource.pageTemplate ).resolve();

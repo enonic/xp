@@ -8,13 +8,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public final class Modules
     extends AbstractImmutableEntityList<Module>
 {
-    private final ImmutableMap<ModuleKey, Module> map;
+    private final ImmutableMap<ApplicationKey, Module> map;
 
     private Modules( final ImmutableList<Module> list )
     {
@@ -27,9 +28,9 @@ public final class Modules
         return ModuleKeys.from( map.keySet() );
     }
 
-    public Module getModule( final ModuleKey ModuleKey )
+    public Module getModule( final ApplicationKey ApplicationKey )
     {
-        return map.get( ModuleKey );
+        return map.get( ApplicationKey );
     }
 
     @Override
@@ -60,10 +61,10 @@ public final class Modules
     }
 
     private final static class ToKeyFunction
-        implements Function<Module, ModuleKey>
+        implements Function<Module, ApplicationKey>
     {
         @Override
-        public ModuleKey apply( final Module value )
+        public ApplicationKey apply( final Module value )
         {
             return value.getKey();
         }

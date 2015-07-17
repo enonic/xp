@@ -12,9 +12,9 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.resource.ResourceUrlRegistry;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 
@@ -59,7 +59,7 @@ public class LocaleServiceImplTest
     public void get_bundle()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ModuleKey.from( "mymodule" ), Locale.ENGLISH );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), Locale.ENGLISH );
         Object[] result = {"a", "c"};
 
         assertNotNull( bundle );
@@ -70,7 +70,7 @@ public class LocaleServiceImplTest
     public void get_bundle_with_country()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ModuleKey.from( "mymodule" ), Locale.US );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), Locale.US );
         Object[] result = {"a", "b", "c"};
 
         assertNotNull( bundle );
@@ -82,7 +82,7 @@ public class LocaleServiceImplTest
         throws Exception
     {
         Locale locale = new Locale( "en", "US", "1" );
-        MessageBundle bundle = localeService.getBundle( ModuleKey.from( "mymodule" ), locale );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), locale );
         Object[] result = {"a", "b", "c", "d"};
 
         assertNotNull( bundle );

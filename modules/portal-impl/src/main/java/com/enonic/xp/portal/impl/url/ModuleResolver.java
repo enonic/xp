@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 
 final class ModuleResolver
@@ -21,13 +21,13 @@ final class ModuleResolver
         return this;
     }
 
-    public ModuleKey resolve()
+    public ApplicationKey resolve()
     {
         if ( this.module != null )
         {
-            return ModuleKey.from( this.module );
+            return ApplicationKey.from( this.module );
         }
 
-        return this.portalRequest.getModule();
+        return this.portalRequest.getApplicationKey();
     }
 }

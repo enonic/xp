@@ -7,9 +7,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.relationship.RelationshipType;
@@ -26,7 +26,7 @@ public class RelationshipTypeServiceImplTest
 
     private Bundle myBundle;
 
-    private ModuleKey myModuleKey;
+    private ApplicationKey myApplicationKey;
 
     private RelationshipType myModuleType;
 
@@ -46,10 +46,10 @@ public class RelationshipTypeServiceImplTest
         //Mocks a module
         startBundles( newBundle( "module2" ) );
         myBundle = findBundle( "module2" );
-        myModuleKey = ModuleKey.from( myBundle );
-        myModuleType = createType( myModuleKey + ":member" );
+        myApplicationKey = ApplicationKey.from( myBundle );
+        myModuleType = createType( myApplicationKey + ":member" );
         myModule = Mockito.mock( Module.class );
-        Mockito.when( myModule.getKey() ).thenReturn( myModuleKey );
+        Mockito.when( myModule.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
 
         //Mocks the module service
@@ -75,7 +75,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( myModuleKey );
+        relationshipTypes = relationshipTypeService.getByModule( myApplicationKey );
         assertNotNull( relationshipTypes );
         assertEquals( 0, relationshipTypes.getSize() );
 
@@ -88,13 +88,13 @@ public class RelationshipTypeServiceImplTest
     {
         Modules modules = Modules.from( myModule );
         Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
-        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
+        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( myModule );
 
         RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER + 1, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( myModuleKey );
+        relationshipTypes = relationshipTypeService.getByModule( myApplicationKey );
         assertNotNull( relationshipTypes );
         assertEquals( 1, relationshipTypes.getSize() );
 
@@ -102,7 +102,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipType );
 
         Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
-        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( null );
+        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( null );
         relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();
@@ -115,7 +115,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( ModuleKey.SYSTEM );
+        relationshipTypes = relationshipTypeService.getByModule( ApplicationKey.SYSTEM );
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 

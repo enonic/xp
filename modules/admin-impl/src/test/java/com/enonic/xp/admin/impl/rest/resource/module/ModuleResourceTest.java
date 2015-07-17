@@ -9,11 +9,11 @@ import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.site.SiteDescriptor;
@@ -34,7 +34,7 @@ public class ModuleResourceTest
         final Modules modules = Modules.from( module );
         Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
             path( "module/list" ).
@@ -50,7 +50,7 @@ public class ModuleResourceTest
         final Modules modules = Modules.from( module, createEmptyModule() );
         Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
             path( "module/list" ).
@@ -67,7 +67,7 @@ public class ModuleResourceTest
         final Modules modules = Modules.from( module, createEmptyModule() );
         Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
             path( "module/list" ).
@@ -81,13 +81,13 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( module );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ModuleKey.class ) ) ).thenReturn( siteDescriptor );
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
             path( "module" ).
-            queryParam( "moduleKey", "testmodule" ).
+            queryParam( "applicationKey", "testmodule" ).
             get().getAsString();
         assertJson( "get_module_by_key_success.json", response );
     }
@@ -101,7 +101,7 @@ public class ModuleResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.moduleService ).startModule( ModuleKey.from( "testmodule" ) );
+        Mockito.verify( this.moduleService ).startModule( ApplicationKey.from( "testmodule" ) );
     }
 
     @Test
@@ -113,13 +113,13 @@ public class ModuleResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.moduleService ).stopModule( ModuleKey.from( "testmodule" ) );
+        Mockito.verify( this.moduleService ).stopModule( ApplicationKey.from( "testmodule" ) );
     }
 
     private Module createModule()
     {
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "testmodule" ) );
+        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "testmodule" ) );
         Mockito.when( module.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
         Mockito.when( module.getDisplayName() ).thenReturn( "module display name" );
         Mockito.when( module.getUrl() ).thenReturn( "http://enonic.net" );
@@ -136,7 +136,7 @@ public class ModuleResourceTest
     private Module createEmptyModule()
     {
         final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "empty_testmodule" ) );
+        Mockito.when( module.getKey() ).thenReturn( ApplicationKey.from( "empty_testmodule" ) );
         Mockito.when( module.getDisplayName() ).thenReturn( "empty name" );
 
         return module;

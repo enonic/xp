@@ -1,20 +1,20 @@
 module api.schema.mixin {
 
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
 
     export class GetMixinsByModuleRequest extends MixinResourceRequest<MixinListJson, Mixin[]> {
 
-        private moduleKey: ModuleKey;
+        private applicationKey: ApplicationKey;
 
-        constructor(moduleKey: ModuleKey) {
+        constructor(applicationKey: ApplicationKey) {
             super();
             super.setMethod("GET");
-            this.moduleKey = moduleKey;
+            this.applicationKey = applicationKey;
         }
 
         getParams(): Object {
             return {
-                moduleKey: this.moduleKey.toString()
+                applicationKey: this.applicationKey.toString()
             };
         }
 

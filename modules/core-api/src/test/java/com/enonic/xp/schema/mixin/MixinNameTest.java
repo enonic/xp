@@ -2,7 +2,7 @@ package com.enonic.xp.schema.mixin;
 
 import org.junit.Test;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 public class MixinNameTest
@@ -33,7 +33,7 @@ public class MixinNameTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return MixinName.from( ModuleKey.from( "mymodule" ), "my_mixin" );
+                return MixinName.from( ApplicationKey.from( "mymodule" ), "my_mixin" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

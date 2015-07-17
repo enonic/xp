@@ -15,7 +15,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
-    import ModuleKey = api.module.ModuleKey;
+    import ApplicationKey = api.module.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
     import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
@@ -65,7 +65,7 @@ module api.content.site.inputtype.siteconfigurator {
 
                 this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Module>) => {
 
-                    var key = event.getOption().displayValue.getModuleKey();
+                    var key = event.getOption().displayValue.getApplicationKey();
                     if (!key) {
                         return;
                     }
@@ -91,13 +91,13 @@ module api.content.site.inputtype.siteconfigurator {
 
                     if (property.hasNonNullValue()) {
                         var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
-                        siteConfigFormsToDisplay.push(siteConfig.getModuleKey().toString());
+                        siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
 
-                        new GetModuleRequest(siteConfig.getModuleKey()).sendAndParse().
+                        new GetModuleRequest(siteConfig.getApplicationKey()).sendAndParse().
                             then((requestedModule: Module) => {
 
-                                this.comboBox.onSiteConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
-                                    var indexToRemove = siteConfigFormsToDisplay.indexOf(moduleKey.toString());
+                                this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
+                                    var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
                                     if (indexToRemove != -1) {
                                         siteConfigFormsToDisplay.splice(indexToRemove, 1);
                                     }

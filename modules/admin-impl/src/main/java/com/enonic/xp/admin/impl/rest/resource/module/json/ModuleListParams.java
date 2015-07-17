@@ -6,24 +6,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 
 public final class ModuleListParams
 {
-    private final Set<ModuleKey> moduleKeys;
+    private final Set<ApplicationKey> applicationKeys;
 
     @JsonCreator
     public ModuleListParams( @JsonProperty("key") String... keys )
     {
-        this.moduleKeys = Sets.newHashSet();
+        this.applicationKeys = Sets.newHashSet();
         for ( final String key : keys )
         {
-            this.moduleKeys.add( ModuleKey.from( key ) );
+            this.applicationKeys.add( ApplicationKey.from( key ) );
         }
     }
 
-    public Set<ModuleKey> getModuleKeys()
+    public Set<ApplicationKey> getApplicationKeys()
     {
-        return this.moduleKeys;
+        return this.applicationKeys;
     }
 }

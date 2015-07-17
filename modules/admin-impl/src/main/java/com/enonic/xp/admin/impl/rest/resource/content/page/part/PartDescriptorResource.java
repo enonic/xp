@@ -16,7 +16,7 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
@@ -42,9 +42,9 @@ public final class PartDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public PartDescriptorsJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    public PartDescriptorsJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
-        final PartDescriptors descriptors = partDescriptorService.getByModule( ModuleKey.from( moduleKey ) );
+        final PartDescriptors descriptors = partDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
         return new PartDescriptorsJson( descriptors );
     }
 

@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.GZIP;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.resource.Resource;
@@ -37,8 +37,8 @@ public final class AssetResource
 
     private void resolveResourceUrl( final String key, final String path )
     {
-        final ModuleKey moduleKey = ModuleKey.from( key );
-        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( moduleKey, "app/assets/" + path ) );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "app/assets/" + path ) );
 
         if ( resource == null )
         {

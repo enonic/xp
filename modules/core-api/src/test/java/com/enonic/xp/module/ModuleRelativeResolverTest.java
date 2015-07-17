@@ -3,6 +3,7 @@ package com.enonic.xp.module;
 
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -14,7 +15,7 @@ public class ModuleRelativeResolverTest
     @Test
     public void toContentTypeName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ModuleKey.from( "aaa" ) );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
         ContentTypeName contentTypeName = resolver.toContentTypeName( "bbb" );
         assertEquals( contentTypeName.getLocalName(), "bbb" );
 
@@ -32,7 +33,7 @@ public class ModuleRelativeResolverTest
     @Test
     public void toMixinName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ModuleKey.from( "aaa" ) );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
         MixinName mixinName = resolver.toMixinName( "bbb" );
         assertEquals( mixinName.getLocalName(), "bbb" );
 
@@ -50,7 +51,7 @@ public class ModuleRelativeResolverTest
     @Test
     public void toRelationshipTypeName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ModuleKey.from( "aaa" ) );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
         RelationshipTypeName relationshipTypeName = resolver.toRelationshipTypeName( "bbb" );
         assertEquals( relationshipTypeName.getLocalName(), "bbb" );
 

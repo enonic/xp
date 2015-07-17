@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
@@ -16,7 +16,7 @@ import com.enonic.xp.region.PartDescriptorService;
 
 class GetComponentByNameCommand
 {
-    private ModuleKey module;
+    private ApplicationKey applicationKey;
 
     private ComponentName name;
 
@@ -51,7 +51,7 @@ class GetComponentByNameCommand
     {
         try
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( this.module, descriptorName );
+            final DescriptorKey descriptorKey = DescriptorKey.from( this.applicationKey, descriptorName );
             return partDescriptorService.getByKey( descriptorKey );
         }
         catch ( PartDescriptorNotFoundException e )
@@ -64,7 +64,7 @@ class GetComponentByNameCommand
     {
         try
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( this.module, descriptorName );
+            final DescriptorKey descriptorKey = DescriptorKey.from( this.applicationKey, descriptorName );
             return layoutDescriptorService.getByKey( descriptorKey );
         }
         catch ( LayoutDescriptorNotFoundException e )
@@ -73,9 +73,9 @@ class GetComponentByNameCommand
         }
     }
 
-    public GetComponentByNameCommand module( final ModuleKey module )
+    public GetComponentByNameCommand applicationKey( final ApplicationKey applicationKey )
     {
-        this.module = module;
+        this.applicationKey = applicationKey;
         return this;
     }
 

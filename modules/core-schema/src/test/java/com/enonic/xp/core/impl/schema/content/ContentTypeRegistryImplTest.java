@@ -7,9 +7,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.content.ContentType;
@@ -24,7 +24,7 @@ public class ContentTypeRegistryImplTest
 
     private Bundle myBundle;
 
-    private ModuleKey myModuleKey;
+    private ApplicationKey myApplicationKey;
 
     private ContentType myContentType;
 
@@ -43,10 +43,10 @@ public class ContentTypeRegistryImplTest
         //Mocks a module
         startBundles( newBundle( "module2" ) );
         myBundle = findBundle( "module2" );
-        myModuleKey = ModuleKey.from( myBundle );
+        myApplicationKey = ApplicationKey.from( myBundle );
         this.myContentType = createContentType( "module2:myContentType", "myContentType display name" );
         myModule = Mockito.mock( Module.class );
-        Mockito.when( myModule.getKey() ).thenReturn( myModuleKey );
+        Mockito.when( myModule.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
 
         //Mocks the module service
@@ -73,7 +73,7 @@ public class ContentTypeRegistryImplTest
         assertNotNull( contentTypes );
         assertTrue( contentTypes.getSize() > 20 );
 
-        contentTypes = service.getByModule( myModuleKey );
+        contentTypes = service.getByModule( myApplicationKey );
         assertNotNull( contentTypes );
         assertEquals( 0, contentTypes.getSize() );
 
@@ -87,13 +87,13 @@ public class ContentTypeRegistryImplTest
 
         Modules modules = Modules.from( myModule );
         Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
-        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( myModule );
+        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( myModule );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
         assertTrue( contentTypes.getSize() > 20 );
 
-        contentTypes = service.getByModule( myModuleKey );
+        contentTypes = service.getByModule( myApplicationKey );
         assertNotNull( contentTypes );
         assertEquals( 1, contentTypes.getSize() );
 
@@ -101,7 +101,7 @@ public class ContentTypeRegistryImplTest
         assertNotNull( contentType );
 
         Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
-        Mockito.when( moduleService.getModule( myModuleKey ) ).thenReturn( null );
+        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( null );
         service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();
@@ -120,15 +120,15 @@ public class ContentTypeRegistryImplTest
         ContentType contentType = service.get( ContentTypeName.folder() );
         assertNotNull( contentType );
 
-        contentTypes = service.getByModule( ModuleKey.BASE );
+        contentTypes = service.getByModule( ApplicationKey.BASE );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 5 );
 
-        contentTypes = service.getByModule( ModuleKey.PORTAL );
+        contentTypes = service.getByModule( ApplicationKey.PORTAL );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 3 );
 
-        contentTypes = service.getByModule( ModuleKey.MEDIA_MOD );
+        contentTypes = service.getByModule( ApplicationKey.MEDIA_MOD );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 13 );
 

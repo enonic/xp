@@ -1,24 +1,38 @@
 package com.enonic.xp.app;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleKeys;
 
 @Beta
 public final class ApplicationKey
 {
+    public final static ApplicationKey SYSTEM = ApplicationKey.from( "system" );
+
+    public static final ApplicationKey MEDIA_MOD = ApplicationKey.from( "media" );
+
+    public static final ApplicationKey PORTAL = ApplicationKey.from( "portal" );
+
+    public static final ApplicationKey BASE = ApplicationKey.from( "base" );
+
+    public static final ModuleKeys SYSTEM_RESERVED_MODULE_KEYS = ModuleKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
+
     private final String name;
 
     private ApplicationKey( final String name )
     {
         Preconditions.checkNotNull( name, "ApplicationKey cannot be null" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "ApplicationKey cannot be blank" );
         this.name = name;
     }
 
     public String getName()
     {
-        return this.name;
+        return name;
     }
 
     @Override
@@ -44,9 +58,13 @@ public final class ApplicationKey
         return new ApplicationKey( name );
     }
 
-    public static ApplicationKey from( final ModuleKey module )
+    public static ApplicationKey from( final Bundle bundle )
     {
-        return ApplicationKey.from( module.getName() );
+        return ApplicationKey.from( bundle.getSymbolicName() );
     }
 
+    public static ApplicationKey from( final Class<?> clzz )
+    {
+        return from( FrameworkUtil.getBundle( clzz ) );
+    }
 }

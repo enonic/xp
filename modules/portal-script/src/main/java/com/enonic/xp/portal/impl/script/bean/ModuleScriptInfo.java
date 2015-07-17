@@ -20,7 +20,7 @@ public final class ModuleScriptInfo
 
     public String getName()
     {
-        return this.key.getModule().toString();
+        return this.key.getApplicationKey().toString();
     }
 
     public Object getExports()
