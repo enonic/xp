@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
@@ -25,7 +25,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
-    protected ModuleService moduleService;
+    protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
 
@@ -103,9 +103,9 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     }
 
     @SuppressWarnings("unchecked")
-    public final T moduleService( final ModuleService moduleService )
+    public final T applicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
         return (T) this;
     }
 

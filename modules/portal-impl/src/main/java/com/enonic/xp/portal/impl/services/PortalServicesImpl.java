@@ -3,10 +3,10 @@ package com.enonic.xp.portal.impl.services;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageScaleFunctionBuilder;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -19,7 +19,7 @@ import com.enonic.xp.site.SiteService;
 public final class PortalServicesImpl
     implements PortalServices
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -42,9 +42,9 @@ public final class PortalServicesImpl
     private ResourceService resourceService;
 
     @Override
-    public ModuleService getModuleService()
+    public ApplicationService getApplicationService()
     {
-        return this.moduleService;
+        return this.applicationService;
     }
 
     @Override
@@ -108,9 +108,9 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
     @Reference

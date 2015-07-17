@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
@@ -25,14 +25,14 @@ public abstract class AbstractContentTypeServiceTest
 
     private ContentTypeRegistry registryImpl;
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     @Before
     public final void setup()
     {
         this.mixinService = Mockito.mock( MixinService.class );
         this.serviceImpl = new ContentTypeServiceImpl();
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
         this.registryImpl = Mockito.mock( ContentTypeRegistry.class );
         this.serviceImpl.setMixinService( this.mixinService );
         this.serviceImpl.setContentTypeRegistry( this.registryImpl );
