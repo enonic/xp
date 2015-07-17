@@ -37,7 +37,7 @@ public class PartDescriptorServiceImpl_getByModulesTest
         mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/parts", "*.xml",
                        "app/parts/barmodule-part-descr/barmodule-part-descr.xml" );
 
-        final PartDescriptors result = this.service.getByModules( modules.getModuleKeys() );
+        final PartDescriptors result = this.service.getByModules( modules.getApplicationKeys() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

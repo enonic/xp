@@ -1,14 +1,23 @@
 package com.enonic.xp.app;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class ApplicationKeysTest
 {
-    private static final ApplicationKey[] APPS = {ApplicationKey.from( "aaa" ), ApplicationKey.from( "bbb" ), ApplicationKey.from( "ccc" )};
+    private static ArrayList<ApplicationKey> list = new ArrayList();
+
+    @BeforeClass
+    public static void initApplicationKeys()
+    {
+        ApplicationKeysTest.list.add( ApplicationKey.from( "aaa" ) );
+        ApplicationKeysTest.list.add( ApplicationKey.from( "bbb" ) );
+        ApplicationKeysTest.list.add( ApplicationKey.from( "ccc" ) );
+    }
 
     @Test
     public void empty()
@@ -21,23 +30,35 @@ public class ApplicationKeysTest
     @Test
     public void fromArray()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( APPS[0], APPS[1], APPS[2] );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list.get( 0 ), ApplicationKeysTest.list.get( 1 ),
+                                                                ApplicationKeysTest.list.get( 2 ) );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( APPS[0] ) );
-        assertTrue( applicationKeys.contains( APPS[1] ) );
-        assertTrue( applicationKeys.contains( APPS[2] ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
     }
 
     @Test
     public void fromIterable()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( Arrays.asList( APPS ) );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable) ApplicationKeysTest.list );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( APPS[0] ) );
-        assertTrue( applicationKeys.contains( APPS[1] ) );
-        assertTrue( applicationKeys.contains( APPS[2] ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+    }
+
+    @Test
+    public void fromCollection()
+    {
+        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list );
+
+        assertEquals( 3, applicationKeys.getSize() );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
     }
 
     @Test
@@ -46,8 +67,8 @@ public class ApplicationKeysTest
         ApplicationKeys applicationKeys = ApplicationKeys.from( "aaa", "bbb", "ccc" );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( APPS[0] ) );
-        assertTrue( applicationKeys.contains( APPS[1] ) );
-        assertTrue( applicationKeys.contains( APPS[2] ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
     }
 }

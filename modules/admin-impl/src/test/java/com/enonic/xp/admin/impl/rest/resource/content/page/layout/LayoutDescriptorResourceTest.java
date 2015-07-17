@@ -6,10 +6,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -98,9 +98,9 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );
 
-        final ModuleKeys moduleKeys = ModuleKeys.from( "module1", "module2", "module3" );
+        final ApplicationKeys applicationKeys = ApplicationKeys.from( "module1", "module2", "module3" );
 
-        Mockito.when( layoutDescriptorService.getByModules( moduleKeys ) ).thenReturn( layoutDescriptors );
+        Mockito.when( layoutDescriptorService.getByModules( applicationKeys ) ).thenReturn( layoutDescriptors );
 
         String jsonString = request().path( "content/page/layout/descriptor/list/by_modules" ).
             entity( readFromFile( "get_by_modules_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

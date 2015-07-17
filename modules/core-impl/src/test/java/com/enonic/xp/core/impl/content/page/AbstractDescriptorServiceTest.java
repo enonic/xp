@@ -101,7 +101,7 @@ public abstract class AbstractDescriptorServiceTest
 
         final Modules modules = Modules.from( list );
         Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
-        Mockito.when( this.moduleService.getModules( modules.getModuleKeys() ) ).thenReturn( modules );
+        Mockito.when( this.moduleService.getModules( modules.getApplicationKeys() ) ).thenReturn( modules );
         return modules;
     }
 

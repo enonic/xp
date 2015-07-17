@@ -53,7 +53,7 @@ public final class LayoutDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public LayoutDescriptorsJson getByModules( final GetByModulesParams params )
     {
-        final LayoutDescriptors descriptors = layoutDescriptorService.getByModules( params.getModuleKeys() );
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByModules( params.getApplicationKeys() );
         return new LayoutDescriptorsJson( descriptors );
     }
 

@@ -3,7 +3,7 @@ package com.enonic.xp.region;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.page.DescriptorKey;
 
 @Beta
@@ -13,5 +13,5 @@ public interface PartDescriptorService
 
     PartDescriptors getByModule( final ApplicationKey applicationKey );
 
-    PartDescriptors getByModules( final ModuleKeys moduleKeys );
+    PartDescriptors getByModules( final ApplicationKeys applicationKeys );
 }

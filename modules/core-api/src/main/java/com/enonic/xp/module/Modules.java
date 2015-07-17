@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
@@ -23,9 +24,9 @@ public final class Modules
         this.map = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
-    public ModuleKeys getModuleKeys()
+    public ApplicationKeys getApplicationKeys()
     {
-        return ModuleKeys.from( map.keySet() );
+        return ApplicationKeys.from( map.keySet() );
     }
 
     public Module getModule( final ApplicationKey ApplicationKey )
