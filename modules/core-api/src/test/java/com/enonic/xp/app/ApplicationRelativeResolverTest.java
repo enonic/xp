@@ -1,21 +1,20 @@
-package com.enonic.xp.module;
+package com.enonic.xp.app;
 
 
 import org.junit.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 import static org.junit.Assert.*;
 
-public class ModuleRelativeResolverTest
+public class ApplicationRelativeResolverTest
 {
     @Test
     public void toContentTypeName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
         ContentTypeName contentTypeName = resolver.toContentTypeName( "bbb" );
         assertEquals( contentTypeName.getLocalName(), "bbb" );
 
@@ -26,14 +25,14 @@ public class ModuleRelativeResolverTest
     @Test(expected = IllegalArgumentException.class)
     public void toContentTypeNameEmpty()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( null );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         resolver.toContentTypeName( "aaa" );
     }
 
     @Test
     public void toMixinName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
         MixinName mixinName = resolver.toMixinName( "bbb" );
         assertEquals( mixinName.getLocalName(), "bbb" );
 
@@ -44,14 +43,14 @@ public class ModuleRelativeResolverTest
     @Test(expected = IllegalArgumentException.class)
     public void toMixinNameEmpty()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( null );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         resolver.toMixinName( "aaa" );
     }
 
     @Test
     public void toRelationshipTypeName()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( ApplicationKey.from( "aaa" ) );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
         RelationshipTypeName relationshipTypeName = resolver.toRelationshipTypeName( "bbb" );
         assertEquals( relationshipTypeName.getLocalName(), "bbb" );
 
@@ -62,7 +61,7 @@ public class ModuleRelativeResolverTest
     @Test(expected = IllegalArgumentException.class)
     public void toRelationshipTypeNameEmpty()
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( null );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         resolver.toRelationshipTypeName( "aaa" );
     }
 }

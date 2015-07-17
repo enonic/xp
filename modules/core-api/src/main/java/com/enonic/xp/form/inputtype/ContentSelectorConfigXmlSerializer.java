@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleRelativeResolver;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
@@ -41,7 +41,7 @@ final class ContentSelectorConfigXmlSerializer
     @Override
     public ContentSelectorConfig parseConfig( final ApplicationKey currentModule, final Element elem )
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentModule );
 
         final ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, RELATIONSHIP_TYPE_ELEMENT );

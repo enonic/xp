@@ -1,18 +1,17 @@
-package com.enonic.xp.module;
+package com.enonic.xp.app;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 @Beta
-public final class ModuleRelativeResolver
+public final class ApplicationRelativeResolver
 {
     private final ApplicationKey current;
 
-    public ModuleRelativeResolver( final ApplicationKey current )
+    public ApplicationRelativeResolver( final ApplicationKey current )
     {
         this.current = current;
     }

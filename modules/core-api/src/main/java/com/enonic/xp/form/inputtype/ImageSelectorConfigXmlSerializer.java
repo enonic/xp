@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleRelativeResolver;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
@@ -28,7 +28,7 @@ final class ImageSelectorConfigXmlSerializer
     @Override
     public ImageSelectorConfig parseConfig( final ApplicationKey currentModule, final Element elem )
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentModule );
 
         final ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );
