@@ -136,7 +136,7 @@ public class ImportNodeCommandTest
         PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data.addString( "name", "value" );
 
-        final Node importNode = Node.newNode().
+        final Node importNode = Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -151,7 +151,7 @@ public class ImportNodeCommandTest
         PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data2.addString( "name", "valueUpdated" );
 
-        final Node importNode2 = Node.newNode().
+        final Node importNode2 = Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
