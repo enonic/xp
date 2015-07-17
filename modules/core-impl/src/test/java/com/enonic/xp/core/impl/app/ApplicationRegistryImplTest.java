@@ -22,8 +22,8 @@ import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 
 import static org.junit.Assert.*;
 
@@ -76,7 +76,7 @@ public class ApplicationRegistryImplTest
 
     private void assertEvent( final int index, final ApplicationEventType type, final ApplicationKey key )
     {
-        final ModuleUpdatedEvent event = (ModuleUpdatedEvent) this.events.get( index );
+        final ApplicationUpdatedEvent event = (ApplicationUpdatedEvent) this.events.get( index );
         assertEquals( type, event.getEventType() );
         assertEquals( key, event.getApplicationKey() );
     }

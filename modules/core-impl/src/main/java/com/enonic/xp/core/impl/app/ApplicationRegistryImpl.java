@@ -18,8 +18,8 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 
 @Component(immediate = true)
 public final class ApplicationRegistryImpl
@@ -94,7 +94,7 @@ public final class ApplicationRegistryImpl
     {
         final ApplicationKey applicationKey = ApplicationKey.from( event.getBundle() );
         final ApplicationEventType state = ApplicationEventType.fromBundleEvent( event );
-        this.eventPublisher.publish( new ModuleUpdatedEvent( applicationKey, state ) );
+        this.eventPublisher.publish( new ApplicationUpdatedEvent( applicationKey, state ) );
     }
 
     private void addBundle( final Bundle bundle )

@@ -7,20 +7,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
+import com.enonic.xp.admin.event.impl.json.ApplicationUpdatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
 import com.enonic.xp.admin.event.impl.json.EventJson;
-import com.enonic.xp.admin.event.impl.json.ModuleUpdatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ObjectMapperHelper;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentCreatedEvent;
 import com.enonic.xp.content.ContentPublishedEvent;
 import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 
 @Component(immediate = true)
 public final class EventListenerImpl
@@ -66,9 +66,9 @@ public final class EventListenerImpl
         {
             return new ContentChangeEventJson( (ContentChangeEvent) event );
         }
-        else if ( event instanceof ModuleUpdatedEvent )
+        else if ( event instanceof ApplicationUpdatedEvent )
         {
-            return new ModuleUpdatedEventJson( (ModuleUpdatedEvent) event );
+            return new ApplicationUpdatedEventJson( (ApplicationUpdatedEvent) event );
         }
         else if ( event instanceof ContentCreatedEvent )
         {

@@ -15,7 +15,7 @@
 ///<reference path='InstallModuleRequest.ts' />
 ///<reference path='UninstallModuleRequest.ts' />
 ///<reference path='UpdateModuleRequest.ts' />
-///<reference path='ModuleUpdatedEvent.ts' />
+///<reference path='ApplicationUpdatedEvent.ts' />
 ///<reference path='ModuleCache.ts' />
 ///<reference path='ModuleBasedName.ts' />
 ///<reference path='ModuleCaches.ts' />

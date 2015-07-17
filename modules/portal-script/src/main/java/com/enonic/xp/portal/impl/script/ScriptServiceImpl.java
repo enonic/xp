@@ -13,9 +13,9 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptExports;
@@ -82,9 +82,9 @@ public final class ScriptServiceImpl
     @Override
     public void onEvent( final Event event )
     {
-        if ( event instanceof ModuleUpdatedEvent )
+        if ( event instanceof ApplicationUpdatedEvent )
         {
-            invalidate( ( (ModuleUpdatedEvent) event ).getApplicationKey() );
+            invalidate( ( (ApplicationUpdatedEvent) event ).getApplicationKey() );
         }
     }
 

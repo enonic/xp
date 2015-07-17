@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 
 import static com.enonic.xp.app.ApplicationEventType.INSTALLED;
 import static org.mockito.Matchers.anyString;
@@ -35,7 +35,7 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ApplicationKey.from( "module" ), INSTALLED );
+        final ApplicationUpdatedEvent event = new ApplicationUpdatedEvent( ApplicationKey.from( "module" ), INSTALLED );
         eventListener.onEvent( event );
 
         verify( this.webSocketManager, atLeastOnce() ).sendToAll( anyString() );
