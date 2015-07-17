@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.module;
+package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

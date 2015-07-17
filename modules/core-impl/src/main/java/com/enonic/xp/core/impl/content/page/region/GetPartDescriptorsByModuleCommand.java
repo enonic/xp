@@ -11,7 +11,7 @@ final class GetPartDescriptorsByModuleCommand
 
     public PartDescriptors execute()
     {
-        final Module module = this.moduleService.getModule( this.applicationKey );
+        final Module module = this.applicationService.getModule( this.applicationKey );
         return getDescriptorsFromModule( module );
     }
 

@@ -10,11 +10,11 @@ import org.osgi.framework.Version;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -22,7 +22,7 @@ import com.enonic.xp.site.SiteService;
 public class ModuleResourceTest
     extends AbstractResourceTest
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private SiteService siteService;
 
@@ -32,7 +32,7 @@ public class ModuleResourceTest
     {
         final Module module = createModule();
         final Modules modules = Modules.from( module );
-        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -48,7 +48,7 @@ public class ModuleResourceTest
     {
         final Module module = createModule();
         final Modules modules = Modules.from( module, createEmptyModule() );
-        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -65,7 +65,7 @@ public class ModuleResourceTest
     {
         final Module module = createModule();
         final Modules modules = Modules.from( module, createEmptyModule() );
-        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -81,7 +81,7 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( module );
+        Mockito.when( this.applicationService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( module );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -101,7 +101,7 @@ public class ModuleResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.moduleService ).startModule( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).startModule( ApplicationKey.from( "testmodule" ) );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ModuleResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.moduleService ).stopModule( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).stopModule( ApplicationKey.from( "testmodule" ) );
     }
 
     private Module createModule()
@@ -153,11 +153,11 @@ public class ModuleResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
         this.siteService = Mockito.mock( SiteService.class );
 
         final ModuleResource resource = new ModuleResource();
-        resource.setModuleService( this.moduleService );
+        resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
 
         return resource;

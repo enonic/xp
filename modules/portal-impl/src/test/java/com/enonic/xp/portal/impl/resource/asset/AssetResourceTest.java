@@ -15,7 +15,7 @@ public class AssetResourceTest
     protected void configure()
         throws Exception
     {
-        configureModuleService();
+        configureApplicationService();
     }
 
     @Test

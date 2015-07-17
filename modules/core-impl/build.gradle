@@ -4,6 +4,7 @@ dependencies {
     compile project( ':core-api' )
     compile 'org.apache.tika:tika-parsers:1.6'
     testCompile project( path: ':core-api', configuration: 'testOutput' )
+    testCompile 'com.googlecode.pojosr:de.kalpatec.pojosr.framework:0.2.1'
 }
 
 bundle {

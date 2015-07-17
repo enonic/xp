@@ -11,10 +11,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
@@ -31,7 +31,7 @@ public final class ScriptServiceImpl
 
     private final ConcurrentMap<ApplicationKey, ScriptExecutor> executors;
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     public ScriptServiceImpl()
     {
@@ -61,8 +61,8 @@ public final class ScriptServiceImpl
 
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
-        final Module module = this.moduleService.getModule( key );
-        ClassLoader classLoader = moduleService.getClassLoader( module );
+        final Module module = this.applicationService.getModule( key );
+        ClassLoader classLoader = applicationService.getClassLoader( module );
         final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
@@ -89,8 +89,8 @@ public final class ScriptServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 }

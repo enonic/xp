@@ -16,7 +16,7 @@ public abstract class AbstractPartDescriptorServiceTest
     public final void setupService()
     {
         this.service = new PartDescriptorServiceImpl();
-        this.service.setModuleService( this.moduleService );
+        this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
     }
 

@@ -15,8 +15,8 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
@@ -32,7 +32,7 @@ public abstract class AbstractDescriptorServiceTest
 
     private File modulesDir;
 
-    protected ModuleService moduleService;
+    protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
 
@@ -42,7 +42,7 @@ public abstract class AbstractDescriptorServiceTest
     {
         this.modulesDir = this.temporaryFolder.newFolder( "modules" );
         ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractDescriptorServiceTest
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getKey() ).thenReturn( applicationKey );
 
-        Mockito.when( this.moduleService.getModule( applicationKey ) ).thenReturn( module );
+        Mockito.when( this.applicationService.getModule( applicationKey ) ).thenReturn( module );
         return module;
     }
 
@@ -100,8 +100,8 @@ public abstract class AbstractDescriptorServiceTest
         }
 
         final Modules modules = Modules.from( list );
-        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
-        Mockito.when( this.moduleService.getModules( modules.getApplicationKeys() ) ).thenReturn( modules );
+        Mockito.when( this.applicationService.getAllModules() ).thenReturn( modules );
+        Mockito.when( this.applicationService.getModules( modules.getApplicationKeys() ) ).thenReturn( modules );
         return modules;
     }
 
