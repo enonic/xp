@@ -1,9 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleService;
@@ -23,8 +21,6 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 {
     private final static String PATH = "/app/parts";
 
-    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
-
     protected ModuleService moduleService;
 
     protected ResourceService resourceService;
@@ -36,16 +32,25 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
-        final String descriptorXml = resource.readString();
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
-        try
+        if ( resource.exists() )
         {
-            parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+
+            final String descriptorXml = resource.readString();
+            try
+            {
+                parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+            }
+            catch ( final Exception e )
+            {
+                throw new XmlException( e, "Could not load part descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            }
         }
-        catch ( final Exception e )
+        else
         {
-            throw new XmlException( e, "Could not load part descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            builder.displayName( key.getName() ).
+                config( Form.create().build() );
         }
 
         builder.name( key.getName() ).key( key );
@@ -85,19 +90,16 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private void readDescriptor( final Module module, final PartDescriptors.Builder partDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
 
         for ( final Resource resource : resources )
         {
-            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if ( matcher.matches() )
+            final String descriptorName = resource.getKey().getName();
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final PartDescriptor partDescriptor = getDescriptor( key );
+            if ( partDescriptor != null )
             {
-                final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
-                final PartDescriptor partDescriptor = getDescriptor( key );
-                if ( partDescriptor != null )
-                {
-                    partDescriptors.add( partDescriptor );
-                }
+                partDescriptors.add( partDescriptor );
             }
         }
     }

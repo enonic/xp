@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.module.Module;
@@ -19,8 +17,6 @@ final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
 {
     private final static String PATH = "/app/pages";
-
-    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     private ApplicationKey applicationKey;
 
@@ -55,20 +51,18 @@ final class GetPageDescriptorsByModuleCommand
     private PageDescriptors getDescriptorsFromModule( final Module module )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
 
         for ( final Resource resource : resources )
         {
-            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if ( matcher.matches() )
+            final String descriptorName = resource.getKey().getName();
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final PageDescriptor pageDescriptor = getDescriptor( key );
+            if ( pageDescriptor != null )
             {
-                final DescriptorKey key = DescriptorKey.from( module.getKey(), matcher.group( 1 ) );
-                final PageDescriptor pageDescriptor = getDescriptor( key );
-                if ( pageDescriptor != null )
-                {
-                    pageDescriptors.add( pageDescriptor );
-                }
+                pageDescriptors.add( pageDescriptor );
             }
+
         }
 
         return PageDescriptors.from( pageDescriptors );
