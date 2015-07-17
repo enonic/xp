@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -18,7 +19,6 @@ import com.enonic.xp.form.inputtype.AbstractInputTypeConfigXmlSerializer;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 
@@ -117,7 +117,7 @@ public final class XmlFormMapper
     private InlineMixin buildInlineItem( final DomElement root )
     {
         final InlineMixin.Builder builder = InlineMixin.create();
-        builder.mixin( new ModuleRelativeResolver( this.currentModule ).toMixinName( root.getAttribute( "mixin" ) ) );
+        builder.mixin( new ApplicationRelativeResolver( this.currentModule ).toMixinName( root.getAttribute( "mixin" ) ) );
         return builder.build();
     }
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.module.ModuleRelativeResolver;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.SiteDescriptor;
@@ -57,7 +57,7 @@ final class XmlSiteParser
 
     private MixinName toMixinName( final DomElement metaStep )
     {
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( applicationKey );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( applicationKey );
         final String name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         return resolver.toMixinName( name );
     }

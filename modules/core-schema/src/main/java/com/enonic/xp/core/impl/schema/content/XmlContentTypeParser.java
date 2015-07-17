@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.module.ModuleRelativeResolver;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
@@ -19,7 +19,7 @@ public final class XmlContentTypeParser
 {
     private ContentType.Builder builder;
 
-    private ModuleRelativeResolver resolver;
+    private ApplicationRelativeResolver resolver;
 
     public XmlContentTypeParser builder( final ContentType.Builder builder )
     {
@@ -31,7 +31,7 @@ public final class XmlContentTypeParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        this.resolver = new ModuleRelativeResolver( this.currentModule );
+        this.resolver = new ApplicationRelativeResolver( this.currentModule );
 
         assertTagName( root, "content-type" );
         this.builder.displayName( root.getChildValue( "display-name" ) );

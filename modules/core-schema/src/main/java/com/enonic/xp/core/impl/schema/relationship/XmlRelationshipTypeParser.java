@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.ModuleRelativeResolver;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.xml.DomElement;
@@ -44,7 +44,7 @@ final class XmlRelationshipTypeParser
             return Collections.emptyList();
         }
 
-        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( this.currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentModule );
         return types.getChildren( "content-type" ).stream().map( child -> resolver.toContentTypeName( child.getValue() ) ).collect(
             Collectors.toList() );
     }
