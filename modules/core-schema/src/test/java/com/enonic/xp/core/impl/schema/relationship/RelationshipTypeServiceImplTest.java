@@ -8,9 +8,9 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -32,7 +32,7 @@ public class RelationshipTypeServiceImplTest
 
     private Module myModule;
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private RelationshipTypeServiceImpl relationshipTypeService;
 
@@ -53,8 +53,8 @@ public class RelationshipTypeServiceImplTest
         Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
 
         //Mocks the module service
-        moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
+        applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
 
         //Mocks the ComponentContext
         final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
@@ -62,7 +62,7 @@ public class RelationshipTypeServiceImplTest
 
         //Creates the service to test
         relationshipTypeService = new RelationshipTypeServiceImpl();
-        relationshipTypeService.setModuleService( moduleService );
+        relationshipTypeService.setApplicationService( applicationService );
 
         //Starts the service
         relationshipTypeService.start( componentContext );
@@ -87,8 +87,8 @@ public class RelationshipTypeServiceImplTest
     public void test_add_removal_module()
     {
         Modules modules = Modules.from( myModule );
-        Mockito.when( moduleService.getAllModules() ).thenReturn( modules );
-        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( myModule );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( modules );
+        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myModule );
 
         RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
         assertNotNull( relationshipTypes );
@@ -101,8 +101,8 @@ public class RelationshipTypeServiceImplTest
         RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
         assertNotNull( relationshipType );
 
-        Mockito.when( moduleService.getAllModules() ).thenReturn( Modules.empty() );
-        Mockito.when( moduleService.getModule( myApplicationKey ) ).thenReturn( null );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
         relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();

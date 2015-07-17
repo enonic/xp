@@ -42,7 +42,7 @@ public class ServiceResourceTest
     protected void configure()
         throws Exception
     {
-        configureModuleService();
+        configureApplicationService();
 
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.services.setControllerScriptFactory( controllerScriptFactory );

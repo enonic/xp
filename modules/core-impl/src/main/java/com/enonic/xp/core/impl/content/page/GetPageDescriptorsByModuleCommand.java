@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
@@ -24,13 +24,13 @@ final class GetPageDescriptorsByModuleCommand
 
     private ApplicationKey applicationKey;
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private ResourceService resourceService;
 
     public PageDescriptors execute()
     {
-        final Module module = this.moduleService.getModule( this.applicationKey );
+        final Module module = this.applicationService.getModule( this.applicationKey );
         return getDescriptorsFromModule( module );
     }
 
@@ -40,9 +40,9 @@ final class GetPageDescriptorsByModuleCommand
         return this;
     }
 
-    public final GetPageDescriptorsByModuleCommand moduleService( final ModuleService moduleService )
+    public final GetPageDescriptorsByModuleCommand applicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
         return this;
     }
 
