@@ -561,6 +561,7 @@ public class NodeServiceImpl
             binaryAttachments( params.getBinaryAttachments() ).
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
+            dryRun( params.isDryRun() ).
             binaryBlobStore( this.binaryBlobStore ).
             versionService( this.versionService ).
             queryService( this.queryService ).

@@ -130,6 +130,41 @@ public class ImportNodeCommandTest
         assertEquals( aclList, abc.getPermissions() );
     }
 
+    @Test
+    public void import_existing_node()
+    {
+        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "name", "value" );
+
+        final Node importNode = Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( data ).
+            build();
+
+        importNode( importNode );
+        final Node abc = getNodeById( NodeId.from( "abc" ) );
+        assertNotNull( abc );
+        assertEquals( data, abc.data() );
+
+        PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data2.addString( "name", "valueUpdated" );
+
+        final Node importNode2 = Node.newNode().
+            id( NodeId.from( "abc" ) ).
+            name( "myNode" ).
+            parentPath( NodePath.ROOT ).
+            data( data2 ).
+            build();
+
+        importNode( importNode2 );
+        final Node abc2 = getNodeById( NodeId.from( "abc" ) );
+        assertNotNull( abc2 );
+        assertEquals( data2, abc2.data() );
+    }
+
+
     private Node importNode( final Node importNode )
     {
         return ImportNodeCommand.create().

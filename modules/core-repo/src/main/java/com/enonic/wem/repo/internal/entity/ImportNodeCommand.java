@@ -5,6 +5,7 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.UpdateNodeParams;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand
@@ -18,6 +19,8 @@ public class ImportNodeCommand
 
     private final BlobStore binaryBlobStore;
 
+    private final boolean dryRun;
+
     private ImportNodeCommand( Builder builder )
     {
         super( builder );
@@ -25,6 +28,7 @@ public class ImportNodeCommand
         binaryAttachments = builder.binaryAttachments;
         importNode = builder.importNode;
         binaryBlobStore = builder.binaryBlobStore;
+        dryRun = builder.dryRun;
     }
 
     public static Builder create()
@@ -40,8 +44,10 @@ public class ImportNodeCommand
         {
             return createNode();
         }
-
-        return null;
+        else
+        {
+            return updateNode( existingNode );
+        }
     }
 
     private Node createNode()
@@ -64,6 +70,17 @@ public class ImportNodeCommand
         return doCreateNode( createNodeParams, this.binaryBlobStore, this.importNode.getTimestamp() );
     }
 
+    private Node updateNode( final Node existingNode )
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            dryRun( this.dryRun ).
+            id( existingNode.id() ).
+            setBinaryAttachments( this.binaryAttachments ).
+            editor( editableNode -> editableNode.data = this.importNode.data() ).build();
+
+        return doUpdateNode( updateNodeParams, this.binaryBlobStore );
+    }
+
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
@@ -75,6 +92,8 @@ public class ImportNodeCommand
         private Node importNode;
 
         private BlobStore binaryBlobStore;
+
+        private boolean dryRun;
 
         private Builder()
         {
@@ -101,6 +120,12 @@ public class ImportNodeCommand
         public Builder binaryBlobStore( BlobStore binaryBlobStore )
         {
             this.binaryBlobStore = binaryBlobStore;
+            return this;
+        }
+
+        public Builder dryRun( boolean dryRun )
+        {
+            this.dryRun = dryRun;
             return this;
         }
 

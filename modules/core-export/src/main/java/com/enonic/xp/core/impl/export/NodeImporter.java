@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
@@ -25,7 +24,6 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
@@ -191,38 +189,22 @@ public class NodeImporter
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
-        final Node existingNode = this.nodeService.getByPath( importNodePath );
+        final boolean isNodeExisting = this.nodeService.getByPath( importNodePath ) != null;
+        final Node importedNode = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
 
-        if ( existingNode != null )
+        if ( isNodeExisting )
         {
-            return updateNode( nodeFolder, newNode, existingNode );
+            result.updated( importedNode.path() );
         }
         else
         {
-            return createNode( nodeFolder, processNodeSettings, newNode, importNodePath );
+            result.added( importedNode.path() );
         }
+
+        return importedNode;
     }
 
-    private Node updateNode( final VirtualFile nodeFolder, final Node newNode, final Node existingNode )
-    {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
-
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().
-            newNode( newNode ).
-            binaryAttachments( binaryAttachments ).
-            existingNode( existingNode ).
-            dryRun( this.dryRun ).
-            build().
-            execute();
-
-        final Node updatedNode = this.nodeService.update( updateNodeParams );
-
-        result.updated( updatedNode.path() );
-
-        return updatedNode;
-    }
-
-    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node serializedNode,
+    private Node importNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node serializedNode,
                              final NodePath importNodePath )
     {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
@@ -240,13 +222,12 @@ public class NodeImporter
             importNode( importNode ).
             binaryAttachments( binaryAttachments ).
             insertManualStrategy( processNodeSettings.build().getInsertManualStrategy() ).
+            dryRun( this.dryRun ).
             build();
 
-        final Node createdNode = this.nodeService.importNode( importNodeParams );
+        final Node importedNode = this.nodeService.importNode( importNodeParams );
 
-        result.added( createdNode.path() );
-
-        return createdNode;
+        return importedNode;
     }
 
     private List<String> processBinarySource( final VirtualFile nodeFolder )

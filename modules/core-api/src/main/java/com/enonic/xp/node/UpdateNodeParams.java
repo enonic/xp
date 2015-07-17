@@ -88,7 +88,7 @@ public class UpdateNodeParams
 
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
-            this.binaryAttachments = binaryAttachments.getSet();
+            this.binaryAttachments = binaryAttachments != null ? binaryAttachments.getSet() : Sets.newHashSet();
             return this;
         }
 
