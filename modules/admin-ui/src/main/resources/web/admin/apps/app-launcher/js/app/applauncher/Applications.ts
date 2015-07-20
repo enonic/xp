@@ -40,7 +40,7 @@ module app.launcher {
             return [
                 new api.app.Application('content-manager', 'Content Manager', 'CM', 'database'),
                 new api.app.Application('user-manager', 'User Manager', 'UM', 'users'),
-                new api.app.Application('module-manager', 'Modules', 'MD', 'puzzle')
+                new api.app.Application('module-manager', 'Applications', 'AM', 'puzzle')
             ];
         }
     }
