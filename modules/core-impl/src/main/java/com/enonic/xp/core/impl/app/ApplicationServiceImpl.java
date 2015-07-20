@@ -3,48 +3,101 @@ package com.enonic.xp.core.impl.app;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
+import com.google.common.collect.ImmutableList;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleNotFoundException;
+import com.enonic.xp.module.Modules;
+import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class ApplicationServiceImpl
     implements ApplicationService
 {
-    private ModuleService moduleService;
+    private ModuleRegistry registry;
 
     @Override
-    public Applications getAll()
+    public Module getModule( final ApplicationKey key )
+        throws ModuleNotFoundException
     {
-        return this.moduleService.getAllModules().stream().
-            filter( Module::isApplication ).
-            map( Application::new ).
-            collect( collectingAndThen( toList(), Applications::from ) );
+        final Module module = this.registry.get( key );
+        if ( module == null )
+        {
+            throw new ModuleNotFoundException( key );
+        }
+        return module;
     }
 
     @Override
-    public Application getByKey( final ApplicationKey applicationKey )
+    public Modules getModules( final ApplicationKeys keys )
     {
-        final String appName = applicationKey.getName();
+        final ImmutableList.Builder<Module> moduleList = ImmutableList.builder();
+        for ( final ApplicationKey key : keys )
+        {
+            final Module module = this.registry.get( key );
+            if ( module != null )
+            {
+                moduleList.add( module );
+            }
+        }
+        return Modules.from( moduleList.build() );
+    }
 
-        final Module appModule = this.moduleService.getAllModules().stream().
-            filter( ( module ) -> module.getKey().getName().equals( appName ) ).
-            filter( Module::isApplication ).
-            findFirst().
-            orElse( null );
+    @Override
+    public Modules getAllModules()
+    {
+        return Modules.from( this.registry.getAll() );
+    }
 
-        return appModule != null ? new Application( appModule ) : null;
+    @Override
+    public ClassLoader getClassLoader( final Module module )
+    {
+        return new BundleClassLoader( module.getBundle() );
+    }
+
+    @Override
+    public void startModule( final ApplicationKey key )
+    {
+        startModule( getModule( key ) );
+
+    }
+
+    @Override
+    public void stopModule( final ApplicationKey key )
+    {
+        stopModule( getModule( key ) );
+    }
+
+    private void startModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().start();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private void stopModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().stop();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setRegistry( final ModuleRegistry registry )
     {
-        this.moduleService = moduleService;
+        this.registry = registry;
     }
 }

@@ -18,8 +18,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -32,7 +32,7 @@ public final class MixinServiceImpl
 {
     private final Map<ApplicationKey, Mixins> map;
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private BundleContext context;
 
@@ -83,7 +83,7 @@ public final class MixinServiceImpl
         }
 
         //Gets modules mixins
-        for ( Module module : this.moduleService.getAllModules() )
+        for ( Module module : this.applicationService.getAllModules() )
         {
             final Mixins mixins = getByModule( module.getKey() );
             mixinList.addAll( mixins.getList() );
@@ -108,7 +108,7 @@ public final class MixinServiceImpl
         }
         else
         {
-            final Module module = this.moduleService.getModule( applicationKey );
+            final Module module = this.applicationService.getModule( applicationKey );
             if ( module != null )
             {
                 final MixinLoader mixinLoader = new MixinLoader( module.getBundle() );
@@ -143,9 +143,9 @@ public final class MixinServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
 }

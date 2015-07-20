@@ -11,8 +11,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -23,7 +23,7 @@ public class ResourceServiceImpl
     implements ResourceService
 {
 
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     @Override
     public Resource getResource( final ResourceKey resourceKey )
@@ -73,7 +73,7 @@ public class ResourceServiceImpl
     {
         Module activeModule = null;
 
-        final Module module = moduleService.getModule( applicationKey );
+        final Module module = applicationService.getModule( applicationKey );
         if ( module != null && module.getBundle().getState() == Bundle.ACTIVE )
         {
             activeModule = module;
@@ -96,8 +96,8 @@ public class ResourceServiceImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 }

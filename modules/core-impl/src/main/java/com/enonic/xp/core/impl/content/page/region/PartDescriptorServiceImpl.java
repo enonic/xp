@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
@@ -17,7 +17,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class PartDescriptorServiceImpl
     implements PartDescriptorService
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private MixinService mixinService;
 
@@ -27,7 +27,7 @@ public final class PartDescriptorServiceImpl
     public PartDescriptor getByKey( final DescriptorKey key )
     {
         return new GetPartDescriptorCommand().
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             key( key ).execute();
     }
@@ -36,7 +36,7 @@ public final class PartDescriptorServiceImpl
     public PartDescriptors getByModule( final ApplicationKey applicationKey )
     {
         return new GetPartDescriptorsByModuleCommand().
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
             applicationKey( applicationKey ).execute();
@@ -46,16 +46,16 @@ public final class PartDescriptorServiceImpl
     public PartDescriptors getByModules( final ApplicationKeys applicationKeys )
     {
         return new GetPartDescriptorsByModulesCommand().
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
             applicationKeys( applicationKeys ).execute();
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
     @Reference

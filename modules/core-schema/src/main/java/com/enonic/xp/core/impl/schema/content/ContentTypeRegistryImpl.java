@@ -16,8 +16,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
@@ -27,7 +27,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 public final class ContentTypeRegistryImpl
     implements ContentTypeRegistry, BundleListener
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private BundleContext context;
 
@@ -73,7 +73,7 @@ public final class ContentTypeRegistryImpl
         }
         else
         {
-            final Module module = this.moduleService.getModule( applicationKey );
+            final Module module = this.applicationService.getModule( applicationKey );
             if ( module != null )
             {
                 final ContentTypeLoader mixinLoader = new ContentTypeLoader( module.getBundle() );
@@ -102,7 +102,7 @@ public final class ContentTypeRegistryImpl
         }
 
         //Gets module content types
-        for ( Module module : this.moduleService.getAllModules() )
+        for ( Module module : this.applicationService.getAllModules() )
         {
             final ContentTypes contentTypes = getByModule( module.getKey() );
             contentTypeList.addAll( contentTypes.getList() );
@@ -112,9 +112,9 @@ public final class ContentTypeRegistryImpl
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
     @Override
