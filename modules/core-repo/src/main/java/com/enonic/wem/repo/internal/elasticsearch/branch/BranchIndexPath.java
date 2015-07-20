@@ -4,7 +4,7 @@ import com.enonic.xp.index.IndexPath;
 
 public class BranchIndexPath
 {
-    public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
+    public static final IndexPath TIMESTAMP = IndexPath.from( "timestamp" );
 
     public static final IndexPath VERSION_ID = IndexPath.from( "versionId" );
 

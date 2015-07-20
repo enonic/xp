@@ -1,6 +1,10 @@
 package com.enonic.xp.index;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 
 @Beta
 public class IndexConfig
@@ -48,6 +52,8 @@ public class IndexConfig
 
     private final boolean includeInAllText;
 
+    private final ImmutableList<IndexValueProcessor> indexValueProcessors;
+
     public boolean isDecideByType()
     {
         return decideByType;
@@ -73,6 +79,11 @@ public class IndexConfig
         return includeInAllText;
     }
 
+    public ImmutableList<IndexValueProcessor> getIndexValueProcessors()
+    {
+        return indexValueProcessors;
+    }
+
     private IndexConfig( Builder builder )
     {
         decideByType = builder.decideByType;
@@ -80,6 +91,7 @@ public class IndexConfig
         nGram = builder.nGram;
         fulltext = builder.fulltext;
         includeInAllText = builder.includeInAllText;
+        indexValueProcessors = ImmutableList.copyOf( builder.indexValueProcessors );
     }
 
     public static Builder create()
@@ -99,6 +111,8 @@ public class IndexConfig
         private boolean fulltext;
 
         private boolean includeInAllText;
+
+        private List<IndexValueProcessor> indexValueProcessors = new LinkedList<>();
 
         private Builder()
         {
@@ -131,6 +145,15 @@ public class IndexConfig
         public Builder includeInAllText( boolean includeInAllText )
         {
             this.includeInAllText = includeInAllText;
+            return this;
+        }
+
+        public Builder addIndexValueProcessor( IndexValueProcessor indexValueProcessor )
+        {
+            if ( indexValueProcessor != null )
+            {
+                this.indexValueProcessors.add( indexValueProcessor );
+            }
             return this;
         }
 

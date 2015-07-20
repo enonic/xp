@@ -8,10 +8,6 @@
     },
     "date_detection": false,
     "numeric_detection": false,
-    "_timestamp": {
-      "enabled": true,
-      "store": true
-    },
     "_parent": {
       "type": "version"
     },
@@ -20,8 +16,8 @@
         "type": "string",
         "index": "not_analyzed"
       },
-      "workspace": {
-        "type": "string",
+      "timestamp": {
+        "type": "date",
         "index": "not_analyzed"
       },
       "status": {
@@ -32,7 +28,15 @@
         "type": "string",
         "index": "not_analyzed"
       },
-      "post_data": {
+      "state": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "branch": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "nodeid": {
         "type": "string",
         "index": "not_analyzed"
       }
