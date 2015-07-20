@@ -1286,7 +1286,9 @@ module api.ui.image {
                 knobPct = 1 - (this.zoomData.w / this.frameW - 1 ) / (this.maxZoom - 1),
                 knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
 
-            zoomKnobEl.setAttribute('cy', knobNewY.toString());
+            if (!!knobNewY) {
+                zoomKnobEl.setAttribute('cy', knobNewY.toString());
+            }
         }
 
         private isCropAreaSmallerThanZoomSlider(height: number): boolean {
