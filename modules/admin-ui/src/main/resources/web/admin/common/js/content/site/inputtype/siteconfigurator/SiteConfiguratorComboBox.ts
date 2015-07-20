@@ -3,7 +3,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import ApplicationKey = api.module.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
     import ModuleViewer = api.module.ModuleViewer;
@@ -14,17 +14,17 @@ module api.content.site.inputtype.siteconfigurator {
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
-    export class SiteConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Module> {
+    export class SiteConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Application> {
 
         private siteConfiguratorSelectedOptionsView: SiteConfiguratorSelectedOptionsView;
 
         constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider, formContext: api.content.form.ContentFormContext) {
             var filterObject = {
-                state: Module.STATE_STARTED
+                state: Application.STATE_STARTED
             };
 
             this.siteConfiguratorSelectedOptionsView = new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext);
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
+            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
@@ -39,7 +39,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         getSelectedOptionViews(): SiteConfiguratorSelectedOptionView[] {
             var views: SiteConfiguratorSelectedOptionView[] = [];
-            this.getSelectedOptions().forEach((selectedOption: SelectedOption<Module>) => {
+            this.getSelectedOptions().forEach((selectedOption: SelectedOption<Application>) => {
                 views.push(<SiteConfiguratorSelectedOptionView>selectedOption.getOptionView());
             });
             return views;
@@ -54,7 +54,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
     }
 
-    export class SiteConfiguratorSelectedOptionsView extends BaseSelectedOptionsView<Module> {
+    export class SiteConfiguratorSelectedOptionsView extends BaseSelectedOptionsView<Application> {
 
         private siteConfigProvider: SiteConfigProvider;
 
@@ -68,14 +68,14 @@ module api.content.site.inputtype.siteconfigurator {
             this.formContext = formContext;
         }
 
-        createSelectedOption(option: Option<Module>): SelectedOption<Module> {
+        createSelectedOption(option: Option<Application>): SelectedOption<Application> {
             var siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
             var optionView = new SiteConfiguratorSelectedOptionView(option, siteConfig, this.formContext);
             optionView.onSiteConfigFormDisplayed((applicationKey: ApplicationKey) => {
                 this.notifySiteConfigFormDisplayed(applicationKey, optionView.getFormView());
             });
 
-            return new SelectedOption<Module>(optionView, this.count());
+            return new SelectedOption<Application>(optionView, this.count());
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
@@ -93,13 +93,13 @@ module api.content.site.inputtype.siteconfigurator {
 
     }
 
-    export class SiteConfiguratorSelectedOptionView extends SiteView implements SelectedOptionView<Module> {
+    export class SiteConfiguratorSelectedOptionView extends SiteView implements SelectedOptionView<Application> {
 
-        private option: Option<Module>;
+        private option: Option<Application>;
 
         private selectedOptionToBeRemovedListeners: {(): void;}[];
 
-        constructor(option: Option<Module>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+        constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             this.selectedOptionToBeRemovedListeners = [];
             this.option = option;
 
@@ -111,11 +111,11 @@ module api.content.site.inputtype.siteconfigurator {
 
         }
 
-        setOption(option: Option<Module>) {
+        setOption(option: Option<Application>) {
             this.option = option;
         }
 
-        getOption(): Option<Module> {
+        getOption(): Option<Application> {
             return this.option;
         }
 

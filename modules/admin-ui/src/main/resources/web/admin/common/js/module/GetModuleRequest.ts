@@ -1,6 +1,6 @@
 module api.module {
 
-    export class GetModuleRequest extends ModuleResourceRequest<json.ModuleJson, Module> {
+    export class GetModuleRequest extends ModuleResourceRequest<json.ModuleJson, Application> {
 
         private applicationKey: ApplicationKey;
 
@@ -23,7 +23,7 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): wemQ.Promise<Module> {
+        sendAndParse(): wemQ.Promise<Application> {
 
             var cache = ModuleCache.get();
             var moduleObj = this.skipCache ? null : cache.getByKey(this.applicationKey);

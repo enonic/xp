@@ -1,7 +1,7 @@
 module app.browse {
 
     import ApplicationKey = api.module.ApplicationKey;
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
     import UninstallModuleRequest = api.module.UninstallModuleRequest;
@@ -11,7 +11,7 @@ module app.browse {
     import ApplicationUpdatedEvent = api.module.ApplicationUpdatedEvent;
     import ApplicationUpdatedEventType = api.module.ApplicationUpdatedEventType;
 
-    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.Module> {
+    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.Application> {
 
         private browseActions: app.browse.ModuleBrowseActions;
 
@@ -42,11 +42,11 @@ module app.browse {
             this.registerEvents();
         }
 
-        treeNodesToBrowseItems(nodes: TreeNode<Module>[]): BrowseItem<Module>[] {
-            var browseItems: BrowseItem<Module>[] = [];
+        treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
+            var browseItems: BrowseItem<Application>[] = [];
 
             // do not proceed duplicated content. still, it can be selected
-            nodes.forEach((node: TreeNode<Module>, index: number) => {
+            nodes.forEach((node: TreeNode<Application>, index: number) => {
                 for (var i = 0; i <= index; i++) {
                     if (nodes[i].getData().getId() === node.getData().getId()) {
                         break;
@@ -54,7 +54,7 @@ module app.browse {
                 }
                 if (i === index) {
                     var moduleEl = node.getData();
-                    var item = new BrowseItem<Module>(moduleEl).
+                    var item = new BrowseItem<Application>(moduleEl).
                         setId(moduleEl.getId()).
                         setDisplayName(moduleEl.getDisplayName()).
                         setPath(moduleEl.getName()).
@@ -67,13 +67,13 @@ module app.browse {
 
         private registerEvents() {
             StopModuleEvent.on((event: StopModuleEvent) => {
-                var applicationKeys = ApplicationKey.fromModules(event.getModules());
+                var applicationKeys = ApplicationKey.fromModules(event.getApplications());
                 new StopModuleRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
             StartModuleEvent.on((event: StartModuleEvent) => {
-                var applicationKeys = ApplicationKey.fromModules(event.getModules());
+                var applicationKeys = ApplicationKey.fromModules(event.getApplications());
                 new StartModuleRequest(applicationKeys).sendAndParse()
                     .then(() => {
                     }).done();

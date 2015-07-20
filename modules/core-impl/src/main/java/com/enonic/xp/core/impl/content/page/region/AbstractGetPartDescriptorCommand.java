@@ -1,13 +1,10 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;

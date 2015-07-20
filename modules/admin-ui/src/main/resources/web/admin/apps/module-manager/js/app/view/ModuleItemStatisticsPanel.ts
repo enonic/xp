@@ -10,7 +10,7 @@ module app.view {
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ItemDataGroup = api.app.view.ItemDataGroup;
 
-    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
+    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Application> {
 
         private moduleDataContainer: api.dom.DivEl;
         private actionMenu: api.ui.menu.ActionMenu;
@@ -19,7 +19,7 @@ module app.view {
             super("module-item-statistics-panel");
 
             this.actionMenu =
-            new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE);
+            new api.ui.menu.ActionMenu("Application actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE);
 
             this.appendChild(this.actionMenu);
 
@@ -27,7 +27,7 @@ module app.view {
             this.appendChild(this.moduleDataContainer);
         }
 
-        setItem(item: api.app.view.ViewItem<api.module.Module>) {
+        setItem(item: api.app.view.ViewItem<api.module.Application>) {
             var currentItem = this.getItem();
 
             if (currentItem && currentItem.equals(item)) {

@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.region.LayoutDescriptors;
 
-public class LayoutDescriptorServiceImpl_getByModulesTest
+public class LayoutDescriptorServiceImpl_getByApplicationsTest
     extends AbstractLayoutDescriptorServiceTest
 {
     @Test
@@ -29,15 +29,15 @@ public class LayoutDescriptorServiceImpl_getByModulesTest
     public void getDescriptorsFromMultipleModules()
         throws Exception
     {
-        final Modules modules = createModules( "foomodule", "barmodule" );
+        final Applications applications = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-layout-descr", "barmodule:barmodule-layout-descr" );
 
-        mockResources( modules.getModule( ApplicationKey.from( "foomodule" ) ), "/app/layouts", "*.xml", true,
+        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/app/layouts", "*.xml", true,
                        "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/layouts", "*.xml", true,
+        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/app/layouts", "*.xml", true,
                        "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
 
-        final LayoutDescriptors result = this.service.getByModules( modules.getApplicationKeys() );
+        final LayoutDescriptors result = this.service.getByModules( applications.getApplicationKeys() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

@@ -1,6 +1,6 @@
 module api.module {
 
-    export class Module extends api.item.BaseItem {
+    export class Application extends api.item.BaseItem {
 
         static STATE_STARTED = 'started';
         static STATE_STOPPED = 'stopped';
@@ -81,7 +81,7 @@ module api.module {
         }
 
         isStarted(): boolean {
-            return this.state === Module.STATE_STARTED;
+            return this.state === Application.STATE_STARTED;
         }
 
         hasChildren(): boolean {
@@ -112,23 +112,23 @@ module api.module {
             return this.metaSteps;
         }
 
-        static fromJson(json: api.module.json.ModuleJson): Module {
+        static fromJson(json: api.module.json.ModuleJson): Application {
             return new ModuleBuilder().fromJson(json).build();
         }
 
-        static fromJsonArray(jsonArray: api.module.json.ModuleJson[]): Module[] {
-            var array: Module[] = [];
+        static fromJsonArray(jsonArray: api.module.json.ModuleJson[]): Application[] {
+            var array: Application[] = [];
             jsonArray.forEach((json: api.module.json.ModuleJson) => {
-                array.push(Module.fromJson(json));
+                array.push(Application.fromJson(json));
             });
             return array;
         }
 
         equals(o: api.Equitable): boolean {
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Module) || !super.equals(o)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Application) || !super.equals(o)) {
                 return false;
             }
-            var other = <Module>o;
+            var other = <Application>o;
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.displayName == other.displayName &&
@@ -174,7 +174,7 @@ module api.module {
         maxSystemVersion: string;
 
 
-        constructor(source?: Module) {
+        constructor(source?: Application) {
             this.moduleDependencies = [];
             this.contentTypeDependencies = [];
             this.metaSteps;
@@ -231,8 +231,8 @@ module api.module {
             return this;
         }
 
-        build(): Module {
-            return new Module(this);
+        build(): Application {
+            return new Application(this);
         }
     }
 }

@@ -1,20 +1,20 @@
 module api.module {
 
-    export class ModuleViewer extends api.ui.NamesAndIconViewer<Module> {
+    export class ModuleViewer extends api.ui.NamesAndIconViewer<Application> {
 
         constructor() {
             super();
         }
 
-        resolveDisplayName(object: Module): string {
+        resolveDisplayName(object: Application): string {
             return object.getDisplayName();
         }
 
-        resolveSubName(object: Module, relativePath: boolean = false): string {
+        resolveSubName(object: Application, relativePath: boolean = false): string {
             return object.getName();
         }
 
-        resolveIconClass(object: Module): string {
+        resolveIconClass(object: Application): string {
             return "icon-puzzle icon-large";
         }
     }

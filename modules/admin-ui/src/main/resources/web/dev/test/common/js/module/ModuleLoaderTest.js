@@ -71,7 +71,7 @@ describe("api.module.ModuleLoaderTest", function () {
 
         beforeEach(function () {
             filterObject = {
-                state: api.module.Module.STATE_STARTED
+                state: api.module.Application.STATE_STARTED
             };
 
             moduleLoader = new api.module.ModuleLoader(500, filterObject);
@@ -89,10 +89,10 @@ describe("api.module.ModuleLoaderTest", function () {
                 modules = [];
                 var moduleBuilder = new api.module.ModuleBuilder();
 
-                moduleBuilder.state = api.module.Module.STATE_STARTED;
+                moduleBuilder.state = api.module.Application.STATE_STARTED;
                 var startedModule = moduleBuilder.build();
 
-                moduleBuilder.state = api.module.Module.STATE_STOPPED;
+                moduleBuilder.state = api.module.Application.STATE_STOPPED;
                 var stoppedModule = moduleBuilder.build();
 
                 modules.push(startedModule, stoppedModule);

@@ -117,7 +117,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          *
          * An Error is thrown if a Property with same id as the given is already registered.
          * @param property the property to register
@@ -133,7 +133,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         unregisterProperty(id: PropertyId) {
             delete this.propertyById[id.toString()];

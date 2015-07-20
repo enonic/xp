@@ -1,6 +1,6 @@
 declare var CONFIG;
 
-import Module = api.module.Module;
+import Application = api.module.Application;
 
 function startApplication() {
     

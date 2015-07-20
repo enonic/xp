@@ -1,10 +1,10 @@
 module app.browse {
 
     import BrowseItem = api.app.browse.BrowseItem;
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
-    export class ModuleBrowseActions implements TreeGridActions<Module>  {
+    export class ModuleBrowseActions implements TreeGridActions<Application>  {
 
         public START_MODULE: api.ui.Action;
         public STOP_MODULE: api.ui.Action;
@@ -36,16 +36,16 @@ module app.browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(moduleBrowseItems: BrowseItem<Module>[]): wemQ.Promise<BrowseItem<Module>[]> {
-            var modulesSelected = moduleBrowseItems.length;
+        updateActionsEnabledState(applicationBrowseItems: BrowseItem<Application>[]): wemQ.Promise<BrowseItem<Application>[]> {
+            var modulesSelected = applicationBrowseItems.length;
             var anySelected = modulesSelected > 0;
             var anyStarted = false;
             var anyStopped = false;
-            moduleBrowseItems.forEach((moduleBrowseItem: BrowseItem<Module>) => {
+            applicationBrowseItems.forEach((moduleBrowseItem: BrowseItem<Application>) => {
                 var state = moduleBrowseItem.getModel().getState();
-                if (state === Module.STATE_STARTED) {
+                if (state === Application.STATE_STARTED) {
                     anyStarted = true;
-                } else if (state === Module.STATE_STOPPED) {
+                } else if (state === Application.STATE_STOPPED) {
                     anyStopped = true;
                 }
             });
@@ -53,8 +53,8 @@ module app.browse {
             this.START_MODULE.setEnabled(anyStopped);
             this.STOP_MODULE.setEnabled(anyStarted);
 
-            var deferred = wemQ.defer<BrowseItem<Module>[]>();
-            deferred.resolve(moduleBrowseItems);
+            var deferred = wemQ.defer<BrowseItem<Application>[]>();
+            deferred.resolve(applicationBrowseItems);
             return deferred.promise;
         }
 

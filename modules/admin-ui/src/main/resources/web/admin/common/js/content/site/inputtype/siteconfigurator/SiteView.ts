@@ -6,7 +6,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import FormView = api.form.FormView;
     import FormContextBuilder = api.form.FormContextBuilder;
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import ApplicationKey = api.module.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
@@ -14,7 +14,7 @@ module api.content.site.inputtype.siteconfigurator {
 
     export class SiteView extends api.dom.DivEl {
 
-        private module: Module;
+        private application: Application;
 
         private formView: FormView;
 
@@ -26,21 +26,21 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[] = [];
 
-        constructor(mod: Module, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+        constructor(application: Application, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             super("site-view");
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
 
-            this.module = mod;
+            this.application = application;
             this.siteConfig = siteConfig;
 
             var header = new api.dom.DivEl('header');
 
             var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.large)).
-                setMainName(this.module.getDisplayName()).
-                setSubName(this.module.getName() + "-" + this.module.getVersion()).
+                setMainName(this.application.getDisplayName()).
+                setSubName(this.application.getName() + "-" + this.application.getVersion()).
                 setIconClass("icon-xlarge icon-puzzle");
 
             header.appendChild(namesAndIconView);
@@ -69,11 +69,11 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(header);
 
-            this.formView = new FormView(formContext, this.module.getForm(), this.siteConfig.getConfig());
+            this.formView = new FormView(formContext, this.application.getForm(), this.siteConfig.getConfig());
             this.formView.addClass("site-form");
             this.appendChild(this.formView);
             this.formView.layout().then(() => {
-                this.notifySiteConfigFormDisplayed(this.module.getApplicationKey());
+                this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
                 this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
                     new api.content.EditContentEvent([content]).fire();
                 });
@@ -82,8 +82,8 @@ module api.content.site.inputtype.siteconfigurator {
             }).done();
         }
 
-        getModule(): Module {
-            return this.module;
+        getApplication(): Application {
+            return this.application;
         }
 
         getSiteConfig(): SiteConfig {

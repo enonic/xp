@@ -29,15 +29,15 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
     public void getDescriptorsFromMultipleModules()
         throws Exception
     {
-        final Modules modules = createModules( "foomodule", "barmodule" );
+        final Applications applications = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResources( modules.getModule( ApplicationKey.from( "foomodule" ) ), "/app/parts", "*", false,
+        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/app/parts", "*", false,
                        "app/parts/foomodule-part-descr" );
-        mockResources( modules.getModule( ApplicationKey.from( "barmodule" ) ), "/app/parts", "*", false,
+        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/app/parts", "*", false,
                        "app/parts/barmodule-part-descr" );
 
-        final PartDescriptors result = this.service.getByModules( modules.getApplicationKeys() );
+        final PartDescriptors result = this.service.getByModules( applications.getApplicationKeys() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

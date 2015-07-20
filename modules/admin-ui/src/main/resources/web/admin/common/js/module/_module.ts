@@ -1,7 +1,7 @@
 ///<reference path='ResourcePath.ts' />
 ///<reference path='ApplicationKey.ts' />
 ///<reference path='ModuleResourceKey.ts' />
-///<reference path='Module.ts' />
+///<reference path='Application.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
 ///<reference path='ListModulesRequest.ts' />

@@ -3,7 +3,7 @@ module api.module {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-    export class ModuleLoader extends api.util.loader.BaseLoader<ModuleListResult, Module> {
+    export class ModuleLoader extends api.util.loader.BaseLoader<ModuleListResult, Application> {
 
         private listModulesRequest: ListModulesRequest;
 
@@ -16,17 +16,17 @@ module api.module {
             }
         }
 
-        search(searchString: string): wemQ.Promise<Module[]> {
+        search(searchString: string): wemQ.Promise<Application[]> {
             this.listModulesRequest.setSearchQuery(searchString);
             return this.load();
         }
 
-        load(): wemQ.Promise<Module[]> {
+        load(): wemQ.Promise<Application[]> {
             var me = this;
             me.notifyLoadingData();
 
             return me.sendRequest()
-                .then((modules: Module[]) => {
+                .then((modules: Application[]) => {
                     if (me.filterObject) {
                         modules = modules.filter(me.filterResults, me);
                     }
@@ -36,7 +36,7 @@ module api.module {
                 });
         }
 
-        private filterResults(module: Module): boolean {
+        private filterResults(module: Application): boolean {
             if (!this.filterObject) {
                 return true;
             }

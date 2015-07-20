@@ -105,7 +105,7 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Application module, final String rootPath, final String filePattern, final boolean recurse,
+    protected final void mockResources( final Application application, final String rootPath, final String filePattern, final boolean recurse,
                                         final String... paths )
     {
         List<Resource> resourceList = new ArrayList<Resource>();
@@ -115,6 +115,6 @@ public abstract class AbstractDescriptorServiceTest
         }
         Resources resources = Resources.from( resourceList );
 
-        Mockito.when( this.resourceService.findResources( module.getKey(), rootPath, filePattern, recurse ) ).thenReturn( resources );
+        Mockito.when( this.resourceService.findResources( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn( resources );
     }
 }

@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleCache extends api.cache.Cache<Module, ApplicationKey> {
+    export class ModuleCache extends api.cache.Cache<Application, ApplicationKey> {
 
         private static instance: ModuleCache;
 
@@ -13,11 +13,11 @@ module api.module {
             });
         }
 
-        copy(object: Module): Module {
+        copy(object: Application): Application {
             return new ModuleBuilder(object).build();
         }
 
-        getKeyFromObject(object: Module): ApplicationKey {
+        getKeyFromObject(object: Application): ApplicationKey {
             return object.getApplicationKey();
         }
 

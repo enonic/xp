@@ -1,12 +1,12 @@
 module app.browse {
 
-    export class ModuleBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.module.Module> {
+    export class ModuleBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.module.Application> {
 
         createItemSelectionPanel(): ModuleBrowseItemsSelectionPanel {
             return new ModuleBrowseItemsSelectionPanel();
         }
 
-        createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<api.module.Module> {
+        createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<api.module.Application> {
             return new app.view.ModuleItemStatisticsPanel();
         }
 
