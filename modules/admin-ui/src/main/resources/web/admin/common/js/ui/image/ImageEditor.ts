@@ -11,6 +11,11 @@ module api.ui.image {
     }
 
     export interface Rect extends Point {
+        x2: number;
+        y2: number;
+    }
+
+    interface SVGRect extends Point {
         w: number;
         h: number;
     }
@@ -20,11 +25,11 @@ module api.ui.image {
         auto: boolean;
     }
 
-    interface CropData extends Rect {
+    interface CropData extends SVGRect {
         auto: boolean;
     }
 
-    interface ZoomData extends Rect {}
+    interface ZoomData extends SVGRect {}
 
     export class ImageEditor extends api.dom.DivEl {
 
@@ -231,9 +236,9 @@ module api.ui.image {
         /**
          * Converts rectangle from px to %
          * @param rect rectangle object to normalize
-         * @returns {Rect} normalized to 0-1 rectangle
+         * @returns {SVGRect} normalized to 0-1 rectangle
          */
-        private normalizeRect(rect: Rect): Rect {
+        private normalizeRect(rect: SVGRect): SVGRect {
             var minW = Math.min(this.frameW, this.imgW);
             var minH = Math.min(this.frameH, this.imgH);
             return {
@@ -250,16 +255,16 @@ module api.ui.image {
          * @param y
          * @param w
          * @param h
-         * @returns {Rect} denormalized rectangle
+         * @returns {SVGRect} denormalized rectangle
          */
-        private denormalizeRect(x: number, y: number, w: number, h: number): Rect {
+        private denormalizeRect(rect: SVGRect): SVGRect {
             var minW = Math.min(this.frameW, this.imgW);
             var minH = Math.min(this.frameH, this.imgH);
             return {
-                x: x * minW,
-                y: y * minH,
-                w: w * minW,
-                h: h * minH
+                x: rect.x * minW,
+                y: rect.y * minH,
+                w: rect.w * minW,
+                h: rect.h * minH
             }
         }
 
@@ -316,11 +321,7 @@ module api.ui.image {
 
             if (this.revertZoomData) {
                 // zoom was set while images was not yet loaded (saved in px);
-                this.setZoomPositionPx(this.denormalizeRect(
-                    this.revertZoomData.x,
-                    this.revertZoomData.y,
-                    this.revertZoomData.w,
-                    this.revertZoomData.h));
+                this.setZoomPositionPx(this.denormalizeRect(this.revertZoomData));
 
                 this.revertZoomData = undefined;
             } else if (this.cropData.auto) {
@@ -331,11 +332,7 @@ module api.ui.image {
             // crop depends on zoom so init it after
             if (this.revertCropData) {
                 // crop was set while images was not yet loaded (saved in px);
-                this.setCropPositionPx(this.denormalizeRect(
-                    this.revertCropData.x,
-                    this.revertCropData.y,
-                    this.revertCropData.w,
-                    this.revertCropData.h));
+                this.setCropPositionPx(this.denormalizeRect(this.revertCropData));
 
                 this.revertCropData = undefined;
             } else if (this.cropData.auto) {
@@ -741,9 +738,12 @@ module api.ui.image {
             this.cropButtonsContainer.setVisible(edit);
 
             // notify position updated in case we exit edit mode and apply changes
-            this.notifyCropModeChanged(edit,
-                !edit && applyChanges ? this.getCropPosition() : undefined,
-                !edit && applyChanges ? this.getZoomPosition() : undefined);
+            var crop, zoom;
+            if (!edit && applyChanges) {
+                crop = this.getCropPosition();
+                zoom = this.getZoomPosition();
+            }
+            this.notifyCropModeChanged(edit, crop, zoom);
         }
 
         isCropEditMode(): boolean {
@@ -757,25 +757,26 @@ module api.ui.image {
          * @param w
          * @param h
          */
-        setCropPosition(x: number, y: number, w: number, h: number) {
+        setCropPosition(x: number, y: number, x2: number, y2: number) {
+            var svg = this.rectToSVG(x, y, x2, y2);
             if (this.isImageLoaded()) {
-                this.setCropPositionPx(this.denormalizeRect(x, y, w, h));
+                this.setCropPositionPx(this.denormalizeRect(svg));
             } else {
                 // use revert position to temporary save values until the image is loaded
                 // can't denormalize until image is loaded
                 this.revertCropData = {
-                    x: x,
-                    y: y,
-                    w: w,
-                    h: h,
+                    x: svg.x,
+                    y: svg.y,
+                    w: svg.w,
+                    h: svg.h,
                     auto: this.cropData.auto
                 }
             }
         }
 
-        private setCropPositionPx(crop: Rect, updateAuto: boolean = true) {
+        private setCropPositionPx(crop: SVGRect, updateAuto: boolean = true) {
 
-            if(this.isCropAreaSmallerThanZoomSlider(crop.h)) {
+            if (this.isCropAreaSmallerThanZoomSlider(crop.h)) {
                 return;
             }
 
@@ -826,13 +827,13 @@ module api.ui.image {
 
         /**
          * Gets the crop area
-         * @returns {{x, y, w, h}|Rect}
+         * @returns {{x, y, w, h}|SVGRect}
          */
-        getCropPosition(): Rect {
+        getCropPosition(): SVGRect {
             return this.normalizeRect(this.getCropPositionPx());
         }
 
-        private getCropPositionPx(): Rect {
+        private getCropPositionPx(): SVGRect {
             return {
                 x: this.cropData.x,
                 y: this.cropData.y,
@@ -842,7 +843,8 @@ module api.ui.image {
         }
 
         resetCropPosition() {
-            this.setCropPositionPx(this.denormalizeRect(0, 0, 1, 1), false);
+            var crop = {x: 0, y: 0, w: 1, h: 1};
+            this.setCropPositionPx(this.denormalizeRect(crop), false);
             this.resetZoomPosition();
         }
 
@@ -968,7 +970,7 @@ module api.ui.image {
                 var x = this.getOffsetX(event),
                     y = this.getOffsetY(event);
 
-                if(!this.isInsideCrop(x,y)) {
+                if (!this.isInsideCrop(x, y)) {
                     return;
                 }
 
@@ -1123,27 +1125,46 @@ module api.ui.image {
             return Math.max(0, Math.min(this.zoomData.h, y));
         }
 
+        private rectFromSVG(svg: SVGRect): Rect {
+            return svg ? {
+                x: svg.x,
+                y: svg.y,
+                x2: svg.x + svg.w,
+                y2: svg.y + svg.h
+            } : undefined;
+        }
+
+        private rectToSVG(x: number, y: number, x2: number, y2: number): SVGRect {
+            return {
+                x: x,
+                y: y,
+                w: x2 - x,
+                h: y2 - y
+            }
+        }
+
 
         /*
          *  Zoom related methods
          */
 
-        setZoomPosition(x: number, y: number, w: number, h: number) {
+        setZoomPosition(x: number, y: number, x2: number, y2: number) {
+            var zoom = this.rectToSVG(x, y, x2, y2);
             if (this.isImageLoaded()) {
-                this.setZoomPositionPx(this.denormalizeRect(x, y, w, h));
+                this.setZoomPositionPx(this.denormalizeRect(zoom));
             } else {
                 // use revert position to temporary save values until the image is loaded
                 // can't denormalize until image is loaded
                 this.revertZoomData = {
-                    x: x,
-                    y: y,
-                    w: w,
-                    h: h
+                    x: zoom.x,
+                    y: zoom.y,
+                    w: zoom.w,
+                    h: zoom.h
                 }
             }
         }
 
-        private setZoomPositionPx(zoom: Rect, updateAuto: boolean = true) {
+        private setZoomPositionPx(zoom: SVGRect, updateAuto: boolean = true) {
             var oldX = this.zoomData.x,
                 oldY = this.zoomData.y,
                 oldW = this.zoomData.w,
@@ -1195,11 +1216,11 @@ module api.ui.image {
             }
         }
 
-        getZoomPosition(): Rect {
+        getZoomPosition(): SVGRect {
             return this.normalizeRect(this.getZoomPositionPx());
         }
 
-        private getZoomPositionPx(): Rect {
+        private getZoomPositionPx(): SVGRect {
             return {
                 x: this.zoomData.x,
                 y: this.zoomData.y,
@@ -1330,6 +1351,7 @@ module api.ui.image {
                 auto: this.focusData.auto
             };
         }
+
         /**
          * Zoom coordinates system starts in the top left corner of the original image
          * @param x
@@ -1467,9 +1489,11 @@ module api.ui.image {
             })
         }
 
-        private notifyCropModeChanged(edit: boolean, position: Rect, zoomPosition: Rect) {
+        private notifyCropModeChanged(edit: boolean, position: SVGRect, zoom: SVGRect) {
+            var p = this.rectFromSVG(position);
+            var z = this.rectFromSVG(zoom);
             this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, position, zoomPosition);
+                listener(edit, p, z);
             })
         }
 
@@ -1499,8 +1523,8 @@ module api.ui.image {
             });
         }
 
-        private notifyCropPositionChanged(position: Rect) {
-            var normalizedPosition = this.normalizeRect(position);
+        private notifyCropPositionChanged(position: SVGRect) {
+            var normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
             this.cropPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
             })

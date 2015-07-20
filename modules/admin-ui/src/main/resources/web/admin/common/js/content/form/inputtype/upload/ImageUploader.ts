@@ -107,13 +107,13 @@ module api.content.form.inputtype.upload {
                     if (container) {
                         container.setDoubleByPath('cropPosition.x', crop.x);
                         container.setDoubleByPath('cropPosition.y', crop.y);
-                        container.setDoubleByPath('cropPosition.w', crop.w);
-                        container.setDoubleByPath('cropPosition.h', crop.h);
+                        container.setDoubleByPath('cropPosition.x2', crop.x2);
+                        container.setDoubleByPath('cropPosition.y2', crop.y2);
 
                         container.setDoubleByPath('zoomPosition.x', zoom.x);
                         container.setDoubleByPath('zoomPosition.y', zoom.y);
-                        container.setDoubleByPath('zoomPosition.w', zoom.w);
-                        container.setDoubleByPath('zoomPosition.h', zoom.h);
+                        container.setDoubleByPath('zoomPosition.x2', zoom.x2);
+                        container.setDoubleByPath('zoomPosition.y2', zoom.y2);
                     }
                 }
             });
@@ -187,14 +187,14 @@ module api.content.form.inputtype.upload {
             var cropPositionSet = property.getPropertySet(),
                 x = cropPositionSet.getDouble('x'),
                 y = cropPositionSet.getDouble('y'),
-                w = cropPositionSet.getDouble('w'),
-                h = cropPositionSet.getDouble('h');
+                x2 = cropPositionSet.getDouble('x2'),
+                y2 = cropPositionSet.getDouble('y2');
 
             return {
                 x: x,
                 y: y,
-                w: w,
-                h: h
+                x2: x2,
+                y2: y2
             };
         }
 

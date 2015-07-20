@@ -190,13 +190,13 @@ module api.content {
 
         setCrop(crop: Rect) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setCropPosition(crop.x, crop.y, crop.w, crop.h);
+                editor.setCropPosition(crop.x, crop.y, crop.x2, crop.y2);
             })
         }
 
         setZoom(zoom: Rect) {
             this.imageEditors.forEach((editor: ImageEditor) => {
-                editor.setZoomPosition(zoom.x, zoom.y, zoom.w, zoom.h);
+                editor.setZoomPosition(zoom.x, zoom.y, zoom.x2, zoom.y2);
             })
         }
 
