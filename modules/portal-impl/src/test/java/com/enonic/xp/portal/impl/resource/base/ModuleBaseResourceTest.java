@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 
-import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -23,17 +23,17 @@ public abstract class ModuleBaseResourceTest
 
     protected Path tmpDir;
 
-    protected ModuleService moduleService;
+    protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
 
-    protected final void configureModuleService()
+    protected final void configureApplicationService()
         throws Exception
     {
         this.tmpDir = this.temporaryFolder.getRoot().toPath();
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
-        this.services.setModuleService( this.moduleService );
+        this.services.setApplicationService( this.applicationService );
         this.services.setResourceService( this.resourceService );
     }
 

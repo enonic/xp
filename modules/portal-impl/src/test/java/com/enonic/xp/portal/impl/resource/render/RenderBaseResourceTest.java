@@ -3,12 +3,12 @@ package com.enonic.xp.portal.impl.resource.render;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -37,7 +37,7 @@ public abstract class RenderBaseResourceTest
 
     protected PageDescriptorService pageDescriptorService;
 
-    protected ModuleService moduleService;
+    protected ApplicationService applicationService;
 
     protected PortalUrlService portalUrlService;
 
@@ -48,13 +48,13 @@ public abstract class RenderBaseResourceTest
         this.contentService = Mockito.mock( ContentService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.moduleService = Mockito.mock( ModuleService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
 
         this.services.setContentService( this.contentService );
         this.services.setPageTemplateService( this.pageTemplateService );
         this.services.setPageDescriptorService( this.pageDescriptorService );
-        this.services.setModuleService( this.moduleService );
+        this.services.setApplicationService( this.applicationService );
         this.services.setPortalUrlService( this.portalUrlService );
     }
 

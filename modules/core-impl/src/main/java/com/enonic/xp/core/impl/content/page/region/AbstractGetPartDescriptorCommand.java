@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
@@ -21,7 +21,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 {
     private final static String PATH = "/app/parts";
 
-    protected ModuleService moduleService;
+    protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
 
@@ -105,9 +105,9 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     }
 
     @SuppressWarnings("unchecked")
-    public final T moduleService( final ModuleService moduleService )
+    public final T applicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
         return (T) this;
     }
 

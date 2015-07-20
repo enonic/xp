@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.Resources;
@@ -58,11 +58,11 @@ public class ResourceServiceImplTest
         Mockito.when( module.getKey() ).thenReturn( applicationKey );
         Mockito.when( module.getBundle() ).thenReturn( bundle );
 
-        final ModuleService moduleService = Mockito.mock( ModuleService.class );
-        Mockito.when( moduleService.getModule( applicationKey ) ).thenReturn( module );
+        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( module );
 
         resourceService = new ResourceServiceImpl();
-        resourceService.setModuleService( moduleService );
+        resourceService.setApplicationService( applicationService );
     }
 
     @Test

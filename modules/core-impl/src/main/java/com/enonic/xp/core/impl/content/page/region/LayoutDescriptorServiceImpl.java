@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -17,7 +17,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private MixinService mixinService;
 
@@ -27,7 +27,7 @@ public final class LayoutDescriptorServiceImpl
     public LayoutDescriptor getByKey( final DescriptorKey key )
     {
         return new GetLayoutDescriptorCommand().key( key ).
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -36,7 +36,7 @@ public final class LayoutDescriptorServiceImpl
     public LayoutDescriptors getByModule( final ApplicationKey applicationKey )
     {
         return new GetLayoutDescriptorsByModuleCommand().
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
             applicationKey( applicationKey ).execute();
@@ -46,16 +46,16 @@ public final class LayoutDescriptorServiceImpl
     public LayoutDescriptors getByModules( final ApplicationKeys applicationKeys )
     {
         return new GetLayoutDescriptorsByModulesCommand().
-            moduleService( this.moduleService ).
+            applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
             applicationKeys( applicationKeys ).execute();
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
     @Reference

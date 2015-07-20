@@ -24,8 +24,8 @@ import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
@@ -40,7 +40,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 public final class ModuleResource
     implements AdminResource
 {
-    private ModuleService moduleService;
+    private ApplicationService applicationService;
 
     private SiteService siteService;
 
@@ -48,7 +48,7 @@ public final class ModuleResource
     @Path("list")
     public ListModuleJson list( @QueryParam("query") final String query )
     {
-        Modules modules = this.moduleService.getAllModules();
+        Modules modules = this.applicationService.getAllModules();
         final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
         if ( StringUtils.isNotBlank( query ) )
         {
@@ -74,7 +74,7 @@ public final class ModuleResource
     @GET
     public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Module module = this.moduleService.getModule( ApplicationKey.from( applicationKey ) );
+        final Module module = this.applicationService.getModule( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
         return new ModuleJson( module, siteDescriptor );
     }
@@ -85,7 +85,7 @@ public final class ModuleResource
     public ModuleSuccessJson start( final ModuleListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.moduleService::startModule );
+        params.getApplicationKeys().forEach( this.applicationService::startModule );
         return new ModuleSuccessJson();
     }
 
@@ -95,14 +95,14 @@ public final class ModuleResource
     public ModuleSuccessJson stop( final ModuleListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.moduleService::stopModule );
+        params.getApplicationKeys().forEach( this.applicationService::stopModule );
         return new ModuleSuccessJson();
     }
 
     @Reference
-    public void setModuleService( final ModuleService moduleService )
+    public void setApplicationService( final ApplicationService applicationService )
     {
-        this.moduleService = moduleService;
+        this.applicationService = applicationService;
     }
 
     @Reference
