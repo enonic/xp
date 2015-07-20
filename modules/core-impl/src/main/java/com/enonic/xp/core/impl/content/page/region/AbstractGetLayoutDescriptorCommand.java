@@ -84,7 +84,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     private void readDescriptor( final Module module, final LayoutDescriptors.Builder layoutDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml" );
+        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*.xml", true );
 
         for ( final Resource resource : resources )
         {

@@ -38,7 +38,7 @@ public class ResourceServiceImpl
     }
 
     @Override
-    public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern )
+    public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern, boolean recurse )
     {
         Resources resources = null;
         final Module module = getActiveModule( applicationKey );
@@ -47,7 +47,7 @@ public class ResourceServiceImpl
         {
             Bundle bundle = module.getBundle();
 
-            final Enumeration<URL> entries = bundle.findEntries( path, filePattern, true );
+            final Enumeration<URL> entries = bundle.findEntries( path, filePattern, recurse );
 
             if ( entries != null )
             {

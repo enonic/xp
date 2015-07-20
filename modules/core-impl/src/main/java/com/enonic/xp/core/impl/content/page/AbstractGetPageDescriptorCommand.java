@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -19,16 +21,25 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
         final ResourceKey resourceKey = PageDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
-        final String descriptorXml = resource.readString();
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
-        try
+        if ( resource.exists() )
         {
-            parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+            final String descriptorXml = resource.readString();
+            try
+            {
+                parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+            }
+            catch ( final Exception e )
+            {
+                throw new XmlException( e, "Could not load page descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            }
         }
-        catch ( final Exception e )
+        else
         {
-            throw new XmlException( e, "Could not load page descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            builder.displayName( key.getName() ).
+                config( Form.create().build() ).
+                regions( RegionDescriptors.create().build() );
         }
 
         builder.key( key );

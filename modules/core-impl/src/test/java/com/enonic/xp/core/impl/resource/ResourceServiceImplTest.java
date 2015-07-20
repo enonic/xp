@@ -101,20 +101,20 @@ public class ResourceServiceImplTest
             Collections.enumeration( Arrays.asList( resourceUrl, resource2Url ) ) );
 
         //Finds resources for a specific path
-        resources = resourceService.findResources( applicationKey, "/", RESOURCE_FILE_NAME );
+        resources = resourceService.findResources( applicationKey, "/", RESOURCE_FILE_NAME, true );
         assertEquals( 1, resources.getSize() );
 
         //Finds all text resources in a specific folder
-        resources = resourceService.findResources( applicationKey, "/a", "*" );
+        resources = resourceService.findResources( applicationKey, "/a", "*", true );
         assertEquals( 2, resources.getSize() );
 
         //Finds all resources in an non existing folder
-        resources = resourceService.findResources( applicationKey, "/b", "*" );
+        resources = resourceService.findResources( applicationKey, "/b", "*", true );
         assertEquals( 0, resources.getSize() );
 
         //Finds all resources for an incorrect module key
         ApplicationKey incorrectApplicationKey = ApplicationKey.from( "othermodule" );
-        resources = resourceService.findResources( incorrectApplicationKey, "/", RESOURCE_FILE_NAME );
+        resources = resourceService.findResources( incorrectApplicationKey, "/", RESOURCE_FILE_NAME, true );
         assertEquals( 0, resources.getSize() );
     }
 }
