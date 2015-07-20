@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.module.Modules;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.region.PartDescriptors;
 
 final class GetPartDescriptorsByModulesCommand
@@ -11,8 +11,8 @@ final class GetPartDescriptorsByModulesCommand
 
     public PartDescriptors execute()
     {
-        final Modules modules = this.applicationService.getModules( this.applicationKeys );
-        return getDescriptorsFromModules( modules );
+        final Applications applications = this.applicationService.getModules( this.applicationKeys );
+        return getDescriptorsFromModules( applications );
     }
 
     public GetPartDescriptorsByModulesCommand applicationKeys( final ApplicationKeys applicationKeys )

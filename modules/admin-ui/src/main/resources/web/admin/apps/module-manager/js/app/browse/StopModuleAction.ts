@@ -1,6 +1,6 @@
 module app.browse {
 
-    import Module = api.module.Module;
+    import Application = api.module.Application;
 
     export class StopModuleAction extends api.ui.Action {
 
@@ -8,8 +8,8 @@ module app.browse {
             super("Stop");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: Module[] = moduleTreeGrid.getSelectedDataList();
-                new StopModuleEvent(modules).fire();
+                var applications: Application[] = moduleTreeGrid.getSelectedDataList();
+                new StopModuleEvent(applications).fire();
             });
         }
     }

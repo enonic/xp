@@ -95,7 +95,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         setContainerProperty(value: Property) {
             this.property = value;
@@ -114,7 +114,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         attachToTree(tree: PropertyTree) {
             this.tree = tree;

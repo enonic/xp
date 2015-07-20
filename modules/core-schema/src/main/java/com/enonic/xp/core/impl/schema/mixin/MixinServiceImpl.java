@@ -17,9 +17,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -83,9 +83,9 @@ public final class MixinServiceImpl
         }
 
         //Gets modules mixins
-        for ( Module module : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllModules() )
         {
-            final Mixins mixins = getByModule( module.getKey() );
+            final Mixins mixins = getByModule( application.getKey() );
             mixinList.addAll( mixins.getList() );
         }
 
@@ -108,10 +108,10 @@ public final class MixinServiceImpl
         }
         else
         {
-            final Module module = this.applicationService.getModule( applicationKey );
-            if ( module != null )
+            final Application application = this.applicationService.getModule( applicationKey );
+            if ( application != null )
             {
-                final MixinLoader mixinLoader = new MixinLoader( module.getBundle() );
+                final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );
                 mixins = mixinLoader.loadMixins();
             }
         }

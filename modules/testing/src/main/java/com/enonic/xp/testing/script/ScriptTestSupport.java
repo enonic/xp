@@ -6,12 +6,12 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -44,11 +44,11 @@ public abstract class ScriptTestSupport
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
 
-        final Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( module );
+        Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.scriptService.setApplicationService( applicationService );

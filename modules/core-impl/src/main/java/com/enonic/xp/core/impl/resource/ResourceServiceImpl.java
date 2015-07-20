@@ -10,9 +10,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -29,10 +29,10 @@ public class ResourceServiceImpl
     public Resource getResource( final ResourceKey resourceKey )
     {
         Resource resource = null;
-        final Module module = getActiveModule( resourceKey.getApplicationKey() );
-        if ( module != null )
+        final Application application = getActiveModule( resourceKey.getApplicationKey() );
+        if ( application != null )
         {
-            resource = getResource( module.getBundle(), resourceKey );
+            resource = getResource( application.getBundle(), resourceKey );
         }
         return resource;
     }
@@ -41,11 +41,11 @@ public class ResourceServiceImpl
     public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern, boolean recurse )
     {
         Resources resources = null;
-        final Module module = getActiveModule( applicationKey );
+        final Application application = getActiveModule( applicationKey );
 
-        if ( module != null )
+        if ( application != null )
         {
-            Bundle bundle = module.getBundle();
+            Bundle bundle = application.getBundle();
 
             final Enumeration<URL> entries = bundle.findEntries( path, filePattern, recurse );
 
@@ -69,17 +69,17 @@ public class ResourceServiceImpl
         return resources;
     }
 
-    private Module getActiveModule( ApplicationKey applicationKey )
+    private Application getActiveModule( ApplicationKey applicationKey )
     {
-        Module activeModule = null;
+        Application activeApplication = null;
 
-        final Module module = applicationService.getModule( applicationKey );
-        if ( module != null && module.getBundle().getState() == Bundle.ACTIVE )
+        final Application application = applicationService.getModule( applicationKey );
+        if ( application != null && application.getBundle().getState() == Bundle.ACTIVE )
         {
-            activeModule = module;
+            activeApplication = application;
         }
 
-        return activeModule;
+        return activeApplication;
     }
 
     private Resource getResource( Bundle bundle, ResourceKey resourceKey )

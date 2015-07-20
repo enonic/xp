@@ -1,7 +1,7 @@
 ///<reference path='ResourcePath.ts' />
 ///<reference path='ApplicationKey.ts' />
 ///<reference path='ModuleResourceKey.ts' />
-///<reference path='Module.ts' />
+///<reference path='Application.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
 ///<reference path='ListModulesRequest.ts' />
@@ -15,7 +15,7 @@
 ///<reference path='InstallModuleRequest.ts' />
 ///<reference path='UninstallModuleRequest.ts' />
 ///<reference path='UpdateModuleRequest.ts' />
-///<reference path='ModuleUpdatedEvent.ts' />
+///<reference path='ApplicationUpdatedEvent.ts' />
 ///<reference path='ModuleCache.ts' />
 ///<reference path='ModuleBasedName.ts' />
 ///<reference path='ModuleCaches.ts' />

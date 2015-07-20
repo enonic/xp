@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
@@ -70,32 +70,32 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         parser.parse();
     }
 
-    protected final PartDescriptors getDescriptorsFromModules( final Modules modules )
+    protected final PartDescriptors getDescriptorsFromModules( final Applications applications )
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
-        for ( final Module module : modules )
+        for ( final Application application : applications )
         {
-            readDescriptor( module, partDescriptors );
+            readDescriptor( application, partDescriptors );
         }
 
         return partDescriptors.build();
     }
 
-    protected final PartDescriptors getDescriptorsFromModule( final Module module )
+    protected final PartDescriptors getDescriptorsFromModule( final Application application )
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
-        readDescriptor( module, partDescriptors );
+        readDescriptor( application, partDescriptors );
         return partDescriptors.build();
     }
 
-    private void readDescriptor( final Module module, final PartDescriptors.Builder partDescriptors )
+    private void readDescriptor( final Application application, final PartDescriptors.Builder partDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( module.getKey(), PATH, "*", false );
+        final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );
 
         for ( final Resource resource : resources )
         {
             final String descriptorName = resource.getKey().getName();
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
             final PartDescriptor partDescriptor = getDescriptor( key );
             if ( partDescriptor != null )
             {

@@ -1,15 +1,14 @@
-package com.enonic.xp.module;
+package com.enonic.xp.app;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.exception.NotFoundException;
 
 @Beta
-public final class ModuleNotStartedException
+public final class ApplicationNotStartedException
     extends NotFoundException
 {
-    public ModuleNotStartedException( final ApplicationKey applicationKey )
+    public ApplicationNotStartedException( final ApplicationKey applicationKey )
     {
         super( "Module [{0}] not started", applicationKey );
     }

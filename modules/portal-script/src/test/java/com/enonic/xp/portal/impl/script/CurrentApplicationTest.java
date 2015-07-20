@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.script;
 
 import org.junit.Test;
 
-public class CurrentModuleTest
+public class CurrentApplicationTest
     extends AbstractScriptTest
 {
     @Test

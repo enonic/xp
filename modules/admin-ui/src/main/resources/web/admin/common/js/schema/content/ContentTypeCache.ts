@@ -1,7 +1,7 @@
 module api.schema.content {
 
-    import ModuleUpdatedEvent = api.module.ModuleUpdatedEvent;
-    import ModuleUpdatedEventType = api.module.ModuleUpdatedEventType;
+    import ApplicationUpdatedEvent = api.module.ApplicationUpdatedEvent;
+    import ApplicationUpdatedEventType = api.module.ApplicationUpdatedEventType;
 
     export class ContentTypeCache extends api.cache.Cache<ContentType,ContentTypeName> {
 
@@ -9,11 +9,11 @@ module api.schema.content {
 
         constructor() {
             super();
-            ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
-                if (ModuleUpdatedEventType.STARTED == event.getEventType()
-                    || ModuleUpdatedEventType.STOPPED == event.getEventType()
-                        || ModuleUpdatedEventType.UPDATED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent - removing cached content types... " +
+            ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
+                if (ApplicationUpdatedEventType.STARTED == event.getEventType()
+                    || ApplicationUpdatedEventType.STOPPED == event.getEventType()
+                        || ApplicationUpdatedEventType.UPDATED == event.getEventType()) {
+                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationUpdatedEvent - removing cached content types... " +
                                 event.getApplicationKey().toString());
                     this.getCachedByApplicationKey(event.getApplicationKey()).forEach((contentType: ContentType) => {
                         this.deleteByKey(this.getKeyFromObject(contentType));

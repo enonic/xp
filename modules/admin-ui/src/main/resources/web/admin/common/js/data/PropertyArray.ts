@@ -116,7 +116,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         addProperty(property: Property) {
             api.util.assert(property.getName() == this.name,
@@ -337,7 +337,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         registerPropertySetListeners(propertySet: PropertySet) {
 
@@ -354,7 +354,7 @@ module api.data {
         }
 
         /**
-         * Module protected. Not to be used outside module.
+         * Application protected. Not to be used outside module.
          */
         unregisterPropertySetListeners(propertySet: PropertySet) {
             propertySet.unPropertyAdded(this.propertyAddedEventHandler);

@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.Resources;
@@ -54,12 +54,12 @@ public class ResourceServiceImplTest
         Mockito.when( bundle.getResource( RESOURCE_2_PATH ) ).thenReturn( resource2Url );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
-        Module module = Mockito.mock( Module.class );
-        Mockito.when( module.getKey() ).thenReturn( applicationKey );
-        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( applicationKey );
+        Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( module );
+        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( application );
 
         resourceService = new ResourceServiceImpl();
         resourceService.setApplicationService( applicationService );

@@ -8,15 +8,15 @@ module api.module {
 
             this.moduleCaches = new ModuleCaches<CACHE>();
 
-            ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
+            ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
 
-                if (ModuleUpdatedEventType.STARTED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STARTED, calling - loadByModule.. " +
+                if (ApplicationUpdatedEventType.STARTED == event.getEventType()) {
+                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationUpdatedEvent STARTED, calling - loadByModule.. " +
                                 event.getApplicationKey().toString());
                     this.loadByModule(event.getApplicationKey());
                 }
-                else if (ModuleUpdatedEventType.STOPPED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STOPPED - calling deleteByApplicationKey.. " +
+                else if (ApplicationUpdatedEventType.STOPPED == event.getEventType()) {
+                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationUpdatedEvent STOPPED - calling deleteByApplicationKey.. " +
                                 event.getApplicationKey().toString());
                     this.deleteByApplicationKey(event.getApplicationKey())
                 }

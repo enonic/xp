@@ -38,8 +38,8 @@ module api.module {
             return keys.map((key: ApplicationKey) => key.toString());
         }
 
-        static fromModules(modules: Module[]): ApplicationKey[] {
-            return modules.map<ApplicationKey>((mod: Module) => mod.getApplicationKey());
+        static fromModules(modules: Application[]): ApplicationKey[] {
+            return modules.map<ApplicationKey>((mod: Application) => mod.getApplicationKey());
         }
 
     }

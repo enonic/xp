@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.module.ModuleJson;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
+import com.enonic.xp.app.Application;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.site.SiteDescriptor;
 
 public class ListModuleJson
@@ -15,13 +15,13 @@ public class ListModuleJson
 
     private List<ModuleJson> list;
 
-    public ListModuleJson( Modules modules, Iterable<SiteDescriptor> siteDescriptors )
+    public ListModuleJson( Applications applications, Iterable<SiteDescriptor> siteDescriptors )
     {
         ImmutableList.Builder<ModuleJson> builder = ImmutableList.builder();
         final Iterator<SiteDescriptor> siteDescriptorIterator = siteDescriptors.iterator();
-        for ( Module module : modules )
+        for ( Application application : applications )
         {
-            builder.add( new ModuleJson( module, siteDescriptorIterator.next() ) );
+            builder.add( new ModuleJson( application, siteDescriptorIterator.next() ) );
         }
         this.list = builder.build();
     }

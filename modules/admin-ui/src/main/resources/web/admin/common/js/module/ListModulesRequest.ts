@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult, Module[]> {
+    export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult, Application[]> {
 
         private searchQuery: string;
 
@@ -24,10 +24,10 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): wemQ.Promise<Module[]> {
+        sendAndParse(): wemQ.Promise<Application[]> {
 
             return this.send().then((response: api.rest.JsonResponse<ModuleListResult>) => {
-                return Module.fromJsonArray(response.getResult().modules);
+                return Application.fromJsonArray(response.getResult().modules);
             });
         }
     }

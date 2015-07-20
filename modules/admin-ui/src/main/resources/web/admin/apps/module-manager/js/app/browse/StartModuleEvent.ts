@@ -1,18 +1,18 @@
 module app.browse {
 
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import Event = api.event.Event;
 
     export class StartModuleEvent extends Event {
-        private modules: Module[];
+        private applications: Application[];
 
-        constructor(modules: Module[]) {
-            this.modules = modules;
+        constructor(applications: Application[]) {
+            this.applications = applications;
             super();
         }
 
-        getModules(): Module[] {
-            return this.modules;
+        getApplications(): Application[] {
+            return this.applications;
         }
 
         static on(handler: (event: StartModuleEvent) => void) {

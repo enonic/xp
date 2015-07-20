@@ -1,15 +1,15 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.xp.module.ModuleUpdatedEvent;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 
-public final class ModuleUpdatedEventJson
+public final class ApplicationUpdatedEventJson
     implements EventJson
 {
     private final String eventType;
 
     private final String applicationKey;
 
-    public ModuleUpdatedEventJson( final ModuleUpdatedEvent event )
+    public ApplicationUpdatedEventJson( final ApplicationUpdatedEvent event )
     {
         this.eventType = event.getEventType().name();
         this.applicationKey = event.getApplicationKey().toString();

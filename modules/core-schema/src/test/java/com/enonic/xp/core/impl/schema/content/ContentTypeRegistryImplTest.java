@@ -7,11 +7,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.Modules;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -28,7 +28,7 @@ public class ContentTypeRegistryImplTest
 
     private ContentType myContentType;
 
-    private Module myModule;
+    private Application myApplication;
 
     private ApplicationService applicationService;
 
@@ -45,9 +45,9 @@ public class ContentTypeRegistryImplTest
         myBundle = findBundle( "module2" );
         myApplicationKey = ApplicationKey.from( myBundle );
         this.myContentType = createContentType( "module2:myContentType", "myContentType display name" );
-        myModule = Mockito.mock( Module.class );
-        Mockito.when( myModule.getKey() ).thenReturn( myApplicationKey );
-        Mockito.when( myModule.getBundle() ).thenReturn( myBundle );
+        myApplication = Mockito.mock( Application.class );
+        Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
+        Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
 
         //Mocks the module service
         applicationService = Mockito.mock( ApplicationService.class );
@@ -67,7 +67,7 @@ public class ContentTypeRegistryImplTest
     @Test
     public void test_empty()
     {
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
@@ -85,9 +85,9 @@ public class ContentTypeRegistryImplTest
     public void test_add_removal_module()
     {
 
-        Modules modules = Modules.from( myModule );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( modules );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myModule );
+        Applications applications = Applications.from( myApplication );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
+        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
@@ -100,7 +100,7 @@ public class ContentTypeRegistryImplTest
         ContentType contentType = service.get( this.myContentType.getName() );
         assertNotNull( contentType );
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
         Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
         service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
@@ -111,7 +111,7 @@ public class ContentTypeRegistryImplTest
     public void test_get_system_module()
     {
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Modules.empty() );
+        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );

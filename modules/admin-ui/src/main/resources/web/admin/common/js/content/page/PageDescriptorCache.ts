@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import ApplicationKey = api.module.ApplicationKey;
     import ModuleCaches = api.module.ModuleCaches;
     import ModuleBasedCache = api.module.ModuleBasedCache;

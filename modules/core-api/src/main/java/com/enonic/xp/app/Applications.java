@@ -1,16 +1,14 @@
 package com.enonic.xp.app;
 
-import java.util.function.Predicate;
+import java.util.Collection;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
 
 @Beta
 public final class Applications
@@ -21,25 +19,23 @@ public final class Applications
     private Applications( final ImmutableList<Application> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, Application::getKey );
+        this.map = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
-    public ApplicationKeys getKeys()
+    public ApplicationKeys getApplicationKeys()
     {
         return ApplicationKeys.from( map.keySet() );
     }
 
-    public Application getApplication( final ApplicationKey ApplicationKey )
+    public Application getModule( final ApplicationKey ApplicationKey )
     {
         return map.get( ApplicationKey );
     }
 
-    public Applications filter( Predicate<Application> predicate )
+    @Override
+    public String toString()
     {
-        final ImmutableList<Application> applicationList = this.list.stream().
-            filter( predicate ).
-            collect( collectingAndThen( toList(), ImmutableList::copyOf ) );
-        return new Applications( applicationList );
+        return this.list.toString();
     }
 
     public static Applications empty()
@@ -53,9 +49,25 @@ public final class Applications
         return new Applications( ImmutableList.copyOf( applications ) );
     }
 
-    public static Applications from( final Iterable<? extends Application> applications )
+    public static Applications from( final Iterable<? extends Application> modules )
     {
-        return new Applications( ImmutableList.copyOf( applications ) );
+        return new Applications( ImmutableList.copyOf( modules ) );
     }
+
+    public static Applications from( final Collection<? extends Application> modules )
+    {
+        return new Applications( ImmutableList.copyOf( modules ) );
+    }
+
+    private final static class ToKeyFunction
+        implements Function<Application, ApplicationKey>
+    {
+        @Override
+        public ApplicationKey apply( final Application value )
+        {
+            return value.getKey();
+        }
+    }
+
 
 }

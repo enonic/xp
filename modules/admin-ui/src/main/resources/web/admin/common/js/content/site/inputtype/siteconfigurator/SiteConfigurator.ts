@@ -14,7 +14,7 @@ module api.content.site.inputtype.siteconfigurator {
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import ApplicationKey = api.module.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
     import GetModuleRequest = api.module.GetModuleRequest;
@@ -58,12 +58,12 @@ module api.content.site.inputtype.siteconfigurator {
 
                 this.setLayoutInProgress(false);
 
-                this.comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
+                this.comboBox.onOptionDeselected((removed: SelectedOption<Application>) => {
                     this.getPropertyArray().remove(removed.getIndex());
                     this.validate(false);
                 });
 
-                this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Module>) => {
+                this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Application>) => {
 
                     var key = event.getOption().displayValue.getApplicationKey();
                     if (!key) {
@@ -94,7 +94,7 @@ module api.content.site.inputtype.siteconfigurator {
                         siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
 
                         new GetModuleRequest(siteConfig.getApplicationKey()).sendAndParse().
-                            then((requestedModule: Module) => {
+                            then((requestedApplication: Application) => {
 
                                 this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
                                     var indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
@@ -109,7 +109,7 @@ module api.content.site.inputtype.siteconfigurator {
                                         this.validate(false);
                                     });
                                 });
-                                this.comboBox.select(requestedModule);
+                                this.comboBox.select(requestedApplication);
                             });
                     }
                 });

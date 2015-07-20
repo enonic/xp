@@ -2,21 +2,17 @@ package com.enonic.xp.app;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleNotFoundException;
-import com.enonic.xp.module.Modules;
-
 @Beta
 public interface ApplicationService
 {
-    Module getModule( ApplicationKey key )
-        throws ModuleNotFoundException;
+    Application getModule( ApplicationKey key )
+        throws ApplicationNotFoundException;
 
-    Modules getModules( ApplicationKeys keys );
+    Applications getModules( ApplicationKeys keys );
 
-    Modules getAllModules();
+    Applications getAllModules();
 
-    ClassLoader getClassLoader(Module module);
+    ClassLoader getClassLoader(Application application );
 
     void startModule( ApplicationKey key );
 

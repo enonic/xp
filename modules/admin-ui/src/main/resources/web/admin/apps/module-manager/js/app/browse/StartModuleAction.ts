@@ -1,6 +1,6 @@
 module app.browse {
 
-    import Module = api.module.Module;
+    import Application = api.module.Application;
 
     export class StartModuleAction extends api.ui.Action {
 
@@ -8,8 +8,8 @@ module app.browse {
             super("Start");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: Module[] = moduleTreeGrid.getSelectedDataList();
-                new StartModuleEvent(modules).fire();
+                var applications: Application[] = moduleTreeGrid.getSelectedDataList();
+                new StartModuleEvent(applications).fire();
             });
         }
     }

@@ -7,7 +7,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 import static org.junit.Assert.*;
 
-public class ContentTypeServiceImpl_getByModuleTest
+public class ContentTypeServiceImpl_getByApplicationTest
     extends AbstractContentTypeServiceTest
 {
     @Test

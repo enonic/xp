@@ -10,12 +10,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.ApplicationUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.module.Module;
-import com.enonic.xp.module.ModuleUpdatedEvent;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptExports;
@@ -61,15 +61,15 @@ public final class ScriptServiceImpl
 
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
-        final Module module = this.applicationService.getModule( key );
-        ClassLoader classLoader = applicationService.getClassLoader( module );
+        final Application application = this.applicationService.getModule( key );
+        ClassLoader classLoader = applicationService.getClassLoader( application );
         final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
         executor.setGlobalMap( this.globalMap );
         executor.setClassLoader( classLoader );
-        executor.setServiceRegistry( new ServiceRegistryImpl( module.getBundle().getBundleContext() ) );
+        executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
         executor.initialize();
         return executor;
     }
@@ -82,9 +82,9 @@ public final class ScriptServiceImpl
     @Override
     public void onEvent( final Event event )
     {
-        if ( event instanceof ModuleUpdatedEvent )
+        if ( event instanceof ApplicationUpdatedEvent )
         {
-            invalidate( ( (ModuleUpdatedEvent) event ).getApplicationKey() );
+            invalidate( ( (ApplicationUpdatedEvent) event ).getApplicationKey() );
         }
     }
 

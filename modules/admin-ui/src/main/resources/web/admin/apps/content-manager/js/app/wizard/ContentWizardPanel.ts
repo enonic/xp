@@ -41,7 +41,7 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
-    import Module = api.module.Module;
+    import Application = api.module.Application;
     import ApplicationKey = api.module.ApplicationKey;
     import Mixin = api.schema.mixin.Mixin;
     import MixinName = api.schema.mixin.MixinName;
@@ -284,18 +284,18 @@ module app.wizard {
         private createSteps(): wemQ.Promise<Mixin[]> {
 
             var applicationKeys = this.site ? this.site.getApplicationKeys() : [];
-            var modulePromises = applicationKeys.map((key: ApplicationKey) => this.fetchModule(key));
+            var applicationPromises = applicationKeys.map((key: ApplicationKey) => this.fetchApplication(key));
 
             return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
                 this.checkSecurityWizardStepFormAllowed(loginResult);
                 this.enablePublishIfAllowed(loginResult);
-                return wemQ.all(modulePromises);
-            }).then((modules: Module[]) => {
-                for (var i = 0; i < modules.length; i++) {
-                    var mdl = modules[i];
+                return wemQ.all(applicationPromises);
+            }).then((applications: Application[]) => {
+                for (var i = 0; i < applications.length; i++) {
+                    var mdl = applications[i];
                     if (!mdl.isStarted()) {
                         var deferred = wemQ.defer<Mixin[]>();
-                        deferred.reject(new api.Exception("Content cannot be opened. Required module '" + mdl.getDisplayName() +
+                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + mdl.getDisplayName() +
                                                           "' is not started.",
                             api.ExceptionType.WARNING));
                         return deferred.promise;
@@ -308,7 +308,7 @@ module app.wizard {
                         return this.fetchMixin(name);
                     }));
 
-                modules.forEach((mdl: Module) => {
+                applications.forEach((mdl: Application) => {
                     metadataMixinPromises = metadataMixinPromises.concat(
                         mdl.getMetaSteps().map((name: MixinName) => {
                             return this.fetchMixin(name);
@@ -356,13 +356,13 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private fetchModule(key: ApplicationKey): wemQ.Promise<Module> {
-            var deferred = wemQ.defer<Module>();
+        private fetchApplication(key: ApplicationKey): wemQ.Promise<Application> {
+            var deferred = wemQ.defer<Application>();
             new api.module.GetModuleRequest(key).sendAndParse().
                 then((mod) => {
                     deferred.resolve(mod);
                 }).catch((reason) => {
-                    deferred.reject(new api.Exception("Content cannot be opened. Required module '" + key.toString() + "' not found.",
+                    deferred.reject(new api.Exception("Content cannot be opened. Required application '" + key.toString() + "' not found.",
                         api.ExceptionType.WARNING));
                 }).done();
             return deferred.promise;
@@ -594,13 +594,13 @@ module app.wizard {
 
         private removeMetadataStepForms() {
             var applicationKeys = this.siteModel.getApplicationKeys();
-            var modulePromises = applicationKeys.map((key: ApplicationKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var applicationPromises = applicationKeys.map((key: ApplicationKey) => new api.module.GetModuleRequest(key).sendAndParse());
 
-            return wemQ.all(modulePromises).
-                then((modules: Module[]) => {
+            return wemQ.all(applicationPromises).
+                then((applications: Application[]) => {
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
-                    modules.forEach((mdl: Module) => {
+                    applications.forEach((mdl: Application) => {
                         metadataMixinPromises = metadataMixinPromises.concat(
                             mdl.getMetaSteps().map((name: MixinName) => {
                                 return new GetMixinByQualifiedNameRequest(name).sendAndParse();
@@ -634,9 +634,9 @@ module app.wizard {
 
         private addMetadataStepForms(applicationKey: ApplicationKey) {
             new api.module.GetModuleRequest(applicationKey).sendAndParse().
-                then((currentModule: Module) => {
+                then((currentApplication: Application) => {
 
-                    var mixinNames = currentModule.getMetaSteps();
+                    var mixinNames = currentApplication.getMetaSteps();
 
                     //remove already existing extraData
                     var mixinNamesToAdd = mixinNames.filter((mixinName: MixinName) => {
