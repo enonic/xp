@@ -8,16 +8,16 @@
     },
     "date_detection": false,
     "numeric_detection": false,
-    "_timestamp": {
-      "enabled": true,
-      "store": true
-    },
     "_parent": {
       "type": "version"
     },
     "properties": {
       "versionid": {
         "type": "string",
+        "index": "not_analyzed"
+      },
+      "_timestamp": {
+        "type": "date",
         "index": "not_analyzed"
       },
       "workspace": {
