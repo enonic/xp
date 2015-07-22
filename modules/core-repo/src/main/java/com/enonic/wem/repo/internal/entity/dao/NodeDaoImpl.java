@@ -138,7 +138,6 @@ public class NodeDaoImpl
             parentPath( parentPath ).
             name( nodeName ).
             nodeState( nodeBranchVersion.getNodeState() ).
-            timestamp( nodeBranchVersion.getTimestamp() ).
             build();
     }
 
