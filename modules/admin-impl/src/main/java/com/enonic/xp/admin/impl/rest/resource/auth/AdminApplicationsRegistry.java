@@ -18,8 +18,7 @@ final class AdminApplicationsRegistry
                                                                                                                        RoleKeys.USER_MANAGER_ADMIN,
                                                                                                                        RoleKeys.USER_MANAGER_APP ) );
 
-    private static final AdminApplication MODULE_MANAGER_APP =
-        new AdminApplication( "module-manager", PrincipalKeys.from( RoleKeys.ADMIN ) );
+    private static final AdminApplication APPLICATIONS_APP = new AdminApplication( "applications", PrincipalKeys.from( RoleKeys.ADMIN ) );
 
 
     private final List<AdminApplication> applications;
@@ -29,7 +28,7 @@ final class AdminApplicationsRegistry
         this.applications = new ArrayList<>();
         add( CONTENT_MANAGER_APP );
         add( USER_MANAGER_APP );
-        add( MODULE_MANAGER_APP );
+        add( APPLICATIONS_APP );
     }
 
     public AdminApplicationsRegistry add( final AdminApplication application )
