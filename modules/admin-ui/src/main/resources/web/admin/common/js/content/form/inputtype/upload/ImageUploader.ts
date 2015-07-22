@@ -105,15 +105,11 @@ module api.content.form.inputtype.upload {
                 if (!edit && crop) {
                     var container = this.getPropertyContainer(this.property);
                     if (container) {
-                        container.setDoubleByPath('cropPosition.x', crop.x);
-                        container.setDoubleByPath('cropPosition.y', crop.y);
-                        container.setDoubleByPath('cropPosition.x2', crop.x2);
-                        container.setDoubleByPath('cropPosition.y2', crop.y2);
-
-                        container.setDoubleByPath('zoomPosition.x', zoom.x);
-                        container.setDoubleByPath('zoomPosition.y', zoom.y);
-                        container.setDoubleByPath('zoomPosition.x2', zoom.x2);
-                        container.setDoubleByPath('zoomPosition.y2', zoom.y2);
+                        container.setDoubleByPath('cropPosition.left', crop.x);
+                        container.setDoubleByPath('cropPosition.top', crop.y);
+                        container.setDoubleByPath('cropPosition.right', crop.x2);
+                        container.setDoubleByPath('cropPosition.bottom', crop.y2);
+                        container.setDoubleByPath('cropPosition.zoom', (zoom.x2 - zoom.x) / (crop.x2 - crop.x));
                     }
                 }
             });
@@ -185,10 +181,10 @@ module api.content.form.inputtype.upload {
             }
 
             var cropPositionSet = property.getPropertySet(),
-                x = cropPositionSet.getDouble('x'),
-                y = cropPositionSet.getDouble('y'),
-                x2 = cropPositionSet.getDouble('x2'),
-                y2 = cropPositionSet.getDouble('y2');
+                x = cropPositionSet.getDouble('left'),
+                y = cropPositionSet.getDouble('top'),
+                x2 = cropPositionSet.getDouble('right'),
+                y2 = cropPositionSet.getDouble('bottom');
 
             return {
                 x: x,

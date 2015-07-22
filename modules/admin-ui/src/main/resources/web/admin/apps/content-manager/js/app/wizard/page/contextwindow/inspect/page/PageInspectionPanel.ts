@@ -4,6 +4,7 @@ module app.wizard.page.contextwindow.inspect.page {
     import PropertyTree = api.data.PropertyTree;
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
+    import FormContext = api.form.FormContext;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
     import SetTemplate = api.content.page.SetTemplate;
