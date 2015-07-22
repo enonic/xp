@@ -19,7 +19,7 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private final static String PATH = "/app/parts";
+    private final static String PATH = "/site/parts";
 
     protected ApplicationService applicationService;
 

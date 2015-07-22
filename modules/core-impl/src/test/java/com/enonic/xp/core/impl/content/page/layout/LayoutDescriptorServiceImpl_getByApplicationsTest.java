@@ -18,7 +18,7 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
         final Application application = createModule( "foomodule" );
         createDescriptors( "foomodule:foomodule-layout-descr" );
 
-        mockResources( application, "/app/layouts", "*.xml", true, "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        mockResources( application, "/site/layouts", "*.xml", true, "site/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
         final LayoutDescriptors result = this.service.getByModule( application.getKey() );
 
         Assert.assertNotNull( result );
@@ -32,10 +32,10 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
         final Applications applications = createModules( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-layout-descr", "barmodule:barmodule-layout-descr" );
 
-        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/app/layouts", "*.xml", true,
-                       "app/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/app/layouts", "*.xml", true,
-                       "app/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
+        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/site/layouts", "*.xml", true,
+                       "site/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/site/layouts", "*.xml", true,
+                       "site/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
 
         final LayoutDescriptors result = this.service.getByModules( applications.getApplicationKeys() );
 

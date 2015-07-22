@@ -40,7 +40,7 @@ public class RenderMustacheTest
     {
         final String output = runTestFunction( "test/mustache-test.js", "render" ).getValue().toString();
         final String result = stripEmptyLines( output );
-        final String expected = stripEmptyLines( readFile( "/app/test/view/test-result.html" ) );
+        final String expected = stripEmptyLines( readFile( "/site/test/view/test-result.html" ) );
         assertEquals( expected, result );
     }
 }

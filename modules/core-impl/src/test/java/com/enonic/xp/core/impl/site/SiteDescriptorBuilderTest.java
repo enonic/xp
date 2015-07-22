@@ -17,7 +17,7 @@ public class SiteDescriptorBuilderTest
 
     private static final String TEST_SITE_DESCRIPTOR_FILENAME = "site.xml";
 
-    private static final String SITE_DESCRIPTOR_FILENAME = "app/site.xml";
+    private static final String SITE_DESCRIPTOR_FILENAME = "site/site.xml";
 
     @Before
     public void setup()

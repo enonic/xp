@@ -38,7 +38,7 @@ public final class AssetResource
     private void resolveResourceUrl( final String key, final String path )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
-        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "app/assets/" + path ) );
+        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "site/assets/" + path ) );
 
         if ( resource == null )
         {

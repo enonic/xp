@@ -17,7 +17,7 @@ import com.enonic.xp.resource.Resources;
 final class GetPageDescriptorsByModulesCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModulesCommand>
 {
-    private final static String PATH = "/app/pages";
+    private final static String PATH = "/site/pages";
 
     private ApplicationKeys applicationKeys;
 

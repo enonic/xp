@@ -28,7 +28,7 @@ public class ApplicationTest
     public void setup()
         throws Exception
     {
-        this.bundle = mockBundle( "app/site.xml", "app/parts/mypart/part.xml", "app/pages/mypage/page.xml" );
+        this.bundle = mockBundle( "site/site.xml", "site/parts/mypart/part.xml", "site/pages/mypage/page.xml" );
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ApplicationTest
         }
         final Enumeration<URL> bundleEntries = Collections.enumeration( urlList );
         Mockito.when( bundle.findEntries( isA( String.class ), isA( String.class ), isA( Boolean.class ) ) ).thenReturn( bundleEntries );
-        Mockito.when( bundle.getEntry( "app/site.xml" ) ).thenReturn( new URL( "http://109.0:1/app/site.xml" ) );
+        Mockito.when( bundle.getEntry( "site/site.xml" ) ).thenReturn( new URL( "http://109.0:1/site/site.xml" ) );
         Mockito.when( bundle.getLastModified() ).thenReturn( 3l );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "mymodule" );
