@@ -110,20 +110,22 @@ public class Media
             return null;
         }
 
-        final Long top = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_TOP );
-        final Long left = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_LEFT );
-        final Long bottom = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_BOTTOM );
-        final Long right = croppingData.getLong( ContentPropertyNames.MEDIA_CROPPING_RIGHT );
+        final Double top = croppingData.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP );
+        final Double left = croppingData.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT );
+        final Double bottom = croppingData.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM );
+        final Double right = croppingData.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT );
+        final Double zoom = croppingData.getDouble( ContentPropertyNames.MEDIA_CROPPING_ZOOM );
         if ( left == null || top == null || bottom == null || right == null )
         {
             return null;
         }
 
         return Cropping.create().
-            top( top.intValue() ).
-            left( left.intValue() ).
-            bottom( bottom.intValue() ).
-            right( right.intValue() ).
+            zoom( zoom ).
+            top( top ).
+            left( left ).
+            bottom( bottom ).
+            right( right ).
             build();
     }
 

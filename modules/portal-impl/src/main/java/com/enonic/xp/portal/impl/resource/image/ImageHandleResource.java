@@ -117,7 +117,10 @@ public final class ImageHandleResource
         {
             return sourceImage;
         }
-        return sourceImage.getSubimage( cropping.left(), cropping.top(), cropping.width(), cropping.height() );
+        final double width = sourceImage.getWidth() / cropping.zoom();
+        final double height = sourceImage.getHeight() / cropping.zoom();
+        return sourceImage.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ),
+                                        (int) ( width * cropping.width() ), (int) ( height * cropping.height() ) );
     }
 
     private BufferedImage toBufferedImage( final ByteSource byteSource )

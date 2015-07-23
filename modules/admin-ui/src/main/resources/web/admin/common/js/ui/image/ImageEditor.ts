@@ -825,12 +825,8 @@ module api.ui.image {
             }
         }
 
-        /**
-         * Gets the crop area
-         * @returns {{x, y, w, h}|SVGRect}
-         */
-        getCropPosition(): SVGRect {
-            return this.normalizeRect(this.getCropPositionPx());
+        getCropPosition(): Rect {
+            return this.rectFromSVG(this.normalizeRect(this.getCropPositionPx()));
         }
 
         private getCropPositionPx(): SVGRect {
@@ -860,20 +856,22 @@ module api.ui.image {
         private createCropButtonsContainer(): DivEl {
             var cropButton = new Button('Crop');
             cropButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => {
-                this.disableCropEditMode();
                 this.resetFocusPosition();
                 this.updateRevertFocusData();
+                // should be done last as uses zoom and crop positions
+                this.disableCropEditMode();
             });
 
             var resetButton = new Button('Reset');
             resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
-                this.disableCropEditMode();
                 this.resetZoomPosition();
                 this.resetCropPosition();
                 this.resetFocusPosition();
                 this.updateRevertCropData();
                 this.updateRevertZoomData();
                 this.updateRevertFocusData();
+                // should be done last as uses zoom and crop positions
+                this.disableCropEditMode();
             });
 
             var cancelButton = new Button('Cancel');
@@ -1216,8 +1214,8 @@ module api.ui.image {
             }
         }
 
-        getZoomPosition(): SVGRect {
-            return this.normalizeRect(this.getZoomPositionPx());
+        getZoomPosition(): Rect {
+            return this.rectFromSVG(this.normalizeRect(this.getZoomPositionPx()));
         }
 
         private getZoomPositionPx(): SVGRect {
@@ -1489,11 +1487,9 @@ module api.ui.image {
             })
         }
 
-        private notifyCropModeChanged(edit: boolean, position: SVGRect, zoom: SVGRect) {
-            var p = this.rectFromSVG(position);
-            var z = this.rectFromSVG(zoom);
+        private notifyCropModeChanged(edit: boolean, position: Rect, zoom: Rect) {
             this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, p, z);
+                listener(edit, position, zoom);
             })
         }
 
