@@ -72,8 +72,7 @@ module api.ui.image {
         private focalButtonsContainer: DivEl;
         private cropButtonsContainer: DivEl;
 
-        private focalPointButton: Button;
-        private cropButton: Button;
+        private editButton: Button;
         private uploadButton: api.dom.ButtonEl;
 
         private focusPositionChangedListeners: {(position: Point): void}[] = [];
@@ -555,7 +554,6 @@ module api.ui.image {
         private setFocusAutoPositioned(auto: boolean) {
             var autoChanged = this.focusData.auto != auto;
             this.focusData.auto = auto;
-            this.focalPointButton.toggleClass('manual', !auto);
 
             this.toggleClass('focused', !auto);
 
@@ -633,16 +631,13 @@ module api.ui.image {
         private createButtonsContainer(): DivEl {
             var toolbar = new DivEl('buttons-container');
 
-            this.focalPointButton = new Button();
-            this.focalPointButton.addClass('button-focal icon-center_focus_strong').onClicked((event: MouseEvent) => this.enableFocusEditMode());
-
-            this.cropButton = new Button();
-            this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.enableCropEditMode());
+            this.editButton = new Button('Edit');
+            this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => this.enableCropEditMode());
 
             this.uploadButton = new Button();
             this.uploadButton.addClass('button-upload');
 
-            toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
+            toolbar.appendChildren(this.editButton, this.uploadButton);
 
             return toolbar;
         }
@@ -847,7 +842,7 @@ module api.ui.image {
         private setCropAutoPositioned(auto: boolean) {
             var autoChanged = this.cropData.auto != auto;
             this.cropData.auto = auto;
-            this.cropButton.toggleClass('manual', !auto);
+
             if (autoChanged) {
                 this.notifyCropAutoPositionedChanged(auto);
             }
