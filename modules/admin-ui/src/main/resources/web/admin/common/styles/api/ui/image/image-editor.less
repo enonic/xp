@@ -66,50 +66,45 @@
       z-index: 10;
       text-align: center;
       position: absolute;
-      top: 40%;
+      top: 50%;
+      margin-top: -50px;
+      height: 100px;
       display: block;
       width: inherit;
-      height: 100px;
       background-color: rgba(255, 255, 255, .6);
 
       .button {
-        background-color: #6C6A73;
-        font-size: 32px;
-        width: 50px;
-        height: 50px;
         margin: 25px 15px 0 15px;
-        padding: 0 0 0 8px;
-        -webkit-filter: contrast(1.5);
-        filter: contrast(1.5);
-        .button-foreground(@admin-white);
-        &.manual {
-          .button-foreground(@admin-input-blue);
+
+        .filter(contrast(1.5));
+      }
+
+      .button-edit, .button-reset {
+        padding: 1px 40px;
+        span {
+          font-size: 18px;
+          line-height: 46px;
         }
-      }
-
-      .button-focal:before {
-        display: table-caption;
-        content: "\e149";
-      }
-
-      .button-mask:before {
-        display: table-caption;
-        content: "\e02b";
       }
 
       .button-upload {
-        &:before {
-          color: transparent;
-        }
+        width: 50px;
+        height: 50px;
         background-image: url("../../common/images/upload_white.png");
         background-repeat: no-repeat;
         background-size: 30px;
         background-position: 10px;
         vertical-align: top;
+
+        .button-background(#6C6A73);
+
+        &:before {
+          color: transparent;
+        }
       }
     }
 
-    &.focused&:not(.edit-mode) {
+    &.focused:not(.edit-mode) {
       .image-frame .image-canvas {
         > svg {
           display: block;
