@@ -73,6 +73,7 @@ module api.ui.image {
         private cropButtonsContainer: DivEl;
 
         private editButton: Button;
+        private resetButton: Button;
         private uploadButton: api.dom.ButtonEl;
 
         private focusPositionChangedListeners: {(position: Point): void}[] = [];
@@ -634,10 +635,16 @@ module api.ui.image {
             this.editButton = new Button('Edit');
             this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => this.enableCropEditMode());
 
+            this.resetButton = new Button('Reset');
+            this.resetButton.addClass('button-reset red').onClicked((event: MouseEvent) => {
+                this.resetCropPosition();
+                this.resetFocusPosition();
+            });
+
             this.uploadButton = new Button();
             this.uploadButton.addClass('button-upload');
 
-            toolbar.appendChildren(this.editButton, this.uploadButton);
+            toolbar.appendChildren(this.editButton, this.resetButton, this.uploadButton);
 
             return toolbar;
         }
