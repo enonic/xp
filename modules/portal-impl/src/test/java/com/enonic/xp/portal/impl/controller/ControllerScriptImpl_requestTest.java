@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
@@ -11,6 +12,13 @@ import static org.junit.Assert.*;
 public class ControllerScriptImpl_requestTest
     extends AbstractControllerTest
 {
+    @Before
+    public void setupMe()
+        throws Exception
+    {
+        mockResource( "mymodule:/controller/request.js" );
+    }
+
     @Test
     public void testSimple()
         throws Exception

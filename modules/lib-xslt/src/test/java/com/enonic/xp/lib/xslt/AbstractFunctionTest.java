@@ -12,7 +12,9 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 import com.enonic.xp.xml.DomHelper;
@@ -23,6 +25,8 @@ public abstract class AbstractFunctionTest
 {
     private XsltProcessor processor;
 
+    private ResourceService resourceService;
+
     @Before
     public final void setup()
     {
@@ -32,7 +36,10 @@ public abstract class AbstractFunctionTest
         final XsltService service = new XsltService();
         service.setViewFunctionService( () -> Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
+        this.resourceService = Mockito.mock( ResourceService.class );
+
         this.processor = service.newProcessor();
+        this.processor.setResourceService( this.resourceService );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
@@ -61,5 +68,13 @@ public abstract class AbstractFunctionTest
         throws Exception
     {
         return DomHelper.serialize( DomHelper.parse( xml ) );
+    }
+
+    protected void mockResource( String uri )
+        throws Exception
+    {
+        ResourceKey key = ResourceKey.from( uri );
+        Resource res = new Resource( ResourceKey.from( uri ), new URL( "module:" + uri ) );
+        Mockito.when( this.resourceService.getResource( key ) ).thenReturn( res );
     }
 }

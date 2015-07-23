@@ -15,7 +15,7 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
     public void getDescriptorsFromSingleModule()
         throws Exception
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "foomodule" );
         createDescriptors( "foomodule:foomodule-layout-descr" );
 
         mockResources( application, "/site/layouts", "*.xml", true, "site/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );

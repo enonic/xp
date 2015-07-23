@@ -2,18 +2,23 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.ResourceUrlRegistry;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
@@ -23,7 +28,13 @@ import static org.junit.Assert.*;
 public class LocaleServiceImplTest
 {
 
-    private LocaleService localeService;
+    private LocaleServiceImpl localeService;
+
+    protected ApplicationService applicationService;
+
+    protected ResourceServiceImpl resourceService;
+
+    protected Bundle bundle;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -52,6 +63,30 @@ public class LocaleServiceImplTest
 
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
+        this.bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getResource( "/site/i18n/phrases_en_US_1.properties" ) ).thenReturn(
+            new URL( "module:mymodule:/site/i18n/phrases_en_US_1.properties" ) );
+        Mockito.when( bundle.getResource( "/site/i18n/phrases_en_US.properties" ) ).thenReturn(
+            new URL( "module:mymodule:/site/i18n/phrases_en_US.properties" ) );
+        Mockito.when( bundle.getResource( "/site/i18n/phrases_en.properties" ) ).thenReturn(
+            new URL( "module:mymodule:/site/i18n/phrases_en.properties" ) );
+        Mockito.when( bundle.getResource( "/site/i18n/phrases.properties" ) ).thenReturn(
+            new URL( "module:mymodule:/site/i18n/phrases.properties" ) );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+
+        Application module = Mockito.mock( Application.class );
+        Mockito.when( module.getKey() ).thenReturn( applicationKey );
+        Mockito.when( module.getBundle() ).thenReturn( bundle );
+
+        this.applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( module );
+
+        this.resourceService = new ResourceServiceImpl();
+        this.resourceService.setApplicationService( applicationService );
+
+        this.localeService.setResourceService( this.resourceService );
     }
 
 

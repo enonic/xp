@@ -22,6 +22,7 @@ public class ScriptingTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         setupRequest();
 
@@ -34,10 +35,14 @@ public class ScriptingTest
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
+
         Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ) ) ).
             thenAnswer( mock -> bundle );
 
         addService( LocaleService.class, localeService );
+
+        mockResource( "mymodule:/test/localize-test.js" );
+        mockResource( "mymodule:/site/lib/xp/i18n.js" );
     }
 
     @Test

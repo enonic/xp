@@ -12,8 +12,12 @@ public class GetCurrentContentScriptTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         setupRequest();
+
+        mockResource( "mymodule:/test/getCurrentContent-test.js" );
+        mockResource( "mymodule:/site/lib/xp/portal.js" );
     }
 
     @Test

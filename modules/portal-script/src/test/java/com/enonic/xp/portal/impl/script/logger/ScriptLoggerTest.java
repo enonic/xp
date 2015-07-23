@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.script.logger;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
@@ -7,6 +8,14 @@ import com.enonic.xp.portal.impl.script.AbstractScriptTest;
 public class ScriptLoggerTest
     extends AbstractScriptTest
 {
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        mockResource( "mymodule:/logging/log-test.js" );
+    }
+
     @Test
     public void testLog()
         throws Exception
@@ -18,6 +27,6 @@ public class ScriptLoggerTest
     public void testFormat()
         throws Exception
     {
-        runTestScript( "logging/format-test.js" );
+        runTestScript( "logging/log-test.js" );
     }
 }

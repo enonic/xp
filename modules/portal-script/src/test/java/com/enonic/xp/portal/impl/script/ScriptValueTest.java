@@ -1,18 +1,27 @@
 package com.enonic.xp.portal.impl.script;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.ResourceProblemException;
 
 import static org.junit.Assert.*;
 
 public class ScriptValueTest
     extends AbstractScriptTest
 {
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        mockResource( "mymodule:/value/value-test.js" );
+    }
+
     private ScriptValue evalValue( final String name )
         throws Exception
     {

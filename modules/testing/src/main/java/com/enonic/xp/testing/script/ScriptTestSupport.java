@@ -1,5 +1,7 @@
 package com.enonic.xp.testing.script;
 
+import java.net.URL;
+
 import org.junit.Assert;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -18,7 +20,9 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
@@ -31,6 +35,8 @@ public abstract class ScriptTestSupport
     private final BundleContext bundleContext;
 
     protected final PortalRequest portalRequest;
+
+    protected final ResourceService resourceService;
 
     public ScriptTestSupport()
     {
@@ -51,7 +57,10 @@ public abstract class ScriptTestSupport
         Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
+        this.resourceService = Mockito.mock( ResourceService.class );
+
         this.scriptService.setApplicationService( applicationService );
+        this.scriptService.setResourceService( resourceService );
         this.portalRequest = new PortalRequest();
     }
 
@@ -99,5 +108,13 @@ public abstract class ScriptTestSupport
     protected ApplicationKey getApplicationKey()
     {
         return DEFAULT_MODULE_KEY;
+    }
+
+    protected void mockResource( String uri )
+        throws Exception
+    {
+        ResourceKey key = ResourceKey.from( uri );
+        Resource res = new Resource( ResourceKey.from( uri ), new URL( "module:" + uri ) );
+        Mockito.when( this.resourceService.getResource( key ) ).thenReturn( res );
     }
 }

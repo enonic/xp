@@ -17,9 +17,13 @@ public class UrlServiceScriptTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         setupRequest();
         addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
+
+        mockResource( "mymodule:/test/url-test.js" );
+        mockResource( "mymodule:/site/lib/xp/portal.js" );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

@@ -60,6 +60,9 @@ public class CreateContentHandlerTest
                                                                    Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
             thenReturn( extraData );
 
+        mockResource( "mymodule:/test/CreateContentHandlerTest.js" );
+        mockResource( "mymodule:/site/lib/xp/content.js" );
+
         runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }
 

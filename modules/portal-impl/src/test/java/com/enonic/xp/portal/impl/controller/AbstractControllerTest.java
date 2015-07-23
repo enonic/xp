@@ -22,7 +22,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -37,6 +39,8 @@ public abstract class AbstractControllerTest
     protected PortalResponse portalResponse;
 
     private final ObjectMapper mapper;
+
+    protected ResourceService resourceService;
 
     public AbstractControllerTest()
     {
@@ -67,8 +71,11 @@ public abstract class AbstractControllerTest
         Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
+        this.resourceService = Mockito.mock( ResourceService.class );
+
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();
         scriptService.setApplicationService( applicationService );
+        scriptService.setResourceService( this.resourceService );
 
         this.factory = new ControllerScriptFactoryImpl();
         this.factory.setScriptService( scriptService );
@@ -106,5 +113,13 @@ public abstract class AbstractControllerTest
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
         Assert.assertEquals( expectedStr, actualStr );
+    }
+
+    protected void mockResource( String uri )
+        throws Exception
+    {
+        ResourceKey key = ResourceKey.from( uri );
+        Resource res = new Resource( ResourceKey.from( uri ), new URL( "module:" + uri ) );
+        Mockito.when( this.resourceService.getResource( key ) ).thenReturn( res );
     }
 }

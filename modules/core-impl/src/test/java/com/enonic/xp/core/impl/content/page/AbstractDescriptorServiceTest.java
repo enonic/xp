@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public abstract class AbstractDescriptorServiceTest
 
     protected abstract String toDescriptorXml( DescriptorKey key );
 
-    protected final Application createModule( final String key )
+    protected final Application createApplication( final String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
@@ -96,7 +97,7 @@ public abstract class AbstractDescriptorServiceTest
         final List<Application> list = Lists.newArrayList();
         for ( final String key : keys )
         {
-            list.add( createModule( key ) );
+            list.add( createApplication( key ) );
         }
 
         final Applications applications = Applications.from( list );
@@ -107,11 +108,15 @@ public abstract class AbstractDescriptorServiceTest
 
     protected final void mockResources( final Application application, final String rootPath, final String filePattern, final boolean recurse,
                                         final String... paths )
+        throws Exception
     {
         List<Resource> resourceList = new ArrayList<Resource>();
         for ( final String path : paths )
         {
-            resourceList.add( Resource.from( ResourceKey.from( application.getKey(), path ) ) );
+            final Resource resource =
+                new Resource( ResourceKey.from( application.getKey(), path ), new URL( "module:" + application.getKey() + ":" + path ) );
+            Mockito.when( this.resourceService.getResource( ResourceKey.from( application.getKey(), path ) ) ).thenReturn( resource );
+            resourceList.add( this.resourceService.getResource( ResourceKey.from( application.getKey(), path ) ) );
         }
         Resources resources = Resources.from( resourceList );
 

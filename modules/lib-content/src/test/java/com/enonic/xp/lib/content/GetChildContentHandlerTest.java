@@ -19,9 +19,13 @@ public class GetChildContentHandlerTest
 
     @Before
     public void setup()
+        throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
         addService( ContentService.class, this.contentService );
+
+        mockResource( "mymodule:/test/GetChildContentHandlerTest.js" );
+        mockResource( "mymodule:/site/lib/xp/content.js" );
     }
 
     @Test

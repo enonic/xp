@@ -2,19 +2,28 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.Assert.*;
 
 public class ResourceTest
 {
+
+    private ResourceService resourceService;
+
+    private ApplicationKey applicationKey;
+
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -37,6 +46,9 @@ public class ResourceTest
         writeFile( modulesDir, "mymodule/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule/a.txt", "a.txt" );
 
+        applicationKey = ApplicationKey.from( "mymodule" );
+        this.resourceService = Mockito.mock( ResourceService.class );
+
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
     }
@@ -45,9 +57,11 @@ public class ResourceTest
     public void testGetResource()
         throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( applicationKey, "/a/b.txt" );
 
-        final Resource resource = Resource.from( key );
+        mockResource( "mymodule:/a/b.txt" );
+
+        final Resource resource = resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -62,13 +76,17 @@ public class ResourceTest
     @Test
     public void testGetResource_notFound()
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( applicationKey, "/not/exists.txt" );
 
-        final Resource resource = Resource.from( key );
-        assertNotNull( resource );
-        assertEquals( key, resource.getKey() );
-        assertEquals( -1, resource.getSize() );
-        assertEquals( -1, resource.getTimestamp() );
-        assertFalse( resource.exists() );
+        final Resource resource = resourceService.getResource( key );
+        assertNull( resource );
+    }
+
+    protected void mockResource( String uri )
+        throws Exception
+    {
+        ResourceKey key = ResourceKey.from( uri );
+        Resource res = new Resource( ResourceKey.from( uri ), new URL( "module:" + uri ) );
+        Mockito.when( this.resourceService.getResource( key ) ).thenReturn( res );
     }
 }

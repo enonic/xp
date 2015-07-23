@@ -28,7 +28,9 @@ public final class PageDescriptorServiceImpl
     {
         return new GetPageDescriptorCommand().
             mixinService( this.mixinService ).
-            key( key ).execute();
+            key( key ).
+            resourceService( this.resourceService ).
+            execute();
     }
 
     @Override

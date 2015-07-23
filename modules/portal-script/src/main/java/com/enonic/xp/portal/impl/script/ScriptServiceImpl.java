@@ -22,6 +22,7 @@ import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true, service = {ScriptService.class, EventListener.class})
 public final class ScriptServiceImpl
@@ -32,6 +33,8 @@ public final class ScriptServiceImpl
     private final ConcurrentMap<ApplicationKey, ScriptExecutor> executors;
 
     private ApplicationService applicationService;
+
+    private ResourceService resourceService;
 
     public ScriptServiceImpl()
     {
@@ -70,6 +73,7 @@ public final class ScriptServiceImpl
         executor.setGlobalMap( this.globalMap );
         executor.setClassLoader( classLoader );
         executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
+        executor.setResourceService( this.resourceService );
         executor.initialize();
         return executor;
     }
@@ -92,5 +96,11 @@ public final class ScriptServiceImpl
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }
