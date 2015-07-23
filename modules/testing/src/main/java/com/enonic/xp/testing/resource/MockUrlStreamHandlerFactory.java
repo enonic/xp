@@ -19,7 +19,7 @@ final class MockUrlStreamHandlerFactory
     @Override
     public URL getUrl( final ResourceKey resourceKey )
     {
-        final URL url = resolveUrl( "app" + resourceKey.getPath() );
+        final URL url = resolveUrl( "site" + resourceKey.getPath() );
         if ( url != null )
         {
             return url;

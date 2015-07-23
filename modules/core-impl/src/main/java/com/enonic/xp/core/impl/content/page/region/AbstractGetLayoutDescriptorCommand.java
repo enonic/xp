@@ -21,7 +21,7 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static String PATH = "/app/layouts";
+    private final static String PATH = "/site/layouts";
 
     private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 

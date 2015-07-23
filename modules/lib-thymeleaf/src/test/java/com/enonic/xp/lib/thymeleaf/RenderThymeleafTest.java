@@ -47,7 +47,7 @@ public class RenderThymeleafTest
         throws Exception
     {
         final String result = execute( "renderTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/app/test/view/test-result.html" ), Charsets.UTF_8 );
+        final String expected = Resources.toString( getClass().getResource( "/site/test/view/test-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
@@ -56,7 +56,7 @@ public class RenderThymeleafTest
         throws Exception
     {
         final String result = execute( "functionsTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/app/test/view/functions-result.html" ), Charsets.UTF_8 );
+        final String expected = Resources.toString( getClass().getResource( "/site/test/view/functions-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
@@ -65,7 +65,7 @@ public class RenderThymeleafTest
         throws Exception
     {
         final String result = execute( "fragmentsTest" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/app/test/fragment/fragment-result.html" ), Charsets.UTF_8 );
+        final String expected = Resources.toString( getClass().getResource( "/site/test/fragment/fragment-result.html" ), Charsets.UTF_8 );
         assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 

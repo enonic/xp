@@ -23,7 +23,7 @@ public abstract class AbstractLayoutDescriptorServiceTest
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "app/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "site/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     @Override

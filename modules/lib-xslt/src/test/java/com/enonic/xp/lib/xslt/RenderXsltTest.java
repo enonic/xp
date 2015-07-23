@@ -37,7 +37,7 @@ public class RenderXsltTest
     {
         final String result = cleanupXml( execute( "render" ).toString() );
         final String expected =
-            cleanupXml( Resources.toString( getClass().getResource( "/app/test/view/test-result.xml" ), Charsets.UTF_8 ) );
+            cleanupXml( Resources.toString( getClass().getResource( "/site/test/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }
 

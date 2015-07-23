@@ -60,7 +60,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRequire()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/app/require/require-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/site/require/require-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
     }
@@ -68,7 +68,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRequire_3rd()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/app/require/3rd/require-3rd-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/site/require/3rd/require-3rd-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
     }

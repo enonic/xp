@@ -39,7 +39,7 @@ final class BundleConfigurator
 
         final String importPackage = instructions.remove( IMPORT_PACKAGE );
         instruction( IMPORT_PACKAGE, importPackage != null ? importPackage : DEFAULT_IMPORT );
-        instruction( PRIVATE_PACKAGE, "app.*;-split-package:=merge-first" );
+        instruction( PRIVATE_PACKAGE, "site.*;-split-package:=merge-first" );
 
         instruction( "-removeheaders", "Require-Capability,Include-Resource" );
         instruction( "-nouses", "true" );

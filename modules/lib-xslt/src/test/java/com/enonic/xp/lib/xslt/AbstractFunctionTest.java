@@ -51,7 +51,7 @@ public abstract class AbstractFunctionTest
         this.processor.setModel( null );
         final String actual = cleanupXml( this.processor.process() );
 
-        final URL actualUrl = getClass().getResource( "/app" + name + "-result.xml" );
+        final URL actualUrl = getClass().getResource( "/site" + name + "-result.xml" );
         final String expected = cleanupXml( Resources.toString( actualUrl, Charsets.UTF_8 ) );
 
         assertEquals( expected, actual );

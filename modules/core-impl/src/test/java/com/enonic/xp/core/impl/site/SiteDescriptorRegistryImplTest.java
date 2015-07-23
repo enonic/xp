@@ -25,7 +25,7 @@ public class SiteDescriptorRegistryImplTest
 
     private static final String TEST_SITE_DESCRIPTOR_FILENAME = "site.xml";
 
-    private static final String SITE_DESCRIPTOR_FILENAME = "app/site.xml";
+    private static final String SITE_DESCRIPTOR_FILENAME = "site/site.xml";
 
     private ResourceTestHelper resourceTestHelper;
 
