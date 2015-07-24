@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.xslt;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -13,6 +14,13 @@ import com.enonic.xp.portal.RenderMode;
 public class UrlFunctionsTest
     extends AbstractFunctionTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        mockResource( "mymodule:/test/url/UrlFunctionsTest.xsl" );
+    }
+
     @Test
     public void testAll()
         throws Exception

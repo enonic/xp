@@ -29,7 +29,9 @@ public final class PartDescriptorServiceImpl
         return new GetPartDescriptorCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
-            key( key ).execute();
+            resourceService( this.resourceService ).
+            key( key ).
+            execute();
     }
 
     @Override
@@ -39,7 +41,8 @@ public final class PartDescriptorServiceImpl
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            applicationKey( applicationKey ).execute();
+            applicationKey( applicationKey ).
+            execute();
     }
 
     @Override
@@ -49,7 +52,8 @@ public final class PartDescriptorServiceImpl
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            applicationKeys( applicationKeys ).execute();
+            applicationKeys( applicationKeys ).
+            execute();
     }
 
     @Reference

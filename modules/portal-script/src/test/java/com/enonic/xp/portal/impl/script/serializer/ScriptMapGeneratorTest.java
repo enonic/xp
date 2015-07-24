@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.script.serializer;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -13,6 +14,14 @@ import com.enonic.xp.portal.script.serializer.MapSerializable;
 public class ScriptMapGeneratorTest
     extends AbstractScriptTest
 {
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        mockResource( "mymodule:/serializer/serializer-test.js" );
+    }
+
     @Test
     public void testObject()
     {

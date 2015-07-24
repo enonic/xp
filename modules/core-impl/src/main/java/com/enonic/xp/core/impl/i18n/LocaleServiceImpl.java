@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
+import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
@@ -25,6 +27,8 @@ public final class LocaleServiceImpl
     private static final String PHRASE_FOLDER = "site/i18n/phrases";
 
     private static final String DELIMITER = "_";
+
+    private ResourceService resourceService;
 
     @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
@@ -80,7 +84,7 @@ public final class LocaleServiceImpl
         final ResourceKey resourceKey = ResourceKey.from( applicationKey, PHRASE_FOLDER + bundleExtension + ".properties" );
         try
         {
-            final Resource resource = Resource.from( resourceKey );
+            final Resource resource = resourceService.getResource( resourceKey );
 
             if ( resource != null && resource.exists() )
             {
@@ -112,5 +116,11 @@ public final class LocaleServiceImpl
         }
 
         return properties;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }

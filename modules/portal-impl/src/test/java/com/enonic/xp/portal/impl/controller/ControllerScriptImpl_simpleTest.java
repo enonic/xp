@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -9,6 +10,13 @@ import static org.junit.Assert.*;
 public class ControllerScriptImpl_simpleTest
     extends AbstractControllerTest
 {
+    @Before
+    public void setupMe()
+        throws Exception
+    {
+        mockResource( "mymodule:/controller/simple.js" );
+    }
+
     @Test
     public void testExecute()
     {
@@ -16,7 +24,6 @@ public class ControllerScriptImpl_simpleTest
         execute( "mymodule:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
     }
-
 
     @Test
     public void testMethodNotSupported()

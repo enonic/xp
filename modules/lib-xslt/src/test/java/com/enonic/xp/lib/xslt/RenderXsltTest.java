@@ -11,6 +11,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 import com.enonic.xp.xml.DomHelper;
 
@@ -21,8 +22,14 @@ public class RenderXsltTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
+        addService( ResourceService.class, this.resourceService );
+
+        mockResource( "mymodule:/test/xslt-test.js" );
+        mockResource( "mymodule:/site/lib/xp/xslt.js" );
+        mockResource( "mymodule:/test/view/test.xsl" );
     }
 
     private Object execute( final String method )

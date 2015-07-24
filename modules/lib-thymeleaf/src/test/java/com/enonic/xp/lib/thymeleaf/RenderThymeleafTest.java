@@ -24,9 +24,13 @@ public class RenderThymeleafTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         setupRequest();
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
+
+        mockResource( "mymodule:/test/thymeleaf-test.js" );
+        mockResource( "mymodule:/site/lib/xp/thymeleaf.js" );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

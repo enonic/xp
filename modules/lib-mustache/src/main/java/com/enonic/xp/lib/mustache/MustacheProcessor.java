@@ -8,6 +8,7 @@ import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.resource.ResourceService;
 
 public final class MustacheProcessor
 {
@@ -16,6 +17,8 @@ public final class MustacheProcessor
     private ResourceKey view;
 
     private ScriptValue model;
+
+    private ResourceService resourceService;
 
     public MustacheProcessor( final Mustache.Compiler compiler )
     {
@@ -44,9 +47,14 @@ public final class MustacheProcessor
         }
     }
 
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+    }
+
     private String doProcess()
     {
-        final Resource resource = Resource.from( this.view );
+        final Resource resource = resourceService.getResource( this.view );
         final Template template = this.compiler.compile( resource.readString() );
         return template.execute( this.model.getMap() );
     }

@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.script.function;
 
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class RequireFunction
@@ -52,7 +51,7 @@ public final class RequireFunction
         }
 
         final ResourceKey resolved = this.script.resolve( "../" + name );
-        if ( Resource.from( resolved ).exists() )
+        if ( this.executor.getResourceService().getResource( resolved ).exists() )
         {
             return resolved;
         }
