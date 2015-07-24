@@ -103,18 +103,17 @@ module api.content.form.inputtype.upload {
                 this.toggleClass('standout', edit);
 
                 if (!edit && crop) {
-                    var container = this.getPropertyContainer(this.property);
-                    if (container) {
-                        container.setDoubleByPath('cropPosition.left', crop.x);
-                        container.setDoubleByPath('cropPosition.top', crop.y);
-                        container.setDoubleByPath('cropPosition.right', crop.x2);
-                        container.setDoubleByPath('cropPosition.bottom', crop.y2);
-                        container.setDoubleByPath('cropPosition.zoom', (zoom.x2 - zoom.x) / (crop.x2 - crop.x));
-                    }
+                    this.saveToProperty(crop, zoom);
                 }
             });
 
-            this.imageUploader.onFocalPointEditModeChanged((edit: boolean, position: Point) => {
+            this.imageUploader.onCropAutoPositionedChanged((auto) => {
+                if (auto) {
+                    this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1});
+                }
+            });
+
+            this.imageUploader.onFocusEditModeChanged((edit: boolean, position: Point) => {
                 this.validate(false);
                 this.toggleClass('standout', edit);
 
@@ -128,6 +127,23 @@ module api.content.form.inputtype.upload {
             });
 
             return wemQ<void>(null);
+        }
+
+        private saveToProperty(crop: Rect, zoom: Rect) {
+            var container = this.getPropertyContainer(this.property);
+
+            if (container) {
+                container.setDoubleByPath('cropPosition.left', crop.x);
+                container.setDoubleByPath('cropPosition.top', crop.y);
+                container.setDoubleByPath('cropPosition.right', crop.x2);
+                container.setDoubleByPath('cropPosition.bottom', crop.y2);
+                container.setDoubleByPath('cropPosition.zoom', zoom.x2 - zoom.x);
+
+                container.setDoubleByPath('zoomPosition.left', zoom.x);
+                container.setDoubleByPath('zoomPosition.top', zoom.y);
+                container.setDoubleByPath('zoomPosition.right', zoom.x2);
+                container.setDoubleByPath('zoomPosition.bottom', zoom.y2);
+            }
         }
 
         private getPropertyContainer(property: Property) {
