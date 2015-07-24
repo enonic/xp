@@ -636,9 +636,19 @@ module api.ui.image {
             this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => this.enableCropEditMode());
 
             this.resetButton = new Button('Reset');
-            this.resetButton.addClass('button-reset red').onClicked((event: MouseEvent) => {
+            this.resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
                 this.resetCropPosition();
                 this.resetFocusPosition();
+            });
+
+            this.onCropAutoPositionedChanged((auto) => {
+                this.resetButton.setVisible(!auto || !this.focusData.auto);
+            });
+
+            this.onFocusAutoPositionedChanged((auto) => {
+                this.resetButton.setVisible(!auto || !this.cropData.auto);
             });
 
             this.uploadButton = new Button();
@@ -800,7 +810,7 @@ module api.ui.image {
             this.updateFrameHeight();
 
             if (updateAuto) {
-                this.setCropAutoPositioned(false);
+                this.setCropAutoPositioned(this.isRectNotModified(this.cropData));
             }
 
             if (oldX != this.cropData.x ||
@@ -1143,6 +1153,10 @@ module api.ui.image {
             }
         }
 
+        private isRectNotModified(rect: SVGRect): boolean {
+            return rect.x == 0 && rect.y == 0 && rect.w == this.frameW && rect.h == this.frameH;
+        }
+
 
         /*
          *  Zoom related methods
@@ -1207,7 +1221,7 @@ module api.ui.image {
 
                 } else if (updateAuto) {
                     // don't forget to flag crop as manually overridden
-                    this.setCropAutoPositioned(false);
+                    this.setCropAutoPositioned(this.isRectNotModified(this.cropData));
                 }
             }
 
