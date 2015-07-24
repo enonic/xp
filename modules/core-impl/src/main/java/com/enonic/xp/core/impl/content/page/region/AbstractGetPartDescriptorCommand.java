@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -21,6 +24,8 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 {
     private final static String PATH = "/site/parts";
 
+    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
+
     protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
@@ -30,7 +35,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     protected final PartDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
-        final Resource resource = Resource.from( resourceKey );
+        final Resource resource = resourceService.getResource( resourceKey );
 
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
@@ -94,12 +99,15 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         for ( final Resource resource : resources )
         {
-            final String descriptorName = resource.getKey().getName();
-            final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
-            final PartDescriptor partDescriptor = getDescriptor( key );
-            if ( partDescriptor != null )
+            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
+            if ( matcher.matches() )
             {
-                partDescriptors.add( partDescriptor );
+                final DescriptorKey key = DescriptorKey.from( application.getKey(), matcher.group( 1 ) );
+                final PartDescriptor partDescriptor = getDescriptor( key );
+                if ( partDescriptor != null )
+                {
+                    partDescriptors.add( partDescriptor );
+                }
             }
         }
     }

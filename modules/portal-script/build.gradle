@@ -3,6 +3,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':portal-api' )
     testCompile project( path: ':portal-api', configuration: 'testOutput' )
+    testCompile project( path: ':core-impl' )
 }
 
 bundle {

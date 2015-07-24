@@ -21,6 +21,7 @@ import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.resource.ResourceService;
 
 public final class XsltProcessor
 {
@@ -34,6 +35,8 @@ public final class XsltProcessor
 
     private Transformer transformer;
 
+    private ResourceService resourceService;
+
     public XsltProcessor( final TransformerFactory factory )
     {
         this.factory = factory;
@@ -42,7 +45,7 @@ public final class XsltProcessor
 
     public void setView( final ResourceKey view )
     {
-        final Resource resource = Resource.from( view );
+        final Resource resource = resourceService.getResource( view );
         resource.requireExists();
 
         this.xsltSource = new StreamSource( resource.getUrl().toString() );
@@ -149,5 +152,10 @@ public final class XsltProcessor
         this.transformer = this.factory.newTransformer( this.xsltSource );
         this.transformer.setErrorListener( this.errors );
         this.transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
+    }
+
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }

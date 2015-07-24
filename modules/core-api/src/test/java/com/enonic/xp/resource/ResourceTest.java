@@ -7,14 +7,27 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 
 import static org.junit.Assert.*;
 
 public class ResourceTest
 {
+
+    private ResourceServiceImpl resourceService;
+
+    private ApplicationKey applicationKey;
+
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -37,6 +50,23 @@ public class ResourceTest
         writeFile( modulesDir, "mymodule/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule/a.txt", "a.txt" );
 
+        applicationKey = ApplicationKey.from( "mymodule" );
+
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+
+        final Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getBundle() ).thenReturn( bundle );
+
+        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( application );
+        Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
+
+        this.resourceService = new ResourceServiceImpl();
+        resourceService.setApplicationService( applicationService );
+
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
     }
@@ -45,9 +75,9 @@ public class ResourceTest
     public void testGetResource()
         throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( applicationKey, "/a/b.txt" );
 
-        final Resource resource = Resource.from( key );
+        final Resource resource = resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -62,9 +92,9 @@ public class ResourceTest
     @Test
     public void testGetResource_notFound()
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( applicationKey, "/not/exists.txt" );
 
-        final Resource resource = Resource.from( key );
+        final Resource resource = resourceService.getResource( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );

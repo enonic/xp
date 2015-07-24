@@ -22,8 +22,6 @@ final class GetPageDescriptorsByModuleCommand
 
     private ApplicationService applicationService;
 
-    private ResourceService resourceService;
-
     public PageDescriptors execute()
     {
         final Application application = this.applicationService.getModule( this.applicationKey );

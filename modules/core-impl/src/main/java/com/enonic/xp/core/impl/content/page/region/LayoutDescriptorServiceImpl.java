@@ -29,6 +29,7 @@ public final class LayoutDescriptorServiceImpl
         return new GetLayoutDescriptorCommand().key( key ).
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
+            resourceService( resourceService ).
             execute();
     }
 
@@ -39,7 +40,8 @@ public final class LayoutDescriptorServiceImpl
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            applicationKey( applicationKey ).execute();
+            applicationKey( applicationKey ).
+            execute();
     }
 
     @Override
@@ -49,7 +51,8 @@ public final class LayoutDescriptorServiceImpl
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
-            applicationKeys( applicationKeys ).execute();
+            applicationKeys( applicationKeys ).
+            execute();
     }
 
     @Reference

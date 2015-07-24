@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
@@ -37,6 +38,8 @@ public abstract class AbstractControllerTest
     protected PortalResponse portalResponse;
 
     private final ObjectMapper mapper;
+
+    protected ResourceServiceImpl resourceService;
 
     public AbstractControllerTest()
     {
@@ -67,8 +70,12 @@ public abstract class AbstractControllerTest
         Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
+        this.resourceService = new ResourceServiceImpl();
+        resourceService.setApplicationService( applicationService );
+
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();
         scriptService.setApplicationService( applicationService );
+        scriptService.setResourceService( this.resourceService );
 
         this.factory = new ControllerScriptFactoryImpl();
         this.factory.setScriptService( scriptService );

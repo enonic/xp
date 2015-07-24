@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -32,6 +33,8 @@ public abstract class ScriptTestSupport
 
     protected final PortalRequest portalRequest;
 
+    protected final ResourceServiceImpl resourceService;
+
     public ScriptTestSupport()
     {
         this.scriptService = new ScriptServiceImpl();
@@ -51,7 +54,11 @@ public abstract class ScriptTestSupport
         Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
+        this.resourceService = new ResourceServiceImpl();
+        resourceService.setApplicationService( applicationService );
+
         this.scriptService.setApplicationService( applicationService );
+        this.scriptService.setResourceService( resourceService );
         this.portalRequest = new PortalRequest();
     }
 

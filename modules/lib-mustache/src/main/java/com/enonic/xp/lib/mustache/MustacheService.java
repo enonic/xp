@@ -4,11 +4,14 @@ import com.samskivert.mustache.Mustache;
 
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.resource.ResourceService;
 
 public final class MustacheService
     implements ScriptBean
 {
     private final Mustache.Compiler compiler;
+
+    private ResourceService resourceService;
 
     public MustacheService()
     {
@@ -17,12 +20,14 @@ public final class MustacheService
 
     public MustacheProcessor newProcessor()
     {
-        return new MustacheProcessor( this.compiler );
+        MustacheProcessor processor = new MustacheProcessor( this.compiler );
+        processor.setResourceService( resourceService );
+        return processor;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        // Do nothing
+        this.resourceService = context.getService( ResourceService.class ).get();
     }
 }
