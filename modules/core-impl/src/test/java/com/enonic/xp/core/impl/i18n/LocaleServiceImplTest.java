@@ -2,20 +2,25 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.ResourceUrlRegistry;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 import static org.junit.Assert.*;
@@ -23,7 +28,7 @@ import static org.junit.Assert.*;
 public class LocaleServiceImplTest
 {
 
-    private LocaleService localeService;
+    private LocaleServiceImpl localeService;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -52,6 +57,14 @@ public class LocaleServiceImplTest
 
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
+
+        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
+        localeService.setResourceService( resourceService );
     }
 
 

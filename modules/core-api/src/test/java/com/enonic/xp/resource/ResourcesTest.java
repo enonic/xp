@@ -2,6 +2,7 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -43,9 +44,12 @@ public class ResourcesTest
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
 
-        resource1 = Resource.from( ResourceKey.from( RESOURCE_URI_1 ) );
-        resource2 = Resource.from( ResourceKey.from( RESOURCE_URI_2 ) );
-        resource3 = Resource.from( ResourceKey.from( RESOURCE_URI_3 ) );
+        final ResourceKey resourceKey1 = ResourceKey.from( RESOURCE_URI_1 );
+        final ResourceKey resourceKey2 = ResourceKey.from( RESOURCE_URI_2 );
+        final ResourceKey resourceKey3 = ResourceKey.from( RESOURCE_URI_3 );
+        resource1 = new Resource( resourceKey1, new URL( "module:" + resourceKey1.toString() ) );
+        resource2 = new Resource( resourceKey2, new URL( "module:" + resourceKey2.toString() ) );
+        resource3 = new Resource( resourceKey3, new URL( "module:" + resourceKey3.toString() ) );
 
         this.list = new ArrayList();
         this.list.add( resource1 );

@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.Resources;
 
 @Component(immediate = true)
@@ -29,11 +30,17 @@ public class ResourceServiceImpl
     public Resource getResource( final ResourceKey resourceKey )
     {
         Resource resource = null;
-        final Application application = getActiveModule( resourceKey.getApplicationKey() );
+        final Application application = getActiveApplication( resourceKey.getApplicationKey() );
         if ( application != null )
         {
             resource = getResource( application.getBundle(), resourceKey );
         }
+
+        if ( resource == null )
+        {
+            return buildResourceFromKey( resourceKey );
+        }
+
         return resource;
     }
 
@@ -41,7 +48,7 @@ public class ResourceServiceImpl
     public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern, boolean recurse )
     {
         Resources resources = null;
-        final Application application = getActiveModule( applicationKey );
+        final Application application = getActiveApplication( applicationKey );
 
         if ( application != null )
         {
@@ -69,7 +76,7 @@ public class ResourceServiceImpl
         return resources;
     }
 
-    private Application getActiveModule( ApplicationKey applicationKey )
+    private Application getActiveApplication( final ApplicationKey applicationKey )
     {
         Application activeApplication = null;
 
@@ -82,7 +89,7 @@ public class ResourceServiceImpl
         return activeApplication;
     }
 
-    private Resource getResource( Bundle bundle, ResourceKey resourceKey )
+    private Resource getResource( final Bundle bundle, final ResourceKey resourceKey )
     {
         Resource resource = null;
 
@@ -93,6 +100,12 @@ public class ResourceServiceImpl
         }
 
         return resource;
+    }
+
+    private Resource buildResourceFromKey( final ResourceKey key )
+    {
+        final URL url = ResourceUrlResolver.resolve( key );
+        return new Resource( key, url );
     }
 
     @Reference

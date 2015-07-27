@@ -14,6 +14,8 @@ public abstract class AbstractPageDescriptorServiceTest
     public final void setupService()
     {
         this.service = new PageDescriptorServiceImpl();
+        this.service.setApplicationService( this.applicationService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Override

@@ -30,7 +30,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     protected final PartDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
-        final Resource resource = Resource.from( resourceKey );
+        final Resource resource = resourceService.getResource( resourceKey );
 
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
