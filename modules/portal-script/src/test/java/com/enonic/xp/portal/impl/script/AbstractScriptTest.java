@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.script;
 
+import java.net.URL;
+
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -7,10 +9,12 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.ResourceUrlRegistry;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 public abstract class AbstractScriptTest
@@ -18,8 +22,6 @@ public abstract class AbstractScriptTest
     private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "mymodule" );
 
     protected final ScriptServiceImpl scriptService;
-
-    protected final ResourceServiceImpl resourceService;
 
     public AbstractScriptTest()
     {
@@ -41,10 +43,14 @@ public abstract class AbstractScriptTest
         Mockito.when( applicationService.getModule( APPLICATION_KEY ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
-        this.resourceService = new ResourceServiceImpl();
-        resourceService.setApplicationService( applicationService );
-
         this.scriptService.setApplicationService( applicationService );
+
+        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
         this.scriptService.setResourceService( resourceService );
     }
 

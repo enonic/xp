@@ -4,7 +4,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorNotFoundException;
 import com.enonic.xp.resource.ResourceNotFoundException;
-import com.enonic.xp.resource.ResourceService;
 
 final class GetPageDescriptorCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorCommand>
@@ -28,11 +27,4 @@ final class GetPageDescriptorCommand
         this.key = key;
         return this;
     }
-
-    public final GetPageDescriptorCommand resourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-        return this;
-    }
-
 }

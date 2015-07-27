@@ -11,7 +11,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.Resources;
 
 final class GetPageDescriptorsByModulesCommand
@@ -38,12 +37,6 @@ final class GetPageDescriptorsByModulesCommand
     public final GetPageDescriptorsByModulesCommand applicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
-        return this;
-    }
-
-    public final GetPageDescriptorsByModulesCommand resourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
         return this;
     }
 

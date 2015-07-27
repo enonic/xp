@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -23,8 +20,6 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
     private final static String PATH = "/site/parts";
-
-    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     protected ApplicationService applicationService;
 
@@ -99,15 +94,12 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         for ( final Resource resource : resources )
         {
-            Matcher matcher = PATTERN.matcher( resource.getKey().getPath() );
-            if ( matcher.matches() )
+            final String descriptorName = resource.getKey().getName();
+            final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
+            final PartDescriptor partDescriptor = getDescriptor( key );
+            if ( partDescriptor != null )
             {
-                final DescriptorKey key = DescriptorKey.from( application.getKey(), matcher.group( 1 ) );
-                final PartDescriptor partDescriptor = getDescriptor( key );
-                if ( partDescriptor != null )
-                {
-                    partDescriptors.add( partDescriptor );
-                }
+                partDescriptors.add( partDescriptor );
             }
         }
     }

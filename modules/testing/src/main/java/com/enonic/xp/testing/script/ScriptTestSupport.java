@@ -1,5 +1,7 @@
 package com.enonic.xp.testing.script;
 
+import java.net.URL;
+
 import org.junit.Assert;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -12,14 +14,16 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
@@ -33,7 +37,7 @@ public abstract class ScriptTestSupport
 
     protected final PortalRequest portalRequest;
 
-    protected final ResourceServiceImpl resourceService;
+    protected final ResourceService resourceService;
 
     public ScriptTestSupport()
     {
@@ -54,8 +58,12 @@ public abstract class ScriptTestSupport
         Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
-        this.resourceService = new ResourceServiceImpl();
-        resourceService.setApplicationService( applicationService );
+        resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
 
         this.scriptService.setApplicationService( applicationService );
         this.scriptService.setResourceService( resourceService );

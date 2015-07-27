@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,10 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.resource.Resources;
@@ -36,7 +37,7 @@ public abstract class AbstractDescriptorServiceTest
 
     protected ApplicationService applicationService;
 
-    protected ResourceServiceImpl resourceService;
+    protected ResourceService resourceService;
 
     @Before
     public final void setup()
@@ -45,8 +46,12 @@ public abstract class AbstractDescriptorServiceTest
         this.modulesDir = this.temporaryFolder.newFolder( "modules" );
         ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
         this.applicationService = Mockito.mock( ApplicationService.class );
-        this.resourceService = new ResourceServiceImpl();
-        this.resourceService.setApplicationService( applicationService );
+        resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
     }
 
     protected final void createFile( final ResourceKey key, final String content )
@@ -108,26 +113,18 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Application application, final String rootPath, final String filePattern, final boolean recurse,
-                                        final String... paths )
-        throws Exception
+    protected final void mockResources( final Application application, final String rootPath, final String filePattern,
+                                        final boolean recurse, final String... paths )
+        throws MalformedURLException
     {
         List<Resource> resourceList = new ArrayList<Resource>();
         for ( final String path : paths )
         {
-            final Resource resource =
-                new Resource( ResourceKey.from( application.getKey(), path ), new URL( "module:" + application.getKey() + ":" + path ) );
-            Mockito.when( this.resourceService.getResource( ResourceKey.from( application.getKey(), path ) ) ).thenReturn( resource );
-            resourceList.add( buildResourceFromKey( ResourceKey.from( application.getKey(), path ) ) );
+            final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
+            resourceList.add( new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) ) );
         }
         Resources resources = Resources.from( resourceList );
 
         Mockito.when( this.resourceService.findResources( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn( resources );
-    }
-
-    private Resource buildResourceFromKey( final ResourceKey key )
-    {
-        final URL url = ResourceUrlResolver.resolve( key );
-        return new Resource( key, url );
     }
 }

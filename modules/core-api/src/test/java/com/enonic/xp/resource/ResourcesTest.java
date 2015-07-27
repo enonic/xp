@@ -2,33 +2,26 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
-
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 
 import static org.junit.Assert.*;
 
 public class ResourcesTest
 {
-    private static final String RESOURCE_URI_1 = "/";
+    private static final String RESOURCE_URI_1 = "mymodule-1.0.0:";
 
-    private static final String RESOURCE_URI_2 = "/a/b.txt";
+    private static final String RESOURCE_URI_2 = "mymodule-1.0.0:/a/b.txt";
 
-    private static final String RESOURCE_URI_3 = "/a/c.txt";
+    private static final String RESOURCE_URI_3 = "mymodule-1.0.0:/a/c.txt";
 
     private ArrayList<Resource> list;
 
@@ -37,10 +30,6 @@ public class ResourcesTest
     private Resource resource2;
 
     private Resource resource3;
-
-    private ResourceServiceImpl resourceService;
-
-    private ApplicationKey applicationKey;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -55,26 +44,12 @@ public class ResourcesTest
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
 
-        applicationKey = ApplicationKey.from( "mymodule-1.0.0" );
-
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
-
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
-
-        final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( application );
-        Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
-
-        this.resourceService = new ResourceServiceImpl();
-        resourceService.setApplicationService( applicationService );
-
-        resource1 = this.resourceService.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_1 ) );
-        resource2 = this.resourceService.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_2 ) );
-        resource3 = this.resourceService.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_3 ) );
+        final ResourceKey resourceKey1 = ResourceKey.from( RESOURCE_URI_1 );
+        final ResourceKey resourceKey2 = ResourceKey.from( RESOURCE_URI_2 );
+        final ResourceKey resourceKey3 = ResourceKey.from( RESOURCE_URI_3 );
+        resource1 = new Resource( resourceKey1, new URL( "module:" + resourceKey1.toString() ) );
+        resource2 = new Resource( resourceKey2, new URL( "module:" + resourceKey2.toString() ) );
+        resource3 = new Resource( resourceKey3, new URL( "module:" + resourceKey3.toString() ) );
 
         this.list = new ArrayList();
         this.list.add( resource1 );
@@ -104,9 +79,9 @@ public class ResourcesTest
 
         assertEquals( 3, resources.getSize() );
         assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_3 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
     }
 
     @Test
@@ -116,9 +91,9 @@ public class ResourcesTest
 
         assertEquals( 3, resources.getSize() );
         assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_3 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
     }
 
     @Test
@@ -128,9 +103,9 @@ public class ResourcesTest
 
         assertEquals( 3, resources.getSize() );
         assertEquals( resource1, resources.first() );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_1 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_2 ) ) );
-        assertNotNull( resources.getResource( ResourceKey.from( applicationKey, RESOURCE_URI_3 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_1 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_2 ) ) );
+        assertNotNull( resources.getResource( ResourceKey.from( RESOURCE_URI_3 ) ) );
     }
 
     @Test
@@ -138,8 +113,7 @@ public class ResourcesTest
     {
         final Resources resources = Resources.from( this.list );
 
-        final ResourceKeys resourceKeys = ResourceKeys.from( applicationKey + ":" + RESOURCE_URI_1, applicationKey + ":" + RESOURCE_URI_2,
-                                                             applicationKey + ":" + RESOURCE_URI_3 );
+        final ResourceKeys resourceKeys = ResourceKeys.from( RESOURCE_URI_1, RESOURCE_URI_2, RESOURCE_URI_3 );
 
         assertEquals( resourceKeys, resources.getResourceKeys() );
     }

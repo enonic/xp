@@ -1,27 +1,16 @@
 package com.enonic.xp.core.impl.content.page.layout;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.region.LayoutDescriptors;
 
 public class LayoutDescriptorServiceImpl_getByApplicationsTest
     extends AbstractLayoutDescriptorServiceTest
 {
-
-    @Before
-    public final void setupMe()
-    {
-        this.resourceService = Mockito.mock( ResourceServiceImpl.class );
-        this.service.setResourceService( this.resourceService );
-    }
-
     @Test
     public void getDescriptorsFromSingleModule()
         throws Exception

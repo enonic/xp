@@ -70,5 +70,9 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
         return (T) this;
     }
 
-    protected abstract T resourceService( final ResourceService resourceService );
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+        return (T) this;
+    }
 }
