@@ -1,17 +1,22 @@
 package com.enonic.xp.toolbox.app;
 
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.io.IOUtils;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
@@ -22,18 +27,13 @@ import com.enonic.xp.toolbox.ToolCommand;
 public final class InitAppCommand
     extends ToolCommand
 {
-    private static final int BUFFER_SIZE = 4096;
-
-    private static final String INIT_APP_PATH = "resources/app-init.zip";
-
     private static final String NAME_REGEX = "(name = ')([\\w\\.]+)(')";
-
 
     @Option(name = {"-n", "--name"}, description = "Application name.", required = true)
     public String name;
 
     @Option(name = {"-v", "--version"}, description = "Version number.")
-    public String version;
+    public String version = "1.0.0-SNAPSHOT";
 
     @Option(name = {"-d", "--destination"}, description = "Project path.")
     public String destination;
@@ -44,76 +44,83 @@ public final class InitAppCommand
     {
         try
         {
-            unzip( INIT_APP_PATH, destination );
-            updateBuildFile( destination + "/app-init/build.gradle", name );
+            initApplication();
+            updateFile( Paths.get( destination, "build.gradle" ), "##NAME##", name );
+            updateFile( Paths.get( destination, "build.gradle" ), "##VERSION##", version );
         }
         catch ( Exception e )
         {
             System.err.println( e.getMessage() );
+            e.printStackTrace();
         }
     }
 
-    private void unzip( String src, String dest )
-        throws IOException
+    private void initApplication()
+        throws URISyntaxException, IOException
     {
 
-        // Unzip to the root folder, if the destination not set
-        dest = dest != null ? dest : "";
+        final Path sourceDirectory = getInitAppResourcesPath();
+        final Path targetDirectory = Paths.get( destination );
 
-        File destDir = new File( dest );
-
-        // Create a full path if doesn't exist
-        if ( !destDir.exists() )
+        Files.walkFileTree( sourceDirectory, new SimpleFileVisitor<Path>()
         {
-            destDir.mkdirs();
-        }
-
-        ZipInputStream zipIn = new ZipInputStream( new FileInputStream( src ) );
-        ZipEntry entry = zipIn.getNextEntry();
-
-        while ( entry != null )
-        {
-            String filePath = dest + File.separator + entry.getName();
-
-            if ( !entry.isDirectory() )
+            @Override
+            public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+                throws IOException
             {
-                extract( zipIn, filePath );
+                Path target = targetDirectory.resolve( sourceDirectory.relativize( dir ).toString() );
+                try
+                {
+                    Files.copy( dir, target );
+                }
+                catch ( FileAlreadyExistsException e )
+                {
+                    if ( !Files.isDirectory( target ) )
+                    {
+                        throw e;
+                    }
+                }
+                return FileVisitResult.CONTINUE;
             }
-            else
+
+            @Override
+            public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
+                throws IOException
             {
-                File dir = new File( filePath );
-                dir.mkdirs();
+                if ( !".gitignore".equals( file.getFileName() ) )
+                {
+                    final Path target = targetDirectory.resolve( sourceDirectory.relativize( file ).toString() );
+                    Files.copy( file, target );
+                }
+                return FileVisitResult.CONTINUE;
             }
-            zipIn.closeEntry();
-            entry = zipIn.getNextEntry();
-        }
-
-        zipIn.close();
+        } );
     }
 
-    private void extract( ZipInputStream zipIn, String filePath )
-        throws IOException
+    private Path getInitAppResourcesPath()
+        throws URISyntaxException, IOException
     {
-        BufferedOutputStream bos = new BufferedOutputStream( new FileOutputStream( filePath ) );
-        byte[] bytesIn = new byte[BUFFER_SIZE];
-        int read;
-
-        while ( ( read = zipIn.read( bytesIn ) ) != -1 )
+        final String uri = getClass().getResource( "/init-app" ).toURI().toString();
+        if ( uri.startsWith( "jar:" ) )
         {
-            bos.write( bytesIn, 0, read );
+            final String[] uriSubStrings = uri.split( "!" );
+            Map<String, String> env = new HashMap<>();
+            env.put( "create", "true" );
+            FileSystem fs = FileSystems.newFileSystem( new URI( uriSubStrings[0] ), env );
+            return fs.getPath( uriSubStrings[1] );
         }
-
-        bos.close();
+        else
+        {
+            return Paths.get( new URI( uri ) );
+        }
     }
 
-    private void updateBuildFile( String src, String name )
+    private void updateFile( Path filePath, String regex, String replacement )
         throws IOException
     {
-        File buildFile = new File( src );
         Charset charset = StandardCharsets.UTF_8;
-
-        String content = IOUtils.toString( new FileInputStream( buildFile ), charset );
-        content = content.replaceAll( NAME_REGEX, "name = '" + name + "'" );
-        IOUtils.write( content, new FileOutputStream( buildFile ), charset );
+        String content = new String( Files.readAllBytes( filePath ), charset );
+        content = content.replaceAll( regex, replacement );
+        Files.write( filePath, content.getBytes( charset ) );
     }
 }
