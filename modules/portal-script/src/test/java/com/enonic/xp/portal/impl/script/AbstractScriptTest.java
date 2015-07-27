@@ -43,14 +43,14 @@ public abstract class AbstractScriptTest
         Mockito.when( applicationService.getModule( APPLICATION_KEY ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
-        this.scriptService.setApplicationService( applicationService );
-
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL url = ResourceUrlResolver.resolve( resourceKey );
             return new Resource( resourceKey, url );
         } );
+
+        this.scriptService.setApplicationService( applicationService );
         this.scriptService.setResourceService( resourceService );
     }
 

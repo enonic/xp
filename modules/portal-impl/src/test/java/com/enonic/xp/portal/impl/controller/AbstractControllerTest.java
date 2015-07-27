@@ -17,13 +17,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.resource.ResourceServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -39,7 +41,7 @@ public abstract class AbstractControllerTest
 
     private final ObjectMapper mapper;
 
-    protected ResourceServiceImpl resourceService;
+    protected ResourceService resourceService;
 
     public AbstractControllerTest()
     {
@@ -70,8 +72,12 @@ public abstract class AbstractControllerTest
         Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
-        this.resourceService = new ResourceServiceImpl();
-        resourceService.setApplicationService( applicationService );
+        this.resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();
         scriptService.setApplicationService( applicationService );
