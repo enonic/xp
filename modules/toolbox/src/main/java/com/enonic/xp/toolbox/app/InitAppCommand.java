@@ -86,7 +86,7 @@ public final class InitAppCommand
             public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
                 throws IOException
             {
-                if ( !".gitignore".equals( file.getFileName() ) )
+                if ( !".gitignore".equals( file.getFileName().toString() ) )
                 {
                     final Path target = targetDirectory.resolve( sourceDirectory.relativize( file ).toString() );
                     Files.copy( file, target, StandardCopyOption.REPLACE_EXISTING );
