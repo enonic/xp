@@ -21,6 +21,10 @@
       }
     }
 
+    .image-toolbar, .sticky-toolbar {
+      display: block;
+    }
+
     &.edit-focus {
       .image-frame {
         .image-canvas {
@@ -112,6 +116,18 @@
           }
         }
       }
+    }
+  }
+
+  &.sticky-mode {
+    position: relative;
+
+    &.edit-mode {
+      padding-top: 57px; // equals to the height of sticky toolbar;
+    }
+
+    .sticky-toolbar {
+      position: absolute;
     }
   }
 
@@ -218,7 +234,8 @@
   }
 
   .image-toolbar {
-    padding: 20px 10px 10px;
+    display: none;
+    padding: 10px;
     position: relative;
     z-index: @z-index-mask + 1;
     .clearfix();
@@ -236,6 +253,24 @@
       }
     }
 
+  }
+
+  .sticky-toolbar {
+    display: none;
+    position: relative;
+    z-index: @z-index-mask; // to have it on top of zoomed image
+    left: 1px; // account for image editor border
+    width: 100%;
+    background-color: rgba(255, 255, 255, .8);
+
+    .dropdown {
+      margin: 10px;
+      width: 100px;
+
+      .option-filter-input {
+        margin: 0; // reset margin set on inputs by image uploader
+      }
+    }
   }
 
 }
