@@ -71,7 +71,6 @@ module api.ui.image {
         private mouseUpListener;
         private mouseMoveListener;
         private mouseDownListener;
-        private mouseWheelListener;
         private dragMouseDownListener;
         private knobMouseDownListener;
 
@@ -1073,40 +1072,6 @@ module api.ui.image {
             };
             this.zoomKnob.onMouseDown(this.knobMouseDownListener);
 
-            this.mouseWheelListener = (event: WheelEvent) => {
-                var x = this.getOffsetX(event),
-                    y = this.getOffsetY(event);
-
-                if (!this.isInsideCrop(x, y)) {
-                    return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                if (ImageEditor.debug) {
-                    console.log('ImageEditor.wheelMouseListener');
-                }
-
-                if (!this.imageSmallerThanFrame) {
-                    var delta;
-                    switch (event.deltaMode) {
-                    case WheelEvent.DOM_DELTA_PIXEL:
-                        delta = event.deltaY / 10;
-                        break;
-                    case WheelEvent.DOM_DELTA_LINE:
-                        delta = event.deltaY * 10 / 3;
-                        break;
-                    case WheelEvent.DOM_DELTA_PAGE:
-                        delta = event.deltaY * 100; //approximate value, change if needed
-                        break;
-                    }
-
-                    this.moveZoomKnobByPx(delta);
-                }
-            };
-            this.clip.onMouseWheel(this.mouseWheelListener);
-
             this.mouseDownListener = (event: MouseEvent) => {
                 var x = this.getOffsetX(event),
                     y = this.getOffsetY(event);
@@ -1204,7 +1169,6 @@ module api.ui.image {
 
             this.dragHandle.unMouseDown(this.dragMouseDownListener);
             this.zoomKnob.unMouseDown(this.knobMouseDownListener);
-            this.clip.unMouseWheel(this.mouseWheelListener);
             this.clip.unMouseDown(this.mouseDownListener);
 
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
