@@ -176,6 +176,10 @@ module api.app.wizard {
             });
         }
 
+        protected getWizardStepsPanel(): WizardStepsPanel {
+            return this.stepsPanel;
+        }
+
         updateStickyToolbar() {
             var scrollTop = this.formPanel.getHTMLElement().scrollTop;
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();

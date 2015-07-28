@@ -108,6 +108,8 @@ module app.wizard {
 
         private isSecurityWizardStepFormAllowed: boolean;
 
+        private publishButtonForMobile: api.ui.dialog.DialogButton;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -260,6 +262,8 @@ module app.wizard {
 
                 onSuccess(this);
             }, onError);
+
+            this.initPublishButtonForMobile();
         }
 
         getContentType(): ContentType {
@@ -423,6 +427,7 @@ module app.wizard {
                             api.content.ContentPublishedEvent.un(publishHandler);
                         });
                     }
+                    this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
                 }).done();
 
             var viewedContent;
@@ -1000,6 +1005,57 @@ module app.wizard {
                     this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
                 }
             }
+        }
+
+        private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
+            var canBeShown = compareStatus !== CompareStatus.EQUAL;
+            this.publishButtonForMobile.toggleClass("visible", canBeShown);
+            this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
+        }
+
+        private initPublishButtonForMobile() {
+
+            var action: api.ui.Action = new api.ui.Action("Publish", "enter");
+            action.setIconClass("publish-action");
+            action.onExecuted(() => {
+                this.publishAction.execute();
+            });
+
+            this.publishButtonForMobile = new api.ui.dialog.DialogButton(action);
+            this.publishButtonForMobile.addClass("mobile-edit-publish-button");
+
+            this.subscribePublishButtonForMobileToPublishEvents();
+
+            this.getWizardStepsPanel().appendChild(this.publishButtonForMobile);
+        }
+
+        private subscribePublishButtonForMobileToPublishEvents() {
+
+            var publishHandler = (event: api.content.ContentsPublishedEvent) => {
+                if (this.getPersistedItem() && event.getContentIds()) {
+                    var isPublished = (event.getContentIds().some((obj: api.content.ContentId) => {
+                        return obj.toString() == this.getPersistedItem().getId();
+                    }));
+                    if (isPublished) {
+                        this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
+                    }
+                }
+            };
+
+            var publishHandlerOfServerEvent = (event: api.content.ContentPublishedEvent) => {
+                if (this.getPersistedItem() && event.getContentId() &&
+                    (this.getPersistedItem().getId() === event.getContentId().toString())) {
+                    this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
+                }
+            };
+
+            api.content.ContentsPublishedEvent.on(publishHandler);
+            api.content.ContentPublishedEvent.on(publishHandlerOfServerEvent);
+
+            this.onClosed(() => {
+                api.content.ContentPublishedEvent.un(publishHandlerOfServerEvent);
+                api.content.ContentsPublishedEvent.un(publishHandler);
+            });
         }
     }
 
