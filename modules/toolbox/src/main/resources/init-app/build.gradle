@@ -20,7 +20,7 @@ version = '##VERSION##'
 
 app {
     name = '##NAME##'
-    displayName = 'Google Analytics App'
+    displayName = 'MyApp'
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
 }
@@ -40,6 +40,14 @@ repositories {
     mavenCentral()
     maven {
         url 'http://repo.enonic.com/public'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository( url: 'http://repo.enonic.com/artifactory/inhouse' )
+        }
     }
 }
 
