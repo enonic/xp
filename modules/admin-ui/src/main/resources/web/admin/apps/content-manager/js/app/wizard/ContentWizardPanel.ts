@@ -110,6 +110,8 @@ module app.wizard {
 
         private publishButtonForMobile: api.ui.dialog.DialogButton;
 
+        private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -155,6 +157,7 @@ module app.wizard {
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
+            this.contentWizardToolbarPublishControls = mainToolbar.getContentWizardToolbarPublishControls();
             this.showLiveEditAction = this.wizardActions.getShowLiveEditAction();
             this.showSplitEditAction = this.wizardActions.getShowSplitEditAction();
             this.showLiveEditAction.setEnabled(false);
@@ -413,20 +416,25 @@ module app.wizard {
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
-                    if (!ignore) {
-                        var publishHandler = (event: api.content.ContentPublishedEvent) => {
-                            if (this.getPersistedItem() && event.getContentId() &&
-                                (this.getPersistedItem().getId() === event.getContentId().toString())) {
 
+                    var publishHandler = (event: api.content.ContentPublishedEvent) => {
+                        if (this.getPersistedItem() && event.getContentId() &&
+                            (this.getPersistedItem().getId() === event.getContentId().toString())) {
+
+                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.EQUAL);
+
+                            if (!ignore) {
                                 this.contentWizardHeader.disableNameGeneration(true);
                                 api.content.ContentPublishedEvent.un(publishHandler);
                             }
-                        };
-                        api.content.ContentPublishedEvent.on(publishHandler);
-                        this.onClosed(() => {
-                            api.content.ContentPublishedEvent.un(publishHandler);
-                        });
-                    }
+                        }
+                    };
+                    api.content.ContentPublishedEvent.on(publishHandler);
+
+                    this.onClosed(() => {
+                        api.content.ContentPublishedEvent.un(publishHandler);
+                    });
+                    this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
                     this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
                 }).done();
 

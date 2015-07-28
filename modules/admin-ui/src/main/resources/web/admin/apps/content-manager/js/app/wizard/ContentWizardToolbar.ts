@@ -18,6 +18,7 @@ module app.wizard {
 
         private contextWindowToggler: ContextWindowToggler;
         private cycleViewModeButton: CycleButton;
+        private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
 
         constructor(params: ContentWizardToolbarParams) {
             super();
@@ -25,13 +26,14 @@ module app.wizard {
             super.addAction(params.deleteAction);
             super.addAction(params.duplicateAction);
             super.addAction(params.previewAction);
-            super.addAction(params.publishAction);
             super.addGreedySpacer();
 
             this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showLiveEditAction, params.showFormAction);
-
-            super.addElement(this.cycleViewModeButton);
             this.contextWindowToggler = new ContextWindowToggler();
+            this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
+
+            super.addElement(this.contentWizardToolbarPublishControls);
+            super.addElement(this.cycleViewModeButton);
             super.addElement(this.contextWindowToggler);
 
         }
@@ -42,6 +44,10 @@ module app.wizard {
 
         getContextWindowToggler() {
             return this.contextWindowToggler;
+        }
+
+        getContentWizardToolbarPublishControls() {
+            return this.contentWizardToolbarPublishControls;
         }
 
     }
