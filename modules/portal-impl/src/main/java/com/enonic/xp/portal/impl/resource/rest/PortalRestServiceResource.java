@@ -26,7 +26,12 @@ public class PortalRestServiceResource
     @Path("{portalRestService}")
     public PortalRestService controller2( @PathParam("portalRestService") final String portalRestServiceName )
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get( httpServletRequest );
+        PortalRequest portalRequest = PortalRequestAccessor.get( httpServletRequest );
+        if ( portalRequest == null )
+        {
+            portalRequest = new PortalRequest();
+            PortalRequestAccessor.set( httpServletRequest, portalRequest );
+        }
         final Content content = getContent( this.contentPath.toString() );
         final Site site = content != null ? getSite( content ) : null;
         portalRequest.setContent( content );
