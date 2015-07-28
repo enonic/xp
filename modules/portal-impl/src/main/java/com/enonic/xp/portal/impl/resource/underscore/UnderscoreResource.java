@@ -8,6 +8,7 @@ import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.portal.impl.resource.error.ErrorResource;
 import com.enonic.xp.portal.impl.resource.image.ImageResource;
 import com.enonic.xp.portal.impl.resource.render.ComponentResource;
+import com.enonic.xp.portal.impl.resource.rest.PortalRestServiceResource;
 import com.enonic.xp.portal.impl.resource.service.ServiceResource;
 
 public final class UnderscoreResource
@@ -47,5 +48,11 @@ public final class UnderscoreResource
     public ErrorResource error()
     {
         return initResource( new ErrorResource() );
+    }
+
+    @Path("rest")
+    public PortalRestServiceResource rest()
+    {
+        return initResource( new PortalRestServiceResource() );
     }
 }
