@@ -50,6 +50,7 @@
 ///<reference path='ContentCreatedEvent.ts' />
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentPublishedEvent.ts' />
+///<reference path='ContentsPublishedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
