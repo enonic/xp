@@ -66,6 +66,13 @@
       <xs:element name="nGram" type="xs:boolean"/>
       <xs:element name="fulltext" type="xs:boolean"/>
       <xs:element name="includeInAllText" type="xs:boolean"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="indexValueProcessors">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="indexValueProcessor" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -75,7 +82,6 @@
       <xs:element name="path" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
-
 
   <xs:complexType name="indexConfigs">
     <xs:sequence>

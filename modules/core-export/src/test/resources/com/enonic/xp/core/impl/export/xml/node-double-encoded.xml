@@ -84,6 +84,10 @@
           <nGram>true</nGram>
           <fulltext>true</fulltext>
           <includeInAllText>true</includeInAllText>
+          <indexValueProcessors>
+            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
+            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
+          </indexValueProcessors>
         </indexConfig>
         <path>mydata</path>
       </pathIndexConfig>
