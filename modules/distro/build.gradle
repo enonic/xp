@@ -17,8 +17,6 @@ ext {
     bundlesDir = "$installDir/system"
     bundlesFile = "$projectDir/src/system/bundles.xml"
     archiveBase = "enonic-xp-$version"
-    toolboxDir = project( ':toolbox' ).buildDir
-    initAppFile = "$toolboxDir/resources/main"
 }
 
 def getProjectMappings()
@@ -99,9 +97,6 @@ task copyResources( type: Copy ) {
     }
     into( 'toolbox/lib' ) {
         from( configurations.toolbox )
-    }
-    into( 'toolbox/resources' ) {
-        from( initAppFile )
     }
     from( 'src' ) {
         include 'README.txt'

@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +28,6 @@ import com.enonic.xp.toolbox.ToolCommand;
 public final class InitAppCommand
     extends ToolCommand
 {
-    private static final String NAME_REGEX = "(name = ')([\\w\\.]+)(')";
-
     @Option(name = {"-n", "--name"}, description = "Application name.", required = true)
     public String name;
 
@@ -36,7 +35,7 @@ public final class InitAppCommand
     public String version = "1.0.0-SNAPSHOT";
 
     @Option(name = {"-d", "--destination"}, description = "Project path.")
-    public String destination;
+    public String destination = ".";
 
     @Override
     protected void execute()
@@ -77,7 +76,7 @@ public final class InitAppCommand
                 {
                     if ( !Files.isDirectory( target ) )
                     {
-                        throw e;
+                        Files.copy( dir, target, StandardCopyOption.REPLACE_EXISTING );
                     }
                 }
                 return FileVisitResult.CONTINUE;
@@ -90,7 +89,7 @@ public final class InitAppCommand
                 if ( !".gitignore".equals( file.getFileName() ) )
                 {
                     final Path target = targetDirectory.resolve( sourceDirectory.relativize( file ).toString() );
-                    Files.copy( file, target );
+                    Files.copy( file, target, StandardCopyOption.REPLACE_EXISTING );
                 }
                 return FileVisitResult.CONTINUE;
             }
