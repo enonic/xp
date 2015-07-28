@@ -14,9 +14,8 @@ module api.content {
     export class ImageUploader extends MediaUploader {
 
         private imageEditors: ImageEditor[];
-        private focusEditModeListeners: {(edit: boolean, position: Point): void}[];
+        private editModeListeners: {(edit: boolean, crop: Rect, zoom: Rect, focus: Point): void}[];
         private focusAutoPositionedListeners: {(auto: boolean): void}[];
-        private cropEditModeListeners: {(edit: boolean, crop: Rect, zoom: Rect): void}[];
         private cropAutoPositionedListeners: {(auto: boolean): void}[];
 
         private initialWidth: number;
@@ -36,9 +35,8 @@ module api.content {
 
             this.scaleWidth = false;
             this.imageEditors = [];
-            this.focusEditModeListeners = [];
+            this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];
-            this.cropEditModeListeners = [];
             this.cropAutoPositionedListeners = [];
 
             if (config.scaleWidth != undefined) {
@@ -140,15 +138,11 @@ module api.content {
             this.getResultContainer().getEl().addClass("placeholder");
 
             var imageEditor = new ImageEditor(imgUrl);
-            imageEditor.onFocusModeChanged((edit: boolean, position: Point) => {
+            imageEditor.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 imageEditor.removeClass('selected');
-                this.notifyFocusEditModeChanged(edit, position);
+                this.notifyEditModeChanged(edit, crop, zoom, focus);
             });
             imageEditor.onFocusAutoPositionedChanged((auto: boolean) => this.notifyFocusAutoPositionedChanged(auto));
-            imageEditor.onCropModeChanged((edit, crop, zoom) => {
-                imageEditor.removeClass('selected');
-                this.notifyCropEditModeChanged(edit, crop, zoom);
-            });
             imageEditor.onCropAutoPositionedChanged((auto: boolean) => this.notifyCropAutoPositionedChanged(auto));
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
@@ -218,19 +212,19 @@ module api.content {
             })
         }
 
-        onCropEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect) => void) {
-            this.cropEditModeListeners.push(listener);
+        onEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect, focus: Point) => void) {
+            this.editModeListeners.push(listener);
         }
 
-        unCropEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect) => void) {
-            this.cropEditModeListeners = this.cropEditModeListeners.filter((curr) => {
+        unEditModeChanged(listener: (edit: boolean, crop: Rect, zoom: Rect, focus: Point) => void) {
+            this.editModeListeners = this.editModeListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyCropEditModeChanged(edit: boolean, crop: Rect, zoom: Rect) {
-            this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, crop, zoom);
+        private notifyEditModeChanged(edit: boolean, crop: Rect, zoom: Rect, focus: Point) {
+            this.editModeListeners.forEach((listener) => {
+                listener(edit, crop, zoom, focus);
             })
         }
 
@@ -246,22 +240,6 @@ module api.content {
 
         private notifyCropAutoPositionedChanged(auto: boolean) {
             this.cropAutoPositionedListeners.forEach((listener) => listener(auto));
-        }
-
-        onFocusEditModeChanged(listener: (edit: boolean, position: Point) => void) {
-            this.focusEditModeListeners.push(listener);
-        }
-
-        unFocusEditModeChanged(listener: (edit: boolean, position: Point) => void) {
-            this.focusEditModeListeners = this.focusEditModeListeners.filter((curr) => {
-                return curr !== listener;
-            });
-        }
-
-        private notifyFocusEditModeChanged(edit: boolean, position: Point) {
-            this.focusEditModeListeners.forEach((listener) => {
-                listener(edit, position);
-            })
         }
 
         onFocusAutoPositionedChanged(listener: (auto: boolean) => void) {

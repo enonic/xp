@@ -98,51 +98,53 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onCropEditModeChanged((edit: boolean, crop: Rect, zoom: Rect) => {
+            this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 this.validate(false);
                 this.toggleClass('standout', edit);
 
                 if (!edit && crop) {
-                    this.saveToProperty(crop, zoom);
+                    this.saveToProperty(crop, zoom, focus);
                 }
             });
 
             this.imageUploader.onCropAutoPositionedChanged((auto) => {
                 if (auto) {
-                    this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1});
+                    this.saveToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
-            this.imageUploader.onFocusEditModeChanged((edit: boolean, position: Point) => {
-                this.validate(false);
-                this.toggleClass('standout', edit);
-
-                if (!edit && position) {
-                    var container = this.getPropertyContainer(this.property);
-                    if (container) {
-                        container.setDoubleByPath('focalPoint.x', position.x);
-                        container.setDoubleByPath('focalPoint.y', position.y);
-                    }
+            this.imageUploader.onFocusAutoPositionedChanged((auto) => {
+                if (auto) {
+                    this.saveToProperty(null, null, {x: 0.5, y: 0.5});
                 }
             });
 
             return wemQ<void>(null);
         }
 
-        private saveToProperty(crop: Rect, zoom: Rect) {
+        private saveToProperty(crop: Rect, zoom: Rect, focus: Point) {
             var container = this.getPropertyContainer(this.property);
 
             if (container) {
-                container.setDoubleByPath('cropPosition.left', crop.x);
-                container.setDoubleByPath('cropPosition.top', crop.y);
-                container.setDoubleByPath('cropPosition.right', crop.x2);
-                container.setDoubleByPath('cropPosition.bottom', crop.y2);
-                container.setDoubleByPath('cropPosition.zoom', zoom.x2 - zoom.x);
+                if (crop) {
+                    container.setDoubleByPath('cropPosition.left', crop.x);
+                    container.setDoubleByPath('cropPosition.top', crop.y);
+                    container.setDoubleByPath('cropPosition.right', crop.x2);
+                    container.setDoubleByPath('cropPosition.bottom', crop.y2);
+                    container.setDoubleByPath('cropPosition.zoom', zoom.x2 - zoom.x);
+                }
 
-                container.setDoubleByPath('zoomPosition.left', zoom.x);
-                container.setDoubleByPath('zoomPosition.top', zoom.y);
-                container.setDoubleByPath('zoomPosition.right', zoom.x2);
-                container.setDoubleByPath('zoomPosition.bottom', zoom.y2);
+                if (zoom) {
+                    container.setDoubleByPath('zoomPosition.left', zoom.x);
+                    container.setDoubleByPath('zoomPosition.top', zoom.y);
+                    container.setDoubleByPath('zoomPosition.right', zoom.x2);
+                    container.setDoubleByPath('zoomPosition.bottom', zoom.y2);
+                }
+
+                if (focus) {
+                    container.setDoubleByPath('focalPoint.x', focus.x);
+                    container.setDoubleByPath('focalPoint.y', focus.y);
+                }
             }
         }
 
