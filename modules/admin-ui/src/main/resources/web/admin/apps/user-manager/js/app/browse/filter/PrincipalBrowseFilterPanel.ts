@@ -21,9 +21,12 @@ module app.browse.filter {
             this.onRefresh(this.searchFacets);
 
             this.onSearch(this.searchFacets);
+
+            this.initHitsCounter();
         }
 
         private resetFacets(supressEvent?: boolean) {
+            this.searchDataAndHandleResponse("", false);
 
             if (!supressEvent) { // then fire usual reset event with content grid reloading
                 new PrincipalBrowseResetEvent().fire();
@@ -48,15 +51,22 @@ module app.browse.filter {
             }
         }
 
-        private searchDataAndHandleResponse(searchString: string) {
+        private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true) {
             new FindPrincipalsRequest().
                 setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).
                 setSearchQuery(searchString).
                 sendAndParse().then((principals: Principal[]) => {
-                    new PrincipalBrowseSearchEvent(principals).fire();
+                    if(fireEvent) {
+                        new PrincipalBrowseSearchEvent(principals).fire();
+                    }
+                    this.updateHitsCounter(principals ? principals.length : 0)
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
+        }
+
+        private initHitsCounter() {
+            this.searchDataAndHandleResponse("", false);
         }
     }
 }
