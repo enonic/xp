@@ -184,13 +184,6 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler()
             );
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                var forced = item.isInRangeOrSmaller(ResponsiveRanges._540_720) || item.isInRangeOrBigger(ResponsiveRanges._1380_1620);
-                this.contentWizardPanel.getContextWindowToggler().setForced(forced);
-
-                this.contextWindowController.resizeHandler();
-            });
-
             this.liveEditListen();
         }
 
@@ -360,12 +353,6 @@ module app.wizard.page {
                 this.contentWizardPanel.close();
             });
 
-            this.liveEditPageProxy.onPageTextModeStarted((event: api.liveedit.PageTextModeStartedEvent) => {
-                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
-                    this.contextWindow.slideOut();
-                }
-            });
-
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
             });
@@ -380,18 +367,6 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
-                if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
-                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
-                        this.contextWindow.isShownOrAboutToBeShown()) {
-                        this.contextWindow.slideOut();
-                    }
-                }
-                else {
-                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() &&
-                        !this.contextWindow.isShownOrAboutToBeShown()) {
-                        this.contextWindow.slideIn();
-                    }
-                }
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                     this.inspectComponent(<ComponentView<Component>>itemView);
@@ -414,12 +389,6 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
-                var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if (this.contextWindow.canAutoSlide() && (this.contextWindow.isFloating() || toggler.isActive()) &&
-                    !this.contextWindow.isShown()) {
-                    this.contextWindow.slideIn();
-                }
-
                 if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
@@ -427,31 +396,11 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPageProxy.onComponentViewDragStarted((event: ComponentViewDragStartedEvent) => {
-
-                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
-                    this.contextWindow.slideOut();
-                }
-            });
-
             this.liveEditPageProxy.onComponentViewDragDropped((event: ComponentViewDragDroppedEvent) => {
 
                 var componentView = event.getComponentView();
                 if (!componentView.isEmpty()) {
-                    var toggler = this.contentWizardPanel.getContextWindowToggler();
-                    if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && !this.contextWindow.isShown() &&
-                        toggler.isActive()) {
-                        this.contextWindow.slideIn();
-                    }
                     this.inspectComponent(componentView);
-                }
-            });
-
-            this.liveEditPageProxy.onComponentViewDragCanceled((event: ComponentViewDragCanceledEvent) => {
-                var toggler = this.contentWizardPanel.getContextWindowToggler();
-                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && !this.contextWindow.isShown() &&
-                    toggler.isActive()) {
-                    this.contextWindow.slideIn();
                 }
             });
 
@@ -464,12 +413,6 @@ module app.wizard.page {
                 api.notify.showError(event.getMessage(), false);
                 new app.wizard.ShowContentFormEvent().fire();
                 this.contentWizardPanel.showForm();
-            });
-
-            this.insertablesPanel.onHideContextWindowRequest(() => {
-                if (this.contextWindow.canAutoSlide() && this.contextWindow.isFloating() && this.contextWindow.isShown()) {
-                    this.contextWindow.slideOut();
-                }
             });
         }
 

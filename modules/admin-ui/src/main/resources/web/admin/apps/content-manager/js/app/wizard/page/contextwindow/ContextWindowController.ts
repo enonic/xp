@@ -32,48 +32,19 @@ module app.wizard.page.contextwindow {
             });
 
             var liveEditShownHandler = () => {
-                this.contextWindowToggler.setEnabled(true);
-                this.splitModeChangedHandler();
+                if (this.contextWindow.isLiveFormShown()) {
+                    this.contextWindowToggler.setEnabled(true);
+                }
             };
 
             var liveEditHiddenHandler = () => {
                 this.contextWindowToggler.setEnabled(false);
-                this.splitModeChangedHandler();
             };
 
             app.wizard.ShowLiveEditEvent.on(liveEditShownHandler);
             app.wizard.ShowSplitEditEvent.on(liveEditShownHandler);
             app.wizard.ShowContentFormEvent.on(liveEditHiddenHandler);
-
-            this.contextWindow.onShown(() => this.splitModeChangedHandler());
         }
-
-        public splitModeChangedHandler() {
-            // reset manual toggle override flag
-            this.togglerOverriden = false;
-            if (!this.contextWindow.isFloating()) {
-                // set toggler active by default for large screen
-                this.contextWindowToggler.setActive(true);
-            } else if (!this.togglerOverriden) {
-                // otherwise toggle it off if not overriden manually ( don't hide the context window if inspecting and can autoslide though )
-                this.contextWindowToggler.setActive(false, this.contextWindow.isInspecting() && this.contextWindow.canAutoSlide());
-            }
-        }
-
-        public resizeHandler() {
-            if (this.contextWindowToggler.isActive()) {
-                // context window should be shown anyway when toggler is active
-                return;
-            }
-            if (this.contextWindow.isShown() && !this.contextWindow.canAutoSlide()) {
-                // hide if it's shown and can not auto slide no matter if we inspecting or not
-                this.contextWindow.slideOut();
-            } else if (!this.contextWindow.isShown() && this.contextWindow.canAutoSlide() && this.contextWindow.isInspecting()) {
-                // show if it's not shown, but inspecting and can auto slide
-                this.contextWindow.slideIn();
-            }
-        }
-
     }
 
 }
