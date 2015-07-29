@@ -75,6 +75,7 @@ public final class InputTypes
         add( HTML_AREA ).
         add( IMAGE_UPLOADER ).
         add( IMAGE_SELECTOR ).
+        add( FILE_UPLOADER ).
         add( MONEY ).
         add( PHONE ).
         add( CONTENT_SELECTOR ).
