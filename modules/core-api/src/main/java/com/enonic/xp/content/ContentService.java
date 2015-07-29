@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -73,6 +74,9 @@ public interface ContentService
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
+
+    @Deprecated
+    InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
 
     AccessControlList getRootPermissions();
 
