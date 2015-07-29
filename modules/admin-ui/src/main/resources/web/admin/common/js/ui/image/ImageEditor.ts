@@ -4,10 +4,10 @@ module api.ui.image {
     import DivEl = api.dom.DivEl;
     import Button = api.ui.button.Button;
     import Element = api.dom.Element;
-    import Dropdown = api.ui.selector.dropdown.Dropdown;
-    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
-    import Option = api.ui.selector.Option;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import TabMenu = api.ui.tab.TabMenu;
+    import TabMenuItem = api.ui.tab.TabMenuItem;
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+    import NavigatorEvent = api.ui.NavigatorEvent;
 
     export interface Point {
         x: number;
@@ -78,7 +78,7 @@ module api.ui.image {
         private focalButtonsContainer: DivEl;
         private cropButtonsContainer: DivEl;
 
-        private modeSelector: Dropdown<string>;
+        private modeSelector: TabMenu;
 
         private editButton: Button;
         private resetButton: Button;
@@ -389,18 +389,19 @@ module api.ui.image {
         private createStickyToolbar(): DivEl {
             var toolbar = new DivEl('sticky-toolbar');
 
-            this.modeSelector = new Dropdown<string>('modeSelector', {});
-            this.modeSelector.addOption({value: 'mask', displayValue: 'Mask'});
-            this.modeSelector.addOption({value: 'focus', displayValue: 'Autofocus'});
-            this.modeSelector.setValue('mask');
+            this.modeSelector = new TabMenu();
+            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Mask').build());
+            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Autofocus').build());
+            this.modeSelector.selectNavigationItem(0);
 
-            this.modeSelector.onOptionSelected((event: OptionSelectedEvent<string>) => {
-                switch (event.getOption().value) {
-                case 'mask':
-                    this.enableCropEditMode();
-                    break;
-                case 'focus':
+            this.modeSelector.onNavigationItemSelected((event: NavigatorEvent) => {
+                switch (event.getItem().getIndex()) {
+                case 1:
                     this.enableFocusEditMode();
+                    break;
+                case 0:
+                default:
+                    this.enableCropEditMode();
                     break;
                 }
             });
@@ -441,12 +442,12 @@ module api.ui.image {
 
         enableEditMode() {
             // enable last used mode
-            var lastSelected = this.modeSelector.getSelectedOption();
-            switch (lastSelected.value) {
-            case 'focus':
+            var lastSelected = this.modeSelector.getSelectedIndex();
+            switch (lastSelected) {
+            case 1:
                 this.enableFocusEditMode();
                 break;
-            case 'mask':
+            case 0:
             default:
                 this.enableCropEditMode();
                 break;
