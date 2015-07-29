@@ -210,40 +210,7 @@ module app.browse {
             if (!!data.getContentSummary()) {   // default node
                 var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
 
-                switch (compareStatus) {
-                case CompareStatus.NEW:
-                    status = "New";
-                    break;
-                case CompareStatus.NEWER:
-                    status = "Modified";
-                    break;
-                case CompareStatus.OLDER:
-                    status = "Behind";
-                    break;
-                case CompareStatus.UNKNOWN:
-                    status = "Unknown";
-                    break;
-                case CompareStatus.PENDING_DELETE:
-                    status = "Pending delete";
-                    break;
-                case CompareStatus.EQUAL:
-                    status = "Online";
-                    break;
-                case CompareStatus.MOVED:
-                    status = "Moved";
-                    break;
-                case CompareStatus.PENDING_DELETE_TARGET:
-                    status = "Deleted in prod";
-                    break;
-                case CompareStatus.NEW_TARGET:
-                    status = "New in prod";
-                    break;
-                case CompareStatus.CONFLICT_PATH_EXISTS:
-                    status = "Conflict";
-                    break;
-                default:
-                    status = "Unknown"
-                }
+                status = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
                 if (!!CompareStatus[value]) {
                     statusEl.addClass(CompareStatus[value].toLowerCase().replace("_", "-") || "unknown");
