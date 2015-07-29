@@ -1,5 +1,9 @@
 .filter-panel {
-  padding: 20px;
+  .transition(all 0.1s ease-in-out);
+  padding-top: 8px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 20px;
   background-color: #eeeeee !important;
   border-style: none;
   position: absolute;
@@ -9,17 +13,14 @@
   width: auto;
 
   a.clear-filter-button {
-    position: absolute;
-    top: 54px;
-    left: 20px;
+    text-decoration: none;
+    float: right;
   }
 
   input.text-search-field {
+    margin-left: 20px;
     margin-bottom: 20px;
-    width: 100%;
-    background-image: url("../images/admin-search-trigger-v.gif") !important;
-    background-repeat: no-repeat !important;
-    background-position: right top !important;
+    width: 95%;
     padding-right: 30px;
     padding: 4px 21px 4px 9px;
     height: 26px;
@@ -38,6 +39,19 @@
     padding: 0 !important;
     text-transform: capitalize;
     white-space: nowrap;
+  }
+
+  .hits-and-clear {
+    line-height: 24px;
+    font-size: 14px;
+  }
+
+  .hide-filter-panel-button {
+    position: absolute;
+    left: 10px;
+    font-size: 14px;
+    padding: 5px;
+    cursor: pointer;
   }
 
 }
