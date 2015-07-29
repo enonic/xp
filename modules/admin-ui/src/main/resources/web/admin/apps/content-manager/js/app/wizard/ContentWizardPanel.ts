@@ -48,6 +48,8 @@ module app.wizard {
     import MixinNames = api.schema.mixin.MixinNames;
     import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedNameRequest;
 
+    import DialogButton = api.ui.dialog.DialogButton;
+
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         private parentContent: Content;
@@ -108,9 +110,9 @@ module app.wizard {
 
         private isSecurityWizardStepFormAllowed: boolean;
 
-        private publishButtonForMobile: api.ui.dialog.DialogButton;
-
         private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
+
+        private publishButtonForMobile: api.ui.dialog.DialogButton;
 
         /**
          * Whether constructor is being currently executed or not.
@@ -1015,12 +1017,6 @@ module app.wizard {
             }
         }
 
-        private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
-            var canBeShown = compareStatus !== CompareStatus.EQUAL;
-            this.publishButtonForMobile.toggleClass("visible", canBeShown);
-            this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
-        }
-
         private initPublishButtonForMobile() {
 
             var action: api.ui.Action = new api.ui.Action("Publish", "enter");
@@ -1029,12 +1025,18 @@ module app.wizard {
                 this.publishAction.execute();
             });
 
-            this.publishButtonForMobile = new api.ui.dialog.DialogButton(action);
+            this.publishButtonForMobile = new DialogButton(action);
             this.publishButtonForMobile.addClass("mobile-edit-publish-button");
 
             this.subscribePublishButtonForMobileToPublishEvents();
 
-            this.getWizardStepsPanel().appendChild(this.publishButtonForMobile);
+            this.getSplitPanel().appendChild(this.publishButtonForMobile);
+        }
+
+        private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
+            var canBeShown = compareStatus !== CompareStatus.EQUAL;
+            this.publishButtonForMobile.toggleClass("visible", canBeShown);
+            this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
         }
 
         private subscribePublishButtonForMobileToPublishEvents() {
