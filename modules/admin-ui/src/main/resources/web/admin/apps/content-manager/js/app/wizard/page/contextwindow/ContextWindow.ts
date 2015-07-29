@@ -186,11 +186,6 @@ module app.wizard.page.contextwindow {
             return this.inspectionsPanel.isInspecting();
         }
 
-        public canAutoSlide(): boolean {
-            var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
-            return liveFormPanelWidth > 720 && liveFormPanelWidth <= 1380;
-        }
-
         private updateFrameSize() {
             var isFloating = this.isFloating(),
                 displayModeChanged = this.hasClass('floating') && !isFloating,
@@ -205,10 +200,14 @@ module app.wizard.page.contextwindow {
             }
         }
 
+        isLiveFormShown(): boolean {
+            return this.liveFormPanel.isVisible();
+        }
+
         isFloating(): boolean {
             var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
             var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
-            return (liveFormPanelWidth < 1380) || ((liveFormPanelWidth - contextWindowWidth) < 960);
+            return (liveFormPanelWidth < 1200) || ((liveFormPanelWidth - contextWindowWidth) < 960);
         }
 
         notifyDisplayModeChanged() {
