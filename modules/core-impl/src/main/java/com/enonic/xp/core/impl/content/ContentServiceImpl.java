@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -691,6 +693,21 @@ public class ContentServiceImpl
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
         return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
+    }
+
+    @Override
+    @Deprecated
+    public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
+    {
+        try
+        {
+            return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference ).openStream();
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Reference

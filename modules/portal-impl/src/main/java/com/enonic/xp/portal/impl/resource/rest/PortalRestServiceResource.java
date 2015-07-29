@@ -24,7 +24,7 @@ public class PortalRestServiceResource
     protected HttpServletRequest httpServletRequest;
 
     @Path("{portalRestService}")
-    public PortalRestService controller2( @PathParam("portalRestService") final String portalRestServiceName )
+    public PortalRestService portalRestService( @PathParam("portalRestService") final String portalRestServiceName )
     {
         PortalRequest portalRequest = PortalRequestAccessor.get( httpServletRequest );
         if ( portalRequest == null )
