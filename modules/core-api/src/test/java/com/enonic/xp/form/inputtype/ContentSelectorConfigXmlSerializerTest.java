@@ -42,7 +42,7 @@ public class ContentSelectorConfigXmlSerializerTest
         final Document doc = serializer.generate( config );
 
         // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
+        assertEquals( xmlHelper.loadTestXml( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ContentSelectorConfigXmlSerializerTest
         final Document doc = serializer.generate( config );
 
         // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeFullConfig.xml" ), DomHelper.serialize( doc ) );
+        assertEquals( xmlHelper.loadTestXml( "serializeFullConfig.xml" ), DomHelper.serialize( doc ) );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ContentSelectorConfigXmlSerializerTest
         final Document doc = serializer.generate( config );
 
         // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeEmptyConfig.xml" ), DomHelper.serialize( doc ) );
+        assertEquals( xmlHelper.loadTestXml( "serializeEmptyConfig.xml" ), DomHelper.serialize( doc ) );
     }
 
     @Test

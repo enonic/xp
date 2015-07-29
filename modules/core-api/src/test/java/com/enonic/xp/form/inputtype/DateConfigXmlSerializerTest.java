@@ -41,7 +41,7 @@ public class DateConfigXmlSerializerTest
         final Document doc = serializer.generate( config );
 
         // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
+        assertEquals( xmlHelper.loadTestXml( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
     }
 
     @Test

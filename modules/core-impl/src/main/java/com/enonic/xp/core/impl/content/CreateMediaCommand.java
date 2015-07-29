@@ -49,11 +49,14 @@ final class CreateMediaCommand
 
         // TODO: Resolve form based on type?
         final PropertyTree data = new PropertyTree();
-        new ImageFormDataBuilder().
-            image( params.getName() ).
-            focalX( params.getFocalX() ).
-            focalY( params.getFocalY() ).
-            build( data );
+        if ( type.isImageMedia() )
+        {
+            new ImageFormDataBuilder().
+                image( params.getName() ).
+                focalX( params.getFocalX() ).
+                focalY( params.getFocalY() ).
+                build( data );
+        }
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).

@@ -1,0 +1,13 @@
+{
+  "allowTypes": [
+    {
+      "name": "Images",
+      "extensions": "jpg,png,gif"
+    },
+    {
+      "name": "Text",
+      "extensions": "txt,doc"
+    }
+  ],
+  "hideDropZone": true
+}

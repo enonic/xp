@@ -12,7 +12,19 @@ final class FileUploader
 {
     FileUploader()
     {
+        super( FileUploaderConfig.class, false );
+    }
 
+    @Override
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    {
+        return FileUploaderConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    {
+        return FileUploaderConfigXmlSerializer.DEFAULT;
     }
 
     @Override
@@ -26,10 +38,13 @@ final class FileUploader
     public void checkTypeValidity( final Property property )
         throws InvalidTypeException
     {
-//        if ( !ValueTypes.REFERENCE.equals( property.getType() ) )
-//        {
-//            throw new InvalidTypeException( property, ValueTypes.REFERENCE );
-//        }
+
+    }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return FileUploaderConfig.create().build();
     }
 
     @Override
