@@ -4,7 +4,7 @@ module api.app.browse.filter {
 
         constructor() {
             super('clear-filter-button');
-            this.getEl().setInnerHtml('Clear filter');
+            this.getEl().setInnerHtml('Clear');
             this.getHTMLElement().setAttribute('href', 'javascript:;');
             this.hide();
         }
