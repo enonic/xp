@@ -21,7 +21,7 @@ module api.content {
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                status = "New";
+                status = "Offline";
                 break;
             case CompareStatus.NEWER:
                 status = "Modified";
