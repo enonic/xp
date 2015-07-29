@@ -6,12 +6,24 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 
+    interface FileUploaderConfigAllowType {
+        name: string;
+        extensions: string;
+    }
+
+    interface FileUploaderConfig {
+        hideDropZone: boolean;
+        allowTypes: FileUploaderConfigAllowType[];
+    }
+
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
+        private config: api.content.form.inputtype.ContentInputTypeViewContext<FileUploaderConfig>;
         private uploader: api.content.MediaUploader;
         private uploaderWrapper: api.dom.DivEl;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<FileUploaderConfig>) {
             super(config, "file-uploader");
+            this.config = config;
         }
 
         getContext(): api.content.form.inputtype.ContentInputTypeViewContext<any> {
@@ -139,18 +151,21 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploader(): api.content.MediaUploader {
+            var allowTypes = this.config.inputConfig.allowTypes.map((allowType) => {
+                return {title: allowType.name, extensions: allowType.extensions};
+            });
             return new api.content.MediaUploader({
                 params: {
                     parent: this.getContext().contentId.toString()
                 },
                 operation: api.content.MediaUploaderOperation.create,
-                allowTypes: [{title: 'Key files', extensions: 'p12'}],
+                allowTypes: allowTypes,
                 name: this.getContext().input.getName(),
                 showReset: false,
                 showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDropZone: true,
+                hideDropZone: !!this.config.inputConfig.hideDropZone,
                 deferred: true
             });
         }
