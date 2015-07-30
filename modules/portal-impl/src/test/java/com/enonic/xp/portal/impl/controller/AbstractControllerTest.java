@@ -25,7 +25,6 @@ import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -75,8 +74,7 @@ public abstract class AbstractControllerTest
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            final URL url = ResourceUrlResolver.resolve( resourceKey );
-            return new Resource( resourceKey, url );
+            return new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) );
         } );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();

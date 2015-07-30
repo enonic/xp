@@ -170,11 +170,4 @@ public final class Resource
             throw handleError( e );
         }
     }
-
-    @Deprecated
-    public static Resource from( final ResourceKey key )
-    {
-        final URL url = ResourceUrlResolver.resolve( key );
-        return new Resource( key, url );
-    }
 }

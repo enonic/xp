@@ -15,7 +15,6 @@ import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 import com.enonic.xp.xml.DomHelper;
@@ -38,8 +37,7 @@ public abstract class AbstractFunctionTest
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            final URL url = ResourceUrlResolver.resolve( resourceKey );
-            return new Resource( resourceKey, url );
+            return new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) );
         } );
 
         this.processor = service.newProcessor();

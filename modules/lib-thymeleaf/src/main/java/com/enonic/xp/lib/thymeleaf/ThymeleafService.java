@@ -17,6 +17,8 @@ public final class ThymeleafService
 {
     private final TemplateEngine engine;
 
+    private ThymeleafResourceResolver thymeleafResourceResolver;
+
     private BeanContext context;
 
     public ThymeleafService()
@@ -31,7 +33,8 @@ public final class ThymeleafService
 
         final TemplateResolver templateResolver = new TemplateResolver();
         templateResolver.setCacheable( false );
-        templateResolver.setResourceResolver( new ThymeleafResourceResolver() );
+        this.thymeleafResourceResolver = new ThymeleafResourceResolver();
+        templateResolver.setResourceResolver( this.thymeleafResourceResolver );
         this.engine.setTemplateResolver( templateResolver );
 
         this.engine.initialize();
@@ -54,5 +57,6 @@ public final class ThymeleafService
     public void initialize( final BeanContext context )
     {
         this.context = context;
+        this.thymeleafResourceResolver.initialize( context );
     }
 }
