@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
 
 public class SiteServiceImplTest
 {
-    private static final String MODULE_NAME = "mymodule";
+    private static final String APPLICATION_NAME = "myapplication";
 
-    private static final String UNKNOWN_MODULE_NAME = "unknownmodule";
+    private static final String UNKNOWN_APPLICATION_NAME = "unknownapplication";
 
     private ApplicationKey applicationKey;
 
@@ -24,7 +24,7 @@ public class SiteServiceImplTest
     @Before
     public void before()
     {
-        applicationKey = ApplicationKey.from( MODULE_NAME );
+        applicationKey = ApplicationKey.from( APPLICATION_NAME );
 
         //Creates a mocked SiteDescriptor
         mockedSiteDescriptor = SiteDescriptor.create().build();
@@ -46,9 +46,9 @@ public class SiteServiceImplTest
     }
 
     @Test
-    public void get_descriptor_for_unknown_module()
+    public void get_descriptor_for_unknown_application()
     {
-        final SiteDescriptor siteDescriptor = siteService.getDescriptor( ApplicationKey.from( UNKNOWN_MODULE_NAME ) );
+        final SiteDescriptor siteDescriptor = siteService.getDescriptor( ApplicationKey.from( UNKNOWN_APPLICATION_NAME ) );
         assertEquals( null, siteDescriptor );
     }
 }

@@ -1,9 +1,9 @@
 {
-    "name": "mymodule:all_schemas",
+    "name": "myapplication:all_schemas",
     "displayName": "All the Base Types",
     "description": "A description",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
-    "superType": "mymodule:content",
+    "superType": "myapplication:content",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn" : false,
@@ -51,7 +51,7 @@
                     {
                       "InlineMixin": {
                             "name": "myCommonInput",
-                            "reference": "mymodule:my_shared_input"
+                          "reference": "myapplication:my_shared_input"
                         }
                     }
                 ]

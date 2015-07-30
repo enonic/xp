@@ -36,7 +36,7 @@ public final class PageDescriptorServiceImpl
     @Override
     public PageDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return new GetPageDescriptorsByModuleCommand().
+        return new GetPageDescriptorsByApplicationCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
@@ -46,7 +46,7 @@ public final class PageDescriptorServiceImpl
     @Override
     public PageDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        return new GetPageDescriptorsByModulesCommand().
+        return new GetPageDescriptorsByApplicationsCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).

@@ -73,7 +73,7 @@ public class FormItemDataSerializerTest
     public void serializeFormItems_given_Inline()
     {
         final InlineMixin inline =
-            MixinRefnew PropertyTree(new PropertyTree.PredictivePropertyIdProvider())erence().name( "mymixinreference" ).mixin( "mymodule:mymixinreferencedto" ).build();
+            MixinRefnew PropertyTree(new PropertyTree.PredictivePropertyIdProvider())erence().name( "mymixinreference" ).mixin( "myapplication:mymixinreferencedto" ).build();
 
         PropertyTree generatedData = new PropertyTree();
 

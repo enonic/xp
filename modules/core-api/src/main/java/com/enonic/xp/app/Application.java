@@ -17,7 +17,7 @@ import com.google.common.collect.Sets;
 @Beta
 public class Application
 {
-    public final static String X_MODULE_URL = "X-Module-Url";
+    public final static String X_APPLICATION_URL = "X-Application-Url";
 
     public final static String X_VENDOR_NAME = "X-Vendor-Name";
 
@@ -49,7 +49,7 @@ public class Application
         this.applicationKey = ApplicationKey.from( bundle );
         this.version = this.bundle.getVersion();
         this.displayName = getHeader( this.bundle, Constants.BUNDLE_NAME, this.getKey().toString() );
-        this.url = getHeader( this.bundle, X_MODULE_URL, null );
+        this.url = getHeader( this.bundle, X_APPLICATION_URL, null );
         this.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
         this.vendorUrl = getHeader( this.bundle, X_VENDOR_URL, null );
         this.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );

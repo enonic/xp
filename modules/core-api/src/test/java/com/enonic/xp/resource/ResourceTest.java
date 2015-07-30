@@ -39,8 +39,8 @@ public class ResourceTest
         writeFile( modulesDir, "mymodule/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule/a.txt", "a.txt" );
 
-        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
-        registry.modulesDir( modulesDir );
+        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockApplicationScheme();
+        registry.applicationsDir( modulesDir );
     }
 
     @Test

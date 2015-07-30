@@ -12,13 +12,14 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
     extends AbstractPartDescriptorServiceTest
 {
     @Test
-    public void getDescriptorsFromSingleModule()
+    public void getDescriptorsFromSingleApplication()
         throws Exception
     {
-        final Application application = createApplication( "foomodule" );
-        createDescriptors( "foomodule:foomodule-part-descr" );
+        final Application application = createApplication( "fooapplication" );
+        createDescriptors( "fooapplication:fooapplication-part-descr" );
 
-        mockResources( application, "/site/parts", "*", false, "site/parts/foomodule-part-descr" );
+        mockResources( application, "/site/parts", "*", false, "site/parts/fooapplication-part-descr" );
+
         final PartDescriptors result = this.service.getByApplication( application.getKey() );
 
         Assert.assertNotNull( result );
@@ -26,16 +27,16 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
     }
 
     @Test
-    public void getDescriptorsFromMultipleModules()
+    public void getDescriptorsFromMultipleApplications()
         throws Exception
     {
-        final Applications applications = createApplications( "foomodule", "barmodule" );
-        createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
+        final Applications applications = createApplications( "fooapplication", "barapplication" );
+        createDescriptors( "fooapplication:fooapplication-part-descr", "barapplication:barapplication-part-descr" );
 
-        mockResources( applications.getApplication( ApplicationKey.from( "foomodule" ) ), "/site/parts", "*", false,
-                       "site/parts/foomodule-part-descr" );
-        mockResources( applications.getApplication( ApplicationKey.from( "barmodule" ) ), "/site/parts", "*", false,
-                       "site/parts/barmodule-part-descr" );
+        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/parts", "*", false,
+                       "site/parts/fooapplication-part-descr" );
+        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/parts", "*", false,
+                       "site/parts/barapplication-part-descr" );
 
         final PartDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 
