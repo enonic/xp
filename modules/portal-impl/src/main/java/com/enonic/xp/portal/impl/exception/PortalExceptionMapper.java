@@ -9,12 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.portal.impl.services.PortalServices;
+import com.enonic.xp.resource.ResourceService;
 
 @Provider
 public final class PortalExceptionMapper
     implements ExceptionMapper<Throwable>
 {
     private final static Logger LOG = LoggerFactory.getLogger( PortalExceptionMapper.class );
+
+    private PortalServices portalServices;
 
     @Override
     public final Response toResponse( final Throwable cause )
@@ -33,20 +37,28 @@ public final class PortalExceptionMapper
 
         if ( cause instanceof NotFoundException )
         {
-            return ExceptionInfo.create( Response.Status.NOT_FOUND.getStatusCode() ).cause( cause );
+            return ExceptionInfo.create( Response.Status.NOT_FOUND.getStatusCode() ).
+                cause( cause ).
+                resourceService( getResourceService() );
         }
 
         if ( cause instanceof IllegalArgumentException )
         {
-            return ExceptionInfo.create( Response.Status.BAD_REQUEST.getStatusCode() ).cause( cause );
+            return ExceptionInfo.create( Response.Status.BAD_REQUEST.getStatusCode() ).
+                cause( cause ).
+                resourceService( getResourceService() );
         }
 
-        return ExceptionInfo.create( Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ).cause( cause );
+        return ExceptionInfo.create( Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ).
+            cause( cause ).
+            resourceService( getResourceService() );
     }
 
     private ExceptionInfo toErrorInfo( final WebApplicationException cause )
     {
-        return ExceptionInfo.create( cause.getResponse().getStatus() ).cause( cause );
+        return ExceptionInfo.create( cause.getResponse().getStatus() ).
+            cause( cause ).
+            resourceService( getResourceService() );
     }
 
     private void logIfNeeded( final ExceptionInfo info )
@@ -55,5 +67,15 @@ public final class PortalExceptionMapper
         {
             LOG.error( info.getMessage(), info.getCause() );
         }
+    }
+
+    private ResourceService getResourceService()
+    {
+        return this.portalServices == null ? null : this.portalServices.getResourceService();
+    }
+
+    public void setPortalServices( final PortalServices portalServices )
+    {
+        this.portalServices = portalServices;
     }
 }

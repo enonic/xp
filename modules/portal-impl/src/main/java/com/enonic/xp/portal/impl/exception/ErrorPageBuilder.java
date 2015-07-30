@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.resource.ResourceService;
 
 final class ErrorPageBuilder
 {
@@ -58,6 +59,8 @@ final class ErrorPageBuilder
 
     private Throwable cause;
 
+    private ResourceService resourceService;
+
     public ErrorPageBuilder status( final int value )
     {
         this.statusCode = value;
@@ -73,6 +76,12 @@ final class ErrorPageBuilder
     public ErrorPageBuilder description( final String value )
     {
         this.description = value;
+        return this;
+    }
+
+    public ErrorPageBuilder resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return this;
     }
 
@@ -294,7 +303,7 @@ final class ErrorPageBuilder
         return list;
     }
 
-    private static List<LineInfo> findSourceLines( final ResourceProblemException cause )
+    private List<LineInfo> findSourceLines( final ResourceProblemException cause )
     {
         final int errorLine = cause.getLineNumber();
         final List<String> allLines = findAllSourceLines( cause );
@@ -313,14 +322,14 @@ final class ErrorPageBuilder
         return list;
     }
 
-    private static List<String> findAllSourceLines( final ResourceProblemException cause )
+    private List<String> findAllSourceLines( final ResourceProblemException cause )
     {
         final ResourceKey resourceKey = cause.getResource();
-        if ( resourceKey == null )
+        if ( resourceKey == null || this.resourceService == null )
         {
             return Lists.newArrayList();
         }
-        final Resource resource = Resource.from( resourceKey );
+        final Resource resource = resourceService.getResource( resourceKey );
         return resource.readLines();
     }
 

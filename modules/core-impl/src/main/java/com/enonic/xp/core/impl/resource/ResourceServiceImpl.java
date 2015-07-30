@@ -10,13 +10,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Throwables;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.Resources;
 
 @Component(immediate = true)
@@ -104,8 +105,15 @@ public class ResourceServiceImpl
 
     private Resource buildResourceFromKey( final ResourceKey key )
     {
-        final URL url = ResourceUrlResolver.resolve( key );
-        return new Resource( key, url );
+        try
+        {
+            final URL url = new URL( "module:" + key.toString() );
+            return new Resource( key, url );
+        }
+        catch ( final Exception e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     @Reference

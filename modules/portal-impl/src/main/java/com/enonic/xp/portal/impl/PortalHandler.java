@@ -12,6 +12,8 @@ import com.enonic.xp.web.jaxrs.JaxRsHandler;
 public final class PortalHandler
     extends JaxRsHandler
 {
+    private final PortalJaxRsFeature portalJaxRsFeature;
+
     private final RootResourceFactory root;
 
     public PortalHandler()
@@ -19,14 +21,16 @@ public final class PortalHandler
         setOrder( MAX_ORDER - 30 );
         setPath( "/portal/" );
 
+        this.portalJaxRsFeature = new PortalJaxRsFeature();
         this.root = new RootResourceFactory();
-        addSingleton( new PortalJaxRsFeature() );
+        addSingleton( this.portalJaxRsFeature );
         addSingleton( this.root );
     }
 
     @Reference
     public void setServices( final PortalServices services )
     {
+        this.portalJaxRsFeature.setServices( services );
         this.root.setServices( services );
     }
 }
