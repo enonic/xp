@@ -1031,7 +1031,12 @@ module app.wizard {
 
             this.subscribePublishButtonForMobileToPublishEvents();
 
-            this.getSplitPanel().appendChild(this.publishButtonForMobile);
+            var publishButtonContainer: api.ui.panel.Panel = this.getSplitPanel();
+            if (!publishButtonContainer) {
+                publishButtonContainer = this.getWizardStepsPanel();
+            }
+
+            publishButtonContainer.appendChild(this.publishButtonForMobile);
         }
 
         private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
