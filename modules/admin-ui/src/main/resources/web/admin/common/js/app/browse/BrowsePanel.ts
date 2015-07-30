@@ -38,6 +38,10 @@ module api.app.browse {
 
         private filterPanelForcedShown: boolean = false;
 
+        private filterPanelForcedHidden: boolean = false;
+
+        private toggleFilterPanelAction: api.ui.Action;
+
         constructor(params: BrowsePanelParams<M>) {
             super();
 
@@ -61,6 +65,12 @@ module api.app.browse {
                 this.filterAndGridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
                     .setFirstPanelSize(200,
                     api.ui.panel.SplitPanelUnit.PIXEL).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).build();
+
+                this.filterPanel.onHideFilterPanelButtonClicked(() => {
+                    this.toggleFilterPanel();
+                });
+
+                this.addToggleFilterPanelButtonInToolbar();
             } else {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
@@ -90,7 +100,7 @@ module api.app.browse {
                         this.gridAndDetailSplitPanel.hidePanel(2);
                     }
                 } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
-                    if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)) {
+                    if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) && !this.filterPanelForcedHidden) {
                         this.filterAndGridAndDetailSplitPanel.showPanel(1);
                     }
                     if (this.gridAndDetailSplitPanel.isPanelHidden(2)) {
@@ -136,9 +146,25 @@ module api.app.browse {
 
         toggleFilterPanel() {
             this.filterPanelForcedShown = !this.filterPanelForcedShown;
-            !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)
-                ? this.filterAndGridAndDetailSplitPanel.hidePanel(1)
-                : this.filterAndGridAndDetailSplitPanel.showPanel(1);
+            this.filterPanelForcedHidden = !this.filterPanelForcedHidden;
+            if(this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)) {
+                this.filterAndGridAndDetailSplitPanel.showPanel(1);
+                this.filterPanel.giveFocusToSearch();
+                this.toggleFilterPanelAction.setVisible(false);
+            }
+            else {
+                this.filterAndGridAndDetailSplitPanel.hidePanel(1);
+                this.toggleFilterPanelAction.setVisible(true);
+            }
+        }
+
+        private addToggleFilterPanelButtonInToolbar() {
+            this.toggleFilterPanelAction = new api.app.browse.action.ToggleFilterPanelAction(this);
+            var existingActions: api.ui.Action[] = this.browseToolbar.getActions();
+            this.browseToolbar.removeActions();
+            this.browseToolbar.addAction(this.toggleFilterPanelAction);
+            this.browseToolbar.addActions(existingActions);
+            this.toggleFilterPanelAction.setVisible(false);
         }
 
     }
