@@ -60,12 +60,12 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     {
         final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( applicationKey );
+        parser.currentApplication( applicationKey );
         parser.source( xml );
         parser.parse();
     }
 
-    protected final LayoutDescriptors getDescriptorsFromModules( final Applications applications )
+    protected final LayoutDescriptors getDescriptorsFromApplications( final Applications applications )
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
         for ( final Application application : applications )
@@ -75,7 +75,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         return layoutDescriptors.build();
     }
 
-    protected final LayoutDescriptors getDescriptorsFromModule( final Application application )
+    protected final LayoutDescriptors getDescriptorsFromApplication( final Application application )
     {
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.create();
         readDescriptor( application, layoutDescriptors );

@@ -96,7 +96,7 @@ final class MockUrlStreamHandlerFactory
     }
 
     @Override
-    public ResourceUrlRegistry modulesDir( final File modulesDir )
+    public ResourceUrlRegistry applicationsDir( final File modulesDir )
     {
         this.modulesDir = modulesDir;
         return this;

@@ -39,14 +39,14 @@ public final class ExtraData
         return name;
     }
 
-    public String getModulePrefix()
+    public String getApplicationPrefix()
     {
         return name.getApplicationKey() == null ? "" : name.getApplicationKey().toString().replace( '.', '-' );
     }
 
-    public static ApplicationKey fromModulePrefix( final String modulePrefix )
+    public static ApplicationKey fromApplicationPrefix( final String applicationPrefix )
     {
-        return ApplicationKey.from( modulePrefix.replace( '-', '.' ) );
+        return ApplicationKey.from( applicationPrefix.replace( '-', '.' ) );
     }
 
     public void setName( final MixinName name )

@@ -43,7 +43,7 @@ public class ResourceServiceImplTest
     @Before
     public void before()
     {
-        applicationKey = ApplicationKey.from( "mymodule" );
+        applicationKey = ApplicationKey.from( "myapplication" );
 
         ResourceTestHelper resourceTestHelper = new ResourceTestHelper( this );
         resourceUrl = resourceTestHelper.getResource( RESOURCE_FILE_NAME );
@@ -59,7 +59,7 @@ public class ResourceServiceImplTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( applicationKey ) ).thenReturn( application );
 
         resourceService = new ResourceServiceImpl();
         resourceService.setApplicationService( applicationService );
@@ -78,8 +78,8 @@ public class ResourceServiceImplTest
         assertEquals( resourceKey, resource.getKey() );
         assertEquals( resourceUrl, resource.getUrl() );
 
-        //Retrieves a resource with an incorrect module key
-        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "othermodule" );
+        //Retrieves a resource with an incorrect application key
+        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
         resourceKey = ResourceKey.from( incorrectApplicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
         assertNotNull( resource );
@@ -114,8 +114,8 @@ public class ResourceServiceImplTest
         resources = resourceService.findResources( applicationKey, "/b", "*", true );
         assertEquals( 0, resources.getSize() );
 
-        //Finds all resources for an incorrect module key
-        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "othermodule" );
+        //Finds all resources for an incorrect application key
+        ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
         resources = resourceService.findResources( incorrectApplicationKey, "/", RESOURCE_FILE_NAME, true );
         assertEquals( 0, resources.getSize() );
     }

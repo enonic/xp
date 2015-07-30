@@ -33,7 +33,7 @@ public abstract class AbstractDescriptorServiceTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private File modulesDir;
+    private File applicationsDir;
 
     protected ApplicationService applicationService;
 
@@ -43,8 +43,8 @@ public abstract class AbstractDescriptorServiceTest
     public final void setup()
         throws Exception
     {
-        this.modulesDir = this.temporaryFolder.newFolder( "modules" );
-        ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
+        this.applicationsDir = this.temporaryFolder.newFolder( "applications" );
+        ResourceUrlTestHelper.mockApplicationScheme().applicationsDir( this.applicationsDir );
         this.applicationService = Mockito.mock( ApplicationService.class );
         resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -58,7 +58,7 @@ public abstract class AbstractDescriptorServiceTest
         throws Exception
     {
         final String path = key.getApplicationKey().toString() + key.getPath();
-        final File file = new File( this.modulesDir, path );
+        final File file = new File( this.applicationsDir, path );
         Assert.assertTrue( file.getParentFile().mkdirs() );
 
         Files.write( content, file, Charsets.UTF_8 );
@@ -95,7 +95,7 @@ public abstract class AbstractDescriptorServiceTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( applicationKey );
 
-        Mockito.when( this.applicationService.getModule( applicationKey ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getApplication( applicationKey ) ).thenReturn( application );
         return application;
     }
 
@@ -108,8 +108,8 @@ public abstract class AbstractDescriptorServiceTest
         }
 
         final Applications applications = Applications.from( list );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( this.applicationService.getModules( applications.getApplicationKeys() ) ).thenReturn( applications );
+        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getApplications( applications.getApplicationKeys() ) ).thenReturn( applications );
         return applications;
     }
 

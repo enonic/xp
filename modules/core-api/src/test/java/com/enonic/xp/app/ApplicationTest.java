@@ -42,7 +42,7 @@ public class ApplicationTest
         assertEquals( "[1.2,2)", application.getSystemVersion() );
         assertEquals( "5.1", application.getMaxSystemVersion() );
         assertEquals( "5.0", application.getMinSystemVersion() );
-        assertEquals( "http://enonic.com/path/to/module", application.getUrl() );
+        assertEquals( "http://enonic.com/path/to/application", application.getUrl() );
         assertEquals( "Enonic AS", application.getVendorName() );
         assertEquals( "http://enonic.com", application.getVendorUrl() );
         assertEquals( bundle, application.getBundle() );
@@ -52,8 +52,8 @@ public class ApplicationTest
         application.checkIfStarted();
         assertTrue( application.isApplication() );
         assertFalse( application.isSystem() );
-        assertTrue( Application.isModule( bundle ) );
-        assertEquals( "Application{applicationKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/module, " +
+        assertTrue( Application.isApplication( bundle ) );
+        assertEquals( "Application{applicationKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/application, " +
                           "vendorName=Enonic AS, vendorUrl=http://enonic.com}", application.toString() );
     }
 
@@ -90,7 +90,7 @@ public class ApplicationTest
     {
         Dictionary<String, String> headers = new Hashtable<String, String>();
         headers.put( Constants.BUNDLE_NAME, "mymodule" );
-        headers.put( Application.X_MODULE_URL, "http://enonic.com/path/to/module" );
+        headers.put( Application.X_APPLICATION_URL, "http://enonic.com/path/to/application" );
         headers.put( Application.X_SYSTEM_VERSION, "[1.2,2)" );
         headers.put( Application.X_VENDOR_NAME, "Enonic AS" );
         headers.put( Application.X_VENDOR_URL, "http://enonic.com" );

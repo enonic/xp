@@ -55,7 +55,7 @@ public class ContentNodeTranslatorTest
             name( "mycontent" ).
             displayName( "myDisplayName" ).
             parent( ContentPath.ROOT ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            type( ContentTypeName.from( "myapplication:my-content-type" ) ).
             contentData( contentData ).
             creator( PrincipalKey.ofAnonymous() ).
             childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
@@ -77,7 +77,7 @@ public class ContentNodeTranslatorTest
             name( "mycontent" ).
             displayName( "myDisplayName" ).
             parent( ContentPath.ROOT ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            type( ContentTypeName.from( "myapplication:my-content-type" ) ).
             contentData( contentData ).
             creator( PrincipalKey.ofAnonymous() ).
             childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).

@@ -12,8 +12,8 @@ import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.Resources;
 
-final class GetPageDescriptorsByModuleCommand
-    extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
+final class GetPageDescriptorsByApplicationCommand
+    extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByApplicationCommand>
 {
     private final static String PATH = "/site/pages";
 
@@ -23,23 +23,23 @@ final class GetPageDescriptorsByModuleCommand
 
     public PageDescriptors execute()
     {
-        final Application application = this.applicationService.getModule( this.applicationKey );
-        return getDescriptorsFromModule( application );
+        final Application application = this.applicationService.getApplication( this.applicationKey );
+        return getDescriptorsFromApplication( application );
     }
 
-    public GetPageDescriptorsByModuleCommand applicationKey( final ApplicationKey applicationKey )
+    public GetPageDescriptorsByApplicationCommand applicationKey( final ApplicationKey applicationKey )
     {
         this.applicationKey = applicationKey;
         return this;
     }
 
-    public final GetPageDescriptorsByModuleCommand applicationService( final ApplicationService applicationService )
+    public final GetPageDescriptorsByApplicationCommand applicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
         return this;
     }
 
-    private PageDescriptors getDescriptorsFromModule( final Application application )
+    private PageDescriptors getDescriptorsFromApplication( final Application application )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
         final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );

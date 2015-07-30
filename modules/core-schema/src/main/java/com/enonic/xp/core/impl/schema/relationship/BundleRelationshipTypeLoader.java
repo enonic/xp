@@ -146,7 +146,7 @@ final class BundleRelationshipTypeLoader
         final XmlRelationshipTypeParser parser = new XmlRelationshipTypeParser();
         parser.builder( builder );
         parser.source( str );
-        parser.currentModule( this.applicationKey );
+        parser.currentApplication( this.applicationKey );
         parser.parse();
 
         return builder;

@@ -30,7 +30,7 @@ public class XmlSiteParserTest
         final String xml = loadTestXml( "serialized-site.xml" );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
-        ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         this.parser.source( xml ).
             applicationKey( applicationKey ).
@@ -49,7 +49,7 @@ public class XmlSiteParserTest
         final String xml = loadTestXml( "empty-site.xml" );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
-        ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         this.parser.source( xml ).
             applicationKey( applicationKey ).

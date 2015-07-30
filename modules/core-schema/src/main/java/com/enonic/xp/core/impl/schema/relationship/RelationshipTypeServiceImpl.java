@@ -68,7 +68,7 @@ public final class RelationshipTypeServiceImpl
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
         //Gets for each module the RelationshipTypes
-        for ( Application application : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllApplications() )
         {
             final RelationshipTypes relationshipTypes = getByModule( application.getKey() );
             relationshipTypeList.addAll( relationshipTypes.getList() );
@@ -97,7 +97,7 @@ public final class RelationshipTypeServiceImpl
         else
         {
             //Else, loads the corresponding bundle relation types
-            final Application application = this.applicationService.getModule( applicationKey );
+            final Application application = this.applicationService.getApplication( applicationKey );
             if ( application != null )
             {
                 final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( application.getBundle() );

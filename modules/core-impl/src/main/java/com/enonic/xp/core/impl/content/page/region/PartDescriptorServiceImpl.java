@@ -35,9 +35,9 @@ public final class PartDescriptorServiceImpl
     }
 
     @Override
-    public PartDescriptors getByModule( final ApplicationKey applicationKey )
+    public PartDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return new GetPartDescriptorsByModuleCommand().
+        return new GetPartDescriptorsByApplicationCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
@@ -46,9 +46,9 @@ public final class PartDescriptorServiceImpl
     }
 
     @Override
-    public PartDescriptors getByModules( final ApplicationKeys applicationKeys )
+    public PartDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        return new GetPartDescriptorsByModulesCommand().
+        return new GetPartDescriptorsByApplicationsCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).

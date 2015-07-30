@@ -54,7 +54,7 @@ public class RelationshipTypeServiceImplTest
 
         //Mocks the module service
         applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
         //Mocks the ComponentContext
         final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
@@ -87,8 +87,8 @@ public class RelationshipTypeServiceImplTest
     public void test_add_removal_module()
     {
         Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
 
         RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
         assertNotNull( relationshipTypes );
@@ -101,8 +101,8 @@ public class RelationshipTypeServiceImplTest
         RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
         assertNotNull( relationshipType );
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
         relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();

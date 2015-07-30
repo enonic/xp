@@ -28,7 +28,7 @@ public abstract class AbstractScriptTest
         this.scriptService = new ScriptServiceImpl();
         this.scriptService.addGlobalVariable( "assert", new AssertHelper() );
 
-        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
+        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockApplicationScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
@@ -40,7 +40,7 @@ public abstract class AbstractScriptTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( APPLICATION_KEY ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( APPLICATION_KEY ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );

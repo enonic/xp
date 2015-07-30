@@ -70,7 +70,7 @@ public class MixinServiceImplTest
     @Test
     public void test_empty()
     {
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
         Mixins mixins = service.getAll();
         assertNotNull( mixins );
@@ -89,8 +89,8 @@ public class MixinServiceImplTest
     {
 
         Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
 
         Mixin mixin = service.getByLocalName( "mixin1" );
         assertNotNull( mixin );
@@ -102,8 +102,8 @@ public class MixinServiceImplTest
     {
 
         Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
 
         ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
@@ -122,8 +122,8 @@ public class MixinServiceImplTest
     {
 
         Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
 
         Mixins mixins = service.getAll();
         assertNotNull( mixins );
@@ -136,8 +136,8 @@ public class MixinServiceImplTest
         Mixin mixin = service.getByName( this.mixin1.getName() );
         assertNotNull( mixin );
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
         service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();
@@ -147,7 +147,7 @@ public class MixinServiceImplTest
     public void test_get_system_module()
     {
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
         Mixins mixins = service.getAll();
         assertNotNull( mixins );

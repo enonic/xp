@@ -24,7 +24,7 @@ public class XmlLayoutDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlLayoutDescriptorParser();
-        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
 
         this.builder = LayoutDescriptor.create();
         this.builder.key( DescriptorKey.from( "mymodule:mylayout" ) );

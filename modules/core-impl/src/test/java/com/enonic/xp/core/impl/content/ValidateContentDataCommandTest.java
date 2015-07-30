@@ -43,7 +43,7 @@ public class ValidateContentDataCommandTest
         // setup
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "mymodule:my_type" ).
+            name( "myapplication:my_type" ).
             addFormItem( FieldSet.create().
                 label( "My layout" ).
                 name( "myLayout" ).
@@ -85,7 +85,7 @@ public class ValidateContentDataCommandTest
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "mymodule:my_type" ).
+            name( "myapplication:my_type" ).
             addFormItem( fieldSet ).
             build();
 

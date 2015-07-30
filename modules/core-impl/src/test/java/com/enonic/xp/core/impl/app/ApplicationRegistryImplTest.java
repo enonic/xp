@@ -60,7 +60,7 @@ public class ApplicationRegistryImplTest
     }
 
     @Test
-    public void testStart_noModules()
+    public void testStart_noApplications()
         throws Exception
     {
         startRegistry();
@@ -82,7 +82,7 @@ public class ApplicationRegistryImplTest
     }
 
     @Test
-    public void testModuleInstalled()
+    public void testApplicationInstalled()
         throws Exception
     {
         startBundles( newBundle( "bundle1", "Bundle 1" ), newBundle( "bundle2", "Bundle 2" ), newBundle( "bundle3", "Bundle 3" ) );
@@ -103,7 +103,7 @@ public class ApplicationRegistryImplTest
     }
 
     @Test
-    public void testModuleLifecycle()
+    public void testApplicationLifecycle()
         throws Exception
     {
         startBundles( newBundle( "bundle1", "Bundle 1" ) );

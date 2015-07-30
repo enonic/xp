@@ -13,7 +13,7 @@ public class PartDescriptorServiceImpl_getByKeyTest
     public void getPageDescriptor()
         throws Exception
     {
-        final DescriptorKey key = createDescriptor( "foomodule:part-descr" );
+        final DescriptorKey key = createDescriptor( "fooapplication:part-descr" );
         final PartDescriptor descriptor = this.service.getByKey( key );
         Assert.assertNotNull( descriptor );
     }

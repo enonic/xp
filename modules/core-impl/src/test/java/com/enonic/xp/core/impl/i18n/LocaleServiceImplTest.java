@@ -48,15 +48,15 @@ public class LocaleServiceImplTest
     {
         localeService = new LocaleServiceImpl();
 
-        final File modulesDir = this.temporaryFolder.newFolder( "modules" );
+        final File applicationsDir = this.temporaryFolder.newFolder( "applications" );
 
-        writeFile( modulesDir, "mymodule/site/i18n/phrases_en_US_1.properties", "d = phrases_en_US_1.properties" );
-        writeFile( modulesDir, "mymodule/site/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
-        writeFile( modulesDir, "mymodule/site/i18n/phrases_en.properties", "a = phrases_en.properties" );
-        writeFile( modulesDir, "mymodule/site/i18n/phrases.properties", "c = phrases.properties" );
+        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en_US_1.properties", "d = phrases_en_US_1.properties" );
+        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
+        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en.properties", "a = phrases_en.properties" );
+        writeFile( applicationsDir, "myapplication/site/i18n/phrases.properties", "c = phrases.properties" );
 
-        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
-        registry.modulesDir( modulesDir );
+        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockApplicationScheme();
+        registry.applicationsDir( applicationsDir );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -72,7 +72,7 @@ public class LocaleServiceImplTest
     public void get_bundle()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), Locale.ENGLISH );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
         Object[] result = {"a", "c"};
 
         assertNotNull( bundle );
@@ -83,7 +83,7 @@ public class LocaleServiceImplTest
     public void get_bundle_with_country()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), Locale.US );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.US );
         Object[] result = {"a", "b", "c"};
 
         assertNotNull( bundle );
@@ -95,7 +95,7 @@ public class LocaleServiceImplTest
         throws Exception
     {
         Locale locale = new Locale( "en", "US", "1" );
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "mymodule" ), locale );
+        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), locale );
         Object[] result = {"a", "b", "c", "d"};
 
         assertNotNull( bundle );

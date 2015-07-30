@@ -103,7 +103,7 @@ public final class CreateContentHandler
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
-            final ApplicationKey applicationKey = ExtraData.fromModulePrefix( modulePrefix );
+            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( modulePrefix );
             final Object extradatasObject = value.get( modulePrefix );
             if ( !( extradatasObject instanceof Map ) )
             {

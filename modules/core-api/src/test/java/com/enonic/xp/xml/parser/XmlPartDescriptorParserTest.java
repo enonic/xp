@@ -22,7 +22,7 @@ public class XmlPartDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlPartDescriptorParser();
-        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
 
         this.builder = PartDescriptor.create();
         this.builder.key( DescriptorKey.from( "mymodule:mypart" ) );

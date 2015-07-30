@@ -34,9 +34,9 @@ public final class LayoutDescriptorServiceImpl
     }
 
     @Override
-    public LayoutDescriptors getByModule( final ApplicationKey applicationKey )
+    public LayoutDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return new GetLayoutDescriptorsByModuleCommand().
+        return new GetLayoutDescriptorsByApplicationCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).
@@ -45,9 +45,9 @@ public final class LayoutDescriptorServiceImpl
     }
 
     @Override
-    public LayoutDescriptors getByModules( final ApplicationKeys applicationKeys )
+    public LayoutDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        return new GetLayoutDescriptorsByModulesCommand().
+        return new GetLayoutDescriptorsByApplicationsCommand().
             applicationService( this.applicationService ).
             mixinService( this.mixinService ).
             resourceService( this.resourceService ).

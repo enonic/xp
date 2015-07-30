@@ -13,7 +13,7 @@ public class LayoutDescriptorServiceImpl_getByKeyTest
     public void getPageDescriptor()
         throws Exception
     {
-        final DescriptorKey key = createDescriptor( "foomodule:layout-descr" );
+        final DescriptorKey key = createDescriptor( "fooapplication:layout-descr" );
         final LayoutDescriptor descriptor = this.service.getByKey( key );
         Assert.assertNotNull( descriptor );
     }

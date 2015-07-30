@@ -80,7 +80,7 @@ public class ResourceServiceImpl
     {
         Application activeApplication = null;
 
-        final Application application = applicationService.getModule( applicationKey );
+        final Application application = applicationService.getApplication( applicationKey );
         if ( application != null && application.getBundle().getState() == Bundle.ACTIVE )
         {
             activeApplication = application;

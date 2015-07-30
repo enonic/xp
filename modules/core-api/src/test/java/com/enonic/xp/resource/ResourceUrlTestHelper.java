@@ -8,7 +8,7 @@ import com.google.common.base.Throwables;
 
 public final class ResourceUrlTestHelper
 {
-    public static ResourceUrlRegistry mockModuleScheme()
+    public static ResourceUrlRegistry mockApplicationScheme()
     {
         final MockUrlStreamHandlerFactory handlerFactory = new MockUrlStreamHandlerFactory();
         installHandlerFactory( handlerFactory );

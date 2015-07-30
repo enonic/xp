@@ -73,7 +73,7 @@ public final class ContentTypeRegistryImpl
         }
         else
         {
-            final Application application = this.applicationService.getModule( applicationKey );
+            final Application application = this.applicationService.getApplication( applicationKey );
             if ( application != null )
             {
                 final ContentTypeLoader mixinLoader = new ContentTypeLoader( application.getBundle() );
@@ -102,7 +102,7 @@ public final class ContentTypeRegistryImpl
         }
 
         //Gets module content types
-        for ( Application application : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllApplications() )
         {
             final ContentTypes contentTypes = getByModule( application.getKey() );
             contentTypeList.addAll( contentTypes.getList() );

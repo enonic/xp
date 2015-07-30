@@ -21,7 +21,7 @@ public class XmlContentTypeParserTest
     public void setup()
     {
         this.parser = new XmlContentTypeParser();
-        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
 
         this.builder = ContentType.create();
         this.builder.name( ContentTypeName.from( "mymodule:mytype" ) );

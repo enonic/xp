@@ -31,7 +31,7 @@ public final class XmlContentTypeParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        this.resolver = new ApplicationRelativeResolver( this.currentModule );
+        this.resolver = new ApplicationRelativeResolver( this.currentApplication );
 
         assertTagName( root, "content-type" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
@@ -46,7 +46,7 @@ public final class XmlContentTypeParser
 
         this.builder.metadata( buildMetaData( root ) );
 
-        final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
+        final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
     }
 

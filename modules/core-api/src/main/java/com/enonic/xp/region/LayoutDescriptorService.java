@@ -11,7 +11,7 @@ public interface LayoutDescriptorService
 {
     LayoutDescriptor getByKey( final DescriptorKey key );
 
-    LayoutDescriptors getByModule( final ApplicationKey applicationKey );
+    LayoutDescriptors getByApplication( final ApplicationKey applicationKey );
 
-    LayoutDescriptors getByModules( final ApplicationKeys applicationKeys );
+    LayoutDescriptors getByApplications( final ApplicationKeys applicationKeys );
 }

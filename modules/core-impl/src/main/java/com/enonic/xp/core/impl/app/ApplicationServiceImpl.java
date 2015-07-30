@@ -20,7 +20,7 @@ public final class ApplicationServiceImpl
     private ApplicationRegistry registry;
 
     @Override
-    public Application getModule( final ApplicationKey key )
+    public Application getApplication( final ApplicationKey key )
         throws ApplicationNotFoundException
     {
         final Application application = this.registry.get( key );
@@ -32,22 +32,22 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getModules( final ApplicationKeys keys )
+    public Applications getApplications( final ApplicationKeys keys )
     {
-        final ImmutableList.Builder<Application> moduleList = ImmutableList.builder();
+        final ImmutableList.Builder<Application> applicationList = ImmutableList.builder();
         for ( final ApplicationKey key : keys )
         {
             final Application application = this.registry.get( key );
             if ( application != null )
             {
-                moduleList.add( application );
+                applicationList.add( application );
             }
         }
-        return Applications.from( moduleList.build() );
+        return Applications.from( applicationList.build() );
     }
 
     @Override
-    public Applications getAllModules()
+    public Applications getAllApplications()
     {
         return Applications.from( this.registry.getAll() );
     }
@@ -59,19 +59,19 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void startModule( final ApplicationKey key )
+    public void startApplication( final ApplicationKey key )
     {
-        startModule( getModule( key ) );
+        startApplication( getApplication( key ) );
 
     }
 
     @Override
-    public void stopModule( final ApplicationKey key )
+    public void stopApplication( final ApplicationKey key )
     {
-        stopModule( getModule( key ) );
+        stopApplication( getApplication( key ) );
     }
 
-    private void startModule( final Application application )
+    private void startApplication( final Application application )
     {
         try
         {
@@ -83,7 +83,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void stopModule( final Application application )
+    private void stopApplication( final Application application )
     {
         try
         {

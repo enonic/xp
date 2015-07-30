@@ -13,7 +13,7 @@ public class PageDescriptorServiceImpl_getByKeyTest
     public void getPageDescriptor()
         throws Exception
     {
-        final DescriptorKey key = createDescriptor( "foomodule:page-descr" );
+        final DescriptorKey key = createDescriptor( "fooapplication:page-descr" );
         final PageDescriptor descriptor = this.service.getByKey( key );
         Assert.assertNotNull( descriptor );
     }

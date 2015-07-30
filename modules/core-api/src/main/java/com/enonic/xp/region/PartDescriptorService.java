@@ -11,7 +11,7 @@ public interface PartDescriptorService
 {
     PartDescriptor getByKey( final DescriptorKey key );
 
-    PartDescriptors getByModule( final ApplicationKey applicationKey );
+    PartDescriptors getByApplication( final ApplicationKey applicationKey );
 
-    PartDescriptors getByModules( final ApplicationKeys applicationKeys );
+    PartDescriptors getByApplications( final ApplicationKeys applicationKeys );
 }

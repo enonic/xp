@@ -74,13 +74,14 @@ public final class ContentDataSerializer
 
             for ( final ExtraData extraData : content.getAllExtraData() )
             {
-                final String xDataModulePrefix = extraData.getModulePrefix();
-                PropertySet xDataModule = metadataSet.getSet( xDataModulePrefix );
-                if ( xDataModule == null )
+                final String xDataApplicationPrefix = extraData.getApplicationPrefix();
+                PropertySet xDataApplication = metadataSet.getSet( xDataApplicationPrefix );
+                if ( xDataApplication == null )
                 {
-                    xDataModule = metadataSet.addSet( xDataModulePrefix );
+                    xDataApplication = metadataSet.addSet( xDataApplicationPrefix );
                 }
-                xDataModule.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( contentAsData.getTree() ) );
+                xDataApplication.addSet( extraData.getName().getLocalName(),
+                                         extraData.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
@@ -121,13 +122,13 @@ public final class ContentDataSerializer
             final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
             for ( final ExtraData extraData : params.getExtraDatas() )
             {
-                final String xDataModulePrefix = extraData.getModulePrefix();
-                PropertySet xDataModule = metaSet.getSet( xDataModulePrefix );
-                if ( xDataModule == null )
+                final String xDataApplicationPrefix = extraData.getApplicationPrefix();
+                PropertySet xDataApplication = metaSet.getSet( xDataApplicationPrefix );
+                if ( xDataApplication == null )
                 {
-                    xDataModule = metaSet.addSet( xDataModulePrefix );
+                    xDataApplication = metaSet.addSet( xDataApplicationPrefix );
                 }
-                xDataModule.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( metaSet.getTree() ) );
+                xDataApplication.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( metaSet.getTree() ) );
             }
         }
 
@@ -193,14 +194,14 @@ public final class ContentDataSerializer
         if ( metadataSet != null )
         {
             final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-            for ( final String metadataModulePrefix : metadataSet.getPropertyNames() )
+            for ( final String metadataApplicationPrefix : metadataSet.getPropertyNames() )
             {
-                final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
-                for ( final String metadataLocalName : xDataModule.getPropertyNames() )
+                final PropertySet xDataApplication = metadataSet.getSet( metadataApplicationPrefix );
+                for ( final String metadataLocalName : xDataApplication.getPropertyNames() )
                 {
-                    final ApplicationKey applicationKey = ExtraData.fromModulePrefix( metadataModulePrefix );
+                    final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( metadataApplicationPrefix );
                     final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
-                    extradatasBuilder.add( new ExtraData( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
+                    extradatasBuilder.add( new ExtraData( metadataName, xDataApplication.getSet( metadataLocalName ).toTree() ) );
                 }
             }
 

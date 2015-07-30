@@ -10,8 +10,8 @@ public interface PageDescriptorService
 {
     PageDescriptor getByKey( final DescriptorKey key );
 
-    PageDescriptors getByModule( final ApplicationKey applicationKey );
+    PageDescriptors getByApplication( final ApplicationKey applicationKey );
 
-    PageDescriptors getByModules( final ApplicationKeys applicationKeys );
+    PageDescriptors getByApplications( final ApplicationKeys applicationKeys );
 
 }

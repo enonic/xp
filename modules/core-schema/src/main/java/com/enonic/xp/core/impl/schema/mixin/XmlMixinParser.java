@@ -28,7 +28,7 @@ public final class XmlMixinParser
         this.builder.displayName( root.getChildValue( "display-name" ) );
         this.builder.description( root.getChildValue( "description" ) );
 
-        final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
+        final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         final Form form = mapper.buildForm( root.getChild( "items" ) );
         this.builder.formItems( form.getFormItems() );
     }

@@ -83,7 +83,7 @@ public final class MixinServiceImpl
         }
 
         //Gets modules mixins
-        for ( Application application : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllApplications() )
         {
             final Mixins mixins = getByModule( application.getKey() );
             mixinList.addAll( mixins.getList() );
@@ -108,7 +108,7 @@ public final class MixinServiceImpl
         }
         else
         {
-            final Application application = this.applicationService.getModule( applicationKey );
+            final Application application = this.applicationService.getApplication( applicationKey );
             if ( application != null )
             {
                 final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );

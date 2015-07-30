@@ -8,11 +8,11 @@ import com.enonic.xp.app.ApplicationKey;
 public abstract class XmlModelParser<P extends XmlModelParser<P>>
     extends XmlObjectParser<P>
 {
-    protected ApplicationKey currentModule;
+    protected ApplicationKey currentApplication;
 
-    public final P currentModule( final ApplicationKey value )
+    public final P currentApplication( final ApplicationKey value )
     {
-        this.currentModule = value;
+        this.currentApplication = value;
         return typecastThis();
     }
 }
