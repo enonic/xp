@@ -12,6 +12,11 @@
 
     display: inline-block;
     padding: 7px 14px;
+
+    &.icon-search {
+      font-size: 16px;
+      padding: 8px 14px 8px 14px;
+    }
   }
 
   .toggle-slide {
@@ -62,6 +67,12 @@
     .dropdown:hover,
     .dropdown:focus {
       display: block;
+    }
+  }
+
+  &.content-browse-toolbar, &.user-browse-toolbar {
+    button {
+      vertical-align: top;
     }
   }
 }

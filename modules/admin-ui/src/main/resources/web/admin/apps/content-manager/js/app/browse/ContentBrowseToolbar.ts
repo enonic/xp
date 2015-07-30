@@ -4,7 +4,7 @@ module app.browse {
 
         constructor(actions: app.browse.action.ContentTreeGridActions) {
             super();
-
+            this.addClass("content-browse-toolbar")
             this.addActions(actions.getAllActions());
         }
     }
