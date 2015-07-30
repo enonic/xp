@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.media.MediaInfo;
@@ -19,7 +20,9 @@ class ProxyContentProcessor
         imageHandler = ImageContentProcessor.create().
             mediaInfo( builder.mediaInfo ).
             contentType( builder.contentType ).
-            mixinService( builder.mixinService ).build();
+            mixinService( builder.mixinService ).
+            contentService( builder.contentService ).
+            build();
     }
 
     public static Builder create()
@@ -61,6 +64,8 @@ class ProxyContentProcessor
 
         private MixinService mixinService;
 
+        private ContentService contentService;
+
         public Builder mediaInfo( final MediaInfo mediaInfo )
         {
             this.mediaInfo = mediaInfo;
@@ -76,6 +81,12 @@ class ProxyContentProcessor
         public Builder mixinService( final MixinService mixinService )
         {
             this.mixinService = mixinService;
+            return this;
+        }
+
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
             return this;
         }
 

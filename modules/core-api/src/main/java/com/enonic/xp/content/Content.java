@@ -254,15 +254,8 @@ public class Content
 
     public PropertyTree getExtraData( final MixinName name )
     {
-        for ( ExtraData item : this.extraDatas )
-        {
-            if ( item.getName().equals( name ) )
-            {
-                return item.getData();
-            }
-        }
-
-        return null;
+        ExtraData item = this.extraDatas.getMetadata( name );
+        return item != null ? item.getData() : null;
     }
 
     public boolean hasExtraData()

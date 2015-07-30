@@ -3,18 +3,38 @@ package com.enonic.xp.media;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItemName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @Beta
-public class MediaInfo
+public final class MediaInfo
 {
-    private String mediaType;
+    private final String mediaType;
 
-    private Multimap<String, String> metadata;
+    private final ImmutableMultimap<String, String> metadata;
 
-    public static final String MEDIA_SOURCE_SIZE = "bytesize";
+    public static final String PHOTO_INFO = "photo-info";
+
+    public static final String GPS_INFO = "gps-info";
+
+    public static final String IMAGE_INFO = "image-info";
+
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
+
+    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, PHOTO_INFO );
+
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
+
+    public static final String IMAGE_INFO_PIXEL_SIZE = "pixelSize";
+
+    public static final String IMAGE_INFO_IMAGE_HEIGHT = "imageHeight";
+
+    public static final String IMAGE_INFO_IMAGE_WIDTH = "imageWidth";
+
+    public static final String MEDIA_INFO_BYTE_SIZE = "bytesize";
+
 
     public static final String BINARY_FILE_MIME = "application/octet-stream";
 
@@ -30,7 +50,7 @@ public class MediaInfo
         return mediaType;
     }
 
-    public Multimap<String, String> getMetadata()
+    public ImmutableMultimap<String, String> getMetadata()
     {
         return metadata;
     }

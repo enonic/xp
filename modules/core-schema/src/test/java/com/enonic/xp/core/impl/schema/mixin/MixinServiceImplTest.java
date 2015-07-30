@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -157,13 +158,13 @@ public class MixinServiceImplTest
         assertNotNull( mixins );
         assertEquals( 2, mixins.getSize() );
 
-        Mixin mixin = service.getByName( BuiltinMixinsLoader.GPS_INFO_METADATA_NAME );
+        Mixin mixin = service.getByName( MediaInfo.GPS_INFO_METADATA_NAME );
         assertNotNull( mixin );
 
-        mixin = service.getByName( BuiltinMixinsLoader.IMAGE_INFO_METADATA_NAME );
+        mixin = service.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
         assertNotNull( mixin );
 
-        mixin = service.getByName( BuiltinMixinsLoader.PHOTO_INFO_METADATA_NAME );
+        mixin = service.getByName( MediaInfo.PHOTO_INFO_METADATA_NAME );
         assertNotNull( mixin );
     }
 

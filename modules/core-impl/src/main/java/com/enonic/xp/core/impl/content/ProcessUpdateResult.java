@@ -4,7 +4,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
 
 
-class ProcessUpdateResult
+final class ProcessUpdateResult
 {
     final ContentEditor editor;
 

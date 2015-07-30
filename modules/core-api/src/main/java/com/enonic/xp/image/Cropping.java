@@ -28,6 +28,12 @@ public final class Cropping
         Preconditions.checkArgument( left >= 0, "Cropping left offset value must be positive : %s", left );
         Preconditions.checkArgument( bottom > top, "Cropping bottom value must be bigger than top : %s", bottom );
         Preconditions.checkArgument( right > left, "Cropping right value must be bigger than left : %s", right );
+        Preconditions.checkArgument( zoom >= 1.0, "Cropping zoom value must be bigger than 1: %s", zoom );
+    }
+
+    public boolean isUnmodified()
+    {
+        return top == 0.0 && left == 0.0 && bottom == 1.0 && right == 1.0 && zoom == 1.0;
     }
 
     public double top()
@@ -80,13 +86,14 @@ public final class Cropping
         return Objects.equal( left, cropping.left ) &&
             Objects.equal( top, cropping.top ) &&
             Objects.equal( right, cropping.right ) &&
-            Objects.equal( bottom, cropping.bottom );
+            Objects.equal( bottom, cropping.bottom ) &&
+            Objects.equal( zoom, cropping.zoom );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( left, top, right, bottom );
+        return Objects.hashCode( left, top, right, bottom, zoom );
     }
 
     @Override
@@ -97,6 +104,7 @@ public final class Cropping
             add( "left", left ).
             add( "bottom", bottom ).
             add( "right", right ).
+            add( "zoom", zoom ).
             toString();
     }
 
@@ -128,7 +136,7 @@ public final class Cropping
             this.left = 0;
             this.bottom = 0;
             this.right = 0;
-            this.zoom = 0;
+            this.zoom = 1.0;
         }
 
         private Builder( final Cropping source )

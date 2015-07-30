@@ -60,8 +60,6 @@ final class UpdateMediaCommand
             byteSource( params.getByteSource() ).
             build();
 
-        // TODO: Support renaming? final String nameOfContent = Name.ensureValidName( params.getName() );
-
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).

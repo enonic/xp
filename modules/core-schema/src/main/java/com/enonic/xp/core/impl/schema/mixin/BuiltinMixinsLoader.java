@@ -15,18 +15,19 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
+
+import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
+import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+import static com.enonic.xp.media.MediaInfo.PHOTO_INFO_METADATA_NAME;
 
 @Component(immediate = true)
 public final class BuiltinMixinsLoader
 {
-    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "image-info" );
-
-    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, "photo-info" );
-
-    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, "gps-info" );
-
     private static final String MIXINS_FOLDER = "mixins";
 
     private static final Mixin IMAGE_METADATA = Mixin.create().
@@ -52,12 +53,12 @@ public final class BuiltinMixinsLoader
     private static FormItems createImageInfoMixinForm()
     {
         final FormItems formItems = new FormItems();
-        formItems.add( createLong( "pixelSize", "Size (px)" ).occurrences( 0, 1 ).build() );
-        formItems.add( createLong( "imageHeight", "Height (px)" ).occurrences( 0, 1 ).build() );
-        formItems.add( createLong( "imageWidth", "Width (px)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( IMAGE_INFO_PIXEL_SIZE, "Size (px)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( IMAGE_INFO_IMAGE_HEIGHT, "Height (px)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( IMAGE_INFO_IMAGE_WIDTH, "Width (px)" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "contentType", "Content Type" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "description", "Description" ).occurrences( 0, 1 ).build() );
-        formItems.add( createLong( "bytesize", "Size (bytes)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( MEDIA_INFO_BYTE_SIZE, "Size (bytes)" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "colorSpace", "Color Space" ).occurrences( 0, 0 ).build() );
         formItems.add( createTextLine( "fileSource", "File Source" ).occurrences( 0, 1 ).build() );
 
@@ -80,7 +81,7 @@ public final class BuiltinMixinsLoader
         formItems.add( createDate( "date", "Date" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "make", "Make" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "model", "Model" ).occurrences( 0, 1 ).build() );
-        formItems.add( createTextLine( "lens", "Lense" ).occurrences( 0, 1 ).build() );
+        formItems.add( createTextLine( "lens", "Lens" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "iso", "ISO" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "focalLength", "Focal Length" ).occurrences( 0, 1 ).build() );
         formItems.add( createTextLine( "focalLength35", "Focal Length 35mm" ).occurrences( 0, 1 ).build() );
