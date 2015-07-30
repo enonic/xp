@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
@@ -38,14 +39,14 @@ final class UpdateContentCommand
 
     private final MediaInfo mediaInfo;
 
-    //private final ProxyContentProcessor proxyProcessor;
+    private final ContentService contentService;
 
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
-
+        this.contentService = builder.contentService;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -115,6 +116,7 @@ final class UpdateContentCommand
         final ProxyContentProcessor proxyContentProcessor = ProxyContentProcessor.create().
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
+            contentService( this.contentService ).
             contentType( contentType ).
             build();
 
@@ -240,6 +242,8 @@ final class UpdateContentCommand
 
         private MediaInfo mediaInfo;
 
+        private ContentService contentService;
+
         Builder( final UpdateContentParams params )
         {
             this.params = params;
@@ -259,6 +263,12 @@ final class UpdateContentCommand
         Builder mediaInfo( final MediaInfo value )
         {
             this.mediaInfo = value;
+            return this;
+        }
+
+        Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
             return this;
         }
 

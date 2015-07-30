@@ -1,17 +1,28 @@
 package com.enonic.xp.core.impl.content;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import javax.imageio.ImageIO;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -19,6 +30,7 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.image.Cropping;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -26,26 +38,45 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
 
-public final class ImageContentProcessor
+import static com.enonic.xp.media.MediaInfo.GPS_INFO;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
+import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+
+final class ImageContentProcessor
 {
-    private MixinService mixinService;
+    private static final ImmutableMap<String, String> FIELD_CONFORMITY_MAP = ImmutableMap.<String, String>builder().
+        put( "tiffImagelength", "imageHeight" ).
+        put( "tiffImagewidth", "imageWidth" ).
+        put( "exposureBiasValue", "exposureBias" ).
+        put( "FNumber", "aperture" ).
+        put( "exposureTime", "shutterTime" ).
+        put( "subjectDistanceRange", "focusDistance" ).
+        put( "gpsAltitude", "altitude" ).
+        put( "gpsImgDirection", "direction" ).
+        put( "whiteBalanceMode", "whiteBalance" ).
+        put( "isoSpeedRatings", "iso" ).
+        build();
 
-    private MediaInfo mediaInfo;
+    private final MixinService mixinService;
 
-    private ContentType contentType;
+    private final ContentService contentService;
 
-    public ImageContentProcessor( final Builder builder )
+    private final MediaInfo mediaInfo;
+
+    private final ContentType contentType;
+
+    private ImageContentProcessor( final Builder builder )
     {
         this.mediaInfo = builder.mediaInfo;
         this.contentType = builder.contentType;
         this.mixinService = builder.mixinService;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        this.contentService = builder.contentService;
     }
 
     public CreateContentParams processCreate( final CreateContentParams params )
@@ -101,66 +132,206 @@ public final class ImageContentProcessor
         }
         else
         {
-            editor = null;
+            editor = editable -> {
+
+                if ( !contentType.getName().isDescendantOfMedia() )
+                {
+                    return;
+                }
+                editable.extraDatas = updateImageMetadata( editable );
+
+            };
         }
         return new ProcessUpdateResult( processedCreateAttachments, editor );
     }
 
+    private ExtraDatas updateImageMetadata( final EditableContent editable )
+    {
+        final Media media = (Media) editable.source;
+        final Attachment mediaAttachment = media.getMediaAttachment();
+        if ( mediaAttachment == null )
+        {
+            return editable.extraDatas;
+        }
+
+        final ByteSource binary = contentService.getBinary( editable.source.getId(), mediaAttachment.getBinaryReference() );
+        if ( binary == null )
+        {
+            return editable.extraDatas;
+        }
+
+        final BufferedImage image = toBufferedImage( binary );
+        final Cropping cropping = media.getCropping();
+
+        final long byteSize;
+        final long imageWidth;
+        final long imageHeight;
+        final long imageSize;
+        if ( cropping == null || cropping.isUnmodified() )
+        {
+            byteSize = mediaAttachment.getSize();
+            imageWidth = image.getWidth();
+            imageHeight = image.getHeight();
+            imageSize = imageWidth * imageHeight;
+        }
+        else
+        {
+            final BufferedImage croppedImage = cropImage( image, cropping );
+            byteSize = getImageByteSize( croppedImage, mediaAttachment.getExtension() );
+            imageWidth = croppedImage.getWidth();
+            imageHeight = croppedImage.getHeight();
+            imageSize = imageWidth * imageHeight;
+        }
+
+        ExtraData extraData = editable.extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        if ( extraData != null )
+        {
+            final PropertyTree xData = extraData.getData();
+            xData.setLong( IMAGE_INFO_PIXEL_SIZE, imageSize );
+            xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
+            xData.setLong( IMAGE_INFO_IMAGE_WIDTH, imageWidth );
+            xData.setLong( MEDIA_INFO_BYTE_SIZE, byteSize );
+        }
+
+        return editable.extraDatas;
+    }
+
+    private BufferedImage toBufferedImage( final ByteSource source )
+    {
+        try
+        {
+            return ImageIO.read( source.openStream() );
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+        }
+    }
+
+    private BufferedImage cropImage( final BufferedImage image, final Cropping cropping )
+    {
+        final double width = image.getWidth() / cropping.zoom();
+        final double height = image.getHeight() / cropping.zoom();
+        return image.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ), (int) ( width * cropping.width() ),
+                                  (int) ( height * cropping.height() ) );
+    }
+
+    private long getImageByteSize( final BufferedImage image, final String format )
+    {
+        final SizeCounterOutputStream output = new SizeCounterOutputStream();
+        try
+        {
+            ImageIO.write( image, format, output );
+        }
+        catch ( final IOException e )
+        {
+            throw Exceptions.newRutime( "Failed to write BufferedImage to InputStream" ).withCause( e );
+        }
+        return output.size();
+    }
+
     private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
-
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-
-        Map<MixinName, ExtraData> metadataMap = new HashMap<>();
+        final Map<MixinName, ExtraData> metadataMap = new HashMap<>();
 
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
             for ( Mixin mixin : mixins )
             {
-
-                final String formItemName = TikaFieldNameFormatter.getConformityName( entry.getKey() );
+                final String formItemName = getConformityName( entry.getKey() );
                 final FormItem formItem = mixin.getFormItems().getItemByName( formItemName );
-                if ( formItem != null )
+                if ( formItem == null )
                 {
+                    continue;
+                }
 
-                    ExtraData extraData = metadataMap.get( mixin.getName() );
-
-                    if ( extraData == null )
+                ExtraData extraData = metadataMap.get( mixin.getName() );
+                if ( extraData == null )
+                {
+                    extraData = new ExtraData( mixin.getName(), new PropertyTree() );
+                    metadataMap.put( mixin.getName(), extraData );
+                    extradatasBuilder.add( extraData );
+                }
+                if ( FormItemType.INPUT.equals( formItem.getType() ) )
+                {
+                    Input input = (Input) formItem;
+                    if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
                     {
-                        extraData = new ExtraData( mixin.getName(), new PropertyTree() );
-                        metadataMap.put( mixin.getName(), extraData );
-                        extradatasBuilder.add( extraData );
+                        extraData.getData().addLocalDateTime( formItemName,
+                                                              ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
                     }
-                    if ( FormItemType.INPUT.equals( formItem.getType() ) )
+                    else if ( InputTypes.LONG.equals( input.getInputType() ) )
                     {
-                        Input input = (Input) formItem;
-                        if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
-                        {
-                            extraData.getData().addLocalDateTime( formItemName,
-                                                                  ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
-                        }
-                        else
-                        {
-                            extraData.getData().addStrings( formItemName, entry.getValue() );
-                        }
+                        final Long[] longValues = entry.getValue().stream().map( Long::parseLong ).toArray( Long[]::new );
+                        extraData.getData().addLongs( formItemName, longValues );
+                    }
+                    else
+                    {
+                        extraData.getData().addStrings( formItemName, entry.getValue() );
                     }
                 }
 
             }
         }
-        TikaFieldNameFormatter.fillComputedFormItems( metadataMap.values(), mediaInfo );
+        fillComputedFormItems( metadataMap.values(), mediaInfo );
 
         return extradatasBuilder.build();
     }
 
+    public String getConformityName( String tikaFieldValue )
+    {
+        if ( FIELD_CONFORMITY_MAP.containsValue( tikaFieldValue ) )
+        {
+            return null;
+        }
+        return FIELD_CONFORMITY_MAP.containsKey( tikaFieldValue ) ? FIELD_CONFORMITY_MAP.get( tikaFieldValue ) : tikaFieldValue;
+    }
+
+    public void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo )
+    {
+        for ( ExtraData extraData : extraDataList )
+        {
+            final PropertyTree xData = extraData.getData();
+            if ( IMAGE_INFO.equals( extraData.getName().getLocalName() ) )
+            {
+                final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
+                final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
+                if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
+                {
+                    final long tiffImageLength = Long.valueOf( tiffImageLengths.toArray()[0].toString() );
+                    final long tiffImageWidth = Long.valueOf( tiffImageWidths.toArray()[0].toString() );
+                    xData.setLong( IMAGE_INFO_PIXEL_SIZE, tiffImageLength * tiffImageWidth );
+                    xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
+                    xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
+                }
+            }
+            if ( GPS_INFO.equals( extraData.getName().getLocalName() ) )
+            {
+                if ( mediaInfo.getMetadata().get( "geoLat" ).size() > 0 && mediaInfo.getMetadata().get( "geoLong" ).size() > 0 )
+                {
+                    xData.addGeoPoint( "geoPoint",
+                                       new GeoPoint( Double.valueOf( mediaInfo.getMetadata().get( "geoLat" ).toArray()[0].toString() ),
+                                                     Double.valueOf( mediaInfo.getMetadata().get( "geoLong" ).toArray()[0].toString() ) ) );
+                }
+            }
+        }
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
-
         private MediaInfo mediaInfo;
 
         private ContentType contentType;
 
         private MixinService mixinService;
+
+        private ContentService contentService;
 
         public Builder mediaInfo( final MediaInfo mediaInfo )
         {
@@ -180,6 +351,12 @@ public final class ImageContentProcessor
             return this;
         }
 
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( this.mixinService );
@@ -193,58 +370,41 @@ public final class ImageContentProcessor
         }
     }
 
-    private static class TikaFieldNameFormatter
+    /**
+     * Keeps track of the number of bytes written to the output stream, but discards the data.
+     */
+    private static final class SizeCounterOutputStream
+        extends OutputStream
     {
-        private static final Map<String, String> fieldConformityMap = new HashMap<>();
+        private long size = 0;
 
-        static
+        public long size()
         {
-            fieldConformityMap.put( "tiffImagelength", "imageHeight" );
-            fieldConformityMap.put( "tiffImagewidth", "imageWidth" );
-            fieldConformityMap.put( "exposureBiasValue", "exposureBias" );
-            fieldConformityMap.put( "FNumber", "aperture" );
-            fieldConformityMap.put( "exposureTime", "shutterTime" );
-            fieldConformityMap.put( "subjectDistanceRange", "focusDistance" );
-            fieldConformityMap.put( "gpsAltitude", "altitude" );
-            fieldConformityMap.put( "gpsImgDirection", "direction" );
-            fieldConformityMap.put( "whiteBalanceMode", "whiteBalance" );
-            fieldConformityMap.put( "isoSpeedRatings", "iso" );
+            return size;
         }
 
-        public static String getConformityName( String tikaFieldValue )
+        @Override
+        public void write( final byte[] b )
+            throws IOException
         {
-            if ( fieldConformityMap.containsValue( tikaFieldValue ) )
+            if ( b != null )
             {
-                return null;
+                size += b.length;
             }
-            return fieldConformityMap.containsKey( tikaFieldValue ) ? fieldConformityMap.get( tikaFieldValue ) : tikaFieldValue;
         }
 
-        public static void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo )
+        @Override
+        public void write( final byte[] b, final int off, final int len )
+            throws IOException
         {
-            for ( ExtraData extraData : extraDataList )
-            {
-                if ( "image-info".equals( extraData.getName().getLocalName() ) )
-                {
-                    final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
-                    final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
-                    if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
-                    {
-                        final Integer tiffImageLength = Integer.valueOf( tiffImageLengths.toArray()[0].toString() );
-                        final Integer tiffImageWidth = Integer.valueOf( tiffImageWidths.toArray()[0].toString() );
-                        extraData.getData().addLong( "pixelSize", (long) tiffImageLength * tiffImageWidth );
-                    }
-                }
-                if ( "gps-info".equals( extraData.getName().getLocalName() ) )
-                {
-                    if ( mediaInfo.getMetadata().get( "geoLat" ).size() > 0 && mediaInfo.getMetadata().get( "geoLong" ).size() > 0 )
-                    {
-                        extraData.getData().addGeoPoint( "geoPoint", new GeoPoint(
-                            Double.valueOf( mediaInfo.getMetadata().get( "geoLat" ).toArray()[0].toString() ),
-                            Double.valueOf( mediaInfo.getMetadata().get( "geoLong" ).toArray()[0].toString() ) ) );
-                    }
-                }
-            }
+            size += len;
+        }
+
+        @Override
+        public void write( final int b )
+            throws IOException
+        {
+            size++;
         }
     }
 }

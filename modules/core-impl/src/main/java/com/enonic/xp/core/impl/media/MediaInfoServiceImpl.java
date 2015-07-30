@@ -48,7 +48,7 @@ public final class MediaInfoServiceImpl
         }
         try
         {
-            builder.addMetadata( MediaInfo.MEDIA_SOURCE_SIZE, String.valueOf( byteSource.size() ) );
+            builder.addMetadata( MediaInfo.MEDIA_INFO_BYTE_SIZE, String.valueOf( byteSource.size() ) );
         }
         catch ( IOException e )
         {

@@ -30,6 +30,10 @@ public class Media
     {
         final PropertyTree contentData = getData();
         final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
+        if ( mediaProperty == null )
+        {
+            return null;
+        }
         final ValueType mediaPropertyType = mediaProperty.getType();
 
         final String mediaAttachmentName;
