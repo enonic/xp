@@ -16,7 +16,7 @@
   }
 }
 
-.split-panel {
+.split-panel, .wizard-steps-panel {
   .button {
     &.mobile-edit-publish-button {
       display: none;
@@ -26,7 +26,7 @@
 
 .content-wizard-panel {
   &._0-240, &._240-360, &._360-540 {
-    .split-panel {
+    .split-panel, .wizard-steps-panel {
       .button {
         &.mobile-edit-publish-button {
           .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
