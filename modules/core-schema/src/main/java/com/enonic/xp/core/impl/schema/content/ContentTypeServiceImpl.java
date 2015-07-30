@@ -49,9 +49,9 @@ public final class ContentTypeServiceImpl
     }
 
     @Override
-    public ContentTypes getByModule( final ApplicationKey applicationKey )
+    public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return this.registry.getByModule( applicationKey );
+        return this.registry.getByApplication( applicationKey );
     }
 
     @Override

@@ -9,7 +9,7 @@ public interface ContentTypeRegistry
 {
     ContentType get( ContentTypeName name );
 
-    ContentTypes getByModule( ApplicationKey applicationKey );
+    ContentTypes getByApplication( ApplicationKey applicationKey );
 
     ContentTypes getAll();
 }

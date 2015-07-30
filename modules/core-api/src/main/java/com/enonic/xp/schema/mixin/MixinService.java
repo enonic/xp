@@ -14,7 +14,7 @@ public interface MixinService
 
     Mixins getAll();
 
-    Mixins getByModule( ApplicationKey applicationKey );
+    Mixins getByApplication( ApplicationKey applicationKey );
 
     Mixins getByContentType( ContentType contentType );
 }

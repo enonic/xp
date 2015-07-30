@@ -64,7 +64,7 @@ public final class ScriptServiceImpl
 
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
-        final Application application = this.applicationService.getModule( key );
+        final Application application = this.applicationService.getApplication( key );
         ClassLoader classLoader = applicationService.getClassLoader( application );
         final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader, "-strict" );
 

@@ -54,11 +54,11 @@ public final class ContentTypeRegistryImpl
     @Override
     public ContentType get( final ContentTypeName name )
     {
-        return getByModule( name.getApplicationKey() ).getContentType( name );
+        return getByApplication( name.getApplicationKey() ).getContentType( name );
     }
 
     @Override
-    public ContentTypes getByModule( final ApplicationKey applicationKey )
+    public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
         return this.map.computeIfAbsent( applicationKey, this::loadByModule );
     }
@@ -73,7 +73,7 @@ public final class ContentTypeRegistryImpl
         }
         else
         {
-            final Application application = this.applicationService.getModule( applicationKey );
+            final Application application = this.applicationService.getApplication( applicationKey );
             if ( application != null )
             {
                 final ContentTypeLoader mixinLoader = new ContentTypeLoader( application.getBundle() );
@@ -97,14 +97,14 @@ public final class ContentTypeRegistryImpl
         //Gets builtin content types
         for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
         {
-            final ContentTypes contentTypes = getByModule( systemReservedApplicationKey );
+            final ContentTypes contentTypes = getByApplication( systemReservedApplicationKey );
             contentTypeList.addAll( contentTypes.getList() );
         }
 
         //Gets module content types
-        for ( Application application : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllApplications() )
         {
-            final ContentTypes contentTypes = getByModule( application.getKey() );
+            final ContentTypes contentTypes = getByApplication( application.getKey() );
             contentTypeList.addAll( contentTypes.getList() );
         }
 

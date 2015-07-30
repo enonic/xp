@@ -5,16 +5,16 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface ApplicationService
 {
-    Application getModule( ApplicationKey key )
+    Application getApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
-    Applications getModules( ApplicationKeys keys );
+    Applications getApplications( ApplicationKeys keys );
 
-    Applications getAllModules();
+    Applications getAllApplications();
 
     ClassLoader getClassLoader(Application application );
 
-    void startModule( ApplicationKey key );
+    void startApplication( ApplicationKey key );
 
-    void stopModule( ApplicationKey key );
+    void stopApplication( ApplicationKey key );
 }

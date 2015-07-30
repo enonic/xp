@@ -54,9 +54,9 @@ public abstract class BaseSchemaName
             return false;
         }
 
-        final BaseSchemaName moduleBasedName = (BaseSchemaName) o;
+        final BaseSchemaName applicationBasedName = (BaseSchemaName) o;
 
-        return refString.equals( moduleBasedName.refString );
+        return refString.equals( applicationBasedName.refString );
     }
 
     @Override

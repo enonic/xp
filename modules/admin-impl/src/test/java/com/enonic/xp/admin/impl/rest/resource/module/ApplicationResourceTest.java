@@ -32,7 +32,7 @@ public class ApplicationResourceTest
     {
         final Application application = createModule();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -48,7 +48,7 @@ public class ApplicationResourceTest
     {
         final Application application = createModule();
         final Applications applications = Applications.from( application, createEmptyModule() );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -65,7 +65,7 @@ public class ApplicationResourceTest
     {
         final Application application = createModule();
         final Applications applications = Applications.from( application, createEmptyModule() );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -81,7 +81,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createModule();
-        Mockito.when( this.applicationService.getModule( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
@@ -101,7 +101,7 @@ public class ApplicationResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).startModule( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).startApplication( ApplicationKey.from( "testmodule" ) );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ApplicationResourceTest
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).stopModule( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testmodule" ) );
     }
 
     private Application createModule()

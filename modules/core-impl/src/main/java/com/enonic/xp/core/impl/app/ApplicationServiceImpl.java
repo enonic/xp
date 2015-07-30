@@ -20,7 +20,7 @@ public final class ApplicationServiceImpl
     private ApplicationRegistry registry;
 
     @Override
-    public Application getModule( final ApplicationKey key )
+    public Application getApplication( final ApplicationKey key )
         throws ApplicationNotFoundException
     {
         final Application application = this.registry.get( key );
@@ -32,7 +32,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getModules( final ApplicationKeys keys )
+    public Applications getApplications( final ApplicationKeys keys )
     {
         final ImmutableList.Builder<Application> moduleList = ImmutableList.builder();
         for ( final ApplicationKey key : keys )
@@ -47,7 +47,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getAllModules()
+    public Applications getAllApplications()
     {
         return Applications.from( this.registry.getAll() );
     }
@@ -59,16 +59,16 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void startModule( final ApplicationKey key )
+    public void startApplication( final ApplicationKey key )
     {
-        startModule( getModule( key ) );
+        startModule( getApplication( key ) );
 
     }
 
     @Override
-    public void stopModule( final ApplicationKey key )
+    public void stopApplication( final ApplicationKey key )
     {
-        stopModule( getModule( key ) );
+        stopModule( getApplication( key ) );
     }
 
     private void startModule( final Application application )

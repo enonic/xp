@@ -67,13 +67,13 @@ public class ContentTypeRegistryImplTest
     @Test
     public void test_empty()
     {
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
         assertTrue( contentTypes.getSize() > 20 );
 
-        contentTypes = service.getByModule( myApplicationKey );
+        contentTypes = service.getByApplication( myApplicationKey );
         assertNotNull( contentTypes );
         assertEquals( 0, contentTypes.getSize() );
 
@@ -86,22 +86,22 @@ public class ContentTypeRegistryImplTest
     {
 
         Applications applications = Applications.from( myApplication );
-        Mockito.when( applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( myApplication );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( myApplication );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
         assertTrue( contentTypes.getSize() > 20 );
 
-        contentTypes = service.getByModule( myApplicationKey );
+        contentTypes = service.getByApplication( myApplicationKey );
         assertNotNull( contentTypes );
         assertEquals( 1, contentTypes.getSize() );
 
         ContentType contentType = service.get( this.myContentType.getName() );
         assertNotNull( contentType );
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
-        Mockito.when( applicationService.getModule( myApplicationKey ) ).thenReturn( null );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
         service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
 
         test_empty();
@@ -111,7 +111,7 @@ public class ContentTypeRegistryImplTest
     public void test_get_system_module()
     {
 
-        Mockito.when( applicationService.getAllModules() ).thenReturn( Applications.empty() );
+        Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
         ContentTypes contentTypes = service.getAll();
         assertNotNull( contentTypes );
@@ -120,15 +120,15 @@ public class ContentTypeRegistryImplTest
         ContentType contentType = service.get( ContentTypeName.folder() );
         assertNotNull( contentType );
 
-        contentTypes = service.getByModule( ApplicationKey.BASE );
+        contentTypes = service.getByApplication( ApplicationKey.BASE );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 5 );
 
-        contentTypes = service.getByModule( ApplicationKey.PORTAL );
+        contentTypes = service.getByApplication( ApplicationKey.PORTAL );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 3 );
 
-        contentTypes = service.getByModule( ApplicationKey.MEDIA_MOD );
+        contentTypes = service.getByApplication( ApplicationKey.MEDIA_MOD );
         assertNotNull( contentTypes );
         assertEquals( contentTypes.getSize(), 13 );
 

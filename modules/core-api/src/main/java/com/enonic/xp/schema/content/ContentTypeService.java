@@ -12,7 +12,7 @@ public interface ContentTypeService
 
     ContentTypes getByNames( GetContentTypesParams params );
 
-    ContentTypes getByModule( ApplicationKey applicationKey );
+    ContentTypes getByApplication( ApplicationKey applicationKey );
 
     ContentTypes getAll( GetAllContentTypesParams params );
 

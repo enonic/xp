@@ -48,7 +48,7 @@ public final class ModuleResource
     @Path("list")
     public ListModuleJson list( @QueryParam("query") final String query )
     {
-        Applications applications = this.applicationService.getAllModules();
+        Applications applications = this.applicationService.getAllApplications();
         final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
         if ( StringUtils.isNotBlank( query ) )
         {
@@ -74,7 +74,7 @@ public final class ModuleResource
     @GET
     public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
-        final Application application = this.applicationService.getModule( ApplicationKey.from( applicationKey ) );
+        final Application application = this.applicationService.getApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
         return new ModuleJson( application, siteDescriptor );
     }
@@ -85,7 +85,7 @@ public final class ModuleResource
     public ModuleSuccessJson start( final ModuleListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.applicationService::startModule );
+        params.getApplicationKeys().forEach( this.applicationService::startApplication );
         return new ModuleSuccessJson();
     }
 
@@ -95,7 +95,7 @@ public final class ModuleResource
     public ModuleSuccessJson stop( final ModuleListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.applicationService::stopModule );
+        params.getApplicationKeys().forEach( this.applicationService::stopApplication );
         return new ModuleSuccessJson();
     }
 
