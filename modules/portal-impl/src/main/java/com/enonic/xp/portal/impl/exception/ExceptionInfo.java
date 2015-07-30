@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.exception;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.xp.resource.ResourceService;
+
 final class ExceptionInfo
 {
     private final int status;
@@ -10,6 +12,8 @@ final class ExceptionInfo
     private String message;
 
     private Throwable cause;
+
+    private ResourceService resourceService;
 
     private ExceptionInfo( final int status )
     {
@@ -69,11 +73,18 @@ final class ExceptionInfo
         return this;
     }
 
+    public ExceptionInfo resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+        return this;
+    }
+
     public Response toResponse()
     {
         final ErrorPageBuilder builder = new ErrorPageBuilder().
             cause( this.cause ).
             description( getDescription() ).
+            resourceService( this.resourceService ).
             status( this.status ).
             title( getReasonPhrase() );
 

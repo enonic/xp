@@ -171,6 +171,7 @@ public final class Resource
         }
     }
 
+    @Deprecated
     public static Resource from( final ResourceKey key )
     {
         final URL url = ResourceUrlResolver.resolve( key );
