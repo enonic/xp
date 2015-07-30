@@ -17,7 +17,7 @@ public class ContentTypeServiceImpl_getByApplicationTest
         register( createContentType( "mymodule:my-contenttype", "DisplayName1" ),
                   createContentType( "othermodule:my-contenttype", "DisplayName2" ) );
 
-        final ContentTypes result = this.service.getByModule( ApplicationKey.from( "mymodule" ) );
+        final ContentTypes result = this.service.getByApplication( ApplicationKey.from( "mymodule" ) );
 
         assertEquals( 1, result.getSize() );
         verifyContentType( "mymodule:my-contenttype", "DisplayName1", result );

@@ -68,7 +68,7 @@ public abstract class AbstractControllerTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.resourceService = Mockito.mock( ResourceService.class );

@@ -59,7 +59,7 @@ public class ResourceServiceImplTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getModule( applicationKey ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( applicationKey ) ).thenReturn( application );
 
         resourceService = new ResourceServiceImpl();
         resourceService.setApplicationService( applicationService );

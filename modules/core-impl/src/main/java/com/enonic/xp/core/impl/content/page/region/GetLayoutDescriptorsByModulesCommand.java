@@ -11,7 +11,7 @@ final class GetLayoutDescriptorsByModulesCommand
 
     public LayoutDescriptors execute()
     {
-        final Applications applications = this.applicationService.getModules( this.applicationKeys );
+        final Applications applications = this.applicationService.getApplications( this.applicationKeys );
         return getDescriptorsFromModules( applications );
     }
 

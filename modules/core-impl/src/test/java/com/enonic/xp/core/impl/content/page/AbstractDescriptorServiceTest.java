@@ -93,7 +93,7 @@ public abstract class AbstractDescriptorServiceTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( applicationKey );
 
-        Mockito.when( this.applicationService.getModule( applicationKey ) ).thenReturn( application );
+        Mockito.when( this.applicationService.getApplication( applicationKey ) ).thenReturn( application );
         return application;
     }
 
@@ -106,8 +106,8 @@ public abstract class AbstractDescriptorServiceTest
         }
 
         final Applications applications = Applications.from( list );
-        Mockito.when( this.applicationService.getAllModules() ).thenReturn( applications );
-        Mockito.when( this.applicationService.getModules( applications.getApplicationKeys() ) ).thenReturn( applications );
+        Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
+        Mockito.when( this.applicationService.getApplications( applications.getApplicationKeys() ) ).thenReturn( applications );
         return applications;
     }
 

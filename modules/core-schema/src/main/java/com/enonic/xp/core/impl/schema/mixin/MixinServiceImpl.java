@@ -57,7 +57,7 @@ public final class MixinServiceImpl
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return getByModule( name.getApplicationKey() ).getMixin( name );
+        return getByApplication( name.getApplicationKey() ).getMixin( name );
     }
 
     @Override
@@ -78,14 +78,14 @@ public final class MixinServiceImpl
         //Gets builtin mixins
         for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
         {
-            final Mixins mixins = getByModule( systemReservedApplicationKey );
+            final Mixins mixins = getByApplication( systemReservedApplicationKey );
             mixinList.addAll( mixins.getList() );
         }
 
         //Gets modules mixins
-        for ( Application application : this.applicationService.getAllModules() )
+        for ( Application application : this.applicationService.getAllApplications() )
         {
-            final Mixins mixins = getByModule( application.getKey() );
+            final Mixins mixins = getByApplication( application.getKey() );
             mixinList.addAll( mixins.getList() );
         }
 
@@ -93,7 +93,7 @@ public final class MixinServiceImpl
     }
 
     @Override
-    public Mixins getByModule( final ApplicationKey applicationKey )
+    public Mixins getByApplication( final ApplicationKey applicationKey )
     {
         return this.map.computeIfAbsent( applicationKey, this::loadByModule );
     }
@@ -108,7 +108,7 @@ public final class MixinServiceImpl
         }
         else
         {
-            final Application application = this.applicationService.getModule( applicationKey );
+            final Application application = this.applicationService.getApplication( applicationKey );
             if ( application != null )
             {
                 final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );
