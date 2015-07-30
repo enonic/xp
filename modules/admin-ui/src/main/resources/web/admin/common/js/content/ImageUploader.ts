@@ -139,7 +139,6 @@ module api.content {
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
-                imageEditor.removeClass('selected');
                 this.notifyEditModeChanged(edit, crop, zoom, focus);
             });
             imageEditor.onFocusAutoPositionedChanged((auto: boolean) => this.notifyFocusAutoPositionedChanged(auto));
