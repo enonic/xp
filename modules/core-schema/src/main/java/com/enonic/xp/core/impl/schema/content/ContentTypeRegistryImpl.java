@@ -67,7 +67,7 @@ public final class ContentTypeRegistryImpl
     {
         ContentTypes contentTypes = null;
 
-        if ( ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS.contains( applicationKey ) )
+        if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
         {
             contentTypes = new BuiltinContentTypeLoader().loadByModule( applicationKey );
         }
@@ -95,7 +95,7 @@ public final class ContentTypeRegistryImpl
         final Set<ContentType> contentTypeList = Sets.newLinkedHashSet();
 
         //Gets builtin content types
-        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS )
+        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
         {
             final ContentTypes contentTypes = getByModule( systemReservedApplicationKey );
             contentTypeList.addAll( contentTypes.getList() );

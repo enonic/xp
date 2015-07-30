@@ -25,7 +25,7 @@ public final class ContentTypeForms
         addFormItem( Input.create().
             name( "siteConfig" ).
             label( "Site config" ).
-            helpText( "Configure modules needed for the Site" ).
+            helpText( "Configure applications needed for the Site" ).
             inputType( InputTypes.SITE_CONFIGURATOR ).
             required( false ).
             multiple( true ).

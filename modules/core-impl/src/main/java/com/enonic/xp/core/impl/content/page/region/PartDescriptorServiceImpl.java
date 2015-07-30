@@ -35,7 +35,7 @@ public final class PartDescriptorServiceImpl
     }
 
     @Override
-    public PartDescriptors getByModule( final ApplicationKey applicationKey )
+    public PartDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         return new GetPartDescriptorsByModuleCommand().
             applicationService( this.applicationService ).
@@ -46,7 +46,7 @@ public final class PartDescriptorServiceImpl
     }
 
     @Override
-    public PartDescriptors getByModules( final ApplicationKeys applicationKeys )
+    public PartDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
         return new GetPartDescriptorsByModulesCommand().
             applicationService( this.applicationService ).

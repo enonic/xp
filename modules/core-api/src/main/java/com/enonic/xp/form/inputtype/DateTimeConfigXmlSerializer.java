@@ -10,10 +10,10 @@ final class DateTimeConfigXmlSerializer
     public static final DateTimeConfigXmlSerializer DEFAULT = new DateTimeConfigXmlSerializer();
 
     @Override
-    public DateTimeConfig parseConfig( final ApplicationKey currentModule, final Element elem )
+    public DateTimeConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
         final DateTimeConfig.Builder builder = DateTimeConfig.create();
-        parseTimezone( currentModule, elem, builder );
+        parseTimezone( currentApplication, elem, builder );
         return builder.build();
     }
 

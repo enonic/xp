@@ -44,7 +44,7 @@ public final class LayoutDescriptorResource
     @Path("list/by_module")
     public LayoutDescriptorsJson getByModules( @QueryParam("applicationKey") final String applicationKey )
     {
-        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new LayoutDescriptorsJson( descriptors );
     }
 
@@ -53,7 +53,7 @@ public final class LayoutDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public LayoutDescriptorsJson getByModules( final GetByModulesParams params )
     {
-        final LayoutDescriptors descriptors = layoutDescriptorService.getByModules( params.getApplicationKeys() );
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByApplications( params.getApplicationKeys() );
         return new LayoutDescriptorsJson( descriptors );
     }
 

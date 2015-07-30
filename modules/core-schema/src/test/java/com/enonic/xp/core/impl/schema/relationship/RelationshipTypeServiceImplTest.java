@@ -75,7 +75,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( myApplicationKey );
+        relationshipTypes = relationshipTypeService.getByApplication( myApplicationKey );
         assertNotNull( relationshipTypes );
         assertEquals( 0, relationshipTypes.getSize() );
 
@@ -94,7 +94,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER + 1, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( myApplicationKey );
+        relationshipTypes = relationshipTypeService.getByApplication( myApplicationKey );
         assertNotNull( relationshipTypes );
         assertEquals( 1, relationshipTypes.getSize() );
 
@@ -115,7 +115,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 
-        relationshipTypes = relationshipTypeService.getByModule( ApplicationKey.SYSTEM );
+        relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.SYSTEM );
         assertNotNull( relationshipTypes );
         assertEquals( DEFAULT_RELATIONSHIP_TYPES_NUMBER, relationshipTypes.getSize() );
 

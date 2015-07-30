@@ -133,7 +133,7 @@ public final class ModifyContentHandler
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         for ( final String modulePrefix : value.keySet() )
         {
-            final ApplicationKey applicationKey = ExtraData.fromModulePrefix( modulePrefix );
+            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( modulePrefix );
             final Object metadatasObject = value.get( modulePrefix );
             if ( !( metadatasObject instanceof Map ) )
             {

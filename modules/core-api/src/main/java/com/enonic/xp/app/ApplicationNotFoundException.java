@@ -10,6 +10,6 @@ public final class ApplicationNotFoundException
 {
     public ApplicationNotFoundException( final ApplicationKey applicationKey )
     {
-        super( "Module [{0}] was not found", applicationKey );
+        super( "Application [{0}] was not found", applicationKey );
     }
 }

@@ -60,7 +60,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     {
         final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( applicationKey );
+        parser.currentApplication( applicationKey );
         parser.source( xml );
         parser.parse();
     }

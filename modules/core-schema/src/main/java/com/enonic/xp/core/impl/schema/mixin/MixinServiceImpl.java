@@ -76,7 +76,7 @@ public final class MixinServiceImpl
         final Set<Mixin> mixinList = Sets.newLinkedHashSet();
 
         //Gets builtin mixins
-        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS )
+        for ( ApplicationKey systemReservedApplicationKey : ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS )
         {
             final Mixins mixins = getByModule( systemReservedApplicationKey );
             mixinList.addAll( mixins.getList() );
@@ -102,7 +102,7 @@ public final class MixinServiceImpl
     {
         Mixins mixins = null;
 
-        if ( ApplicationKey.SYSTEM_RESERVED_MODULE_KEYS.contains( applicationKey ) )
+        if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
         {
             mixins = new BuiltinMixinsLoader().loadByModule( applicationKey );
         }

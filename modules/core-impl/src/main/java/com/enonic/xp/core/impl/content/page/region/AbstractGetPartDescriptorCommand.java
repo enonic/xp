@@ -65,7 +65,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     {
         final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( applicationKey );
+        parser.currentApplication( applicationKey );
         parser.source( xml );
         parser.parse();
     }

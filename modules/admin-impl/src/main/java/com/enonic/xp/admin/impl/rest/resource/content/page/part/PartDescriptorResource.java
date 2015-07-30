@@ -44,7 +44,7 @@ public final class PartDescriptorResource
     @Path("list/by_module")
     public PartDescriptorsJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
-        final PartDescriptors descriptors = partDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
+        final PartDescriptors descriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new PartDescriptorsJson( descriptors );
     }
 
@@ -54,7 +54,7 @@ public final class PartDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public PartDescriptorsJson getByModules( final GetByModulesParams params )
     {
-        final PartDescriptors descriptors = partDescriptorService.getByModules( params.getApplicationKeys() );
+        final PartDescriptors descriptors = partDescriptorService.getByApplications( params.getApplicationKeys() );
         return new PartDescriptorsJson( descriptors );
     }
 

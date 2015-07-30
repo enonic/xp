@@ -81,7 +81,7 @@ public final class RelationshipTypeResource
     @Path("byModule")
     public RelationshipTypeListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
-        final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ApplicationKey.from( applicationKey ) );
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
 
         return new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
     }

@@ -263,7 +263,7 @@ public class ContentResourceTest
         PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "A", 1L );
         SiteConfig siteConfig = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 

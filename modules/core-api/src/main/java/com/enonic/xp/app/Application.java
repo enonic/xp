@@ -29,7 +29,7 @@ public class Application
 
     private ApplicationKey applicationKey;
 
-    private Version moduleVersion;
+    private Version version;
 
     private String displayName;
 
@@ -43,10 +43,11 @@ public class Application
 
     private Bundle bundle;
 
-    private Application( final Bundle bundle ) {
+    private Application( final Bundle bundle )
+    {
         this.bundle = bundle;
         this.applicationKey = ApplicationKey.from( bundle );
-        this.moduleVersion = this.bundle.getVersion();
+        this.version = this.bundle.getVersion();
         this.displayName = getHeader( this.bundle, Constants.BUNDLE_NAME, this.getKey().toString() );
         this.url = getHeader( this.bundle, X_MODULE_URL, null );
         this.vendorName = getHeader( this.bundle, X_VENDOR_NAME, null );
@@ -54,7 +55,8 @@ public class Application
         this.systemVersion = getHeader( this.bundle, X_SYSTEM_VERSION, null );
     }
 
-    public static Application from( final Bundle bundle ) {
+    public static Application from( final Bundle bundle )
+    {
         Application application = new Application( bundle );
         return application;
     }
@@ -66,7 +68,7 @@ public class Application
 
     public Version getVersion()
     {
-        return moduleVersion;
+        return version;
     }
 
     public String getDisplayName()
@@ -166,7 +168,7 @@ public class Application
         return !isApplication();
     }
 
-    public static boolean isModule( final Bundle bundle )
+    public static boolean isApplication( final Bundle bundle )
     {
         return ( bundle.getEntry( SITE_XML ) != null );
     }

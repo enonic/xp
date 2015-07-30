@@ -27,7 +27,7 @@ public final class Applications
         return ApplicationKeys.from( map.keySet() );
     }
 
-    public Application getModule( final ApplicationKey ApplicationKey )
+    public Application getApplication( final ApplicationKey ApplicationKey )
     {
         return map.get( ApplicationKey );
     }
@@ -49,14 +49,14 @@ public final class Applications
         return new Applications( ImmutableList.copyOf( applications ) );
     }
 
-    public static Applications from( final Iterable<? extends Application> modules )
+    public static Applications from( final Iterable<? extends Application> applications )
     {
-        return new Applications( ImmutableList.copyOf( modules ) );
+        return new Applications( ImmutableList.copyOf( applications ) );
     }
 
-    public static Applications from( final Collection<? extends Application> modules )
+    public static Applications from( final Collection<? extends Application> applications )
     {
-        return new Applications( ImmutableList.copyOf( modules ) );
+        return new Applications( ImmutableList.copyOf( applications ) );
     }
 
     private final static class ToKeyFunction

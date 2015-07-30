@@ -54,7 +54,7 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipType getByName( final RelationshipTypeName name )
     {
-        final RelationshipTypes relationshipTypes = getByModule( name.getApplicationKey() );
+        final RelationshipTypes relationshipTypes = getByApplication( name.getApplicationKey() );
         return relationshipTypes.get( name );
     }
 
@@ -64,13 +64,13 @@ public final class RelationshipTypeServiceImpl
         final Set<RelationshipType> relationshipTypeList = Sets.newLinkedHashSet();
 
         //Gets the default RelationshipTypes
-        final RelationshipTypes systemRelationshipTypes = getByModule( ApplicationKey.SYSTEM );
+        final RelationshipTypes systemRelationshipTypes = getByApplication( ApplicationKey.SYSTEM );
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
         //Gets for each module the RelationshipTypes
         for ( Application application : this.applicationService.getAllModules() )
         {
-            final RelationshipTypes relationshipTypes = getByModule( application.getKey() );
+            final RelationshipTypes relationshipTypes = getByApplication( application.getKey() );
             relationshipTypeList.addAll( relationshipTypes.getList() );
         }
 
@@ -78,7 +78,7 @@ public final class RelationshipTypeServiceImpl
     }
 
     @Override
-    public RelationshipTypes getByModule( final ApplicationKey applicationKey )
+    public RelationshipTypes getByApplication( final ApplicationKey applicationKey )
     {
         return relationshipTypesMap.computeIfAbsent( applicationKey, this::loadByModule );
     }
@@ -100,7 +100,8 @@ public final class RelationshipTypeServiceImpl
             final Application application = this.applicationService.getModule( applicationKey );
             if ( application != null )
             {
-                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( application.getBundle() );
+                final BundleRelationshipTypeLoader bundleRelationshipTypeLoader =
+                    new BundleRelationshipTypeLoader( application.getBundle() );
                 relationshipTypes = bundleRelationshipTypeLoader.load();
             }
         }

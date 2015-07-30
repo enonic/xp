@@ -44,7 +44,7 @@ final class XmlRelationshipTypeParser
             return Collections.emptyList();
         }
 
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
         return types.getChildren( "content-type" ).stream().map( child -> resolver.toContentTypeName( child.getValue() ) ).collect(
             Collectors.toList() );
     }

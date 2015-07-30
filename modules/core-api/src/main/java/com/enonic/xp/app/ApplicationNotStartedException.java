@@ -10,6 +10,6 @@ public final class ApplicationNotStartedException
 {
     public ApplicationNotStartedException( final ApplicationKey applicationKey )
     {
-        super( "Module [{0}] not started", applicationKey );
+        super( "Application [{0}] not started", applicationKey );
     }
 }

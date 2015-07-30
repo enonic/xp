@@ -34,7 +34,7 @@ public final class PageDescriptorServiceImpl
     }
 
     @Override
-    public PageDescriptors getByModule( final ApplicationKey applicationKey )
+    public PageDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         return new GetPageDescriptorsByModuleCommand().
             applicationService( this.applicationService ).
@@ -44,7 +44,7 @@ public final class PageDescriptorServiceImpl
     }
 
     @Override
-    public PageDescriptors getByModules( final ApplicationKeys applicationKeys )
+    public PageDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
         return new GetPageDescriptorsByModulesCommand().
             applicationService( this.applicationService ).

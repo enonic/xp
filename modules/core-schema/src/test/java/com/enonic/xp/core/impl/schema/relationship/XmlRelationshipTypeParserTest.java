@@ -20,7 +20,7 @@ public class XmlRelationshipTypeParserTest
     public void setup()
     {
         this.parser = new XmlRelationshipTypeParser();
-        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
 
         this.builder = RelationshipType.create();
         this.builder.name( "mymodule:name" );

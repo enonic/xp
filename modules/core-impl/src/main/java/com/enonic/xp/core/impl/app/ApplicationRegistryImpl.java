@@ -87,7 +87,7 @@ public final class ApplicationRegistryImpl
 
     private boolean isModule( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && Application.isModule( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && Application.isApplication( bundle );
     }
 
     private void publishModuleChangeEvent( final BundleEvent event )

@@ -146,7 +146,7 @@ final class MixinLoader
         final XmlMixinParser parser = new XmlMixinParser();
         parser.builder( builder );
         parser.source( serializedMixin );
-        parser.currentModule( this.applicationKey );
+        parser.currentApplication( this.applicationKey );
         parser.parse();
 
         return builder;

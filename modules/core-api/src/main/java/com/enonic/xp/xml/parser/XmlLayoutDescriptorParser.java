@@ -24,7 +24,7 @@ public final class XmlLayoutDescriptorParser
         assertTagName( root, "layout" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
-        final XmlFormMapper formMapper = new XmlFormMapper( this.currentModule );
+        final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
         this.builder.config( formMapper.buildForm( root.getChild( "config" ) ) );
 
         final XmlRegionDescriptorsMapper regionsMapper = new XmlRegionDescriptorsMapper();

@@ -25,7 +25,7 @@ public final class ApplicationRelativeResolver
 
         if ( this.current == null )
         {
-            throw new IllegalArgumentException( "Unable to resolve module for ContentType [" + name + "]" );
+            throw new IllegalArgumentException( "Unable to resolve application for ContentType [" + name + "]" );
         }
 
         return ContentTypeName.from( this.current, name );
@@ -40,7 +40,7 @@ public final class ApplicationRelativeResolver
 
         if ( this.current == null )
         {
-            throw new IllegalArgumentException( "Unable to resolve module for Mixin [" + name + "]" );
+            throw new IllegalArgumentException( "Unable to resolve application for Mixin [" + name + "]" );
         }
 
         return MixinName.from( this.current, name );
@@ -55,7 +55,7 @@ public final class ApplicationRelativeResolver
 
         if ( this.current == null )
         {
-            throw new IllegalArgumentException( "Unable to resolve module for RelationshipType [" + name + "]" );
+            throw new IllegalArgumentException( "Unable to resolve application for RelationshipType [" + name + "]" );
         }
 
         return RelationshipTypeName.from( this.current, name );
