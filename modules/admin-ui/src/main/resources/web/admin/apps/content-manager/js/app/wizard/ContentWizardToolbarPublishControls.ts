@@ -10,6 +10,7 @@ module app.wizard {
         private publishButton: DialogButton;
         private contentStateSpan: SpanEl;
         private publishAction: Action;
+        private contentFormValid: boolean = false;
         private contentCompareStatus: CompareStatus;
 
         constructor(action: Action) {
@@ -26,10 +27,24 @@ module app.wizard {
             this.appendChildren(this.contentStateSpan, this.publishButton);
         }
 
-        public setCompareStatus(compareStatus: CompareStatus) {
-            var canBeEnabled = compareStatus !== CompareStatus.EQUAL;
+        public setCompareStatus(compareStatus: CompareStatus, refresh: boolean = true) {
+            this.contentCompareStatus = compareStatus;
+            if (refresh) {
+                this.refreshState();
+            }
+        }
+
+        public setContentFormValidity(value: boolean, refresh: boolean = true) {
+            this.contentFormValid = value;
+            if (refresh) {
+                this.refreshState();
+            }
+        }
+
+        public refreshState() {
+            var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentFormValid;
             this.publishAction.setEnabled(canBeEnabled);
-            this.contentStateSpan.setHtml(this.getContentStateValueForSpan(compareStatus));
+            this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus));
         }
 
         private getContentStateValueForSpan(compareStatus: CompareStatus): string {
