@@ -39,9 +39,9 @@ final class ContentSelectorConfigXmlSerializer
     }
 
     @Override
-    public ContentSelectorConfig parseConfig( final ApplicationKey currentModule, final Element elem )
+    public ContentSelectorConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentApplication );
 
         final ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, RELATIONSHIP_TYPE_ELEMENT );

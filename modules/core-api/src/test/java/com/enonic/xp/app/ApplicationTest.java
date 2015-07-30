@@ -52,7 +52,7 @@ public class ApplicationTest
         application.checkIfStarted();
         assertTrue( application.isApplication() );
         assertFalse( application.isSystem() );
-        assertTrue( Application.isModule( bundle ) );
+        assertTrue( Application.isApplication( bundle ) );
         assertEquals( "Application{applicationKey=mymodule, displayName=mymodule, url=http://enonic.com/path/to/module, " +
                           "vendorName=Enonic AS, vendorUrl=http://enonic.com}", application.toString() );
     }

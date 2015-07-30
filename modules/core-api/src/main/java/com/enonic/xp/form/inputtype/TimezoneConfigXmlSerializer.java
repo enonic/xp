@@ -20,7 +20,7 @@ abstract class TimezoneConfigXmlSerializer<T extends TimezoneConfig>
     }
 
     @Override
-    public T parseConfig( final ApplicationKey currentModule, final Element elem )
+    public T parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
         final T.Builder builder = T.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "with-timezone" );
@@ -35,7 +35,7 @@ abstract class TimezoneConfigXmlSerializer<T extends TimezoneConfig>
     }
 
 
-    public void parseTimezone( final ApplicationKey currentModule, final Element elem, T.Builder builder )
+    public void parseTimezone( final ApplicationKey currentApplication, final Element elem, T.Builder builder )
     {
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "with-timezone" );
 

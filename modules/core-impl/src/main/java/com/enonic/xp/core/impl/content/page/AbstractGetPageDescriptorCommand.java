@@ -58,7 +58,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
     {
         final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
         parser.builder( builder );
-        parser.currentModule( applicationKey );
+        parser.currentApplication( applicationKey );
         parser.source( xml );
         parser.parse();
     }

@@ -46,7 +46,7 @@ public class SiteTest
     public void builder()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -64,7 +64,7 @@ public class SiteTest
     public void siteConfigs()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -86,11 +86,11 @@ public class SiteTest
     public void siteConfigEquals()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         SiteConfig siteConfig1 = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
 

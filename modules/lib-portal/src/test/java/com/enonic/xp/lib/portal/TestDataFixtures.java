@@ -158,7 +158,7 @@ public final class TestDataFixtures
         siteConfigConfig.setLong( "Field", 42l );
 
         final SiteConfig siteConfig = SiteConfig.create().
-            module( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "mymodule" ) ).
             config( siteConfigConfig ).
             build();
 

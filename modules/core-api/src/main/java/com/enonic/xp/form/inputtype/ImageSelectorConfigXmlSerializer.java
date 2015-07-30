@@ -26,9 +26,9 @@ final class ImageSelectorConfigXmlSerializer
     }
 
     @Override
-    public ImageSelectorConfig parseConfig( final ApplicationKey currentModule, final Element elem )
+    public ImageSelectorConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentModule );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( currentApplication );
 
         final ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );

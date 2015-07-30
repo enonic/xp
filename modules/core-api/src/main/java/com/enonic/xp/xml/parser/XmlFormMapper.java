@@ -25,11 +25,11 @@ import com.enonic.xp.xml.XmlException;
 @Beta
 public final class XmlFormMapper
 {
-    private final ApplicationKey currentModule;
+    private final ApplicationKey currentApplication;
 
-    public XmlFormMapper( final ApplicationKey currentModule )
+    public XmlFormMapper( final ApplicationKey currentApplication )
     {
-        this.currentModule = currentModule;
+        this.currentApplication = currentApplication;
     }
 
     public Form buildForm( final DomElement root )
@@ -117,7 +117,7 @@ public final class XmlFormMapper
     private InlineMixin buildInlineItem( final DomElement root )
     {
         final InlineMixin.Builder builder = InlineMixin.create();
-        builder.mixin( new ApplicationRelativeResolver( this.currentModule ).toMixinName( root.getAttribute( "mixin" ) ) );
+        builder.mixin( new ApplicationRelativeResolver( this.currentApplication ).toMixinName( root.getAttribute( "mixin" ) ) );
         return builder.build();
     }
 
@@ -154,6 +154,6 @@ public final class XmlFormMapper
         {
             return type.getDefaultConfig();
         }
-        return configXmlSerializer.parseConfig( this.currentModule, value.getWrapped() );
+        return configXmlSerializer.parseConfig( this.currentApplication, value.getWrapped() );
     }
 }

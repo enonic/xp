@@ -15,17 +15,17 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public class SiteConfigs
     extends AbstractImmutableEntityList<SiteConfig>
 {
-    private final ImmutableMap<ApplicationKey, SiteConfig> modulesByName;
+    private final ImmutableMap<ApplicationKey, SiteConfig> applicationsByName;
 
     private SiteConfigs( final ImmutableList<SiteConfig> list )
     {
         super( list );
-        this.modulesByName = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.applicationsByName = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
     public SiteConfig get( final ApplicationKey applicationKey )
     {
-        return this.modulesByName.get( applicationKey );
+        return this.applicationsByName.get( applicationKey );
     }
 
     public SiteConfig get( final String applicationKey )

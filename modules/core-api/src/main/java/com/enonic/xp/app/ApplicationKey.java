@@ -17,7 +17,7 @@ public final class ApplicationKey
 
     public static final ApplicationKey BASE = ApplicationKey.from( "base" );
 
-    public static final ApplicationKeys SYSTEM_RESERVED_MODULE_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
+    public static final ApplicationKeys SYSTEM_RESERVED_APPLICATION_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
 
     private final String name;
 

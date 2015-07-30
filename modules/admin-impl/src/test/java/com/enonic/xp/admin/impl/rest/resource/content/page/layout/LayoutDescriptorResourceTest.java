@@ -100,7 +100,7 @@ public class LayoutDescriptorResourceTest
 
         final ApplicationKeys applicationKeys = ApplicationKeys.from( "module1", "module2", "module3" );
 
-        Mockito.when( layoutDescriptorService.getByModules( applicationKeys ) ).thenReturn( layoutDescriptors );
+        Mockito.when( layoutDescriptorService.getByApplications( applicationKeys ) ).thenReturn( layoutDescriptors );
 
         String jsonString = request().path( "content/page/layout/descriptor/list/by_modules" ).
             entity( readFromFile( "get_by_modules_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

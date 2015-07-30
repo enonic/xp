@@ -44,9 +44,9 @@ public class ApplicationsTest
 
         assertEquals( 3, applications.getSize() );
         assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getModule( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "ccc" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test
@@ -56,22 +56,22 @@ public class ApplicationsTest
 
         assertEquals( 3, applications.getSize() );
         assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getModule( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "ccc" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test
     public void fromArrayList()
     {
-        Applications applications = Applications.from( ApplicationsTest.list.get( 0 ), ApplicationsTest.list.get( 1 ),
-                                                       ApplicationsTest.list.get( 2 ) );
+        Applications applications =
+            Applications.from( ApplicationsTest.list.get( 0 ), ApplicationsTest.list.get( 1 ), ApplicationsTest.list.get( 2 ) );
 
         assertEquals( 3, applications.getSize() );
         assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getModule( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getModule( ApplicationKey.from( "ccc" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
+        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
     }
 
     @Test

@@ -28,7 +28,7 @@ final class ComboBoxConfigXmlSerializer
     }
 
     @Override
-    public ComboBoxConfig parseConfig( final ApplicationKey currentModule, final Element elem )
+    public ComboBoxConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
         final ComboBoxConfig.Builder builder = ComboBoxConfig.create();
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );

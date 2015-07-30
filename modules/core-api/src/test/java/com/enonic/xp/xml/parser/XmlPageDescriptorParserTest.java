@@ -24,7 +24,7 @@ public class XmlPageDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlPageDescriptorParser();
-        this.parser.currentModule( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
 
         this.builder = PageDescriptor.create();
         this.builder.key( DescriptorKey.from( "mymodule:mypage" ) );

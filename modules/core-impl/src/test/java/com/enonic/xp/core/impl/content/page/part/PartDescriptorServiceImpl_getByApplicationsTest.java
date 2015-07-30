@@ -19,7 +19,7 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
         createDescriptors( "foomodule:foomodule-part-descr" );
 
         mockResources( application, "/site/parts", "*", false, "site/parts/foomodule-part-descr" );
-        final PartDescriptors result = this.service.getByModule( application.getKey() );
+        final PartDescriptors result = this.service.getByApplication( application.getKey() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 1, result.getSize() );
@@ -32,12 +32,12 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
         final Applications applications = createApplications( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-part-descr", "barmodule:barmodule-part-descr" );
 
-        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/site/parts", "*", false,
+        mockResources( applications.getApplication( ApplicationKey.from( "foomodule" ) ), "/site/parts", "*", false,
                        "site/parts/foomodule-part-descr" );
-        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/site/parts", "*", false,
+        mockResources( applications.getApplication( ApplicationKey.from( "barmodule" ) ), "/site/parts", "*", false,
                        "site/parts/barmodule-part-descr" );
 
-        final PartDescriptors result = this.service.getByModules( applications.getApplicationKeys() );
+        final PartDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 
         Assert.assertNotNull( result );
         Assert.assertEquals( 2, result.getSize() );

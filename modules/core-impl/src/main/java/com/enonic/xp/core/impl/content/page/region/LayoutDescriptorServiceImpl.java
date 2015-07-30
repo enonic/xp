@@ -34,7 +34,7 @@ public final class LayoutDescriptorServiceImpl
     }
 
     @Override
-    public LayoutDescriptors getByModule( final ApplicationKey applicationKey )
+    public LayoutDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         return new GetLayoutDescriptorsByModuleCommand().
             applicationService( this.applicationService ).
@@ -45,7 +45,7 @@ public final class LayoutDescriptorServiceImpl
     }
 
     @Override
-    public LayoutDescriptors getByModules( final ApplicationKeys applicationKeys )
+    public LayoutDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
         return new GetLayoutDescriptorsByModulesCommand().
             applicationService( this.applicationService ).

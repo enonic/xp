@@ -11,6 +11,6 @@ public interface RelationshipTypeService
 
     RelationshipType getByName( RelationshipTypeName name );
 
-    RelationshipTypes getByModule( ApplicationKey applicationKey );
+    RelationshipTypes getByApplication( ApplicationKey applicationKey );
 
 }

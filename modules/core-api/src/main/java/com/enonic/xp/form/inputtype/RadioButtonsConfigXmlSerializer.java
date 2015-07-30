@@ -27,7 +27,7 @@ final class RadioButtonsConfigXmlSerializer
     }
 
     @Override
-    public InputTypeConfig parseConfig( final ApplicationKey currentModule, final Element elem )
+    public InputTypeConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
         final RadioButtonsConfig.Builder builder = RadioButtonsConfig.create();
 

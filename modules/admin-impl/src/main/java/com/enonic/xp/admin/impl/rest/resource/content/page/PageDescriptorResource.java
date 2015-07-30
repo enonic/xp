@@ -47,7 +47,7 @@ public final class PageDescriptorResource
     @Path("list/by_module")
     public PageDescriptorListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
     {
-        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModule( ApplicationKey.from( applicationKey ) );
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
     }
 
@@ -57,7 +57,7 @@ public final class PageDescriptorResource
     public PageDescriptorListJson getByModules( final GetByModulesParams params )
     {
         final ApplicationKeys applicationKeys = ApplicationKeys.from( params.getApplicationKeys() );
-        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModules( applicationKeys );
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplications( applicationKeys );
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
     }
 

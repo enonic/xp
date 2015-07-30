@@ -24,7 +24,7 @@ public final class XmlPartDescriptorParser
         assertTagName( root, "part" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
 
-        final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
+        final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.config( mapper.buildForm( root.getChild( "config" ) ) );
     }
 }

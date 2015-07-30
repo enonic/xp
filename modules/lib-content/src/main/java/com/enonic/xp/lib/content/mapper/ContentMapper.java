@@ -67,7 +67,7 @@ public final class ContentMapper
             {
                 continue;
             }
-            gen.map( extraDatas.get( 0 ).getModulePrefix() );
+            gen.map( extraDatas.get( 0 ).getApplicationPrefix() );
             for ( final ExtraData extraData : extraDatas )
             {
                 gen.map( extraData.getName().getLocalName() );

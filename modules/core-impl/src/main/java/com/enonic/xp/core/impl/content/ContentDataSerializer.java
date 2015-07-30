@@ -74,7 +74,7 @@ public final class ContentDataSerializer
 
             for ( final ExtraData extraData : content.getAllExtraData() )
             {
-                final String xDataModulePrefix = extraData.getModulePrefix();
+                final String xDataModulePrefix = extraData.getApplicationPrefix();
                 PropertySet xDataModule = metadataSet.getSet( xDataModulePrefix );
                 if ( xDataModule == null )
                 {
@@ -121,7 +121,7 @@ public final class ContentDataSerializer
             final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
             for ( final ExtraData extraData : params.getExtraDatas() )
             {
-                final String xDataModulePrefix = extraData.getModulePrefix();
+                final String xDataModulePrefix = extraData.getApplicationPrefix();
                 PropertySet xDataModule = metaSet.getSet( xDataModulePrefix );
                 if ( xDataModule == null )
                 {
@@ -198,7 +198,7 @@ public final class ContentDataSerializer
                 final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
                 for ( final String metadataLocalName : xDataModule.getPropertyNames() )
                 {
-                    final ApplicationKey applicationKey = ExtraData.fromModulePrefix( metadataModulePrefix );
+                    final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( metadataModulePrefix );
                     final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
                     extradatasBuilder.add( new ExtraData( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
                 }

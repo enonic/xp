@@ -144,7 +144,7 @@ final class ContentTypeLoader
         final ContentType.Builder builder = ContentType.create();
 
         final XmlContentTypeParser parser = new XmlContentTypeParser();
-        parser.currentModule( this.applicationKey );
+        parser.currentApplication( this.applicationKey );
         parser.source( str );
         parser.builder( builder );
         parser.parse();
