@@ -26,7 +26,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
 
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
-        if ( resource.exists() )
+        if ( resource != null )
         {
             final String descriptorXml = resource.readString();
             try

@@ -82,14 +82,12 @@ public class ResourceServiceImplTest
         ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
         resourceKey = ResourceKey.from( incorrectApplicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
-        assertNotNull( resource );
-        assertFalse( resource.exists() );
+        assertNull( resource );
 
         //Retrieves a resource with an incorrect resource path
         resourceKey = ResourceKey.from( applicationKey, "c/resource.txt" );
         resource = resourceService.getResource( resourceKey );
-        assertNotNull( resource );
-        assertFalse( resource.exists() );
+        assertNull( resource );
     }
 
     @Test
