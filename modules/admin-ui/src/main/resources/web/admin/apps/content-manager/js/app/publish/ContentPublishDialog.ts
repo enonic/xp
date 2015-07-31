@@ -377,11 +377,13 @@ module app.publish {
 
         private doPublish() {
 
+            var selectedIds = this.getSelectedContentsIds();
             new PublishContentRequest().
                 setIncludeChildren(this.includeChildItemsCheck.isChecked()).
-                setIds(this.getSelectedContentsIds()).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+                setIds(selectedIds).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
                     this.close();
                     PublishContentRequest.feedback(jsonResponse);
+                    new api.content.ContentsPublishedEvent(selectedIds).fire();
                 });
         }
 

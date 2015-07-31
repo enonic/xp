@@ -15,3 +15,48 @@
     padding: 0 @padding-right 0 @padding-left;
   }
 }
+
+.split-panel, .wizard-steps-panel {
+  .button {
+    &.mobile-edit-publish-button {
+      display: none;
+    }
+  }
+}
+
+.content-wizard-panel {
+  &._0-240, &._240-360, &._360-540 {
+    .split-panel, .wizard-steps-panel {
+      .button {
+        &.mobile-edit-publish-button {
+          .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
+          position: fixed;
+          bottom: 0px;
+          text-align: center;
+          height: 40px;
+          width: 100%;
+          opacity: 0.9;
+          display: none;
+
+          &.visible {
+            display: inherit;
+          }
+
+          &.spinner {
+            font-family: 'live-edit-font-icon';
+
+            &:after {
+              .animation(rotate360, .5s, .0s, linear);
+              content: "\e007";
+              color: white;
+              display: inline-block;
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+

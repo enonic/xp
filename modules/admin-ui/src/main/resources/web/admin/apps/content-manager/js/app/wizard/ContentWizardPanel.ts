@@ -48,6 +48,8 @@ module app.wizard {
     import MixinNames = api.schema.mixin.MixinNames;
     import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedNameRequest;
 
+    import DialogButton = api.ui.dialog.DialogButton;
+
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         private parentContent: Content;
@@ -106,6 +108,10 @@ module app.wizard {
 
         private isSecurityWizardStepFormAllowed: boolean;
 
+        private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
+
+        private publishButtonForMobile: api.ui.dialog.DialogButton;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -151,6 +157,7 @@ module app.wizard {
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
+            this.contentWizardToolbarPublishControls = mainToolbar.getContentWizardToolbarPublishControls();
             this.showLiveEditAction = this.wizardActions.getShowLiveEditAction();
             this.showSplitEditAction = this.wizardActions.getShowSplitEditAction();
             this.showLiveEditAction.setEnabled(false);
@@ -206,6 +213,7 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
+                    this.contentWizardToolbarPublishControls.setContentFormValidity(this.isContentFormValid);
                 });
 
                 this.addClass("content-wizard-panel");
@@ -258,6 +266,8 @@ module app.wizard {
 
                 onSuccess(this);
             }, onError);
+
+            this.initPublishButtonForMobile();
         }
 
         getContentType(): ContentType {
@@ -407,20 +417,26 @@ module app.wizard {
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
-                    if (!ignore) {
-                        var publishHandler = (event: api.content.ContentPublishedEvent) => {
-                            if (this.getPersistedItem() && event.getContentId() &&
-                                (this.getPersistedItem().getId() === event.getContentId().toString())) {
 
+                    var publishHandler = (event: api.content.ContentPublishedEvent) => {
+                        if (this.getPersistedItem() && event.getContentId() &&
+                            (this.getPersistedItem().getId() === event.getContentId().toString())) {
+
+                            this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.EQUAL);
+
+                            if (!ignore) {
                                 this.contentWizardHeader.disableNameGeneration(true);
                                 api.content.ContentPublishedEvent.un(publishHandler);
                             }
-                        };
-                        api.content.ContentPublishedEvent.on(publishHandler);
-                        this.onClosed(() => {
-                            api.content.ContentPublishedEvent.un(publishHandler);
-                        });
-                    }
+                        }
+                    };
+                    api.content.ContentPublishedEvent.on(publishHandler);
+
+                    this.onClosed(() => {
+                        api.content.ContentPublishedEvent.un(publishHandler);
+                    });
+                    this.contentWizardToolbarPublishControls.setCompareStatus(contentSummaryAndCompareStatus.getCompareStatus());
+                    this.managePublishButtonStateForMobile(contentSummaryAndCompareStatus.getCompareStatus());
                 }).done();
 
             var viewedContent;
@@ -1002,6 +1018,62 @@ module app.wizard {
                     this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
                 }
             }
+        }
+
+        private initPublishButtonForMobile() {
+
+            var action: api.ui.Action = new api.ui.Action("Publish", "enter");
+            action.setIconClass("publish-action");
+            action.onExecuted(() => {
+                this.publishAction.execute();
+            });
+
+            this.publishButtonForMobile = new DialogButton(action);
+            this.publishButtonForMobile.addClass("mobile-edit-publish-button");
+
+            this.subscribePublishButtonForMobileToPublishEvents();
+
+            var publishButtonContainer: api.ui.panel.Panel = this.getSplitPanel();
+            if (!publishButtonContainer) {
+                publishButtonContainer = this.getWizardStepsPanel();
+            }
+
+            publishButtonContainer.appendChild(this.publishButtonForMobile);
+        }
+
+        private managePublishButtonStateForMobile(compareStatus: CompareStatus) {
+            var canBeShown = compareStatus !== CompareStatus.EQUAL;
+            this.publishButtonForMobile.toggleClass("visible", canBeShown);
+            this.publishButtonForMobile.setLabel("Publish " + api.content.CompareStatusFormatter.formatStatus(compareStatus) + " item");
+        }
+
+        private subscribePublishButtonForMobileToPublishEvents() {
+
+            var publishHandler = (event: api.content.ContentsPublishedEvent) => {
+                if (this.getPersistedItem() && event.getContentIds()) {
+                    var isPublished = (event.getContentIds().some((obj: api.content.ContentId) => {
+                        return obj.toString() == this.getPersistedItem().getId();
+                    }));
+                    if (isPublished) {
+                        this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
+                    }
+                }
+            };
+
+            var publishHandlerOfServerEvent = (event: api.content.ContentPublishedEvent) => {
+                if (this.getPersistedItem() && event.getContentId() &&
+                    (this.getPersistedItem().getId() === event.getContentId().toString())) {
+                    this.managePublishButtonStateForMobile(CompareStatus.EQUAL);
+                }
+            };
+
+            api.content.ContentsPublishedEvent.on(publishHandler);
+            api.content.ContentPublishedEvent.on(publishHandlerOfServerEvent);
+
+            this.onClosed(() => {
+                api.content.ContentPublishedEvent.un(publishHandlerOfServerEvent);
+                api.content.ContentsPublishedEvent.un(publishHandler);
+            });
         }
     }
 

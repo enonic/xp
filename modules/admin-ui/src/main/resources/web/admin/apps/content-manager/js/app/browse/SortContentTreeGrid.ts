@@ -87,7 +87,7 @@ module app.browse {
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                return "New";
+                return "Offline";
                 break;
             case CompareStatus.NEWER:
                 return "Modified";
