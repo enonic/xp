@@ -51,7 +51,7 @@ public final class RequireFunction
         }
 
         final ResourceKey resolved = this.script.resolve( "../" + name );
-        if ( this.executor.getResourceService().getResource( resolved ).exists() )
+        if ( this.executor.getResourceService().getResource( resolved ) != null )
         {
             return resolved;
         }

@@ -34,7 +34,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
-        if ( resource.exists() )
+        if ( resource != null )
         {
 
             final String descriptorXml = resource.readString();

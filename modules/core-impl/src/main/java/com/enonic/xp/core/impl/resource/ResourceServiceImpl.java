@@ -10,8 +10,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Throwables;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -35,11 +33,6 @@ public class ResourceServiceImpl
         if ( application != null )
         {
             resource = getResource( application.getBundle(), resourceKey );
-        }
-
-        if ( resource == null )
-        {
-            return buildResourceFromKey( resourceKey );
         }
 
         return resource;
@@ -101,19 +94,6 @@ public class ResourceServiceImpl
         }
 
         return resource;
-    }
-
-    private Resource buildResourceFromKey( final ResourceKey key )
-    {
-        try
-        {
-            final URL url = new URL( "module:" + key.toString() );
-            return new Resource( key, url );
-        }
-        catch ( final Exception e )
-        {
-            throw Throwables.propagate( e );
-        }
     }
 
     @Reference

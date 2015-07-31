@@ -46,8 +46,6 @@ public final class XsltProcessor
     public void setView( final ResourceKey view )
     {
         final Resource resource = resourceService.getResource( view );
-        resource.requireExists();
-
         this.xsltSource = new StreamSource( resource.getUrl().toString() );
     }
 
