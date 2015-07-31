@@ -49,7 +49,7 @@ final class BundleConfigurator
 
         instruction( "Bundle-SymbolicName", module.getName() );
         instruction( "Bundle-Name", module.getDisplayName() );
-        instruction( "X-Module-Url", module.getUrl() );
+        instruction( "X-Application-Url", module.getUrl() );
         instruction( "X-Vendor-Name", module.getVendorName() );
         instruction( "X-Vendor-Url", module.getVendorUrl() );
         instruction( "X-System-Version", module.getSystemVersion() );
