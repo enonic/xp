@@ -78,8 +78,6 @@ module app.wizard {
 
         private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
 
-        // TODO: CMS-4677 private iconUploadItem: api.ui.uploader.UploadItem;
-
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
         private liveFormPanel: page.LiveFormPanel;
@@ -465,12 +463,16 @@ module app.wizard {
                     console.warn(" viewedContent: ", viewedContent);
                     console.warn(" persistedContent: ", persistedContent);
 
-                    ConfirmationDialog.get().
-                        setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
-                        setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
-                        setNoCallback(() => {/* Do nothing... */
-                        }).
-                        show();
+                    if (persistedContent.getType().isDescendantOfMedia()) {
+                        this.updateMetadataAndMetadataForms(persistedContent.clone());
+                    } else {
+                        ConfirmationDialog.get().
+                            setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
+                            setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
+                            setNoCallback(() => {/* Do nothing... */
+                            }).
+                            show();
+                    }
                 }
 
                 deferred.resolve(null);
