@@ -75,7 +75,7 @@ public class ComponentInstructionTest
         PageTemplate pageTemplate = createPageTemplate();
         portalRequest.setPageTemplate( pageTemplate );
 
-        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT application:myPartComponent" ).getAsString();
+        String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" ).getAsString();
         assertEquals( "<b>part content</b>", outputHtml );
     }
 

@@ -28,7 +28,7 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
-    static final String APPLICATION_COMPONENT_PREFIX = "application:";
+    static final String APPLICATION_COMPONENT_PREFIX = "module:";
 
     private RendererFactory rendererFactory;
 
