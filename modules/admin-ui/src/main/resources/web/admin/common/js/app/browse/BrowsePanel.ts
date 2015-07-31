@@ -38,6 +38,12 @@ module api.app.browse {
 
         private filterPanelForcedShown: boolean = false;
 
+        private filterPanelForcedHidden: boolean = false;
+
+        private filterPanelToBeShownFullScreen: boolean = false;
+
+        private toggleFilterPanelAction: api.ui.Action;
+
         constructor(params: BrowsePanelParams<M>) {
             super();
 
@@ -58,9 +64,7 @@ module api.app.browse {
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
 
             if (this.filterPanel) {
-                this.filterAndGridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
-                    .setFirstPanelSize(200,
-                    api.ui.panel.SplitPanelUnit.PIXEL).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).build();
+                this.setupFilterPanel();
             } else {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
@@ -82,21 +86,10 @@ module api.app.browse {
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                    if (this.filterPanel && !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) && !this.filterPanelForcedShown) {
-                        this.filterAndGridAndDetailSplitPanel.hidePanel(1);
-                    }
-                    if (!this.gridAndDetailSplitPanel.isPanelHidden(2)) {
-                        this.gridAndDetailSplitPanel.hidePanel(2);
-                    }
-                } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
-                    if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)) {
-                        this.filterAndGridAndDetailSplitPanel.showPanel(1);
-                    }
-                    if (this.gridAndDetailSplitPanel.isPanelHidden(2)) {
-                        this.gridAndDetailSplitPanel.showPanel(2);
-                    }
-                }
+                this.checkFilterPanelToBeShownFullScreen(item);
+
+                this.toggleFilterPanelDependingOnScreenSize(item);
+                this.togglePreviewPanelDependingOnScreenSize(item);
             });
         }
 
@@ -135,10 +128,100 @@ module api.app.browse {
         }
 
         toggleFilterPanel() {
-            this.filterPanelForcedShown = !this.filterPanelForcedShown;
-            !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)
-                ? this.filterAndGridAndDetailSplitPanel.hidePanel(1)
-                : this.filterAndGridAndDetailSplitPanel.showPanel(1);
+            this.filterAndGridAndDetailSplitPanel.setFirstPanelIsFullScreen(this.filterPanelToBeShownFullScreen);
+
+            if(this.filterPanelIsHidden()) {
+                this.showFilterPanel();
+            }
+            else {
+                this.hideFilterPanel();
+            }
+        }
+
+        private filterPanelIsHidden(): boolean {
+            return this.filterAndGridAndDetailSplitPanel.isFirstPanelHidden();
+        }
+
+        private showFilterPanel() {
+            this.filterPanelForcedShown = true;
+            this.filterPanelForcedHidden = false;
+
+            if(this.filterPanelToBeShownFullScreen) {
+                this.filterAndGridAndDetailSplitPanel.hideSecondPanel();
+            }
+
+            this.filterAndGridAndDetailSplitPanel.showFirstPanel();
+            this.filterPanel.giveFocusToSearch();
+            this.toggleFilterPanelAction.setVisible(false);
+        }
+
+        private hideFilterPanel() {
+            this.filterPanelForcedShown = false;
+            this.filterPanelForcedHidden = true;
+            this.filterAndGridAndDetailSplitPanel.showSecondPanel();
+            this.filterAndGridAndDetailSplitPanel.hideFirstPanel();
+
+            this.toggleFilterPanelAction.setVisible(true);
+        }
+
+        private setupFilterPanel() {
+            this.filterAndGridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
+                .setFirstPanelSize(200,
+                api.ui.panel.SplitPanelUnit.PIXEL).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).build();
+
+            this.filterPanel.onHideFilterPanelButtonClicked(() => {
+                this.toggleFilterPanel();
+            });
+
+            this.filterPanel.onShowResultsButtonClicked(() => {
+                this.toggleFilterPanel();
+            });
+
+            this.addToggleFilterPanelButtonInToolbar();
+        }
+
+        private addToggleFilterPanelButtonInToolbar() {
+            this.toggleFilterPanelAction = new api.app.browse.action.ToggleFilterPanelAction(this);
+            var existingActions: api.ui.Action[] = this.browseToolbar.getActions();
+            this.browseToolbar.removeActions();
+            this.browseToolbar.addAction(this.toggleFilterPanelAction);
+            this.browseToolbar.addActions(existingActions);
+            this.toggleFilterPanelAction.setVisible(false);
+        }
+
+        private checkFilterPanelToBeShownFullScreen(item: ResponsiveItem) {
+            if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                this.filterPanelToBeShownFullScreen = true;
+            }
+            else {
+                this.filterPanelToBeShownFullScreen = false;
+            }
+        }
+
+        private toggleFilterPanelDependingOnScreenSize(item: ResponsiveItem) {
+            if (item.isInRangeOrSmaller(ResponsiveRanges._1380_1620)) {
+                if (this.filterPanel && !this.filterAndGridAndDetailSplitPanel.isFirstPanelHidden() && !this.filterPanelForcedShown) {
+                    this.filterAndGridAndDetailSplitPanel.hideFirstPanel();
+                    this.toggleFilterPanelAction.setVisible(true);
+                }
+            } else if (item.isInRangeOrBigger(ResponsiveRanges._1620_1920)) {
+                if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isFirstPanelHidden() && !this.filterPanelForcedHidden) {
+                    this.filterAndGridAndDetailSplitPanel.showFirstPanel();
+                    this.toggleFilterPanelAction.setVisible(false);
+                }
+            }
+        }
+
+        private togglePreviewPanelDependingOnScreenSize(item: ResponsiveItem) {
+            if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                if (!this.gridAndDetailSplitPanel.isSecondPanelHidden()) {
+                    this.gridAndDetailSplitPanel.hideSecondPanel();
+                }
+            } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
+                if (this.gridAndDetailSplitPanel.isSecondPanelHidden()) {
+                    this.gridAndDetailSplitPanel.showSecondPanel();
+                }
+            }
         }
 
     }

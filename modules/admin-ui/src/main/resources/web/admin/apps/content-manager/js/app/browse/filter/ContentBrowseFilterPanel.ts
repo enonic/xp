@@ -37,20 +37,23 @@ module app.browse.filter {
         static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types";
         static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified";
 
+        contentTypeAggregation: ContentTypeAggregationGroupView;
+        lastModifiedAggregation: AggregationGroupView;
+
         constructor() {
 
-            var contentTypeAggregation: ContentTypeAggregationGroupView = new ContentTypeAggregationGroupView(
+            this.contentTypeAggregation = new ContentTypeAggregationGroupView(
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
 
-            var lastModifiedAggregation: AggregationGroupView = new AggregationGroupView(
+            this.lastModifiedAggregation = new AggregationGroupView(
                 ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
 
-            super(null, [contentTypeAggregation, lastModifiedAggregation]);
+            super(null, [this.contentTypeAggregation, this.lastModifiedAggregation]);
 
 
-            this.initAggregationGroupView([contentTypeAggregation, lastModifiedAggregation]);
+            this.initAggregationGroupView([this.contentTypeAggregation, this.lastModifiedAggregation]);
 
             this.onReset(()=> {
                 this.resetFacets();
@@ -114,6 +117,8 @@ module app.browse.filter {
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                     if (!api.util.StringHelper.isEmpty(searchString)) {
                         this.updateAggregations(contentQueryResult.getAggregations(), true);
+                        this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                        this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
                         new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
 
                     } else {
@@ -122,6 +127,8 @@ module app.browse.filter {
                             new ContentBrowseRefreshEvent().fire();
                         } else {// in other cases - reset with grid reload
                             this.updateAggregations(contentQueryResult.getAggregations(), false);
+                            this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                            this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
                             new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
                         }
                     }
@@ -138,6 +145,8 @@ module app.browse.filter {
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), false);
+                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                    this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
 
                     aggregationGroupView.forEach((aggregationGroupView: AggregationGroupView) => {
                         aggregationGroupView.initialize();
@@ -155,6 +164,8 @@ module app.browse.filter {
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
+                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                    this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
 
                     if (!suppressEvent) { // then fire usual reset event with content grid reloading
                         new ContentBrowseResetEvent().fire();
@@ -259,6 +270,25 @@ module app.browse.filter {
             dateRangeAgg.addRange(new DateRange("now-1w", null, "< 1 week"));
 
             contentQuery.addAggregationQuery(dateRangeAgg);
+        }
+
+        private toggleAggregationsVisibility(aggregations: api.aggregation.Aggregation[]) {
+            aggregations.forEach((aggregation: api.aggregation.BucketAggregation) => {
+                var aggregationIsEmpty = !aggregation.getBuckets().some((bucket: api.aggregation.Bucket) => {
+                    if(bucket.docCount > 0) {
+                        return true;
+                    }
+                })
+
+                var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME ? this.contentTypeAggregation : this.lastModifiedAggregation;
+
+                if(aggregationIsEmpty) {
+                    aggregationGroupView.hide();
+                }
+                else {
+                    aggregationGroupView.show();
+                }
+            })
         }
     }
 }

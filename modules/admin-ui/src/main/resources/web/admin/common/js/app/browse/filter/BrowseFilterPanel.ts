@@ -8,15 +8,34 @@ module api.app.browse.filter {
 
         private resetListeners: {():void}[] = [];
 
+        private hideFilterPanelButtonClickedListeners: {():void}[] = [];
+
+        private showResultsButtonClickedListeners: {():void}[] = [];
+
         private aggregationContainer: api.aggregation.AggregationContainer;
 
         private searchField: api.app.browse.filter.TextSearchField;
 
         private clearFilter: api.app.browse.filter.ClearFilterButton;
 
+        private hitsCounterEl: api.dom.SpanEl;
+
+        private hideFilterPanelButton: api.dom.SpanEl;
+
+        private showResultsButton: api.dom.SpanEl;
+
         constructor(aggregations?: api.aggregation.Aggregation[], groupViews?: api.aggregation.AggregationGroupView[]) {
             super();
             this.addClass('filter-panel');
+
+            this.hideFilterPanelButton = new api.dom.SpanEl("hide-filter-panel-button icon-search");
+            this.hideFilterPanelButton.onClicked(() => this.notifyHidePanelButtonPressed());
+
+            var showResultsButtonWrapper = new api.dom.DivEl("show-filter-results");
+            this.showResultsButton = new api.dom.SpanEl("show-filter-results-button");
+            this.showResultsButton.setHtml("Show results");
+            this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
+            showResultsButtonWrapper.appendChild(this.showResultsButton);
 
             this.searchField = new TextSearchField('Search');
             this.searchField.onValueChanged(() => {
@@ -27,6 +46,11 @@ module api.app.browse.filter {
             this.clearFilter.onClicked((event: MouseEvent) => {
                 this.reset();
             });
+
+            this.hitsCounterEl = new api.dom.SpanEl("hits-counter");
+
+            var hitsCounterAndClearButtonWrapper = new api.dom.DivEl("hits-and-clear");
+            hitsCounterAndClearButtonWrapper.appendChildren(this.hitsCounterEl, this.clearFilter);
 
             this.aggregationContainer = new api.aggregation.AggregationContainer();
             this.appendChild(this.aggregationContainer);
@@ -44,9 +68,13 @@ module api.app.browse.filter {
             }
 
             this.onRendered((event) => {
+                this.appendChild(this.hideFilterPanelButton);
                 this.appendChild(this.searchField);
-                this.appendChild(this.clearFilter);
+                this.appendChild(hitsCounterAndClearButtonWrapper);
                 this.appendChild(this.aggregationContainer);
+                this.appendChild(showResultsButtonWrapper);
+
+                this.showResultsButton.hide();
 
                 api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("/", (e: ExtendedKeyboardEvent) => {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
@@ -54,7 +82,7 @@ module api.app.browse.filter {
             })
         }
 
-        private giveFocusToSearch() {
+        giveFocusToSearch() {
             this.searchField.giveFocus();
         }
 
@@ -124,6 +152,14 @@ module api.app.browse.filter {
 
         }
 
+        onHideFilterPanelButtonClicked(listener: ()=>void) {
+            this.hideFilterPanelButtonClickedListeners.push(listener);
+        }
+
+        onShowResultsButtonClicked(listener: ()=>void) {
+            this.showResultsButtonClickedListeners.push(listener);
+        }
+
         private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
             this.searchListeners.forEach((listener: (event: SearchEvent)=>void) => {
                 listener.call(this, new SearchEvent(searchInputValues, elementChanged));
@@ -140,6 +176,34 @@ module api.app.browse.filter {
             this.resetListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
             });
+        }
+
+        private notifyHidePanelButtonPressed() {
+            this.hideFilterPanelButtonClickedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        private notifyShowResultsButtonPressed() {
+            this.showResultsButtonClickedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        updateHitsCounter(hits: number) {
+            if(hits != 1) {
+                this.hitsCounterEl.setHtml(hits + " hits");
+            }
+            else {
+                this.hitsCounterEl.setHtml(hits + " hit");
+            }
+
+            if(hits != 0) {
+                this.showResultsButton.show();
+            }
+            else {
+                this.showResultsButton.hide();
+            }
         }
     }
 

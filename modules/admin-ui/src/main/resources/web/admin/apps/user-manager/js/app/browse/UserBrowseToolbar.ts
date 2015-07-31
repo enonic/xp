@@ -4,6 +4,7 @@ module app.browse {
 
         constructor(actions: UserTreeGridActions) {
             super();
+            this.addClass("user-browse-toolbar")
             this.addActions(actions.getAllActions());
         }
     }
