@@ -67,6 +67,12 @@ module api.app.wizard {
 
         private validityManager: WizardValidityManager;
 
+        private minimizeEditButton: api.dom.DivEl;
+
+        private isMinimized: boolean = false;
+
+        private toggleMinimizeListener: (event: api.ui.NavigatorEvent) => void;
+
         constructor(params: WizardPanelParams, onSuccess: () => void, onError?: (reason: any) => void) {
             super("wizard-panel");
             this.validityManager = new WizardValidityManager();
@@ -85,8 +91,18 @@ module api.app.wizard {
 
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
+                this.toggleMinimizeListener = (event: api.ui.NavigatorEvent) => {
+                    console.log("before toggleMinimize");
+                    this.toggleMinimize();
+                };
+                this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
+                this.formPanel.prependChild(this.minimizeEditButton);
                 this.splitPanel = this.createSplitPanel(this.formPanel, params.livePanel);
                 this.appendChild(this.splitPanel);
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.minimizeEditButton, () => {
+                    this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
+                });
+                this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this));
             } else {
                 this.appendChild(this.formPanel);
             }
@@ -99,9 +115,9 @@ module api.app.wizard {
                 this.actions.suspendActions(event.isMask());
             });
 
-            var aboveStepPanels = new api.dom.DivEl();
-            aboveStepPanels.appendChild(params.formIcon);
-            aboveStepPanels.appendChild(this.header);
+            var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
+            headerAndNavigatorContainer.appendChild(params.formIcon);
+            headerAndNavigatorContainer.appendChild(this.header);
 
             var container = new api.dom.DivEl("test-container");
             this.stepNavigatorAndToolbarContainer = new api.dom.DivEl("wizard-step-navigator-and-toolbar");
@@ -110,7 +126,7 @@ module api.app.wizard {
                 this.stepNavigatorAndToolbarContainer.appendChild(this.stepToolbar);
             }
             this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
-            aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
+            headerAndNavigatorContainer.appendChild(this.stepNavigatorAndToolbarContainer);
 
             this.stepsPanel = new WizardStepsPanel(this.stepNavigator, this.formPanel);
             this.stepNavigatorAndToolbarContainer.onShown((event: api.dom.ElementShownEvent) => {
@@ -124,7 +140,7 @@ module api.app.wizard {
                     this.stepsPanel.setScrollOffset(item.getElement().getEl().getHeight());
                 }
             });
-            this.formPanel.appendChildren(aboveStepPanels, this.stepsPanel);
+            this.formPanel.appendChildren(headerAndNavigatorContainer, this.stepsPanel);
 
             this.layingOutNew = this.persistedItem == null;
 
@@ -182,7 +198,8 @@ module api.app.wizard {
 
         updateStickyToolbar() {
             var scrollTop = this.formPanel.getHTMLElement().scrollTop;
-            var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
+            var wizardHeaderHeight = this.header.getEl().getHeightWithMargin();
+            var navigationWidth;
             if (scrollTop > wizardHeaderHeight) {
                 this.mainToolbar.removeClass("scroll-shadow");
                 var stepNavigatorEl = this.stepNavigatorAndToolbarContainer.getEl().addClass("scroll-stick");
@@ -202,7 +219,33 @@ module api.app.wizard {
             if (scrollTop == 0) {
                 this.mainToolbar.removeClass("scroll-shadow");
             }
-            this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(this.formPanel.getEl().getWidth());
+
+            if (this.isMinimized) {
+                navigationWidth = this.splitPanel.getEl().getHeight();
+            } else {
+                navigationWidth = this.stepsPanel.getEl().getWidth();
+            }
+            this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
+        }
+
+        toggleMinimize() {
+            this.stepNavigator.unNavigationItemSelected(this.toggleMinimizeListener);
+            var navIndex = this.stepNavigator.getSelectedIndex();
+            this.isMinimized = !this.isMinimized;
+            this.formPanel.toggleClass("minimized");
+
+            if (this.isMinimized) {
+                this.stepNavigator.selectNavigationItem(navIndex, false, true);
+                this.splitPanel.saveFirstPanelSizeAndDistribute(40, 0, api.ui.panel.SplitPanelUnit.PIXEL);
+                this.splitPanel.hideSplitter();
+                this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
+                this.stepNavigator.onNavigationItemSelected(this.toggleMinimizeListener);
+            } else {
+                this.stepNavigator.selectNavigationItem(navIndex, false, true);
+                this.splitPanel.loadFirstPanelSizeAndDistribute();
+                this.splitPanel.showSplitter();
+
+            }
         }
 
         giveInitialFocus() {

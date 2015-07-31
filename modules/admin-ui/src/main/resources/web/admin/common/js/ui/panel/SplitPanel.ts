@@ -183,6 +183,12 @@ module api.ui.panel {
 
         private splitterIsHidden: boolean
 
+        private savedFirstPanelSize: number;
+
+        private savedFirstPanelMinSize: number;
+
+        private savedFirstPanelUnit: SplitPanelUnit;
+
         constructor(builder: SplitPanelBuilder) {
             super("split-panel");
             this.firstPanel = builder.getFirstPanel();
@@ -195,6 +201,8 @@ module api.ui.panel {
             this.secondPanelIsHidden = false;
             this.firstPanelIsFullScreen = false;
             this.splitterIsHidden = false;
+
+            this.saveFirstPanelSize();
 
             if (builder.isFirstPanelDecidingPanel()) {
                 this.setFirstPanelSize(builder.getFirstPanelSize(), this.firstPanelUnit);
@@ -356,6 +364,42 @@ module api.ui.panel {
             if (unit) {
                 this.secondPanelUnit = unit;
             }
+        }
+
+        saveFirstPanelSize() {
+            this.savedFirstPanelSize = this.firstPanelSize;
+            this.savedFirstPanelMinSize = this.firstPanelMinSize;
+            this.savedFirstPanelUnit = this.firstPanelUnit;
+        }
+
+        loadFirstPanelSize() {
+            this.firstPanelSize = this.savedFirstPanelSize;
+            this.firstPanelMinSize = this.savedFirstPanelMinSize;
+            this.firstPanelUnit = this.savedFirstPanelUnit;
+
+            this.secondPanelSize = -1;
+        }
+
+        saveFirstPanelSizeAndDistribute(size: number, minSize: number = -1, unit?: SplitPanelUnit) {
+            this.saveFirstPanelSize();
+            this.firstPanelSize = size < 0 ? this.firstPanelSize : size;
+            this.firstPanelUnit = minSize < 0 ? this.firstPanelUnit : minSize;
+            this.firstPanelMinSize = unit ? unit : this.firstPanelMinSize;
+            this.distribute();
+        }
+
+        loadFirstPanelSizeAndDistribute() {
+            this.loadFirstPanelSize();
+            this.distribute();
+        }
+
+
+        showSplitter() {
+            this.splitter.show();
+        }
+
+        hideSplitter() {
+            this.splitter.hide();
         }
 
         distribute() {
