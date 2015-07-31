@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.lib.content.mapper;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class JsonToPropertyTreeTranslator
 
             if ( next.getValue().isObject() )
             {
-                final PropertySet propertySet = this.propertyTree.addSet( next.getKey() );
+                final PropertySet propertySet = parent.addSet( next.getKey() );
                 traverse( next.getValue(), propertySet );
             }
             else
@@ -64,6 +64,11 @@ public class JsonToPropertyTreeTranslator
             {
                 addValue( parent, key, objNode );
             }
+        }
+        else if ( value.isObject() )
+        {
+            final PropertySet parentSet = parent.addSet( key );
+            value.fields().forEachRemaining( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
         }
         else
         {
@@ -110,7 +115,7 @@ public class JsonToPropertyTreeTranslator
 
         if ( value.isInt() )
         {
-            return Value.newDouble( (double) value.intValue() );
+            return Value.newLong( (long) value.intValue() );
         }
 
         if ( value.isLong() )
@@ -138,7 +143,7 @@ public class JsonToPropertyTreeTranslator
             return FormItemPath.from( key );
         }
 
-        final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().toString() );
+        final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().resetAllIndexesTo( 0 ).toString() );
         return FormItemPath.from( FormItemPath.from( parentPath, key ) );
     }
 

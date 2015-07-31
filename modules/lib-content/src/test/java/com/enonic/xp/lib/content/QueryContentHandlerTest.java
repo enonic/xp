@@ -2,7 +2,6 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -13,23 +12,13 @@ import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.StatsAggregation;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class QueryContentHandlerTest
-    extends ScriptTestSupport
+    extends BaseContentHandlerTest
 {
-    private ContentService contentService;
-
-    @Before
-    public void setup()
-    {
-        this.contentService = Mockito.mock( ContentService.class );
-        addService( ContentService.class, this.contentService );
-    }
 
     @Test
     public void query()

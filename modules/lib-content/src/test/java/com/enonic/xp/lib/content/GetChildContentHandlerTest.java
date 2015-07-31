@@ -1,28 +1,17 @@
 package com.enonic.xp.lib.content;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class GetChildContentHandlerTest
-    extends ScriptTestSupport
+    extends BaseContentHandlerTest
 {
-    private ContentService contentService;
-
-    @Before
-    public void setup()
-    {
-        this.contentService = Mockito.mock( ContentService.class );
-        addService( ContentService.class, this.contentService );
-    }
 
     @Test
     public void getChildrenById()

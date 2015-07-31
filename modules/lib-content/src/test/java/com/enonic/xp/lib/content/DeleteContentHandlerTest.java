@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.content;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -8,21 +7,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class DeleteContentHandlerTest
-    extends ScriptTestSupport
+    extends BaseContentHandlerTest
 {
-    private ContentService contentService;
-
-    @Before
-    public void setup()
-    {
-        this.contentService = Mockito.mock( ContentService.class );
-        addService( ContentService.class, this.contentService );
-    }
 
     @Test
     public void deleteById()

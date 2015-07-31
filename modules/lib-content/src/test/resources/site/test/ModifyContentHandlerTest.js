@@ -14,8 +14,8 @@ var expectedJson = {
         "c": [{
             "d": true
         }, {
-            "d": true,
-            "e": ["3", "4", "5"],
+            "d": false,
+            "e": ["3", "42", "5"],
             "f": 2
         }],
         "z": "99"
@@ -84,6 +84,8 @@ function editor(c) {
     c.displayName = 'Modified';
     c.data.a++;
     c.data.z = '99';
+    c.data.c[1].d = false;
+    c.data.c[1].e[1] = 42;
 
     if (!c.x['com-enonic-mymodule']) {
         c.x['com-enonic-mymodule'] = {};

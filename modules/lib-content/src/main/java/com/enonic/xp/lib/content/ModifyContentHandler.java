@@ -104,7 +104,7 @@ public final class ModifyContentHandler
             return null;
         }
 
-        return this.contentService.translateToPropertyTree( createJson( value ), contentTypeName );
+        return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
     private PropertyTree createPropertyTree( final Map<?, ?> value, final MixinName mixinName )
@@ -114,7 +114,7 @@ public final class ModifyContentHandler
             return null;
         }
 
-        return this.contentService.translateToPropertyTree( createJson( value ), mixinName );
+        return this.translateToPropertyTree( createJson( value ), mixinName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )

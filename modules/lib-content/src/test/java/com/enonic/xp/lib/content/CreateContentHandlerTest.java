@@ -2,63 +2,91 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class CreateContentHandlerTest
-    extends ScriptTestSupport
+    extends BaseContentHandlerTest
 {
-    private ContentService contentService;
-
-    @Before
-    public void setup()
-    {
-        this.contentService = Mockito.mock( ContentService.class );
-        addService( ContentService.class, this.contentService );
-    }
 
     @Test
     public void createContent()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree();
-        data.addLong( "a", 1l );
-        data.addLong( "b", 2l );
-        data.addString( "c", "1" );
-        data.addString( "c", "2" );
-        final PropertySet d = data.addSet( "d" );
-        final PropertySet e = d.addSet( "e" );
-        e.addDouble( "f", 3.6 );
-        e.addBoolean( "g", true );
-
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
-                                                                   Mockito.eq( ContentTypeName.from( "test:myContentType" ) ) ) ).
-            thenReturn( data );
+        final FormItemSet eSet = FormItemSet.create().
+            name( "e" ).
+            addFormItem( Input.create().
+                label( "f" ).
+                name( "f" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            addFormItem( Input.create().
+                label( "g" ).
+                name( "g" ).
+                inputType( InputTypes.CHECKBOX ).
+                build() ).
+            build();
+
+        final FormItemSet dSet = FormItemSet.create().
+            name( "d" ).
+            addFormItem( eSet ).
+            build();
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            addFormItem( Input.create().
+                label( "a" ).
+                name( "a" ).
+                inputType( InputTypes.LONG ).
+                build() ).
+            addFormItem( Input.create().
+                label( "b" ).
+                name( "b" ).
+                inputType( InputTypes.LONG ).
+                build() ).
+            addFormItem( Input.create().
+                label( "c" ).
+                name( "c" ).
+                occurrences( 0, 10 ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( dSet ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
 
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
-                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
-            thenReturn( extraData );
+        final Mixin mixin = Mixin.create().
+            name( "com.enonic.mymodule:myschema" ).
+            addFormItem( Input.create().
+                label( "a" ).
+                name( "a" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).thenReturn( mixin );
 
         runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }

@@ -1,34 +1,25 @@
 package com.enonic.xp.lib.content;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.Mixin;
 
 public class ModifyContentHandlerTest
-    extends ScriptTestSupport
+    extends BaseContentHandlerTest
 {
-    private ContentService contentService;
-
-    @Before
-    public void setup()
-    {
-        this.contentService = Mockito.mock( ContentService.class );
-        addService( ContentService.class, this.contentService );
-    }
 
     @Test
     public void modifyById()
@@ -39,8 +30,6 @@ public class ModifyContentHandlerTest
 
         final Content content = TestDataFixtures.newSmallContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ), Mockito.eq( content.getType() ) ) ).
-            thenReturn( createPropertyTree() );
 
         mockXData();
 
@@ -53,8 +42,6 @@ public class ModifyContentHandlerTest
     {
         final Content content = TestDataFixtures.newSmallContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ), Mockito.eq( content.getType() ) ) ).
-            thenReturn( createPropertyTree() );
 
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
@@ -64,38 +51,80 @@ public class ModifyContentHandlerTest
         runTestFunction( "/test/ModifyContentHandlerTest.js", "modifyByPath" );
     }
 
-    private void mockXData()
+    @Test
+    public void modifyNotFound()
+        throws Exception
     {
-        final PropertyTree mySchema = new PropertyTree();
-        mySchema.addDouble( "a", 1.0 );
-
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
-                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).
-            thenReturn( mySchema );
-
-        final PropertyTree other = new PropertyTree();
-        other.addString( "name", "test" );
-
-        Mockito.when( this.contentService.translateToPropertyTree( Mockito.isA( JsonNode.class ),
-                                                                   Mockito.eq( MixinName.from( "com.enonic.mymodule:other" ) ) ) ).
-            thenReturn( other );
+        runTestFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
     }
 
-    private PropertyTree createPropertyTree()
+    private void mockXData()
     {
-        final PropertyTree data = new PropertyTree();
-        data.addDouble( "a", 2.0 );
-        data.addString( "b", "2" );
-        final PropertySet c1 = data.addSet( "c" );
-        final PropertySet c2 = data.addSet( "c" );
+        final FormItemSet cSet = FormItemSet.create().
+            name( "c" ).
+            occurrences( 0, 10 ).
+            addFormItem( Input.create().
+                label( "d" ).
+                name( "d" ).
+                inputType( InputTypes.CHECKBOX ).
+                build() ).
+            addFormItem( Input.create().
+                label( "e" ).
+                name( "e" ).
+                occurrences( 0, 0 ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( Input.create().
+                label( "f" ).
+                name( "f" ).
+                inputType( InputTypes.LONG ).
+                build() ).
+            build();
 
-        c1.addBoolean( "d", true );
-        c2.addBoolean( "d", true );
-        c2.addStrings( "e", "3", "4", "5" );
-        c2.addLong( "f", 2l );
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            addFormItem( Input.create().
+                label( "a" ).
+                name( "a" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            addFormItem( Input.create().
+                label( "b" ).
+                name( "b" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            addFormItem( cSet ).
+            addFormItem( Input.create().
+                label( "z" ).
+                name( "z" ).
+                occurrences( 0, 10 ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            build();
 
-        data.addString( "z", "99" );
-        return data;
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        final Mixin mixin1 = Mixin.create().
+            name( "com.enonic.mymodule:myschema" ).
+            addFormItem( Input.create().
+                label( "a" ).
+                name( "a" ).
+                inputType( InputTypes.DOUBLE ).
+                build() ).
+            build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
+
+        final Mixin mixin2 = Mixin.create().
+            name( "com.enonic.mymodule:other" ).
+            addFormItem( Input.create().
+                label( "name" ).
+                name( "name" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
     }
 
     private Content invokeUpdate( final UpdateContentParams params )
@@ -112,10 +141,4 @@ public class ModifyContentHandlerTest
         return editable.build();
     }
 
-    @Test
-    public void modify_notFound()
-        throws Exception
-    {
-        runTestFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
-    }
 }
