@@ -460,10 +460,8 @@ module api.ui.image {
             this.updateRevertZoomData();
             this.updateRevertFocusData();
 
-            // enable last used mode
-            var selected = this.modeSelector.getSelectedIndex() || 0;
-            this.modeSelector.deselectNavigationItem();
-            this.modeSelector.selectNavigationItem(selected);
+            // enable crop mode by default
+            this.modeSelector.selectNavigationItem(0);
 
             this.setEditMode(true, false);
         }
