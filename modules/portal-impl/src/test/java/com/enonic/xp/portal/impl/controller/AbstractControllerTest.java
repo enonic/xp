@@ -54,7 +54,7 @@ public abstract class AbstractControllerTest
     public void setup()
         throws Exception
     {
-        ResourceUrlTestHelper.mockApplicationScheme().modulesClassLoader( getClass().getClassLoader() );
+        ResourceUrlTestHelper.mockApplicationScheme().applicationsClassLoader( getClass().getClassLoader() );
 
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
@@ -68,7 +68,7 @@ public abstract class AbstractControllerTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getApplication( ApplicationKey.from( "mymodule" ) ) ).thenReturn( application );
+        Mockito.when( applicationService.getApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
         this.resourceService = Mockito.mock( ResourceService.class );

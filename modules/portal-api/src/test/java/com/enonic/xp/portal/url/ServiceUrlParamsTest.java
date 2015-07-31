@@ -11,16 +11,16 @@ public class ServiceUrlParamsTest
     extends AbstractUrlParamsTest
 {
     @Test
-    public void testModule()
+    public void testApplication()
     {
         final ServiceUrlParams params = configure( new ServiceUrlParams() );
-        assertNull( params.getModule() );
+        assertNull( params.getApplication() );
 
-        params.module( "" );
-        assertNull( params.getModule() );
+        params.application( "" );
+        assertNull( params.getApplication() );
 
-        params.module( "othermodule" );
-        assertEquals( "othermodule", params.getModule() );
+        params.application( "otherapplication" );
+        assertEquals( "otherapplication", params.getApplication() );
     }
 
     @Test
@@ -41,15 +41,15 @@ public class ServiceUrlParamsTest
     {
         final Multimap<String, String> map = HashMultimap.create();
         map.put( "_service", "myservice" );
-        map.put( "_module", "othermodule" );
+        map.put( "_application", "otherapplication" );
         map.put( "a", "1" );
 
         final ServiceUrlParams params = configure( new ServiceUrlParams() );
         params.setAsMap( map );
 
         assertEquals( "myservice", params.getService() );
-        assertEquals( "othermodule", params.getModule() );
+        assertEquals( "otherapplication", params.getApplication() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ServiceUrlParams{params={a=[1]}, service=myservice, module=othermodule}", params.toString() );
+        assertEquals( "ServiceUrlParams{params={a=[1]}, service=myservice, application=otherapplication}", params.toString() );
     }
 }

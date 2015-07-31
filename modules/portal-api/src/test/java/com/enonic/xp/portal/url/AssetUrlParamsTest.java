@@ -11,16 +11,16 @@ public class AssetUrlParamsTest
     extends AbstractUrlParamsTest
 {
     @Test
-    public void testModule()
+    public void testApplication()
     {
         final AssetUrlParams params = configure( new AssetUrlParams() );
-        assertNull( params.getModule() );
+        assertNull( params.getApplication() );
 
-        params.module( "" );
-        assertNull( params.getModule() );
+        params.application( "" );
+        assertNull( params.getApplication() );
 
-        params.module( "othermodule" );
-        assertEquals( "othermodule", params.getModule() );
+        params.application( "otherapplication" );
+        assertEquals( "otherapplication", params.getApplication() );
     }
 
     @Test
@@ -41,15 +41,15 @@ public class AssetUrlParamsTest
     {
         final Multimap<String, String> map = HashMultimap.create();
         map.put( "_path", "/a/b" );
-        map.put( "_module", "othermodule" );
+        map.put( "_application", "otherapplication" );
         map.put( "a", "1" );
 
         final AssetUrlParams params = configure( new AssetUrlParams() );
         params.setAsMap( map );
 
         assertEquals( "/a/b", params.getPath() );
-        assertEquals( "othermodule", params.getModule() );
+        assertEquals( "otherapplication", params.getApplication() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "AssetUrlParams{params={a=[1]}, path=/a/b, module=othermodule}", params.toString() );
+        assertEquals( "AssetUrlParams{params={a=[1]}, path=/a/b, application=otherapplication}", params.toString() );
     }
 }

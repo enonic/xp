@@ -61,13 +61,13 @@ public abstract class RenderBaseResourceTest
     protected final void setupContentAndSite()
         throws Exception
     {
-        final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
+        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
+            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
@@ -77,10 +77,10 @@ public abstract class RenderBaseResourceTest
         throws Exception
     {
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
+            thenReturn( createPage( "id", "site/somepath/content", "myapplication:ctype", false ) );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
+            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
     }
 
     protected final void setupTemplates()
@@ -160,14 +160,14 @@ public abstract class RenderBaseResourceTest
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "abc" ) ).
-            canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
+            canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner" ) ).
             regions( pageRegions ).
             config( pageTemplateConfig );
 
-        builder.controller( DescriptorKey.from( "mainmodule:landing-page" ) );
+        builder.controller( DescriptorKey.from( "mainapplication:landing-page" ) );
 
-        builder.displayName( "Main page emplate" );
-        builder.displayName( "Main page emplate" );
+        builder.displayName( "Main page template" );
+        builder.displayName( "Main page template" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );
 
@@ -177,7 +177,7 @@ public abstract class RenderBaseResourceTest
     private PageDescriptor createDescriptor()
         throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "mainmodule" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "mainapplication" );
         final String name = "mypage";
         final DescriptorKey key = DescriptorKey.from( applicationKey, name );
 

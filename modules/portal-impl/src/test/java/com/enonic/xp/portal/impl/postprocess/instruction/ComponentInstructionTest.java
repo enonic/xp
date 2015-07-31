@@ -45,9 +45,9 @@ public class ComponentInstructionTest
         instruction.setComponentService( componentService );
 
         PortalRequest portalRequest = new PortalRequest();
-        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
         portalRequest.setContent( content );
-        Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
+        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
 
         String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ).getAsString();
@@ -68,9 +68,9 @@ public class ComponentInstructionTest
         instruction.setComponentService( componentService );
 
         PortalRequest portalRequest = new PortalRequest();
-        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
         portalRequest.setContent( content );
-        Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
+        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
         PageTemplate pageTemplate = createPageTemplate();
         portalRequest.setPageTemplate( pageTemplate );
@@ -83,7 +83,7 @@ public class ComponentInstructionTest
     {
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "my-page" ) ).
-            controller( DescriptorKey.from( "mymodule:mypagetemplate" ) ).
+            controller( DescriptorKey.from( "myapplication:mypagetemplate" ) ).
             name( "my-page-template" ).
             parentPath( ContentPath.ROOT ).
             build();
@@ -93,7 +93,7 @@ public class ComponentInstructionTest
     {
         return PartComponent.create().
             name( "myPartComponent" ).
-            descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
+            descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
             build();
     }
 
@@ -106,7 +106,7 @@ public class ComponentInstructionTest
             name( "myRegion" ).
             add( PartComponent.create().
                 name( "myPartComponent" ).
-                descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
+                descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
                 build() ).
             build();
 

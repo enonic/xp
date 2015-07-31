@@ -14,11 +14,11 @@ final class AssetUrlBuilder
     extends PortalUrlBuilder<AssetUrlParams>
 {
 
-    private ApplicationKey getModule()
+    private ApplicationKey getApplication()
     {
-        return new ModuleResolver().
+        return new ApplicationResolver().
             portalRequest( this.portalRequest ).
-            module( this.params.getModule() ).
+            application( this.params.getApplication() ).
             resolve();
     }
 
@@ -29,15 +29,15 @@ final class AssetUrlBuilder
         appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "asset" );
-        appendPart( url, getModule().toString() );
+        appendPart( url, getApplication().toString() );
         appendPart( url, this.params.getPath() );
     }
 
     @Override
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
     {
-        //Example of URI: /portal/draft/context/path/_/asset/mymodule/css/my.css
-        //Corresponding result: /portal/draft/_/asset/mymodule/css/my.css
+        //Example of URI: /portal/draft/context/path/_/asset/myapplication/css/my.css
+        //Corresponding result: /portal/draft/_/asset/myapplication/css/my.css
 
         StringBuilder result = new StringBuilder();
         String uriToProcess = uriRewritingResult.getRewrittenUri();
@@ -63,7 +63,7 @@ final class AssetUrlBuilder
 
     private String buildContentPathRegExp()
     {
-        //Example of uri: /portal/draft/context/path/_/asset/mymodule/css/my.css
+        //Example of uri: /portal/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding regexp: (?:(?:context/)?path/)?_/asset
 
         final StringBuilder regexp = new StringBuilder();

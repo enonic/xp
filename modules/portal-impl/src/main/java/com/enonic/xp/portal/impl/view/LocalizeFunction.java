@@ -18,7 +18,7 @@ public final class LocalizeFunction
 {
     private LocaleService localeService;
 
-    final static String NO_MATCHING_BUNDLE = "no localization bundle found in module ''{0}''";
+    final static String NO_MATCHING_BUNDLE = "no localization bundle found in application ''{0}''";
 
     @Override
     public String getName()

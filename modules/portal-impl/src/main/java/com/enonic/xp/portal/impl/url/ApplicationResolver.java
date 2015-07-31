@@ -3,29 +3,29 @@ package com.enonic.xp.portal.impl.url;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 
-final class ModuleResolver
+final class ApplicationResolver
 {
     private PortalRequest portalRequest;
 
-    private String module;
+    private String application;
 
-    public ModuleResolver portalRequest( final PortalRequest portalRequest )
+    public ApplicationResolver portalRequest( final PortalRequest portalRequest )
     {
         this.portalRequest = portalRequest;
         return this;
     }
 
-    public ModuleResolver module( final String module )
+    public ApplicationResolver application( final String application )
     {
-        this.module = module;
+        this.application = application;
         return this;
     }
 
     public ApplicationKey resolve()
     {
-        if ( this.module != null )
+        if ( this.application != null )
         {
-            return ApplicationKey.from( this.module );
+            return ApplicationKey.from( this.application );
         }
 
         return this.portalRequest.getApplicationKey();

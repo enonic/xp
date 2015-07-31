@@ -16,7 +16,7 @@ public class ControllerScriptImpl_requestTest
         throws Exception
     {
         this.portalRequest.setMethod( "GET" );
-        execute( "mymodule:/controller/request.js" );
+        execute( "myapplication:/controller/request.js" );
 
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsString() );
@@ -38,7 +38,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.getCookies().put( "mycookie", "123" );
         this.portalRequest.getCookies().put( "other", "abc" );
 
-        execute( "mymodule:/controller/request.js" );
+        execute( "myapplication:/controller/request.js" );
 
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
         assertJson( "all", getResponseAsString() );
@@ -49,7 +49,7 @@ public class ControllerScriptImpl_requestTest
         throws Exception
     {
         this.portalRequest.setMethod( "HEAD" );
-        execute( "mymodule:/controller/request.js" );
+        execute( "myapplication:/controller/request.js" );
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
     }
 }

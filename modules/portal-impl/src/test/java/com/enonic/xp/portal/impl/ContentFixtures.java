@@ -44,7 +44,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
@@ -76,7 +76,7 @@ public final class ContentFixtures
     {
         final Page.Builder builder = Page.create();
         builder.config( newTinyPropertyTree() );
-        builder.controller( DescriptorKey.from( "mymodule:mycontroller" ) );
+        builder.controller( DescriptorKey.from( "myapplication:mycontroller" ) );
         builder.regions( newPageRegions() );
         return builder.build();
     }
@@ -110,7 +110,7 @@ public final class ContentFixtures
         final PartComponent.Builder builder = PartComponent.create();
         builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "mymodule:mypart" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mypart" ) );
         return builder.build();
     }
 
@@ -119,7 +119,7 @@ public final class ContentFixtures
         final LayoutComponent.Builder builder = LayoutComponent.create();
         builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "mymodule:mylayout" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mylayout" ) );
         builder.regions( newLayoutRegions() );
         return builder.build();
     }
@@ -137,7 +137,7 @@ public final class ContentFixtures
         siteConfigConfig.setLong( "Field", 42l );
 
         final SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( siteConfigConfig ).
             build();
 
@@ -162,7 +162,7 @@ public final class ContentFixtures
                 add( RegionDescriptor.create().name( "header" ).build() ).
                 add( RegionDescriptor.create().name( "main" ).build() ).
                 add( RegionDescriptor.create().name( "footer" ).build() ).
-                build() ).key( DescriptorKey.from( "mymodule:landing-page" ) ).
+                build() ).key( DescriptorKey.from( "myapplication:landing-page" ) ).
             build();
     }
 }

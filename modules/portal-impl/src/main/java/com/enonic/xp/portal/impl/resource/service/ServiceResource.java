@@ -17,9 +17,9 @@ public final class ServiceResource
     extends BaseSubResource
 {
     @Path("{module}/{service}")
-    public ServiceControllerResource controller( @PathParam("module") final String module, @PathParam("service") final String service )
+    public ServiceControllerResource controller( @PathParam("module") final String application, @PathParam("service") final String service )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( module );
+        final ApplicationKey applicationKey = ApplicationKey.from( application );
         final ResourceKey scriptDir = ResourceKey.from( applicationKey, "site/services/" + service );
 
         final ServiceControllerResource resource = initResource( new ServiceControllerResource() );

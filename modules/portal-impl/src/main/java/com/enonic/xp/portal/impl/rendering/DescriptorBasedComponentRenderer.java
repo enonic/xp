@@ -47,7 +47,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
-        final ApplicationKey previousModule = portalRequest.getApplicationKey();
+        final ApplicationKey previousApplication = portalRequest.getApplicationKey();
 
         try
         {
@@ -73,7 +73,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         finally
         {
             portalRequest.setComponent( previousComponent );
-            portalRequest.setApplicationKey( previousModule );
+            portalRequest.setApplicationKey( previousApplication );
         }
     }
 

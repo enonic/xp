@@ -17,7 +17,7 @@ public final class BeanContextImpl
     private ScriptExecutor executor;
 
     @Override
-    public ApplicationKey getModule()
+    public ApplicationKey getApplication()
     {
         return this.resource.getApplicationKey();
     }

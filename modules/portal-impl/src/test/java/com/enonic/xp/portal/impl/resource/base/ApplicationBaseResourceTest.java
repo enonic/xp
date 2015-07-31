@@ -15,7 +15,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
-public abstract class ModuleBaseResourceTest
+public abstract class ApplicationBaseResourceTest
     extends BaseResourceTest
 {
     @Rule
@@ -43,10 +43,10 @@ public abstract class ModuleBaseResourceTest
         final Path filePath = this.tmpDir.resolve( name );
         Files.write( filePath, content.getBytes( Charsets.UTF_8 ) );
 
-        final ResourceKey moduleResourceKey = ResourceKey.from( key );
+        final ResourceKey applicationResourceKey = ResourceKey.from( key );
         final URL resourcePathUrl = filePath.toUri().toURL();
-        final Resource resource = new Resource( moduleResourceKey, resourcePathUrl );
-        Mockito.when( this.resourceService.getResource( moduleResourceKey ) ).thenReturn( resource );
+        final Resource resource = new Resource( applicationResourceKey, resourcePathUrl );
+        Mockito.when( this.resourceService.getResource( applicationResourceKey ) ).thenReturn( resource );
 
     }
 }

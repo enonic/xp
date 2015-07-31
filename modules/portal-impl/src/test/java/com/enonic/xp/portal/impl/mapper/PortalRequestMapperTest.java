@@ -31,7 +31,7 @@ public class PortalRequestMapperTest
         this.portalRequest.getHeaders().put( "header3", "value3-A" );
         this.portalRequest.getHeaders().put( "header3", "value3-B" );
 
-        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         this.portalRequest.setContent( ContentFixtures.newContent() );
         this.portalRequest.setSite( ContentFixtures.newSite() );
         this.portalRequest.setPageDescriptor( ContentFixtures.newPageDescriptor() );

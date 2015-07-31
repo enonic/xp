@@ -21,7 +21,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
+import com.enonic.xp.portal.impl.resource.base.ApplicationBaseResourceTest;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -32,7 +32,7 @@ import com.enonic.xp.site.Site;
 import static org.junit.Assert.*;
 
 public class ServiceResourceTest
-    extends ModuleBaseResourceTest
+    extends ApplicationBaseResourceTest
 {
     protected ContentService contentService;
 
@@ -126,13 +126,13 @@ public class ServiceResourceTest
     private void setupContentAndSite()
         throws Exception
     {
-        final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
+        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
+            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );

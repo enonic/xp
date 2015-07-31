@@ -8,7 +8,7 @@ import com.enonic.xp.resource.ResourceKey;
 
 public interface BeanContext
 {
-    ApplicationKey getModule();
+    ApplicationKey getApplication();
 
     ResourceKey getResource();
 

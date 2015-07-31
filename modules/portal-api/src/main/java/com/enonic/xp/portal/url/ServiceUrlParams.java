@@ -9,7 +9,7 @@ import com.google.common.collect.Multimap;
 public final class ServiceUrlParams
     extends AbstractUrlParams<ServiceUrlParams>
 {
-    private String module;
+    private String application;
 
     private String service;
 
@@ -18,9 +18,9 @@ public final class ServiceUrlParams
         return this.service;
     }
 
-    public String getModule()
+    public String getApplication()
     {
-        return this.module;
+        return this.application;
     }
 
     public ServiceUrlParams service( final String value )
@@ -29,9 +29,9 @@ public final class ServiceUrlParams
         return this;
     }
 
-    public ServiceUrlParams module( final String value )
+    public ServiceUrlParams application( final String value )
     {
-        this.module = Strings.emptyToNull( value );
+        this.application = Strings.emptyToNull( value );
         return this;
     }
 
@@ -39,7 +39,7 @@ public final class ServiceUrlParams
     public ServiceUrlParams setAsMap( final Multimap<String, String> map )
     {
         service( singleValue( map, "_service" ) );
-        module( singleValue( map, "_module" ) );
+        application( singleValue( map, "_application" ) );
         getParams().putAll( map );
         return this;
     }
@@ -49,6 +49,6 @@ public final class ServiceUrlParams
     {
         super.buildToString( helper );
         helper.add( "service", this.service );
-        helper.add( "module", this.module );
+        helper.add( "application", this.application );
     }
 }

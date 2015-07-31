@@ -28,7 +28,7 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
-    static final String MODULE_COMPONENT_PREFIX = "module:";
+    static final String APPLICATION_COMPONENT_PREFIX = "module:";
 
     private RendererFactory rendererFactory;
 
@@ -67,17 +67,17 @@ public final class ComponentInstruction
     private PortalResponse renderComponent( final PortalRequest portalRequest, final String componentSelector )
     {
         final Component component;
-        if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
+        if ( !componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
             component = resolveComponent( portalRequest, componentPath );
         }
         else
         {
-            final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
+            final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
             final ComponentName componentName = name != null ? new ComponentName( name ) : null;
-            final ApplicationKey currentModule = portalRequest.getPageTemplate().getController().getApplicationKey();
-            component = componentService.getByName( currentModule, componentName );
+            final ApplicationKey currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
+            component = componentService.getByName( currentApplication, componentName );
         }
         return renderComponent( portalRequest, component );
     }
