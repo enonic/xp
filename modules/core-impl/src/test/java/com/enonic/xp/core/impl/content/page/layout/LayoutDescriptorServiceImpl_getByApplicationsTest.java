@@ -12,13 +12,15 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
     extends AbstractLayoutDescriptorServiceTest
 {
     @Test
-    public void getDescriptorsFromSingleModule()
+    public void getDescriptorsFromSingleApplication()
         throws Exception
     {
-        final Application application = createApplication( "foomodule" );
-        createDescriptors( "foomodule:foomodule-layout-descr" );
+        final Application application = createApplication( "fooapplication" );
+        createDescriptors( "fooapplication:fooapplication-layout-descr" );
 
-        mockResources( application, "/site/layouts", "*.xml", true, "site/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
+        mockResources( application, "/site/layouts", "*.xml", true,
+                       "site/layouts/fooapplication-layout-descr/fooapplication-layout-descr.xml" );
+
         final LayoutDescriptors result = this.service.getByApplication( application.getKey() );
 
         Assert.assertNotNull( result );
@@ -26,16 +28,16 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
     }
 
     @Test
-    public void getDescriptorsFromMultipleModules()
+    public void getDescriptorsFromMultipleApplications()
         throws Exception
     {
-        final Applications applications = createApplications( "foomodule", "barmodule" );
-        createDescriptors( "foomodule:foomodule-layout-descr", "barmodule:barmodule-layout-descr" );
+        final Applications applications = createApplications( "fooapplication", "barapplication" );
+        createDescriptors( "fooapplication:fooapplication-layout-descr", "barapplication:barapplication-layout-descr" );
 
-        mockResources( applications.getApplication( ApplicationKey.from( "foomodule" ) ), "/site/layouts", "*.xml", true,
-                       "site/layouts/foomodule-layout-descr/foomodule-layout-descr.xml" );
-        mockResources( applications.getApplication( ApplicationKey.from( "barmodule" ) ), "/site/layouts", "*.xml", true,
-                       "site/layouts/barmodule-layout-descr/barmodule-layout-descr.xml" );
+        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/layouts", "*.xml", true,
+                       "site/layouts/fooapplication-layout-descr/fooapplication-layout-descr.xml" );
+        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/layouts", "*.xml", true,
+                       "site/layouts/barapplication-layout-descr/barapplication-layout-descr.xml" );
 
         final LayoutDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 

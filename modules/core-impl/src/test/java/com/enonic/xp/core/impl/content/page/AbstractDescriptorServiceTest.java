@@ -32,7 +32,7 @@ public abstract class AbstractDescriptorServiceTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private File modulesDir;
+    private File applicationsDir;
 
     protected ApplicationService applicationService;
 
@@ -42,8 +42,8 @@ public abstract class AbstractDescriptorServiceTest
     public final void setup()
         throws Exception
     {
-        this.modulesDir = this.temporaryFolder.newFolder( "modules" );
-        ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
+        this.applicationsDir = this.temporaryFolder.newFolder( "applications" );
+        ResourceUrlTestHelper.mockApplicationScheme().applicationsDir( this.applicationsDir );
         this.applicationService = Mockito.mock( ApplicationService.class );
         resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -56,7 +56,7 @@ public abstract class AbstractDescriptorServiceTest
         throws Exception
     {
         final String path = key.getApplicationKey().toString() + key.getPath();
-        final File file = new File( this.modulesDir, path );
+        final File file = new File( this.applicationsDir, path );
         Assert.assertTrue( file.getParentFile().mkdirs() );
 
         Files.write( content, file, Charsets.UTF_8 );

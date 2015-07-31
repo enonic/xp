@@ -4,18 +4,18 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.region.PartDescriptors;
 
-final class GetPartDescriptorsByModuleCommand
-    extends AbstractGetPartDescriptorCommand<GetPartDescriptorsByModuleCommand>
+final class GetPartDescriptorsByApplicationCommand
+    extends AbstractGetPartDescriptorCommand<GetPartDescriptorsByApplicationCommand>
 {
     private ApplicationKey applicationKey;
 
     public PartDescriptors execute()
     {
         final Application application = this.applicationService.getApplication( this.applicationKey );
-        return getDescriptorsFromModule( application );
+        return getDescriptorsFromApplication( application );
     }
 
-    public GetPartDescriptorsByModuleCommand applicationKey( final ApplicationKey applicationKey )
+    public GetPartDescriptorsByApplicationCommand applicationKey( final ApplicationKey applicationKey )
     {
         this.applicationKey = applicationKey;
         return this;

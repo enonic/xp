@@ -108,7 +108,7 @@ public final class LocaleServiceImpl
 
     private Properties getOrCreateProperties( final ApplicationKey applicationKey )
     {
-        Properties properties = null /*getFromCache( module )*/;
+        Properties properties = null /*getFromCache( application )*/;
 
         if ( properties == null )
         {

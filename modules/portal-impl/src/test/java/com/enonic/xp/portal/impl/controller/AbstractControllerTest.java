@@ -54,7 +54,7 @@ public abstract class AbstractControllerTest
     public void setup()
         throws Exception
     {
-        ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
+        ResourceUrlTestHelper.mockApplicationScheme().modulesClassLoader( getClass().getClassLoader() );
 
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();

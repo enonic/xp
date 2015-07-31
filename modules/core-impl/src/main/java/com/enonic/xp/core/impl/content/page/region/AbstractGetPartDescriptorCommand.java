@@ -70,7 +70,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         parser.parse();
     }
 
-    protected final PartDescriptors getDescriptorsFromModules( final Applications applications )
+    protected final PartDescriptors getDescriptorsFromApplications( final Applications applications )
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
         for ( final Application application : applications )
@@ -81,7 +81,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         return partDescriptors.build();
     }
 
-    protected final PartDescriptors getDescriptorsFromModule( final Application application )
+    protected final PartDescriptors getDescriptorsFromApplication( final Application application )
     {
         final PartDescriptors.Builder partDescriptors = PartDescriptors.create();
         readDescriptor( application, partDescriptors );

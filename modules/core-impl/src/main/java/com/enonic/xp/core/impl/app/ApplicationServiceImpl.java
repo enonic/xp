@@ -34,16 +34,16 @@ public final class ApplicationServiceImpl
     @Override
     public Applications getApplications( final ApplicationKeys keys )
     {
-        final ImmutableList.Builder<Application> moduleList = ImmutableList.builder();
+        final ImmutableList.Builder<Application> applicationList = ImmutableList.builder();
         for ( final ApplicationKey key : keys )
         {
             final Application application = this.registry.get( key );
             if ( application != null )
             {
-                moduleList.add( application );
+                applicationList.add( application );
             }
         }
-        return Applications.from( moduleList.build() );
+        return Applications.from( applicationList.build() );
     }
 
     @Override
@@ -61,17 +61,16 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
-        startModule( getApplication( key ) );
-
+        startApplication( getApplication( key ) );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key )
     {
-        stopModule( getApplication( key ) );
+        stopApplication( getApplication( key ) );
     }
 
-    private void startModule( final Application application )
+    private void startApplication( final Application application )
     {
         try
         {
@@ -83,7 +82,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void stopModule( final Application application )
+    private void stopApplication( final Application application )
     {
         try
         {

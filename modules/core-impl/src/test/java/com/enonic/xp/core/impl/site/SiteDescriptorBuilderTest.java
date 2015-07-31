@@ -33,7 +33,7 @@ public class SiteDescriptorBuilderTest
         final URL resource = resourceTestHelper.getTestResource( TEST_SITE_DESCRIPTOR_FILENAME );
         Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getResource( SITE_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( "mymodule" );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
 
         SiteDescriptorBuilder builder = new SiteDescriptorBuilder().
             bundle( bundle );

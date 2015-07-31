@@ -42,32 +42,32 @@ public class ApplicationServiceImplTest
         this.service.setRegistry( this.registry );
     }
 
-    private Application createModule( final String key )
+    private Application createApplication( final String key )
     {
         final Application application = Application.from( mockBundle( key ) );
         return application;
     }
 
     @Test
-    public void testGetModule()
+    public void testGetApplication()
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "fooapplication" );
         Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
-        final Application result = this.service.getApplication( ApplicationKey.from( "foomodule" ) );
+        final Application result = this.service.getApplication( ApplicationKey.from( "fooapplication" ) );
         assertSame( application, result );
     }
 
     @Test(expected = ApplicationNotFoundException.class)
-    public void testGetModule_notFound()
+    public void testGetApplication_notFound()
     {
-        this.service.getApplication( ApplicationKey.from( "foomodule" ) );
+        this.service.getApplication( ApplicationKey.from( "fooapplication" ) );
     }
 
     @Test
-    public void testGetAllModules()
+    public void testGetAllApplications()
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "fooapplication" );
         Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( application ) );
 
         final Applications result = this.service.getAllApplications();
@@ -77,22 +77,23 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testGetModules()
+    public void testGetApplications()
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "fooapplication" );
         Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
-        final Applications result = this.service.getApplications( ApplicationKeys.from( "foomodule", "othermodule" ) );
+        final Applications result = this.service.getApplications( ApplicationKeys.from( "fooapplication", "otherapplication" ) );
+
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( application, result.get( 0 ) );
     }
 
     @Test
-    public void testStartModule()
+    public void testStartApplication()
         throws Exception
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "fooapplication" );
         Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
         this.service.startApplication( application.getKey() );
@@ -100,10 +101,10 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testStopModule()
+    public void testStopApplication()
         throws Exception
     {
-        final Application application = createModule( "foomodule" );
+        final Application application = createApplication( "fooapplication" );
         Mockito.when( this.registry.get( application.getKey() ) ).thenReturn( application );
 
         this.service.stopApplication( application.getKey() );
@@ -141,8 +142,8 @@ public class ApplicationServiceImplTest
     private Dictionary<String, String> createBundleHeaders()
     {
         Dictionary<String, String> headers = new Hashtable<String, String>();
-        headers.put( Constants.BUNDLE_NAME, "mymodule" );
-        headers.put( Application.X_MODULE_URL, "http://enonic.com/path/to/module" );
+        headers.put( Constants.BUNDLE_NAME, "myapplication" );
+        headers.put( Application.X_APPLICATION_URL, "http://enonic.com/path/to/application" );
         headers.put( Application.X_VENDOR_NAME, "Enonic AS" );
         headers.put( Application.X_VENDOR_URL, "http://enonic.com" );
 

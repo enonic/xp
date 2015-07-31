@@ -2,7 +2,7 @@
     "id": null,
     "parentPath": "/",
     "name": "mycontent",
-    "type": "mymodule:my_type",
+    "type": "myapplication:my_type",
     "displayName": null,
     "owner": null,
     "creator": null,

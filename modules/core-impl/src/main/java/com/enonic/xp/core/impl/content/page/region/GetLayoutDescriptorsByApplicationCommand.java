@@ -4,18 +4,18 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.region.LayoutDescriptors;
 
-final class GetLayoutDescriptorsByModuleCommand
-    extends AbstractGetLayoutDescriptorCommand<GetLayoutDescriptorsByModuleCommand>
+final class GetLayoutDescriptorsByApplicationCommand
+    extends AbstractGetLayoutDescriptorCommand<GetLayoutDescriptorsByApplicationCommand>
 {
     private ApplicationKey applicationKey;
 
     public LayoutDescriptors execute()
     {
         final Application application = this.applicationService.getApplication( this.applicationKey );
-        return getDescriptorsFromModule( application );
+        return getDescriptorsFromApplication( application );
     }
 
-    public GetLayoutDescriptorsByModuleCommand applicationKey( final ApplicationKey applicationKey )
+    public GetLayoutDescriptorsByApplicationCommand applicationKey( final ApplicationKey applicationKey )
     {
         this.applicationKey = applicationKey;
         return this;
