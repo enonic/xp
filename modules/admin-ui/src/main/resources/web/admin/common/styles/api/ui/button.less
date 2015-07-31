@@ -62,10 +62,6 @@
   .reset();
   .button(@form-button-font, @form-button-bg);
 
-  &.no-bg {
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
-  }
-
   &.small {
     padding: 0 15px 0 15px;
 
@@ -82,6 +78,10 @@
     }
   }
 
+  &.transparent {
+    .button(@admin-button-blue1, transparent, @admin-button-blue2, transparent);
+  }
+
   &.green {
     .button-background(green);
   }
@@ -93,12 +93,13 @@
   &.blue {
     .button-background(@admin-button-blue2);
   }
+
 }
 
 .close-button {
   .button(@admin-white, rgba(55, 55, 55, 0.2), @admin-white, rgba(55, 55, 55, 0.5));
 
-  &.no-bg {
+  &.transparent {
     .button(@admin-white, transparent, @admin-almost-white, transparent);
   }
 
@@ -108,5 +109,14 @@
   width: 24px;
   height: 24px;
   line-height: 24px;
+
+  &:before {
+    vertical-align: bottom;
+  }
+
+  span {
+    display: none;
+  }
+
 }
 
