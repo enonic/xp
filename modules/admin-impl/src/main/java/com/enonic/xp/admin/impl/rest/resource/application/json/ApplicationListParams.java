@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.module.json;
+package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.util.Set;
 
@@ -8,12 +8,12 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.ApplicationKey;
 
-public final class ModuleListParams
+public final class ApplicationListParams
 {
     private final Set<ApplicationKey> applicationKeys;
 
     @JsonCreator
-    public ModuleListParams( @JsonProperty("key") String... keys )
+    public ApplicationListParams( @JsonProperty("key") String... keys )
     {
         this.applicationKeys = Sets.newHashSet();
         for ( final String key : keys )

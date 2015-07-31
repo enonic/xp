@@ -42,7 +42,7 @@ public final class PartDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public PartDescriptorsJson getByModule( @QueryParam("applicationKey") final String applicationKey )
+    public PartDescriptorsJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PartDescriptors descriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new PartDescriptorsJson( descriptors );
@@ -52,7 +52,7 @@ public final class PartDescriptorResource
     @POST
     @Path("list/by_modules")
     @Consumes(MediaType.APPLICATION_JSON)
-    public PartDescriptorsJson getByModules( final GetByModulesParams params )
+    public PartDescriptorsJson getByApplications( final GetByApplicationsParams params )
     {
         final PartDescriptors descriptors = partDescriptorService.getByApplications( params.getApplicationKeys() );
         return new PartDescriptorsJson( descriptors );

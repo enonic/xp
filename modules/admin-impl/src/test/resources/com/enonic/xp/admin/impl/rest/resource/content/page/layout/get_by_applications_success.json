@@ -28,7 +28,7 @@
             "deletable": false,
             "displayName": "Fancy layout",
             "editable": false,
-            "key": "module:fancy-layout",
+            "key": "application:fancy-layout",
             "name": "fancy-layout",
             "regions": [
                 {
@@ -67,7 +67,7 @@
             "deletable": false,
             "displayName": "Putty layout",
             "editable": false,
-            "key": "module:putty-layout",
+            "key": "application:putty-layout",
             "name": "putty-layout",
             "regions": [
                 {

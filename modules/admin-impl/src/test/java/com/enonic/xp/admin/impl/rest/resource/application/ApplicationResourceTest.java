@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.module;
+package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.time.Instant;
 
@@ -27,10 +27,10 @@ public class ApplicationResourceTest
     private SiteService siteService;
 
     @Test
-    public void get_module_list()
+    public void get_application_list()
         throws Exception
     {
-        final Application application = createModule();
+        final Application application = createApplication();
         final Applications applications = Applications.from( application );
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
@@ -39,15 +39,15 @@ public class ApplicationResourceTest
         String response = request().
             path( "module/list" ).
             get().getAsString();
-        assertJson( "get_module_list_success.json", response );
+        assertJson( "get_application_list_success.json", response );
     }
 
     @Test
-    public void get_module_list_with_query()
+    public void get_application_list_with_query()
         throws Exception
     {
-        final Application application = createModule();
-        final Applications applications = Applications.from( application, createEmptyModule() );
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application, createEmptyApplication() );
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
@@ -56,15 +56,15 @@ public class ApplicationResourceTest
             path( "module/list" ).
             queryParam( "query", "Enonic" ).
             get().getAsString();
-        assertJson( "get_module_list_success.json", response );
+        assertJson( "get_application_list_success.json", response );
     }
 
     @Test
-    public void get_module_list_with_invalid_query()
+    public void get_application_list_with_invalid_query()
         throws Exception
     {
-        final Application application = createModule();
-        final Applications applications = Applications.from( application, createEmptyModule() );
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application, createEmptyApplication() );
         Mockito.when( this.applicationService.getAllApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
@@ -73,55 +73,55 @@ public class ApplicationResourceTest
             path( "module/list" ).
             queryParam( "query", "invalid query" ).
             get().getAsString();
-        assertJson( "get_module_list_with_invalid_query.json", response );
+        assertJson( "get_application_list_with_invalid_query.json", response );
     }
 
     @Test
-    public void get_module_by_key()
+    public void get_application_by_key()
         throws Exception
     {
-        final Application application = createModule();
+        final Application application = createApplication();
         Mockito.when( this.applicationService.getApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
             path( "module" ).
-            queryParam( "applicationKey", "testmodule" ).
+            queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
-        assertJson( "get_module_by_key_success.json", response );
+        assertJson( "get_application_by_key_success.json", response );
     }
 
     @Test
-    public void start_module()
+    public void start_application()
         throws Exception
     {
         request().
             path( "module/start" ).
-            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).startApplication( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).startApplication( ApplicationKey.from( "testapplication" ) );
     }
 
     @Test
-    public void stop_module()
+    public void stop_application()
         throws Exception
     {
         request().
             path( "module/stop" ).
-            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testmodule" ) );
+        Mockito.verify( this.applicationService ).stopApplication( ApplicationKey.from( "testapplication" ) );
     }
 
-    private Application createModule()
+    private Application createApplication()
     {
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testmodule" ) );
+        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
         Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
-        Mockito.when( application.getDisplayName() ).thenReturn( "module display name" );
+        Mockito.when( application.getDisplayName() ).thenReturn( "application display name" );
         Mockito.when( application.getUrl() ).thenReturn( "http://enonic.net" );
         Mockito.when( application.getVendorName() ).thenReturn( "Enonic" );
         Mockito.when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
@@ -133,10 +133,10 @@ public class ApplicationResourceTest
         return application;
     }
 
-    private Application createEmptyModule()
+    private Application createEmptyApplication()
     {
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testmodule" ) );
+        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
         Mockito.when( application.getDisplayName() ).thenReturn( "empty name" );
 
         return application;
@@ -156,7 +156,7 @@ public class ApplicationResourceTest
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.siteService = Mockito.mock( SiteService.class );
 
-        final ModuleResource resource = new ModuleResource();
+        final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
 

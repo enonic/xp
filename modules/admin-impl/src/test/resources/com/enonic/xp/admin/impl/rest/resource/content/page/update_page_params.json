@@ -1,6 +1,6 @@
 {
     "contentId": "content-id",
-    "template": "mymodule|my-page",
+    "template": "myapplication|my-page",
     "config": [
         {
             "name": "property1",

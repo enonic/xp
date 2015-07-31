@@ -16,7 +16,7 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByModulesParams;
+import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByApplicationsParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.page.DescriptorKey;
@@ -45,7 +45,7 @@ public final class PageDescriptorResource
 
     @GET
     @Path("list/by_module")
-    public PageDescriptorListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
+    public PageDescriptorListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
@@ -54,7 +54,7 @@ public final class PageDescriptorResource
     @POST
     @Path("list/by_modules")
     @Consumes(MediaType.APPLICATION_JSON)
-    public PageDescriptorListJson getByModules( final GetByModulesParams params )
+    public PageDescriptorListJson getByApplications( final GetByApplicationsParams params )
     {
         final ApplicationKeys applicationKeys = ApplicationKeys.from( params.getApplicationKeys() );
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplications( applicationKeys );
