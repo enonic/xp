@@ -22,7 +22,7 @@ public abstract class AbstractPortalUrlServiceImplTest
     {
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         this.portalRequest.setBaseUri( "/portal" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 

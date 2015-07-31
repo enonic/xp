@@ -9,7 +9,7 @@ import com.google.common.collect.Multimap;
 public final class AssetUrlParams
     extends AbstractUrlParams<AssetUrlParams>
 {
-    private String module;
+    private String application;
 
     private String path;
 
@@ -18,9 +18,9 @@ public final class AssetUrlParams
         return this.path;
     }
 
-    public String getModule()
+    public String getApplication()
     {
-        return this.module;
+        return this.application;
     }
 
     public AssetUrlParams path( final String value )
@@ -29,9 +29,9 @@ public final class AssetUrlParams
         return this;
     }
 
-    public AssetUrlParams module( final String value )
+    public AssetUrlParams application( final String value )
     {
-        this.module = Strings.emptyToNull( value );
+        this.application = Strings.emptyToNull( value );
         return this;
     }
 
@@ -39,7 +39,7 @@ public final class AssetUrlParams
     public AssetUrlParams setAsMap( final Multimap<String, String> map )
     {
         path( singleValue( map, "_path" ) );
-        module( singleValue( map, "_module" ) );
+        application( singleValue( map, "_application" ) );
         getParams().putAll( map );
         return this;
     }
@@ -49,6 +49,6 @@ public final class AssetUrlParams
     {
         super.buildToString( helper );
         helper.add( "path", this.path );
-        helper.add( "module", this.module );
+        helper.add( "application", this.application );
     }
 }

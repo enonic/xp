@@ -8,11 +8,11 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 final class ServiceUrlBuilder
     extends PortalUrlBuilder<ServiceUrlParams>
 {
-    private ApplicationKey getModule()
+    private ApplicationKey getAplication()
     {
-        return new ModuleResolver().
+        return new ApplicationResolver().
             portalRequest( this.portalRequest ).
-            module( this.params.getModule() ).
+            application( this.params.getApplication() ).
             resolve();
     }
 
@@ -23,7 +23,7 @@ final class ServiceUrlBuilder
         appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "service" );
-        appendPart( url, getModule().toString() );
+        appendPart( url, getAplication().toString() );
         appendPart( url, this.params.getService() );
     }
 }

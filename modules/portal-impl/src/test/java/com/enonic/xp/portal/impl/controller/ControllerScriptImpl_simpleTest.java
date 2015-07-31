@@ -13,7 +13,7 @@ public class ControllerScriptImpl_simpleTest
     public void testExecute()
     {
         this.portalRequest.setMethod( "GET" );
-        execute( "mymodule:/controller/simple.js" );
+        execute( "myapplication:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
     }
 
@@ -22,7 +22,7 @@ public class ControllerScriptImpl_simpleTest
     public void testMethodNotSupported()
     {
         this.portalRequest.setMethod( "POST" );
-        execute( "mymodule:/controller/simple.js" );
+        execute( "myapplication:/controller/simple.js" );
         assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.portalResponse.getStatus() );
     }
 

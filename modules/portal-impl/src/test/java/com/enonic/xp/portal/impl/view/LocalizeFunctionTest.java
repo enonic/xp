@@ -53,7 +53,7 @@ public class LocalizeFunctionTest
             thenReturn( null );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
-        assertEquals( "no localization bundle found in module 'mymodule'", result );
+        assertEquals( "no localization bundle found in application 'myapplication'", result );
     }
 
     @Test

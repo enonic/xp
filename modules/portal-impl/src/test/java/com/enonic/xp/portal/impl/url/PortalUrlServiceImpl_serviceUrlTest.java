@@ -18,18 +18,18 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/portal/draft/context/path/_/service/mymodule/myservice?a=3", url );
+        assertEquals( "/portal/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
-    public void createUrl_withModule()
+    public void createUrl_withApplication()
     {
         final ServiceUrlParams params = new ServiceUrlParams().
             portalRequest( this.portalRequest ).
             service( "myservice" ).
-            module( "othermodule" );
+            application( "otherapplication" );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/portal/draft/context/path/_/service/othermodule/myservice", url );
+        assertEquals( "/portal/draft/context/path/_/service/otherapplication/myservice", url );
     }
 }

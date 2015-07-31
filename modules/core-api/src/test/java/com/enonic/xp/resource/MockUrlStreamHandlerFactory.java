@@ -103,7 +103,7 @@ final class MockUrlStreamHandlerFactory
     }
 
     @Override
-    public ResourceUrlRegistry modulesClassLoader( final ClassLoader modulesClassLoader )
+    public ResourceUrlRegistry applicationsClassLoader( final ClassLoader modulesClassLoader )
     {
         this.modulesClassLoader = modulesClassLoader;
         return this;

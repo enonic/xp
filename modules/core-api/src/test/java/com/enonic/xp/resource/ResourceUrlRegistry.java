@@ -9,5 +9,5 @@ public interface ResourceUrlRegistry
 
     public ResourceUrlRegistry applicationsDir( File modulesDir );
 
-    public ResourceUrlRegistry modulesClassLoader( ClassLoader modulesClassLoader );
+    public ResourceUrlRegistry applicationsClassLoader( ClassLoader modulesClassLoader );
 }

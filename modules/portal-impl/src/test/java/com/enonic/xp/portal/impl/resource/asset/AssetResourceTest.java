@@ -4,12 +4,12 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
+import com.enonic.xp.portal.impl.resource.base.ApplicationBaseResourceTest;
 
 import static org.junit.Assert.*;
 
 public class AssetResourceTest
-    extends ModuleBaseResourceTest
+    extends ApplicationBaseResourceTest
 {
     @Override
     protected void configure()
@@ -40,7 +40,7 @@ public class AssetResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
-        assertTrue( response.getContentAsString().contains( "Module [demo] or file [css/main.css] in it not found" ) );
+        assertTrue( response.getContentAsString().contains( "Application [demo] or file [css/main.css] in it not found" ) );
     }
 
     @Test

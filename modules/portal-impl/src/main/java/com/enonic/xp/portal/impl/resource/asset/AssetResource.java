@@ -28,10 +28,10 @@ public final class AssetResource
     @GET
     @Path("{module}/{path:.+}")
     @GZIP
-    public Response handle( @PathParam("module") final String module, @PathParam("path") final String path )
+    public Response handle( @PathParam("module") final String application, @PathParam("path") final String path )
         throws Exception
     {
-        resolveResourceUrl( module, path );
+        resolveResourceUrl( application, path );
         return doHandle();
     }
 
@@ -42,7 +42,7 @@ public final class AssetResource
 
         if ( resource == null )
         {
-            throw notFound( "Module [%s] or file [%s] in it not found", key, path );
+            throw notFound( "Application [%s] or file [%s] in it not found", key, path );
         }
 
         this.resourceUrl = resource.getUrl();
