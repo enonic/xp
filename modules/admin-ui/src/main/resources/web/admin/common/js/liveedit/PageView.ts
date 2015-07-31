@@ -353,7 +353,7 @@ module api.liveedit {
             var toolbar = new api.dom.DivEl('text-edit-toolbar');
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.setHtml('Text Edit Mode');
-            var closeButton = new api.ui.button.CloseButton('no-bg');
+            var closeButton = new api.ui.button.CloseButton('transparent');
             closeButton.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
                 event.preventDefault();

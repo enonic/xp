@@ -4,6 +4,10 @@ module api.ui.image {
     import DivEl = api.dom.DivEl;
     import Button = api.ui.button.Button;
     import Element = api.dom.Element;
+    import TabMenu = api.ui.tab.TabMenu;
+    import TabMenuItem = api.ui.tab.TabMenuItem;
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+    import NavigatorEvent = api.ui.NavigatorEvent;
 
     export interface Point {
         x: number;
@@ -32,6 +36,9 @@ module api.ui.image {
     interface ZoomData extends SVGRect {}
 
     export class ImageEditor extends api.dom.DivEl {
+
+        private SCROLLABLE_SELECTOR: string = '.form-panel';
+        private WIZARD_TOOLBAR_SELECTOR: string = '.wizard-step-navigator-and-toolbar';
 
         private frame: DivEl;
         private canvas: DivEl;
@@ -64,45 +71,39 @@ module api.ui.image {
         private mouseUpListener;
         private mouseMoveListener;
         private mouseDownListener;
-        private mouseWheelListener;
         private dragMouseDownListener;
         private knobMouseDownListener;
 
         private buttonsContainer: DivEl;
-        private focalButtonsContainer: DivEl;
-        private cropButtonsContainer: DivEl;
 
-        private focalPointButton: Button;
-        private cropButton: Button;
+        private modeSelector: TabMenu;
+
+        private editButton: Button;
+        private resetButton: Button;
         private uploadButton: api.dom.ButtonEl;
+
+        private editModeListeners: {(edit: boolean, position: Rect, zoom: Rect, focus: Point): void}[] = [];
 
         private focusPositionChangedListeners: {(position: Point): void}[] = [];
         private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
         private focusRadiusChangedListeners: {(r: number): void}[] = [];
-        private focusEditModeListeners: {(edit: boolean, position: Point): void}[] = [];
 
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private cropEditModeListeners: {(edit: boolean, position: Rect, zoomPosition: Rect): void}[] = [];
 
         public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');
 
-            var toolbar = this.createToolbar();
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
-
             this.buttonsContainer = this.createButtonsContainer();
-
-            this.frame.appendChild(this.buttonsContainer);
 
             this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
-                    this.appendChild(toolbar);
                     this.updateImageDimensions();
                 }
             });
@@ -155,9 +156,11 @@ module api.ui.image {
 
             this.canvas.appendChildren(this.image, this.clip);
 
-            this.frame.appendChild(this.canvas);
+            this.frame.appendChildren(this.buttonsContainer, this.canvas);
 
-            this.appendChild(this.frame);
+            this.appendChildren(this.frame);
+            // sticky toolbar needs to have access to parent elements
+            this.onAdded((event: api.dom.ElementAddedEvent) => this.prependChild(this.createStickyToolbar()));
 
             if (src) {
                 this.setSrc(src);
@@ -251,10 +254,7 @@ module api.ui.image {
 
         /**
          * Converts rectangle from % to px
-         * @param x
-         * @param y
-         * @param w
-         * @param h
+         * @param rect
          * @returns {SVGRect} denormalized rectangle
          */
         private denormalizeRect(rect: SVGRect): SVGRect {
@@ -364,57 +364,200 @@ module api.ui.image {
             }
         }
 
-        private createToolbar(): DivEl {
-            var toolbar = new DivEl('image-toolbar');
+        private setShaderVisible(visible: boolean) {
+            new api.app.wizard.MaskWizardPanelEvent(visible).fire();
+        }
 
-            this.focalButtonsContainer = this.createFocalButtonsContainer();
+        private createStickyToolbar(): DivEl {
+            var toolbar = new DivEl('sticky-toolbar');
 
-            this.cropButtonsContainer = this.createCropButtonsContainer();
+            this.modeSelector = new TabMenu();
+            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Mask').build());
+            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Autofocus').build());
 
-            toolbar.appendChildren(this.focalButtonsContainer, this.cropButtonsContainer);
+            this.modeSelector.onNavigationItemSelected((event: NavigatorEvent) => {
+                switch (event.getItem().getIndex()) {
+                case 1:
+                    this.enableFocusEditMode();
+                    resetButton.setLabel('Reset Autofocus').setVisible(!this.focusData.auto);
+                    break;
+                case 0:
+                default:
+                    this.enableCropEditMode();
+                    resetButton.setLabel('Reset Mask').setVisible(!this.cropData.auto);
+                    break;
+                }
+            });
+
+            var resetButton = new Button('Reset');
+            resetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                if (this.isFocusEditMode()) {
+                    this.resetFocusPosition();
+                } else if (this.isCropEditMode()) {
+                    this.resetZoomPosition();
+                    this.resetCropPosition();
+                }
+            });
+
+            var applyButton = new Button('Apply');
+            applyButton.addClass('blue').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.disableEditMode();
+            });
+
+            var cancelButton = new api.ui.button.CloseButton();
+            cancelButton.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.disableEditMode(false);
+            });
+
+            this.onFocusAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
+            this.onCropAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
+
+            var rightContainer = new DivEl('right-container');
+            rightContainer.appendChildren(resetButton, applyButton, cancelButton);
+            toolbar.appendChildren(this.modeSelector, rightContainer);
+
+            wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll", (event) => this.updateStickyToolbar(toolbar));
 
             return toolbar;
         }
 
-        private setShaderVisible(visible: boolean) {
-            new api.app.wizard.MaskWizardPanelEvent(visible).fire();
+        private updateStickyToolbar(toolbar: DivEl) {
+            var relativeScrollTop = this.getRelativeScrollTop();
+            if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
+                this.addClass("sticky-mode");
+                toolbar.getEl().setTopPx(-relativeScrollTop);
+            } else {
+                toolbar.getEl().setTopPx(0);
+                this.removeClass("sticky-mode");
+            }
+        }
+
+        private isTopEdgeVisible(relativeScrollTop: number): boolean {
+            return relativeScrollTop > 0;
+        }
+
+        private isBottomEdgeVisible(relativeScrollTop: number): boolean {
+            // use crop area bottom edge
+            return (this.getCropPositionPx().h + relativeScrollTop) > 0;
+        }
+
+        private getRelativeScrollTop(): number {
+            var scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
+                wizardToolbarHeight = scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).outerHeight(true);
+
+            return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
+        }
+
+        enableEditMode() {
+            // should be done here to occur on edit mode activation only
+            this.updateRevertCropData();
+            this.updateRevertZoomData();
+            this.updateRevertFocusData();
+
+            // enable crop mode by default
+            this.modeSelector.selectNavigationItem(0);
+
+            this.setEditMode(true, false);
+        }
+
+        disableEditMode(applyChanges: boolean = true) {
+            // disable both modes in case they have been modified
+            this.disableFocusEditMode(applyChanges);
+            this.disableCropEditMode(applyChanges);
+
+            this.setEditMode(false, applyChanges);
+        }
+
+        private setEditMode(edit: boolean, applyChanges: boolean = true) {
+
+            this.toggleClass('edit-mode', edit);
+
+            var crop, zoom, focus;
+            if (!edit && applyChanges) {
+                crop = this.getCropPosition();
+                zoom = this.getZoomPosition();
+                focus = this.getFocusPosition();
+            }
+
+            this.notifyEditModeChanged(edit, crop, zoom, focus);
+        }
+
+        isEditMode(): boolean {
+            return this.hasClass('edit-mode');
+        }
+
+        private createButtonsContainer(): DivEl {
+            var toolbar = new DivEl('buttons-container');
+
+            this.editButton = new Button('Edit');
+            this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.enableEditMode();
+            });
+
+            this.resetButton = new Button('Reset');
+            this.resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.resetCropPosition();
+                this.resetZoomPosition();
+                this.resetFocusPosition();
+            });
+
+            this.onCropAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.focusData.auto));
+            this.onFocusAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.cropData.auto));
+
+            this.uploadButton = new Button();
+            this.uploadButton.addClass('button-upload');
+
+            toolbar.appendChildren(this.editButton, this.resetButton, this.uploadButton);
+
+            return toolbar;
         }
 
 
         /*
          *  Focus related methods
          */
-        enableFocusEditMode(applyChanges: boolean = true) {
-            this.bindFocusMouseListeners();
-            this.updateRevertFocusData();
-            // set mask position instead of just updating to restrain coordinates
-            // in case it was updated during stand by or the crop has been changed
-            this.setFocusPositionPx(this.revertFocusData);
 
-            this.setFocusEditMode(true, applyChanges);
+        private enableFocusEditMode() {
+            if (this.isCropEditMode()) {
+                this.disableCropEditMode();
+            }
+
+            this.bindFocusMouseListeners();
+
+            // set mask position without updating the auto flag to restrain coordinates
+            // in case they were updated during stand by or the crop has been changed
+            this.setFocusPositionPx(this.focusData, false);
+
+            this.setFocusEditMode(true);
         }
 
-        disableFocusEditMode(applyChanges: boolean = true) {
+        private disableFocusEditMode(applyChanges: boolean = true) {
             this.unbindFocusMouseListeners();
+
             if (!applyChanges) {
                 this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
                 this.setFocusRadiusPx(this.revertFocusData.r, false);
                 this.setFocusAutoPositioned(this.revertFocusData.auto);
+                this.revertFocusData = undefined;
             }
-            this.revertFocusData = undefined;
 
-            this.setFocusEditMode(false, applyChanges);
+            this.setFocusEditMode(false);
         }
 
-        private setFocusEditMode(edit: boolean, applyChanges: boolean) {
-            this.toggleClass('edit-mode edit-focus', edit);
+        private setFocusEditMode(edit: boolean) {
+            this.toggleClass('edit-focus', edit);
             this.setImageClipPath(this.focusClipPath);
             this.setShaderVisible(edit);
-
-            this.focalButtonsContainer.setVisible(edit);
-
-            // notify position updated in case we exit edit mode and apply changes
-            this.notifyFocusModeChanged(edit, !edit && applyChanges ? this.getFocusPosition() : undefined);
         }
 
         isFocusEditMode(): boolean {
@@ -456,7 +599,7 @@ module api.ui.image {
             this.focusData.y = this.restrainFocusY(position.y);
 
             if (updateAuto) {
-                this.setFocusAutoPositioned(false);
+                this.setFocusAutoPositioned(this.isFocusNotModified(this.focusData));
             }
 
             if (oldX != this.focusData.x || oldY != this.focusData.y) {
@@ -555,7 +698,6 @@ module api.ui.image {
         private setFocusAutoPositioned(auto: boolean) {
             var autoChanged = this.focusData.auto != auto;
             this.focusData.auto = auto;
-            this.focalPointButton.toggleClass('manual', !auto);
 
             this.toggleClass('focused', !auto);
 
@@ -630,48 +772,6 @@ module api.ui.image {
             api.dom.Body.get().unMouseUp(this.mouseUpListener);
         }
 
-        private createButtonsContainer(): DivEl {
-            var toolbar = new DivEl('buttons-container');
-
-            this.focalPointButton = new Button();
-            this.focalPointButton.addClass('button-focal icon-center_focus_strong').onClicked((event: MouseEvent) => this.enableFocusEditMode());
-
-            this.cropButton = new Button();
-            this.cropButton.addClass('button-mask icon-center_focus_strong').onClicked((event: MouseEvent) => this.enableCropEditMode());
-
-            this.uploadButton = new Button();
-            this.uploadButton.addClass('button-upload');
-
-            toolbar.appendChildren(this.focalPointButton, this.cropButton, this.uploadButton);
-
-            return toolbar;
-        }
-
-        private createFocalButtonsContainer(): DivEl {
-            var setFocusButton = new Button('Set Focus');
-            setFocusButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => this.disableFocusEditMode());
-
-            var resetButton = new Button('Reset');
-            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
-                this.disableFocusEditMode();
-                this.resetFocusPosition();
-                this.updateRevertFocusData();
-            });
-
-            var cancelButton = new Button('Cancel');
-            cancelButton.onClicked((event: MouseEvent) => this.disableFocusEditMode(false));
-
-            this.onFocusAutoPositionedChanged((auto) => {
-                resetButton.setEnabled(!auto);
-                setFocusButton.setEnabled(!auto);
-            });
-
-            var focalButtonsContainer = new DivEl('edit-container');
-            focalButtonsContainer.setVisible(false).appendChildren(setFocusButton, resetButton, cancelButton);
-
-            return focalButtonsContainer;
-        }
-
         private updateFocusMaskPosition() {
             var clipCircle = this.focusClipPath.getHTMLElement().querySelector('circle'),
                 strokeCircle = this.clip.getHTMLElement().querySelector('.focus-group circle');
@@ -701,49 +801,47 @@ module api.ui.image {
             return Math.max(0, Math.min(this.frameW, this.frameH, r));
         }
 
+        private isFocusNotModified(point: Point): boolean {
+            return point.x == this.frameW / 2 && point.y == this.frameH / 2;
+        }
+
 
         /*
          *  Crop related methods
          */
 
-        private enableCropEditMode(applyChanges: boolean = true) {
+        private enableCropEditMode() {
+            if (this.isFocusEditMode()) {
+                this.disableFocusEditMode();
+            }
+
             this.bindCropMouseListeners();
-            this.updateRevertCropData();
-            this.updateRevertZoomData();
+
             // update mask position in case it was updated during stand by
             this.updateCropMaskPosition();
             this.updateZoomPosition();
 
-            this.setCropEditMode(true, applyChanges);
+            this.setCropEditMode(true);
         }
 
         private disableCropEditMode(applyChanges: boolean = true) {
             this.unbindCropMouseListeners();
+
             if (!applyChanges) {
                 this.setZoomPositionPx(this.revertZoomData, false);
                 this.setCropPositionPx(this.revertCropData, false);
                 this.setCropAutoPositioned(this.revertCropData.auto);
+                this.revertCropData = undefined;
+                this.revertZoomData = undefined;
             }
-            this.revertCropData = undefined;
-            this.revertZoomData = undefined;
 
-            this.setCropEditMode(false, applyChanges);
+            this.setCropEditMode(false);
         }
 
-        private setCropEditMode(edit: boolean, applyChanges: boolean) {
-            this.toggleClass('edit-mode edit-crop', edit);
+        private setCropEditMode(edit: boolean) {
+            this.toggleClass('edit-crop', edit);
             this.setImageClipPath(this.cropClipPath);
             this.setShaderVisible(edit);
-
-            this.cropButtonsContainer.setVisible(edit);
-
-            // notify position updated in case we exit edit mode and apply changes
-            var crop, zoom;
-            if (!edit && applyChanges) {
-                crop = this.getCropPosition();
-                zoom = this.getZoomPosition();
-            }
-            this.notifyCropModeChanged(edit, crop, zoom);
         }
 
         isCropEditMode(): boolean {
@@ -798,7 +896,7 @@ module api.ui.image {
             this.updateFrameHeight();
 
             if (updateAuto) {
-                this.setCropAutoPositioned(false);
+                this.setCropAutoPositioned(this.isCropNotModified(this.cropData));
             }
 
             if (oldX != this.cropData.x ||
@@ -847,45 +945,10 @@ module api.ui.image {
         private setCropAutoPositioned(auto: boolean) {
             var autoChanged = this.cropData.auto != auto;
             this.cropData.auto = auto;
-            this.cropButton.toggleClass('manual', !auto);
+
             if (autoChanged) {
                 this.notifyCropAutoPositionedChanged(auto);
             }
-        }
-
-        private createCropButtonsContainer(): DivEl {
-            var cropButton = new Button('Crop');
-            cropButton.setEnabled(false).addClass('blue').onClicked((event: MouseEvent) => {
-                this.resetFocusPosition();
-                this.updateRevertFocusData();
-                // should be done last as uses zoom and crop positions
-                this.disableCropEditMode();
-            });
-
-            var resetButton = new Button('Reset');
-            resetButton.setEnabled(false).addClass('red').onClicked((event: MouseEvent) => {
-                this.resetZoomPosition();
-                this.resetCropPosition();
-                this.resetFocusPosition();
-                this.updateRevertCropData();
-                this.updateRevertZoomData();
-                this.updateRevertFocusData();
-                // should be done last as uses zoom and crop positions
-                this.disableCropEditMode();
-            });
-
-            var cancelButton = new Button('Cancel');
-            cancelButton.onClicked((event: MouseEvent) => this.disableCropEditMode(false));
-
-            this.onCropAutoPositionedChanged((auto) => {
-                resetButton.setEnabled(!auto);
-                cropButton.setEnabled(!auto);
-            });
-
-            var cropButtonsContainer = new DivEl('edit-container');
-            cropButtonsContainer.setVisible(false).appendChildren(cropButton, resetButton, cancelButton);
-            return cropButtonsContainer;
-
         }
 
         private updateCropMaskPosition() {
@@ -963,40 +1026,6 @@ module api.ui.image {
                 this.zoomSlider.addClass('active');
             };
             this.zoomKnob.onMouseDown(this.knobMouseDownListener);
-
-            this.mouseWheelListener = (event: WheelEvent) => {
-                var x = this.getOffsetX(event),
-                    y = this.getOffsetY(event);
-
-                if (!this.isInsideCrop(x, y)) {
-                    return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                if (ImageEditor.debug) {
-                    console.log('ImageEditor.wheelMouseListener');
-                }
-
-                if (!this.imageSmallerThanFrame) {
-                    var delta;
-                    switch (event.deltaMode) {
-                    case WheelEvent.DOM_DELTA_PIXEL:
-                        delta = event.deltaY / 10;
-                        break;
-                    case WheelEvent.DOM_DELTA_LINE:
-                        delta = event.deltaY * 10 / 3;
-                        break;
-                    case WheelEvent.DOM_DELTA_PAGE:
-                        delta = event.deltaY * 100; //approximate value, change if needed
-                        break;
-                    }
-
-                    this.moveZoomKnobByPx(delta);
-                }
-            };
-            this.clip.onMouseWheel(this.mouseWheelListener);
 
             this.mouseDownListener = (event: MouseEvent) => {
                 var x = this.getOffsetX(event),
@@ -1095,7 +1124,6 @@ module api.ui.image {
 
             this.dragHandle.unMouseDown(this.dragMouseDownListener);
             this.zoomKnob.unMouseDown(this.knobMouseDownListener);
-            this.clip.unMouseWheel(this.mouseWheelListener);
             this.clip.unMouseDown(this.mouseDownListener);
 
             api.dom.Body.get().unMouseMove(this.mouseMoveListener);
@@ -1139,6 +1167,10 @@ module api.ui.image {
                 w: x2 - x,
                 h: y2 - y
             }
+        }
+
+        private isCropNotModified(rect: SVGRect): boolean {
+            return rect.x == 0 && rect.y == 0 && rect.w == this.frameW && rect.h == this.frameH;
         }
 
 
@@ -1205,7 +1237,7 @@ module api.ui.image {
 
                 } else if (updateAuto) {
                     // don't forget to flag crop as manually overridden
-                    this.setCropAutoPositioned(false);
+                    this.setCropAutoPositioned(this.isCropNotModified(this.cropData));
                 }
             }
 
@@ -1379,36 +1411,29 @@ module api.ui.image {
 
 
         /*
-         *   Focus related listeners
+         *      Common listeners
          */
 
-        /**
-         * Bind listener to focus edit mode change
-         * @param listener has following params:
-         *  - edit - tells if we enter or exit edit mode
-         *  - position - will be supplied if we exit edit mode and apply changes
-         */
-        onFocusModeChanged(listener: (edit: boolean, position: Point) => void) {
-            this.focusEditModeListeners.push(listener);
+        onEditModeChanged(listener: (edit: boolean, position: Rect, zoom: Rect, focus: Point) => void) {
+            this.editModeListeners.push(listener);
         }
 
-        /**
-         * Unbind listener from focus edit mode change
-         * @param listener has following params:
-         *  - edit - tells if we enter or exit edit mode
-         *  - position - will be supplied if we exit edit mode and apply changes
-         */
-        unFocusModeChanged(listener: (edit: boolean, position: Point) => void) {
-            this.focusEditModeListeners = this.focusEditModeListeners.filter((curr) => {
+        unEditModeChanged(listener: (edit: boolean, position: Rect, zoom: Rect, focus: Point) => void) {
+            this.editModeListeners = this.editModeListeners.filter((curr) => {
                 return curr !== listener;
             })
         }
 
-        private notifyFocusModeChanged(edit: boolean, position: Point) {
-            this.focusEditModeListeners.forEach((listener) => {
-                listener(edit, position);
+        private notifyEditModeChanged(edit: boolean, position: Rect, zoom: Rect, focus: Point) {
+            this.editModeListeners.forEach((listener) => {
+                listener(edit, position, zoom, focus);
             })
         }
+
+
+        /*
+         *   Focus related listeners
+         */
 
         onFocusAutoPositionedChanged(listener: (auto: boolean) => void) {
             this.autoFocusChangedListeners.push(listener);
@@ -1464,34 +1489,6 @@ module api.ui.image {
         /*
          *   Crop related listeners
          */
-
-        /**
-         * Bind listener to focus edit mode change
-         * @param listener has following params:
-         *  - edit - tells if we enter or exit edit mode
-         *  - position - will be supplied if we exit edit mode and apply changes
-         */
-        onCropModeChanged(listener: (edit: boolean, position: Rect, zoomPosition: Rect) => void) {
-            this.cropEditModeListeners.push(listener);
-        }
-
-        /**
-         * Unbind listener from crop edit mode change
-         * @param listener has following params:
-         *  - edit - tells if we enter or exit edit mode
-         *  - position - will be supplied if we exit edit mode and apply changes
-         */
-        unCropModeChanged(listener: (edit: boolean, position: Rect) => void) {
-            this.cropEditModeListeners = this.cropEditModeListeners.filter((curr) => {
-                return curr !== listener;
-            })
-        }
-
-        private notifyCropModeChanged(edit: boolean, position: Rect, zoom: Rect) {
-            this.cropEditModeListeners.forEach((listener) => {
-                listener(edit, position, zoom);
-            })
-        }
 
         onCropAutoPositionedChanged(listener: (auto: boolean) => void) {
             this.autoCropChangedListeners.push(listener);
