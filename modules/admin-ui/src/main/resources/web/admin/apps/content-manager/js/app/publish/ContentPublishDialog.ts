@@ -421,7 +421,7 @@ module app.publish {
 
             this.cleanPublishButtonText();
 
-            this.publishButton.setLabel("Publish Now (" + count + ")");
+            this.publishButton.setLabel(count > 0 ? "Publish (" + count + ")" : "Publish");
             this.publishButton.setEnabled(count > 0 && this.allResolvedItemsAreValid());
         }
 
@@ -473,7 +473,7 @@ module app.publish {
         }
 
         private cleanPublishButtonText() {
-            this.publishButton.setLabel("Publish Now");
+            this.publishButton.setLabel("Publish");
         }
     }
 
