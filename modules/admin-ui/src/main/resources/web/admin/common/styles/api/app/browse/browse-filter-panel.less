@@ -60,4 +60,23 @@
     top: 6px;
   }
 
+  .show-filter-results {
+    color: @admin-button-blue1;
+    text-align: center;
+    font-size: 14px;
+
+
+    @media screen and (min-width: 541px) {
+      display: none;
+    }
+
+    .show-filter-results-button {
+      color: @admin-button-blue1;
+      cursor: pointer;
+      &:hover {
+        color: @admin-button-blue3;
+      }
+    }
+  }
+
 }

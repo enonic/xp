@@ -10,6 +10,8 @@ module api.app.browse.filter {
 
         private hideFilterPanelButtonClickedListeners: {():void}[] = [];
 
+        private showResultsButtonClickedListeners: {():void}[] = [];
+
         private aggregationContainer: api.aggregation.AggregationContainer;
 
         private searchField: api.app.browse.filter.TextSearchField;
@@ -20,12 +22,20 @@ module api.app.browse.filter {
 
         private hideFilterPanelButton: api.dom.SpanEl;
 
+        private showResultsButton: api.dom.SpanEl;
+
         constructor(aggregations?: api.aggregation.Aggregation[], groupViews?: api.aggregation.AggregationGroupView[]) {
             super();
             this.addClass('filter-panel');
 
             this.hideFilterPanelButton = new api.dom.SpanEl("hide-filter-panel-button icon-search");
             this.hideFilterPanelButton.onClicked(() => this.notifyHidePanelButtonPressed());
+
+            var showResultsButtonWrapper = new api.dom.DivEl("show-filter-results");
+            this.showResultsButton = new api.dom.SpanEl("show-filter-results-button");
+            this.showResultsButton.setHtml("Show results");
+            this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
+            showResultsButtonWrapper.appendChild(this.showResultsButton);
 
             this.searchField = new TextSearchField('Search');
             this.searchField.onValueChanged(() => {
@@ -62,6 +72,9 @@ module api.app.browse.filter {
                 this.appendChild(this.searchField);
                 this.appendChild(hitsCounterAndClearButtonWrapper);
                 this.appendChild(this.aggregationContainer);
+                this.appendChild(showResultsButtonWrapper);
+
+                this.showResultsButton.hide();
 
                 api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("/", (e: ExtendedKeyboardEvent) => {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
@@ -143,6 +156,10 @@ module api.app.browse.filter {
             this.hideFilterPanelButtonClickedListeners.push(listener);
         }
 
+        onShowResultsButtonClicked(listener: ()=>void) {
+            this.showResultsButtonClickedListeners.push(listener);
+        }
+
         private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
             this.searchListeners.forEach((listener: (event: SearchEvent)=>void) => {
                 listener.call(this, new SearchEvent(searchInputValues, elementChanged));
@@ -167,6 +184,12 @@ module api.app.browse.filter {
             });
         }
 
+        private notifyShowResultsButtonPressed() {
+            this.showResultsButtonClickedListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
         updateHitsCounter(hits: number) {
             if(hits != 1) {
                 this.hitsCounterEl.setHtml(hits + " hits");
@@ -175,6 +198,12 @@ module api.app.browse.filter {
                 this.hitsCounterEl.setHtml(hits + " hit");
             }
 
+            if(hits != 0) {
+                this.showResultsButton.show();
+            }
+            else {
+                this.showResultsButton.hide();
+            }
         }
     }
 
