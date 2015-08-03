@@ -1,5 +1,5 @@
 {
-    "modules": [
+  "applications": [
         {
             "config": {
                 "formItems": [
@@ -26,9 +26,9 @@
                 ]
             },
             "deletable": false,
-            "displayName": "module display name",
+          "displayName": "application display name",
             "editable": false,
-            "key": "testmodule",
+          "key": "testapplication",
             "maxSystemVersion": "5.1",
           "metaSteps": [],
             "minSystemVersion": "5.0",

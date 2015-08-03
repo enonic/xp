@@ -38,7 +38,7 @@ public class ContentTypeResourceTest
 {
     private static final Instant SOME_DATE = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 
-    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "mymodule:my_cty" );
+    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "myapplication:my_cty" );
 
     private ContentTypeService contentTypeService;
 
@@ -131,7 +131,7 @@ public class ContentTypeResourceTest
             build();
 
         InlineMixin myInline = InlineMixin.create().
-            mixin( "mymodule:mymixin" ).
+            mixin( "myapplication:mymixin" ).
             build();
 
         ContentType contentType = ContentType.create().
@@ -197,15 +197,15 @@ public class ContentTypeResourceTest
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType contentType = ContentType.create().
-            name( "mymodule:my_content_type" ).
+            name( "myapplication:my_content_type" ).
             displayName( "My content type" ).
-            superType( ContentTypeName.from( "mymodule:unstructured" ) ).
+            superType( ContentTypeName.from( "myapplication:unstructured" ) ).
             icon( schemaIcon ).
             build();
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:my_content_type", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:my_content_type", 20, null );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -221,21 +221,21 @@ public class ContentTypeResourceTest
 
         final ContentType systemContentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "mymodule:unstructured" ).
+            name( "myapplication:unstructured" ).
             displayName( "Unstructured" ).
             icon( schemaIcon ).
             build();
         setupContentType( systemContentType );
 
         final ContentType contentType = ContentType.create().
-            name( "mymodule:my_content_type" ).
+            name( "myapplication:my_content_type" ).
             displayName( "My content type" ).
             superType( systemContentType.getName() ).
             build();
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:my_content_type", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:my_content_type", 20, null );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -251,7 +251,7 @@ public class ContentTypeResourceTest
         try
         {
             // exercise
-            this.resource.getIcon( "mymodule:my_content_type", 10, null );
+            this.resource.getIcon( "myapplication:my_content_type", 10, null );
         }
         catch ( WebApplicationException e )
         {

@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.json.module;
+package com.enonic.xp.admin.impl.json.application;
 
 import java.time.Instant;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.enonic.xp.form.FormJson;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.SiteDescriptor;
 
-public class ModuleJson
+public class ApplicationJson
     implements ItemJson
 {
     final Application application;
@@ -20,7 +20,7 @@ public class ModuleJson
 
     private final ImmutableList<String> metaStepMixinNames;
 
-    public ModuleJson( final Application application, final SiteDescriptor siteDescriptor )
+    public ApplicationJson( final Application application, final SiteDescriptor siteDescriptor )
     {
         this.application = application;
         this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;

@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.module;
+package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.util.stream.Collectors;
 
@@ -18,11 +18,11 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.AdminResource;
-import com.enonic.xp.admin.impl.json.module.ModuleJson;
+import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
-import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
-import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -37,7 +37,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
-public final class ModuleResource
+public final class ApplicationResource
     implements AdminResource
 {
     private ApplicationService applicationService;
@@ -46,20 +46,20 @@ public final class ModuleResource
 
     @GET
     @Path("list")
-    public ListModuleJson list( @QueryParam("query") final String query )
+    public ListApplicationJson list( @QueryParam("query") final String query )
     {
         Applications applications = this.applicationService.getAllApplications();
         final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
         if ( StringUtils.isNotBlank( query ) )
         {
             applications = Applications.from( applications.stream().
-                filter( ( module ) -> containsIgnoreCase( module.getDisplayName(), query ) ||
-                    containsIgnoreCase( module.getMaxSystemVersion(), query ) ||
-                    containsIgnoreCase( module.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( module.getSystemVersion(), query ) ||
-                    containsIgnoreCase( module.getUrl(), query ) ||
-                    containsIgnoreCase( module.getVendorName(), query ) ||
-                    containsIgnoreCase( module.getVendorUrl(), query ) ).
+                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
+                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getSystemVersion(), query ) ||
+                    containsIgnoreCase( application.getUrl(), query ) ||
+                    containsIgnoreCase( application.getVendorName(), query ) ||
+                    containsIgnoreCase( application.getVendorUrl(), query ) ).
                 collect( Collectors.toList() ) );
         }
 
@@ -68,35 +68,35 @@ public final class ModuleResource
             siteDescriptors.add( this.siteService.getDescriptor( application.getKey() ) );
         }
 
-        return new ListModuleJson( applications, siteDescriptors.build() );
+        return new ListApplicationJson( applications, siteDescriptors.build() );
     }
 
     @GET
-    public ModuleJson getByKey( @QueryParam("applicationKey") String applicationKey )
+    public ApplicationJson getByKey( @QueryParam("applicationKey") String applicationKey )
     {
         final Application application = this.applicationService.getApplication( ApplicationKey.from( applicationKey ) );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( ApplicationKey.from( applicationKey ) );
-        return new ModuleJson( application, siteDescriptor );
+        return new ApplicationJson( application, siteDescriptor );
     }
 
     @POST
     @Path("start")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson start( final ModuleListParams params )
+    public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
     {
         params.getApplicationKeys().forEach( this.applicationService::startApplication );
-        return new ModuleSuccessJson();
+        return new ApplicationSuccessJson();
     }
 
     @POST
     @Path("stop")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ModuleSuccessJson stop( final ModuleListParams params )
+    public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
     {
         params.getApplicationKeys().forEach( this.applicationService::stopApplication );
-        return new ModuleSuccessJson();
+        return new ApplicationSuccessJson();
     }
 
     @Reference
