@@ -6,7 +6,8 @@ module api.content.site {
         constructor(siteConfig: SiteConfig) {
             this.siteConfig = siteConfig;
         }
-        getApplicationKey() : api.module.ApplicationKey {
+
+        getApplicationKey(): api.application.ApplicationKey {
             return this.siteConfig.getApplicationKey();
         }
 

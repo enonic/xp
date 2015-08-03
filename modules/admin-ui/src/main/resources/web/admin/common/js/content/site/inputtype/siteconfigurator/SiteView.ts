@@ -6,8 +6,8 @@ module api.content.site.inputtype.siteconfigurator {
     import Option = api.ui.selector.Option;
     import FormView = api.form.FormView;
     import FormContextBuilder = api.form.FormContextBuilder;
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;

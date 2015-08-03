@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class GetRelationshipTypesByModuleRequest extends RelationshipTypeResourceRequest<RelationshipTypeListJson, RelationshipType[]> {
 

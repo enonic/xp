@@ -1,7 +1,7 @@
 module app.browse {
 
     import BrowseItem = api.app.browse.BrowseItem;
-    import Application = api.module.Application;
+    import Application = api.application.Application;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
     export class ModuleBrowseActions implements TreeGridActions<Application>  {

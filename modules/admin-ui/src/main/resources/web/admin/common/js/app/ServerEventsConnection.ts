@@ -98,7 +98,7 @@ module api.app {
                 return api.content.ContentServerEvent.fromJson(serverEventJson.event);
             }
             if (eventType === 'ApplicationUpdatedEvent') {
-                return api.module.ApplicationUpdatedEvent.fromJson(serverEventJson.event);
+                return api.application.ApplicationUpdatedEvent.fromJson(serverEventJson.event);
             }
             return null;
         }

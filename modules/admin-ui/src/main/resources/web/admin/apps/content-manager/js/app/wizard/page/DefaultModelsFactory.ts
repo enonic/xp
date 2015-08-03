@@ -13,7 +13,7 @@ module app.wizard.page {
 
         contentType: ContentTypeName;
 
-        applications: api.module.ApplicationKey[];
+        applications: api.application.ApplicationKey[];
     }
 
     export class DefaultModelsFactory {

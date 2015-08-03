@@ -2,7 +2,7 @@
     "relationshipKey": {
         "fromContent": "123",
         "toContent": "321",
-        "type": "mymodule:like"
+        "type": "myapplication:like"
     },
     "add": {
         "addA": "1",

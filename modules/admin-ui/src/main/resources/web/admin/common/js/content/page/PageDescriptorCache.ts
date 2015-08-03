@@ -1,11 +1,11 @@
 module api.content.page {
 
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
-    import ModuleCaches = api.module.ModuleCaches;
-    import ModuleBasedCache = api.module.ModuleBasedCache;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
+    import ModuleCaches = api.application.ApplicationCaches;
+    import ApplicationBasedCache = api.application.ApplicationBasedCache;
 
-    export class PageDescriptorCache extends ModuleBasedCache<PageDescriptorModuleCache,PageDescriptor,DescriptorKey> {
+    export class PageDescriptorCache extends ApplicationBasedCache<PageDescriptorModuleCache,PageDescriptor,DescriptorKey> {
 
         private static instance: PageDescriptorCache;
 
@@ -43,7 +43,7 @@ module api.content.page {
             return super.getByKey(key, key.getApplicationKey());
         }
 
-        createModuleCache(): PageDescriptorModuleCache {
+        createApplicationCache(): PageDescriptorModuleCache {
             return new PageDescriptorModuleCache();
         }
     }

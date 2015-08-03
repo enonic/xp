@@ -2,10 +2,10 @@
     "templates": [
         {
             "deletable": true,
-            "descriptorKey": "mainmodule:landing-page",
+            "descriptorKey": "mainapplication:landing-page",
             "displayName": "Main page template",
             "editable": true,
-            "key": "mymodule|my-page"
+            "key": "myapplication|my-page"
         }
     ]
 }

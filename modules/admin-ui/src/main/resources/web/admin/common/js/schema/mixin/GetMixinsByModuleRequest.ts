@@ -1,6 +1,6 @@
 module api.schema.mixin {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class GetMixinsByModuleRequest extends MixinResourceRequest<MixinListJson, Mixin[]> {
 

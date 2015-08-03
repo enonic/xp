@@ -3,11 +3,11 @@ module api.content.site.inputtype.siteconfigurator {
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
-    import ModuleViewer = api.module.ModuleViewer;
-    import ModuleLoader = api.module.ModuleLoader;
+    import ModuleViewer = api.application.ApplicationViewer;
+    import ModuleLoader = api.application.ApplicationLoader;
     import FormView = api.form.FormView;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;

@@ -14,7 +14,7 @@ module api.schema.content.inputtype {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 

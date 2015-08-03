@@ -1,7 +1,7 @@
 module api.schema.content {
 
-    import ApplicationUpdatedEvent = api.module.ApplicationUpdatedEvent;
-    import ApplicationUpdatedEventType = api.module.ApplicationUpdatedEventType;
+    import ApplicationUpdatedEvent = api.application.ApplicationUpdatedEvent;
+    import ApplicationUpdatedEventType = api.application.ApplicationUpdatedEventType;
 
     export class ContentTypeCache extends api.cache.Cache<ContentType,ContentTypeName> {
 
@@ -35,7 +35,7 @@ module api.schema.content {
             return key.toString();
         }
 
-        private getCachedByApplicationKey(applicationKey: api.module.ApplicationKey): ContentType[] {
+        private getCachedByApplicationKey(applicationKey: api.application.ApplicationKey): ContentType[] {
             var result: ContentType[] = [];
             this.getAll().forEach((contentType: ContentType) => {
                 if(applicationKey.equals(this.getKeyFromObject(contentType).getApplicationKey())) {

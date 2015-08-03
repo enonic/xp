@@ -4,22 +4,22 @@
       "child": true,
       "compareStatus": "NEW",
       "displayName": "My Content",
-      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
       "id": "node1_1_1",
       "name": "node1_1_1_content",
       "path": "/node1_1_1_content",
-      "type": "mymodule:my_type",
+      "type": "myapplication:my_type",
       "valid": true
     },
     {
       "child": false,
       "compareStatus": "NEW",
       "displayName": "My Content",
-      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
       "id": "node1",
       "name": "node1_content",
       "path": "/node1_content",
-      "type": "mymodule:my_type",
+      "type": "myapplication:my_type",
       "valid": true
     }
   ]

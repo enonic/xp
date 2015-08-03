@@ -2,17 +2,17 @@
     "templates": [
         {
             "deletable": true,
-            "descriptorKey": "module1:layout1-template",
+            "descriptorKey": "application1:layout1-template",
             "displayName": "Layout1 template",
             "editable": true,
-            "key": "module1|layout1"
+            "key": "application1|layout1"
         },
         {
             "deletable": true,
-            "descriptorKey": "module2:layout2-template",
+            "descriptorKey": "application2:layout2-template",
             "displayName": "Layout2 template",
             "editable": true,
-            "key": "module2|layout2"
+            "key": "application2|layout2"
         }
     ],
     "total": 2

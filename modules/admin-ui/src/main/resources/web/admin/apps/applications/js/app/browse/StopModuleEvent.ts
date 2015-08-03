@@ -1,6 +1,6 @@
 module app.browse {
 
-    import Application = api.module.Application;
+    import Application = api.application.Application;
     import Event = api.event.Event;
 
     export class StopModuleEvent extends Event {

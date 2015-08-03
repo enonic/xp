@@ -10,7 +10,7 @@ module app.view {
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ItemDataGroup = api.app.view.ItemDataGroup;
 
-    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Application> {
+    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
         private moduleDataContainer: api.dom.DivEl;
         private actionMenu: api.ui.menu.ActionMenu;
@@ -27,7 +27,7 @@ module app.view {
             this.appendChild(this.moduleDataContainer);
         }
 
-        setItem(item: api.app.view.ViewItem<api.module.Application>) {
+        setItem(item: api.app.view.ViewItem<api.application.Application>) {
             var currentItem = this.getItem();
 
             if (currentItem && currentItem.equals(item)) {

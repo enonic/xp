@@ -9,7 +9,7 @@
     "displayName": "My Content",
     "editable": true,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
+    "iconUrl": "/admin/rest/schema/content/icon/myapplication:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
     "inheritPermissions": true,
     "isPage": false,
@@ -30,7 +30,7 @@
                     ]
                 }
             ],
-            "name": "myModule:myField"
+            "name": "myApplication:myField"
         }
     ],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
@@ -66,5 +66,5 @@
         }
     ],
     "thumbnail": null,
-    "type": "mymodule:content-type"
+    "type": "myapplication:content-type"
 }
