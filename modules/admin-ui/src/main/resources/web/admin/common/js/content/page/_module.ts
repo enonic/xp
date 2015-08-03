@@ -13,8 +13,8 @@
 ///<reference path='PageDescriptorCache.ts' />
 ///<reference path='PageDescriptorResourceRequest.ts' />
 ///<reference path='GetPageDescriptorByKeyRequest.ts' />
-///<reference path='GetPageDescriptorsByModuleRequest.ts' />
-///<reference path='GetPageDescriptorsByModulesRequest.ts' />
+///<reference path='GetPageDescriptorsByApplicationRequest.ts' />
+///<reference path='GetPageDescriptorsByApplicationsRequest.ts' />
 ///<reference path='PageDescriptorDropdown.ts' />
 ///<reference path='PageDescriptorViewer.ts' />
 

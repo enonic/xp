@@ -3,7 +3,7 @@
 
 ///<reference path="RelationshipTypeResourceRequest.ts" />
 ///<reference path="GetRelationshipTypeByNameRequest.ts" />
-///<reference path="GetRelationshipTypesByModuleRequest.ts" />
+///<reference path="GetRelationshipTypesByApplicationRequest.ts" />
 
 ///<reference path="RelationshipTypeJson.ts" />
 ///<reference path="RelationshipTypeListJson.ts" />

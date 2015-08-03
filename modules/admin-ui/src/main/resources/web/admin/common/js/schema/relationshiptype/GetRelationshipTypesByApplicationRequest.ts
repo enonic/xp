@@ -2,7 +2,7 @@ module api.schema.relationshiptype {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetRelationshipTypesByModuleRequest extends RelationshipTypeResourceRequest<RelationshipTypeListJson, RelationshipType[]> {
+    export class GetRelationshipTypesByApplicationRequest extends RelationshipTypeResourceRequest<RelationshipTypeListJson, RelationshipType[]> {
 
         private applicationKey: ApplicationKey;
 
@@ -19,7 +19,7 @@ module api.schema.relationshiptype {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "byModule");
+            return api.rest.Path.fromParent(super.getResourcePath(), "byApplication");
         }
 
         sendAndParse(): wemQ.Promise<RelationshipType[]> {

@@ -16,7 +16,7 @@ public class GetByApplicationsParams
     private ApplicationKeys applicationKeys;
 
     @JsonCreator
-    public GetByApplicationsParams( @JsonProperty("moduleKeys") List<String> applicationKeysAsStringList )
+    public GetByApplicationsParams( @JsonProperty("applicationKeys") List<String> applicationKeysAsStringList )
     {
         this.applicationKeys = ApplicationKeys.from( Iterables.toArray( applicationKeysAsStringList, String.class ) );
     }

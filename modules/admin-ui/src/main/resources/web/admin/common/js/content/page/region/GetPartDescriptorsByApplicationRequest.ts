@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class GetPartDescriptorsByModuleRequest extends PartDescriptorsResourceRequest {
+    export class GetPartDescriptorsByApplicationRequest extends PartDescriptorsResourceRequest {
 
         private applicationKey: api.application.ApplicationKey;
 
@@ -17,7 +17,7 @@ module api.content.page.region {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_module");
+            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_application");
         }
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {

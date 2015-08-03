@@ -41,7 +41,7 @@ public final class PartDescriptorResource
     }
 
     @GET
-    @Path("list/by_module")
+    @Path("list/by_application")
     public PartDescriptorsJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PartDescriptors descriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
@@ -50,7 +50,7 @@ public final class PartDescriptorResource
 
 
     @POST
-    @Path("list/by_modules")
+    @Path("list/by_applications")
     @Consumes(MediaType.APPLICATION_JSON)
     public PartDescriptorsJson getByApplications( final GetByApplicationsParams params )
     {

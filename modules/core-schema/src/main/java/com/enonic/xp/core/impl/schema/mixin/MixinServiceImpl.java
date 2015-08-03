@@ -82,7 +82,7 @@ public final class MixinServiceImpl
             mixinList.addAll( mixins.getList() );
         }
 
-        //Gets modules mixins
+        //Gets application mixins
         for ( Application application : this.applicationService.getAllApplications() )
         {
             final Mixins mixins = getByApplication( application.getKey() );

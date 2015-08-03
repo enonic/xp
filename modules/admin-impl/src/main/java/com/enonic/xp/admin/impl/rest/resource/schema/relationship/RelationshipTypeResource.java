@@ -78,7 +78,7 @@ public final class RelationshipTypeResource
     }
 
     @GET
-    @Path("byModule")
+    @Path("byApplication")
     public RelationshipTypeListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.from( applicationKey ) );

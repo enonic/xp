@@ -29,7 +29,7 @@ module api.content.page.region {
         }
 
         loadByModule(applicationKey: ApplicationKey) {
-            new GetLayoutDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
+            new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }

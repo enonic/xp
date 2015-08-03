@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
     import Descriptor = api.content.page.Descriptor;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             super.setModel(liveEditModel);
 
-            var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getApplicationKeys());
+            var descriptorsRequest = new GetLayoutDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             loader.setComparator(new DescriptorByDisplayNameComparator());
             this.layoutSelector = new LayoutDescriptorDropdown("", {loader: loader});

@@ -33,7 +33,7 @@ import com.enonic.xp.site.SiteService;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
-@Path(ResourceConstants.REST_ROOT + "module")
+@Path(ResourceConstants.REST_ROOT + "application")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)

@@ -9,13 +9,13 @@ module app.wizard.page.contextwindow.inspect.page {
     import DescriptorKey = api.content.page.DescriptorKey;
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
-    import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
+    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class PageControllerSelector extends PageDescriptorDropdown {
 
-        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByModulesRequest;
+        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByApplicationsRequest;
 
         private pageModel: PageModel;
 
@@ -23,7 +23,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
         constructor() {
 
-            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByModulesRequest([]);
+            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByApplicationsRequest([]);
 
             super('page-controller', {
                 loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest).

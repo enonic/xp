@@ -16,8 +16,9 @@ import com.enonic.xp.site.Site;
 public final class ServiceResource
     extends BaseSubResource
 {
-    @Path("{module}/{service}")
-    public ServiceControllerResource controller( @PathParam("module") final String application, @PathParam("service") final String service )
+    @Path("{application}/{service}")
+    public ServiceControllerResource controller( @PathParam("application") final String application,
+                                                 @PathParam("service") final String service )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( application );
         final ResourceKey scriptDir = ResourceKey.from( applicationKey, "site/services/" + service );

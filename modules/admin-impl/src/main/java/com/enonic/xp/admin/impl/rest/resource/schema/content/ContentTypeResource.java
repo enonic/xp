@@ -84,7 +84,7 @@ public final class ContentTypeResource
     }
 
     @GET
-    @Path("byModule")
+    @Path("byApplication")
     public ContentTypeSummaryListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final ContentTypes contentTypes = contentTypeService.getByApplication( ApplicationKey.from( applicationKey ) );

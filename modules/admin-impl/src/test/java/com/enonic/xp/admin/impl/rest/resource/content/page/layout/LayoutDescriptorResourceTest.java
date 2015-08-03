@@ -102,7 +102,7 @@ public class LayoutDescriptorResourceTest
 
         Mockito.when( layoutDescriptorService.getByApplications( applicationKeys ) ).thenReturn( layoutDescriptors );
 
-        String jsonString = request().path( "content/page/layout/descriptor/list/by_modules" ).
+        String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
             entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 

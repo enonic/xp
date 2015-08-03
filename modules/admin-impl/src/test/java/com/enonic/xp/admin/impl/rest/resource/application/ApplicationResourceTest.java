@@ -37,7 +37,7 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
-            path( "module/list" ).
+            path( "application/list" ).
             get().getAsString();
         assertJson( "get_application_list_success.json", response );
     }
@@ -53,7 +53,7 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
-            path( "module/list" ).
+            path( "application/list" ).
             queryParam( "query", "Enonic" ).
             get().getAsString();
         assertJson( "get_application_list_success.json", response );
@@ -70,7 +70,7 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
-            path( "module/list" ).
+            path( "application/list" ).
             queryParam( "query", "invalid query" ).
             get().getAsString();
         assertJson( "get_application_list_with_invalid_query.json", response );
@@ -86,7 +86,7 @@ public class ApplicationResourceTest
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         String response = request().
-            path( "module" ).
+            path( "application" ).
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
         assertJson( "get_application_by_key_success.json", response );
@@ -97,7 +97,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         request().
-            path( "module/start" ).
+            path( "application/start" ).
             entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
@@ -109,7 +109,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         request().
-            path( "module/stop" ).
+            path( "application/stop" ).
             entity( "{\"key\":[\"testapplication\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 

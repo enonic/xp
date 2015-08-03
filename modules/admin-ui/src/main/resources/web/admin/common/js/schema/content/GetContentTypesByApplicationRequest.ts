@@ -2,7 +2,7 @@ module api.schema.content {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetContentTypesByModuleRequest extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
+    export class GetContentTypesByApplicationRequest extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
         private applicationKey: ApplicationKey;
 
@@ -13,7 +13,7 @@ module api.schema.content {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "byModule");
+            return api.rest.Path.fromParent(super.getResourcePath(), "byApplication");
         }
 
         getParams(): Object {

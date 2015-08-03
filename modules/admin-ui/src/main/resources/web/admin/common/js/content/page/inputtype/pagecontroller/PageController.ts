@@ -8,7 +8,7 @@ module api.content.page.inputtype.pagecontroller {
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
     import PageDescriptor = api.content.page.PageDescriptor;
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
-    import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
+    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
     import Element = api.dom.Element;
@@ -32,7 +32,7 @@ module api.content.page.inputtype.pagecontroller {
         createInputOccurrenceElement(index: number, property: Property): Element {
             var context = <ContentInputTypeViewContext<any>>this.getContext(),
                 applicationKeys = context.site.getApplicationKeys(),
-                request = new GetPageDescriptorsByModulesRequest(applicationKeys),
+                request = new GetPageDescriptorsByApplicationsRequest(applicationKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 
             var dropdown = new PageDescriptorDropdown('page-controller[' + index + ']', {
