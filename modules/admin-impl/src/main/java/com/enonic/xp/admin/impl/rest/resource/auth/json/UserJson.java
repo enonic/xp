@@ -1,5 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.auth;
-
+package com.enonic.xp.admin.impl.rest.resource.auth.json;
 
 import java.time.Instant;
 
@@ -44,5 +43,4 @@ public final class UserJson
     {
         return user.isDisabled();
     }
-
 }

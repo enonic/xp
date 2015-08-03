@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-
 import java.util.List;
 
 public final class DeletePrincipalJson

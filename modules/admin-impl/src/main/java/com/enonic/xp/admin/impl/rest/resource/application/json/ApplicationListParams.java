@@ -1,29 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.ApplicationKey;
 
 public final class ApplicationListParams
 {
-    private final Set<ApplicationKey> applicationKeys;
+    @JsonProperty("key")
+    protected Set<String> keys;
 
-    @JsonCreator
-    public ApplicationListParams( @JsonProperty("key") String... keys )
+    public Set<ApplicationKey> getKeys()
     {
-        this.applicationKeys = Sets.newHashSet();
-        for ( final String key : keys )
-        {
-            this.applicationKeys.add( ApplicationKey.from( key ) );
-        }
-    }
-
-    public Set<ApplicationKey> getApplicationKeys()
-    {
-        return this.applicationKeys;
+        return this.keys.stream().map( ApplicationKey::from ).collect( Collectors.toSet() );
     }
 }

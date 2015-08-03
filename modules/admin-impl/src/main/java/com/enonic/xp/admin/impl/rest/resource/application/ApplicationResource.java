@@ -15,8 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -49,7 +47,6 @@ public final class ApplicationResource
     public ListApplicationJson list( @QueryParam("query") final String query )
     {
         Applications applications = this.applicationService.getAllApplications();
-        final ImmutableList.Builder<SiteDescriptor> siteDescriptors = ImmutableList.builder();
         if ( StringUtils.isNotBlank( query ) )
         {
             applications = Applications.from( applications.stream().
@@ -63,12 +60,13 @@ public final class ApplicationResource
                 collect( Collectors.toList() ) );
         }
 
-        for ( Application application : applications )
+        final ListApplicationJson json = new ListApplicationJson();
+        for ( final Application application : applications )
         {
-            siteDescriptors.add( this.siteService.getDescriptor( application.getKey() ) );
+            json.add( application, this.siteService.getDescriptor( application.getKey() ) );
         }
 
-        return new ListApplicationJson( applications, siteDescriptors.build() );
+        return json;
     }
 
     @GET
@@ -85,7 +83,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.applicationService::startApplication );
+        params.getKeys().forEach( this.applicationService::startApplication );
         return new ApplicationSuccessJson();
     }
 
@@ -95,7 +93,7 @@ public final class ApplicationResource
     public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
     {
-        params.getApplicationKeys().forEach( this.applicationService::stopApplication );
+        params.getKeys().forEach( this.applicationService::stopApplication );
         return new ApplicationSuccessJson();
     }
 

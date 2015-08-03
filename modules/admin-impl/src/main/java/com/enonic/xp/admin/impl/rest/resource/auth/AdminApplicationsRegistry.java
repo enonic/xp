@@ -8,7 +8,7 @@ import com.enonic.xp.security.RoleKeys;
 
 import static java.util.stream.Collectors.toList;
 
-final class AdminApplicationsRegistry
+public final class AdminApplicationsRegistry
 {
     private static final AdminApplication CONTENT_MANAGER_APP = new AdminApplication( "content-manager", PrincipalKeys.from( RoleKeys.ADMIN,
                                                                                                                              RoleKeys.CONTENT_MANAGER_ADMIN,

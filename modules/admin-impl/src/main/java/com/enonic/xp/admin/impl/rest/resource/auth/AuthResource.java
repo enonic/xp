@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginJson;
+import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
 import com.enonic.xp.admin.impl.security.AuthHelper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.RoleKeys;
@@ -42,7 +44,7 @@ public final class AuthResource
 
         if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
         {
-            helper.logout();
+            AuthHelper.logout();
             return new LoginResultJson( AuthenticationInfo.unAuthenticated(), "Access Denied" );
         }
         if ( !authInfo.isAuthenticated() )

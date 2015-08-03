@@ -1,9 +1,10 @@
-package com.enonic.xp.admin.impl.rest.resource.auth;
+package com.enonic.xp.admin.impl.rest.resource.auth.json;
 
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.admin.impl.rest.resource.auth.AdminApplication;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;

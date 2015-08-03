@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.auth;
 
 import com.enonic.xp.security.PrincipalKeys;
 
-final class AdminApplication
+public final class AdminApplication
 {
     private final String id;
 

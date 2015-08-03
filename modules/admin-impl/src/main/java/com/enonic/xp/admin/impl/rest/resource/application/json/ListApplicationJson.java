@@ -1,29 +1,25 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
-import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.site.SiteDescriptor;
 
-public class ListApplicationJson
+public final class ListApplicationJson
 {
+    private final List<ApplicationJson> list;
 
-    private List<ApplicationJson> list;
-
-    public ListApplicationJson( Applications applications, Iterable<SiteDescriptor> siteDescriptors )
+    public ListApplicationJson()
     {
-        ImmutableList.Builder<ApplicationJson> builder = ImmutableList.builder();
-        final Iterator<SiteDescriptor> siteDescriptorIterator = siteDescriptors.iterator();
-        for ( Application application : applications )
-        {
-            builder.add( new ApplicationJson( application, siteDescriptorIterator.next() ) );
-        }
-        this.list = builder.build();
+        this.list = Lists.newArrayList();
+    }
+
+    public void add( final Application application, final SiteDescriptor siteDescriptor )
+    {
+        this.list.add( new ApplicationJson( application, siteDescriptor ) );
     }
 
     public int getTotal()
