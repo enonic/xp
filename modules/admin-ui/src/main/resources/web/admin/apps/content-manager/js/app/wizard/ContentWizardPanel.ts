@@ -225,12 +225,14 @@ module app.wizard {
                     if (this.isVisible()) {
                         this.updateStickyToolbar();
                         if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
-                            this.cycleViewModeButton.disableAction(this.wizardActions.getShowSplitEditAction());
                             if (this.isSplitView()) {
-                                this.cycleViewModeButton.setCurrentAction(this.wizardActions.getShowFormAction());
+                                if (this.isMinimized()) {
+                                    this.toggleMinimize();
+                                }
+                                this.cycleViewModeButton.executePrevAction();
                             }
-                        } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200)) {
-                            this.cycleViewModeButton.enableAction(this.wizardActions.getShowSplitEditAction());
+                        } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200) && !this.isSplitView()) {
+                            this.wizardActions.getShowSplitEditAction().execute();
                         }
                     }
                 });
@@ -531,7 +533,7 @@ module app.wizard {
                     this.cycleViewModeButton.setVisible(renderable);
 
                     if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
-                        this.cycleViewModeButton.setCurrentAction(this.wizardActions.getShowSplitEditAction());
+                        this.wizardActions.getShowSplitEditAction().execute();
                     }
 
                 }).catch((reason: any) => {

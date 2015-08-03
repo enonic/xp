@@ -69,7 +69,7 @@ module api.app.wizard {
 
         private minimizeEditButton: api.dom.DivEl;
 
-        private isMinimized: boolean = false;
+        private minimized: boolean = false;
 
         private toggleMinimizeListener: (event: api.ui.NavigatorEvent) => void;
 
@@ -92,7 +92,6 @@ module api.app.wizard {
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
                 this.toggleMinimizeListener = (event: api.ui.NavigatorEvent) => {
-                    console.log("before toggleMinimize");
                     this.toggleMinimize();
                 };
                 this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
@@ -220,7 +219,7 @@ module api.app.wizard {
                 this.mainToolbar.removeClass("scroll-shadow");
             }
 
-            if (this.isMinimized) {
+            if (this.minimized) {
                 navigationWidth = this.splitPanel.getEl().getHeight();
             } else {
                 navigationWidth = this.stepsPanel.getEl().getWidth();
@@ -231,21 +230,24 @@ module api.app.wizard {
         toggleMinimize() {
             this.stepNavigator.unNavigationItemSelected(this.toggleMinimizeListener);
             var navIndex = this.stepNavigator.getSelectedIndex();
-            this.isMinimized = !this.isMinimized;
+            this.minimized = !this.minimized;
             this.formPanel.toggleClass("minimized");
 
-            if (this.isMinimized) {
+            if (this.minimized) {
                 this.stepNavigator.selectNavigationItem(navIndex, false, true);
                 this.splitPanel.saveFirstPanelSizeAndDistribute(40, 0, api.ui.panel.SplitPanelUnit.PIXEL);
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
                 this.stepNavigator.onNavigationItemSelected(this.toggleMinimizeListener);
             } else {
-                this.stepNavigator.selectNavigationItem(navIndex, false, true);
                 this.splitPanel.loadFirstPanelSizeAndDistribute();
                 this.splitPanel.showSplitter();
-
+                this.stepNavigator.selectNavigationItem(navIndex, false, true);
             }
+        }
+
+        isMinimized(): boolean {
+            return this.minimized;
         }
 
         giveInitialFocus() {
