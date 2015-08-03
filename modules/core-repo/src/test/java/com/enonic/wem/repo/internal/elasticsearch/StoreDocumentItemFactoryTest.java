@@ -4,15 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.util.GeoPoint;
-import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 
 import static org.junit.Assert.*;
 
@@ -57,7 +56,6 @@ public class StoreDocumentItemFactoryTest
     }
 
     @Test
-    @Ignore // TODO: Correct test & implementation
     public void dateTime_property()
         throws Exception
     {
