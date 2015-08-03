@@ -2,7 +2,7 @@ module api.content.page.region {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetPartDescriptorsByModulesRequest extends PartDescriptorsResourceRequest {
+    export class GetPartDescriptorsByApplicationsRequest extends PartDescriptorsResourceRequest {
 
         private applicationKeys: ApplicationKey[];
 
@@ -25,7 +25,7 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPartDescriptorsByModuleRequest(applicationKey).sendAndParse());
+            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
             return wemQ.all(promises).then((results: PartDescriptor[][]) => {
                 var all: PartDescriptor[] = [];

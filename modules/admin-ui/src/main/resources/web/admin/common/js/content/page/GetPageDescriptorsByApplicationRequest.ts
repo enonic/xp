@@ -1,6 +1,6 @@
-module api.content.page.region {
+module api.content.page {
 
-    export class GetLayoutDescriptorsByModuleRequest extends LayoutDescriptorsResourceRequest {
+    export class GetPageDescriptorsByApplicationRequest extends PageDescriptorResourceRequest<PageDescriptorsJson, PageDescriptor[]> {
 
         private applicationKey: api.application.ApplicationKey;
 
@@ -17,18 +17,18 @@ module api.content.page.region {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_module");
+            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_application");
         }
 
-        sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
+        sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
             var cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
             }
             else {
-                return this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
-                    return this.fromJsonToLayoutDescriptors(response.getResult());
+                return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
+                    return this.fromJsonToPageDescriptors(response.getResult());
                 });
             }
         }

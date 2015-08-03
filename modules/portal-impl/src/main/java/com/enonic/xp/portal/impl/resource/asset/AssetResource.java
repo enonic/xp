@@ -26,9 +26,9 @@ public final class AssetResource
     private URL resourceUrl;
 
     @GET
-    @Path("{module}/{path:.+}")
+    @Path("{application}/{path:.+}")
     @GZIP
-    public Response handle( @PathParam("module") final String application, @PathParam("path") final String path )
+    public Response handle( @PathParam("application") final String application, @PathParam("path") final String path )
         throws Exception
     {
         resolveResourceUrl( application, path );
@@ -38,7 +38,8 @@ public final class AssetResource
     private void resolveResourceUrl( final String key, final String path )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
-        final Resource resource = this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "site/assets/" + path ) );
+        final Resource resource =
+            this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "site/assets/" + path ) );
 
         if ( resource == null )
         {

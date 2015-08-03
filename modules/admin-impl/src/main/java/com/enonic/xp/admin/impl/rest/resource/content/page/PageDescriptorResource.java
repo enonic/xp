@@ -44,7 +44,7 @@ public final class PageDescriptorResource
     }
 
     @GET
-    @Path("list/by_module")
+    @Path("list/by_application")
     public PageDescriptorListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
@@ -52,7 +52,7 @@ public final class PageDescriptorResource
     }
 
     @POST
-    @Path("list/by_modules")
+    @Path("list/by_applications")
     @Consumes(MediaType.APPLICATION_JSON)
     public PageDescriptorListJson getByApplications( final GetByApplicationsParams params )
     {

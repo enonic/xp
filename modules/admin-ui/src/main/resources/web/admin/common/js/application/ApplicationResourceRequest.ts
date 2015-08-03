@@ -6,7 +6,7 @@ module api.application {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "module");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "application");
         }
 
         getResourcePath(): api.rest.Path {

@@ -28,7 +28,7 @@ module api.content.page {
         }
 
         loadByModule(applicationKey: ApplicationKey) {
-            new GetPageDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
+            new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }

@@ -39,8 +39,8 @@
 ///<reference path='PartDescriptorLoader.ts' />
 ///<reference path='PartDescriptorResourceRequest.ts' />
 ///<reference path='PartDescriptorsResourceRequest.ts' />
-///<reference path='GetPartDescriptorsByModulesRequest.ts' />
-///<reference path='GetPartDescriptorsByModuleRequest.ts' />
+///<reference path='GetPartDescriptorsByApplicationsRequest.ts' />
+///<reference path='GetPartDescriptorsByApplicationRequest.ts' />
 ///<reference path='GetPartDescriptorByKeyRequest.ts' />
 ///<reference path='PartDescriptorCache.ts' />
 
@@ -55,8 +55,8 @@
 ///<reference path='LayoutDescriptorLoader.ts' />
 ///<reference path='LayoutDescriptorResourceRequest.ts' />
 ///<reference path='LayoutDescriptorsResourceRequest.ts' />
-///<reference path='GetLayoutDescriptorsByModuleRequest.ts' />
-///<reference path='GetLayoutDescriptorsByModulesRequest.ts' />
+///<reference path='GetLayoutDescriptorsByApplicationRequest.ts' />
+///<reference path='GetLayoutDescriptorsByApplicationsRequest.ts' />
 ///<reference path='GetLayoutDescriptorByKeyRequest.ts' />
 ///<reference path='LayoutDescriptorDropdown.ts' />
 ///<reference path='LayoutRegionsMerger.ts' />

@@ -24,8 +24,8 @@ module app.wizard.page {
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import ComponentPropertyValueChangedEvent = api.content.page.region.ComponentPropertyValueChangedEvent;
 
-    import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
+    import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
+    import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
 
     import InspectionsPanelConfig = app.wizard.page.contextwindow.inspect.InspectionsPanelConfig;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;

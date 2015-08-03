@@ -67,7 +67,7 @@ public final class RelationshipTypeServiceImpl
         final RelationshipTypes systemRelationshipTypes = getByApplication( ApplicationKey.SYSTEM );
         relationshipTypeList.addAll( systemRelationshipTypes.getList() );
 
-        //Gets for each module the RelationshipTypes
+        //Gets for each application the RelationshipTypes
         for ( Application application : this.applicationService.getAllApplications() )
         {
             final RelationshipTypes relationshipTypes = getByApplication( application.getKey() );
@@ -87,7 +87,7 @@ public final class RelationshipTypeServiceImpl
     {
         RelationshipTypes relationshipTypes = null;
 
-        //If the module is the default module
+        //If the application is the default application
         if ( ApplicationKey.SYSTEM.equals( applicationKey ) )
         {
             //loads the default relationship types

@@ -2,7 +2,7 @@ module api.schema.mixin {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetMixinsByModuleRequest extends MixinResourceRequest<MixinListJson, Mixin[]> {
+    export class GetMixinsByApplicationRequest extends MixinResourceRequest<MixinListJson, Mixin[]> {
 
         private applicationKey: ApplicationKey;
 
@@ -19,7 +19,7 @@ module api.schema.mixin {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "byModule");
+            return api.rest.Path.fromParent(super.getResourcePath(), "byApplication");
         }
 
         sendAndParse(): wemQ.Promise<Mixin[]> {

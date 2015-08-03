@@ -4,7 +4,7 @@ module api.liveedit.layout {
     import PageItemType = api.liveedit.PageItemType;
     import SiteModel = api.content.site.SiteModel;
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
 
@@ -19,7 +19,7 @@ module api.liveedit.layout {
             this.addClass("layout-placeholder");
             this.layoutComponentView = layoutView;
 
-            var request = new GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getApplicationKeys());
+            var request = new GetLayoutDescriptorsByApplicationsRequest(layoutView.liveEditModel.getSiteModel().getApplicationKeys());
             var loader = new LayoutDescriptorLoader(request);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new LayoutDescriptorComboBox(loader);

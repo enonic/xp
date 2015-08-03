@@ -29,7 +29,7 @@ module api.content.page.region {
         }
 
         loadByModule(applicationKey: ApplicationKey) {
-            new GetPartDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
+            new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }

@@ -2,7 +2,7 @@ module api.content.page.region {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetLayoutDescriptorsByModulesRequest extends LayoutDescriptorsResourceRequest {
+    export class GetLayoutDescriptorsByApplicationsRequest extends LayoutDescriptorsResourceRequest {
 
         private applicationKeys: api.application.ApplicationKey[];
 
@@ -26,7 +26,7 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetLayoutDescriptorsByModuleRequest(applicationKey).sendAndParse());
+            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
             return wemQ.all(promises).
                 then((results: LayoutDescriptor[][]) => {

@@ -2,7 +2,7 @@ module api.content.page {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class GetPageDescriptorsByModulesRequest extends PageDescriptorResourceRequest<PageDescriptorsJson, PageDescriptor[]> {
+    export class GetPageDescriptorsByApplicationsRequest extends PageDescriptorResourceRequest<PageDescriptorsJson, PageDescriptor[]> {
 
         private applicationKeys: ApplicationKey[];
 
@@ -25,7 +25,7 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPageDescriptorsByModuleRequest(applicationKey).sendAndParse());
+            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
             return wemQ.all(promises).then((results: PageDescriptor[][]) => {
                 var all: PageDescriptor[] = [];

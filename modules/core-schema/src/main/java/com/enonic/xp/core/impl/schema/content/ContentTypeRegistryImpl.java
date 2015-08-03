@@ -101,7 +101,7 @@ public final class ContentTypeRegistryImpl
             contentTypeList.addAll( contentTypes.getList() );
         }
 
-        //Gets module content types
+        //Gets application content types
         for ( Application application : this.applicationService.getAllApplications() )
         {
             final ContentTypes contentTypes = getByApplication( application.getKey() );

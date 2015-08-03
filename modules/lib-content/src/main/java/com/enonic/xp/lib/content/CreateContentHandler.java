@@ -101,10 +101,10 @@ public final class CreateContentHandler
         }
 
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-        for ( final String modulePrefix : value.keySet() )
+        for ( final String applicationPrefix : value.keySet() )
         {
-            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( modulePrefix );
-            final Object extradatasObject = value.get( modulePrefix );
+            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( applicationPrefix );
+            final Object extradatasObject = value.get( applicationPrefix );
             if ( !( extradatasObject instanceof Map ) )
             {
                 continue;

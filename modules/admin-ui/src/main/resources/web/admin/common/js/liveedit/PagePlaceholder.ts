@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
+    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
     import PageDescriptor = api.content.page.PageDescriptor;
     import SetController = api.content.page.SetController;
     import SiteModel = api.content.site.SiteModel;
@@ -21,7 +21,7 @@ module api.liveedit {
             this.pageView = pageView;
 
             var applicationKeys = pageView.liveEditModel.getSiteModel().getApplicationKeys(),
-                request = new GetPageDescriptorsByModulesRequest(applicationKeys),
+                request = new GetPageDescriptorsByApplicationsRequest(applicationKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 
             this.controllerDropdown = new PageDescriptorDropdown('page-controller', {
