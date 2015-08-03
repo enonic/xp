@@ -217,9 +217,10 @@ module api.ui.image {
          * @returns {Point} normalized to 0-1 point
          */
         private normalizePoint(point: Point): Point {
+            // focus point is calculated relative to crop area
             return {
-                x: point.x / Math.min(this.frameW, this.imgW),
-                y: point.y / Math.min(this.frameH, this.imgH)
+                x: point.x / Math.min(this.frameW, this.cropData.w),
+                y: point.y / Math.min(this.frameH, this.cropData.h)
             }
         }
 
@@ -230,9 +231,10 @@ module api.ui.image {
          * @returns {Point} denormalized point
          */
         private denormalizePoint(x: number, y: number): Point {
+            // focus point is calculated relative to crop area
             return {
-                x: x * Math.min(this.frameW, this.imgW),
-                y: y * Math.min(this.frameH, this.imgH, this.cropData.h)
+                x: x * Math.min(this.frameW, this.cropData.w),
+                y: y * Math.min(this.frameH, this.cropData.h)
             }
         }
 
@@ -286,12 +288,12 @@ module api.ui.image {
             return r * Math.min(this.frameW, this.frameH, this.imgW, this.imgH);
         }
 
-        private getOffsetX(e: MouseEvent, relativeToZoom?: boolean): number {
-            return e.clientX - this.getEl().getOffset().left - (relativeToZoom ? this.zoomData.x : 0);
+        private getOffsetX(e: MouseEvent): number {
+            return e.clientX - this.frame.getEl().getOffset().left;
         }
 
-        private getOffsetY(e: MouseEvent, relativeTooom?: boolean): number {
-            return e.clientY - this.getEl().getOffset().top - (relativeTooom ? this.zoomData.y : 0);
+        private getOffsetY(e: MouseEvent): number {
+            return e.clientY - this.frame.getEl().getOffset().top;
         }
 
         private isImageLoaded(): boolean {
@@ -475,7 +477,9 @@ module api.ui.image {
         }
 
         private setEditMode(edit: boolean, applyChanges: boolean = true) {
-
+            if (ImageEditor.debug) {
+                console.group('setEditMode');
+            }
             this.toggleClass('edit-mode', edit);
 
             var crop, zoom, focus;
@@ -483,9 +487,14 @@ module api.ui.image {
                 crop = this.getCropPosition();
                 zoom = this.getZoomPosition();
                 focus = this.getFocusPosition();
+                console.log('Crop', crop, '\nZoom', zoom, '\nFocus', focus);
             }
 
             this.notifyEditModeChanged(edit, crop, zoom, focus);
+
+            if (ImageEditor.debug) {
+                console.groupEnd();
+            }
         }
 
         isEditMode(): boolean {
@@ -534,9 +543,7 @@ module api.ui.image {
 
             this.bindFocusMouseListeners();
 
-            // set mask position without updating the auto flag to restrain coordinates
-            // in case they were updated during stand by or the crop has been changed
-            this.setFocusPositionPx(this.focusData, false);
+            this.updateFocusMaskPosition();
 
             this.setFocusEditMode(true);
         }
@@ -722,8 +729,8 @@ module api.ui.image {
 
                 mouseDown = true;
                 lastPos = {
-                    x: this.getOffsetX(event, true),
-                    y: this.getOffsetY(event, true)
+                    x: this.getOffsetX(event),
+                    y: this.getOffsetY(event)
                 };
             };
             this.clip.onMouseDown(this.mouseDownListener);
@@ -735,8 +742,8 @@ module api.ui.image {
                     }
 
                     var restrainedPos = {
-                        x: this.restrainFocusX(this.focusData.x + this.getOffsetX(event, true) - lastPos.x),
-                        y: this.restrainFocusY(this.focusData.y + this.getOffsetY(event, true) - lastPos.y)
+                        x: this.restrainFocusX(this.focusData.x + this.getOffsetX(event) - lastPos.x),
+                        y: this.restrainFocusY(this.focusData.y + this.getOffsetY(event) - lastPos.y)
                     };
                     this.setFocusPositionPx(restrainedPos);
 
@@ -752,8 +759,8 @@ module api.ui.image {
                     }
                     // allow focus positioning by clicking
                     var restrainedPos = {
-                        x: this.restrainFocusX(this.getOffsetX(event, true)),
-                        y: this.restrainFocusY(this.getOffsetY(event, true))
+                        x: this.restrainFocusX(this.getOffsetX(event)),
+                        y: this.restrainFocusY(this.getOffsetY(event))
                     };
                     this.setFocusPositionPx(restrainedPos);
 
@@ -784,25 +791,26 @@ module api.ui.image {
             for (var i = 0; i < circles.length; i++) {
                 var circle = <HTMLElement> circles[i];
                 circle.setAttribute('r', this.focusData.r.toString());
-                circle.setAttribute('cx', this.focusData.x.toString());
-                circle.setAttribute('cy', this.focusData.y.toString());
+                // focus position is calculated relative to crop area
+                circle.setAttribute('cx', (this.cropData.x + this.focusData.x).toString());
+                circle.setAttribute('cy', (this.cropData.y + this.focusData.y).toString());
             }
         }
 
         private restrainFocusX(x: number) {
-            return Math.max(this.cropData.x, Math.min(this.cropData.x + this.cropData.w, x));
+            return Math.max(0, Math.min(this.cropData.w, this.frameW, x));
         }
 
         private restrainFocusY(y: number) {
-            return Math.max(this.cropData.y, Math.min(this.cropData.y + this.cropData.h, y));
+            return Math.max(0, Math.min(this.cropData.h, this.frameH, y));
         }
 
         private restrainFocusRadius(r: number) {
-            return Math.max(0, Math.min(this.frameW, this.frameH, r));
+            return Math.max(0, Math.min(this.frameW, this.frameH, this.cropData.w, this.cropData.h, r));
         }
 
         private isFocusNotModified(point: Point): boolean {
-            return point.x == this.frameW / 2 && point.y == this.frameH / 2;
+            return point.x == Math.min(this.frameW, this.cropData.w) / 2 && point.y == Math.min(this.frameH, this.cropData.h) / 2;
         }
 
 
