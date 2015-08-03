@@ -4,7 +4,7 @@ module api.content.page {
 
         private static SEPARATOR = ":";
 
-        private applicationKey: api.module.ApplicationKey;
+        private applicationKey: api.application.ApplicationKey;
 
         private name: DescriptorName;
 
@@ -19,16 +19,16 @@ module api.content.page {
             var applicationKey = str.substring(0, sepIndex);
             var name = str.substring(sepIndex + 1, str.length);
 
-            return new DescriptorKey(api.module.ApplicationKey.fromString(applicationKey), new DescriptorName(name));
+            return new DescriptorKey(api.application.ApplicationKey.fromString(applicationKey), new DescriptorName(name));
         }
 
-        constructor(applicationKey: api.module.ApplicationKey, name: DescriptorName) {
+        constructor(applicationKey: api.application.ApplicationKey, name: DescriptorName) {
             this.applicationKey = applicationKey;
             this.name = name;
             this.refString = applicationKey.toString() + DescriptorKey.SEPARATOR + name.toString();
         }
 
-        getApplicationKey(): api.module.ApplicationKey {
+        getApplicationKey(): api.application.ApplicationKey {
             return this.applicationKey;
         }
 

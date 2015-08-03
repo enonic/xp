@@ -3,7 +3,7 @@
     "requireValid": true,
     "name": "content-path",
     "parent": "/parent-path:/",
-    "contentType": "mymodule::my-type",
+  "contentType": "myapplication::my-type",
     "data": [],
   "meta": [],
     "displayName": "Content One",

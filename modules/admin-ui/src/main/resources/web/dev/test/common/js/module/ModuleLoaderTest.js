@@ -3,7 +3,7 @@ describe("api.module.ModuleLoaderTest", function () {
     var moduleLoader;
 
     beforeEach(function () {
-        moduleLoader = new api.module.ModuleLoader();
+        moduleLoader = new api.module.ApplicationLoader();
     });
 
     it("should create an instance", function () {
@@ -15,7 +15,7 @@ describe("api.module.ModuleLoaderTest", function () {
     });
 
     it("request property should be of correct type", function () {
-        expect(api.ObjectHelper.iFrameSafeInstanceOf(moduleLoader.request, api.module.ListModulesRequest)).toBeTruthy();
+        expect(api.ObjectHelper.iFrameSafeInstanceOf(moduleLoader.request, api.module.ListApplicationsRequest)).toBeTruthy();
     });
 
     describe("default loading behavior", function () {
@@ -74,7 +74,7 @@ describe("api.module.ModuleLoaderTest", function () {
                 state: api.module.Application.STATE_STARTED
             };
 
-            moduleLoader = new api.module.ModuleLoader(500, filterObject);
+            moduleLoader = new api.module.ApplicationLoader(500, filterObject);
 
             deferredPromise = wemQ.defer();
 

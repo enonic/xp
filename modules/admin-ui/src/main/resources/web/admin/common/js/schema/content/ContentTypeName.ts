@@ -1,8 +1,8 @@
 module api.schema.content {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
-    export class ContentTypeName extends api.module.ModuleBasedName {
+    export class ContentTypeName extends api.application.ApplicationBasedName {
 
         // Built-in ContentTypes can be listed here
 //
@@ -50,11 +50,11 @@ module api.schema.content {
 
         constructor(name: string) {
             api.util.assertNotNull(name, "Content type name can't be null");
-            var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
+            var parts = name.split(api.application.ApplicationBasedName.SEPARATOR);
             super(ApplicationKey.fromString(parts[0]), parts[1]);
         }
 
-        static from(applicationKey: api.module.ApplicationKey, localName: string) {
+        static from(applicationKey: api.application.ApplicationKey, localName: string) {
             return new ContentTypeName(applicationKey.toString() + ":" + localName);
         }
 

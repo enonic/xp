@@ -14,10 +14,10 @@ module api.content.site.inputtype.siteconfigurator {
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
-    import GetModuleRequest = api.module.GetModuleRequest;
+    import GetModuleRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<SiteView> {

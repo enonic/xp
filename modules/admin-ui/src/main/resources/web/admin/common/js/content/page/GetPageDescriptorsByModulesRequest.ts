@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class GetPageDescriptorsByModulesRequest extends PageDescriptorResourceRequest<PageDescriptorsJson, PageDescriptor[]> {
 

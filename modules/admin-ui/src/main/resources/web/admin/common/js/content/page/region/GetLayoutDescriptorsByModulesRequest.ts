@@ -1,17 +1,17 @@
 module api.content.page.region {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class GetLayoutDescriptorsByModulesRequest extends LayoutDescriptorsResourceRequest {
 
-        private applicationKeys: api.module.ApplicationKey[];
+        private applicationKeys: api.application.ApplicationKey[];
 
-        constructor(applicationKey: api.module.ApplicationKey[]) {
+        constructor(applicationKey: api.application.ApplicationKey[]) {
             super();
             this.applicationKeys = applicationKey;
         }
 
-        setApplicationKeys(applicationKeys: api.module.ApplicationKey[]) {
+        setApplicationKeys(applicationKeys: api.application.ApplicationKey[]) {
             this.applicationKeys = applicationKeys;
         }
 

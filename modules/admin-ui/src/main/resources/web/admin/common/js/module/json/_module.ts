@@ -1,2 +1,0 @@
-///<reference path='ModuleJson.ts' />
-

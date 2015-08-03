@@ -2,9 +2,9 @@ module api.content.page.region {
 
     export class GetPartDescriptorsByModuleRequest extends PartDescriptorsResourceRequest {
 
-        private applicationKey: api.module.ApplicationKey;
+        private applicationKey: api.application.ApplicationKey;
 
-        constructor(applicationKey: api.module.ApplicationKey) {
+        constructor(applicationKey: api.application.ApplicationKey) {
             super();
             super.setMethod("GET");
             this.applicationKey = applicationKey;
@@ -22,7 +22,7 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var cached = this.cache.getByModule(this.applicationKey);
+            var cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
             }

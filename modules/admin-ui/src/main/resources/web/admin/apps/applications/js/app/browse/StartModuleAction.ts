@@ -1,6 +1,6 @@
 module app.browse {
 
-    import Application = api.module.Application;
+    import Application = api.application.Application;
 
     export class StartModuleAction extends api.ui.Action {
 

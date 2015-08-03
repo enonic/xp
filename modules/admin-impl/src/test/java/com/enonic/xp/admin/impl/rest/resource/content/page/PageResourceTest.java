@@ -53,7 +53,7 @@ public class PageResourceTest
         resource.setContentTypeService( contentTypeService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createContentType( "mymodule:my_type" ) );
+            thenReturn( createContentType( "myapplication:my_type" ) );
 
         final SecurityService securityService = Mockito.mock( SecurityService.class );
         resource.setSecurityService( securityService );
@@ -65,7 +65,7 @@ public class PageResourceTest
     public void update_page_success()
         throws Exception
     {
-        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenReturn( content );
 
@@ -80,7 +80,7 @@ public class PageResourceTest
     public void update_page_failure()
         throws Exception
     {
-        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), Branch.from( "branch" ) ) );
@@ -96,7 +96,7 @@ public class PageResourceTest
     public void create_page_success()
         throws Exception
     {
-        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
 
         Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ) ) ).thenReturn( content );
 

@@ -3,8 +3,8 @@ module app.browse {
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
-    import Application = api.module.Application;
-    import ModuleViewer = api.module.ModuleViewer;
+    import Application = api.application.Application;
+    import ModuleViewer = api.application.ApplicationViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -77,23 +77,24 @@ module app.browse {
         }
 
         fetchRoot(): wemQ.Promise<Application[]> {
-            return new api.module.ListModulesRequest().sendAndParse();
+            return new api.application.ListApplicationsRequest().sendAndParse();
         }
 
-        fetch(node: TreeNode<Application>): wemQ.Promise<api.module.Application> {
+        fetch(node: TreeNode<Application>): wemQ.Promise<api.application.Application> {
             return this.fetchByKey(node.getData().getApplicationKey());
         }
 
-        private fetchByKey(applicationKey: api.module.ApplicationKey): wemQ.Promise<api.module.Application> {
-            var deferred = wemQ.defer<api.module.Application>();
-            new api.module.GetModuleRequest(applicationKey, true).sendAndParse().then((application: api.module.Application)=> {
+        private fetchByKey(applicationKey: api.application.ApplicationKey): wemQ.Promise<api.application.Application> {
+            var deferred = wemQ.defer<api.application.Application>();
+            new api.application.GetApplicationRequest(applicationKey,
+                true).sendAndParse().then((application: api.application.Application)=> {
                 deferred.resolve(application);
             });
 
             return deferred.promise;
         }
 
-        updateModuleNode(applicationKey: api.module.ApplicationKey) {
+        updateModuleNode(applicationKey: api.application.ApplicationKey) {
             var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Application>) => {
                 var curApplication: Application = child.getData();
@@ -103,7 +104,7 @@ module app.browse {
             });
         }
 
-        deleteModuleNode(applicationKey: api.module.ApplicationKey) {
+        deleteModuleNode(applicationKey: api.application.ApplicationKey) {
             var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Application>) => {
                 var curApplication: Application = child.getData();
@@ -113,10 +114,10 @@ module app.browse {
             });
         }
 
-        appendModuleNode(applicationKey: api.module.ApplicationKey) {
+        appendModuleNode(applicationKey: api.application.ApplicationKey) {
 
             this.fetchByKey(applicationKey)
-                .then((data: api.module.Application) => {
+                .then((data: api.application.Application) => {
                this.appendNode(data, true);
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);

@@ -9,9 +9,9 @@
             "displayName": null,
             "editable": false,
             "fromSemantic": null,
-            "iconUrl": "/admin/rest/schema/relationship/icon/mymodule:the_relationship_type_1",
+            "iconUrl": "/admin/rest/schema/relationship/icon/myapplication:the_relationship_type_1",
             "modifiedTime": null,
-            "name": "mymodule:the_relationship_type_1",
+            "name": "myapplication:the_relationship_type_1",
             "toSemantic": null
         },
         {
@@ -23,9 +23,9 @@
             "displayName": null,
             "editable": false,
             "fromSemantic": null,
-            "iconUrl": "/admin/rest/schema/relationship/icon/mymodule:the_relationship_type_2",
+            "iconUrl": "/admin/rest/schema/relationship/icon/myapplication:the_relationship_type_2",
             "modifiedTime": null,
-            "name": "mymodule:the_relationship_type_2",
+            "name": "myapplication:the_relationship_type_2",
             "toSemantic": null
         }
     ],
