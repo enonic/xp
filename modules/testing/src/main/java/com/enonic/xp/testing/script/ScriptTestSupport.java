@@ -60,7 +60,8 @@ public abstract class ScriptTestSupport
         resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            return new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) );
+            final URL resourceUrl = ScriptTestSupport.class.getResource( resourceKey.getPath() );
+            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
         } );
 
         ServiceReference<ResourceService> resourceServiceReference = Mockito.mock( ServiceReference.class );
@@ -95,7 +96,7 @@ public abstract class ScriptTestSupport
 
     protected final ScriptExports runTestScript( final String path )
     {
-        return runTestScript( ResourceKey.from( getApplicationKey(), path ) );
+        return runTestScript( ResourceKey.from( getApplicationKey(), "/site/" + path ) );
     }
 
     private ScriptExports runTestScript( final ResourceKey key )

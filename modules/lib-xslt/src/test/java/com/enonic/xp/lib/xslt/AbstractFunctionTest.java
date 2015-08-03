@@ -37,7 +37,8 @@ public abstract class AbstractFunctionTest
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            return new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) );
+            final URL resourceUrl = AbstractFunctionTest.class.getResource( "/site" + resourceKey.getPath() );
+            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
         } );
 
         this.processor = service.newProcessor();
