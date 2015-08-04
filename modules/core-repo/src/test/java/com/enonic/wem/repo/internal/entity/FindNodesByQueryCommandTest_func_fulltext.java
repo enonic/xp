@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -361,7 +360,6 @@ public class FindNodesByQueryCommandTest_func_fulltext
             build() );
     }
 
-    @Ignore("Does not work due to the use of the document field _analyzer")
     @Test
     public void fulltext_word_breaking_character()
         throws Exception
