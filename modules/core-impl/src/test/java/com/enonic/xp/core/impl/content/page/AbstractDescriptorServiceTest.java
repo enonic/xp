@@ -24,7 +24,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.resource.Resources;
 
 public abstract class AbstractDescriptorServiceTest
@@ -43,7 +42,6 @@ public abstract class AbstractDescriptorServiceTest
         throws Exception
     {
         this.applicationsDir = this.temporaryFolder.newFolder( "applications" );
-        ResourceUrlTestHelper.mockApplicationScheme().applicationsDir( this.applicationsDir );
         this.applicationService = Mockito.mock( ApplicationService.class );
         resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {

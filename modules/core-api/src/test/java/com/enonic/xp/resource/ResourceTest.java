@@ -36,9 +36,6 @@ public class ResourceTest
         modulesDir = this.temporaryFolder.newFolder( "modules" );
 
         writeFile( modulesDir, "myapplication/a/b.txt", "a/b.txt" );
-
-        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockApplicationScheme();
-        registry.applicationsDir( modulesDir );
     }
 
     @Test

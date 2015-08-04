@@ -19,8 +19,6 @@ import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlRegistry;
-import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 import static org.junit.Assert.*;
 
@@ -53,9 +51,6 @@ public class LocaleServiceImplTest
         writeFile( applicationsDir, "myapplication/site/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
         writeFile( applicationsDir, "myapplication/site/i18n/phrases_en.properties", "a = phrases_en.properties" );
         writeFile( applicationsDir, "myapplication/site/i18n/phrases.properties", "c = phrases.properties" );
-
-        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockApplicationScheme();
-        registry.applicationsDir( applicationsDir );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
