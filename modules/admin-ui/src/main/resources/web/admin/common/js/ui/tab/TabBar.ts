@@ -62,7 +62,6 @@ module api.ui.tab {
         }
 
         selectNavigationItem(index: number, silent?: boolean, forced?: boolean) {
-            debugger;
             if (index < 0 || index >= this.getSize() || (!forced && this.selectedIndex == index)) {
                 return;
             }
