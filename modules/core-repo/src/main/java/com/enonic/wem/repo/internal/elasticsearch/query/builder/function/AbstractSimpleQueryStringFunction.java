@@ -18,15 +18,26 @@ public abstract class AbstractSimpleQueryStringFunction
 
     private static final int OPERATOR_INDEX = 2;
 
+    private static final int ANALYZER_INDEX = 3;
+
     private static final int MIN_ARGUMENTS = 2;
 
-    private static final int MAX_ARGUMENTS = 3;
+    private static final int MAX_ARGUMENTS = 4;
 
     private final WeightedQueryFieldNames fieldNames;
 
     private SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.OR;
 
     private final String searchString;
+
+    private String analyzer;
+
+    protected abstract String getDefaultAnalyzer();
+
+    public String getAnalyzer()
+    {
+        return analyzer;
+    }
 
     protected AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
     {
@@ -38,7 +49,8 @@ public abstract class AbstractSimpleQueryStringFunction
 
         searchString = arguments.get( SEARCHSTRING_INDEX ).getValue().asString();
 
-        setOperator( arguments );
+        setOperator( getValueAt( arguments, OPERATOR_INDEX ) );
+        setAnalyzer( getValueAt( arguments, ANALYZER_INDEX ) );
     }
 
     @Override
@@ -56,22 +68,44 @@ public abstract class AbstractSimpleQueryStringFunction
     @Override
     public abstract String getFunctionName();
 
-    private void setOperator( final List<ValueExpr> arguments )
+    private void setOperator( final ValueExpr expr )
     {
-        if ( arguments.size() >= OPERATOR_INDEX + 1 && arguments.get( OPERATOR_INDEX ) != null )
+        if ( expr == null )
         {
-            final String operatorAsString = arguments.get( OPERATOR_INDEX ).getValue().asString().toUpperCase();
-
-            try
-            {
-                final SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.valueOf( operatorAsString );
-                this.operator = operator;
-            }
-            catch ( IllegalArgumentException e )
-            {
-                throw new FunctionQueryBuilderException( "fulltext", OPERATOR_INDEX + 1, operatorAsString, e );
-            }
+            return;
         }
+
+        final String operatorAsString = expr.getValue().asString().toUpperCase();
+
+        try
+        {
+            this.operator = SimpleQueryStringBuilder.Operator.valueOf( operatorAsString );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new FunctionQueryBuilderException( "fulltext", OPERATOR_INDEX + 1, operatorAsString, e );
+        }
+    }
+
+    private void setAnalyzer( final ValueExpr expr )
+    {
+        if ( expr == null )
+        {
+            this.analyzer = getDefaultAnalyzer();
+            return;
+        }
+
+        this.analyzer = expr.getValue().asString();
+    }
+
+    public ValueExpr getValueAt( final List<ValueExpr> arguments, final int pos )
+    {
+        if ( arguments.size() >= pos + 1 && arguments.get( pos ) != null )
+        {
+            return arguments.get( pos );
+        }
+
+        return null;
     }
 
     public WeightedQueryFieldNames getWeightedQueryFieldName()

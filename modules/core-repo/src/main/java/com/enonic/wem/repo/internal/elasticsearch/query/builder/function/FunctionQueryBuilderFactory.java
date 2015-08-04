@@ -13,7 +13,6 @@ import com.enonic.xp.query.expr.FunctionExpr;
 
 public class FunctionQueryBuilderFactory
 {
-    private static final String NGRAM_SEARCH_ANALYSER_NAME = "ngram_search";
 
     public static QueryBuilder create( final FunctionExpr function )
     {
@@ -42,6 +41,7 @@ public class FunctionQueryBuilderFactory
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             defaultOperator( arguments.getOperator() );
+        // analyzer( arguments.getAnalyzer() );
 
         appendQueryFieldNames( arguments, builder );
 
@@ -54,7 +54,7 @@ public class FunctionQueryBuilderFactory
 
         SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             defaultOperator( arguments.getOperator() ).
-            analyzer( NGRAM_SEARCH_ANALYSER_NAME );
+            analyzer( arguments.getAnalyzer() );
 
         appendQueryFieldNames( arguments, builder );
 

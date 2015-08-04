@@ -62,6 +62,16 @@
         "type": "custom",
         "tokenizer": "standard"
       },
+      "fulltext_default": {
+        "type": "custom",
+        "filter": [
+          "standard",
+          "lowercase",
+          "asciifolding"
+        ],
+        "type": "custom",
+        "tokenizer": "standard"
+      },
       "content_default": {
         "type": "custom",
         "filter": [
