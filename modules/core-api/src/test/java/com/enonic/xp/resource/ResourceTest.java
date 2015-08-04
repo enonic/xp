@@ -3,7 +3,6 @@ package com.enonic.xp.resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,6 +19,8 @@ public class ResourceTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    private File modulesDir;
+
     private void writeFile( final File dir, final String path, final String value )
         throws Exception
     {
@@ -32,12 +33,9 @@ public class ResourceTest
     public void setup()
         throws Exception
     {
-        final File modulesDir = this.temporaryFolder.newFolder( "modules" );
+        modulesDir = this.temporaryFolder.newFolder( "modules" );
 
-        writeFile( modulesDir, "mymodule/a/b.txt", "a/b.txt" );
-        writeFile( modulesDir, "mymodule/a/c.txt", "a/c.txt" );
-        writeFile( modulesDir, "mymodule/a/c/d.txt", "a/c/d.txt" );
-        writeFile( modulesDir, "othermodule/a.txt", "a.txt" );
+        writeFile( modulesDir, "myapplication/a/b.txt", "a/b.txt" );
 
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockApplicationScheme();
         registry.applicationsDir( modulesDir );
@@ -47,9 +45,9 @@ public class ResourceTest
     public void testGetResource()
         throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
 
-        final Resource resource = new Resource( key, new URL( "module:" + key.toString() ) );
+        final Resource resource = new Resource( key, new File( modulesDir, "myapplication/a/b.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -65,9 +63,9 @@ public class ResourceTest
     public void testGetResource_notFound()
         throws MalformedURLException
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );
 
-        final Resource resource = new Resource( key, new URL( "module:" + key.toString() ) );
+        final Resource resource = new Resource( key, new File( modulesDir, "myapplication/not/exists.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );
