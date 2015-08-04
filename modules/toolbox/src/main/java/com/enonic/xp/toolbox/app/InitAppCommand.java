@@ -57,7 +57,6 @@ public final class InitAppCommand
     private void initApplication()
         throws URISyntaxException, IOException
     {
-
         final Path sourceDirectory = getInitAppResourcesPath();
         final Path targetDirectory = Paths.get( destination );
 
@@ -86,7 +85,7 @@ public final class InitAppCommand
             public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
                 throws IOException
             {
-                if ( !".gitignore".equals( file.getFileName().toString() ) )
+                if ( !".gitkeep".equals( file.getFileName().toString() ) )
                 {
                     final Path target = targetDirectory.resolve( sourceDirectory.relativize( file ).toString() );
                     Files.copy( file, target, StandardCopyOption.REPLACE_EXISTING );
@@ -94,6 +93,8 @@ public final class InitAppCommand
                 return FileVisitResult.CONTINUE;
             }
         } );
+
+        targetDirectory.resolve( "gradlew" ).toFile().setExecutable( true );
     }
 
     private Path getInitAppResourcesPath()

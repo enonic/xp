@@ -1,5 +1,4 @@
 dependencies {
     compile gradleApi()
     compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
-    compile 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2'
 }
