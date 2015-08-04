@@ -5,112 +5,58 @@ module api.ui.button {
 
         private actionList: Action[];
 
-        constructor(...actions: Action[]) {
+        private active: number;
+
+        constructor(actions: Action[], label: string = "") {
             super("button cycle-button");
             this.actionList = actions;
 
-            this.actionList.forEach((action: Action, i: number) => {
-                var el = this.addAction(action, i);
-                if (i == 0) {
-                    this.setActive(el);
-                }
-            });
+            this.setHtml(label);
 
-            var dropDownButton = new api.dom.DivEl("drop-down-button");
-            dropDownButton.onClicked((event) => {
-                if (this.hasClass("expanded")) {
-                    this.removeClass("expanded");
-                } else {
-                    this.addClass("expanded");
-                }
-            });
-            this.appendChild(dropDownButton);
-        }
+            if (this.actionList.length > 0) {
+                this.active = -1;
+                this.updateActive();
 
-        disableAction(action: Action) {
-            if (action.isEnabled()) {
-                action.setEnabled(false);
-                this.getElementFromIndex(this.getIndexFromAction(action)).addClass("hidden");
+                this.onClicked(() => {
+                    this.doAction();
+                });
             }
         }
 
-        enableAction(action: Action) {
-            action.setEnabled(true);
-            this.getElementFromIndex(this.getIndexFromAction(action)).removeClass("hidden");
+        private doAction() {
+            this.actionList[this.active].execute();
+            this.updateActive();
         }
 
-        setCurrentAction(action: Action) {
-            this.doAction(this.getIndexFromAction(action));
-        }
+        private updateActive() {
+            var name, prevName;
 
-        private addAction(action: Action, index: number): api.dom.DivEl {
-            var cycleActionEl = new api.dom.DivEl("action");
-            cycleActionEl.getEl().setInnerHtml(action.getLabel());
-            cycleActionEl.getEl().setData("action", index + "");
+            prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
 
-            cycleActionEl.onClicked(() => {
-                this.removeClass("expanded");
-                if (cycleActionEl.hasClass("active")) {
-                    this.doAction(this.nextActionIndex(index));
-                } else {
-                    this.doAction(index);
-                }
+            this.active++;
 
-            });
-            this.appendChild(cycleActionEl);
-            return cycleActionEl
-        }
+            if (this.active >= this.actionList.length) {
+                this.active = 0;
+            }
 
-        private nextActionIndex(index: number): number {
-            index = index + 1;
-            if (index < this.actionList.length) {
-                if (this.actionList[index].isEnabled()) {
-                    return index;
-                } else {
-                    return this.nextActionIndex(index);
-                }
-            } else {
-                return 0;
+            name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
+
+            if (prevName) {
+                this.removeClass(prevName);
+            }
+            if (name) {
+                this.addClass(name);
             }
         }
 
-        private doAction(index: number) {
-            while (!this.actionList[index].isEnabled()) {
-                index++;
+        executePrevAction() {
+            var prev = this.active - 1;
+            prev = prev < 0 ? this.actionList.length - 1 : prev;
+
+            if (this.actionList.length > 0) {
+                this.actionList[prev].execute();
             }
-            this.setActive(this.getElementFromIndex(index));
-            this.actionList[index].execute();
         }
-
-        private getIndexFromAction(action: Action) {
-            var index = -1;
-            this.actionList.forEach((a, i) => {
-                if (a == action) {
-                    index = i;
-                }
-            });
-            return index;
-        }
-
-        private getElementFromIndex(index: number): api.dom.Element {
-            var element = null;
-            this.getChildren().forEach((actionEl) => {
-                if (parseInt(actionEl.getEl().getData("action")) == index) {
-                    element = actionEl;
-                }
-            });
-            return element;
-        }
-
-        private setActive(listItem: api.dom.Element) {
-            this.getChildren().forEach((child) => {
-                child.removeClass("active");
-            });
-            listItem.addClass("active");
-            this.removeChild(listItem);
-            this.prependChild(listItem);
-        }
-
 
     }
 }

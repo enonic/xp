@@ -1,62 +1,23 @@
 .cycle-button {
   position: relative;
-  min-width: 85px;
   color: @admin-font-gray2;
-  font-size: 14px;
+  font-size: 16px;
 
   .notSelectable();
 
   &.button {
-    border-color: @admin-font-gray1;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    border: 2px solid @admin-font-gray1;
+    padding: 2px 7px;
   }
 
-  &.expanded {
-    background-color: @admin-bg-light-gray !important;
-    z-index: @z-index-toolbar-element;
-    .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
-    .action {
-      display:block;
-      &.active {
-        color: @admin-font-gray3;
-      }
-      &.hidden {
-        display:none;
-      }
-    }
+  &:not(.live) {
+    border-color: @admin-button-blue1;
+    color: @admin-button-blue1;
   }
-  .action {
-    display:none;
-    &:hover {
-      color: @admin-font-gray3;
-    }
-    &.active {
-      display: block;
-    }
-    &:not(.active) {
-      margin-top:10px;
-    }
+}
 
+._960-1200, ._1200-1380, ._1380-1620, ._1620-1920, ._1920-UP {
+  .cycle-button {
+    display: none !important;
   }
-  .drop-down-button {
-    position: absolute;
-    right:10px;
-    top: 6px;
-    margin-left:10px;
-    &:before {
-      color: @admin-font-gray2;
-      font-size: 16px;
-      &:hover {
-        color: @admin-font-gray3;
-      }
-    }
-
-    &:hover {
-      .icon-arrow-down();
-    }
-
-    .icon-loop();
-  }
-
 }
