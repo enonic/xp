@@ -1,6 +1,6 @@
 module api.content.site {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class ModuleRemovedEvent {
 

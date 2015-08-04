@@ -3,7 +3,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import SiteModel = api.content.site.SiteModel;
     import PartDescriptor = api.content.page.region.PartDescriptor;
     import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
-    import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
+    import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
     import GetPartDescriptorByKeyRequest = api.content.page.region.GetPartDescriptorByKeyRequest;
     import PartComponent = api.content.page.region.PartComponent;
     import PartDescriptorDropdown = api.content.page.region.PartDescriptorDropdown;
@@ -40,7 +40,7 @@ module app.wizard.page.contextwindow.inspect.region {
         setModel(liveEditModel: LiveEditModel) {
             super.setModel(liveEditModel);
 
-            var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getApplicationKeys());
+            var descriptorsRequest = new GetPartDescriptorsByApplicationsRequest(liveEditModel.getSiteModel().getApplicationKeys());
             var loader = new PartDescriptorLoader(descriptorsRequest);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.partSelector = new PartDescriptorDropdown("", {loader: loader});

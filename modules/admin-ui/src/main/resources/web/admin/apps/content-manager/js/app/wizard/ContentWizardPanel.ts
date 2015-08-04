@@ -41,8 +41,8 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
     import Mixin = api.schema.mixin.Mixin;
     import MixinName = api.schema.mixin.MixinName;
     import MixinNames = api.schema.mixin.MixinNames;
@@ -366,7 +366,7 @@ module app.wizard {
 
         private fetchApplication(key: ApplicationKey): wemQ.Promise<Application> {
             var deferred = wemQ.defer<Application>();
-            new api.module.GetModuleRequest(key).sendAndParse().
+            new api.application.GetApplicationRequest(key).sendAndParse().
                 then((mod) => {
                     deferred.resolve(mod);
                 }).catch((reason) => {
@@ -612,7 +612,7 @@ module app.wizard {
 
         private removeMetadataStepForms() {
             var applicationKeys = this.siteModel.getApplicationKeys();
-            var applicationPromises = applicationKeys.map((key: ApplicationKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var applicationPromises = applicationKeys.map((key: ApplicationKey) => new api.application.GetApplicationRequest(key).sendAndParse());
 
             return wemQ.all(applicationPromises).
                 then((applications: Application[]) => {
@@ -651,7 +651,7 @@ module app.wizard {
         }
 
         private addMetadataStepForms(applicationKey: ApplicationKey) {
-            new api.module.GetModuleRequest(applicationKey).sendAndParse().
+            new api.application.GetApplicationRequest(applicationKey).sendAndParse().
                 then((currentApplication: Application) => {
 
                     var mixinNames = currentApplication.getMetaSteps();

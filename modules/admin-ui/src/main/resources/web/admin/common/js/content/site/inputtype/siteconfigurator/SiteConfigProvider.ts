@@ -2,7 +2,7 @@ module api.content.site.inputtype.siteconfigurator {
 
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
 
     export class SiteConfigProvider {

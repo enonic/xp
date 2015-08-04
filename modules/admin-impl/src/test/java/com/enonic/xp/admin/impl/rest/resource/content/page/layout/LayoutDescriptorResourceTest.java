@@ -37,7 +37,7 @@ public class LayoutDescriptorResourceTest
     public void test_get_by_key()
         throws Exception
     {
-        final DescriptorKey key = DescriptorKey.from( "module:fancy-layout" );
+        final DescriptorKey key = DescriptorKey.from( "application:fancy-layout" );
         final Form layoutForm = Form.create().
             addFormItem( Input.create().
                 name( "columns" ).
@@ -61,13 +61,13 @@ public class LayoutDescriptorResourceTest
         Mockito.when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
 
         String jsonString = request().path( "content/page/layout/descriptor" ).
-            queryParam( "key", "module:fancy-layout" ).get().getAsString();
+            queryParam( "key", "application:fancy-layout" ).get().getAsString();
 
         assertJson( "get_by_key_success.json", jsonString );
     }
 
     @Test
-    public void test_get_by_modules()
+    public void test_get_by_applications()
         throws Exception
     {
         final Form layoutForm = Form.create().
@@ -82,7 +82,7 @@ public class LayoutDescriptorResourceTest
                 add( RegionDescriptor.create().name( "left" ).build() ).
                 add( RegionDescriptor.create().name( "right" ).build() ).
                 build() ).
-            key( DescriptorKey.from( "module:fancy-layout" ) ).
+            key( DescriptorKey.from( "application:fancy-layout" ) ).
             build();
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
@@ -93,19 +93,19 @@ public class LayoutDescriptorResourceTest
                 add( RegionDescriptor.create().name( "top" ).build() ).
                 add( RegionDescriptor.create().name( "bottom" ).build() ).
                 build() ).
-            key( DescriptorKey.from( "module:putty-layout" ) ).
+            key( DescriptorKey.from( "application:putty-layout" ) ).
             build();
 
         final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );
 
-        final ApplicationKeys applicationKeys = ApplicationKeys.from( "module1", "module2", "module3" );
+        final ApplicationKeys applicationKeys = ApplicationKeys.from( "application1", "application2", "application3" );
 
         Mockito.when( layoutDescriptorService.getByApplications( applicationKeys ) ).thenReturn( layoutDescriptors );
 
-        String jsonString = request().path( "content/page/layout/descriptor/list/by_modules" ).
-            entity( readFromFile( "get_by_modules_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+        String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
+            entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "get_by_modules_success.json", jsonString );
+        assertJson( "get_by_applications_success.json", jsonString );
     }
 }

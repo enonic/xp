@@ -1,6 +1,6 @@
 module app.browse {
 
-    import Application = api.module.Application;
+    import Application = api.application.Application;
 
     export class StopModuleAction extends api.ui.Action {
 

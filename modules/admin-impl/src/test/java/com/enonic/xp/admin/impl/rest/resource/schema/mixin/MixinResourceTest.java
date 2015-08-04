@@ -31,11 +31,11 @@ import static org.junit.Assert.*;
 public class MixinResourceTest
     extends AbstractResourceTest
 {
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "mymodule:input_text_1" );
+    private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "myapplication:input_text_1" );
 
     private final static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
 
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "mymodule:text_area_2" );
+    private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "myapplication:text_area_2" );
 
     private final static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
@@ -111,7 +111,7 @@ public class MixinResourceTest
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         Mixin mixin = Mixin.create().
-            name( "mymodule:postal_code" ).
+            name( "myapplication:postal_code" ).
             displayName( "My content type" ).
             icon( icon ).
             addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -119,7 +119,7 @@ public class MixinResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:postal_code", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:postal_code", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -131,14 +131,14 @@ public class MixinResourceTest
         throws Exception
     {
         Mixin mixin = Mixin.create().
-            name( "mymodule:postal_code" ).
+            name( "myapplication:postal_code" ).
             displayName( "My content type" ).
             addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:postal_code", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:postal_code", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify

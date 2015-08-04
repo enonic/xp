@@ -251,23 +251,23 @@ public final class SecurityResource
     @Path("principals/createUser")
     public UserJson createUser( final CreateUserJson params )
     {
-        if ( StringUtils.isBlank( params.getPassword() ) )
+        if ( StringUtils.isBlank( params.password ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
 
-        final User user = securityService.createUser( params.getCreateUserParams() );
+        final User user = this.securityService.createUser( params.toCreateUserParams() );
         final PrincipalKey userKey = user.getKey();
 
-        securityService.setPassword( userKey, params.getPassword() );
+        this.securityService.setPassword( userKey, params.password );
 
-        for ( PrincipalKey membershipToAdd : params.getMemberships() )
+        for ( final PrincipalKey membershipToAdd : params.toMembershipKeys() )
         {
             final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
-            securityService.addRelationship( rel );
+            this.securityService.addRelationship( rel );
         }
 
-        final Principals memberships = securityService.getPrincipals( securityService.getMemberships( userKey ) );
+        final Principals memberships = this.securityService.getPrincipals( this.securityService.getMemberships( userKey ) );
         return new UserJson( user, memberships );
     }
 
@@ -275,28 +275,34 @@ public final class SecurityResource
     @Path("principals/createGroup")
     public GroupJson createGroup( final CreateGroupJson params )
     {
-        final Group group = securityService.createGroup( params.getCreateGroupParams() );
+        final Group group = securityService.createGroup( params.toCreateGroupParams() );
         final PrincipalKey groupKey = group.getKey();
-        for ( PrincipalKey member : params.getMembers() )
+        final PrincipalKeys members = params.toMemberKeys();
+
+        for ( final PrincipalKey member : members )
         {
             final PrincipalRelationship rel = PrincipalRelationship.from( groupKey ).to( member );
             securityService.addRelationship( rel );
         }
-        return new GroupJson( group, params.getMembers() );
+
+        return new GroupJson( group, members );
     }
 
     @POST
     @Path("principals/createRole")
     public RoleJson createRole( final CreateRoleJson params )
     {
-        final Role role = securityService.createRole( params.getCreateRoleParams() );
+        final Role role = securityService.createRole( params.toCreateRoleParams() );
         final PrincipalKey roleKey = role.getKey();
-        for ( PrincipalKey member : params.getMembers() )
+        final PrincipalKeys members = params.toMemberKeys();
+
+        for ( final PrincipalKey member : members )
         {
             final PrincipalRelationship rel = PrincipalRelationship.from( roleKey ).to( member );
             securityService.addRelationship( rel );
         }
-        return new RoleJson( role, params.getMembers() );
+
+        return new RoleJson( role, members );
     }
 
     @POST

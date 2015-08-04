@@ -7,7 +7,7 @@
             "description": null,
             "displayName": null,
             "editable": false,
-            "iconUrl": "/admin/rest/schema/mixin/icon/mymodule:input_text_1",
+            "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:input_text_1",
             "items": [
                 {
                     "Input": {
@@ -32,7 +32,7 @@
             ],
             "modifiedTime": null,
             "modifier": null,
-            "name": "mymodule:input_text_1"
+            "name": "myapplication:input_text_1"
         },
         {
             "createdTime": "2013-01-01T12:00:00Z",
@@ -41,7 +41,7 @@
             "description": null,
             "displayName": null,
             "editable": false,
-            "iconUrl": "/admin/rest/schema/mixin/icon/mymodule:text_area_2",
+            "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:text_area_2",
             "items": [
                 {
                     "Input": {
@@ -66,7 +66,7 @@
             ],
             "modifiedTime": null,
             "modifier": null,
-            "name": "mymodule:text_area_2"
+            "name": "myapplication:text_area_2"
         }
     ]
 }

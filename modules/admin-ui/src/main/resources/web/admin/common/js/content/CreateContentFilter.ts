@@ -1,6 +1,6 @@
 module api.content {
 
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentTypeName = api.schema.content.ContentTypeName;
 

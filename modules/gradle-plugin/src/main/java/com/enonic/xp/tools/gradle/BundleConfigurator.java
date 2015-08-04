@@ -29,10 +29,10 @@ final class BundleConfigurator
         this.ext = ext;
     }
 
-    public void configure( final AppExtension module )
+    public void configure( final AppExtension application )
     {
         final Map<String, String> instructions = new HashMap<>();
-        instructions.putAll( module.getInstructions() );
+        instructions.putAll( application.getInstructions() );
 
         final String exportPackage = instructions.remove( EXPORT_PACKAGE );
         instruction( "-exportcontents", exportPackage != null ? exportPackage : "" );
@@ -45,14 +45,14 @@ final class BundleConfigurator
         instruction( "-nouses", "true" );
         instruction( "-dsannotations", "*" );
 
-        validateModuleName( module.getName() );
+        validateApplicationName( application.getName() );
 
-        instruction( "Bundle-SymbolicName", module.getName() );
-        instruction( "Bundle-Name", module.getDisplayName() );
-        instruction( "X-Application-Url", module.getUrl() );
-        instruction( "X-Vendor-Name", module.getVendorName() );
-        instruction( "X-Vendor-Url", module.getVendorUrl() );
-        instruction( "X-System-Version", module.getSystemVersion() );
+        instruction( "Bundle-SymbolicName", application.getName() );
+        instruction( "Bundle-Name", application.getDisplayName() );
+        instruction( "X-Application-Url", application.getUrl() );
+        instruction( "X-Vendor-Name", application.getVendorName() );
+        instruction( "X-Vendor-Url", application.getVendorUrl() );
+        instruction( "X-System-Version", application.getSystemVersion() );
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
         final Configuration filteredConfig = new UnwantedJarFilter( libConfig ).filter();
@@ -97,11 +97,11 @@ final class BundleConfigurator
         return str.length() > 0 ? str.substring( 1 ) : str.toString();
     }
 
-    private void validateModuleName( final String name )
+    private void validateApplicationName( final String name )
     {
         if ( name.contains( "-" ) )
         {
-            throw new IllegalArgumentException( "Invalid module name [" + name + "]. Name should not contain [-]." );
+            throw new IllegalArgumentException( "Invalid application name [" + name + "]. Name should not contain [-]." );
         }
     }
 

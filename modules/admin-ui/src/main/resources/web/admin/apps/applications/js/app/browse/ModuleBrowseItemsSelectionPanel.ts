@@ -1,8 +1,8 @@
 module app.browse {
 
     import BrowseItem = api.app.browse.BrowseItem;
-    import Application = api.module.Application;
-    import ModuleViewer = api.module.ModuleViewer;
+    import Application = api.application.Application;
+    import ModuleViewer = api.application.ApplicationViewer;
 
     export class ModuleBrowseItemsSelectionPanel extends api.app.browse.BrowseItemsSelectionPanel<Application> {
 

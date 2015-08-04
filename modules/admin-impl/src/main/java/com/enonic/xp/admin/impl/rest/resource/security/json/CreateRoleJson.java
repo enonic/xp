@@ -1,10 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.security.CreateRoleParams;
@@ -15,31 +12,26 @@ import static java.util.stream.Collectors.toList;
 
 public final class CreateRoleJson
 {
-    private final CreateRoleParams createRoleParams;
+    @JsonProperty("key")
+    public String userKey;
 
-    private final PrincipalKeys members;
+    @JsonProperty("displayName")
+    public String displayName;
 
-    @JsonCreator
-    public CreateRoleJson( @JsonProperty("key") final String userKey, @JsonProperty("displayName") final String displayName,
-                           @JsonProperty("members") final List<String> members )
+    @JsonProperty("members")
+    public List<String> members;
+
+    public CreateRoleParams toCreateRoleParams()
     {
-        final PrincipalKey principalKey = PrincipalKey.from( userKey );
-        this.createRoleParams = CreateRoleParams.create().
+        final PrincipalKey principalKey = PrincipalKey.from( this.userKey );
+        return CreateRoleParams.create().
             roleKey( principalKey ).
-            displayName( displayName ).
+            displayName( this.displayName ).
             build();
-        this.members = PrincipalKeys.from( members.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 
-    @JsonIgnore
-    public CreateRoleParams getCreateRoleParams()
+    public PrincipalKeys toMemberKeys()
     {
-        return createRoleParams;
-    }
-
-    @JsonIgnore
-    public PrincipalKeys getMembers()
-    {
-        return members;
+        return PrincipalKeys.from( this.members.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 }

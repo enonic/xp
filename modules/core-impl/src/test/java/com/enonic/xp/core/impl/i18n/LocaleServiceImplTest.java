@@ -60,7 +60,9 @@ public class LocaleServiceImplTest
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            return new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) );
+            final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
+            final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
+            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
         } );
         localeService.setResourceService( resourceService );
     }

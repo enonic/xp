@@ -1,17 +1,17 @@
 module app.browse {
 
-    import ApplicationKey = api.module.ApplicationKey;
-    import Application = api.module.Application;
+    import ApplicationKey = api.application.ApplicationKey;
+    import Application = api.application.Application;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
-    import UninstallModuleRequest = api.module.UninstallModuleRequest;
-    import UpdateModuleRequest = api.module.UpdateModuleRequest;
-    import StartModuleRequest = api.module.StartModuleRequest;
-    import StopModuleRequest = api.module.StopModuleRequest;
-    import ApplicationUpdatedEvent = api.module.ApplicationUpdatedEvent;
-    import ApplicationUpdatedEventType = api.module.ApplicationUpdatedEventType;
+    import UninstallModuleRequest = api.application.UninstallApplicationRequest;
+    import UpdateModuleRequest = api.application.UpdateApplicationRequest;
+    import StartModuleRequest = api.application.StartApplicationRequest;
+    import StopModuleRequest = api.application.StopApplicationRequest;
+    import ApplicationUpdatedEvent = api.application.ApplicationUpdatedEvent;
+    import ApplicationUpdatedEventType = api.application.ApplicationUpdatedEventType;
 
-    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.Application> {
+    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.application.Application> {
 
         private browseActions: app.browse.ModuleBrowseActions;
 
@@ -79,7 +79,7 @@ module app.browse {
                     }).done();
             });
 
-            api.module.ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
+            api.application.ApplicationUpdatedEvent.on((event: ApplicationUpdatedEvent) => {
                 if (ApplicationUpdatedEventType.INSTALLED == event.getEventType()) {
                     this.moduleTreeGrid.appendModuleNode(event.getApplicationKey());
                 } else if (ApplicationUpdatedEventType.UNINSTALLED == event.getEventType()) {

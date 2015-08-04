@@ -45,15 +45,15 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = RelationshipType.create().
-            name( "mymodule:the_relationship_type" ).
+            name( "myapplication:the_relationship_type" ).
             description( "RT description" ).
             build();
 
-        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule:the_relationship_type" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "myapplication:the_relationship_type" );
         Mockito.when( relationshipTypeService.getByName( name ) ).thenReturn( relationshipType );
 
         String response =
-            request().path( "schema/relationship" ).queryParam( "name", "mymodule:the_relationship_type" ).get().getAsString();
+            request().path( "schema/relationship" ).queryParam( "name", "myapplication:the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type.json", response );
 
@@ -65,7 +65,8 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( relationshipTypeService.getByName( Mockito.any( RelationshipTypeName.class ) ) ).thenReturn( null );
 
-        final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
+        final MockRestResponse response =
+            request().path( "schema/relationship" ).queryParam( "name", "myapplication:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
     }
 
@@ -74,11 +75,11 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType1 = RelationshipType.create().
-            name( "mymodule:the_relationship_type_1" ).
+            name( "myapplication:the_relationship_type_1" ).
             build();
 
         final RelationshipType relationshipType2 = RelationshipType.create().
-            name( "mymodule:the_relationship_type_2" ).
+            name( "myapplication:the_relationship_type_2" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );
@@ -98,17 +99,17 @@ public class RelationshipTypeResourceTest
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         RelationshipType relationshipType = RelationshipType.create().
-            name( "mymodule:like" ).
+            name( "myapplication:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
+            addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
             icon( icon ).
             build();
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:like", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:like", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -120,16 +121,16 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         RelationshipType relationshipType = RelationshipType.create().
-            name( "mymodule:like" ).
+            name( "myapplication:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
+            addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
             build();
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.resource.getIcon( "mymodule:like", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:like", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify

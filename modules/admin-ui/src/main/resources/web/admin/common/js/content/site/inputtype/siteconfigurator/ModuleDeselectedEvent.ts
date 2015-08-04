@@ -1,7 +1,7 @@
 module api.content.site.inputtype.siteconfigurator {
 
     import FormView = api.form.FormView;
-    import Application = api.module.Application;
+    import Application = api.application.Application;
 
     export class ModuleDeselectedEvent {
 

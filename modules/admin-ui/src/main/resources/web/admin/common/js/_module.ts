@@ -111,8 +111,8 @@
 ///<reference path='query/aggregation/_module.ts' />
 ///<reference path='query/filter/_module.ts' />
 
-///<reference path='module/_module.ts' />
-///<reference path='module/json/_module.ts' />
+///<reference path='application/_module.ts' />
+///<reference path='application/json/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>

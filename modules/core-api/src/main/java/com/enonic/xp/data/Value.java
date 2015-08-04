@@ -46,7 +46,7 @@ public abstract class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE ) || ( this.type == ValueTypes.LOCAL_DATE_TIME );
     }
 
     public boolean isNumericType()

@@ -155,7 +155,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user1 = User.create().
-            key( PrincipalKey.from( "user:system:user1" )  ).
+            key( PrincipalKey.from( "user:system:user1" ) ).
             displayName( "User 1" ).
             login( "user1" ).
             modifiedTime( Instant.now( clock ) ).
@@ -186,7 +186,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user1 = User.create().
-            key( PrincipalKey.from( "user:system:user1" )  ).
+            key( PrincipalKey.from( "user:system:user1" ) ).
             displayName( "User 1" ).
             login( "user1" ).
             modifiedTime( Instant.now( clock ) ).
@@ -586,8 +586,12 @@ public class SecurityResourceTest
         throws Exception
     {
         final SecurityResource resource = (SecurityResource) getResourceInstance();
-        final CreateUserJson params =
-            new CreateUserJson( "user:system:user1", "usert1", "test@enonic.com", "test", null, new ArrayList<String>() );
+        final CreateUserJson params = new CreateUserJson();
+        params.userKey = "user:system:user1";
+        params.displayName = "usert1";
+        params.email = "test@enonic.com";
+        params.login = "test";
+        params.password = null;
 
         exception.expect( WebApplicationException.class );
         resource.createUser( params );
@@ -598,8 +602,12 @@ public class SecurityResourceTest
         throws Exception
     {
         final SecurityResource resource = (SecurityResource) getResourceInstance();
-        final CreateUserJson params =
-            new CreateUserJson( "user:system:user1", "usert1", "test@enonic.com", "test", " ", new ArrayList<String>() );
+        final CreateUserJson params = new CreateUserJson();
+        params.userKey = "user:system:user1";
+        params.displayName = "usert1";
+        params.email = "test@enonic.com";
+        params.login = "test";
+        params.password = " ";
 
         exception.expect( WebApplicationException.class );
         resource.createUser( params );
@@ -643,7 +651,7 @@ public class SecurityResourceTest
     private Principals createPrincipalsFromRoles()
     {
         final Role role1 = Role.create().
-            key( PrincipalKey.ofRole( "a" )).
+            key( PrincipalKey.ofRole( "a" ) ).
             displayName( "Destructors" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -659,7 +667,7 @@ public class SecurityResourceTest
     private Principals createPrincipalsFromGroups()
     {
         final Group group1 = Group.create().
-            key( PrincipalKey.ofGroup(  USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofGroup( USER_STORE_1, "a" ) ).
             displayName( "Destructors" ).
             modifiedTime( Instant.now( clock ) ).
             build();

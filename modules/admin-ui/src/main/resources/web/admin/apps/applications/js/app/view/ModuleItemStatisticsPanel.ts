@@ -10,7 +10,7 @@ module app.view {
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ItemDataGroup = api.app.view.ItemDataGroup;
 
-    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Application> {
+    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
         private moduleDataContainer: api.dom.DivEl;
         private actionMenu: api.ui.menu.ActionMenu;
@@ -19,7 +19,8 @@ module app.view {
             super("module-item-statistics-panel");
 
             this.actionMenu =
-            new api.ui.menu.ActionMenu("Application actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE);
+                new api.ui.menu.ActionMenu("Application actions", ModuleBrowseActions.get().START_MODULE,
+                    ModuleBrowseActions.get().STOP_MODULE);
 
             this.appendChild(this.actionMenu);
 
@@ -27,7 +28,7 @@ module app.view {
             this.appendChild(this.moduleDataContainer);
         }
 
-        setItem(item: api.app.view.ViewItem<api.module.Application>) {
+        setItem(item: api.app.view.ViewItem<api.application.Application>) {
             var currentItem = this.getItem();
 
             if (currentItem && currentItem.equals(item)) {
@@ -60,9 +61,9 @@ module app.view {
 
             var applicationKey = currentModule.getApplicationKey();
             var schemaPromises = [
-                new api.schema.content.GetContentTypesByModuleRequest(applicationKey).sendAndParse(),
-                new api.schema.mixin.GetMixinsByModuleRequest(applicationKey).sendAndParse(),
-                new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(applicationKey).sendAndParse()
+                new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
+                new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
+                new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
             ];
 
             wemQ.all(schemaPromises).
@@ -81,9 +82,9 @@ module app.view {
 
             var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
             var descriptorPromises = [
-                new api.content.page.GetPageDescriptorsByModuleRequest(applicationKey).sendAndParse(),
-                new api.content.page.region.GetPartDescriptorsByModuleRequest(applicationKey).sendAndParse(),
-                new api.content.page.region.GetLayoutDescriptorsByModuleRequest(applicationKey).sendAndParse()
+                new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
+                new api.content.page.region.GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
+                new api.content.page.region.GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse()
             ];
 
             wemQ.all(descriptorPromises).

@@ -5,7 +5,7 @@
     "description": null,
     "displayName": null,
     "editable": false,
-    "iconUrl": "/admin/rest/schema/mixin/icon/mymodule:input_text_1",
+    "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:input_text_1",
     "items": [
         {
             "Input": {
@@ -30,5 +30,5 @@
     ],
     "modifiedTime": null,
     "modifier": null,
-    "name": "mymodule:input_text_1"
+    "name": "myapplication:input_text_1"
 }

@@ -41,17 +41,17 @@ public final class LayoutDescriptorResource
     }
 
     @GET
-    @Path("list/by_module")
-    public LayoutDescriptorsJson getByModules( @QueryParam("applicationKey") final String applicationKey )
+    @Path("list/by_application")
+    public LayoutDescriptorsJson getByApplications( @QueryParam("applicationKey") final String applicationKey )
     {
         final LayoutDescriptors descriptors = layoutDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new LayoutDescriptorsJson( descriptors );
     }
 
     @POST
-    @Path("list/by_modules")
+    @Path("list/by_applications")
     @Consumes(MediaType.APPLICATION_JSON)
-    public LayoutDescriptorsJson getByModules( final GetByModulesParams params )
+    public LayoutDescriptorsJson getByApplications( final GetByApplicationsParams params )
     {
         final LayoutDescriptors descriptors = layoutDescriptorService.getByApplications( params.getApplicationKeys() );
         return new LayoutDescriptorsJson( descriptors );

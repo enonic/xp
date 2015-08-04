@@ -1,12 +1,12 @@
 module api.content.page.region {
 
-    import Application = api.module.Application;
-    import ApplicationKey = api.module.ApplicationKey;
-    import ModuleCaches = api.module.ModuleCaches;
-    import ModuleBasedCache = api.module.ModuleBasedCache;
+    import Application = api.application.Application;
+    import ApplicationKey = api.application.ApplicationKey;
+    import ModuleCaches = api.application.ApplicationCaches;
+    import ApplicationBasedCache = api.application.ApplicationBasedCache;
     import DescriptorKey = api.content.page.DescriptorKey;
 
-    export class LayoutDescriptorCache extends ModuleBasedCache<LayoutDescriptorModuleCache,LayoutDescriptor,DescriptorKey> {
+    export class LayoutDescriptorCache extends ApplicationBasedCache<LayoutDescriptorModuleCache,LayoutDescriptor,DescriptorKey> {
 
         private static instance: LayoutDescriptorCache;
 
@@ -29,7 +29,7 @@ module api.content.page.region {
         }
 
         loadByModule(applicationKey: ApplicationKey) {
-            new GetLayoutDescriptorsByModuleRequest(applicationKey).sendAndParse().catch((reason: any) => {
+            new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
         }
@@ -44,7 +44,7 @@ module api.content.page.region {
             return super.getByKey(key, key.getApplicationKey());
         }
 
-        createModuleCache(): LayoutDescriptorModuleCache {
+        createApplicationCache(): LayoutDescriptorModuleCache {
             return new LayoutDescriptorModuleCache();
         }
     }

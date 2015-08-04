@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-
+import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,43 +14,38 @@ import static java.util.stream.Collectors.toList;
 
 public final class CreateUserJson
 {
-    private final CreateUserParams createUserParams;
+    @JsonProperty("key")
+    public String userKey;
 
-    private final String password;
+    @JsonProperty("displayName")
+    public String displayName;
 
-    private final PrincipalKeys memberships;
+    @JsonProperty("email")
+    public String email;
 
-    @JsonCreator
-    public CreateUserJson( @JsonProperty("key") final String userKey, @JsonProperty("displayName") final String displayName,
-                           @JsonProperty("email") final String email, @JsonProperty("login") final String login,
-                           @JsonProperty("password") final String password, @JsonProperty("memberships") final List<String> memberships )
+    @JsonProperty("login")
+    public String login;
+
+    @JsonProperty("password")
+    public String password;
+
+    @JsonProperty("memberships")
+    public List<String> memberships = Collections.emptyList();
+
+    public CreateUserParams toCreateUserParams()
     {
-        final PrincipalKey principalKey = PrincipalKey.from( userKey );
-        this.createUserParams = CreateUserParams.create().
+        final PrincipalKey principalKey = PrincipalKey.from( this.userKey );
+        return CreateUserParams.create().
             userKey( principalKey ).
-            displayName( displayName ).
-            email( email ).
-            login( login ).
+            displayName( this.displayName ).
+            email( this.email ).
+            login( this.login ).
             build();
-        this.password = password;
-        this.memberships = PrincipalKeys.from( memberships.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 
     @JsonIgnore
-    public CreateUserParams getCreateUserParams()
+    public PrincipalKeys toMembershipKeys()
     {
-        return createUserParams;
-    }
-
-    @JsonIgnore
-    public String getPassword()
-    {
-        return password;
-    }
-
-    @JsonIgnore
-    public PrincipalKeys getMemberships()
-    {
-        return memberships;
+        return PrincipalKeys.from( this.memberships.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 }

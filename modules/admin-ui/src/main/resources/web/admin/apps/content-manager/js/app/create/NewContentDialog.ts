@@ -12,7 +12,7 @@ module app.create {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentType = api.schema.content.ContentType;
     import Site = api.content.site.Site;
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
     import ListContentByPathRequest = api.content.ListContentByPathRequest;

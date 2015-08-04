@@ -3,7 +3,7 @@ module api.content.site {
     import Property = api.data.Property;
     import PropertySet = api.data.PropertySet;
     import PropertyTree = api.data.PropertyTree;
-    import ApplicationKey = api.module.ApplicationKey;
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class SiteConfig implements api.Equitable, api.Cloneable {
 
@@ -16,7 +16,7 @@ module api.content.site {
             this.config = builder.config;
         }
 
-        getApplicationKey(): api.module.ApplicationKey {
+        getApplicationKey(): api.application.ApplicationKey {
             return this.applicationKey;
         }
 
@@ -85,7 +85,7 @@ module api.content.site {
             return this;
         }
 
-        setApplicationKey(value: api.module.ApplicationKey): SiteConfigBuilder {
+        setApplicationKey(value: api.application.ApplicationKey): SiteConfigBuilder {
             this.applicationKey = value;
             return this;
         }

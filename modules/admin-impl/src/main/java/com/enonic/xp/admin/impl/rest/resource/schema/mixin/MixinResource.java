@@ -71,8 +71,8 @@ public final class MixinResource
     }
 
     @GET
-    @Path("byModule")
-    public MixinListJson getByModule( @QueryParam("applicationKey") final String applicationKey )
+    @Path("byApplication")
+    public MixinListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final Mixins mixins = mixinService.getByApplication( ApplicationKey.from( applicationKey ) );
         return new MixinListJson( mixins, this.mixinIconUrlResolver );
