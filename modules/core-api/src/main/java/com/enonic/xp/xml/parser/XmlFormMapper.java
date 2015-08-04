@@ -88,7 +88,7 @@ public final class XmlFormMapper
     {
         final Input.Builder builder = Input.create();
 
-        final InputType type = InputTypes.parse( root.getAttribute( "type" ) );
+        final InputType type = InputTypes.find( root.getAttribute( "type" ) );
         builder.inputType( type );
 
         builder.name( root.getAttribute( "name" ) );

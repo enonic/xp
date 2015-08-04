@@ -2,17 +2,19 @@ package com.enonic.xp.form.inputtype;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
-@Beta
-public class SiteConfigurator
+final class SiteConfigurator
     extends InputType
 {
+    public SiteConfigurator()
+    {
+        super( "SiteConfigurator", null, false );
+    }
+
     @Override
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException

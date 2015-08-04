@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -8,44 +7,16 @@ import com.google.common.annotations.Beta;
 @Beta
 public final class InputTypeName
 {
-    private final String ref;
-
     private final String name;
 
-    private final boolean custom;
-
-    public static InputTypeName from( final String s )
-    {
-        if ( s.startsWith( "custom:" ) )
-        {
-            return new InputTypeName( s.substring( "custom:".length(), s.length() ), true );
-        }
-        else
-        {
-            return new InputTypeName( s, false );
-        }
-    }
-
-    public static InputTypeName from( final InputType inputType )
-    {
-        return from( inputType.getName() );
-    }
-
-    public InputTypeName( final String name, final boolean custom )
+    private InputTypeName( final String name )
     {
         this.name = name;
-        this.custom = custom;
-        this.ref = custom ? "custom:" + name : "" + name;
     }
 
     public String getName()
     {
         return this.name;
-    }
-
-    public boolean isCustom()
-    {
-        return this.custom;
     }
 
     @Override
@@ -61,18 +32,23 @@ public final class InputTypeName
         }
 
         final InputTypeName other = (InputTypeName) o;
-        return Objects.equals( ref, other.ref );
+        return Objects.equals( this.name, other.name );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( ref );
+        return Objects.hash( this.name );
     }
 
     @Override
     public String toString()
     {
-        return ref;
+        return this.name;
+    }
+
+    public static InputTypeName from( final String name )
+    {
+        return new InputTypeName( name );
     }
 }

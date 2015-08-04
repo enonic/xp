@@ -11,8 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class TextLine
     extends InputType
 {
-    TextLine()
+    public TextLine()
     {
+        super( "TextLine", null, false );
     }
 
     @Override

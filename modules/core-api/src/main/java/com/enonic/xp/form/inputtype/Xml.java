@@ -11,8 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Xml
     extends InputType
 {
-    Xml()
+    public Xml()
     {
+        super( "Xml", null, false );
     }
 
     @Override

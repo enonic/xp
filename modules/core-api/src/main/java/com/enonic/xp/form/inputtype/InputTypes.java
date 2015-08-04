@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import java.util.LinkedHashMap;
 
 import com.google.common.annotations.Beta;
@@ -124,17 +123,17 @@ public final class InputTypes
         return INPUT_TYPE_BY_NAME.size();
     }
 
-    public static InputType parse( final String simpleClassName )
+    public static InputType find( final String name )
     {
-        for ( InputType inputType : INPUT_TYPE_BY_NAME.values() )
+        for ( final InputType inputType : INPUT_TYPE_BY_NAME.values() )
         {
-            if ( inputType.getClass().getSimpleName().equals( simpleClassName ) )
+            if ( inputType.getName().equals( name ) )
             {
                 return inputType;
             }
         }
 
-        return new CustomInputType( simpleClassName );
+        return null;
     }
 
     public static ImmutableList<InputType> list()

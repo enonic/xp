@@ -11,8 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Tag
     extends InputType
 {
-    Tag()
+    public Tag()
     {
+        super( "Tag", null, false );
     }
 
     @Override

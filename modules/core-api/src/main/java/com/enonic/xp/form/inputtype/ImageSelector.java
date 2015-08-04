@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
@@ -11,9 +10,9 @@ import com.enonic.xp.util.Reference;
 final class ImageSelector
     extends InputType
 {
-    ImageSelector()
+    public ImageSelector()
     {
-        super( ImageSelectorConfig.class, false );
+        super( "ImageSelector", ImageSelectorConfig.class, false );
     }
 
     @Override

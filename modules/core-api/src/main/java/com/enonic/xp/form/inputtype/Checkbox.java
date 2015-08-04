@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
@@ -11,12 +10,12 @@ import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
-public class Checkbox
+final class Checkbox
     extends InputType
 {
     public Checkbox()
     {
-
+        super( "Checkbox", null, false );
     }
 
     @Override

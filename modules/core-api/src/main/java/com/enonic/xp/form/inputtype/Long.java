@@ -9,8 +9,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Long
     extends InputType
 {
-    Long()
+    public Long()
     {
+        super( "Long", null, false );
     }
 
     @Override

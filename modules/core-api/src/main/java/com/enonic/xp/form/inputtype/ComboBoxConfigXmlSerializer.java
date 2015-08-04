@@ -26,3 +26,4 @@ final class ComboBoxConfigXmlSerializer
         return builder.build();
     }
 }
+

@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -12,35 +11,22 @@ import com.enonic.xp.form.Occurrences;
 @Beta
 public abstract class InputType
 {
-    private final InputTypeName inputTypeName;
+    private final InputTypeName name;
 
     private final Class configClass;
 
-    private final boolean builtIn;
-
     private final boolean requiresConfig;
 
-    protected InputType()
+    protected InputType( final String name, final Class configClass, final boolean requiresConfig )
     {
-        this.builtIn = resolveBuiltIn();
-        this.configClass = null;
-        final String name = resolveName();
-        this.inputTypeName = new InputTypeName( name, !this.builtIn );
-        this.requiresConfig = false;
-    }
-
-    protected InputType( final Class configClass, final boolean requiresConfig )
-    {
-        this.builtIn = resolveBuiltIn();
         this.configClass = configClass;
-        final String name = resolveName();
-        this.inputTypeName = new InputTypeName( name, !this.builtIn );
+        this.name = InputTypeName.from( name );
         this.requiresConfig = requiresConfig;
     }
 
     public String getName()
     {
-        return inputTypeName.toString();
+        return name.toString();
     }
 
     public final boolean requiresConfig()
@@ -86,31 +72,19 @@ public abstract class InputType
 
         final InputType that = (InputType) o;
 
-        return Objects.equals( this.inputTypeName, that.inputTypeName ) &&
-            Objects.equals( this.configClass, that.configClass ) &&
-            Objects.equals( this.builtIn, that.builtIn );
+        return Objects.equals( this.name, that.name ) && Objects.equals( this.configClass, that.configClass );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.inputTypeName, this.configClass, this.builtIn );
+        return Objects.hash( this.name, this.configClass );
     }
 
     @Override
     public String toString()
     {
-        return this.inputTypeName.toString();
-    }
-
-    private String resolveName()
-    {
-        return this.getClass().getSimpleName();
-    }
-
-    private boolean resolveBuiltIn()
-    {
-        return !( this instanceof InputTypeExtension );
+        return this.name.toString();
     }
 
     public InputTypeConfig getDefaultConfig()
@@ -124,5 +98,4 @@ public abstract class InputType
     }
 
     public abstract Value createPropertyValue( final String value, final InputTypeConfig config );
-
 }

@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,9 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class ComboBox
     extends InputType
 {
-    ComboBox()
+    public ComboBox()
     {
-        super( ComboBoxConfig.class, true );
+        super( "ComboBox", ComboBoxConfig.class, true );
     }
 
     @Override
@@ -56,5 +55,4 @@ final class ComboBox
     {
         return Value.newString( value );
     }
-
 }

@@ -12,8 +12,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Money
     extends InputType
 {
-    Money()
+    public Money()
     {
+        super( "Money", null, false );
     }
 
     @Override
