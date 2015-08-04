@@ -7,36 +7,16 @@ import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
 final class ContentSelectorConfigXmlSerializer
-    extends AbstractInputTypeConfigXmlSerializer<ContentSelectorConfig>
+    implements AbstractInputTypeConfigXmlSerializer<ContentSelectorConfig>
 {
     static final ContentSelectorConfigXmlSerializer DEFAULT = new ContentSelectorConfigXmlSerializer();
 
     private static final String RELATIONSHIP_TYPE_ELEMENT = "relationship-type";
 
     private static final String ALLOWED_CONTENT_TYPE_ELEMENT = "allow-content-type";
-
-    @Override
-    protected void serializeConfig( final ContentSelectorConfig contentSelectorConfig, final DomBuilder builder )
-    {
-        builder.start( RELATIONSHIP_TYPE_ELEMENT );
-        if ( contentSelectorConfig.getRelationshipType() != null )
-        {
-            builder.text( contentSelectorConfig.getRelationshipType().toString() );
-        }
-        builder.end();
-
-        for ( ContentTypeName allowedContentTypeName : contentSelectorConfig.getAllowedContentTypes() )
-        {
-            builder.start( ALLOWED_CONTENT_TYPE_ELEMENT );
-            builder.text( allowedContentTypeName.toString() );
-            builder.end();
-        }
-    }
 
     @Override
     public ContentSelectorConfig parseConfig( final ApplicationKey currentApplication, final Element elem )

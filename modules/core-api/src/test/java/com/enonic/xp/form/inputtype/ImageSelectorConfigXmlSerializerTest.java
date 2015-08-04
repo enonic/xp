@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -30,22 +28,6 @@ public class ImageSelectorConfigXmlSerializerTest
     }
 
     @Test
-    public void serializeConfig()
-        throws IOException, SAXException
-    {
-        // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
-        builder.relationshipType( RelationshipTypeName.REFERENCE );
-        ImageSelectorConfig config = builder.build();
-
-        // exercise
-        final Document doc = serializer.generate( config );
-
-        // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
-    }
-
-    @Test
     public void parseConfig()
         throws IOException
     {
@@ -55,7 +37,7 @@ public class ImageSelectorConfigXmlSerializerTest
         ImageSelectorConfig expected = builder.build();
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -78,7 +60,7 @@ public class ImageSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -98,7 +80,7 @@ public class ImageSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -115,7 +97,7 @@ public class ImageSelectorConfigXmlSerializerTest
         ImageSelectorConfig expected = ImageSelectorConfig.create().build();
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

@@ -5,25 +5,12 @@ import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
-import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
 final class ImageSelectorConfigXmlSerializer
-    extends AbstractInputTypeConfigXmlSerializer<ImageSelectorConfig>
+    implements AbstractInputTypeConfigXmlSerializer<ImageSelectorConfig>
 {
     public static final ImageSelectorConfigXmlSerializer DEFAULT = new ImageSelectorConfigXmlSerializer();
-
-    @Override
-    protected void serializeConfig( final ImageSelectorConfig relationshipConfig, final DomBuilder builder )
-    {
-        builder.start( "relationship-type" );
-        if ( relationshipConfig.getRelationshipType() != null )
-        {
-            builder.text( relationshipConfig.getRelationshipType().toString() );
-        }
-
-        builder.end();
-    }
 
     @Override
     public ImageSelectorConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
@@ -41,5 +28,4 @@ final class ImageSelectorConfigXmlSerializer
 
         return builder.build();
     }
-
 }
