@@ -1,15 +1,12 @@
 package com.enonic.xp.form.inputtype;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
 public abstract class TimezoneConfigJsonSerializer<T extends TimezoneConfig>
-    extends AbstractInputTypeConfigJsonSerializer<T>
+    implements InputTypeConfigJsonSerializer<T>
 {
-
     @Override
     public JsonNode serializeConfig( final T config, final ObjectMapper objectMapper )
     {

@@ -15,7 +15,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 @Beta
 public class ContentSelectorConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<ContentSelectorConfig>
+    implements InputTypeConfigJsonSerializer<ContentSelectorConfig>
 {
     public static final ContentSelectorConfigJsonSerializer DEFAULT = new ContentSelectorConfigJsonSerializer();
 

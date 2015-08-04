@@ -39,7 +39,7 @@ final class Date
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return DateConfigJsonSerializer.DEFAULT;
     }

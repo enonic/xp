@@ -12,7 +12,7 @@ import com.google.common.annotations.Beta;
 
 @Beta
 public class ComboBoxConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<ComboBoxConfig>
+    implements InputTypeConfigJsonSerializer<ComboBoxConfig>
 {
     public static final ComboBoxConfigJsonSerializer DEFAULT = new ComboBoxConfigJsonSerializer();
 

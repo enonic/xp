@@ -58,7 +58,7 @@ public abstract class InputType
         return configClass;
     }
 
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return null;
     }

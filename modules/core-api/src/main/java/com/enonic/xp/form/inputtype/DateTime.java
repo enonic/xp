@@ -21,7 +21,7 @@ public class DateTime
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return DateTimeConfigJsonSerializer.DEFAULT;
     }

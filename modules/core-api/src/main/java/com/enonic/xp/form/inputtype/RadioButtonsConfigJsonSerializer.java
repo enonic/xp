@@ -12,7 +12,7 @@ import com.google.common.annotations.Beta;
 
 @Beta
 public class RadioButtonsConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<RadioButtonsConfig>
+    implements InputTypeConfigJsonSerializer<RadioButtonsConfig>
 {
     public static final RadioButtonsConfigJsonSerializer DEFAULT = new RadioButtonsConfigJsonSerializer();
 

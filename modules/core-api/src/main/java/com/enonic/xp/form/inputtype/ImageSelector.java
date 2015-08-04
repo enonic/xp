@@ -17,7 +17,7 @@ final class ImageSelector
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return ImageSelectorConfigJsonSerializer.DEFAULT;
     }

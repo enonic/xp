@@ -11,7 +11,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 @Beta
 public class ImageSelectorConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<ImageSelectorConfig>
+    implements InputTypeConfigJsonSerializer<ImageSelectorConfig>
 {
     public static final ImageSelectorConfigJsonSerializer DEFAULT = new ImageSelectorConfigJsonSerializer();
 
