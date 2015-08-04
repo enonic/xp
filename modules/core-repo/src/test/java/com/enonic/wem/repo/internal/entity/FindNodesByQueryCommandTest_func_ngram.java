@@ -72,7 +72,7 @@ public class FindNodesByQueryCommandTest_func_ngram
             parent( NodePath.ROOT ).
             data( data ).
             indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( "content_default" ).
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
@@ -85,7 +85,7 @@ public class FindNodesByQueryCommandTest_func_ngram
             parent( NodePath.ROOT ).
             data( data2 ).
             indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( "content_default" ).
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );

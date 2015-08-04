@@ -190,7 +190,7 @@ public abstract class AbstractNodeTest
     {
         final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
             indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
+                analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
                 build() ).
             build();
 

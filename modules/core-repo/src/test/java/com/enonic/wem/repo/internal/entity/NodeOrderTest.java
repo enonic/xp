@@ -5,6 +5,8 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
@@ -24,8 +26,6 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.util.GeoPoint;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 import static org.junit.Assert.*;
 
@@ -108,7 +108,7 @@ public class NodeOrderTest
             data( data ).
             setNodeId( NodeId.from( name ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
+                analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
                 build() ).
             build() );
     }

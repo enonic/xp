@@ -16,9 +16,11 @@ public final class NodeConstants
 
     private static final User NODE_SUPER_USER = User.create().key( NODE_SUPER_USER_KEY ).login( "node" ).build();
 
-    public static final String DEFAULT_FULLTEXT_SEARCH_ANALYZER = "fulltext_default";
+    public static final String DEFAULT_FULLTEXT_SEARCH_ANALYZER = "fulltext_search_default";
 
-    public static final String DEFAULT_NGRAM_SEARCH_ANALYZER = "ngram_search";
+    public static final String DEFAULT_NGRAM_SEARCH_ANALYZER = "ngram_search_default";
+
+    public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
     public static final AuthenticationInfo NODE_SU_AUTH_INFO = AuthenticationInfo.create().
         principals( NODE_SUPER_USER_KEY, RoleKeys.ADMIN ).

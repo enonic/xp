@@ -2,7 +2,7 @@
   "simple_query_string": {
     "query": "mysearchphrase",
     "fields": ["myfield._analyzed"],
-    "analyzer": "fulltext_default",
+    "analyzer": "fulltext_search_default",
     "default_operator": "or"
   }
 }

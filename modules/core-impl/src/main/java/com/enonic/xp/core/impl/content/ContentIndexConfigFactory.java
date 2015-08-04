@@ -33,7 +33,7 @@ class ContentIndexConfigFactory
     private static IndexConfigDocument doCreateIndexConfig()
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
-            analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
+            analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
             add( PAGE, IndexConfig.MINIMAL ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).

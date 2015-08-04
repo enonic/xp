@@ -52,7 +52,7 @@
         "type": "custom",
         "tokenizer": "standard"
       },
-      "ngram_search": {
+      "ngram_search_default": {
         "type": "custom",
         "filter": [
           "standard",
@@ -62,7 +62,7 @@
         "type": "custom",
         "tokenizer": "standard"
       },
-      "fulltext_default": {
+      "fulltext_search_default": {
         "type": "custom",
         "filter": [
           "standard",
@@ -72,7 +72,7 @@
         "type": "custom",
         "tokenizer": "standard"
       },
-      "content_default": {
+      "document_index_default": {
         "type": "custom",
         "filter": [
           "standard",

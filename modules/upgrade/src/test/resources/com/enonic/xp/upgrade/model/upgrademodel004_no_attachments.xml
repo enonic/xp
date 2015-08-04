@@ -61,7 +61,7 @@
     </property-set>
   </data>
   <indexConfigs>
-    <analyzer>content_default</analyzer>
+    <analyzer>document_index_default</analyzer>
     <defaultConfig>
       <decideByType>true</decideByType>
       <enabled>true</enabled>

@@ -16,7 +16,7 @@ import com.enonic.xp.repository.RepositoryId;
 @Beta
 public class ContentConstants
 {
-    public static final String CONTENT_DEFAULT_ANALYZER = "content_default";
+    public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
     public static final Branch BRANCH_DRAFT = Branch.create().
         name( "draft" ).

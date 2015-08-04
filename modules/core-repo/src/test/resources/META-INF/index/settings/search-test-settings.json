@@ -50,7 +50,7 @@
         "type": "custom",
         "tokenizer": "standard"
       },
-      "ngram_search": {
+      "ngram_search_default": {
         "type": "custom",
         "filter": [
           "standard",
@@ -60,7 +60,17 @@
         "type": "custom",
         "tokenizer": "standard"
       },
-      "content_default": {
+      "fulltext_search_default": {
+        "type": "custom",
+        "filter": [
+          "standard",
+          "lowercase",
+          "asciifolding"
+        ],
+        "type": "custom",
+        "tokenizer": "standard"
+      },
+      "document_index_default": {
         "type": "custom",
         "filter": [
           "standard",
