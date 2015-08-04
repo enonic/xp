@@ -5,18 +5,18 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FieldSetJson;
-import com.enonic.xp.form.FormItemJson;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormItemSetJson;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputJson;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.form.inputtype.NullConfig;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.Assert.*;
+import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 
 public class FormItemJsonTest
 {
@@ -29,7 +29,7 @@ public class FormItemJsonTest
     }
 
     @Test
-    public void deserialize_serialization_of_Input()
+    public void serialization_of_Input()
         throws IOException
     {
         InputJson inputJson = new InputJson( Input.create().
@@ -45,20 +45,12 @@ public class FormItemJsonTest
             inputType( InputTypes.TEXT_LINE ).
             build() );
 
-        // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( inputJson );
-
-        // de-serialize
-        FormItemJson parsedFormItem = jsonTestHelper.objectMapper().readValue( expectedSerialization, FormItemJson.class );
-
-        // serialize from json
-        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedFormItem );
-
-        assertEquals( expectedSerialization, serializationOfDeSerialization );
+        JsonNode json = jsonTestHelper.objectToJson( inputJson );
+        assertJsonEquals( jsonTestHelper.loadTestJson( "input.json" ), json );
     }
 
     @Test
-    public void deserialize_serialization_of_Input_with_config()
+    public void serialization_of_Input_with_config()
         throws IOException
     {
         InputJson inputJson = new InputJson( Input.create().
@@ -71,23 +63,14 @@ public class FormItemJsonTest
             helpText( "Help text" ).
             occurrences( 1, 3 ).
             inputType( InputTypes.TEXT_AREA ).
-            inputTypeConfig( NullConfig.create() ).
             build() );
 
-        // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( inputJson );
-
-        // de-serialize
-        FormItemJson parsedFormItem = jsonTestHelper.objectMapper().readValue( expectedSerialization, FormItemJson.class );
-
-        // serialize from json
-        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedFormItem );
-
-        assertEquals( expectedSerialization, serializationOfDeSerialization );
+        JsonNode json = jsonTestHelper.objectToJson( inputJson );
+        assertJsonEquals( jsonTestHelper.loadTestJson( "inputWithConfig.json" ), json );
     }
 
     @Test
-    public void deserialize_serialization_of_FormItemSet()
+    public void serialization_of_FormItemSet()
         throws IOException
     {
         FormItemSetJson formItemSetJson = new FormItemSetJson( FormItemSet.create().
@@ -100,20 +83,12 @@ public class FormItemJsonTest
             addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
-        // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( formItemSetJson );
-
-        // de-serialize
-        FormItemJson parsedFormItem = jsonTestHelper.objectMapper().readValue( expectedSerialization, FormItemJson.class );
-
-        // serialize from json
-        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedFormItem );
-
-        assertEquals( expectedSerialization, serializationOfDeSerialization );
+        JsonNode json = jsonTestHelper.objectToJson( formItemSetJson );
+        assertJsonEquals( jsonTestHelper.loadTestJson( "formItemSet.json" ), json );
     }
 
     @Test
-    public void deserialize_serialization_of_FieldSet()
+    public void serialization_of_FieldSet()
         throws IOException
     {
         FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.create().
@@ -123,15 +98,7 @@ public class FormItemJsonTest
             addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build() );
 
-        // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( fieldSetJson );
-
-        // de-serialize
-        FormItemJson parsedFormItem = jsonTestHelper.objectMapper().readValue( expectedSerialization, FormItemJson.class );
-
-        // serialize from json
-        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedFormItem );
-
-        assertEquals( expectedSerialization, serializationOfDeSerialization );
+        JsonNode json = jsonTestHelper.objectToJson( fieldSetJson );
+        assertJsonEquals( jsonTestHelper.loadTestJson( "fieldSet.json" ), json );
     }
 }

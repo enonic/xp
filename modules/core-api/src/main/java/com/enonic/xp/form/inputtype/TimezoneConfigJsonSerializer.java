@@ -14,26 +14,4 @@ public abstract class TimezoneConfigJsonSerializer<T extends TimezoneConfig>
         jsonConfig.put( "withTimezone", config.isWithTimezone() );
         return jsonConfig;
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public T parseConfig( final JsonNode inputTypeConfigNode )
-    {
-        final T.Builder builder = T.create();
-        final JsonNode withTimeZoneNode = inputTypeConfigNode.get( "withTimezone" );
-        if ( withTimeZoneNode != null && !withTimeZoneNode.isNull() )
-        {
-            builder.withTimezone( withTimeZoneNode.booleanValue() );
-        }
-        return (T) builder.build();
-    }
-
-    public void parseTimezone( final JsonNode inputTypeConfigNode, T.Builder builder )
-    {
-        final JsonNode withTimeZoneNode = inputTypeConfigNode.get( "withTimezone" );
-        if ( withTimeZoneNode != null && !withTimeZoneNode.isNull() )
-        {
-            builder.withTimezone( withTimeZoneNode.booleanValue() );
-        }
-    }
 }

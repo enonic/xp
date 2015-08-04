@@ -1,0 +1,44 @@
+{
+  "FieldSet": {
+    "items": [
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": {"name": "TextLine"},
+          "label": "myTextLine",
+          "maximizeUIInputWidth": false,
+          "name": "myTextLine",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      },
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": {"name": "Date"},
+          "label": "myDate",
+          "maximizeUIInputWidth": false,
+          "name": "myDate",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      }
+    ],
+    "label": "My field set",
+    "name": "myFieldSet"
+  }
+}

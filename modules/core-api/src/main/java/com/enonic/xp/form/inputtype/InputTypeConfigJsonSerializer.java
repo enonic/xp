@@ -9,6 +9,4 @@ import com.google.common.annotations.Beta;
 public interface InputTypeConfigJsonSerializer<T extends InputTypeConfig>
 {
     JsonNode serializeConfig( T config, ObjectMapper objectMapper );
-
-    T parseConfig( JsonNode inputTypeConfigNode );
 }

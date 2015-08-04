@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -12,7 +11,6 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
-import static org.junit.Assert.*;
 
 public class ImageSelectorConfigJsonSerializerTest
 {
@@ -55,36 +53,5 @@ public class ImageSelectorConfigJsonSerializerTest
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
-    }
-
-    @Test
-    public void parseConfig()
-        throws IOException
-    {
-        // setup
-        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
-        builder.relationshipType( RelationshipTypeName.REFERENCE );
-        ImageSelectorConfig expected = builder.build();
-
-        // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-    }
-
-    @Test
-    public void parseConfig_relationshipType_not_existing()
-        throws IOException
-    {
-        // setup
-        String json = "{}";
-        ImageSelectorConfig expected = ImageSelectorConfig.create().build();
-
-        // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 }
