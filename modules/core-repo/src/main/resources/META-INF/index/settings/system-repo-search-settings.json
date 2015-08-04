@@ -14,13 +14,6 @@
       }
     },
     "analyzer": {
-      "default_index": {
-        "tokenizer": "keyword",
-        "filter": [
-          "lowercase",
-          "asciifolding"
-        ]
-      },
       "default_search": {
         "tokenizer": "keyword",
         "filter": [
