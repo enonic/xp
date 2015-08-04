@@ -121,8 +121,9 @@ public abstract class AbstractDescriptorServiceTest
         for ( final String path : paths )
         {
             final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
-
-            resourceList.add( new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) ) );
+            final String filePath = application.getKey().toString() + path;
+            final File file = new File( this.applicationsDir, filePath );
+            resourceList.add( new Resource( resourceKey, file.toURI().toURL() ) );
         }
         Resources resources = Resources.from( resourceList );
 
