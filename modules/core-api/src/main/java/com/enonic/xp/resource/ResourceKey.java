@@ -1,7 +1,5 @@
 package com.enonic.xp.resource;
 
-import java.net.URL;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
@@ -11,8 +9,6 @@ import com.enonic.xp.app.ApplicationKey;
 @Beta
 public final class ResourceKey
 {
-    private final static String URL_PROTOCOL_PREFIX = "applicationKey";
-
     private final String uri;
 
     private final ApplicationKey applicationKey;
@@ -117,11 +113,5 @@ public final class ResourceKey
         Preconditions.checkNotNull( path );
 
         return new ResourceKey( application, path );
-    }
-
-    public static ResourceKey from( final URL url )
-    {
-        Preconditions.checkArgument( URL_PROTOCOL_PREFIX.equals( url.getProtocol() ), "Invalid applicationKey resource key URL." );
-        return ResourceKey.from( url.getPath() );
     }
 }

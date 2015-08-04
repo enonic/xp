@@ -11,9 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class TextArea
     extends InputType
 {
-    TextArea()
+    public TextArea()
     {
-        super();
+        super( "TextArea", null, false );
     }
 
     @Override

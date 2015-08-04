@@ -10,9 +10,9 @@ import com.enonic.xp.util.Reference;
 final class FileUploader
     extends InputType
 {
-    FileUploader()
+    public FileUploader()
     {
-
+        super( "FileUploader", null, false );
     }
 
     @Override
@@ -38,4 +38,3 @@ final class FileUploader
         return Value.newReference( Reference.from( value ) );
     }
 }
-

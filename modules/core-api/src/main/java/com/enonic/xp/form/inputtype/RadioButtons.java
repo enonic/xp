@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,19 +11,19 @@ import com.enonic.xp.form.InvalidTypeException;
 final class RadioButtons
     extends InputType
 {
-    RadioButtons()
+    public RadioButtons()
     {
-        super( RadioButtonsConfig.class, true );
+        super( "RadioButtons", RadioButtonsConfig.class, true );
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return RadioButtonsConfigJsonSerializer.DEFAULT;
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return RadioButtonsConfigXmlSerializer.DEFAULT;
     }

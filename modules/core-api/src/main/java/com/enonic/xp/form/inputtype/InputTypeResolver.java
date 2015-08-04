@@ -1,14 +1,11 @@
 package com.enonic.xp.form.inputtype;
 
-
 import com.google.common.annotations.Beta;
 
 @Beta
-public class InputTypeResolver
+public final class InputTypeResolver
 {
     private final static InputTypeResolver INSTANCE = new InputTypeResolver();
-
-    private InputTypeExtensions inputTypeExtensions;
 
     public static InputTypeResolver get()
     {
@@ -22,25 +19,12 @@ public class InputTypeResolver
 
     public InputType resolve( final InputTypeName inputTypeName )
     {
-        final InputType foundType;
-        if ( inputTypeName.isCustom() )
-        {
-            foundType = inputTypeExtensions.getInputType( inputTypeName.toString() );
-        }
-        else
-        {
-            foundType = InputTypes.parse( inputTypeName.getName() );
-        }
+        final InputType foundType = InputTypes.find( inputTypeName.getName() );
         if ( foundType == null )
         {
             throw new IllegalArgumentException( "InputType not found: " + inputTypeName );
         }
 
         return foundType;
-    }
-
-    public void setInputTypeExtensions( final InputTypeExtensions inputTypeExtensions )
-    {
-        this.inputTypeExtensions = inputTypeExtensions;
     }
 }

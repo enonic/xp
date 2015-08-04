@@ -13,8 +13,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class ImageUploader
     extends InputType
 {
-    ImageUploader()
+    public ImageUploader()
     {
+        super( "ImageUploader", null, false );
     }
 
     @Override

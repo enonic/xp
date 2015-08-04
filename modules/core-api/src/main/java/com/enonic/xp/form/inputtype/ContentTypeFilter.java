@@ -14,6 +14,11 @@ import com.enonic.xp.form.InvalidTypeException;
 public class ContentTypeFilter
     extends InputType
 {
+    public ContentTypeFilter()
+    {
+        super( "ContentTypeFilter", null, false );
+    }
+
     @Override
     public void checkBreaksRequiredContract( final Property property )
     {

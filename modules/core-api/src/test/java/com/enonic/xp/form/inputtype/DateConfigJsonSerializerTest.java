@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
-import static org.junit.Assert.*;
 
 public class DateConfigJsonSerializerTest
 {
@@ -39,36 +37,5 @@ public class DateConfigJsonSerializerTest
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
-    }
-
-    @Test
-    public void parseConfig()
-        throws IOException
-    {
-        // setup
-        DateConfig.Builder builder = DateConfig.create();
-        builder.withTimezone( true );
-        DateConfig expected = builder.build();
-
-        // exercise
-        DateConfig parsed = serializer.parseConfig( jsonHelper.loadTestJson( "parseConfig.json" ) );
-
-        // verify
-        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
-    }
-
-    @Test
-    public void parseConfig_relationshipType_not_existing()
-        throws IOException
-    {
-        // setup
-        String json = "{}";
-        DateConfig expected = DateConfig.create().build();
-
-        // exercise
-        DateConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );
-
-        // verify
-        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
     }
 }

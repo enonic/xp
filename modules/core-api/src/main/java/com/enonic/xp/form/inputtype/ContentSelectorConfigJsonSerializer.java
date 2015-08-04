@@ -1,8 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,12 +7,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
-
 
 @Beta
 public class ContentSelectorConfigJsonSerializer
-    extends AbstractInputTypeConfigJsonSerializer<ContentSelectorConfig>
+    implements InputTypeConfigJsonSerializer<ContentSelectorConfig>
 {
     public static final ContentSelectorConfigJsonSerializer DEFAULT = new ContentSelectorConfigJsonSerializer();
 
@@ -46,32 +41,5 @@ public class ContentSelectorConfigJsonSerializer
         }
 
         return jsonConfig;
-    }
-
-    @Override
-    public ContentSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
-    {
-        final ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
-        final JsonNode relationshipTypeNode = inputTypeConfigNode.get( RELATIONSHIP_TYPE_KEY );
-        if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
-        {
-            builder.relationshipType( RelationshipTypeName.from( relationshipTypeNode.textValue() ) );
-        }
-
-        final JsonNode allowedNode = inputTypeConfigNode.get( ALLOWED_CONTENT_TYPE_KEY );
-        final ArrayNode allowedContentTypesArray = allowedNode != null && allowedNode.isArray() ? (ArrayNode) allowedNode : null;
-        if ( allowedContentTypesArray != null )
-        {
-            for ( JsonNode allowContentTypeNode : allowedContentTypesArray )
-            {
-                final String allowContentTypeText = allowContentTypeNode.asText();
-                if ( StringUtils.isNotBlank( allowContentTypeText ) )
-                {
-                    builder.addAllowedContentType( ContentTypeName.from( allowContentTypeText ) );
-                }
-            }
-        }
-
-        return builder.build();
     }
 }

@@ -3,28 +3,12 @@ package com.enonic.xp.form.inputtype;
 import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 
 final class RadioButtonsConfigXmlSerializer
-    extends AbstractInputTypeConfigXmlSerializer
+    implements InputTypeConfigXmlSerializer
 {
     public static final RadioButtonsConfigXmlSerializer DEFAULT = new RadioButtonsConfigXmlSerializer();
-
-    @Override
-    protected void serializeConfig( final InputTypeConfig config, final DomBuilder builder )
-    {
-        final RadioButtonsConfig radioButtonsConfig = (RadioButtonsConfig) config;
-        builder.start( "options" );
-        for ( final Option option : radioButtonsConfig.getOptions() )
-        {
-            builder.start( "option" );
-            builder.start( "label" ).text( option.getLabel() ).end();
-            builder.start( "value" ).text( option.getValue() ).end();
-            builder.end();
-        }
-        builder.end();
-    }
 
     @Override
     public InputTypeConfig parseConfig( final ApplicationKey currentApplication, final Element elem )

@@ -1,131 +1,131 @@
 {
-    "abstract": false,
-    "allowChildContent": true,
-    "contentDisplayNameScript": null,
-    "createdTime": "2013-01-01T12:00:00Z",
-    "creator": null,
-    "deletable": false,
-    "description": null,
-    "displayName": null,
-    "editable": false,
+  "abstract": false,
+  "allowChildContent": true,
+  "contentDisplayNameScript": null,
+  "createdTime": "2013-01-01T12:00:00Z",
+  "creator": null,
+  "deletable": false,
+  "description": null,
+  "displayName": null,
+  "editable": false,
   "final": true,
-    "form": {
-        "formItems": [
+  "form": {
+    "formItems": [
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": {
+            "name": "TextLine"
+          },
+          "label": "My text line",
+          "maximizeUIInputWidth": false,
+          "name": "myTextLine",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 1
+          },
+          "validationRegexp": null
+        }
+      },
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": {
+            "name": "Checkbox"
+          },
+          "label": "My checkbox input",
+          "maximizeUIInputWidth": false,
+          "name": "myCheckbox",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      },
+      {
+        "FieldSet": {
+          "items": [
             {
-                "Input": {
-                    "config": { },
-                    "customText": null,
-                    "helpText": null,
-                    "immutable": false,
-                    "indexed": false,
-                    "inputType": {
-                        "name": "TextLine"
-                    },
-                    "label": "My text line",
-                  "maximizeUIInputWidth": false,
-                    "name": "myTextLine",
-                    "occurrences": {
-                        "maximum": 1,
-                        "minimum": 1
-                    },
-                    "validationRegexp": null
-                }
-            },
-            {
-                "Input": {
-                    "config": { },
-                    "customText": null,
-                    "helpText": null,
-                    "immutable": false,
-                    "indexed": false,
-                    "inputType": {
-                        "name": "custom:DummyCustomInputType"
-                    },
-                    "label": "My custom input",
-                  "maximizeUIInputWidth": false,
-                    "name": "myCustomInput",
-                    "occurrences": {
-                        "maximum": 1,
-                        "minimum": 0
-                    },
-                    "validationRegexp": null
-                }
-            },
-            {
-                "FieldSet": {
-                    "items": [
-                        {
-                            "Input": {
-                                "config": { },
-                                "customText": null,
-                                "helpText": null,
-                                "immutable": false,
-                                "indexed": false,
-                                "inputType": {
-                                    "name": "TextLine"
-                                },
-                                "label": "My text line",
-                              "maximizeUIInputWidth": false,
-                                "name": "myTextLine",
-                                "occurrences": {
-                                    "maximum": 1,
-                                    "minimum": 0
-                                },
-                                "validationRegexp": null
-                            }
-                        }
-                    ],
-                    "label": "My field set",
-                    "name": "myFieldSet"
-                }
-            },
-            {
-                "FormItemSet": {
-                    "customText": null,
-                    "helpText": null,
-                    "immutable": false,
-                    "items": [
-                        {
-                            "Input": {
-                                "config": { },
-                                "customText": null,
-                                "helpText": null,
-                                "immutable": false,
-                                "indexed": false,
-                                "inputType": {
-                                    "name": "TextLine"
-                                },
-                                "label": "My text line",
-                              "maximizeUIInputWidth": false,
-                                "name": "myTextLine",
-                                "occurrences": {
-                                    "maximum": 1,
-                                    "minimum": 0
-                                },
-                                "validationRegexp": null
-                            }
-                        }
-                    ],
-                    "label": "My form item set",
-                    "name": "myFormItemSet",
-                    "occurrences": {
-                        "maximum": 1,
-                        "minimum": 0
-                    }
-                }
-            },
-            {
-              "InlineMixin": {
-                    "name" : "mymixin",
-                "reference": "myapplication:mymixin"
-                }
+              "Input": {
+                "config": {},
+                "customText": null,
+                "helpText": null,
+                "immutable": false,
+                "indexed": false,
+                "inputType": {
+                  "name": "TextLine"
+                },
+                "label": "My text line",
+                "maximizeUIInputWidth": false,
+                "name": "myTextLine",
+                "occurrences": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "validationRegexp": null
+              }
             }
-        ]
-    },
+          ],
+          "label": "My field set",
+          "name": "myFieldSet"
+        }
+      },
+      {
+        "FormItemSet": {
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "items": [
+            {
+              "Input": {
+                "config": {},
+                "customText": null,
+                "helpText": null,
+                "immutable": false,
+                "indexed": false,
+                "inputType": {
+                  "name": "TextLine"
+                },
+                "label": "My text line",
+                "maximizeUIInputWidth": false,
+                "name": "myTextLine",
+                "occurrences": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "validationRegexp": null
+              }
+            }
+          ],
+          "label": "My form item set",
+          "name": "myFormItemSet",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          }
+        }
+      },
+      {
+        "InlineMixin": {
+          "name": "mymixin",
+          "reference": "myapplication:mymixin"
+        }
+      }
+    ]
+  },
   "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_cty?hash=f95b70fdc3088560732a5ac135644506",
-    "metadata" : [ ],
-    "modifiedTime": null,
-    "modifier": null,
+  "metadata": [],
+  "modifiedTime": null,
+  "modifier": null,
   "name": "myapplication:my_cty",
-    "superType": "base:unstructured"
+  "superType": "base:unstructured"
 }

@@ -9,10 +9,11 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Double
     extends InputType
 {
-    Double()
+    public Double()
     {
+        super( "Double", null, false );
     }
-
+    
     @Override
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException

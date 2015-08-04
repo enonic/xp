@@ -11,23 +11,22 @@ import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
-public class DateTime
+final class DateTime
     extends InputType
 {
-
-    DateTime()
+    public DateTime()
     {
-        super( DateTimeConfig.class, false );
+        super( "DateTime", DateTimeConfig.class, false );
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return DateTimeConfigJsonSerializer.DEFAULT;
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return DateTimeConfigXmlSerializer.DEFAULT;
     }

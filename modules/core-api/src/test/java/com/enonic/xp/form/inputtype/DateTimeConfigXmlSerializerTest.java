@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.XmlTestHelper;
@@ -29,22 +27,6 @@ public class DateTimeConfigXmlSerializerTest
     }
 
     @Test
-    public void serializeConfig()
-        throws IOException, SAXException
-    {
-        // setup
-        DateTimeConfig.Builder builder = DateTimeConfig.create();
-        builder.withTimezone( true );
-        DateTimeConfig config = builder.build();
-
-        // exercise
-        final Document doc = serializer.generate( config );
-
-        // verify
-        assertEquals( xmlHelper.loadTestXml2( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
-    }
-
-    @Test
     public void parseConfig()
         throws IOException
     {
@@ -54,7 +36,7 @@ public class DateTimeConfigXmlSerializerTest
         DateTimeConfig expected = builder.build();
 
         // exercise
-        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ) );
+        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -74,7 +56,7 @@ public class DateTimeConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
+        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -91,7 +73,7 @@ public class DateTimeConfigXmlSerializerTest
         DateTimeConfig expected = DateTimeConfig.create().build();
 
         // exercise
-        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
+        DateTimeConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );

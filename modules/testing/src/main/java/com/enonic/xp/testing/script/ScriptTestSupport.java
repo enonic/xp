@@ -23,12 +23,10 @@ import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.testing.resource.ResourceUrlRegistry;
-import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
 public abstract class ScriptTestSupport
 {
-    private final static ApplicationKey DEFAULT_MODULE_KEY = ApplicationKey.from( "mymodule" );
+    private final static ApplicationKey DEFAULT_MODULE_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptServiceImpl scriptService;
 
@@ -41,9 +39,6 @@ public abstract class ScriptTestSupport
     public ScriptTestSupport()
     {
         this.scriptService = new ScriptServiceImpl();
-
-        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
-        urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         this.bundleContext = Mockito.mock( BundleContext.class );
 

@@ -13,8 +13,7 @@ final class DateConfigXmlSerializer
     public DateConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
         final DateConfig.Builder builder = DateConfig.create();
-        parseTimezone( currentApplication, elem, builder );
+        parseTimezone( elem, builder );
         return builder.build();
     }
-
 }

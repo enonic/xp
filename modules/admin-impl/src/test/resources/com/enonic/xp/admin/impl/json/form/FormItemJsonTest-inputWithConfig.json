@@ -1,0 +1,18 @@
+{
+  "Input": {
+    "config": {},
+    "customText": "Custom text",
+    "helpText": "Help text",
+    "immutable": true,
+    "indexed": true,
+    "inputType": {"name": "TextArea"},
+    "label": "My TextLine",
+    "maximizeUIInputWidth": false,
+    "name": "myTextLine",
+    "occurrences": {
+      "maximum": 3,
+      "minimum": 1
+    },
+    "validationRegexp": "script"
+  }
+}

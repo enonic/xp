@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,8 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class HtmlArea
     extends InputType
 {
-    HtmlArea()
+    public HtmlArea()
     {
+        super( "HtmlArea", null, false );
     }
 
     @Override

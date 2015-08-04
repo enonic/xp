@@ -11,9 +11,14 @@ import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
-public class PageController
+final class PageController
     extends InputType
 {
+    public PageController()
+    {
+        super( "PageController", null, false );
+    }
+
     @Override
     public void checkBreaksRequiredContract( final Property property )
     {

@@ -12,8 +12,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class TinyMCE
     extends InputType
 {
-    TinyMCE()
+    public TinyMCE()
     {
+        super( "TinyMCE", null, false );
     }
 
     @Override

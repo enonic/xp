@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.acme.DummyCustomInputType;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
@@ -29,6 +28,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
+import static com.enonic.xp.form.inputtype.InputTypes.CHECKBOX;
 import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
 import static org.junit.Assert.*;
 
@@ -81,8 +81,9 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
-        String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "inlineMixinsToFormItems", "false" ).get().getAsString();
+        String jsonString =
+            request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam( "inlineMixinsToFormItems",
+                                                                                                                  "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_only_one_input-result.json", jsonString );
@@ -102,9 +103,9 @@ public class ContentTypeResourceTest
             build();
 
         Input myCustomInput = Input.create().
-            name( "myCustomInput" ).
-            inputType( new DummyCustomInputType() ).
-            label( "My custom input" ).
+            name( "myCheckbox" ).
+            inputType( CHECKBOX ).
+            label( "My checkbox input" ).
             required( false ).
             build();
 
@@ -149,8 +150,9 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
-        String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "inlineMixinsToFormItems", "false" ).get().getAsString();
+        String jsonString =
+            request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam( "inlineMixinsToFormItems",
+                                                                                                                  "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_all_formItem_types-result.json", jsonString );

@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,9 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Date
     extends InputType
 {
-    Date()
+    public Date()
     {
-        super( DateConfig.class, false );
+        super( "Date", DateConfig.class, false );
     }
 
     @Override
@@ -39,13 +38,13 @@ final class Date
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return DateConfigJsonSerializer.DEFAULT;
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return DateConfigXmlSerializer.DEFAULT;
     }

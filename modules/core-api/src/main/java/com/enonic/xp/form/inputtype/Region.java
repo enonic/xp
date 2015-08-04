@@ -11,8 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Region
     extends InputType
 {
-    Region()
+    public Region()
     {
+        super( "Region", null, false );
     }
 
     @Override

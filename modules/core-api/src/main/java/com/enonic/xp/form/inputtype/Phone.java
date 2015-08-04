@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,9 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class Phone
     extends InputType
 {
-    Phone()
+    public Phone()
     {
-
+        super( "Phone", null, false );
     }
 
     @Override

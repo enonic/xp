@@ -29,6 +29,8 @@ public final class XsltProcessor
 
     private final XsltProcessorErrors errors;
 
+    private final UriResolverImpl uriResolver;
+
     private Source xsltSource;
 
     private Source xmlSource;
@@ -41,6 +43,7 @@ public final class XsltProcessor
     {
         this.factory = factory;
         this.errors = new XsltProcessorErrors();
+        this.uriResolver = new UriResolverImpl();
     }
 
     public void setView( final ResourceKey view )
@@ -115,7 +118,7 @@ public final class XsltProcessor
     {
         try
         {
-            return ResourceKey.from( new URL( systemId ) );
+            return ResourceKey.from( new URL( systemId ).getPath() );
         }
         catch ( final IOException e )
         {
@@ -146,7 +149,7 @@ public final class XsltProcessor
         throws Exception
     {
         this.factory.setErrorListener( this.errors );
-        this.factory.setURIResolver( new UriResolverImpl() );
+        this.factory.setURIResolver( uriResolver );
         this.transformer = this.factory.newTransformer( this.xsltSource );
         this.transformer.setErrorListener( this.errors );
         this.transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
@@ -155,5 +158,6 @@ public final class XsltProcessor
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
+        this.uriResolver.setResourceService( resourceService );
     }
 }

@@ -13,8 +13,6 @@ import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlRegistry;
-import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 public abstract class AbstractScriptTest
 {
@@ -26,9 +24,6 @@ public abstract class AbstractScriptTest
     {
         this.scriptService = new ScriptServiceImpl();
         this.scriptService.addGlobalVariable( "assert", new AssertHelper() );
-
-        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockApplicationScheme();
-        urlRegistry.applicationsClassLoader( getClass().getClassLoader() );
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 

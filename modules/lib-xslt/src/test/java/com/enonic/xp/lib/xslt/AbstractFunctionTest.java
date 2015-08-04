@@ -15,8 +15,6 @@ import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.testing.resource.ResourceUrlRegistry;
-import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
 import static org.junit.Assert.*;
@@ -28,9 +26,6 @@ public abstract class AbstractFunctionTest
     @Before
     public final void setup()
     {
-        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
-        urlRegistry.modulesClassLoader( getClass().getClassLoader() );
-
         final XsltService service = new XsltService();
         service.setViewFunctionService( () -> Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 

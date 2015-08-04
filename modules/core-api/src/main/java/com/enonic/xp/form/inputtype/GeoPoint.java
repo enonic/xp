@@ -9,8 +9,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class GeoPoint
     extends InputType
 {
-    GeoPoint()
+    public GeoPoint()
     {
+        super( "GeoPoint", null, false );
     }
 
     @Override

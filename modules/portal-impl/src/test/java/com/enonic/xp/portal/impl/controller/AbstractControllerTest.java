@@ -25,7 +25,6 @@ import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractControllerTest
@@ -54,8 +53,6 @@ public abstract class AbstractControllerTest
     public void setup()
         throws Exception
     {
-        ResourceUrlTestHelper.mockApplicationScheme().applicationsClassLoader( getClass().getClassLoader() );
-
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
 

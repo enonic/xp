@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.Property;
@@ -12,19 +11,19 @@ import com.enonic.xp.form.InvalidTypeException;
 final class ContentSelector
     extends InputType
 {
-    ContentSelector()
+    public ContentSelector()
     {
-        super( ContentSelectorConfig.class, true );
+        super( "ContentSelector", ContentSelectorConfig.class, true );
     }
 
     @Override
-    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return ContentSelectorConfigJsonSerializer.DEFAULT;
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return ContentSelectorConfigXmlSerializer.DEFAULT;
     }
