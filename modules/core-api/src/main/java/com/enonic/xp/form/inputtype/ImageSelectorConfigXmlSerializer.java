@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.xml.DomHelper;
 
 final class ImageSelectorConfigXmlSerializer
-    implements AbstractInputTypeConfigXmlSerializer<ImageSelectorConfig>
+    implements InputTypeConfigXmlSerializer<ImageSelectorConfig>
 {
     public static final ImageSelectorConfigXmlSerializer DEFAULT = new ImageSelectorConfigXmlSerializer();
 

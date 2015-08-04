@@ -24,7 +24,7 @@ final class RadioButtons
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return RadioButtonsConfigXmlSerializer.DEFAULT;
     }

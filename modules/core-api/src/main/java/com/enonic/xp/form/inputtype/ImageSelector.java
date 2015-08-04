@@ -23,7 +23,7 @@ final class ImageSelector
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return ImageSelectorConfigXmlSerializer.DEFAULT;
     }

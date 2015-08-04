@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.xml.DomHelper;
 
 final class ComboBoxConfigXmlSerializer
-    implements AbstractInputTypeConfigXmlSerializer<ComboBoxConfig>
+    implements InputTypeConfigXmlSerializer<ComboBoxConfig>
 {
     public static final ComboBoxConfigXmlSerializer DEFAULT = new ComboBoxConfigXmlSerializer();
 

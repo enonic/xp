@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 import com.enonic.xp.xml.DomHelper;
 
 abstract class TimezoneConfigXmlSerializer<T extends TimezoneConfig>
-    implements AbstractInputTypeConfigXmlSerializer<T>
+    implements InputTypeConfigXmlSerializer<T>
 {
     protected final void parseTimezone( final Element elem, T.Builder builder )
     {

@@ -10,7 +10,7 @@ import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.xml.DomHelper;
 
 final class ContentSelectorConfigXmlSerializer
-    implements AbstractInputTypeConfigXmlSerializer<ContentSelectorConfig>
+    implements InputTypeConfigXmlSerializer<ContentSelectorConfig>
 {
     static final ContentSelectorConfigXmlSerializer DEFAULT = new ContentSelectorConfigXmlSerializer();
 

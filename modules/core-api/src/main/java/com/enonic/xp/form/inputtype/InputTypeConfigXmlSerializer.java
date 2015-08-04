@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.app.ApplicationKey;
 
 @Beta
-public interface AbstractInputTypeConfigXmlSerializer<T extends InputTypeConfig>
+public interface InputTypeConfigXmlSerializer<T extends InputTypeConfig>
 {
     T parseConfig( ApplicationKey currentApp, Element elem );
 }

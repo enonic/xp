@@ -63,7 +63,7 @@ public abstract class InputType
         return null;
     }
 
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return null;
     }

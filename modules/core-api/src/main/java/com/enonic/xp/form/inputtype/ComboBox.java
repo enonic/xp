@@ -24,7 +24,7 @@ final class ComboBox
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return ComboBoxConfigXmlSerializer.DEFAULT;
     }

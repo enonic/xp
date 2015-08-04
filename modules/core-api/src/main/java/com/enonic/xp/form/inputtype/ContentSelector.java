@@ -24,7 +24,7 @@ final class ContentSelector
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return ContentSelectorConfigXmlSerializer.DEFAULT;
     }

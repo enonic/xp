@@ -27,7 +27,7 @@ public class DateTime
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return DateTimeConfigXmlSerializer.DEFAULT;
     }

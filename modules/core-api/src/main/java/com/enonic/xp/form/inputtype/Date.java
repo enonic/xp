@@ -45,7 +45,7 @@ final class Date
     }
 
     @Override
-    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
         return DateConfigXmlSerializer.DEFAULT;
     }

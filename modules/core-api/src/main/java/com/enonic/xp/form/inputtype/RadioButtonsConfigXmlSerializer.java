@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.xml.DomHelper;
 
 final class RadioButtonsConfigXmlSerializer
-    implements AbstractInputTypeConfigXmlSerializer
+    implements InputTypeConfigXmlSerializer
 {
     public static final RadioButtonsConfigXmlSerializer DEFAULT = new RadioButtonsConfigXmlSerializer();
 
