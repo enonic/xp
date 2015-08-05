@@ -7,16 +7,24 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.image.ImageFilter;
+import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageHelper;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.filter.ScaleMaxFunction;
 import com.enonic.xp.image.filter.ScaleSquareFunction;
 import com.enonic.xp.image.filter.ScaleWidthFunction;
+import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.Exceptions;
 
@@ -24,6 +32,10 @@ import com.enonic.xp.util.Exceptions;
 public class ImageServiceImpl
     implements ImageService
 {
+    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
+
+    private ImageFilterBuilder imageFilterBuilder;
+
     @Override
     public BufferedImage readImage( final ByteSource blob, final ReadImageParams readImageParams )
     {
@@ -32,15 +44,31 @@ public class ImageServiceImpl
 
         if ( bufferedImage != null )
         {
+            //Apply the cropping
             if ( readImageParams.getCropping() != null )
             {
                 bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
             }
-            if ( readImageParams.getSize() > 0 && ( bufferedImage.getWidth() >= readImageParams.getSize() ) )
+
+            //Applies the scaling
+            if ( readImageParams.getScaleParams() != null )
+            {
+                bufferedImage = applyScalingParams( bufferedImage, readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
+            }
+            else if ( readImageParams.getScaleSize() > 0 && ( bufferedImage.getWidth() >= readImageParams.getScaleSize() ) )
             {
                 bufferedImage = applyScalingFunction( bufferedImage, readImageParams );
             }
-            if ( readImageParams.getOrientation() != null )
+
+            //Applies the filters
+            if ( !Strings.isNullOrEmpty( readImageParams.getFilterParam() ) )
+            {
+                bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam(), readImageParams.getBackgroundColor(),
+                                              readImageParams.getFormat() );
+            }
+
+            //Applies the rotation
+            if ( readImageParams.getOrientation() != ImageOrientation.TopLeft )
             {
                 bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
             }
@@ -76,29 +104,46 @@ public class ImageServiceImpl
 
     }
 
+    private BufferedImage applyScalingParams( final BufferedImage sourceImage, final ScaleParams scaleParams, final FocalPoint focalPoint )
+    {
+        final ImageScaleFunction imageScaleFunction = imageScaleFunctionBuilder.build( scaleParams, focalPoint );
+        return imageScaleFunction.scale( sourceImage );
+    }
+
     private BufferedImage applyScalingFunction( final BufferedImage bufferedImage, final ReadImageParams readImageParams )
     {
         if ( readImageParams.isScaleSquare() )
         {
-            return new ScaleSquareFunction( readImageParams.getSize() ).scale( bufferedImage );
+            return new ScaleSquareFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
         }
         else if ( readImageParams.isScaleWidth() )
         {
-            return new ScaleWidthFunction( readImageParams.getSize() ).scale( bufferedImage );
+            return new ScaleWidthFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
         }
         else
         {
-            return new ScaleMaxFunction( readImageParams.getSize() ).scale( bufferedImage );
+            return new ScaleMaxFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
+        }
+    }
+
+    private BufferedImage applyFilters( final BufferedImage sourceImage, final String filterParam, final int backgroundColor,
+                                        String format )
+    {
+        final ImageFilter imageFilter = imageFilterBuilder.build( filterParam );
+        final BufferedImage targetImage = imageFilter.filter( sourceImage );
+
+        if ( !ImageHelper.supportsAlphaChannel( format ) )
+        {
+            return ImageHelper.removeAlphaChannel( targetImage, backgroundColor );
+        }
+        else
+        {
+            return targetImage;
         }
     }
 
     private BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )
     {
-        if ( orientation == ImageOrientation.TopLeft )
-        {
-            return bufferedImage;
-        }
-
         final AffineTransform transform = new AffineTransform();
         int resultWidth = bufferedImage.getWidth();
         int resultHeight = bufferedImage.getHeight();
@@ -152,5 +197,15 @@ public class ImageServiceImpl
         return op.filter( bufferedImage, destinationImage );
     }
 
+    @Reference
+    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
+    {
+        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
+    }
 
+    @Reference
+    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
+    {
+        this.imageFilterBuilder = imageFilterBuilder;
+    }
 }

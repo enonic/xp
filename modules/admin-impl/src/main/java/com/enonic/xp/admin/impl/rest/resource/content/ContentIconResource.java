@@ -105,7 +105,7 @@ public final class ContentIconResource
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
 
                 final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    size( size ).
+                    scaleSize( size ).
                     scaleSquare( crop ).
                     orientation( imageOrientation ).
                     build();
@@ -126,10 +126,10 @@ public final class ContentIconResource
             if ( attachmentBinary != null )
             {
                 final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    size( size ).
+                    cropping( media.getCropping() ).
+                    scaleSize( size ).
                     scaleSquare( crop ).
                     orientation( getSourceAttachmentOrientation( media ) ).
-                    cropping( media.getCropping() ).
                     build();
 
                 final BufferedImage contentImage = imageService.readImage( attachmentBinary, readImageParams );

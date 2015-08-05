@@ -4,6 +4,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageScaleFunctionBuilder;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -35,4 +36,7 @@ public interface PortalServices
     ImageScaleFunctionBuilder getImageScaleFunctionBuilder();
 
     ResourceService getResourceService();
+
+    ImageService getImageService();
+
 }

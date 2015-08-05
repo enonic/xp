@@ -111,10 +111,10 @@ public final class ContentImageResource
                 final Cropping cropping = source ? null : media.getCropping();
 
                 final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    size( size ).
-                    orientation( imageOrientation ).
                     cropping( cropping ).
+                    scaleSize( size ).
                     scaleWidth( scaleWidth ).
+                    orientation( imageOrientation ).
                     build();
 
                 final BufferedImage contentImage = imageService.readImage( binary, readImageParams );

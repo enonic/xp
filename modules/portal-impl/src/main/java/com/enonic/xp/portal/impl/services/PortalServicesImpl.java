@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageScaleFunctionBuilder;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -40,6 +41,8 @@ public final class PortalServicesImpl
     private SiteService siteService;
 
     private ResourceService resourceService;
+
+    private ImageService imageService;
 
     @Override
     public ApplicationService getApplicationService()
@@ -107,6 +110,12 @@ public final class PortalServicesImpl
         return this.resourceService;
     }
 
+    @Override
+    public ImageService getImageService()
+    {
+        return imageService;
+    }
+
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {
@@ -168,7 +177,14 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setResourceService( final ResourceService resourceService) {
+    public void setResourceService( final ResourceService resourceService )
+    {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setImageService( final ImageService imageService )
+    {
+        this.imageService = imageService;
     }
 }
