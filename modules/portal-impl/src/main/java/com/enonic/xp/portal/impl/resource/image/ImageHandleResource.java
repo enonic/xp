@@ -117,8 +117,8 @@ public final class ImageHandleResource
         {
             return sourceImage;
         }
-        final double width = sourceImage.getWidth() / cropping.zoom();
-        final double height = sourceImage.getHeight() / cropping.zoom();
+        final double width = sourceImage.getWidth();
+        final double height = sourceImage.getHeight();
         return sourceImage.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ),
                                         (int) ( width * cropping.width() ), (int) ( height * cropping.height() ) );
     }
