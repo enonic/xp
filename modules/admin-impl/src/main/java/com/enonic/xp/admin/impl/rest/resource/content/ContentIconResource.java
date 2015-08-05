@@ -27,6 +27,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
@@ -44,6 +46,8 @@ public final class ContentIconResource
     private ContentImageHelper helper;
 
     private MediaInfoService mediaInfoService;
+
+    private ImageService imageService;
 
     @GET
     @Path("{contentId}")
@@ -99,13 +103,14 @@ public final class ContentIconResource
             if ( binary != null )
             {
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                final ImageParams imageParams = ImageParams.newImageParams().
+
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                     size( size ).
-                    cropRequired( crop ).
+                    scaleSquare( crop ).
                     orientation( imageOrientation ).
                     build();
 
-                final BufferedImage thumbnailImage = helper.readAndRotateImage( binary, imageParams );
+                final BufferedImage thumbnailImage = imageService.readImage( binary, readImageParams );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -120,14 +125,14 @@ public final class ContentIconResource
             final ByteSource attachmentBinary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
             if ( attachmentBinary != null )
             {
-                final ImageParams imageParams = ImageParams.newImageParams().
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                     size( size ).
-                    cropRequired( crop ).
+                    scaleSquare( crop ).
                     orientation( getSourceAttachmentOrientation( media ) ).
-                    sourceCropping( media.getCropping() ).
+                    cropping( media.getCropping() ).
                     build();
 
-                final BufferedImage contentImage = helper.readAndRotateImage( attachmentBinary, imageParams );
+                final BufferedImage contentImage = imageService.readImage( attachmentBinary, readImageParams );
                 return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
             }
         }
@@ -171,5 +176,11 @@ public final class ContentIconResource
     public void setMediaInfoService( final MediaInfoService mediaInfoService )
     {
         this.mediaInfoService = mediaInfoService;
+    }
+
+    @Reference
+    public void setImageService( final ImageService imageService )
+    {
+        this.imageService = imageService;
     }
 }

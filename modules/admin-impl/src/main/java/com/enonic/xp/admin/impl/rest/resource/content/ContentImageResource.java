@@ -26,6 +26,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentType;
@@ -49,6 +51,8 @@ public final class ContentImageResource
     private ContentImageHelper helper;
 
     private MediaInfoService mediaInfoService;
+
+    private ImageService imageService;
 
     @GET
     @Path("{contentId}")
@@ -104,15 +108,16 @@ public final class ContentImageResource
             if ( binary != null )
             {
                 final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                final Cropping sourceCropping = source ? null : media.getCropping();
-                final ImageParams imageParams = ImageParams.newImageParams().
+                final Cropping cropping = source ? null : media.getCropping();
+
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                     size( size ).
                     orientation( imageOrientation ).
-                    sourceCropping( sourceCropping ).
+                    cropping( cropping ).
                     scaleWidth( scaleWidth ).
                     build();
 
-                final BufferedImage contentImage = helper.readAndRotateImage( binary, imageParams );
+                final BufferedImage contentImage = imageService.readImage( binary, readImageParams );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -174,5 +179,11 @@ public final class ContentImageResource
     public void setMediaInfoService( final MediaInfoService mediaInfoService )
     {
         this.mediaInfoService = mediaInfoService;
+    }
+
+    @Reference
+    public void setImageService( final ImageService imageService )
+    {
+        this.imageService = imageService;
     }
 }
