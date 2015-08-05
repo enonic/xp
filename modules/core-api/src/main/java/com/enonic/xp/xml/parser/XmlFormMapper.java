@@ -15,9 +15,9 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.form.inputtype.InputTypeConfigXmlSerializer;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
+import com.enonic.xp.form.inputtype.InputTypeConfigSerializer;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
@@ -149,11 +149,12 @@ public final class XmlFormMapper
             return type.getDefaultConfig();
         }
 
-        final InputTypeConfigXmlSerializer configXmlSerializer = type.getInputTypeConfigXmlSerializer();
-        if ( configXmlSerializer == null )
+        final InputTypeConfigSerializer configSerializer = type.getConfigSerializer();
+        if ( configSerializer == null )
         {
             return type.getDefaultConfig();
         }
-        return configXmlSerializer.parseConfig( this.currentApplication, value.getWrapped() );
+
+        return configSerializer.parseConfig( this.currentApplication, value.getWrapped() );
     }
 }

@@ -6,25 +6,32 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
+import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 import static org.junit.Assert.*;
 
-public class ImageSelectorConfigXmlSerializerTest
+public class ImageSelectorConfigSerializerTest
 {
     private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
 
     private XmlTestHelper xmlHelper;
 
-    private ImageSelectorConfigXmlSerializer serializer = new ImageSelectorConfigXmlSerializer();
+    private JsonTestHelper jsonHelper;
+
+    private ImageSelectorConfigSerializer serializer = new ImageSelectorConfigSerializer();
 
     @Before
     public void before()
     {
         xmlHelper = new XmlTestHelper( this );
+        jsonHelper = new JsonTestHelper( this );
     }
 
     @Test
@@ -42,7 +49,6 @@ public class ImageSelectorConfigXmlSerializerTest
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
-
 
     @Test
     public void parseConfig_with_contentTypeFilter_as_empty()
@@ -101,5 +107,36 @@ public class ImageSelectorConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
+    }
+
+    @Test
+    public void serializeConfig()
+        throws IOException
+    {
+        // setup
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
+        ImageSelectorConfig config = builder.build();
+
+        // exercise
+        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+
+        // verify
+        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
+    }
+
+    @Test
+    public void serializeConfig_with_no_explicit_relationShipType()
+        throws IOException
+    {
+        // setup
+        ImageSelectorConfig.Builder builder = ImageSelectorConfig.create();
+        ImageSelectorConfig config = builder.build();
+
+        // exercise
+        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+
+        // verify
+        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 }

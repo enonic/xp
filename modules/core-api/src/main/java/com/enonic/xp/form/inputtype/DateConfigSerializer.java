@@ -4,10 +4,10 @@ import org.w3c.dom.Element;
 
 import com.enonic.xp.app.ApplicationKey;
 
-final class DateConfigXmlSerializer
-    extends TimezoneConfigXmlSerializer<DateConfig>
+final class DateConfigSerializer
+    extends TimezoneConfigSerializer<DateConfig>
 {
-    public static final DateConfigXmlSerializer DEFAULT = new DateConfigXmlSerializer();
+    public static final DateConfigSerializer INSTANCE = new DateConfigSerializer();
 
     @Override
     public DateConfig parseConfig( final ApplicationKey currentApplication, final Element elem )

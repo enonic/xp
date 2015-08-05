@@ -5,8 +5,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
-import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
@@ -20,19 +18,13 @@ final class Checkbox
 
     @Override
     public void checkBreaksRequiredContract( final Property property )
-        throws BreaksRequiredContractException
     {
-
     }
 
     @Override
     public void checkTypeValidity( final Property property )
-        throws InvalidTypeException
     {
-        if ( !ValueTypes.BOOLEAN.equals( property.getType() ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.BOOLEAN );
-        }
+        validateType( property, ValueTypes.BOOLEAN );
     }
 
     @Override
@@ -40,7 +32,7 @@ final class Checkbox
     {
         if ( occurrences.getMinimum() != 0 )
         {
-            throw new InvalidOccurrencesConfigurationException(
+            throw new IllegalArgumentException(
                 "An Input of type " + this.getClass().getSimpleName() + " can only have 0 as minimum occurrences: " +
                     occurrences.getMinimum() );
         }

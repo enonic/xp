@@ -1,12 +1,8 @@
 package com.enonic.xp.form.inputtype;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
-import com.enonic.xp.form.InvalidTypeException;
 
 final class RadioButtons
     extends InputType
@@ -17,36 +13,21 @@ final class RadioButtons
     }
 
     @Override
-    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigSerializer getConfigSerializer()
     {
-        return RadioButtonsConfigJsonSerializer.DEFAULT;
-    }
-
-    @Override
-    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
-    {
-        return RadioButtonsConfigXmlSerializer.DEFAULT;
+        return RadioButtonsConfigSerializer.INSTANCE;
     }
 
     @Override
     public void checkBreaksRequiredContract( final Property property )
-        throws BreaksRequiredContractException
     {
-        final String stringValue = (String) property.getObject();
-        if ( StringUtils.isBlank( stringValue ) )
-        {
-            throw new BreaksRequiredContractException( property, this );
-        }
+        validateNotBlank( property );
     }
 
     @Override
     public void checkTypeValidity( final Property property )
-        throws InvalidTypeException
     {
-        if ( !ValueTypes.STRING.equals( property.getType() ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.STRING );
-        }
+        validateType( property, ValueTypes.STRING );
     }
 
     @Override

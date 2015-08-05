@@ -2,10 +2,16 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueType;
+import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.Occurrences;
 
 @Beta
@@ -44,12 +50,7 @@ public abstract class InputType
         return configClass;
     }
 
-    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
-    {
-        return null;
-    }
-
-    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    public InputTypeConfigSerializer getConfigSerializer()
     {
         return null;
     }
@@ -98,4 +99,29 @@ public abstract class InputType
     }
 
     public abstract Value createPropertyValue( final String value, final InputTypeConfig config );
+
+    protected final void validateType( final Property property, final ValueType type )
+    {
+        if ( property.getType() != type )
+        {
+            throw new InvalidTypeException( property, ValueTypes.STRING );
+        }
+    }
+
+    protected final void validateNotBlank( final Property property )
+    {
+        final String stringValue = property.getString();
+        if ( StringUtils.isBlank( stringValue ) )
+        {
+            throw new BreaksRequiredContractException( property, this );
+        }
+    }
+
+    protected final void validateNotNull( final Property property, final Object value )
+    {
+        if ( value == null )
+        {
+            throw new BreaksRequiredContractException( property, this );
+        }
+    }
 }

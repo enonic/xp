@@ -20,7 +20,6 @@ final class ImageUploader
 
     @Override
     public void checkBreaksRequiredContract( final Property property )
-        throws BreaksRequiredContractException
     {
         boolean isAttachment = ContentPropertyNames.MEDIA_ATTACHMENT.equals( property.getName() );
         boolean isX = ContentPropertyNames.MEDIA_FOCAL_POINT_X.equals( property.getName() );
@@ -35,14 +34,13 @@ final class ImageUploader
 
     @Override
     public void checkTypeValidity( final Property property )
-        throws InvalidTypeException
     {
         boolean isAttachment = ContentPropertyNames.MEDIA_ATTACHMENT.equals( property.getName() );
         boolean isX = ContentPropertyNames.MEDIA_FOCAL_POINT_X.equals( property.getName() );
         boolean isY = ContentPropertyNames.MEDIA_FOCAL_POINT_Y.equals( property.getName() );
-        if ( isAttachment && !ValueTypes.STRING.equals( property.getType() ) ||
-            isX && !ValueTypes.DOUBLE.equals( property.getType() ) ||
-            isY && !ValueTypes.DOUBLE.equals( property.getType() ) )
+        if ( isAttachment && ( ValueTypes.STRING != property.getType() ) ||
+            isX && ( ValueTypes.DOUBLE != property.getType() ) ||
+            isY && ( ValueTypes.DOUBLE != property.getType() ) )
         {
             throw new InvalidTypeException( property, isAttachment ? ValueTypes.STRING : ValueTypes.DOUBLE );
         }

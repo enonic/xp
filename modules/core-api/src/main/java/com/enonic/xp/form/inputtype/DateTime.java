@@ -1,13 +1,10 @@
 package com.enonic.xp.form.inputtype;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
 import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
@@ -20,33 +17,21 @@ final class DateTime
     }
 
     @Override
-    public InputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    public InputTypeConfigSerializer getConfigSerializer()
     {
-        return DateTimeConfigJsonSerializer.DEFAULT;
-    }
-
-    @Override
-    public InputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
-    {
-        return DateTimeConfigXmlSerializer.DEFAULT;
+        return DateTimeConfigSerializer.INSTANCE;
     }
 
     @Override
     public void checkBreaksRequiredContract( final Property property )
-        throws BreaksRequiredContractException
     {
-        final String stringValue = property.getString();
-        if ( StringUtils.isBlank( stringValue ) )
-        {
-            throw new BreaksRequiredContractException( property, this );
-        }
+        validateNotBlank( property );
     }
 
     @Override
     public void checkTypeValidity( final Property property )
-        throws InvalidTypeException
     {
-        if ( !ValueTypes.DATE_TIME.equals( property.getType() ) && !ValueTypes.LOCAL_DATE_TIME.equals( property.getType() ) )
+        if ( ( ValueTypes.DATE_TIME != property.getType() ) && ( ValueTypes.LOCAL_DATE_TIME != property.getType() ) )
         {
             throw new InvalidTypeException( property, ValueTypes.DATE_TIME );
         }
@@ -69,8 +54,7 @@ final class DateTime
                 "Expected config of type " + DateTimeConfig.class.getName() + ", got " + config.getClass() );
         }
 
-        DateTimeConfig dateTimeConfig = config == null ? (DateTimeConfig) getDefaultConfig() : (DateTimeConfig) config;
-
+        final DateTimeConfig dateTimeConfig = config == null ? (DateTimeConfig) getDefaultConfig() : (DateTimeConfig) config;
         if ( dateTimeConfig.isWithTimezone() )
         {
             return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );

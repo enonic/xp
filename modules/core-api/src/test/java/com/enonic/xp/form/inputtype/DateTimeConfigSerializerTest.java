@@ -6,24 +6,31 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
+import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 import static org.junit.Assert.*;
 
-public class DateTimeConfigXmlSerializerTest
+public class DateTimeConfigSerializerTest
 {
     private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
 
     private XmlTestHelper xmlHelper;
 
-    private DateTimeConfigXmlSerializer serializer = new DateTimeConfigXmlSerializer();
+    private JsonTestHelper jsonHelper;
+
+    private DateTimeConfigSerializer serializer = new DateTimeConfigSerializer();
 
     @Before
     public void before()
     {
         xmlHelper = new XmlTestHelper( this );
+        jsonHelper = new JsonTestHelper( this );
     }
 
     @Test
@@ -77,5 +84,21 @@ public class DateTimeConfigXmlSerializerTest
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
+    }
+
+    @Test
+    public void serializeConfig()
+        throws IOException
+    {
+        // setup
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
+        builder.withTimezone( true );
+        DateTimeConfig config = builder.build();
+
+        // exercise
+        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+
+        // verify
+        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 }

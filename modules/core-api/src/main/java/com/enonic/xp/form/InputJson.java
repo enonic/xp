@@ -29,9 +29,8 @@ public class InputJson
         if ( input.getInputType().hasConfig() && input.getInputTypeConfig() != null )
         {
 
-            this.configJson =
-                (ObjectNode) this.input.getInputType().getInputTypeConfigJsonSerializer().serializeConfig( this.input.getInputTypeConfig(),
-                                                                                                           objectMapper );
+            this.configJson = (ObjectNode) this.input.getInputType().getConfigSerializer().serializeConfig( this.input.getInputTypeConfig(),
+                                                                                                            objectMapper );
         }
         else
         {
