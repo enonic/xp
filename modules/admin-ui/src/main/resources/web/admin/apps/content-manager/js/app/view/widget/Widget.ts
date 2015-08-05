@@ -12,6 +12,7 @@ module app.view.widget {
 
             this.widgetName = name;
             this.initWidgetToggleButton();
+            this.widgetContents.setVisible(false);
             this.appendChild(this.widgetContents);
         }
 
@@ -27,7 +28,8 @@ module app.view.widget {
         }
 
         slideOut() {
-            this.widgetContents.getEl().getHTMLElement().style.maxHeight = "0px";
+            this.widgetContents.setVisible(false);
+            /*this.widgetContents.getEl().getHTMLElement().style.maxHeight = "0px";
             // there is a 100ms animation so wait until it's finished
             if (this.animationTimer) {
                 clearTimeout(this.animationTimer);
@@ -35,11 +37,12 @@ module app.view.widget {
             this.animationTimer = setTimeout(() => {
                 // this.updateFrameSize();
                 this.animationTimer = null;
-            }, 100);
+             }, 100);*/
         }
 
         slideIn() {
-            this.widgetContents.getEl().getHTMLElement().style.maxHeight = "300px";
+            this.widgetContents.setVisible(true);
+            /*this.widgetContents.getEl().getHTMLElement().style.maxHeight = "600px";
             // there is a 100ms animation so wait until it's finished
             if (this.animationTimer) {
                 clearTimeout(this.animationTimer);
@@ -47,7 +50,7 @@ module app.view.widget {
             this.animationTimer = setTimeout(() => {
                 // this.updateFrameSize();
                 this.animationTimer = null
-            }, 100);
+             }, 100);*/
         }
 
     }

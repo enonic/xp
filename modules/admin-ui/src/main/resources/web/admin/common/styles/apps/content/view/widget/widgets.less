@@ -48,6 +48,25 @@
     background-color: @admin-white;
     .transition(all 0.5s ease-in-out);
 
+    .widgets-container {
+      position: absolute;
+      overflow-y: scroll;
+      right: -15px;
+      top: 38px;
+      left: 5px;
+      bottom: 0px;
+    }
+
+    .splitter {
+      position: relative;
+      width: 5px;
+      height: 100%;
+      float: left;
+      background-color: #d3d3d3;
+      cursor: ew-resize;
+      .notSelectable();
+    }
+
     .widgets-panel-label {
       background-color: @admin-blue;
       color: @admin-white;
@@ -60,10 +79,6 @@
 
     .label {
       font-family: @admin-font-family;
-    }
-
-    .widgets-container {
-      clear: both;
     }
 
     .widget-toggle-button {
@@ -99,8 +114,11 @@
       .widget-content {
         margin-left: 5px;
         overflow: hidden;
-        max-height: 0px;
         .transition(all 0.1s ease-in-out);
+
+        .panel {
+          position: relative;
+        }
       }
 
       .widget-toggle-button {
