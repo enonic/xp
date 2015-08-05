@@ -3,7 +3,6 @@ package com.enonic.xp.form.inputtype;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
 
 final class ComboBox
     extends InputType
@@ -21,7 +20,6 @@ final class ComboBox
 
     @Override
     public void checkBreaksRequiredContract( final Property property )
-        throws BreaksRequiredContractException
     {
         validateNotBlank( property );
     }

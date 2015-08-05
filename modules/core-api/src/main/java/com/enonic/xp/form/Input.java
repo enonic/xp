@@ -40,7 +40,7 @@ public final class Input
 
     private Input( Builder builder )
     {
-        super( );
+        super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
         Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
@@ -52,13 +52,15 @@ public final class Input
 
         if ( builder.inputType.requiresConfig() )
         {
-                Preconditions.checkArgument( builder.inputTypeConfig != null,
-                                             "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name, builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
+            Preconditions.checkArgument( builder.inputTypeConfig != null,
+                                         "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name,
+                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
 
-                //noinspection ConstantConditions
-                Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
-                                             "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
-                                             builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(), builder.inputTypeConfig.getClass().getName() );
+            //noinspection ConstantConditions
+            Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
+                                         "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
+                                         builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(),
+                                         builder.inputTypeConfig.getClass().getName() );
         }
 
         this.name = builder.name;
@@ -75,6 +77,7 @@ public final class Input
 
         this.type.validateOccurrences( this.occurrences );
     }
+
     @Override
     public String getName()
     {
@@ -147,8 +150,7 @@ public final class Input
         return inputTypeConfig;
     }
 
-
-    public void checkValidityAccordingToInputType( final Property property )
+    private void checkValidityAccordingToInputType( final Property property )
     {
         if ( type != null )
         {
@@ -156,24 +158,11 @@ public final class Input
         }
     }
 
-    public void checkValidityAccordingToInputTypeConfig( final Property property )
+    private void checkValidityAccordingToInputTypeConfig( final Property property )
     {
         if ( inputTypeConfig != null )
         {
             inputTypeConfig.checkValidity( property );
-        }
-    }
-
-    public void checkValidationRegexp( final Property property )
-        throws InvalidDataException
-    {
-        try
-        {
-            validationRegexp.checkValidity( property );
-        }
-        catch ( BreaksRegexValidationException e )
-        {
-            throw new InvalidDataException( property, e );
         }
     }
 
