@@ -53,8 +53,8 @@ public final class ContentImageHelperImpl
         final Cropping sourceCropping = imageParams.getSourceCropping();
         if ( sourceCropping != null )
         {
-            final double width = image.getWidth() / sourceCropping.zoom();
-            final double height = image.getHeight() / sourceCropping.zoom();
+            final double width = image.getWidth();
+            final double height = image.getHeight();
             image = image.getSubimage( (int) ( width * sourceCropping.left() ), (int) ( height * sourceCropping.top() ),
                                        (int) ( width * sourceCropping.width() ), (int) ( height * sourceCropping.height() ) );
         }

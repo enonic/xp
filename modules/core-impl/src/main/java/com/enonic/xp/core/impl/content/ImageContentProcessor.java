@@ -210,8 +210,8 @@ final class ImageContentProcessor
 
     private BufferedImage cropImage( final BufferedImage image, final Cropping cropping )
     {
-        final double width = image.getWidth() / cropping.zoom();
-        final double height = image.getHeight() / cropping.zoom();
+        final double width = image.getWidth();
+        final double height = image.getHeight();
         return image.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ), (int) ( width * cropping.width() ),
                                   (int) ( height * cropping.height() ) );
     }
