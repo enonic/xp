@@ -16,9 +16,13 @@ module api.content.page {
             return this.resourcePath;
         }
 
-        fromJsonToPageDescriptor(json: api.content.page.PageDescriptorJson): PageDescriptor {
+        fromJsonToPageDescriptor(json: api.content.page.PageDescriptorJson, ignoreCache: boolean = false): PageDescriptor {
+
             var pageDescriptor = new api.content.page.PageDescriptorBuilder().fromJson(json).build();
-            this.cache.put(pageDescriptor);
+            if(!ignoreCache) {
+                this.cache.put(pageDescriptor);
+            }
+
             return  pageDescriptor;
         }
 
