@@ -61,8 +61,8 @@ module api.ui.tab {
             tab.remove();
         }
 
-        selectNavigationItem(index: number, silent?: boolean) {
-            if (index < 0 || index >= this.getSize() || this.selectedIndex == index) {
+        selectNavigationItem(index: number, silent?: boolean, forced?: boolean) {
+            if (index < 0 || index >= this.getSize() || (!forced && this.selectedIndex == index)) {
                 return;
             }
 
