@@ -32,7 +32,7 @@ public class FormItemSet
 
     private FormItemSet( Builder builder )
     {
-        super( );
+        super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
         Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
@@ -233,7 +233,7 @@ public class FormItemSet
 
         private boolean immutable;
 
-        private Occurrences occurrences = Occurrences.create().minimum( 0 ).maximum( 1 ).build();
+        private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private String customText;
 
@@ -287,19 +287,7 @@ public class FormItemSet
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences = Occurrences.create().minimum( minOccurrences ).maximum( maxOccurrences ).build();
-            return this;
-        }
-
-        public Builder minimumOccurrences( int value )
-        {
-            occurrences = Occurrences.create( occurrences ).minimum( value ).build();
-            return this;
-        }
-
-        public Builder maximumOccurrences( int value )
-        {
-            occurrences = Occurrences.create( occurrences ).maximum( value ).build();
+            occurrences = Occurrences.create( minOccurrences, maxOccurrences );
             return this;
         }
 
@@ -307,11 +295,11 @@ public class FormItemSet
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.create( occurrences ).minimum( 1 ).build();
+                occurrences = Occurrences.create( 1, occurrences.getMaximum() );
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.create( occurrences ).minimum( 0 ).build();
+                occurrences = Occurrences.create( 0, occurrences.getMaximum() );
             }
             return this;
         }
@@ -320,11 +308,11 @@ public class FormItemSet
         {
             if ( value )
             {
-                occurrences = Occurrences.create( occurrences ).maximum( 0 ).build();
+                occurrences = Occurrences.create( occurrences.getMinimum(), 0 );
             }
             else
             {
-                occurrences = Occurrences.create( occurrences ).maximum( 1 ).build();
+                occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
             }
             return this;
         }

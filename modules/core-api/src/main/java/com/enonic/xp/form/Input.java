@@ -244,7 +244,7 @@ public final class Input
 
         private boolean immutable = false;
 
-        private Occurrences occurrences = Occurrences.create().minimum( 0 ).maximum( 1 ).build();
+        private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private boolean indexed = false;
 
@@ -303,25 +303,25 @@ public final class Input
 
         public Builder occurrences( Occurrences value )
         {
-            occurrences = Occurrences.create().minimum( value.getMinimum() ).maximum( value.getMaximum() ).build();
+            occurrences = value;
             return this;
         }
 
         public Builder occurrences( int minOccurrences, int maxOccurrences )
         {
-            occurrences = Occurrences.create().minimum( minOccurrences ).maximum( maxOccurrences ).build();
+            occurrences = Occurrences.create( minOccurrences, maxOccurrences );
             return this;
         }
 
         public Builder minimumOccurrences( int value )
         {
-            occurrences = Occurrences.create( occurrences ).minimum( value ).build();
+            occurrences = Occurrences.create( value, occurrences.getMaximum() );
             return this;
         }
 
         public Builder maximumOccurrences( int value )
         {
-            occurrences = Occurrences.create( occurrences ).maximum( value ).build();
+            occurrences = Occurrences.create( occurrences.getMinimum(), value );
             return this;
         }
 
@@ -329,11 +329,11 @@ public final class Input
         {
             if ( value && !occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.create( occurrences ).minimum( 1 ).build();
+                occurrences = Occurrences.create( 1, occurrences.getMaximum() );
             }
             else if ( !value && occurrences.impliesRequired() )
             {
-                occurrences = Occurrences.create( occurrences ).minimum( 0 ).build();
+                occurrences = Occurrences.create( 0, occurrences.getMaximum() );
             }
             return this;
         }
@@ -348,11 +348,11 @@ public final class Input
         {
             if ( value )
             {
-                occurrences = Occurrences.create( occurrences ).maximum( 0 ).build();
+                occurrences = Occurrences.create( occurrences.getMinimum(), 0 );
             }
             else
             {
-                occurrences = Occurrences.create( occurrences ).maximum( 1 ).build();
+                occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
             }
             return this;
         }

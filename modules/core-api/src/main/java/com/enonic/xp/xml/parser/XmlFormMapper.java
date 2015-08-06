@@ -136,10 +136,9 @@ public final class XmlFormMapper
 
     private Occurrences buildOccurrence( final DomElement root )
     {
-        final Occurrences.Builder builder = Occurrences.create();
-        builder.minimum( root.getAttributeAs( "minimum", Integer.class, 0 ) );
-        builder.maximum( root.getAttributeAs( "maximum", Integer.class, 0 ) );
-        return builder.build();
+        final int min = root.getAttributeAs( "minimum", Integer.class, 0 );
+        final int max = root.getAttributeAs( "maximum", Integer.class, 0 );
+        return Occurrences.create( min, max );
     }
 
     private InputTypeConfig fromConfigXml( final InputType type, final DomElement value )
