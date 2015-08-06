@@ -52,7 +52,6 @@
   <!-- Core app bundles -->
   <bundle level="30">${group}:core-api:${version}</bundle>
   <bundle level="30">${group}:core-event:${version}</bundle>
-  <bundle level="30">${group}:core-module:${version}</bundle>
   <bundle level="30">${group}:core-schema:${version}</bundle>
   <bundle level="30">${group}:core-repo:${version}</bundle>
   <bundle level="30">${group}:core-relationship:${version}</bundle>

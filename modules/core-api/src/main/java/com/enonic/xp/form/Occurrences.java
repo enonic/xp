@@ -1,6 +1,5 @@
 package com.enonic.xp.form;
 
-
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -80,48 +79,10 @@ public final class Occurrences
         return s.toString();
     }
 
-    public static Builder create()
+    public static Occurrences create( final int minimum, final int maximum )
     {
-        return new Builder();
+        return new Occurrences( minimum, maximum );
     }
-
-    public static Builder create( final Occurrences occurrences )
-    {
-        return new Builder( occurrences );
-    }
-
-    public static class Builder
-    {
-        private int minimum;
-
-        private int maximum;
-
-        private Builder()
-        {
-        }
-
-        private Builder( final Occurrences occurrences )
-        {
-            this.minimum = occurrences.getMinimum();
-            this.maximum = occurrences.getMaximum();
-        }
-
-        public Builder minimum( final int minimum )
-        {
-            this.minimum = minimum;
-            return this;
-        }
-
-        public Builder maximum( final int maximum )
-        {
-            this.maximum = maximum;
-            return this;
-        }
-
-        public Occurrences build()
-        {
-            return new Occurrences( minimum, maximum );
-        }
-    }
-
 }
+
+

@@ -26,7 +26,6 @@ public class JsonToPropertyTreeTranslatorTest
 {
     final ObjectMapper mapper = new ObjectMapper();
 
-
     @Test
     public void all_input_types()
         throws Exception
@@ -134,11 +133,6 @@ public class JsonToPropertyTreeTranslatorTest
                 inputType( InputTypes.LONG ).
                 build() ).
             addFormItem( Input.create().
-                name( "color" ).
-                label( "Color" ).
-                inputType( InputTypes.COLOR ).
-                build() ).
-            addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
@@ -157,11 +151,6 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "tinyMce" ).
                 label( "tinyMce" ).
                 inputType( InputTypes.TINY_MCE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "phone" ).
-                label( "Phone" ).
-                inputType( InputTypes.PHONE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
@@ -206,11 +195,6 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "htmlArea" ).
                 label( "Html area" ).
                 inputType( InputTypes.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "xml" ).
-                label( "Xml" ).
-                inputType( InputTypes.XML ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).

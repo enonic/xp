@@ -5,17 +5,11 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class ComboBox
-    extends InputType
+    extends ConfigurableInputType<ComboBoxConfig>
 {
     public ComboBox()
     {
-        super( "ComboBox", ComboBoxConfig.class, true );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return ComboBoxConfigSerializer.INSTANCE;
+        super( InputTypeName.COMBOBOX, new ComboBoxConfigSerializer() );
     }
 
     @Override

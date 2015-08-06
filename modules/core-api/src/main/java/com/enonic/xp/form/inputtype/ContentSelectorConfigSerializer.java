@@ -5,9 +5,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -18,8 +17,6 @@ import com.enonic.xp.xml.DomHelper;
 final class ContentSelectorConfigSerializer
     implements InputTypeConfigSerializer<ContentSelectorConfig>
 {
-    public static final ContentSelectorConfigSerializer INSTANCE = new ContentSelectorConfigSerializer();
-
     private static final String RELATIONSHIP_TYPE_ELEMENT = "relationship-type";
 
     private static final String ALLOWED_CONTENT_TYPE_ELEMENT = "allow-content-type";
@@ -55,9 +52,9 @@ final class ContentSelectorConfigSerializer
     }
 
     @Override
-    public JsonNode serializeConfig( final ContentSelectorConfig config, final ObjectMapper objectMapper )
+    public ObjectNode serializeConfig( final ContentSelectorConfig config )
     {
-        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
         if ( config.getRelationshipType() != null )
         {
             jsonConfig.put( RELATIONSHIP_TYPE_KEY, config.getRelationshipType().toString() );

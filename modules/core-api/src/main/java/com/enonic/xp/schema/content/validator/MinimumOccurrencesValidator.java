@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -66,7 +66,7 @@ final class MinimumOccurrencesValidator
                     {
                         input.getInputType().checkBreaksRequiredContract( property );
                     }
-                    catch ( BreaksRequiredContractException e )
+                    catch ( InputValidationException e )
                     {
                         validationErrors.add( new MissingRequiredValueValidationError( input, e.getProperty() ) );
                     }

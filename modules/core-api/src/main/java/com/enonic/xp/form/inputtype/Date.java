@@ -5,11 +5,11 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class Date
-    extends InputType
+    extends ConfigurableInputType<DateConfig>
 {
     public Date()
     {
-        super( "Date", DateConfig.class, false );
+        super( InputTypeName.DATE, new DateConfigSerializer() );
     }
 
     @Override
@@ -22,12 +22,6 @@ final class Date
     public void checkTypeValidity( final Property property )
     {
         validateType( property, ValueTypes.LOCAL_DATE );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return DateConfigSerializer.INSTANCE;
     }
 
     @Override

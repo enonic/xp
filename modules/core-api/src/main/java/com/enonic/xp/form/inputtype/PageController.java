@@ -12,7 +12,7 @@ final class PageController
 {
     public PageController()
     {
-        super( "PageController", null, false );
+        super( InputTypeName.PAGE_CONTROLLER );
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.enonic.xp.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.form.inputtype.ConfigurableInputType;
+import com.enonic.xp.form.inputtype.InputType;
+import com.enonic.xp.form.inputtype.InputTypeConfig;
 
 @Beta
 public class InputJson
@@ -25,16 +29,17 @@ public class InputJson
 
         this.inputType = new InputTypeJson( input.getInputType() );
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-        if ( input.getInputType().hasConfig() && input.getInputTypeConfig() != null )
-        {
+        final InputType type = input.getInputType();
+        final ConfigurableInputType configurableType = ( type instanceof ConfigurableInputType ) ? (ConfigurableInputType) type : null;
+        final InputTypeConfig config = input.getInputTypeConfig();
 
-            this.configJson = (ObjectNode) this.input.getInputType().getConfigSerializer().serializeConfig( this.input.getInputTypeConfig(),
-                                                                                                            objectMapper );
+        if ( ( configurableType != null ) && ( config != null ) )
+        {
+            this.configJson = configurableType.serializeConfig( config );
         }
         else
         {
-            this.configJson = objectMapper.createObjectNode();
+            this.configJson = JsonNodeFactory.instance.objectNode();
         }
     }
 
@@ -89,7 +94,7 @@ public class InputJson
 
     public String getValidationRegexp()
     {
-        return input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null;
+        return input.getValidationRegexp();
     }
 
     public OccurrencesJson getOccurrences()

@@ -141,7 +141,7 @@ public class ContentSelectorConfigSerializerTest
         ContentSelectorConfig config = builder.build();
 
         // exercise
-        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config );
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
@@ -159,7 +159,7 @@ public class ContentSelectorConfigSerializerTest
         ContentSelectorConfig config = builder.build();
 
         // exercise
-        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config );
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeFullConfig.json" ), json );
@@ -174,7 +174,7 @@ public class ContentSelectorConfigSerializerTest
         ContentSelectorConfig config = builder.build();
 
         // exercise
-        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config );
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeEmptyConfig.json" ), json );

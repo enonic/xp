@@ -15,9 +15,9 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.form.inputtype.ConfigurableInputType;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
-import com.enonic.xp.form.inputtype.InputTypeConfigSerializer;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
@@ -136,25 +136,24 @@ public final class XmlFormMapper
 
     private Occurrences buildOccurrence( final DomElement root )
     {
-        final Occurrences.Builder builder = Occurrences.create();
-        builder.minimum( root.getAttributeAs( "minimum", Integer.class, 0 ) );
-        builder.maximum( root.getAttributeAs( "maximum", Integer.class, 0 ) );
-        return builder.build();
+        final int min = root.getAttributeAs( "minimum", Integer.class, 0 );
+        final int max = root.getAttributeAs( "maximum", Integer.class, 0 );
+        return Occurrences.create( min, max );
     }
 
     private InputTypeConfig fromConfigXml( final InputType type, final DomElement value )
     {
+        if ( !( type instanceof ConfigurableInputType ) )
+        {
+            return null;
+        }
+
+        final ConfigurableInputType configurableType = (ConfigurableInputType) type;
         if ( value == null )
         {
-            return type.getDefaultConfig();
+            return configurableType.getDefaultConfig();
         }
 
-        final InputTypeConfigSerializer configSerializer = type.getConfigSerializer();
-        if ( configSerializer == null )
-        {
-            return type.getDefaultConfig();
-        }
-
-        return configSerializer.parseConfig( this.currentApplication, value.getWrapped() );
+        return configurableType.parseConfig( this.currentApplication, value.getWrapped() );
     }
 }

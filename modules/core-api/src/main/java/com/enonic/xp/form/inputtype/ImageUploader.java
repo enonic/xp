@@ -7,7 +7,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.InvalidTypeException;
 
 final class ImageUploader
@@ -15,7 +15,7 @@ final class ImageUploader
 {
     public ImageUploader()
     {
-        super( "ImageUploader", null, false );
+        super( InputTypeName.IMAGE_UPLOADER );
     }
 
     @Override
@@ -28,7 +28,7 @@ final class ImageUploader
             isX && ( property.getDouble() == null || property.getDouble() < 0 || property.getDouble() > 1 ) ||
             isY && ( property.getDouble() == null || property.getDouble() < 0 || property.getDouble() > 1 ) )
         {
-            throw new BreaksRequiredContractException( property, this );
+            throw new InputValidationException( property, this );
         }
     }
 

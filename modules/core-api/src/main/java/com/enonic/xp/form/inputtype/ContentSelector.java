@@ -5,17 +5,11 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class ContentSelector
-    extends InputType
+    extends ConfigurableInputType<ContentSelectorConfig>
 {
     public ContentSelector()
     {
-        super( "ContentSelector", ContentSelectorConfig.class, true );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return ContentSelectorConfigSerializer.INSTANCE;
+        super( InputTypeName.CONTENT_SELECTOR, new ContentSelectorConfigSerializer() );
     }
 
     @Override

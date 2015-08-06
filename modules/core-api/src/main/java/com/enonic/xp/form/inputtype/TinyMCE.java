@@ -10,7 +10,7 @@ final class TinyMCE
 {
     public TinyMCE()
     {
-        super( "TinyMCE", null, false );
+        super( InputTypeName.TINY_MCE );
     }
 
     @Override

@@ -2,9 +2,8 @@ package com.enonic.xp.form.inputtype;
 
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -13,8 +12,6 @@ import com.enonic.xp.xml.DomHelper;
 final class ComboBoxConfigSerializer
     implements InputTypeConfigSerializer<ComboBoxConfig>
 {
-    public static final ComboBoxConfigSerializer INSTANCE = new ComboBoxConfigSerializer();
-
     @Override
     public ComboBoxConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
@@ -32,9 +29,9 @@ final class ComboBoxConfigSerializer
     }
 
     @Override
-    public JsonNode serializeConfig( final ComboBoxConfig config, final ObjectMapper objectMapper )
+    public ObjectNode serializeConfig( final ComboBoxConfig config )
     {
-        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
 
         final ArrayNode jsonArray = jsonConfig.putArray( "options" );
         for ( Option option : config.getOptions() )

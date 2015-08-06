@@ -3,8 +3,7 @@ package com.enonic.xp.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.xml.DomHelper;
@@ -24,9 +23,9 @@ abstract class TimezoneConfigSerializer<T extends TimezoneConfig>
     }
 
     @Override
-    public final JsonNode serializeConfig( final T config, final ObjectMapper objectMapper )
+    public final ObjectNode serializeConfig( final T config )
     {
-        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
         jsonConfig.put( "withTimezone", config.isWithTimezone() );
         return jsonConfig;
     }

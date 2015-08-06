@@ -9,7 +9,7 @@ final class Double
 {
     public Double()
     {
-        super( "Double", null, false );
+        super( InputTypeName.DOUBLE );
     }
 
     @Override

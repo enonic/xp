@@ -1,7 +1,6 @@
 dependencies {
     compile project( ':core-impl' )
     compile project( ':core-repo' )
-    compile project( ':core-module' )
     compile project( ':core-schema' )
     compile project( ':core-event' )
     testCompile project( path: ':core-repo', configuration: 'testOutput' )

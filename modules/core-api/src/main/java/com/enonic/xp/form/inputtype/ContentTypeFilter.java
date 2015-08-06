@@ -13,7 +13,7 @@ public class ContentTypeFilter
 {
     public ContentTypeFilter()
     {
-        super( "ContentTypeFilter", null, false );
+        super( InputTypeName.CONTENT_TYPE_FILTER );
     }
 
     @Override

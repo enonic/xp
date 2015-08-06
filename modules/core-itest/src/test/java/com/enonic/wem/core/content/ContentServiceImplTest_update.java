@@ -230,11 +230,6 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLong( "color", Long.parseLong( "FFFFFF", 16 ) );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addBoolean( "comboBox", true );
         update_incorrect_content_data( content, invalidData );
 
@@ -255,17 +250,7 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addDouble( "phone", 1.0d );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addDouble( "tag", 1.0d );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
-        invalidData.addDouble( "phone", 1.0d );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
@@ -274,32 +259,13 @@ public class ContentServiceImplTest_update
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
-        //TODO ContentSelectConfig should check the content types
-//        final Content referredContent = this.contentService.create( CreateContentParams.create().
-//            contentData( new PropertyTree() ).
-//            displayName( "Invalid Referred content" ).
-//            parent( ContentPath.ROOT ).
-//            type( ContentTypeName.shortcut() ).
-//            build() );
-//        final Reference invalidReference = Reference.from( referredContent.getId().toString() );
-//        invalidData = new PropertyTree();
-//        invalidData.addReference( "contentSelector", invalidReference );
-//        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
         invalidData = new PropertyTree();
         invalidData.addDouble( "contentTypeFilter", 1.0d );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
-        //TODO ModuleConfigurator should check the input type
-//        invalidData = new PropertyTree();
-//        invalidData.addDouble( "moduleConfigurator", 1.0d );
-//        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLocalDateTime( "date", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+        invalidData.addLocalDateTime( "date", LocalDateTime.of( 2015, 3, 13, 10, 0, 0 ) );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
@@ -319,17 +285,12 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addXml( "xml", "<elem>element</elem>" );
+        invalidData.addLocalDate( "localDateTime", LocalDate.of( 2015, 3, 13 ) );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLocalDate( "localDateTime", LocalDate.of( 2015, 03, 13 ) );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
-        invalidData.addLocalDate( "dateTime", LocalDate.of( 2015, 03, 13 ) );
+        invalidData.addLocalDate( "dateTime", LocalDate.of( 2015, 3, 13 ) );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value

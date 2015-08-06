@@ -48,7 +48,7 @@ public class InlineMixinsToFormItemsTransformer
                 }
                 else
                 {
-                    throw new MixinNotFound( inline.getMixinName() );
+                    throw new RuntimeException( "Mixin [" + inline.getMixinName() + "] not found" );
                 }
             }
             else if ( formItem instanceof FormItemSet )
