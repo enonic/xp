@@ -5,17 +5,11 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class RadioButtons
-    extends InputType
+    extends ConfigurableInputType<RadioButtonsConfig>
 {
     public RadioButtons()
     {
-        super( InputTypeName.RADIO_BUTTONS, RadioButtonsConfig.class, true );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return RadioButtonsConfigSerializer.INSTANCE;
+        super( InputTypeName.RADIO_BUTTONS, new RadioButtonsConfigSerializer() );
     }
 
     @Override

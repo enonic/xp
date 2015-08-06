@@ -9,7 +9,7 @@ final class Long
 {
     public Long()
     {
-        super( InputTypeName.LONG, null, false );
+        super( InputTypeName.LONG );
     }
 
     @Override

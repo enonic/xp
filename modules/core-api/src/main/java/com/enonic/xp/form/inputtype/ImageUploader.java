@@ -15,7 +15,7 @@ final class ImageUploader
 {
     public ImageUploader()
     {
-        super( InputTypeName.IMAGE_UPLOADER, null, false );
+        super( InputTypeName.IMAGE_UPLOADER );
     }
 
     @Override

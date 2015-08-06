@@ -6,17 +6,11 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.util.Reference;
 
 final class ImageSelector
-    extends InputType
+    extends ConfigurableInputType<ImageSelectorConfig>
 {
     public ImageSelector()
     {
-        super( InputTypeName.IMAGE_SELECTOR, ImageSelectorConfig.class, false );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return ImageSelectorConfigSerializer.INSTANCE;
+        super( InputTypeName.IMAGE_SELECTOR, new ImageSelectorConfigSerializer() );
     }
 
     @Override
@@ -31,7 +25,7 @@ final class ImageSelector
     }
 
     @Override
-    public InputTypeConfig getDefaultConfig()
+    public ImageSelectorConfig getDefaultConfig()
     {
         return ImageSelectorConfig.create().build();
     }

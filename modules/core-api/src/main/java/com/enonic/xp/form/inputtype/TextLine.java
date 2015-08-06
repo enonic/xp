@@ -9,7 +9,7 @@ final class TextLine
 {
     public TextLine()
     {
-        super( InputTypeName.TEXT_LINE, null, false );
+        super( InputTypeName.TEXT_LINE );
     }
 
     @Override

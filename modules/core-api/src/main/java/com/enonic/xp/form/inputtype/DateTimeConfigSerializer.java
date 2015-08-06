@@ -7,8 +7,6 @@ import com.enonic.xp.app.ApplicationKey;
 final class DateTimeConfigSerializer
     extends TimezoneConfigSerializer<DateTimeConfig>
 {
-    public static final DateTimeConfigSerializer INSTANCE = new DateTimeConfigSerializer();
-
     @Override
     public DateTimeConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {

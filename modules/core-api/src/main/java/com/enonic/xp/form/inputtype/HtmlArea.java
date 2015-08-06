@@ -9,7 +9,7 @@ final class HtmlArea
 {
     public HtmlArea()
     {
-        super( InputTypeName.HTML_AREA, null, false );
+        super( InputTypeName.HTML_AREA );
     }
 
     @Override

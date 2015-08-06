@@ -9,17 +9,11 @@ import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 final class DateTime
-    extends InputType
+    extends ConfigurableInputType<DateTimeConfig>
 {
     public DateTime()
     {
-        super( InputTypeName.DATE_TIME, DateTimeConfig.class, false );
-    }
-
-    @Override
-    public InputTypeConfigSerializer getConfigSerializer()
-    {
-        return DateTimeConfigSerializer.INSTANCE;
+        super( InputTypeName.DATE_TIME, new DateTimeConfigSerializer() );
     }
 
     @Override
@@ -38,11 +32,11 @@ final class DateTime
     }
 
     @Override
-    public InputTypeConfig getDefaultConfig()
+    public DateTimeConfig getDefaultConfig()
     {
-        return DateTimeConfig.create().
-            withTimezone( false ).
-            build();
+        final DateTimeConfig.Builder builder = DateTimeConfig.create();
+        builder.withTimezone( false );
+        return builder.build();
     }
 
     @Override
@@ -54,7 +48,7 @@ final class DateTime
                 "Expected config of type " + DateTimeConfig.class.getName() + ", got " + config.getClass() );
         }
 
-        final DateTimeConfig dateTimeConfig = config == null ? (DateTimeConfig) getDefaultConfig() : (DateTimeConfig) config;
+        final DateTimeConfig dateTimeConfig = config == null ? getDefaultConfig() : (DateTimeConfig) config;
         if ( dateTimeConfig.isWithTimezone() )
         {
             return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );

@@ -13,7 +13,7 @@ final class Checkbox
 {
     public Checkbox()
     {
-        super( InputTypeName.CHECKBOX, null, false );
+        super( InputTypeName.CHECKBOX );
     }
 
     @Override

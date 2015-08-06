@@ -9,7 +9,7 @@ final class GeoPoint
 {
     public GeoPoint()
     {
-        super( InputTypeName.GEO_POINT, null, false );
+        super( InputTypeName.GEO_POINT );
     }
 
     @Override

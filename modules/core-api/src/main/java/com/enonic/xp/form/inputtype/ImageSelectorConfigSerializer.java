@@ -3,8 +3,7 @@ package com.enonic.xp.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -14,8 +13,6 @@ import com.enonic.xp.xml.DomHelper;
 final class ImageSelectorConfigSerializer
     implements InputTypeConfigSerializer<ImageSelectorConfig>
 {
-    public static final ImageSelectorConfigSerializer INSTANCE = new ImageSelectorConfigSerializer();
-
     @Override
     public ImageSelectorConfig parseConfig( final ApplicationKey currentApplication, final Element elem )
     {
@@ -34,9 +31,9 @@ final class ImageSelectorConfigSerializer
     }
 
     @Override
-    public JsonNode serializeConfig( final ImageSelectorConfig config, final ObjectMapper objectMapper )
+    public ObjectNode serializeConfig( final ImageSelectorConfig config )
     {
-        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
         if ( config.getRelationshipType() != null )
         {
             jsonConfig.put( "relationshipType", config.getRelationshipType().toString() );
@@ -45,6 +42,7 @@ final class ImageSelectorConfigSerializer
         {
             jsonConfig.putNull( "relationshipType" );
         }
+
         return jsonConfig;
     }
 }

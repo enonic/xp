@@ -8,7 +8,7 @@ final class SiteConfigurator
 {
     public SiteConfigurator()
     {
-        super( InputTypeName.SITE_CONFIGURATOR, null, false );
+        super( InputTypeName.SITE_CONFIGURATOR );
     }
 
     @Override

@@ -119,7 +119,7 @@ public class ImageSelectorConfigSerializerTest
         ImageSelectorConfig config = builder.build();
 
         // exercise
-        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config );
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
@@ -134,7 +134,7 @@ public class ImageSelectorConfigSerializerTest
         ImageSelectorConfig config = builder.build();
 
         // exercise
-        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config );
 
         // verify
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );

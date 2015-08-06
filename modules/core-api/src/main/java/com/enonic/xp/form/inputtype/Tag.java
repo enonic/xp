@@ -9,7 +9,7 @@ final class Tag
 {
     public Tag()
     {
-        super( InputTypeName.TAG, null, false );
+        super( InputTypeName.TAG );
     }
 
     @Override
