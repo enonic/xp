@@ -9,7 +9,7 @@ final class RadioButtons
 {
     public RadioButtons()
     {
-        super( "RadioButtons", RadioButtonsConfig.class, true );
+        super( InputTypeName.RADIO_BUTTONS, RadioButtonsConfig.class, true );
     }
 
     @Override

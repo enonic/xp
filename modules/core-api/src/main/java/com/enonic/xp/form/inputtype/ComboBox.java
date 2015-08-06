@@ -9,7 +9,7 @@ final class ComboBox
 {
     public ComboBox()
     {
-        super( "ComboBox", ComboBoxConfig.class, true );
+        super( InputTypeName.COMBOBOX, ComboBoxConfig.class, true );
     }
 
     @Override

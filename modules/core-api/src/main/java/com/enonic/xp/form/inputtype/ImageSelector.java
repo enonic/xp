@@ -10,7 +10,7 @@ final class ImageSelector
 {
     public ImageSelector()
     {
-        super( "ImageSelector", ImageSelectorConfig.class, false );
+        super( InputTypeName.IMAGE_SELECTOR, ImageSelectorConfig.class, false );
     }
 
     @Override

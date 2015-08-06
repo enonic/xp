@@ -9,7 +9,7 @@ final class Money
 {
     public Money()
     {
-        super( "Money", null, false );
+        super( InputTypeName.MONEY, null, false );
     }
 
     @Override

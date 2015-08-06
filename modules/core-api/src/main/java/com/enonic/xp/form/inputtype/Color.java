@@ -9,7 +9,7 @@ final class Color
 {
     public Color()
     {
-        super( "Color", null, false );
+        super( InputTypeName.COLOR, null, false );
     }
 
     @Override

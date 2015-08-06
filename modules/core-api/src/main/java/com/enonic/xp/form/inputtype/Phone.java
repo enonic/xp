@@ -10,7 +10,7 @@ final class Phone
 {
     public Phone()
     {
-        super( "Phone", null, false );
+        super( InputTypeName.PHONE, null, false );
     }
 
     @Override

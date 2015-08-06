@@ -9,7 +9,7 @@ final class Attachment
 {
     public Attachment()
     {
-        super( "Attachment", null, false );
+        super( InputTypeName.ATTACHMENT, null, false );
     }
 
     @Override

@@ -9,7 +9,7 @@ final class Date
 {
     public Date()
     {
-        super( "Date", DateConfig.class, false );
+        super( InputTypeName.DATE, DateConfig.class, false );
     }
 
     @Override

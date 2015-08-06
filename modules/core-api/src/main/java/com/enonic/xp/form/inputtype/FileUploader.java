@@ -10,7 +10,7 @@ final class FileUploader
 {
     public FileUploader()
     {
-        super( "FileUploader", null, false );
+        super( InputTypeName.FILE_UPLOADER, null, false );
     }
 
     @Override

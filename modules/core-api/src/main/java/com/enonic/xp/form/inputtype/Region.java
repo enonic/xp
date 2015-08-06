@@ -9,7 +9,7 @@ final class Region
 {
     public Region()
     {
-        super( "Region", null, false );
+        super( InputTypeName.REGION, null, false );
     }
 
     @Override

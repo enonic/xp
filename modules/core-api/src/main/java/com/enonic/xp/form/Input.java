@@ -30,7 +30,7 @@ public final class Input
 
     private final String customText;
 
-    private final ValidationRegex validationRegexp;
+    private final String validationRegexp;
 
     private final String helpText;
 
@@ -135,7 +135,7 @@ public final class Input
         return customText;
     }
 
-    public ValidationRegex getValidationRegexp()
+    public String getValidationRegexp()
     {
         return validationRegexp;
     }
@@ -250,7 +250,7 @@ public final class Input
 
         private String customText;
 
-        private ValidationRegex validationRegexp;
+        private String validationRegexp;
 
         private String helpText;
 
@@ -371,7 +371,7 @@ public final class Input
 
         public Builder validationRegexp( String value )
         {
-            validationRegexp = value != null ? new ValidationRegex( value ) : null;
+            validationRegexp = value;
             return this;
         }
 

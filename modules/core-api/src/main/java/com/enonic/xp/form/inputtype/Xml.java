@@ -9,7 +9,7 @@ final class Xml
 {
     public Xml()
     {
-        super( "Xml", null, false );
+        super( InputTypeName.XML, null, false );
     }
 
     @Override

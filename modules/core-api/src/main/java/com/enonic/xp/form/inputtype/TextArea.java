@@ -9,7 +9,7 @@ final class TextArea
 {
     public TextArea()
     {
-        super( "TextArea", null, false );
+        super( InputTypeName.TEXT_AREA, null, false );
     }
 
     @Override

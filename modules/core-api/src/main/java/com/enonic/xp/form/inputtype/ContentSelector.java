@@ -9,7 +9,7 @@ final class ContentSelector
 {
     public ContentSelector()
     {
-        super( "ContentSelector", ContentSelectorConfig.class, true );
+        super( InputTypeName.CONTENT_SELECTOR, ContentSelectorConfig.class, true );
     }
 
     @Override

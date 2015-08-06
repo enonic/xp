@@ -13,7 +13,7 @@ final class DateTime
 {
     public DateTime()
     {
-        super( "DateTime", DateTimeConfig.class, false );
+        super( InputTypeName.DATE_TIME, DateTimeConfig.class, false );
     }
 
     @Override

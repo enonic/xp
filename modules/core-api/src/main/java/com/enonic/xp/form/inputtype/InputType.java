@@ -10,7 +10,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.InvalidTypeException;
 import com.enonic.xp.form.Occurrences;
 
@@ -23,10 +23,10 @@ public abstract class InputType
 
     private final boolean requiresConfig;
 
-    protected InputType( final String name, final Class configClass, final boolean requiresConfig )
+    protected InputType( final InputTypeName name, final Class configClass, final boolean requiresConfig )
     {
         this.configClass = configClass;
-        this.name = InputTypeName.from( name );
+        this.name = name;
         this.requiresConfig = requiresConfig;
     }
 
@@ -113,7 +113,7 @@ public abstract class InputType
         final String stringValue = property.getString();
         if ( StringUtils.isBlank( stringValue ) )
         {
-            throw new BreaksRequiredContractException( property, this );
+            throw new InputValidationException( property, this );
         }
     }
 
@@ -121,7 +121,7 @@ public abstract class InputType
     {
         if ( value == null )
         {
-            throw new BreaksRequiredContractException( property, this );
+            throw new InputValidationException( property, this );
         }
     }
 }

@@ -9,7 +9,7 @@ final class Time
 {
     public Time()
     {
-        super( "Time", null, false );
+        super( InputTypeName.TIME, null, false );
     }
 
     @Override
