@@ -1,10 +1,11 @@
 package com.enonic.xp.image;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import com.google.common.io.ByteSource;
 
 public interface ImageService
 {
-    BufferedImage readImage( final ByteSource blob, final ReadImageParams readImageParams );
+    byte[] readImage( final ByteSource blob, final ReadImageParams readImageParams )
+        throws IOException;
 }

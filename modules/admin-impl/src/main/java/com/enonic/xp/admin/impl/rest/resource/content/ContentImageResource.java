@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
@@ -35,6 +36,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.Exceptions;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
@@ -114,11 +116,19 @@ public final class ContentImageResource
                     cropping( cropping ).
                     scaleSize( size ).
                     scaleWidth( scaleWidth ).
+                    mimeType( attachment.getMimeType() ).
                     orientation( imageOrientation ).
                     build();
 
-                final BufferedImage contentImage = imageService.readImage( binary, readImageParams );
-                return new ResolvedImage( contentImage, attachment.getMimeType() );
+                try
+                {
+                    final byte[] contentImage = imageService.readImage( binary, readImageParams );
+                    return new ResolvedImage( contentImage, attachment.getMimeType() );
+                }
+                catch ( IOException e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
             }
         }
         return ResolvedImage.unresolved();

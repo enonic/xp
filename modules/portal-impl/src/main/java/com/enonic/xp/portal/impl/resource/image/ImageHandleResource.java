@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.resource.image;
 
-import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -16,7 +15,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
@@ -70,20 +68,14 @@ public final class ImageHandleResource
                 filterParam( filterParam ).
                 backgroundColor( getBackgroundColor() ).
                 format( format ).
+                quality( getImageQuality() ).
                 build();
-            final BufferedImage bufferedImage = services.getImageService().readImage( this.binary, imageParams );
 
-            imageData = serializeImage( bufferedImage, format );
+            imageData = services.getImageService().readImage( this.binary, imageParams );
             FilesHelper.write( cachedImagePath, imageData );
         }
 
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
-    }
-
-    private byte[] serializeImage( final BufferedImage image, final String format )
-        throws Exception
-    {
-        return ImageHelper.writeImage( image, format, getImageQuality() );
     }
 
     private String getFormat( final String fileName )

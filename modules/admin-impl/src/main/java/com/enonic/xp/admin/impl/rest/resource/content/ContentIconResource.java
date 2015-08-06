@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
@@ -32,6 +32,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.Exceptions;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
@@ -107,11 +108,19 @@ public final class ContentIconResource
                 final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                     scaleSize( size ).
                     scaleSquare( crop ).
+                    mimeType( contentThumbnail.getMimeType() ).
                     orientation( imageOrientation ).
                     build();
 
-                final BufferedImage thumbnailImage = imageService.readImage( binary, readImageParams );
-                return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
+                try
+                {
+                    final byte[] thumbnailImage = imageService.readImage( binary, readImageParams );
+                    return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
+                }
+                catch ( IOException e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
             }
         }
         return ResolvedImage.unresolved();
@@ -129,11 +138,19 @@ public final class ContentIconResource
                     cropping( media.getCropping() ).
                     scaleSize( size ).
                     scaleSquare( crop ).
+                    mimeType( imageAttachment.getMimeType() ).
                     orientation( getSourceAttachmentOrientation( media ) ).
                     build();
 
-                final BufferedImage contentImage = imageService.readImage( attachmentBinary, readImageParams );
-                return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
+                try
+                {
+                    final byte[] contentImage = imageService.readImage( attachmentBinary, readImageParams );
+                    return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
+                }
+                catch ( IOException e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
             }
         }
         return ResolvedImage.unresolved();

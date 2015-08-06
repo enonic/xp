@@ -21,7 +21,11 @@ public class ReadImageParams
 
     private final int backgroundColor;
 
+    private final String mimeType;
+
     private final String format;
+
+    private final int quality;
 
     private final ImageOrientation orientation;
 
@@ -35,7 +39,9 @@ public class ReadImageParams
         this.scaleWidth = builder.scaleWidth;
         this.filterParam = builder.filterParam;
         this.backgroundColor = builder.backgroundColor;
+        this.mimeType = builder.mimeType;
         this.format = builder.format;
+        this.quality = builder.quality;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
     }
 
@@ -79,9 +85,19 @@ public class ReadImageParams
         return backgroundColor;
     }
 
+    public String getMimeType()
+    {
+        return mimeType;
+    }
+
     public String getFormat()
     {
         return format;
+    }
+
+    public int getQuality()
+    {
+        return quality;
     }
 
     public ImageOrientation getOrientation()
@@ -112,9 +128,13 @@ public class ReadImageParams
 
         private int backgroundColor;
 
+        private String mimeType;
+
         private String format;
 
         private ImageOrientation orientation;
+
+        public int quality;
 
         private Builder()
         {
@@ -168,9 +188,21 @@ public class ReadImageParams
             return this;
         }
 
+        public Builder mimeType( String mimeType )
+        {
+            this.mimeType = mimeType;
+            return this;
+        }
+
         public Builder format( String format )
         {
             this.format = format;
+            return this;
+        }
+
+        public Builder quality( int quality )
+        {
+            this.quality = quality;
             return this;
         }
 

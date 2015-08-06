@@ -3,8 +3,13 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -26,7 +31,6 @@ import com.enonic.xp.image.filter.ScaleSquareFunction;
 import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.util.Exceptions;
 
 @Component
 public class ImageServiceImpl
@@ -37,7 +41,22 @@ public class ImageServiceImpl
     private ImageFilterBuilder imageFilterBuilder;
 
     @Override
-    public BufferedImage readImage( final ByteSource blob, final ReadImageParams readImageParams )
+    public byte[] readImage( final ByteSource blob, final ReadImageParams readImageParams )
+        throws IOException
+    {
+        byte[] serializedImage = null;
+
+        final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
+        if ( bufferedImage != null )
+        {
+            serializedImage = serializeImage( readImageParams, bufferedImage );
+        }
+
+        return serializedImage;
+    }
+
+    private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
+        throws IOException
     {
         //Retrieves the buffered image
         BufferedImage bufferedImage = retrieveBufferedImage( blob );
@@ -51,6 +70,7 @@ public class ImageServiceImpl
             }
 
             //Applies the scaling
+            //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
             if ( readImageParams.getScaleParams() != null )
             {
                 bufferedImage = applyScalingParams( bufferedImage, readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
@@ -78,21 +98,10 @@ public class ImageServiceImpl
     }
 
     private BufferedImage retrieveBufferedImage( final ByteSource blob )
+        throws IOException
     {
-        final BufferedImage bufferedImage;
-
-        final InputStream inputStream;
-        try
-        {
-            inputStream = blob.openStream();
-            bufferedImage = ImageHelper.toBufferedImage( inputStream );
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-
-        return bufferedImage;
+        final InputStream inputStream = blob.openStream();
+        return ImageHelper.toBufferedImage( inputStream );
     }
 
     private BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
@@ -104,11 +113,13 @@ public class ImageServiceImpl
 
     }
 
+
     private BufferedImage applyScalingParams( final BufferedImage sourceImage, final ScaleParams scaleParams, final FocalPoint focalPoint )
     {
         final ImageScaleFunction imageScaleFunction = imageScaleFunctionBuilder.build( scaleParams, focalPoint );
         return imageScaleFunction.scale( sourceImage );
     }
+
 
     private BufferedImage applyScalingFunction( final BufferedImage bufferedImage, final ReadImageParams readImageParams )
     {
@@ -195,6 +206,57 @@ public class ImageServiceImpl
         final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, bufferedImage.getType() );
         final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( bufferedImage, destinationImage );
+    }
+
+    private byte[] serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
+        throws IOException
+    {
+        final byte[] serializedImage;
+        //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
+        if ( readImageParams.getFormat() != null && readImageParams.getQuality() != 0 )
+        {
+            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality() );
+        }
+        else
+        {
+            String format = readImageParams.getFormat();
+            if ( readImageParams.getFormat() == null )
+            {
+                format = retrieveFormat( readImageParams.getMimeType() );
+                if ( format == null )
+                {
+                    throw new IOException(
+                        "The image-based media type " + readImageParams.getMimeType() + " is not supported for writing" );
+                }
+            }
+            serializedImage = serializeImage( bufferedImage, format );
+        }
+        return serializedImage;
+    }
+
+    private byte[] serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
+        throws IOException
+    {
+        return ImageHelper.writeImage( bufferedImage, format, quality );
+    }
+
+    private byte[] serializeImage( final BufferedImage bufferedImage, final String format )
+        throws IOException
+    {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write( bufferedImage, format, out );
+        return out.toByteArray();
+    }
+
+    private String retrieveFormat( final String mimeType )
+    {
+        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
+        if ( !i.hasNext() )
+        {
+            return null;
+        }
+
+        return i.next().getOriginatingProvider().getFormatNames()[0];
     }
 
     @Reference
