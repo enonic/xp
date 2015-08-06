@@ -17,6 +17,7 @@ module app.view {
 
             var navigator = new api.ui.tab.TabBar();
             this.deckPanel = new api.ui.panel.NavigatedDeckPanel(navigator);
+            this.deckPanel.setDoOffset(false);
             this.appendChild(navigator);
             this.appendChild(this.deckPanel);
             this.mask = new api.ui.mask.LoadMask(this);
@@ -31,14 +32,16 @@ module app.view {
             this.allGrid.onLoaded(() => {
                 this.mask.hide();
             });
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('All Versions').build(), this.allGrid, true);
+            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('All Versions').setAddLabelTitleAttribute(false).build(),
+                this.allGrid, true);
 
             this.activeGrid = new ActiveContentVersionsTreeGrid();
             this.activeGrid.onLoaded(() => {
                 this.mask.hide();
             });
 
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('Active Versions').build(), this.activeGrid);
+            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('Active Versions').setAddLabelTitleAttribute(false).build(),
+                this.activeGrid);
 
         }
 
@@ -50,6 +53,13 @@ module app.view {
                     this.mask.show();
                     (<ContentVersionsTreeGrid>this.deckPanel.getPanelShown()).setContentId(item.getModel().getContentId());
                 }
+            }
+        }
+
+        public ReRenderActivePanel() {
+            if (this.item) {
+                var panel = <ContentVersionsTreeGrid>this.deckPanel.getPanelShown();
+                panel.render();
             }
         }
 
