@@ -29,15 +29,13 @@ import static org.junit.Assert.*;
 
 public class InputValidatorTest
 {
-    private ContentType contentType;
-
     private InputValidator inputValidator;
 
     @Before
     public void before()
     {
-        contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
-        inputValidator = InputValidator.
+        final ContentType contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
+        this.inputValidator = InputValidator.
             create().
             contentType( contentType ).
             build();
@@ -72,7 +70,6 @@ public class InputValidatorTest
         data.addLocalTime( "time", LocalTime.parse( "10:00:32.123" ) );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "-45,34" ) );
         data.addString( "htmlArea", "<h1>test</h1>" );
-        data.addString( "xml", "<xml><car><color>blue</color></car></xml>" );
 
         //Validates the correct data
         inputValidator.validate( data );
@@ -98,11 +95,6 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLong( "color", Long.parseLong( "FFFFFF", 16 ) );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addBoolean( "comboBox", true );
         validateIncorrectInputType( invalidData );
 
@@ -123,17 +115,7 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addDouble( "phone", 1.0d );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addDouble( "tag", 1.0d );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
-        invalidData.addDouble( "phone", 1.0d );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
@@ -142,28 +124,9 @@ public class InputValidatorTest
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
-        //TODO ContentSelectConfig should check the content types
-//        final Content referredContent = this.contentService.create( CreateContentParams.create().
-//                    contentData( new PropertyTree() ).
-//                    displayName( "Invalid Referred content" ).
-//                    parent( ContentPath.ROOT ).
-//                    type( ContentTypeName.shortcut() ).
-//                    build() );
-//        final Reference invalidReference = Reference.from( referredContent.getId().toString() );
-//        invalidData = new PropertyTree();
-//        invalidData.addReference( "contentSelector", invalidReference );
-//        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
         invalidData = new PropertyTree();
         invalidData.addDouble( "contentTypeFilter", 1.0d );
         validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        //TODO SiteConfigurator should check the input type
-//        invalidData = new PropertyTree();
-//        invalidData.addDouble( "moduleConfigurator", 1.0d );
-//        validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
@@ -183,11 +146,6 @@ public class InputValidatorTest
         //Validates an incorrect value
         invalidData = new PropertyTree();
         invalidData.addXml( "htmlArea", "<p>paragraph</p>" );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
-        invalidData.addXml( "xml", "<elem>element</elem>" );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
@@ -268,11 +226,6 @@ public class InputValidatorTest
                 inputType( InputTypes.LONG ).
                 build() ).
             addFormItem( Input.create().
-                name( "color" ).
-                label( "Color" ).
-                inputType( InputTypes.COLOR ).
-                build() ).
-            addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
@@ -291,11 +244,6 @@ public class InputValidatorTest
                 name( "tinyMce" ).
                 label( "Tinymce" ).
                 inputType( InputTypes.TINY_MCE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "phone" ).
-                label( "Phone" ).
-                inputType( InputTypes.PHONE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
@@ -340,11 +288,6 @@ public class InputValidatorTest
                 name( "htmlArea" ).
                 label( "Html area" ).
                 inputType( InputTypes.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "xml" ).
-                label( "Xml" ).
-                inputType( InputTypes.XML ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).

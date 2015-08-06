@@ -7,11 +7,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public final class InputTypeName
 {
-    public final static InputTypeName ATTACHMENT = InputTypeName.from( "Attachment" );
-
     public final static InputTypeName CHECKBOX = InputTypeName.from( "Checkbox" );
-
-    public final static InputTypeName COLOR = InputTypeName.from( "Color" );
 
     public final static InputTypeName COMBOBOX = InputTypeName.from( "ComboBox" );
 
@@ -37,15 +33,9 @@ public final class InputTypeName
 
     public final static InputTypeName LONG = InputTypeName.from( "Long" );
 
-    public final static InputTypeName MONEY = InputTypeName.from( "Money" );
-
     public final static InputTypeName PAGE_CONTROLLER = InputTypeName.from( "PageController" );
 
-    public final static InputTypeName PHONE = InputTypeName.from( "Phone" );
-
     public final static InputTypeName RADIO_BUTTONS = InputTypeName.from( "RadioButtons" );
-
-    public final static InputTypeName REGION = InputTypeName.from( "Region" );
 
     public final static InputTypeName SITE_CONFIGURATOR = InputTypeName.from( "SiteConfigurator" );
 
@@ -58,8 +48,6 @@ public final class InputTypeName
     public final static InputTypeName TIME = InputTypeName.from( "Time" );
 
     public final static InputTypeName TINY_MCE = InputTypeName.from( "TinyMCE" );
-
-    public final static InputTypeName XML = InputTypeName.from( "Xml" );
 
     private final String name;
 

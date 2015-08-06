@@ -350,11 +350,6 @@ public class AbstractContentServiceTest
                 inputType( InputTypes.LONG ).
                 build() ).
             addFormItem( Input.create().
-                name( "color" ).
-                label( "Color" ).
-                inputType( InputTypes.COLOR ).
-                build() ).
-            addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
@@ -373,11 +368,6 @@ public class AbstractContentServiceTest
                 name( "tinyMce" ).
                 label( "Tinymce" ).
                 inputType( InputTypes.TINY_MCE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "phone" ).
-                label( "Phone" ).
-                inputType( InputTypes.PHONE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
@@ -422,11 +412,6 @@ public class AbstractContentServiceTest
                 name( "htmlArea" ).
                 label( "Htmlarea" ).
                 inputType( InputTypes.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "xml" ).
-                label( "Xml" ).
-                inputType( InputTypes.XML ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).
