@@ -28,7 +28,7 @@ module api.content.page {
             }
             else {
                 return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
-                    pageDescriptor = this.fromJsonToPageDescriptor(response.getResult());
+                    pageDescriptor = this.fromJsonToPageDescriptor(response.getResult(), true);
                     return pageDescriptor;
                 });
             }
