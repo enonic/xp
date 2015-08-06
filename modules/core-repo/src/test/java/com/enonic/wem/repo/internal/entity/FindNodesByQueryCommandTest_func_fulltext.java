@@ -381,6 +381,49 @@ public class FindNodesByQueryCommandTest_func_fulltext
         queryAndAssert( "fulltext('title', 'levenshteins-algorithm', 'AND')", 1 );
     }
 
+
+    @Test
+    public void word_delimiter_testing_underscore()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "testing_delimiter" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
+        queryAndAssert( "fulltext('title', 'delimiter', 'AND')", 1 );
+    }
+
+    @Test
+    public void word_delimiter_testing_dot()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "testing.delimiter" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
+        queryAndAssert( "fulltext('title', 'delimiter', 'AND')", 1 );
+    }
+
     private void queryAndAssert( final Node node, final String queryString, final int expected )
     {
         final NodeQuery query = NodeQuery.create().

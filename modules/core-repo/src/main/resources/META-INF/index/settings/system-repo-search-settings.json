@@ -40,6 +40,7 @@
           "standard",
           "lowercase",
           "asciifolding",
+          "word_delimiter",
           "fulltext_ngrams"
         ],
         "type": "custom",
@@ -50,7 +51,8 @@
         "filter": [
           "standard",
           "lowercase",
-          "asciifolding"
+          "asciifolding",
+          "word_delimiter"
         ],
         "type": "custom",
         "tokenizer": "standard"
@@ -60,7 +62,8 @@
         "filter": [
           "standard",
           "lowercase",
-          "asciifolding"
+          "asciifolding",
+          "word_delimiter"
         ],
         "type": "custom",
         "tokenizer": "standard"
@@ -70,7 +73,8 @@
         "filter": [
           "standard",
           "lowercase",
-          "asciifolding"
+          "asciifolding",
+          "word_delimiter"
         ],
         "type": "custom",
         "tokenizer": "standard"

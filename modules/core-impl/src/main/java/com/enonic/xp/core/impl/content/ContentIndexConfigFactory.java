@@ -10,9 +10,14 @@ import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
+import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
+import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 import static com.enonic.xp.content.ContentPropertyNames.HTMLAREA_TEXT;
+import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
+import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
+import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
@@ -33,6 +38,11 @@ class ContentIndexConfigFactory
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+            add( CREATOR, IndexConfig.MINIMAL ).
+            add( MODIFIER, IndexConfig.MINIMAL ).
+            add( CREATED_TIME, IndexConfig.MINIMAL ).
+            add( MODIFIED_TIME, IndexConfig.MINIMAL ).
+            add( OWNER, IndexConfig.MINIMAL ).
             add( PAGE, IndexConfig.MINIMAL ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
