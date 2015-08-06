@@ -1,37 +1,18 @@
-package com.enonic.xp.core.impl.index.processor;
+package com.enonic.xp.index;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.index.IndexValueProcessor;
-import com.enonic.xp.index.IndexValueProcessorRegistry;
 
-@Component(immediate = true)
-public class HtmlStripper
+final class HtmlStripper
     implements IndexValueProcessor
 {
-    public final static String NAME = "constructor";
+    private final static String NAME = "htmlStripper";
 
     private final static Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
-
-    @Activate
-    public void register()
-    {
-        IndexValueProcessorRegistry.register( this );
-    }
-
-    @Deactivate
-    public void unregister()
-    {
-        IndexValueProcessorRegistry.unregister( this );
-    }
 
     @Override
     public Value process( final Value value )

@@ -3,11 +3,10 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.core.impl.index.processor.HtmlStripper;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.index.IndexValueProcessorRegistry;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
@@ -43,13 +42,13 @@ class ContentIndexConfigFactory
             add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
-        IndexConfig htmlIndexConfig = IndexConfig.create().
+        final IndexConfig htmlIndexConfig = IndexConfig.create().
             enabled( true ).
             fulltext( true ).
             nGram( true ).
             decideByType( false ).
             includeInAllText( true ).
-            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor( HtmlStripper.NAME ) ).
+            addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
             build();
         configDocumentBuilder.add( HTMLAREA_TEXT, htmlIndexConfig );
 

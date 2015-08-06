@@ -11,7 +11,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
-import com.enonic.xp.index.IndexValueProcessorRegistry;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -108,8 +108,7 @@ public class XmlNodeSerializerTest
             nGram( true ).
             decideByType( false ).
             includeInAllText( true ).
-            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
-            addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor("indexValueProcessor" )).
+            addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
             build();
         final PatternIndexConfigDocument.Builder indexConfigDocumentBuilder = PatternIndexConfigDocument.create();
         indexConfigDocumentBuilder.analyzer( "no" );

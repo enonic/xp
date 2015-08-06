@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.index.processor;
+package com.enonic.xp.index;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

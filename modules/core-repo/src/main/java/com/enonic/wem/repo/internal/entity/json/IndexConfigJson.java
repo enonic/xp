@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessor;
-import com.enonic.xp.index.IndexValueProcessorRegistry;
+import com.enonic.xp.index.IndexValueProcessors;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -46,7 +46,7 @@ final class IndexConfigJson
         {
             for ( final String indexValueProcessor : this.indexValueProcessors )
             {
-                builder.addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor( indexValueProcessor ) );
+                builder.addIndexValueProcessor( IndexValueProcessors.get( indexValueProcessor ) );
             }
         }
 

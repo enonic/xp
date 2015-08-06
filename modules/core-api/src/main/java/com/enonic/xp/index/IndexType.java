@@ -13,5 +13,4 @@ public enum IndexType
     {
         return this.name().toLowerCase();
     }
-
 }

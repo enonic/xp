@@ -13,7 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.index.IndexValueProcessorRegistry;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
@@ -285,7 +285,7 @@ public final class XmlNodeParser
         {
             for ( DomElement indexValueProcessor : indexValueProcessors.getChildren() )
             {
-                builder.addIndexValueProcessor( IndexValueProcessorRegistry.getIndexValueProcessor( indexValueProcessor.getValue() ) );
+                builder.addIndexValueProcessor( IndexValueProcessors.get( indexValueProcessor.getValue() ) );
             }
         }
 

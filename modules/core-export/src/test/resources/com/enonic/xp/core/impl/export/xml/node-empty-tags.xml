@@ -83,8 +83,7 @@
           <fulltext>true</fulltext>
           <includeInAllText>true</includeInAllText>
           <indexValueProcessors>
-            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
-            <indexValueProcessor>indexValueProcessor</indexValueProcessor>
+            <indexValueProcessor>htmlStripper</indexValueProcessor>
           </indexValueProcessors>
         </indexConfig>
         <path>mydata</path>
