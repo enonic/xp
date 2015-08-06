@@ -6,20 +6,22 @@ import java.nio.file.Paths;
 import com.google.common.io.CharSource;
 
 /**
- * Rename default analyzer from content_default to document_index_default)
+ * Removes owner, modifier, creator from fulltext and ngram indexing
  */
-public final class UpgradeModel005
+public final class UpgradeModel006
     extends AbstractXsltUpgradeModel
 {
-    public UpgradeModel005()
+    private final static String SUPPORTED_REPO = "cms-repo";
+
+    public UpgradeModel006()
     {
-        super( "UpgradeModel005.xsl" );
+        super( "UpgradeModel006.xsl" );
     }
 
     @Override
     public boolean supports( final Path path, final String repositoryName, final String branchName )
     {
-        return path.endsWith( Paths.get( "_", "node.xml" ) );
+        return path.endsWith( Paths.get( "_", "node.xml" ) ) && SUPPORTED_REPO.equals( repositoryName );
     }
 
     @Override
