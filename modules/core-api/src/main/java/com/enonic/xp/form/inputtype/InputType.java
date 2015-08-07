@@ -1,9 +1,12 @@
 package com.enonic.xp.form.inputtype;
 
 import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Element;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
@@ -67,5 +70,24 @@ public abstract class InputType
         {
             throw new InputValidationException( property, this );
         }
+    }
+
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
+    public InputTypeConfig parseConfig( ApplicationKey app, Element elem )
+    {
+        return null;
+    }
+
+    public ObjectNode serializeConfig( InputTypeConfig config )
+    {
+        return null;
+    }
+
+    public void checkValidity( InputTypeConfig config, Property property )
+    {
     }
 }

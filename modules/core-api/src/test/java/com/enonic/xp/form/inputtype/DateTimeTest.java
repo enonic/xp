@@ -16,7 +16,7 @@ import com.enonic.xp.xml.DomHelper;
 import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 import static org.junit.Assert.*;
 
-public class DateConfigSerializerTest
+public class DateTimeTest
 {
     private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
 
@@ -24,7 +24,7 @@ public class DateConfigSerializerTest
 
     private JsonTestHelper jsonHelper;
 
-    private DateConfigSerializer serializer = new DateConfigSerializer();
+    private DateTime serializer = new DateTime();
 
     @Before
     public void before()
@@ -38,12 +38,13 @@ public class DateConfigSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.create();
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
         builder.withTimezone( true );
-        DateConfig expected = builder.build();
+        DateTimeConfig expected = builder.build();
 
         // exercise
-        DateConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
+        DateTimeConfig parsed =
+            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -54,8 +55,8 @@ public class DateConfigSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.create();
-        DateConfig expected = builder.build();
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
+        DateTimeConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
@@ -63,7 +64,8 @@ public class DateConfigSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        DateConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+        DateTimeConfig parsed =
+            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -77,10 +79,11 @@ public class DateConfigSerializerTest
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
-        DateConfig expected = DateConfig.create().build();
+        DateTimeConfig expected = DateTimeConfig.create().build();
 
         // exercise
-        DateConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+        DateTimeConfig parsed =
+            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -91,9 +94,9 @@ public class DateConfigSerializerTest
         throws IOException
     {
         // setup
-        DateConfig.Builder builder = DateConfig.create();
+        DateTimeConfig.Builder builder = DateTimeConfig.create();
         builder.withTimezone( true );
-        DateConfig config = builder.build();
+        DateTimeConfig config = builder.build();
 
         // exercise
         JsonNode json = serializer.serializeConfig( config );

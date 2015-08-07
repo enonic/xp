@@ -2,8 +2,6 @@ package com.enonic.xp.form.inputtype;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.form.InvalidValueException;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -30,13 +28,6 @@ public final class ContentSelectorConfig
     public ContentTypeNames getAllowedContentTypes()
     {
         return allowedContentTypes;
-    }
-
-    @Override
-    public void checkValidity( final Property property )
-        throws InvalidValueException
-    {
-
     }
 
     public static Builder create()

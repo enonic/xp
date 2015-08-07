@@ -149,7 +149,7 @@ public final class Input
     {
         if ( inputTypeConfig != null )
         {
-            inputTypeConfig.checkValidity( property );
+            type.checkValidity( inputTypeConfig, property );
         }
     }
 

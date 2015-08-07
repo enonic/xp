@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.form.inputtype.ConfigurableInputType;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 
@@ -30,12 +29,11 @@ public class InputJson
         this.inputType = new InputTypeJson( input.getInputType() );
 
         final InputType type = input.getInputType();
-        final ConfigurableInputType configurableType = ( type instanceof ConfigurableInputType ) ? (ConfigurableInputType) type : null;
         final InputTypeConfig config = input.getInputTypeConfig();
-
-        if ( ( configurableType != null ) && ( config != null ) )
+        if ( config != null )
         {
-            this.configJson = configurableType.serializeConfig( config );
+            final ObjectNode json = type.serializeConfig( config );
+            this.configJson = json != null ? json : JsonNodeFactory.instance.objectNode();
         }
         else
         {

@@ -2,12 +2,18 @@ package com.enonic.xp.form.inputtype;
 
 
 public final class DateTimeConfig
-    extends TimezoneConfig
+    implements InputTypeConfig
 {
+    private final boolean withTimezone;
 
     DateTimeConfig( final Builder builder )
     {
-        super(builder);
+        this.withTimezone = builder.withTimezone;
+    }
+
+    public boolean isWithTimezone()
+    {
+        return withTimezone;
     }
 
     public static Builder create()
@@ -15,11 +21,19 @@ public final class DateTimeConfig
         return new Builder();
     }
 
-    public static final class Builder extends TimezoneConfig.Builder
+    public static class Builder
     {
+        private boolean withTimezone = false;
+
         Builder()
         {
             // protection
+        }
+
+        public Builder withTimezone( final boolean value )
+        {
+            withTimezone = value;
+            return this;
         }
 
         public DateTimeConfig build()
