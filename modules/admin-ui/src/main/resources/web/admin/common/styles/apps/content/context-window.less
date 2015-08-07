@@ -32,17 +32,29 @@
     color: @admin-font-gray1;
   }
 
-  .tab-bar {
+  & > .tab-bar {
     position: absolute;
     left: 5px;
     cursor: move;
   }
+
   & > .deck-panel {
     left: 5px;
     right: 0;
     top: 43px;
     width: auto;
+    bottom: 40px;
   }
+
+  & > .button-bar {
+    left: 5px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 6px;
+    text-align: center;
+  }
+
   .slick-viewport {
     overflow-y: auto !important;
     overflow-x: hidden !important;

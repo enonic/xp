@@ -160,5 +160,6 @@
 ///<reference path='liveedit/part/_module.ts' />
 ///<reference path='liveedit/layout/_module.ts' />
 ///<reference path='liveedit/text/_module.ts' />
+///<reference path='liveedit/ItemViewIconClassResolver.ts' />
 
 ///<reference path='main.ts' />

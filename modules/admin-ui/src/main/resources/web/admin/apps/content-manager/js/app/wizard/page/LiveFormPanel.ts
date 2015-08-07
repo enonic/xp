@@ -201,7 +201,10 @@ module app.wizard.page {
         setModel(liveEditModel: LiveEditModel) {
 
             this.liveEditModel = liveEditModel;
+
             this.content = liveEditModel.getContent();
+            this.contextWindow.setContent(this.content);
+
             this.pageModel = liveEditModel.getPageModel();
             this.pageModel.setIgnorePropertyChanges(true);
 
@@ -355,6 +358,7 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
+                this.contextWindow.setPageView(this.pageView);
             });
 
             this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {

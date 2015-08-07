@@ -66,6 +66,7 @@ module api.ui.treegrid {
             return new GridOptionsBuilder<NODE>().
                 setDataItemColumnValueExtractor(this.nodeExtractor).
                 setEditable(false).
+                setAutoHeight(false).
                 setEnableAsyncPostRender(true).
                 setAutoRenderGridOnDataChanges(true).
                 setEnableCellNavigation(false).

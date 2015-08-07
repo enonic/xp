@@ -377,7 +377,7 @@ module app.browse {
                                 }
                             }
                         });
-                        this.contentTreeGrid.resetAndRender();
+                        this.contentTreeGrid.invalidate();
                     });
             });
             return promise;
@@ -402,7 +402,7 @@ module app.browse {
                                 }
                             }
                         });
-                        this.contentTreeGrid.resetAndRender();
+                        this.contentTreeGrid.invalidate();
                     });
             });
             return promise;
@@ -420,7 +420,7 @@ module app.browse {
                 // merge array of nodes arrays
                 merged = merged.concat.apply(merged, nodes);
 
-                this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.resetAndRender());
+                this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.invalidate());
             });
             return promise;
         }

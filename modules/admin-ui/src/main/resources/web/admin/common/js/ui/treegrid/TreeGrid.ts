@@ -69,16 +69,6 @@ module api.ui.treegrid {
 
             this.gridOptions = builder.getOptions();
 
-            this.gridOptions.setForceFitColumns(true);
-
-            /*
-             * AutoHeight should be disabled, because it causes big performance problems
-             * on a big array of data. Each render cycle will take (1ms * row count)
-             * and the smart render in the viewport will be disabled.
-             */
-            this.gridOptions.setAutoHeight(false);
-
-
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
@@ -126,28 +116,28 @@ module api.ui.treegrid {
                         elem.removeClass("expand").addClass("collapse");
                         var node = this.gridData.getItem(data.row);
                         this.expandNode(node);
+                        event.stopPropagation();
                     } else if (elem.hasClass("collapse")) {
                         this.active = false;
                         elem.removeClass("collapse").addClass("expand");
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
+                        event.stopPropagation();
                     } else if (data.cell === 0) {
                         this.active = true;
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
+                            event.stopPropagation();
                         }
                     } else {
                         this.active = true;
                         this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
                     }
-
-                    this.manageRowClick(elem, data);
                 }
                 if (this.contextMenu) {
                     this.contextMenu.hide();
                 }
-                event.stopPropagation();
             });
 
             if (builder.isShowToolbar()) {
@@ -184,8 +174,7 @@ module api.ui.treegrid {
                 if (builder.isHotkeysEnabled()) {
 
                     if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                        keyBindings =
-                        [
+                        keyBindings = [
                             new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
                                 if (this.active) {
                                     this.scrollToRow(this.grid.addSelectedUp());
@@ -240,7 +229,7 @@ module api.ui.treegrid {
                                     && !node.isExpanded() && this.active) {
 
                                     this.active = false;
-                                    this.resetAndRender();
+                                    this.invalidate();
                                     this.expandNode(node);
                                 }
                             }
@@ -272,18 +261,15 @@ module api.ui.treegrid {
                 this.notifySelectionChanged(event, rows.rows);
             });
 
-           /* if (this.toolbar) {
-                this.gridData.onRowCountChanged(() => {
-                    this.toolbar.refresh();
-                });
+            /* if (this.toolbar) {
+             this.gridData.onRowCountChanged(() => {
+             this.toolbar.refresh();
+             });
 
-                this.onSelectionChanged(() => {
-                    this.toolbar.refresh();
-                });
-            }*/
-        }
-
-        protected manageRowClick(elem: ElementHelper, args: any) {
+             this.onSelectionChanged(() => {
+             this.toolbar.refresh();
+             });
+             }*/
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
@@ -478,7 +464,7 @@ module api.ui.treegrid {
             this.root.setFiltered(true);
             this.root.getCurrentRoot().setChildren(this.dataToTreeNodes(dataList, this.root.getCurrentRoot()));
             this.initData(this.root.getCurrentRoot().treeToList());
-            this.resetAndRender();
+            this.invalidate();
             this.active = true;
         }
 
@@ -488,7 +474,7 @@ module api.ui.treegrid {
             if (this.root.isFiltered()) {
                 this.root.setFiltered(false);
                 this.initData(this.root.getCurrentRoot().treeToList());
-                this.resetAndRender();
+                this.invalidate();
                 this.active = true;
                 this.notifyLoaded();
             } else {
@@ -544,7 +530,7 @@ module api.ui.treegrid {
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
-                    this.resetAndRender();
+                    this.invalidate();
                     this.active = true;
                 }).done(() => this.notifyLoaded());
         }
@@ -558,7 +544,7 @@ module api.ui.treegrid {
             root.setExpanded(true);
             this.initData(root.treeToList());
 
-            this.resetAndRender();
+            this.invalidate();
 
             this.active = true;
 
@@ -575,7 +561,7 @@ module api.ui.treegrid {
 
             root.setExpanded(true);
             this.initData(root.treeToList());
-            this.resetAndRender();
+            this.invalidate();
 
             this.active = true;
 
@@ -819,7 +805,7 @@ module api.ui.treegrid {
         }
 
         private updateExpanded() {
-            this.resetAndRender();
+            this.invalidate();
             this.active = true;
         }
 
@@ -837,7 +823,7 @@ module api.ui.treegrid {
             this.root.stashSelection();
 
             this.gridData.refresh();
-            this.resetAndRender();
+            this.invalidate();
             this.triggerSelectionChangedListeners();
             this.active = true;
         }
@@ -932,14 +918,13 @@ module api.ui.treegrid {
             return this.root.isFiltered();
         }
 
-        resetAndRender() {
+        invalidate() {
             this.grid.invalidate();
-            this.grid.renderGrid();
         }
 
         initAndRender() {
             this.initData(this.getRoot().getCurrentRoot().treeToList());
-            this.resetAndRender();
+            this.invalidate();
         }
 
         refreshNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
