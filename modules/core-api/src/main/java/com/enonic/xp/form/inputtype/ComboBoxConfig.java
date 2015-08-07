@@ -7,9 +7,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.form.InvalidValueException;
-
 @Beta
 public class ComboBoxConfig
     implements InputTypeConfig
@@ -18,7 +15,6 @@ public class ComboBoxConfig
 
     private final ImmutableMap<String, Option> optionsAsMap;
 
-
     private ComboBoxConfig( Builder builder )
     {
         this.optionsAsList = builder.listBuilder.build();
@@ -26,24 +22,17 @@ public class ComboBoxConfig
         Preconditions.checkArgument( this.optionsAsList.size() > 0, "No options given" );
     }
 
+    public boolean containsKey( final String name )
+    {
+        return this.optionsAsMap.containsKey( name );
+    }
+
     public List<Option> getOptions()
     {
         return optionsAsList;
     }
 
-    @Override
-    public void checkValidity( final Property property )
-        throws InvalidValueException
-    {
-        final String valueAsString = property.getString();
-        if ( valueAsString != null && !optionsAsMap.containsKey( valueAsString ) )
-        {
-            throw new InvalidValueException( property,
-                                             "Value can only be of one the following strings: " + optionValuesAsCommaSeparatedString() );
-        }
-    }
-
-    private String optionValuesAsCommaSeparatedString()
+    public String optionValuesAsCommaSeparatedString()
     {
         StringBuilder s = new StringBuilder();
         for ( int i = 0; i < optionsAsList.size(); i++ )

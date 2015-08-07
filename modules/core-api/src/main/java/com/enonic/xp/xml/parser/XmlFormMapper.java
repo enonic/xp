@@ -15,7 +15,6 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.form.inputtype.ConfigurableInputType;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
@@ -143,17 +142,11 @@ public final class XmlFormMapper
 
     private InputTypeConfig fromConfigXml( final InputType type, final DomElement value )
     {
-        if ( !( type instanceof ConfigurableInputType ) )
-        {
-            return null;
-        }
-
-        final ConfigurableInputType configurableType = (ConfigurableInputType) type;
         if ( value == null )
         {
-            return configurableType.getDefaultConfig();
+            return type.getDefaultConfig();
         }
 
-        return configurableType.parseConfig( this.currentApplication, value.getWrapped() );
+        return type.parseConfig( this.currentApplication, value.getWrapped() );
     }
 }
