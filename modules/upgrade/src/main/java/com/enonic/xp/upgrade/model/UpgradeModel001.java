@@ -24,10 +24,15 @@ public final class UpgradeModel001
         return path.endsWith( Paths.get( "_", "node.xml" ) ) && SUPPORTED_REPO.equals( repositoryName );
     }
 
-
     @Override
     public String upgrade( final Path path, final CharSource source )
     {
         return this.transform( path, source );
+    }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel001: Replace input-type 'html-part' with 'string'";
     }
 }

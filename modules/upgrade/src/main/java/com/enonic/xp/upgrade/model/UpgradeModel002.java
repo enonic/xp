@@ -29,4 +29,10 @@ public final class UpgradeModel002
     {
         return this.transform( path, source );
     }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel002: Replace image-content property-names";
+    }
 }

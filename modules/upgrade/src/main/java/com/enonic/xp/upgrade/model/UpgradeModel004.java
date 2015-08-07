@@ -29,4 +29,10 @@ public final class UpgradeModel004
     {
         return this.transform( path, source );
     }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel004: Remove pre-scaled image attachments (those with label=\"small\", \"medium\", \"large\", \"extra-large\")";
+    }
 }

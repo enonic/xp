@@ -10,7 +10,7 @@ import com.enonic.xp.upgrade.UpgradeException;
 
 
 public class UpgradeExportProperties
-    implements UpgradeModel
+    extends AbstractUpgradeModel
 {
     private static final String KEY_VALUE_SEPERATOR = " = ";
 
@@ -49,5 +49,11 @@ public class UpgradeExportProperties
         }
 
         return upgradedContent;
+    }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeExportProperties: Set export properties for upgraded version";
     }
 }

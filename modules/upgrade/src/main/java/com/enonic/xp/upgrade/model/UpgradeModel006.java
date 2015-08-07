@@ -29,4 +29,10 @@ public final class UpgradeModel006
     {
         return this.transform( path, source );
     }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel006: Removes owner, modifier, creator from fulltext and ngram indexing";
+    }
 }

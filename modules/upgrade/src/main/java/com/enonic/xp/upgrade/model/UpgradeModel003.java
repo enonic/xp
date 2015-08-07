@@ -29,4 +29,10 @@ public final class UpgradeModel003
     {
         return this.transform( path, source );
     }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel003: Replace moduleConfig with siteConfig in Content data";
+    }
 }

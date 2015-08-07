@@ -27,4 +27,10 @@ public final class UpgradeModel005
     {
         return this.transform( path, source );
     }
+
+    @Override
+    protected String getLogMsg()
+    {
+        return "UpgradeModel005: Rename default analyzer from content_default to document_index_default";
+    }
 }

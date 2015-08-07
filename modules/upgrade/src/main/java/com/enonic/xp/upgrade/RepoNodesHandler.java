@@ -45,9 +45,15 @@ public final class RepoNodesHandler
 
     public void execute()
     {
+        log();
         verifyRoot();
         processRepositories( root );
         processExportProperties( root );
+    }
+
+    private void log()
+    {
+        this.upgradeModels.forEach( com.enonic.xp.upgrade.model.UpgradeModel::log );
     }
 
     private void processExportProperties( final Path path )

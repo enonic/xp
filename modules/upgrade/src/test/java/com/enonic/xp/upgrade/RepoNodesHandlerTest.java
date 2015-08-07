@@ -67,6 +67,12 @@ public class RepoNodesHandlerTest
                     throw new RuntimeException();
                 }
             }
+
+            @Override
+            public void log()
+            {
+                // Do nothing
+            }
         };
 
         RepoNodesHandler.create().
