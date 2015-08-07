@@ -213,7 +213,7 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
-                    this.contentWizardToolbarPublishControls.setContentFormValidity(this.isContentFormValid);
+                    this.contentWizardToolbarPublishControls.setContentCanBePublished(this.checkContentCanBePublished(false));
                 });
 
                 this.addClass("content-wizard-panel");
@@ -879,9 +879,9 @@ module app.wizard {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
         }
 
-        public checkContentCanBePublished(): boolean {
+        public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
             if (!this.isContentFormValid) {
-                this.contentWizardStepForm.displayValidationErrors(true);
+                this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
             }
             var contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
@@ -891,7 +891,7 @@ module app.wizard {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
                     var form = this.metadataStepFormByName[key];
                     if (!form.isValid()) {
-                        form.displayValidationErrors(true);
+                        form.displayValidationErrors(displayValidationErrors);
                         allMetadataFormsValid = false;
                     }
                     var formHasValidUserInput = form.getFormView().hasValidUserInput();

@@ -36,6 +36,8 @@ module api.form {
 
         private previousValidityRecording: ValidationRecording;
 
+        private userInputValid: boolean;
+
         private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         constructor(config: InputViewConfig) {
@@ -121,7 +123,6 @@ module api.form {
                 this.appendChild(this.validationViewer);
 
                 this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
-
                     this.handleInputValidationRecording(event.getRecording(), false);
                 });
 
@@ -186,6 +187,7 @@ module api.form {
 
             var recording = new ValidationRecording();
             var validationRecordingPath = this.resolveValidationRecordingPath();
+            var hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
@@ -194,15 +196,19 @@ module api.form {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
-            if (!silent && recording.validityChanged(this.previousValidityRecording)) {
-                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording, validationRecordingPath));
+            if (!silent && (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput) )) {
+                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording, validationRecordingPath, !hasValidInput));
             }
-
             this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
 
             this.previousValidityRecording = recording;
+            this.userInputValid = hasValidInput;
             return recording;
 
+        }
+
+        userInputValidityChanged(currentState: boolean): boolean {
+            return this.userInputValid == undefined || this.userInputValid == null || !(this.userInputValid == currentState);
         }
 
         giveFocus(): boolean {

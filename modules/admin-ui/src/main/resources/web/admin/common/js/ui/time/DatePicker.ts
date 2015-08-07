@@ -135,9 +135,9 @@ module api.ui.time {
                     this.popup.hide();
                 }
                 this.selectedDate = e.getDate();
+                this.validUserInput = true;
                 this.input.setValue(this.formatDate(e.getDate()));
                 this.notifySelectedDateChanged(e);
-                this.validUserInput = true;
                 this.updateInputStyling();
             });
 

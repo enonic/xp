@@ -172,19 +172,19 @@ module api.ui.time {
                 }
 
                 this.setDate(e.getDate());
+                this.validUserInput = true;
                 this.input.setValue(this.formatDate(this.selectedDate) + " " +
                                                                              this.formatTime(this.selectedDate.getHours(),
                                                                                  this.selectedDate.getMinutes()));
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
-                this.validUserInput = true;
                 this.updateInputStyling();
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 this.setTime(hours, minutes);
+                this.validUserInput = true;
                 this.input.setValue(this.formatDate(this.selectedDate) + " " + this.formatTime(hours, minutes));
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
-                this.validUserInput = true;
                 this.updateInputStyling();
             });
 

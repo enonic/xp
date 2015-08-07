@@ -51,6 +51,7 @@ module app.wizard {
                 this.appendChild(this.formView);
 
                 this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                    this.previousValidation = event.getRecording();
                     this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
                 });
 
