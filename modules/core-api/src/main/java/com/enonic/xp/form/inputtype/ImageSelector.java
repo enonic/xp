@@ -34,12 +34,6 @@ final class ImageSelector
     }
 
     @Override
-    public ImageSelectorConfig getDefaultConfig()
-    {
-        return ImageSelectorConfig.create().build();
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newReference( Reference.from( value ) );

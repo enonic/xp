@@ -13,7 +13,6 @@ import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 import static org.junit.Assert.*;
 
 public class DateTimeTest
@@ -102,6 +101,6 @@ public class DateTimeTest
         JsonNode json = serializer.serializeConfig( config );
 
         // verify
-        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
+        this.jsonHelper.assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 }

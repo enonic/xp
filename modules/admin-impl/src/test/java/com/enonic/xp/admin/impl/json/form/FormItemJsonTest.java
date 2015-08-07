@@ -16,8 +16,6 @@ import com.enonic.xp.form.InputJson;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
-
 public class FormItemJsonTest
 {
 
@@ -25,7 +23,7 @@ public class FormItemJsonTest
 
     public FormItemJsonTest()
     {
-        jsonTestHelper = new JsonTestHelper( this, true );
+        jsonTestHelper = new JsonTestHelper( this );
     }
 
     @Test
@@ -46,7 +44,7 @@ public class FormItemJsonTest
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( inputJson );
-        assertJsonEquals( jsonTestHelper.loadTestJson( "input.json" ), json );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "input.json" ), json );
     }
 
     @Test
@@ -66,7 +64,7 @@ public class FormItemJsonTest
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( inputJson );
-        assertJsonEquals( jsonTestHelper.loadTestJson( "inputWithConfig.json" ), json );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "inputWithConfig.json" ), json );
     }
 
     @Test
@@ -84,7 +82,7 @@ public class FormItemJsonTest
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( formItemSetJson );
-        assertJsonEquals( jsonTestHelper.loadTestJson( "formItemSet.json" ), json );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "formItemSet.json" ), json );
     }
 
     @Test
@@ -99,6 +97,6 @@ public class FormItemJsonTest
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( fieldSetJson );
-        assertJsonEquals( jsonTestHelper.loadTestJson( "fieldSet.json" ), json );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "fieldSet.json" ), json );
     }
 }

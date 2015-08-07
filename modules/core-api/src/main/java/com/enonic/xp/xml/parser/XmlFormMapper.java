@@ -144,7 +144,7 @@ public final class XmlFormMapper
     {
         if ( value == null )
         {
-            return type.getDefaultConfig();
+            return null;
         }
 
         return type.parseConfig( this.currentApplication, value.getWrapped() );

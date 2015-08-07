@@ -72,11 +72,6 @@ public abstract class InputType
         }
     }
 
-    public InputTypeConfig getDefaultConfig()
-    {
-        return null;
-    }
-
     public InputTypeConfig parseConfig( ApplicationKey app, Element elem )
     {
         return null;

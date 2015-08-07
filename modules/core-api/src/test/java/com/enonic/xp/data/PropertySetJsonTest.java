@@ -16,7 +16,7 @@ public class PropertySetJsonTest
 
     public PropertySetJsonTest()
     {
-        jsonTestHelper = new JsonTestHelper( this, true );
+        jsonTestHelper = new JsonTestHelper( this );
     }
 
     @Test

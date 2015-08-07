@@ -3,10 +3,12 @@ package com.enonic.xp.xml;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.w3c.dom.EntityReference;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -82,18 +84,20 @@ public final class DomElement
             }
         }
 
-        return str.toString();
+        return str.toString().trim();
     }
 
-    public String getValue( final String defValue )
+    public List<Attr> getAttributes()
     {
-        final String value = getValue();
-        return value != null ? value : defValue;
-    }
+        final List<Attr> result = Lists.newArrayList();
+        final NamedNodeMap map = this.elem.getAttributes();
 
-    public <T> T getValueAs( final Class<T> type, final T defValue )
-    {
-        return convert( type, getValue(), defValue );
+        for ( int i = 0; i < map.getLength(); i++ )
+        {
+            result.add( (Attr) map.item( i ) );
+        }
+
+        return result;
     }
 
     public String getAttribute( final String name )

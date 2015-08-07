@@ -22,14 +22,11 @@ public class JsonTestHelper
 
     private final ObjectWriter objectWriter;
 
-    private final boolean prettyPrint;
-
     private final ResourceTestHelper resourceTestHelper;
 
-    public JsonTestHelper()
+    public JsonTestHelper( final Object testInstance )
     {
-        this.resourceTestHelper = new ResourceTestHelper( this );
-        this.prettyPrint = true;
+        this.resourceTestHelper = new ResourceTestHelper( testInstance );
         objectMapper = new ObjectMapper();
         objectMapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
         objectMapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
@@ -41,42 +38,9 @@ public class JsonTestHelper
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 
-    public JsonTestHelper( final Object testInstance )
-    {
-        this( testInstance, true );
-    }
-
-    public JsonTestHelper( final Object testInstance, final boolean prettyPrint )
-    {
-        this.resourceTestHelper = new ResourceTestHelper( testInstance );
-        objectMapper = new ObjectMapper();
-        objectMapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        objectMapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
-        objectMapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        objectMapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-        objectMapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        objectMapper.registerModule( new JSR310Module() );
-        this.prettyPrint = prettyPrint;
-        if ( prettyPrint )
-        {
-            objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        }
-        else
-        {
-            objectWriter = objectMapper.writer();
-        }
-    }
-
-
     public ObjectMapper objectMapper()
     {
         return objectMapper;
-    }
-
-    public String loadTestFile( String fileName )
-    {
-        return resourceTestHelper.loadTestFile( fileName );
     }
 
     public JsonNode loadTestJson( final String fileName )
@@ -136,14 +100,8 @@ public class JsonTestHelper
         }
     }
 
-    public static void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
+    public void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
     {
-        assertEquals( expectedJson, actualJson );
-    }
-
-    public void assertJsonEquals2( final JsonNode expectedJson, final JsonNode actualJson )
-    {
-
         assertEquals( jsonToString( expectedJson ), jsonToString( actualJson ) );
     }
 }

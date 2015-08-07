@@ -38,25 +38,20 @@ final class DateTime
         }
     }
 
-    @Override
-    public DateTimeConfig getDefaultConfig()
+    private boolean useTimeZone( final InputTypeConfig config )
     {
-        final DateTimeConfig.Builder builder = DateTimeConfig.create();
-        builder.withTimezone( false );
-        return builder.build();
+        if ( config instanceof DateTimeConfig )
+        {
+            return ( (DateTimeConfig) config ).isWithTimezone();
+        }
+
+        return false;
     }
 
     @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
-        if ( config != null && !( config instanceof DateTimeConfig ) )
-        {
-            throw new IllegalArgumentException(
-                "Expected config of type " + DateTimeConfig.class.getName() + ", got " + config.getClass() );
-        }
-
-        final DateTimeConfig dateTimeConfig = config == null ? getDefaultConfig() : (DateTimeConfig) config;
-        if ( dateTimeConfig.isWithTimezone() )
+        if ( useTimeZone( config ) )
         {
             return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
         }

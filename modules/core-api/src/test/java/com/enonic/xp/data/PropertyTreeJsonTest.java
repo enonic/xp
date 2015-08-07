@@ -24,7 +24,7 @@ public class PropertyTreeJsonTest
 
     public PropertyTreeJsonTest()
     {
-        jsonTestHelper = new JsonTestHelper( this, true );
+        jsonTestHelper = new JsonTestHelper( this );
     }
 
     private PropertyTree createPropertyTree_with_all_types()
@@ -182,7 +182,7 @@ public class PropertyTreeJsonTest
         List<?> parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, List.class );
 
         // verify de-serialization against static file
-        jsonTestHelper.assertJsonEquals2( jsonTestHelper.loadTestJson( "all-types.json" ), jsonTestHelper.objectToJson( parsedData ) );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "all-types.json" ), jsonTestHelper.objectToJson( parsedData ) );
     }
 
 }
