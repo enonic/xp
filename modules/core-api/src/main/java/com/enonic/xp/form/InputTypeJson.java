@@ -1,24 +1,15 @@
 package com.enonic.xp.form;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeResolver;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class InputTypeJson
 {
     private final InputType inputType;
-
-    @JsonCreator
-    public InputTypeJson( @JsonProperty("name") String name, @JsonProperty("config") String config )
-    {
-        this.inputType = InputTypeResolver.get().resolve( name );
-    }
 
     public InputTypeJson( final InputType inputType )
     {

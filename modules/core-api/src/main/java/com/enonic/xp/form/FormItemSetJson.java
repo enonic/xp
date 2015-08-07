@@ -3,9 +3,7 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 
 @Beta
@@ -18,26 +16,6 @@ public class FormItemSetJson
     private final List<FormItemJson> items;
 
     private final OccurrencesJson occurrences;
-
-    @JsonCreator
-    public FormItemSetJson( @JsonProperty("name") String name, @JsonProperty("label") String label,
-                            @JsonProperty("customText") String customText, @JsonProperty("helpText") String helpText,
-                            @JsonProperty("validationRegexp") String validationRegexp, @JsonProperty("immutable") boolean immutable,
-                            @JsonProperty("inputType") InputTypeJson inputType, @JsonProperty("occurrences") OccurrencesJson occurrences,
-                            @JsonProperty("items") List<FormItemJson> items )
-    {
-        formItemSet = FormItemSet.create().
-            name( name ).
-            label( label ).
-            immutable( immutable ).
-            customText( customText ).
-            helpText( helpText ).
-            occurrences( occurrences.getOccurrences() ).
-            addFormItems( unwrapFormItems( items ) ).
-            build();
-        this.items = items;
-        this.occurrences = occurrences;
-    }
 
     public FormItemSetJson( final FormItemSet formItemSet )
     {
