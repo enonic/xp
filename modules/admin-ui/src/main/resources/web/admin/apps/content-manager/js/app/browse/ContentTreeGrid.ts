@@ -114,6 +114,13 @@ module app.browse {
 
             });
 
+            this.getGrid().subscribeOnClick((event, data) => {
+                var elem = new ElementHelper(event.target);
+                if (elem.hasClass("sort-dialog-trigger")) {
+                    this.sortIconClickCallback();
+                }
+            });
+
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
                     var node = this.getGrid().getDataView().getItem(data.row);
@@ -183,12 +190,6 @@ module app.browse {
                 }
             }
             return wrapper.toString();
-        }
-
-        protected manageRowClick(elem: ElementHelper, args: any) {
-            if (elem.hasClass("sort-dialog-trigger")) {
-                this.sortIconClickCallback();
-            }
         }
 
         private sortIconClickCallback() {
@@ -397,13 +398,13 @@ module app.browse {
             }).done();
 
             item.onProgress((progress: number) => {
-                this.resetAndRender();
+                this.invalidate();
             });
             item.onUploaded((model: ContentSummary) => {
                 var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
                 if (nodeToRemove) {
                     nodeToRemove.remove();
-                    this.resetAndRender();
+                    this.invalidate();
                 }
 
                 api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
@@ -456,7 +457,7 @@ module app.browse {
                     : new TreeNodesOfContentPath(paths[i]);
                 if (useParent && node.getPath().isRoot()) {
                     node.getNodes().push(this.getRoot().getDefaultRoot());
-                    if(this.isFiltered()) {
+                    if (this.isFiltered()) {
                         node.getNodes().push(this.getRoot().getFilteredRoot());
                     }
                 } else {
@@ -528,7 +529,7 @@ module app.browse {
             return wemQ.allSettled(parallelPromises).then((results) => {
                 var rootList = this.getRoot().getCurrentRoot().treeToList();
                 this.initData(rootList);
-                this.resetAndRender();
+                this.invalidate();
                 return results;
             });
         }
@@ -571,7 +572,7 @@ module app.browse {
             return wemQ.allSettled(parallelPromises).then((results) => {
                 var rootList = this.getRoot().getCurrentRoot().treeToList();
                 this.initData(rootList);
-                this.resetAndRender();
+                this.invalidate();
                 return results;
             });
         }

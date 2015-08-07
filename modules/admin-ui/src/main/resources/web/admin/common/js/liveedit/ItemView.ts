@@ -597,6 +597,13 @@ module api.liveedit {
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+
+            var selectedView = this.getPageView().getSelectedView();
+            if (selectedView) {
+                // deselect selected item view if any
+                selectedView.deselect();
+            }
+
             this.getEl().setData("live-edit-selected", "true");
 
             this.showContextMenu(clickPosition, menuPosition);
