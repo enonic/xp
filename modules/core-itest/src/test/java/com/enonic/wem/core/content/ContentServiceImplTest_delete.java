@@ -306,4 +306,36 @@ public class ContentServiceImplTest_delete
     }
 
 
+    @Test
+    public void create_content_with_same_paths_in_two_repos_then_delete()
+        throws Exception
+    {
+        final CreateContentParams params = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( params );
+
+        final Content contentOther = CTX_OTHER.callWith( () -> this.contentService.create( params ) );
+
+        System.out.println( "Content: " + content.getId() );
+        System.out.println( "ContentOther: " + contentOther.getId() );
+
+        //Deletes the content
+        final Contents deletedContents =
+            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        assertNotNull( deletedContents );
+        assertEquals( 1, deletedContents.getSize() );
+
+        final Contents deletedOther = CTX_OTHER.callWith(
+            () -> this.contentService.delete( DeleteContentParams.create().contentPath( contentOther.getPath() ).build() ) );
+
+        assertNotNull( deletedOther );
+        assertEquals( 1, deletedOther.getSize() );
+    }
+
+
 }
