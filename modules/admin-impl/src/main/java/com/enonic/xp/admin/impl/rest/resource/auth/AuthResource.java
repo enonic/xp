@@ -10,8 +10,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.impl.app.AdminApplicationsRegistry;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginJson;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
 import com.enonic.xp.admin.impl.security.AuthHelper;
 import com.enonic.xp.context.ContextAccessor;
@@ -37,10 +37,10 @@ public final class AuthResource
 
     @POST
     @Path("login")
-    public LoginResultJson login( final LoginJson login )
+    public LoginResultJson login( final LoginRequest request )
     {
         final AuthHelper helper = new AuthHelper( this.securityService );
-        final AuthenticationInfo authInfo = helper.login( login.getUser(), login.getPassword(), login.isRememberMe() );
+        final AuthenticationInfo authInfo = helper.login( request.getUser(), request.getPassword(), request.isRememberMe() );
 
         if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
         {

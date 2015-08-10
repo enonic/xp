@@ -15,7 +15,6 @@ import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
-import static com.enonic.xp.support.JsonTestHelper.assertJsonEquals;
 import static org.junit.Assert.*;
 
 public class ContentSelectorTest
@@ -147,7 +146,7 @@ public class ContentSelectorTest
         JsonNode json = serializer.serializeConfig( config );
 
         // verify
-        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
+        this.jsonHelper.assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 
     @Test
@@ -165,7 +164,7 @@ public class ContentSelectorTest
         JsonNode json = serializer.serializeConfig( config );
 
         // verify
-        assertJsonEquals( jsonHelper.loadTestJson( "serializeFullConfig.json" ), json );
+        this.jsonHelper.assertJsonEquals( jsonHelper.loadTestJson( "serializeFullConfig.json" ), json );
     }
 
     @Test
@@ -180,6 +179,6 @@ public class ContentSelectorTest
         JsonNode json = serializer.serializeConfig( config );
 
         // verify
-        assertJsonEquals( jsonHelper.loadTestJson( "serializeEmptyConfig.json" ), json );
+        this.jsonHelper.assertJsonEquals( jsonHelper.loadTestJson( "serializeEmptyConfig.json" ), json );
     }
 }

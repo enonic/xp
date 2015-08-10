@@ -1,8 +1,6 @@
 package com.enonic.xp.form;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 
 @Beta
@@ -10,12 +8,6 @@ import com.google.common.annotations.Beta;
 public class OccurrencesJson
 {
     private final Occurrences occurrences;
-
-    @JsonCreator
-    public OccurrencesJson( @JsonProperty("minimum") int minimum, @JsonProperty("maximum") int maximum )
-    {
-        occurrences = new Occurrences( minimum, maximum );
-    }
 
     public OccurrencesJson( final Occurrences occurrences )
     {

@@ -1,0 +1,27 @@
+{
+  "fruits": {
+    "fruit": [
+      "apple",
+      {
+        "@color": "yellow",
+        "$value": "banana"
+      }
+    ]
+  },
+  "vehicles": {
+    "vehicle": [
+      {
+        "@type": "car",
+        "@wheels": "4",
+        "name": "Lexus",
+        "color": "Blue"
+      },
+      {
+        "@type": "car",
+        "@wheels": "4",
+        "name": "Tesla",
+        "color": "Black"
+      }
+    ]
+  }
+}

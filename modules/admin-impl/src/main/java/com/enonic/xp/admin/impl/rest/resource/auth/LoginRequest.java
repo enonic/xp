@@ -1,6 +1,6 @@
-package com.enonic.xp.admin.impl.rest.resource.auth.json;
+package com.enonic.xp.admin.impl.rest.resource.auth;
 
-public final class LoginJson
+public final class LoginRequest
 {
     protected boolean rememberMe;
 

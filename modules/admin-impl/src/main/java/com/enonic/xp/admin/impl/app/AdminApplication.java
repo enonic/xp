@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.auth;
+package com.enonic.xp.admin.impl.app;
 
 import com.enonic.xp.security.PrincipalKeys;
 

@@ -5,23 +5,23 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.support.SerializingTestHelper;
+import com.enonic.xp.support.XmlTestHelper;
 
 public class XmlSiteParserTest
 {
-    private final SerializingTestHelper serializingTestHelper;
+    private final XmlTestHelper xmlTestHelper;
 
     private final XmlSiteParser parser;
 
     public XmlSiteParserTest()
     {
-        this.serializingTestHelper = new SerializingTestHelper( this, true );
+        this.xmlTestHelper = new XmlTestHelper( this );
         this.parser = new XmlSiteParser();
     }
 
     private String loadTestXml( final String fileName )
     {
-        return this.serializingTestHelper.loadTextXml( fileName );
+        return this.xmlTestHelper.loadTestXml( fileName );
     }
 
     @Test

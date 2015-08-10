@@ -4,9 +4,7 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 
 @Beta
@@ -25,18 +23,6 @@ public class FormJson
         {
             items.add( FormItemJsonFactory.create( formItem ) );
         }
-    }
-
-    @JsonCreator
-    public FormJson( @JsonProperty("formItems") List<FormItemJson> items )
-    {
-        this.items = items;
-        final Form.Builder builder = Form.create();
-        for ( FormItemJson formItemJson : items )
-        {
-            builder.addFormItem( formItemJson.getFormItem() );
-        }
-        this.form = builder.build();
     }
 
     public List<FormItemJson> getFormItems()
