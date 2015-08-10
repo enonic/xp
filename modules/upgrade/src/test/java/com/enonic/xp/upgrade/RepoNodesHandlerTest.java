@@ -20,32 +20,33 @@ import static junit.framework.TestCase.assertTrue;
 public class RepoNodesHandlerTest
 {
     @Rule
-    public TemporaryFolder dumpRoot = new TemporaryFolder();
-
-    @Rule
-    public TemporaryFolder targetRoot = new TemporaryFolder();
+    public TemporaryFolder dumpFolder = new TemporaryFolder();
 
     @Test
     public void untouched_files_copied()
         throws Exception
     {
-        createDump();
+        final Path dumpRoot = this.dumpFolder.newFolder( "testDump" ).toPath();
+
+        createDump( dumpRoot );
 
         RepoNodesHandler.create().
-            sourceRoot( dumpRoot.getRoot().toPath() ).
-            target( targetRoot.getRoot().toPath() ).
+            sourceRoot( dumpRoot ).
             upgradeModels( Lists.newArrayList() ).
             build().
             execute();
 
-        assertTarget();
+        assertTarget( UpgradePathHelper.generateUpgradeTargetPath( dumpFolder.getRoot().toPath(), "testDump" ) );
     }
 
     @Test
     public void touched_files_written()
         throws Exception
     {
-        createDump();
+
+        final Path dumpRoot = this.dumpFolder.newFolder( "testDump" ).toPath();
+
+        createDump( dumpRoot );
 
         UpgradeModel model = new UpgradeModel()
         {
@@ -76,23 +77,20 @@ public class RepoNodesHandlerTest
         };
 
         RepoNodesHandler.create().
-            sourceRoot( dumpRoot.getRoot().toPath() ).
-            target( targetRoot.getRoot().toPath() ).
+            sourceRoot( dumpRoot ).
             upgradeModels( Lists.newArrayList( model ) ).
             build().
             execute();
 
-        assertTarget();
+        assertTarget( UpgradePathHelper.generateUpgradeTargetPath( dumpFolder.getRoot().toPath(), "testDump" ) );
     }
 
-    private void createDump()
+    private void createDump( final Path dumpFolder )
         throws Exception
     {
-        final String root = dumpRoot.getRoot().toString();
-
-        doCreateFile( root, "cms-repo", "draft", "_", "node.xml" );
-        doCreateFile( root, "cms-repo", "master", "_", "node.xml" );
-        doCreateFile( root, "system-repo", "master", "_", "node.xml" );
+        doCreateFile( dumpFolder.toString(), "cms-repo", "draft", "_", "node.xml" );
+        doCreateFile( dumpFolder.toString(), "cms-repo", "master", "_", "node.xml" );
+        doCreateFile( dumpFolder.toString(), "system-repo", "master", "_", "node.xml" );
     }
 
     private boolean doCreateFile( final String first, final String... elements )
@@ -102,11 +100,11 @@ public class RepoNodesHandlerTest
         return file.getParentFile().mkdirs() && file.createNewFile();
     }
 
-    private void assertTarget()
+    private void assertTarget( final Path targetRoot )
     {
-        assertTrue( Files.exists( Paths.get( targetRoot.getRoot().getPath(), "cms-repo", "draft", "_", "node.xml" ) ) );
-        assertTrue( Files.exists( Paths.get( targetRoot.getRoot().getPath(), "cms-repo", "master", "_", "node.xml" ) ) );
-        assertTrue( Files.exists( Paths.get( targetRoot.getRoot().getPath(), "system-repo", "master", "_", "node.xml" ) ) );
+        assertTrue( Files.exists( Paths.get( targetRoot.toString(), "cms-repo", "draft", "_", "node.xml" ) ) );
+        assertTrue( Files.exists( Paths.get( targetRoot.toString(), "cms-repo", "master", "_", "node.xml" ) ) );
+        assertTrue( Files.exists( Paths.get( targetRoot.toString(), "system-repo", "master", "_", "node.xml" ) ) );
     }
 
 

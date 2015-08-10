@@ -2,7 +2,6 @@ package com.enonic.xp.upgrade;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
@@ -11,9 +10,9 @@ public final class UpgradeHandler
 {
     private final Path root;
 
-    private final static Path TARGET = Paths.get( "upgraded" ).toAbsolutePath();
-
     private final UpgradeTaskLocator upgradeTaskLocator;
+
+    public static final String XP_VERSION = "6.0.0";
 
     private final Logger LOG = Logger.getLogger( UpgradeHandler.class.getName() );
 
@@ -37,7 +36,6 @@ public final class UpgradeHandler
         RepoNodesHandler.create().
             sourceRoot( root ).
             upgradeModels( this.upgradeTaskLocator.getUpgradeModels() ).
-            target( TARGET.resolve( root.getFileName() ) ).
             build().
             execute();
     }

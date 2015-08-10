@@ -23,7 +23,7 @@ public final class RepoNodesHandler
 
     private static final Predicate<Path> IGNORE_FILES_FILTER = ( repo ) -> !IGNORE_FILES.contains( repo.getFileName().toString() );
 
-    private final Path root;
+    private final Path dumpFolder;
 
     private final Path target;
 
@@ -33,9 +33,9 @@ public final class RepoNodesHandler
 
     private RepoNodesHandler( Builder builder )
     {
-        this.root = builder.root;
+        this.dumpFolder = builder.root;
         this.upgradeModels = builder.upgradeModels;
-        this.target = builder.target;
+        this.target = UpgradePathHelper.generateUpgradeTargetPath( this.dumpFolder.getParent(), this.dumpFolder.getFileName().toString() );
     }
 
     public static Builder create()
@@ -47,9 +47,10 @@ public final class RepoNodesHandler
     {
         log();
         verifyRoot();
-        processRepositories( root );
-        processExportProperties( root );
+        processRepositories( dumpFolder );
+        processExportProperties( dumpFolder );
     }
+
 
     private void log()
     {
@@ -154,17 +155,17 @@ public final class RepoNodesHandler
 
     private Path createTargetPath( final Path path )
     {
-        return Paths.get( this.target.toString(), PathHelper.subtractPath( path, root ).toString() );
+        return Paths.get( this.target.toString(), PathHelper.subtractPath( path, dumpFolder ).toString() );
     }
 
     private void verifyRoot()
     {
-        if ( !Files.exists( root ) )
+        if ( !Files.exists( dumpFolder ) )
         {
             throw new UpgradeException( "Upgrade root does not exist" );
         }
 
-        if ( !Files.isDirectory( root ) )
+        if ( !Files.isDirectory( dumpFolder ) )
         {
             throw new UpgradeException( "Upgrade root is not directory" );
         }
@@ -174,18 +175,10 @@ public final class RepoNodesHandler
     {
         private Path root;
 
-        private Path target;
-
         private List<UpgradeModel> upgradeModels;
 
         private Builder()
         {
-        }
-
-        public Builder target( final Path target )
-        {
-            this.target = target;
-            return this;
         }
 
         public Builder sourceRoot( Path root )

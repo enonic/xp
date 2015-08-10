@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.upgrade.UpgradeException;
+import com.enonic.xp.upgrade.UpgradeHandler;
 
 
 public class UpgradeExportProperties
@@ -17,8 +18,6 @@ public class UpgradeExportProperties
     private static final String XP_VERSION_KEY = "xp.version";
 
     private static final String XP_VERSION_REGEXP = "[\\w\\.]+$";
-
-    private static final String XP_VERSION = "6.0.0";
 
     private static final Pattern EXPORT_PROPERTIES_PATTERN =
         Pattern.compile( XP_VERSION_KEY + KEY_VALUE_SEPERATOR + XP_VERSION_REGEXP, Pattern.MULTILINE );
@@ -40,7 +39,8 @@ public class UpgradeExportProperties
 
             if ( matcher.find() )
             {
-                upgradedContent = upgradedContent.replaceFirst( matcher.group( 0 ), XP_VERSION_KEY + KEY_VALUE_SEPERATOR + XP_VERSION );
+                upgradedContent =
+                    upgradedContent.replaceFirst( matcher.group( 0 ), XP_VERSION_KEY + KEY_VALUE_SEPERATOR + UpgradeHandler.XP_VERSION );
             }
         }
         catch ( Exception e )
