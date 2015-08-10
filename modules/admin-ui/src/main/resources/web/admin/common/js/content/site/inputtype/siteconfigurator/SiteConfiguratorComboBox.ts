@@ -6,8 +6,8 @@ module api.content.site.inputtype.siteconfigurator {
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig;
-    import ModuleViewer = api.application.ApplicationViewer;
-    import ModuleLoader = api.application.ApplicationLoader;
+    import ApplicationViewer = api.application.ApplicationViewer;
+    import ApplicationLoader = api.application.ApplicationLoader;
     import FormView = api.form.FormView;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -28,10 +28,10 @@ module api.content.site.inputtype.siteconfigurator {
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
-                setComboBoxName("moduleSelector").
-                setLoader(new ModuleLoader(500, filterObject)).
+                setComboBoxName("applicationSelector").
+                setLoader(new ApplicationLoader(500, filterObject)).
                 setSelectedOptionsView(this.siteConfiguratorSelectedOptionsView).
-                setOptionDisplayValueViewer(new ModuleViewer()).
+                setOptionDisplayValueViewer(new ApplicationViewer()).
                 setDelayedInputValueChangedHandling(500);
 
             super(builder);

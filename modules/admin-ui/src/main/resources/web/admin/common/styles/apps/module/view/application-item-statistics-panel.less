@@ -1,0 +1,52 @@
+.application-item-statistics-panel {
+  overflow-x: auto;
+  overflow-y: scroll;
+
+  .action-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .header {
+    background-color: @admin-bg-light-gray;
+    padding: 35px;
+    color: @admin-font-gray3;
+    margin: 0;
+
+    img {
+      height: 64px;
+      width: 64px;
+      margin-right: 20px;
+    }
+
+    .path {
+      display: none;
+    }
+  }
+
+  .upgrade-message-container {
+    width: 100%;
+    background-color: @admin-red;
+    padding: 10px 0;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+
+  }
+  .application-data-container {
+    padding: 0 35px;
+
+    .item-data-group {
+      display: flex;
+      flex-flow: row wrap;
+      padding: 35px 0;
+      border-bottom: 1px solid @admin-bg-light-gray;
+
+      h2 {
+        flex: 1 100%;
+        color: @admin-font-gray2;
+      }
+    }
+  }
+}

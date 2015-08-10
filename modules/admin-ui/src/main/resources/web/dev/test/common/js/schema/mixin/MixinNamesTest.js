@@ -8,9 +8,9 @@ describe("api.schema.mixin.MixinNamesTest", function () {
 
             expect(function () {
 
-                MixinNames.create().fromStrings(["mymodule:duplicate", "mymodule:duplicate"]).build();
+                MixinNames.create().fromStrings(["myapplication:duplicate", "myapplication:duplicate"]).build();
 
-            }).toThrow(new Error("MixinNames do not allow duplicates, found: 'mymodule:duplicate'"));
+            }).toThrow(new Error("MixinNames do not allow duplicates, found: 'myapplication:duplicate'"));
         });
     });
 });

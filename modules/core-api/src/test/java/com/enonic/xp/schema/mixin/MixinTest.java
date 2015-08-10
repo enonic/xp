@@ -17,15 +17,15 @@ public class MixinTest
     @Test
     public void adding_a_formItemSetMixin_to_another_formItemSetMixin_throws_exception()
     {
-        Mixin ageMixin = Mixin.create().name( "mymodule:age" ).addFormItem(
+        Mixin ageMixin = Mixin.create().name( "myapplication:age" ).addFormItem(
             Input.create().name( "age" ).label( "Age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final FormItemSet personFormItemSet = FormItemSet.create().name( "person" ).addFormItem(
             Input.create().name( "name" ).label( "Name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             InlineMixin.create( ageMixin ).build() ).build();
-        Mixin personMixin = Mixin.create().name( "mymodule:person" ).addFormItem( personFormItemSet ).build();
+        Mixin personMixin = Mixin.create().name( "myapplication:person" ).addFormItem( personFormItemSet ).build();
 
-        Mixin addressMixin = Mixin.create().name( MixinName.from(  ApplicationKey.from("mymodule"), "address" ) ).addFormItem(
+        Mixin addressMixin = Mixin.create().name( MixinName.from( ApplicationKey.from( "myapplication" ), "address" ) ).addFormItem(
             FormItemSet.create().name( "address" ).addFormItem(
                 Input.create().inputType( InputTypes.TEXT_LINE ).name( "street" ).label( "Street" ).build() ).addFormItem(
                 Input.create().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).label( "Postal code" ).build() ).addFormItem(
@@ -47,7 +47,7 @@ public class MixinTest
     {
         FormItems formItems = new FormItems(  );
         formItems.add( Input.create().name( "name" ).label( "Name" ).inputType( InputTypes.TEXT_LINE ).build() );
-        Mixin mixin1 = Mixin.create().name( MixinName.from("mymodule:my1") ).formItems( formItems ).build();
+        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).formItems( formItems ).build();
         Mixin mixin2 = Mixin.create( mixin1 ).build();
         assertEquals( mixin1.getFormItems(), mixin2.getFormItems() );
     }

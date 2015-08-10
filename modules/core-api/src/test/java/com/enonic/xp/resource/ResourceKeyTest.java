@@ -10,16 +10,18 @@ public class ResourceKeyTest
     @Test
     public void fromUri()
     {
-        fromUri( "mymodule-1.0.0:", "mymodule-1.0.0:/", "mymodule-1.0.0", "/", "", null, true );
-        fromUri( "mymodule-1.0.0:/", "mymodule-1.0.0:/", "mymodule-1.0.0", "/", "", null, true );
-        fromUri( "mymodule-1.0.0:a/b.txt", "mymodule-1.0.0:/a/b.txt", "mymodule-1.0.0", "/a/b.txt", "b.txt", "txt", false );
-        fromUri( "mymodule-1.0.0:/a/b.txt", "mymodule-1.0.0:/a/b.txt", "mymodule-1.0.0", "/a/b.txt", "b.txt", "txt", false );
-        fromUri( "mymodule-1.0.0://a//b.txt", "mymodule-1.0.0:/a/b.txt", "mymodule-1.0.0", "/a/b.txt", "b.txt", "txt", false );
-        fromUri( "mymodule-1.0.0://a/..", "mymodule-1.0.0:/", "mymodule-1.0.0", "/", "", null, true );
-        fromUri( "mymodule-1.0.0://a/./b/..", "mymodule-1.0.0:/a", "mymodule-1.0.0", "/a", "a", null, false );
+        fromUri( "myapplication-1.0.0:", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
+        fromUri( "myapplication-1.0.0:/", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
+        fromUri( "myapplication-1.0.0:a/b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt", false );
+        fromUri( "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt", false );
+        fromUri( "myapplication-1.0.0://a//b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt",
+                 false );
+        fromUri( "myapplication-1.0.0://a/..", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
+        fromUri( "myapplication-1.0.0://a/./b/..", "myapplication-1.0.0:/a", "myapplication-1.0.0", "/a", "a", null, false );
     }
 
-    private void fromUri( final String input, final String uri, final String module, final String path, final String name, final String ext,
+    private void fromUri( final String input, final String uri, final String application, final String path, final String name,
+                          final String ext,
                           final boolean root )
     {
         final ResourceKey key = ResourceKey.from( input );
@@ -29,26 +31,26 @@ public class ResourceKeyTest
         Assert.assertEquals( uri, key.getUri() );
         Assert.assertEquals( path, key.getPath() );
         Assert.assertEquals( ext, key.getExtension() );
-        Assert.assertEquals( module, key.getApplicationKey().toString() );
+        Assert.assertEquals( application, key.getApplicationKey().toString() );
         Assert.assertEquals( root, key.isRoot() );
         Assert.assertEquals( name, key.getName() );
     }
 
     @Test
-    public void fromModuleAndPath()
+    public void fromApplicationAndPath()
     {
-        fromModuleAndPath( "", "mymodule-1.0.0:/", "/", null, true );
-        fromModuleAndPath( "/", "mymodule-1.0.0:/", "/", null, true );
-        fromModuleAndPath( "a/b.txt", "mymodule-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromModuleAndPath( "/a/b.txt", "mymodule-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromModuleAndPath( "//a//b.txt", "mymodule-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromModuleAndPath( "//a/..", "mymodule-1.0.0:/", "/", null, true );
-        fromModuleAndPath( "//a/./b/..", "mymodule-1.0.0:/a", "/a", null, false );
+        fromApplicationAndPath( "", "myapplication-1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "/", "myapplication-1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "a/b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "/a/b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "//a//b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "//a/..", "myapplication-1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "//a/./b/..", "myapplication-1.0.0:/a", "/a", null, false );
     }
 
-    private void fromModuleAndPath( final String input, final String uri, final String path, final String ext, final boolean root )
+    private void fromApplicationAndPath( final String input, final String uri, final String path, final String ext, final boolean root )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "mymodule-1.0.0" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication-1.0.0" );
         final ResourceKey key = ResourceKey.from( applicationKey, input );
 
         Assert.assertNotNull( key );
@@ -69,11 +71,11 @@ public class ResourceKeyTest
     @Test
     public void testEquals()
     {
-        testEquals( "mymodule-1.0.0:/", "mymodule-1.0.0:/", true );
-        testEquals( "mymodule-1.0.0:", "mymodule-1.0.0:/", true );
-        testEquals( "mymodule-1.0.0:/a/b", "mymodule-1.0.0:/a/b", true );
-        testEquals( "mymodule-1.0.0:/a", "mymodule-1.0.0:/a/b", false );
-        testEquals( "mymodule-1.0.0:/a/b", "mymodule-1.1.0:/a/b", false );
+        testEquals( "myapplication-1.0.0:/", "myapplication-1.0.0:/", true );
+        testEquals( "myapplication-1.0.0:", "myapplication-1.0.0:/", true );
+        testEquals( "myapplication-1.0.0:/a/b", "myapplication-1.0.0:/a/b", true );
+        testEquals( "myapplication-1.0.0:/a", "myapplication-1.0.0:/a/b", false );
+        testEquals( "myapplication-1.0.0:/a/b", "myapplication-1.1.0:/a/b", false );
     }
 
     private void testEquals( final String key1, final String key2, final boolean flag )
@@ -85,11 +87,11 @@ public class ResourceKeyTest
     @Test
     public void testResolve()
     {
-        testResolve( "mymodule-1.0.0:/", "", "mymodule-1.0.0:/" );
-        testResolve( "mymodule-1.0.0:/", ".", "mymodule-1.0.0:/" );
-        testResolve( "mymodule-1.0.0:/", "/", "mymodule-1.0.0:/" );
-        testResolve( "mymodule-1.0.0:/a/b", "../c", "mymodule-1.0.0:/a/c" );
-        testResolve( "mymodule-1.0.0:/a", "b/c", "mymodule-1.0.0:/a/b/c" );
+        testResolve( "myapplication-1.0.0:/", "", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/", ".", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/", "/", "myapplication-1.0.0:/" );
+        testResolve( "myapplication-1.0.0:/a/b", "../c", "myapplication-1.0.0:/a/c" );
+        testResolve( "myapplication-1.0.0:/a", "b/c", "myapplication-1.0.0:/a/b/c" );
     }
 
     private void testResolve( final String uri, final String path, final String resolved )
@@ -104,9 +106,9 @@ public class ResourceKeyTest
     @Test
     public void testHashCode()
     {
-        final ResourceKey key1 = ResourceKey.from( "mymodule-1.0.0:/a/b" );
-        final ResourceKey key2 = ResourceKey.from( "mymodule-1.0.0:/a/b" );
-        final ResourceKey key3 = ResourceKey.from( "mymodule-1.0.0:/a" );
+        final ResourceKey key1 = ResourceKey.from( "myapplication-1.0.0:/a/b" );
+        final ResourceKey key2 = ResourceKey.from( "myapplication-1.0.0:/a/b" );
+        final ResourceKey key3 = ResourceKey.from( "myapplication-1.0.0:/a" );
 
         Assert.assertEquals( key1.hashCode(), key2.hashCode() );
         Assert.assertNotEquals( key1.hashCode(), key3.hashCode() );

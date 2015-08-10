@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 public class DateTimeTest
 {
-    private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
+    private final static ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapplication" );
 
     private XmlTestHelper xmlHelper;
 
@@ -43,7 +43,7 @@ public class DateTimeTest
 
         // exercise
         DateTimeConfig parsed =
-            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
+            (DateTimeConfig) serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -64,7 +64,7 @@ public class DateTimeTest
 
         // exercise
         DateTimeConfig parsed =
-            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (DateTimeConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
@@ -82,7 +82,7 @@ public class DateTimeTest
 
         // exercise
         DateTimeConfig parsed =
-            (DateTimeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (DateTimeConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );

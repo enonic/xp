@@ -28,7 +28,7 @@ public class RelationshipTypeServiceImplTest
 
     private ApplicationKey myApplicationKey;
 
-    private RelationshipType myModuleType;
+    private RelationshipType myApplicationType;
 
     private Application myApplication;
 
@@ -43,16 +43,16 @@ public class RelationshipTypeServiceImplTest
     {
         super.setup();
 
-        //Mocks a module
-        startBundles( newBundle( "module2" ) );
-        myBundle = findBundle( "module2" );
+        //Mocks an application
+        startBundles( newBundle( "application2" ) );
+        myBundle = findBundle( "application2" );
         myApplicationKey = ApplicationKey.from( myBundle );
-        myModuleType = createType( myApplicationKey + ":member" );
+        myApplicationType = createType( myApplicationKey + ":member" );
         myApplication = Mockito.mock( Application.class );
         Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
 
-        //Mocks the module service
+        //Mocks the application service
         applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
 
@@ -79,12 +79,12 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( 0, relationshipTypes.getSize() );
 
-        RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
+        RelationshipType relationshipType = relationshipTypeService.getByName( myApplicationType.getName() );
         assertEquals( null, relationshipType );
     }
 
     @Test
-    public void test_add_removal_module()
+    public void test_add_removal_application()
     {
         Applications applications = Applications.from( myApplication );
         Mockito.when( applicationService.getAllApplications() ).thenReturn( applications );
@@ -98,7 +98,7 @@ public class RelationshipTypeServiceImplTest
         assertNotNull( relationshipTypes );
         assertEquals( 1, relationshipTypes.getSize() );
 
-        RelationshipType relationshipType = relationshipTypeService.getByName( myModuleType.getName() );
+        RelationshipType relationshipType = relationshipTypeService.getByName( myApplicationType.getName() );
         assertNotNull( relationshipType );
 
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
@@ -109,7 +109,7 @@ public class RelationshipTypeServiceImplTest
     }
 
     @Test
-    public void test_get_system_module()
+    public void test_get_system_application()
     {
         RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
         assertNotNull( relationshipTypes );

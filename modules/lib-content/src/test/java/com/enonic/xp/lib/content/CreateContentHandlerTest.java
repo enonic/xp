@@ -79,14 +79,14 @@ public class CreateContentHandlerTest
         extraData.addDouble( "a", 1.0 );
 
         final Mixin mixin = Mixin.create().
-            name( "com.enonic.mymodule:myschema" ).
+            name( "com.enonic.myapplication:myschema" ).
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
                 inputType( InputTypes.DOUBLE ).
                 build() ).
             build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.mymodule:myschema" ) ) ) ).thenReturn( mixin );
+        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( mixin );
 
         runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }

@@ -14,7 +14,7 @@ public class MixinsTest
     @Test
     public void test_immutable_mixins()
     {
-        MixinName mixinName = MixinName.from( "mymodule:my1" );
+        MixinName mixinName = MixinName.from( "myapplication:my1" );
         Mixin mixin = Mixin.create().name( mixinName ).build();
         Mixins mixins = Mixins.from( mixin );
 
@@ -53,8 +53,8 @@ public class MixinsTest
     {
         Mixins mixins = Mixins.empty();
 
-        Mixin mixin1 = Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build();
-        Mixin mixin2 = Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build();
+        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
+        Mixin mixin2 = Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build();
 
         Mixins newMixins = mixins.add( mixin1, mixin2 );
 
@@ -67,8 +67,8 @@ public class MixinsTest
     {
         Mixins mixins = Mixins.empty();
 
-        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                                    Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
+        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
+                                                    Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
         Mixins newMixins = mixins.add( mixinList );
 
@@ -79,11 +79,11 @@ public class MixinsTest
     @Test
     public void from()
     {
-        Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                     Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
+        Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
+                                     Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
-        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "mymodule:my1" ) ).build(),
-                                                    Mixin.create().name( MixinName.from( "mymodule:my2" ) ).build() );
+        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
+                                                    Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
         assertEquals( 2, mixins.getSize() );
         assertEquals( 2, Mixins.from( mixins ).getSize() );

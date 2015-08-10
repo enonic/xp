@@ -21,10 +21,10 @@ public class XmlMixinParserTest
     public void setup()
     {
         this.parser = new XmlMixinParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = Mixin.create();
-        this.builder.name( MixinName.from( "mymodule:mymixin" ) );
+        this.builder.name( MixinName.from( "myapplication:mymixin" ) );
         this.parser.builder( this.builder );
     }
 
@@ -48,7 +48,7 @@ public class XmlMixinParserTest
         throws Exception
     {
         final Mixin result = this.builder.build();
-        assertEquals( "mymodule:mymixin", result.getName().toString() );
+        assertEquals( "myapplication:mymixin", result.getName().toString() );
         assertEquals( "display name", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
 

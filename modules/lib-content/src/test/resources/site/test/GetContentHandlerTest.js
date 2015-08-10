@@ -43,14 +43,14 @@ var expectedJson = {
         "config": {
             "a": "1"
         },
-        "controller": "mymodule:mycontroller",
+        "controller": "myapplication:mycontroller",
         "regions": {
             "top": {
                 "components": [{
                     "config": {
                         "a": "1"
                     },
-                    "descriptor": "mymodule:mypart",
+                    "descriptor": "myapplication:mypart",
                     "name": "mypart",
                     "path": "top/0",
                     "type": "part"
@@ -58,7 +58,7 @@ var expectedJson = {
                     "config": {
                         "a": "1"
                     },
-                    "descriptor": "mymodule:mylayout",
+                    "descriptor": "myapplication:mylayout",
                     "name": "mylayout",
                     "path": "top/1",
                     "regions": {
@@ -67,7 +67,7 @@ var expectedJson = {
                                 "config": {
                                     "a": "1"
                                 },
-                                "descriptor": "mymodule:mypart",
+                                "descriptor": "myapplication:mypart",
                                 "name": "mypart",
                                 "path": "top/1/bottom/0",
                                 "type": "part"
@@ -84,7 +84,7 @@ var expectedJson = {
     "type": "base:unstructured",
     "valid": false,
     "x": {
-        "com-enonic-mymodule": {
+        "com-enonic-myapplication": {
             "myschema": {
                 "a": "1"
             }

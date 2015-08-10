@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class ContentSelectorTest
 {
-    private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
+    private final static ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapplication" );
 
     private XmlTestHelper xmlHelper;
 
@@ -44,8 +44,8 @@ public class ContentSelectorTest
         ContentSelectorConfig expected = builder.build();
 
         // exercise
-        ContentSelectorConfig parsed =
-            (ContentSelectorConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
+        ContentSelectorConfig parsed = (ContentSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml(
+            "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -63,7 +63,7 @@ public class ContentSelectorTest
         ContentSelectorConfig expected = builder.build();
 
         // exercise
-        ContentSelectorConfig parsed = (ContentSelectorConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml(
+        ContentSelectorConfig parsed = (ContentSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml(
             "parseFullConfig.xml" ).getDocumentElement() );
 
         // verify
@@ -87,7 +87,7 @@ public class ContentSelectorTest
 
         // exercise
         ContentSelectorConfig parsed =
-            (ContentSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ContentSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -108,7 +108,7 @@ public class ContentSelectorTest
 
         // exercise
         ContentSelectorConfig parsed =
-            (ContentSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ContentSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -126,7 +126,7 @@ public class ContentSelectorTest
 
         // exercise
         ContentSelectorConfig parsed =
-            (ContentSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ContentSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

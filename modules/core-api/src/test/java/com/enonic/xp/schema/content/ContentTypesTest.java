@@ -20,8 +20,8 @@ public class ContentTypesTest
         ContentTypes contentTypes = ContentTypes.empty();
 
         ContentTypes newContentTypes =
-            contentTypes.add( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                              ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            contentTypes.add( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                              ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
 
         assertEquals( 0, contentTypes.getSize() );
         assertEquals( 2, newContentTypes.getSize() );
@@ -33,8 +33,8 @@ public class ContentTypesTest
         ContentTypes contentTypes = ContentTypes.empty();
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
 
         ContentTypes newContentTypes = contentTypes.add( contentTypeList );
 
@@ -61,13 +61,13 @@ public class ContentTypesTest
     public void from()
     {
         ContentTypes contentTypes =
-            ContentTypes.from( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                               ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build() );
+            ContentTypes.from( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                               ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test1" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test2" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test3" ).build() );
+            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build(),
+                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test3" ).build() );
 
         assertEquals( 2, contentTypes.getSize() );
         assertEquals( 2, ContentTypes.from( contentTypes ).getSize() );

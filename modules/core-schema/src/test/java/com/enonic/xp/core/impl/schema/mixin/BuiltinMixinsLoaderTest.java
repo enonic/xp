@@ -23,15 +23,15 @@ public class BuiltinMixinsLoaderTest
     }
 
     @Test
-    public void testBuiltinLoadByModule()
+    public void testBuiltinLoadByApplication()
     {
-        Mixins mixins = new BuiltinMixinsLoader().loadByModule( ApplicationKey.MEDIA_MOD );
+        Mixins mixins = new BuiltinMixinsLoader().loadByApplication( ApplicationKey.MEDIA_MOD );
         assertEquals( 2, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":image-info" ), false );
         assertSchema( mixins.get( 1 ), MixinName.from( ApplicationKey.MEDIA_MOD + ":photo-info" ), false );
 
-        mixins = new BuiltinMixinsLoader().loadByModule( ApplicationKey.BASE );
+        mixins = new BuiltinMixinsLoader().loadByApplication( ApplicationKey.BASE );
         assertEquals( 1, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( ApplicationKey.BASE + ":gps-info" ), false );

@@ -26,7 +26,7 @@ import com.enonic.xp.resource.ResourceService;
 
 public abstract class ScriptTestSupport
 {
-    private final static ApplicationKey DEFAULT_MODULE_KEY = ApplicationKey.from( "myapplication" );
+    private final static ApplicationKey DEFAULT_APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptServiceImpl scriptService;
 
@@ -72,7 +72,7 @@ public abstract class ScriptTestSupport
     {
         this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setBranch( Branch.from( "draft" ) );
-        this.portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
+        this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         this.portalRequest.setBaseUri( "/portal" );
 
         final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();
@@ -111,6 +111,6 @@ public abstract class ScriptTestSupport
 
     protected ApplicationKey getApplicationKey()
     {
-        return DEFAULT_MODULE_KEY;
+        return DEFAULT_APPLICATION_KEY;
     }
 }
