@@ -6,10 +6,10 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
+import com.enonic.xp.admin.impl.json.form.FormItemJson;
+import com.enonic.xp.admin.impl.json.form.FormItemJsonFactory;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemJson;
-import com.enonic.xp.form.FormItemJsonFactory;
 import com.enonic.xp.schema.mixin.Mixin;
 
 public class MixinJson

@@ -1,9 +1,11 @@
-package com.enonic.xp.form;
+package com.enonic.xp.admin.impl.json.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.form.FormItem;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")
