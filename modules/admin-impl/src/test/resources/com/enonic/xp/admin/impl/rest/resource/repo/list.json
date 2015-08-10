@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "indices": [
+        "46f2a9",
+        "bc02aa"
+      ],
+      "name": "name1",
+      "reason": "because reasons",
+      "state": "SUCCESS",
+      "timestamp": "2015-08-06T13:15:15.875Z"
+    },
+    {
+      "indices": [
+        "cc82e4",
+        "f35b49"
+      ],
+      "name": "name2",
+      "reason": "because reasons",
+      "state": "IN_PROGRESS",
+      "timestamp": "2015-08-06T16:01:55.875Z"
+    }
+  ]
+}
