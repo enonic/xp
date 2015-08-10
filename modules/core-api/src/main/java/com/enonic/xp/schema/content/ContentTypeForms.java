@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.ContentSelectorConfig;
+import com.enonic.xp.form.inputtype.ContentSelectorTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
@@ -52,7 +52,7 @@ public final class ContentTypeForms
             label( "Target" ).
             helpText( "Choose shortcut target" ).
             inputType( InputTypes.CONTENT_SELECTOR ).
-            inputTypeConfig( ContentSelectorConfig.create().relationshipType( RelationshipTypeName.REFERENCE ).build() ).
+            inputTypeConfig( ContentSelectorTypeConfig.create().relationshipType( RelationshipTypeName.REFERENCE ).build() ).
             required( true ).
             build() ).
         build();

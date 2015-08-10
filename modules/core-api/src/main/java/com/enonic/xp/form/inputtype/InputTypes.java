@@ -12,47 +12,47 @@ import com.enonic.xp.data.ValueTypes;
 @Beta
 public final class InputTypes
 {
-    public static final InputType COMBO_BOX = new ComboBox();
+    public static final InputType COMBO_BOX = new ComboBoxType();
 
-    public static final InputType DATE = new Date();
+    public static final InputType DATE = new DateType();
 
-    public static final InputType TIME = new Time();
+    public static final InputType TIME = new TimeType();
 
-    public static final InputType DATE_TIME = new DateTime();
+    public static final InputType DATE_TIME = new DateTimeType();
 
-    public static final InputType CHECKBOX = new Checkbox();
+    public static final InputType CHECKBOX = new CheckboxType();
 
-    public static final InputType DOUBLE = new com.enonic.xp.form.inputtype.Double();
+    public static final InputType DOUBLE = new DoubleType();
 
-    public static final InputType GEO_POINT = new GeoPoint();
+    public static final InputType GEO_POINT = new GeoPointType();
 
-    public static final InputType HTML_AREA = new HtmlArea();
+    public static final InputType HTML_AREA = new HtmlAreaType();
 
-    public static final InputType TINY_MCE = new TinyMCE();
+    public static final InputType TINY_MCE = new TinyMCEType();
 
-    public static final InputType IMAGE_UPLOADER = new ImageUploader();
+    public static final InputType IMAGE_UPLOADER = new ImageUploaderType();
 
-    public static final InputType IMAGE_SELECTOR = new ImageSelector();
+    public static final InputType IMAGE_SELECTOR = new ImageSelectorType();
 
-    public static final InputType FILE_UPLOADER = new FileUploader();
+    public static final InputType FILE_UPLOADER = new FileUploaderType();
 
-    public static final InputType CONTENT_SELECTOR = new ContentSelector();
+    public static final InputType CONTENT_SELECTOR = new ContentSelectorType();
 
-    public static final InputType RADIO_BUTTONS = new RadioButtons();
+    public static final InputType RADIO_BUTTONS = new RadioButtonsType();
 
-    public static final InputType TAG = new Tag();
+    public static final InputType TAG = new TagType();
 
-    public static final InputType TEXT_LINE = new TextLine();
+    public static final InputType TEXT_LINE = new TextLineType();
 
-    public static final InputType TEXT_AREA = new TextArea();
+    public static final InputType TEXT_AREA = new TextAreaType();
 
-    public static final InputType LONG = new Long();
+    public static final InputType LONG = new LongType();
 
-    public static final InputType PAGE_CONTROLLER = new PageController();
+    public static final InputType PAGE_CONTROLLER = new PageControllerType();
 
-    public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilter();
+    public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilterType();
 
-    public static final InputType SITE_CONFIGURATOR = new SiteConfigurator();
+    public static final InputType SITE_CONFIGURATOR = new SiteConfiguratorType();
 
     private static final ImmutableList<InputType> INPUT_TYPES = new ImmutableList.Builder<InputType>().
         add( COMBO_BOX ).
