@@ -112,18 +112,22 @@ public class ImageServiceImpl
         }
 
         //Filter string value
-        final String filter =
-            readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() + "-" + readImageParams.getBackgroundColor() + "-" +
-                readImageParams.getFormat() : "no-filter";
+        final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
+
+        //Format string value
+        final String format = readImageParams.getFormat();
+
+        //Background string value
+        final String background = "background-" + readImageParams.getBackgroundColor();
 
         //Orientating string value
-        final String orientation = readImageParams.getOrientation().toString();
+        final String orientation = "orientation-" + readImageParams.getOrientation().toString();
 
         //Serialization string value
-        final String serialization = readImageParams.getQuality() + "-" + readImageParams.getFormat();
+        final String quality = "quality-" + Integer.toString( readImageParams.getQuality() );
 
-        return Paths.get( homeDir, "work", "cache", "img", readImageParams.getContentId().toString(), cropping, scale, filter, orientation,
-                          serialization, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
+        return Paths.get( homeDir, "work", "cache", "img", readImageParams.getContentId().toString(), cropping, scale, filter, format,
+                          background, orientation, quality, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
@@ -154,8 +158,13 @@ public class ImageServiceImpl
             //Applies the filters
             if ( !Strings.isNullOrEmpty( readImageParams.getFilterParam() ) )
             {
-                bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam(), readImageParams.getBackgroundColor(),
-                                              readImageParams.getFormat() );
+                bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam() );
+            }
+
+            //Applies alpha channel removal
+            if ( !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
+            {
+                bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
             }
 
             //Applies the rotation
@@ -208,20 +217,10 @@ public class ImageServiceImpl
         }
     }
 
-    private BufferedImage applyFilters( final BufferedImage sourceImage, final String filterParam, final int backgroundColor,
-                                        String format )
+    private BufferedImage applyFilters( final BufferedImage sourceImage, final String filterParam )
     {
         final ImageFilter imageFilter = imageFilterBuilder.build( filterParam );
-        final BufferedImage targetImage = imageFilter.filter( sourceImage );
-
-        if ( !ImageHelper.supportsAlphaChannel( format ) )
-        {
-            return ImageHelper.removeAlphaChannel( targetImage, backgroundColor );
-        }
-        else
-        {
-            return targetImage;
-        }
+        return imageFilter.filter( sourceImage );
     }
 
     private BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )
