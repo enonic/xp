@@ -35,10 +35,6 @@ public abstract class ImageBaseResourceTest
     protected void configure()
         throws Exception
     {
-        this.temporaryFolder = new TemporaryFolder();
-        this.temporaryFolder.create();
-        System.setProperty( "xp.home", this.temporaryFolder.getRoot().getPath() );
-
         this.contentService = Mockito.mock( ContentService.class );
         this.imageService = Mockito.mock( ImageService.class );
 
