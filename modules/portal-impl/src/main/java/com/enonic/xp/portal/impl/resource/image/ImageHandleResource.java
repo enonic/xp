@@ -7,13 +7,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.io.ByteSource;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
+import com.enonic.xp.util.BinaryReference;
 
 public final class ImageHandleResource
     extends BaseResource
@@ -31,11 +32,9 @@ public final class ImageHandleResource
     @QueryParam("background")
     protected String background;
 
-    protected String id;
+    protected ContentId contentId;
 
-    protected String binaryRef;
-
-    protected ByteSource binary;
+    protected BinaryReference binaryReference;
 
     protected String mimeType;
 
@@ -52,17 +51,19 @@ public final class ImageHandleResource
         throws Exception
     {
         final String format = getFormat( this.name );
-        final ReadImageParams imageParams = ReadImageParams.newImageParams().
-            cropping( cropping ).
-            scaleParams( scaleParams ).
-            focalPoint( focalPoint ).
-            filterParam( filterParam ).
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+            contentId( this.contentId ).
+            binaryReference( this.binaryReference ).
+            cropping( this.cropping ).
+            scaleParams( this.scaleParams ).
+            focalPoint( this.focalPoint ).
+            filterParam( this.filterParam ).
             backgroundColor( getBackgroundColor() ).
             format( format ).
             quality( getImageQuality() ).
             build();
 
-        final byte[] imageData = services.getImageService().readImage( this.binary, this.id, this.binaryRef, imageParams );
+        final byte[] imageData = this.services.getImageService().readImage( readImageParams );
 
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
     }

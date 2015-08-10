@@ -109,15 +109,15 @@ public final class ContentIconResource
                     final String format = imageService.getFormatByMimeType( contentThumbnail.getMimeType() );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                        contentId( content.getId() ).
+                        binaryReference( contentThumbnail.getBinaryReference() ).
                         scaleSize( size ).
                         scaleSquare( crop ).
                         format( format ).
                         orientation( imageOrientation ).
                         build();
 
-                    final byte[] thumbnailImage =
-                        imageService.readImage( binary, content.getId().toString(), contentThumbnail.getBinaryReference().toString(),
-                                                readImageParams );
+                    final byte[] thumbnailImage = imageService.readImage( readImageParams );
                     return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
                 }
                 catch ( IOException e )
@@ -134,30 +134,26 @@ public final class ContentIconResource
         final Attachment imageAttachment = media.getMediaAttachment();
         if ( imageAttachment != null )
         {
-            final ByteSource attachmentBinary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
-            if ( attachmentBinary != null )
+            try
             {
-                try
-                {
-                    final String format = imageService.getFormatByMimeType( imageAttachment.getMimeType() );
+                final String format = imageService.getFormatByMimeType( imageAttachment.getMimeType() );
 
-                    final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                        cropping( media.getCropping() ).
-                        scaleSize( size ).
-                        scaleSquare( crop ).
-                        format( format ).
-                        orientation( getSourceAttachmentOrientation( media ) ).
-                        build();
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                    contentId( media.getId() ).
+                    binaryReference( imageAttachment.getBinaryReference() ).
+                    cropping( media.getCropping() ).
+                    scaleSize( size ).
+                    scaleSquare( crop ).
+                    format( format ).
+                    orientation( getSourceAttachmentOrientation( media ) ).
+                    build();
 
-                    final byte[] contentImage =
-                        imageService.readImage( attachmentBinary, media.getId().toString(), imageAttachment.getBinaryReference().toString(),
-                                                readImageParams );
-                    return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
-                }
-                catch ( IOException e )
-                {
-                    throw Exceptions.unchecked( e );
-                }
+                final byte[] contentImage = imageService.readImage( readImageParams );
+                return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
+            }
+            catch ( IOException e )
+            {
+                throw Exceptions.unchecked( e );
             }
         }
         return ResolvedImage.unresolved();

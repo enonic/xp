@@ -5,8 +5,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.image.ImageFilterBuilder;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
@@ -26,15 +24,11 @@ public final class PortalServicesImpl
 
     private ContentService contentService;
 
-    private ImageFilterBuilder imageFilterBuilder;
-
     private RendererFactory rendererFactory;
 
     private PageTemplateService pageTemplateService;
 
     private PageDescriptorService pageDescriptorService;
-
-    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
     private PortalUrlService portalUrlService;
 
@@ -63,12 +57,6 @@ public final class PortalServicesImpl
     }
 
     @Override
-    public ImageFilterBuilder getImageFilterBuilder()
-    {
-        return this.imageFilterBuilder;
-    }
-
-    @Override
     public RendererFactory getRendererFactory()
     {
         return this.rendererFactory;
@@ -84,12 +72,6 @@ public final class PortalServicesImpl
     public PageDescriptorService getPageDescriptorService()
     {
         return this.pageDescriptorService;
-    }
-
-    @Override
-    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder()
-    {
-        return this.imageScaleFunctionBuilder;
     }
 
     @Override
@@ -135,12 +117,6 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
-    {
-        this.imageFilterBuilder = imageFilterBuilder;
-    }
-
-    @Reference
     public void setRendererFactory( final RendererFactory rendererFactory )
     {
         this.rendererFactory = rendererFactory;
@@ -156,12 +132,6 @@ public final class PortalServicesImpl
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
-    }
-
-    @Reference
-    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
-    {
-        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
     }
 
     @Reference

@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
@@ -40,23 +41,29 @@ import com.enonic.xp.util.FilesHelper;
 public class ImageServiceImpl
     implements ImageService
 {
+    private ContentService contentService;
+
     private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
     private ImageFilterBuilder imageFilterBuilder;
 
     @Override
-    public byte[] readImage( final ByteSource blob, final String id, final String binaryReference, final ReadImageParams readImageParams )
+    public byte[] readImage( final ReadImageParams readImageParams )
         throws IOException
     {
-        final Path cachedImagePath = getCachedImagePath( id, binaryReference, readImageParams );
+        final Path cachedImagePath = getCachedImagePath( readImageParams );
         byte[] serializedImage = FilesHelper.readAllBytes( cachedImagePath );
         if ( serializedImage == null )
         {
-            final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
-            if ( bufferedImage != null )
+            final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+            if ( blob != null )
             {
-                serializedImage = serializeImage( readImageParams, bufferedImage );
-                FilesHelper.write( cachedImagePath, serializedImage );
+                final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
+                if ( bufferedImage != null )
+                {
+                    serializedImage = serializeImage( readImageParams, bufferedImage );
+                    FilesHelper.write( cachedImagePath, serializedImage );
+                }
             }
         }
         return serializedImage;
@@ -75,7 +82,7 @@ public class ImageServiceImpl
         return i.next().getOriginatingProvider().getFormatNames()[0];
     }
 
-    private Path getCachedImagePath( final String id, final String binaryReference, final ReadImageParams readImageParams )
+    private Path getCachedImagePath( final ReadImageParams readImageParams )
     {
         final String homeDir = HomeDir.get().toString();
 
@@ -115,8 +122,8 @@ public class ImageServiceImpl
         //Serialization string value
         final String serialization = readImageParams.getQuality() + "-" + readImageParams.getFormat();
 
-        return Paths.get( homeDir, "work", "cache", "img", id, cropping, scale, filter, orientation, serialization, binaryReference ).
-            toAbsolutePath();
+        return Paths.get( homeDir, "work", "cache", "img", readImageParams.getContentId().toString(), cropping, scale, filter, orientation,
+                          serialization, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
@@ -300,6 +307,12 @@ public class ImageServiceImpl
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write( bufferedImage, format, out );
         return out.toByteArray();
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 
     @Reference
