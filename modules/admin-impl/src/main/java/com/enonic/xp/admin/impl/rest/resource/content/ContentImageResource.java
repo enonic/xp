@@ -109,20 +109,23 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
-                final Cropping cropping = source ? null : media.getCropping();
-
-                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    cropping( cropping ).
-                    scaleSize( size ).
-                    scaleWidth( scaleWidth ).
-                    mimeType( attachment.getMimeType() ).
-                    orientation( imageOrientation ).
-                    build();
-
                 try
                 {
-                    final byte[] contentImage = imageService.readImage( binary, readImageParams );
+                    final Cropping cropping = source ? null : media.getCropping();
+                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
+                    final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
+
+                    final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+                        cropping( cropping ).
+                        scaleSize( size ).
+                        scaleWidth( scaleWidth ).
+                        format( format ).
+                        orientation( imageOrientation ).
+                        build();
+
+                    final byte[] contentImage =
+                        imageService.readImage( binary, media.getId().toString(), attachment.getBinaryReference().toString(),
+                                                readImageParams );
                     return new ResolvedImage( contentImage, attachment.getMimeType() );
                 }
                 catch ( IOException e )

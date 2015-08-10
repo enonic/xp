@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
@@ -31,6 +34,7 @@ import com.enonic.xp.image.filter.ScaleSquareFunction;
 import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.util.FilesHelper;
 
 @Component
 public class ImageServiceImpl
@@ -41,18 +45,78 @@ public class ImageServiceImpl
     private ImageFilterBuilder imageFilterBuilder;
 
     @Override
-    public byte[] readImage( final ByteSource blob, final ReadImageParams readImageParams )
+    public byte[] readImage( final ByteSource blob, final String id, final String binaryReference, final ReadImageParams readImageParams )
         throws IOException
     {
-        byte[] serializedImage = null;
-
-        final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
-        if ( bufferedImage != null )
+        final Path cachedImagePath = getCachedImagePath( id, binaryReference, readImageParams );
+        byte[] serializedImage = FilesHelper.readAllBytes( cachedImagePath );
+        if ( serializedImage == null )
         {
-            serializedImage = serializeImage( readImageParams, bufferedImage );
+            final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
+            if ( bufferedImage != null )
+            {
+                serializedImage = serializeImage( readImageParams, bufferedImage );
+                FilesHelper.write( cachedImagePath, serializedImage );
+            }
+        }
+        return serializedImage;
+    }
+
+    @Override
+    public String getFormatByMimeType( final String mimeType )
+        throws IOException
+    {
+        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
+        if ( !i.hasNext() )
+        {
+            throw new IOException( "The image-based media type " + mimeType + " is not supported for writing" );
         }
 
-        return serializedImage;
+        return i.next().getOriginatingProvider().getFormatNames()[0];
+    }
+
+    private Path getCachedImagePath( final String id, final String binaryReference, final ReadImageParams readImageParams )
+    {
+        final String homeDir = HomeDir.get().toString();
+
+        //Cropping string value
+        final String cropping = readImageParams.getCropping() != null ? readImageParams.getCropping().toString() : "no-cropping";
+
+        //Scale string value
+        String scale = "no-scale";
+        if ( readImageParams.getScaleParams() != null )
+        {
+            scale = "scale-" + readImageParams.getScaleParams().toString() + "-" + readImageParams.getFocalPoint().toString();
+        }
+        else if ( readImageParams.getScaleSize() > 0 )
+        {
+            if ( readImageParams.isScaleSquare() )
+            {
+                scale = "scalesquare-" + readImageParams.getScaleSize();
+            }
+            else if ( readImageParams.isScaleWidth() )
+            {
+                scale = "scalewidth-" + readImageParams.getScaleSize();
+            }
+            else
+            {
+                scale = "scalemax-" + readImageParams.getScaleSize();
+            }
+        }
+
+        //Filter string value
+        final String filter =
+            readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() + "-" + readImageParams.getBackgroundColor() + "-" +
+                readImageParams.getFormat() : "no-filter";
+
+        //Orientating string value
+        final String orientation = readImageParams.getOrientation().toString();
+
+        //Serialization string value
+        final String serialization = readImageParams.getQuality() + "-" + readImageParams.getFormat();
+
+        return Paths.get( homeDir, "work", "cache", "img", id, cropping, scale, filter, orientation, serialization, binaryReference ).
+            toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
@@ -104,6 +168,7 @@ public class ImageServiceImpl
         return ImageHelper.toBufferedImage( inputStream );
     }
 
+
     private BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
     {
         final double width = bufferedImage.getWidth();
@@ -119,7 +184,6 @@ public class ImageServiceImpl
         final ImageScaleFunction imageScaleFunction = imageScaleFunctionBuilder.build( scaleParams, focalPoint );
         return imageScaleFunction.scale( sourceImage );
     }
-
 
     private BufferedImage applyScalingFunction( final BufferedImage bufferedImage, final ReadImageParams readImageParams )
     {
@@ -213,23 +277,13 @@ public class ImageServiceImpl
     {
         final byte[] serializedImage;
         //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
-        if ( readImageParams.getFormat() != null && readImageParams.getQuality() != 0 )
+        if ( readImageParams.getQuality() != 0 )
         {
             serializedImage = serializeImage( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality() );
         }
         else
         {
-            String format = readImageParams.getFormat();
-            if ( readImageParams.getFormat() == null )
-            {
-                format = retrieveFormat( readImageParams.getMimeType() );
-                if ( format == null )
-                {
-                    throw new IOException(
-                        "The image-based media type " + readImageParams.getMimeType() + " is not supported for writing" );
-                }
-            }
-            serializedImage = serializeImage( bufferedImage, format );
+            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat() );
         }
         return serializedImage;
     }
@@ -246,17 +300,6 @@ public class ImageServiceImpl
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write( bufferedImage, format, out );
         return out.toByteArray();
-    }
-
-    private String retrieveFormat( final String mimeType )
-    {
-        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
-        if ( !i.hasNext() )
-        {
-            return null;
-        }
-
-        return i.next().getOriginatingProvider().getFormatNames()[0];
     }
 
     @Reference
