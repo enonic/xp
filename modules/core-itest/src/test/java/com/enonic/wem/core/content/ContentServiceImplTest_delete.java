@@ -321,9 +321,6 @@ public class ContentServiceImplTest_delete
 
         final Content contentOther = CTX_OTHER.callWith( () -> this.contentService.create( params ) );
 
-        System.out.println( "Content: " + content.getId() );
-        System.out.println( "ContentOther: " + contentOther.getId() );
-
         //Deletes the content
         final Contents deletedContents =
             this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
