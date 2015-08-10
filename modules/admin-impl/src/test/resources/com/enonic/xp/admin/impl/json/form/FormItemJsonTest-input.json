@@ -5,7 +5,7 @@
     "helpText": "Help text",
     "immutable": true,
     "indexed": true,
-    "inputType": {"name": "TextLine"},
+    "inputType": "TextLine",
     "label": "My TextLine",
     "maximizeUIInputWidth": true,
     "name": "myTextLine",

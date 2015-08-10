@@ -43,11 +43,9 @@ module api.form {
             return this.refString;
         }
 
-        public toJson(): api.form.json.InputTypeJson {
+        public toJson(): string {
 
-            return <api.form.json.InputTypeJson>{
-                name: this.toString()
-            };
+            return this.toString()
         }
 
         equals(o: api.Equitable): boolean {

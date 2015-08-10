@@ -76,7 +76,7 @@ module api.form {
 
         fromJson(json: json.InputJson): InputBuilder {
             this.name = json.name;
-            this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
+            this.inputType = InputTypeName.parseInputTypeName(json.inputType);
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = Occurrences.fromJson(json.occurrences);

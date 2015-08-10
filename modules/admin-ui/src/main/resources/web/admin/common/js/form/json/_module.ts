@@ -4,7 +4,6 @@
 ///<reference path='FieldSetJson.ts' />
 ///<reference path='LayoutTypeWrapperJson.ts' />
 ///<reference path='FormItemSetJson.ts' />
-///<reference path='InputTypeJson.ts' />
 ///<reference path='InputJson.ts' />
 ///<reference path='FormItemTypeWrapperJson.ts' />
 ///<reference path='FormJson.ts' />

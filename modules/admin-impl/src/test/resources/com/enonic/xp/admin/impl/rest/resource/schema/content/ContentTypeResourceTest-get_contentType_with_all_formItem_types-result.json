@@ -18,9 +18,7 @@
           "helpText": null,
           "immutable": false,
           "indexed": false,
-          "inputType": {
-            "name": "TextLine"
-          },
+          "inputType": "TextLine",
           "label": "My text line",
           "maximizeUIInputWidth": false,
           "name": "myTextLine",
@@ -38,9 +36,7 @@
           "helpText": null,
           "immutable": false,
           "indexed": false,
-          "inputType": {
-            "name": "Checkbox"
-          },
+          "inputType": "Checkbox",
           "label": "My checkbox input",
           "maximizeUIInputWidth": false,
           "name": "myCheckbox",
@@ -61,9 +57,7 @@
                 "helpText": null,
                 "immutable": false,
                 "indexed": false,
-                "inputType": {
-                  "name": "TextLine"
-                },
+                "inputType": "TextLine",
                 "label": "My text line",
                 "maximizeUIInputWidth": false,
                 "name": "myTextLine",
@@ -92,9 +86,7 @@
                 "helpText": null,
                 "immutable": false,
                 "indexed": false,
-                "inputType": {
-                  "name": "TextLine"
-                },
+                "inputType": "TextLine",
                 "label": "My text line",
                 "maximizeUIInputWidth": false,
                 "name": "myTextLine",
