@@ -209,19 +209,20 @@ public class NodeImporter
     {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
+        final ProcessNodeSettings settings = processNodeSettings.build();
         final Node importNode = ImportNodeFactory.create().
             importNodeIds( this.importNodeIds ).
             importPermissions( this.importPermissions ).
             serializedNode( serializedNode ).
             importPath( importNodePath ).
-            processNodeSettings( processNodeSettings.build() ).
+            processNodeSettings( settings ).
             build().
             execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create().
             importNode( importNode ).
             binaryAttachments( binaryAttachments ).
-            insertManualStrategy( processNodeSettings.build().getInsertManualStrategy() ).
+            insertManualStrategy( settings.getInsertManualStrategy() ).
             dryRun( this.dryRun ).
             build();
 

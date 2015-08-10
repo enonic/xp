@@ -259,9 +259,9 @@ public class NodeImporterTest
     public void import_nodes_ordered()
         throws Exception
     {
-        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), true );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1" ), false );
-        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild" ), true );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild1" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild2" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild3" ), false );
@@ -282,8 +282,13 @@ public class NodeImporterTest
         assertEquals( 7, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
-        final Node mychild = assertNodeExists( mynode.path(), "mychild1" );
-        final Node mychildchild = assertNodeExists( mychild.path(), "mychildchild" );
+        assertNull( mynode.getManualOrderValue() );
+        final Node myChild1 = assertNodeExists( mynode.path(), "mychild1" );
+        assertNotNull( "manualOrderValue should be set", myChild1.getManualOrderValue() );
+        final Node myChild2 = assertNodeExists( mynode.path(), "mychild2" );
+        assertNotNull( "manualOrderValue should be set", myChild2.getManualOrderValue() );
+
+        final Node mychildchild = assertNodeExists( myChild1.path(), "mychildchild" );
         assertNodeExists( mynode.path(), "mychild2" );
         assertNodeExists( mychildchild.path(), "mychildchildchild1" );
         assertNodeExists( mychildchild.path(), "mychildchildchild2" );

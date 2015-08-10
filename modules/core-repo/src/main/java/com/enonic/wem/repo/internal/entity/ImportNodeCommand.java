@@ -10,7 +10,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 public class ImportNodeCommand
     extends AbstractNodeCommand
 {
-
     private final InsertManualStrategy insertManualStrategy;
 
     private final BinaryAttachments binaryAttachments;
@@ -24,11 +23,11 @@ public class ImportNodeCommand
     private ImportNodeCommand( Builder builder )
     {
         super( builder );
-        insertManualStrategy = builder.insertManualStrategy;
-        binaryAttachments = builder.binaryAttachments;
-        importNode = builder.importNode;
-        binaryBlobStore = builder.binaryBlobStore;
-        dryRun = builder.dryRun;
+        this.insertManualStrategy = builder.insertManualStrategy;
+        this.binaryAttachments = builder.binaryAttachments;
+        this.importNode = builder.importNode;
+        this.binaryBlobStore = builder.binaryBlobStore;
+        this.dryRun = builder.dryRun;
     }
 
     public static Builder create()
@@ -60,6 +59,7 @@ public class ImportNodeCommand
             data( this.importNode.data() ).
             indexConfigDocument( this.importNode.getIndexConfigDocument() ).
             insertManualStrategy( this.insertManualStrategy ).
+            manualOrderValue( this.importNode.getManualOrderValue() ).
             name( this.importNode.name().toString() ).
             parent( this.importNode.parentPath() ).
             inheritPermissions( this.importNode.inheritsPermissions() ).

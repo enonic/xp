@@ -91,6 +91,7 @@ class NodeServiceMock
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
             timestamp( timestamp != null ? timestamp : null ).
+            manualOrderValue( params.getManualOrderValue() ).
             childOrder( params.getChildOrder() );
 
         final AttachedBinaries.Builder attachmentBuilder = AttachedBinaries.create();
@@ -400,6 +401,7 @@ class NodeServiceMock
             data( importNode.data() ).
             indexConfigDocument( importNode.getIndexConfigDocument() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
+            manualOrderValue( importNode.getManualOrderValue() ).
             name( importNode.name().toString() ).
             parent( importNode.parentPath() ).
             setNodeId( importNode.id() ).
