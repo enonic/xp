@@ -8,25 +8,24 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.repository.Repository;
 
 import static org.junit.Assert.*;
 
 public class OrderByValueResolverTest
-    extends AbstractElasticsearchIntegrationTest
+    extends AbstractNodeTest
 {
     private Repository repository;
 
@@ -47,21 +46,11 @@ public class OrderByValueResolverTest
         this.indexType = "test";
     }
 
-    void createSearchIndex( final Repository repository )
-    {
-        final String indexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
-        elasticsearchIndexService.createIndex( indexName, getContentRepoSearchDefaultSettings() );
-        elasticsearchIndexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ), IndexType.SEARCH,
-                                                RepositoryIndexMappingProvider.getSearchMappings( repository.getId() ) );
-
-        assertTrue( indexExists( indexName ) );
-    }
-
     @Test
     public void ensureOrderingCorrectForLongValues()
         throws Exception
     {
-        createSearchIndex( this.repository );
+        //     createSearchIndex( this.repository );
         refresh();
 
         final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000.0 ) ) );
