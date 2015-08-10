@@ -12,6 +12,8 @@ module api.content.page {
 
         private regions: api.content.page.region.Regions;
 
+        private customized: boolean;
+
         constructor(contentId: api.content.ContentId) {
             super();
             super.setMethod("POST");
@@ -38,13 +40,19 @@ module api.content.page {
             return this;
         }
 
+        setCustomized(value: boolean): CreatePageRequest {
+            this.customized = value;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.contentId.toString(),
                 controller: this.controller ? this.controller.toString() : null,
                 template: this.template ? this.template.toString() : null,
                 config: this.config ? this.config.toJson() : null,
-                regions: this.regions != null ? this.regions.toJson() : null
+                regions: this.regions != null ? this.regions.toJson() : null,
+                customized: this.customized
             };
         }
 

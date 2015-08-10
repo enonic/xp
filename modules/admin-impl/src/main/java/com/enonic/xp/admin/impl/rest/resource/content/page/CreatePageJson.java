@@ -24,14 +24,16 @@ public class CreatePageJson
     public CreatePageJson( final @JsonProperty("contentId") String contentId, @JsonProperty("controller") final String pageDescriptorKey,
                            final @JsonProperty("template") String pageTemplateKey,
                            final @JsonProperty("config") List<PropertyArrayJson> config,
-                           final @JsonProperty("regions") List<RegionJson> regions )
+                           final @JsonProperty("regions") List<RegionJson> regions,
+                           final @JsonProperty("customized")  boolean customized)
     {
         this.createPage = new CreatePageParams().
             content( ContentId.from( contentId ) ).
             controller( pageDescriptorKey != null ? DescriptorKey.from( pageDescriptorKey ) : null ).
             pageTemplate( pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
-            regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null );
+            regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null ).
+            customized( customized );
     }
 
     @JsonIgnore
