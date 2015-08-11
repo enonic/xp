@@ -1,6 +1,12 @@
-package com.enonic.xp.form;
+package com.enonic.xp.admin.impl.json.form;
 
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Layout;
 
 @Beta
 public class FormItemJsonFactory

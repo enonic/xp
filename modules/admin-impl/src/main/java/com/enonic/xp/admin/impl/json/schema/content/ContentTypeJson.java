@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.json.schema.content;
 
+import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.form.FormJson;
 import com.enonic.xp.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
