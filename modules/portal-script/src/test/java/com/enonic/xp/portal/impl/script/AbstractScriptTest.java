@@ -16,7 +16,7 @@ import com.enonic.xp.resource.ResourceService;
 
 public abstract class AbstractScriptTest
 {
-    private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "mymodule" );
+    private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptServiceImpl scriptService;
 

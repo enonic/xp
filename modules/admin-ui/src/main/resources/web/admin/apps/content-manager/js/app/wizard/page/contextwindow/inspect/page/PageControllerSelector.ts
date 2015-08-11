@@ -15,7 +15,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
     export class PageControllerSelector extends PageDescriptorDropdown {
 
-        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByApplicationsRequest;
+        private getPageDescriptorsByApplicationsRequest: GetPageDescriptorsByApplicationsRequest;
 
         private pageModel: PageModel;
 
@@ -23,10 +23,10 @@ module app.wizard.page.contextwindow.inspect.page {
 
         constructor() {
 
-            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByApplicationsRequest([]);
+            this.getPageDescriptorsByApplicationsRequest = new GetPageDescriptorsByApplicationsRequest([]);
 
             super('page-controller', {
-                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest).
+                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByApplicationsRequest).
                     setComparator(new api.content.page.DescriptorByDisplayNameComparator())
             });
 
@@ -42,7 +42,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.siteModel = model.getSiteModel();
             this.pageModel = model.getPageModel();
 
-            this.getPageDescriptorsByModulesRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
+            this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
             this.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
 
                 if (this.pageModel.hasController()) {
@@ -53,7 +53,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    this.getPageDescriptorsByModulesRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
+                    this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
                     this.load();
                 }
             });

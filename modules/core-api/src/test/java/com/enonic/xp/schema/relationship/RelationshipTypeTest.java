@@ -15,21 +15,21 @@ public class RelationshipTypeTest
     {
         // setup
         RelationshipType.Builder builder = RelationshipType.create();
-        builder.name( "mymodule:like" );
+        builder.name( "myapplication:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
-        builder.addAllowedFromType( ContentTypeName.from( "mymodule:person" ) );
-        builder.addAllowedToType( ContentTypeName.from( "mymodule:person" ) );
+        builder.addAllowedFromType( ContentTypeName.from( "myapplication:person" ) );
+        builder.addAllowedToType( ContentTypeName.from( "myapplication:person" ) );
 
         // exercise
         RelationshipType relationshipType = builder.build();
 
         // verify
-        assertEquals( "mymodule:like", relationshipType.getName().toString() );
+        assertEquals( "myapplication:like", relationshipType.getName().toString() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
-        assertEquals( ContentTypeNames.from( "mymodule:person" ), relationshipType.getAllowedFromTypes() );
-        assertEquals( ContentTypeNames.from( "mymodule:person" ), relationshipType.getAllowedToTypes() );
+        assertEquals( ContentTypeNames.from( "myapplication:person" ), relationshipType.getAllowedFromTypes() );
+        assertEquals( ContentTypeNames.from( "myapplication:person" ), relationshipType.getAllowedToTypes() );
     }
 
     @Test
@@ -37,11 +37,11 @@ public class RelationshipTypeTest
     {
         // setup
         RelationshipType.Builder builder = RelationshipType.create();
-        builder.name( "mymodule:like" );
+        builder.name( "myapplication:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
-        builder.setAllowedFromTypes( ContentTypeNames.from( ContentTypeName.from( "mymodule:person" ) ) );
-        builder.setAllowedToTypes( ContentTypeNames.from( ContentTypeName.from( "mymodule:person" ) ) );
+        builder.setAllowedFromTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ) );
+        builder.setAllowedToTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ) );
 
         RelationshipType relationshipType1 = builder.build();
         builder = RelationshipType.create( relationshipType1 );

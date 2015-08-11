@@ -21,10 +21,10 @@ public class XmlContentTypeParserTest
     public void setup()
     {
         this.parser = new XmlContentTypeParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = ContentType.create();
-        this.builder.name( ContentTypeName.from( "mymodule:mytype" ) );
+        this.builder.name( ContentTypeName.from( "myapplication:mytype" ) );
         this.parser.builder( this.builder );
     }
 
@@ -48,16 +48,16 @@ public class XmlContentTypeParserTest
         throws Exception
     {
         final ContentType result = this.builder.build();
-        assertEquals( "mymodule:mytype", result.getName().toString() );
+        assertEquals( "myapplication:mytype", result.getName().toString() );
         assertEquals( "All the Base Types", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "$('firstName') + ' ' + $('lastName')", result.getContentDisplayNameScript() );
-        assertEquals( "mymodule:content", result.getSuperType().toString() );
-        assertEquals( "[mymodule:metadata]", result.getMetadata().toString() );
+        assertEquals( "myapplication:content", result.getSuperType().toString() );
+        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
         assertEquals( 1, result.form().size() );
-        assertEquals( "[mymodule:metadata]", result.getMetadata().toString() );
+        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
     }
 }

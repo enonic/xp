@@ -17,7 +17,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
     import SiteConfig = api.content.site.SiteConfig
-    import GetModuleRequest = api.application.GetApplicationRequest;
+    import GetApplicationRequest = api.application.GetApplicationRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<SiteView> {
@@ -54,7 +54,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(this.comboBox);
 
-            return this.doLoadModules(propertyArray).then(() => {
+            return this.doLoadApplications(propertyArray).then(() => {
 
                 this.setLayoutInProgress(false);
 
@@ -79,7 +79,7 @@ module api.content.site.inputtype.siteconfigurator {
             });
         }
 
-        private doLoadModules(propertyArray: PropertyArray): wemQ.Promise<void> {
+        private doLoadApplications(propertyArray: PropertyArray): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             var siteConfigFormsToDisplay: string[] = [];
@@ -93,7 +93,7 @@ module api.content.site.inputtype.siteconfigurator {
                         var siteConfig = SiteConfig.create().fromData(property.getPropertySet()).build();
                         siteConfigFormsToDisplay.push(siteConfig.getApplicationKey().toString());
 
-                        new GetModuleRequest(siteConfig.getApplicationKey()).sendAndParse().
+                        new GetApplicationRequest(siteConfig.getApplicationKey()).sendAndParse().
                             then((requestedApplication: Application) => {
 
                                 this.comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {

@@ -46,7 +46,7 @@ public class SiteTest
     public void builder()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -64,7 +64,7 @@ public class SiteTest
     public void siteConfigs()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.create().
@@ -76,8 +76,8 @@ public class SiteTest
         SiteConfigs siteConfigs = site.getSiteConfigs();
         assertNotNull( siteConfigs );
         assertEquals( 1, siteConfigs.getSize() );
-        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ApplicationKey.from( "mymodule" ) ) );
-        assertNotNull( siteConfigs.get( "mymodule" ) );
+        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ApplicationKey.from( "myapplication" ) ) );
+        assertNotNull( siteConfigs.get( "myapplication" ) );
         assertTrue( SiteConfigs.empty().getSize() == 0 );
         assertTrue( SiteConfigs.from( siteConfig ).getSize() == 1 );
     }
@@ -86,11 +86,11 @@ public class SiteTest
     public void siteConfigEquals()
     {
         SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         SiteConfig siteConfig1 = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
 

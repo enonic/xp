@@ -24,10 +24,10 @@ public class XmlLayoutDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlLayoutDescriptorParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = LayoutDescriptor.create();
-        this.builder.key( DescriptorKey.from( "mymodule:mylayout" ) );
+        this.builder.key( DescriptorKey.from( "myapplication:mylayout" ) );
         this.builder.name( "mylayout" );
         this.parser.builder( this.builder );
     }
@@ -52,7 +52,7 @@ public class XmlLayoutDescriptorParserTest
         throws Exception
     {
         final LayoutDescriptor result = this.builder.build();
-        assertEquals( "mymodule:mylayout", result.getKey().toString() );
+        assertEquals( "myapplication:mylayout", result.getKey().toString() );
         assertEquals( "mylayout", result.getName() );
         assertEquals( "My Layout", result.getDisplayName() );
 

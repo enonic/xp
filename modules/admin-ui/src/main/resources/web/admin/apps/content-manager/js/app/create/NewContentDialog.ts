@@ -223,7 +223,7 @@ module app.create {
         }
 
         private filterByParentContent(items: NewContentDialogListItem[], siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
-            var createContentFilter = new api.content.CreateContentFilter().siteModulesFilter(siteApplicationKeys);
+            var createContentFilter = new api.content.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
             return items.filter((item: NewContentDialogListItem) =>
                     createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
             );
@@ -447,8 +447,8 @@ module app.create {
 
         private createListOfContentTypeItems(allContentTypes: ContentTypeSummary[], parentSite: Site): NewContentDialogListItem[] {
             var allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
-            var siteModules: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
-            return this.filterByParentContent(allListItems, siteModules);
+            var siteApplications: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
+            return this.filterByParentContent(allListItems, siteApplications);
         }
 
         private findElementByFieldValue<T>(array: Array<T>, field: string, value: any): T {

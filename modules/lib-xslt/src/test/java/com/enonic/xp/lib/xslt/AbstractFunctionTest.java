@@ -52,7 +52,7 @@ public abstract class AbstractFunctionTest
     {
         final String name = "/test/url/" + baseName;
 
-        this.processor.setView( ResourceKey.from( "mymodule:" + name + ".xsl" ) );
+        this.processor.setView( ResourceKey.from( "myapplication:" + name + ".xsl" ) );
         this.processor.setModel( null );
         final String actual = cleanupXml( this.processor.process() );
 

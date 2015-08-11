@@ -6,9 +6,9 @@ public class CurrentApplicationTest
     extends AbstractScriptTest
 {
     @Test
-    public void testCurrentModule()
+    public void testCurrentApplication()
         throws Exception
     {
-        runTestScript( "module-test.js" );
+        runTestScript( "application-test.js" );
     }
 }

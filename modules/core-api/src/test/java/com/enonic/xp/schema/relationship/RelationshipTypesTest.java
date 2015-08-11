@@ -17,8 +17,8 @@ public class RelationshipTypesTest
     {
         RelationshipTypes relationshipTypes = RelationshipTypes.empty();
 
-        RelationshipType[] relationshipTypesArray =
-            {RelationshipType.create().name( "mymodule:like" ).build(), RelationshipType.create().name( "mymodule:person" ).build()};
+        RelationshipType[] relationshipTypesArray = {RelationshipType.create().name( "myapplication:like" ).build(),
+            RelationshipType.create().name( "myapplication:person" ).build()};
 
         RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesArray );
 
@@ -31,8 +31,9 @@ public class RelationshipTypesTest
     {
         RelationshipTypes relationshipTypes = RelationshipTypes.empty();
 
-        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "mymodule:like" ).build(),
-                                                                           RelationshipType.create().name( "mymodule:person" ).build() );
+        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "myapplication:like" ).build(),
+                                                                           RelationshipType.create().name(
+                                                                               "myapplication:person" ).build() );
 
         RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesList );
 
@@ -43,7 +44,7 @@ public class RelationshipTypesTest
     @Test
     public void test_equals()
     {
-        RelationshipTypes relTypes = RelationshipTypes.from( RelationshipType.create().name( "mymodule:like" ).build() );
+        RelationshipTypes relTypes = RelationshipTypes.from( RelationshipType.create().name( "myapplication:like" ).build() );
         assertEquals( relTypes, RelationshipTypes.from( relTypes ) );
     }
 
@@ -60,7 +61,7 @@ public class RelationshipTypesTest
         {
             Assert.assertTrue( e instanceof UnsupportedOperationException );
         }
-        relTypes = RelationshipTypes.from( RelationshipType.create().name( "mymodule:like" ).build() );
+        relTypes = RelationshipTypes.from( RelationshipType.create().name( "myapplication:like" ).build() );
         try
         {
             relTypes.getList().add( null );
@@ -82,14 +83,15 @@ public class RelationshipTypesTest
     @Test
     public void from()
     {
-        RelationshipType[] relationshipTypesArray =
-            {RelationshipType.create().name( "mymodule:like" ).build(), RelationshipType.create().name( "mymodule:person" ).build(),
-                RelationshipType.create().name( "mymodule:site" ).build()};
+        RelationshipType[] relationshipTypesArray = {RelationshipType.create().name( "myapplication:like" ).build(),
+            RelationshipType.create().name( "myapplication:person" ).build(),
+            RelationshipType.create().name( "myapplication:site" ).build()};
 
         RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipTypesArray );
 
-        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "mymodule:like" ).build(),
-                                                                           RelationshipType.create().name( "mymodule:person" ).build() );
+        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "myapplication:like" ).build(),
+                                                                           RelationshipType.create().name(
+                                                                               "myapplication:person" ).build() );
 
         assertEquals( 3, relationshipTypes.getSize() );
         assertEquals( 3, RelationshipTypes.from( relationshipTypes ).getSize() );

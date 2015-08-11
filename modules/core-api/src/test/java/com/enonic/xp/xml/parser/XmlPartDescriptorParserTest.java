@@ -22,10 +22,10 @@ public class XmlPartDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlPartDescriptorParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = PartDescriptor.create();
-        this.builder.key( DescriptorKey.from( "mymodule:mypart" ) );
+        this.builder.key( DescriptorKey.from( "myapplication:mypart" ) );
         this.builder.name( "mypart" );
         this.parser.builder( this.builder );
     }
@@ -50,7 +50,7 @@ public class XmlPartDescriptorParserTest
         throws Exception
     {
         final PartDescriptor result = this.builder.build();
-        assertEquals( "mymodule:mypart", result.getKey().toString() );
+        assertEquals( "myapplication:mypart", result.getKey().toString() );
         assertEquals( "mypart", result.getName() );
         assertEquals( "A Part", result.getDisplayName() );
 

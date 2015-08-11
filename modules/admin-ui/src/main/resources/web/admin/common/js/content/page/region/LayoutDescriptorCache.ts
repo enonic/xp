@@ -2,11 +2,11 @@ module api.content.page.region {
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
-    import ModuleCaches = api.application.ApplicationCaches;
+    import ApplicationCaches = api.application.ApplicationCaches;
     import ApplicationBasedCache = api.application.ApplicationBasedCache;
     import DescriptorKey = api.content.page.DescriptorKey;
 
-    export class LayoutDescriptorCache extends ApplicationBasedCache<LayoutDescriptorModuleCache,LayoutDescriptor,DescriptorKey> {
+    export class LayoutDescriptorCache extends ApplicationBasedCache<LayoutDescriptorApplicationCache,LayoutDescriptor,DescriptorKey> {
 
         private static instance: LayoutDescriptorCache;
 
@@ -28,7 +28,7 @@ module api.content.page.region {
             super();
         }
 
-        loadByModule(applicationKey: ApplicationKey) {
+        loadByApplication(applicationKey: ApplicationKey) {
             new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -44,12 +44,12 @@ module api.content.page.region {
             return super.getByKey(key, key.getApplicationKey());
         }
 
-        createApplicationCache(): LayoutDescriptorModuleCache {
-            return new LayoutDescriptorModuleCache();
+        createApplicationCache(): LayoutDescriptorApplicationCache {
+            return new LayoutDescriptorApplicationCache();
         }
     }
 
-    export class LayoutDescriptorModuleCache extends api.cache.Cache<LayoutDescriptor, DescriptorKey> {
+    export class LayoutDescriptorApplicationCache extends api.cache.Cache<LayoutDescriptor, DescriptorKey> {
 
         copy(object: LayoutDescriptor): LayoutDescriptor {
             return object.clone();

@@ -16,11 +16,11 @@ import static org.junit.Assert.*;
 
 public class ResourcesTest
 {
-    private static final String RESOURCE_URI_1 = "mymodule-1.0.0:";
+    private static final String RESOURCE_URI_1 = "myapplication-1.0.0:";
 
-    private static final String RESOURCE_URI_2 = "mymodule-1.0.0:/a/b.txt";
+    private static final String RESOURCE_URI_2 = "myapplication-1.0.0:/a/b.txt";
 
-    private static final String RESOURCE_URI_3 = "mymodule-1.0.0:/a/c.txt";
+    private static final String RESOURCE_URI_3 = "myapplication-1.0.0:/a/c.txt";
 
     private ArrayList<Resource> list;
 
@@ -37,16 +37,16 @@ public class ResourcesTest
     public void initList()
         throws Exception
     {
-        final File modulesDir = temporaryFolder.newFolder( "modules" );
-        writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
-        writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
+        final File applicationsDir = temporaryFolder.newFolder( "applications" );
+        writeFile( applicationsDir, "myapplication-1.0.0/a/b.txt", "a/b.txt" );
+        writeFile( applicationsDir, "myapplication-1.0.0/a/c.txt", "a/c.txt" );
 
         final ResourceKey resourceKey1 = ResourceKey.from( RESOURCE_URI_1 );
         final ResourceKey resourceKey2 = ResourceKey.from( RESOURCE_URI_2 );
         final ResourceKey resourceKey3 = ResourceKey.from( RESOURCE_URI_3 );
-        resource1 = new Resource( resourceKey1, new File( modulesDir, "mymodule-1.0.0" ).toURI().toURL() );
-        resource2 = new Resource( resourceKey2, new File( modulesDir, "mymodule-1.0.0/a/b.txt" ).toURI().toURL() );
-        resource3 = new Resource( resourceKey3, new File( modulesDir, "mymodule-1.0.0/a/c.txt" ).toURI().toURL() );
+        resource1 = new Resource( resourceKey1, new File( applicationsDir, "myapplication-1.0.0" ).toURI().toURL() );
+        resource2 = new Resource( resourceKey2, new File( applicationsDir, "myapplication-1.0.0/a/b.txt" ).toURI().toURL() );
+        resource3 = new Resource( resourceKey3, new File( applicationsDir, "myapplication-1.0.0/a/c.txt" ).toURI().toURL() );
 
         this.list = new ArrayList();
         this.list.add( resource1 );
