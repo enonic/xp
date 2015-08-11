@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
@@ -16,7 +17,6 @@ import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
@@ -98,8 +98,9 @@ public final class XmlFormMapper
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );
         builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
-        builder.inputTypeConfig( fromConfigXml( type, root.getChild( "config" ) ) );
         builder.maximizeUIInputWidth( root.getChildValueAs( "maximize", Boolean.class, false ) );
+
+        buildConfig( builder, root.getChild( "config" ) );
 
         return builder.build();
     }
@@ -140,13 +141,22 @@ public final class XmlFormMapper
         return Occurrences.create( min, max );
     }
 
-    private InputTypeConfig fromConfigXml( final InputType type, final DomElement value )
+    private void buildConfig( final Input.Builder builder, final DomElement root )
     {
-        if ( value == null )
+        if ( root == null )
         {
-            return null;
+            return;
         }
 
-        return type.parseConfig( this.currentApplication, value.getWrapped() );
+        for ( final DomElement child : root.getChildren( "property" ) )
+        {
+            final String name = child.getAttribute( "name" );
+            final String value = child.getValue();
+
+            if ( !Strings.isNullOrEmpty( name ) && !Strings.isNullOrEmpty( value ) )
+            {
+                builder.inputTypeConfig( name, value );
+            }
+        }
     }
 }

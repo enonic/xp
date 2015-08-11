@@ -57,7 +57,7 @@
           <xs:element minOccurs="0" name="help-text" type="xs:string"/>
           <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
-          <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+          <xs:element minOccurs="0" name="config" type="properties"/>
           <xs:element minOccurs="0" name="maximize" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
@@ -195,6 +195,20 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="properties">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="property"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="property">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
 </xs:schema>
