@@ -1,0 +1,34 @@
+{
+  "nodeExportResults": [
+    {
+      "dryRun": true,
+      "exportErrors": [
+        "Error"
+      ],
+      "exportedBinaries": [],
+      "exportedNodes": [
+        "/path/to/node"
+      ]
+    },
+    {
+      "dryRun": true,
+      "exportErrors": [
+        "Error"
+      ],
+      "exportedBinaries": [],
+      "exportedNodes": [
+        "/path/to/node"
+      ]
+    },
+    {
+      "dryRun": true,
+      "exportErrors": [
+        "Error"
+      ],
+      "exportedBinaries": [],
+      "exportedNodes": [
+        "/path/to/node"
+      ]
+    }
+  ]
+}
