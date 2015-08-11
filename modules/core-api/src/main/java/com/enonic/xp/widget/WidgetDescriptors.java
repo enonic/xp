@@ -23,19 +23,19 @@ public final class WidgetDescriptors
         return new WidgetDescriptors( list );
     }
 
-    public static WidgetDescriptors from( final WidgetDescriptor... widgetDescriptos )
+    public static WidgetDescriptors from( final WidgetDescriptor... widgetDescriptors )
     {
-        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptos ) );
+        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptors ) );
     }
 
-    public static WidgetDescriptors from( final Iterable<? extends WidgetDescriptor> widgetDescriptos )
+    public static WidgetDescriptors from( final Iterable<? extends WidgetDescriptor> widgetDescriptors )
     {
-        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptos ) );
+        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptors ) );
     }
 
-    public static WidgetDescriptors from( final Collection<? extends WidgetDescriptor> widgetDescriptos )
+    public static WidgetDescriptors from( final Collection<? extends WidgetDescriptor> widgetDescriptors )
     {
-        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptos ) );
+        return new WidgetDescriptors( ImmutableList.copyOf( widgetDescriptors ) );
     }
 
 }
