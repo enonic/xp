@@ -4,10 +4,10 @@
   <from-semantic>likes</from-semantic>
   <to-semantic>liked by</to-semantic>
   <allowed-from-types>
-    <content-type>mymodule:animal</content-type>
+    <content-type>myapplication:animal</content-type>
     <content-type>person</content-type>
   </allowed-from-types>
   <allowed-to-types>
-    <content-type>mymodule:vehicle</content-type>
+    <content-type>myapplication:vehicle</content-type>
   </allowed-to-types>
 </relationship-type>

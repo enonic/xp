@@ -24,7 +24,7 @@ var expectedJson = {
     "type": "test:myContentType",
     "valid": false,
     "x": {
-        "com-enonic-mymodule": {
+        "com-enonic-myapplication": {
             "myschema": {
                 "a": 1.0
             }
@@ -51,7 +51,7 @@ exports.createContent = function () {
             }
         },
         x: {
-            "com-enonic-mymodule": {
+            "com-enonic-myapplication": {
                 myschema: {
                     a: 1
                 }

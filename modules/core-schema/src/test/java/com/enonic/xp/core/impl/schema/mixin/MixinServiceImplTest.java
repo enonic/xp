@@ -44,16 +44,16 @@ public class MixinServiceImplTest
     {
         super.setup();
 
-        //Mocks a module
-        startBundles( newBundle( "module2" ) );
-        myBundle = findBundle( "module2" );
+        //Mocks an application
+        startBundles( newBundle( "application2" ) );
+        myBundle = findBundle( "application2" );
         myApplicationKey = ApplicationKey.from( myBundle );
-        this.mixin1 = createMixin( "module2:mixin1" );
+        this.mixin1 = createMixin( "application2:mixin1" );
         myApplication = Mockito.mock( Application.class );
         Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
 
-        //Mocks the module service
+        //Mocks the application service
         applicationService = Mockito.mock( ApplicationService.class );
 
         //Mocks the ComponentContext
@@ -108,8 +108,8 @@ public class MixinServiceImplTest
 
         ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "module2:mixin1" ).
-            metadata( MixinNames.from( "module2:mixin1", "module2:mixin2" ) ).
+            name( "application2:mixin1" ).
+            metadata( MixinNames.from( "application2:mixin1", "application2:mixin2" ) ).
             build();
 
         Mixins mixins = service.getByContentType( contentType );
@@ -119,7 +119,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void test_add_removal_module()
+    public void test_add_removal_application()
     {
 
         Applications applications = Applications.from( myApplication );
@@ -145,7 +145,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void test_get_system_module()
+    public void test_get_system_application()
     {
 
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );

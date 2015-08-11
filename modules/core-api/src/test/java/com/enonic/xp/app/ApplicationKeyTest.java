@@ -26,26 +26,26 @@ public class ApplicationKeyTest
     }
 
     @Test
-    public void testFromModuleKey()
+    public void testFromApplicationKey()
     {
-        assertEquals( "mymodule", ApplicationKey.from( "mymodule" ).getName() );
+        assertEquals( "myapplication", ApplicationKey.from( "myapplication" ).getName() );
     }
 
     @Test
-    public void testParseModuleVersion()
+    public void testParseApplicationVersion()
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "mymodule" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        assertEquals( ApplicationKey.from( "mymodule" ), applicationKey );
+        assertEquals( ApplicationKey.from( "myapplication" ), applicationKey );
     }
 
     @Test
     public void fromBundle()
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( "mymodule" );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
         ApplicationKey applicationKey = ApplicationKey.from( bundle );
 
-        assertEquals( ApplicationKey.from( "mymodule" ).toString(), applicationKey.toString() );
+        assertEquals( ApplicationKey.from( "myapplication" ).toString(), applicationKey.toString() );
     }
 }

@@ -9,7 +9,7 @@ public class ResourceProblemExceptionTest
     @Test
     public void testSimple()
     {
-        final ResourceKey resource = ResourceKey.from( "mymodule:/test.js" );
+        final ResourceKey resource = ResourceKey.from( "myapplication:/test.js" );
 
         final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.resource( resource );

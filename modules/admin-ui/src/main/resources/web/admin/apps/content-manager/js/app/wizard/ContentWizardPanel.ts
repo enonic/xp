@@ -603,11 +603,11 @@ module app.wizard {
         }
 
         private initSiteModelListeners() {
-            this.siteModel.onModuleAdded((event: api.content.site.ModuleAddedEvent) => {
+            this.siteModel.onApplicationAdded((event: api.content.site.ApplicationAddedEvent) => {
                 this.addMetadataStepForms(event.getApplicationKey());
             });
 
-            this.siteModel.onModuleRemoved((event: api.content.site.ModuleRemovedEvent) => {
+            this.siteModel.onApplicationRemoved((event: api.content.site.ApplicationRemovedEvent) => {
                 this.removeMetadataStepForms();
             });
         }

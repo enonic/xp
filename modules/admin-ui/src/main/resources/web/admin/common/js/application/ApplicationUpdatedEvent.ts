@@ -29,7 +29,7 @@ module api.application {
             return this.eventType;
         }
 
-        isNeedToUpdateModule(): boolean {
+        isNeedToUpdateApplication(): boolean {
             return ApplicationUpdatedEventType.RESOLVED != this.eventType &&
                 ApplicationUpdatedEventType.STARTING != this.eventType &&
                 ApplicationUpdatedEventType.UNRESOLVED != this.eventType &&

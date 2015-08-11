@@ -45,7 +45,7 @@ public final class TestDataFixtures
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
@@ -93,7 +93,7 @@ public final class TestDataFixtures
     {
         final Page.Builder builder = Page.create();
         builder.config( newTinyPropertyTree() );
-        builder.controller( DescriptorKey.from( "mymodule:mycontroller" ) );
+        builder.controller( DescriptorKey.from( "myapplication:mycontroller" ) );
         builder.regions( newPageRegions() );
         return builder.build();
     }
@@ -127,7 +127,7 @@ public final class TestDataFixtures
         final PartComponent.Builder builder = PartComponent.create();
         builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "mymodule:mypart" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mypart" ) );
         return builder.build();
     }
 
@@ -136,7 +136,7 @@ public final class TestDataFixtures
         final LayoutComponent.Builder builder = LayoutComponent.create();
         builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "mymodule:mylayout" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mylayout" ) );
         builder.regions( newLayoutRegions() );
         final LayoutComponent layout = builder.build();
 
@@ -158,7 +158,7 @@ public final class TestDataFixtures
         siteConfigConfig.setLong( "Field", 42l );
 
         final SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "mymodule" ) ).
+            application( ApplicationKey.from( "myapplication" ) ).
             config( siteConfigConfig ).
             build();
 

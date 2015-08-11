@@ -22,25 +22,25 @@ public class ContentTypeServiceImpl_getAllTest
     @Test
     public void testGetAll()
     {
-        final ContentType type1 = createContentType( "mymodule:my-contenttype-1", "DisplayName1" );
-        final ContentType type2 = createContentType( "mymodule:my-contenttype-2", "DisplayName2" );
+        final ContentType type1 = createContentType( "myapplication:my-contenttype-1", "DisplayName1" );
+        final ContentType type2 = createContentType( "myapplication:my-contenttype-2", "DisplayName2" );
 
         register( type1, type2 );
 
         final ContentTypes result = this.service.getAll( new GetAllContentTypesParams() );
         assertEquals( 2, result.getSize() );
 
-        verifyContentType( "mymodule:my-contenttype-1", "DisplayName1", result );
-        verifyContentType( "mymodule:my-contenttype-2", "DisplayName2", result );
+        verifyContentType( "myapplication:my-contenttype-1", "DisplayName1", result );
+        verifyContentType( "myapplication:my-contenttype-2", "DisplayName2", result );
     }
 
     @Test
     public void testGetAll_inlineMixins()
         throws Exception
     {
-        final String contentTypeName = "mymodule:my-contenttype-1";
+        final String contentTypeName = "myapplication:my-contenttype-1";
 
-        final Mixin mixin = Mixin.create().name( "mymodule:my_mixin" ).
+        final Mixin mixin = Mixin.create().name( "myapplication:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).

@@ -11,14 +11,14 @@ public class ResourceKeyConverterTest
     @Test
     public void testSameType()
     {
-        final ResourceKey key = ResourceKey.from( "mymodule:/some/path" );
+        final ResourceKey key = ResourceKey.from( "myapplication:/some/path" );
         assertSame( key, Converters.convert( key, ResourceKey.class ) );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( ResourceKey.from( "mymodule:/some/path" ), Converters.convert( "mymodule:/some/path", ResourceKey.class ) );
+        assertEquals( ResourceKey.from( "myapplication:/some/path" ), Converters.convert( "myapplication:/some/path", ResourceKey.class ) );
     }
 
     @Test(expected = ConvertException.class)

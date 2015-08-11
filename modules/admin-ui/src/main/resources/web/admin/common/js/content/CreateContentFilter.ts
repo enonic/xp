@@ -12,19 +12,19 @@ module api.content {
 
     export class CreateContentFilter {
 
-        private siteModulesAllowed: {[key:string]: ApplicationKey};
+        private siteApplicationsAllowed: {[key:string]: ApplicationKey};
 
         constructor() {
-            this.siteModulesAllowed = null;
+            this.siteApplicationsAllowed = null;
         }
 
-        siteModulesFilter(siteApplicationKeys: ApplicationKey[]): CreateContentFilter {
+        siteApplicationsFilter(siteApplicationKeys: ApplicationKey[]): CreateContentFilter {
             if (siteApplicationKeys == null) {
                 return this;
             }
-            this.siteModulesAllowed = {};
+            this.siteApplicationsAllowed = {};
             siteApplicationKeys.forEach((applicationKey: ApplicationKey) => {
-                this.siteModulesAllowed[applicationKey.toString()] = applicationKey;
+                this.siteApplicationsAllowed[applicationKey.toString()] = applicationKey;
             });
             return this;
         }
@@ -53,7 +53,7 @@ module api.content {
             else if (TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()]) {
                 return true;
             }
-            else if ((!this.siteModulesAllowed) || this.siteModulesAllowed[contentTypeName.getApplicationKey().toString()]) {
+            else if ((!this.siteApplicationsAllowed) || this.siteApplicationsAllowed[contentTypeName.getApplicationKey().toString()]) {
                 return true;
             }
             else {

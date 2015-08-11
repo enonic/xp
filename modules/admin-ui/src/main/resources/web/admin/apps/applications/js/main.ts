@@ -6,7 +6,7 @@ function startApplication() {
     
     var application: api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.bar.AppBar(application);
-    var appPanel = new app.ModuleAppPanel(appBar, application.getPath());
+    var appPanel = new app.ApplicationAppPanel(appBar, application.getPath());
 
     var body = api.dom.Body.get();
     body.appendChild(appBar);
@@ -26,5 +26,5 @@ function startApplication() {
 }
 
 module components {
-    export var detailPanel: app.browse.ModuleBrowseItemPanel;
+    export var detailPanel: app.browse.ApplicationBrowseItemPanel;
 }

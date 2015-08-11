@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 public class ImageSelectorTest
 {
-    private final static ApplicationKey CURRENT_MODULE = ApplicationKey.from( "mymodule" );
+    private final static ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapplication" );
 
     private XmlTestHelper xmlHelper;
 
@@ -43,8 +43,8 @@ public class ImageSelectorTest
         ImageSelectorConfig expected = builder.build();
 
         // exercise
-        ImageSelectorConfig parsed =
-            (ImageSelectorConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
+        ImageSelectorConfig parsed = (ImageSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml(
+            "parseConfig.xml" ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -67,7 +67,7 @@ public class ImageSelectorTest
 
         // exercise
         ImageSelectorConfig parsed =
-            (ImageSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ImageSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -88,7 +88,7 @@ public class ImageSelectorTest
 
         // exercise
         ImageSelectorConfig parsed =
-            (ImageSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ImageSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -106,7 +106,7 @@ public class ImageSelectorTest
 
         // exercise
         ImageSelectorConfig parsed =
-            (ImageSelectorConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
+            (ImageSelectorConfig) serializer.parseConfig( CURRENT_APPLICATION, DomHelper.parse( xml.toString() ).getDocumentElement() );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

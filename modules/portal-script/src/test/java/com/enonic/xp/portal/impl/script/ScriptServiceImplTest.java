@@ -18,7 +18,7 @@ public class ScriptServiceImplTest
     @Test
     public void testEmpty()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/empty-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/empty-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -28,7 +28,7 @@ public class ScriptServiceImplTest
     @Test
     public void testExecuteExported()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/export-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -39,7 +39,7 @@ public class ScriptServiceImplTest
     @Test
     public void testExecuteExported_objectArg()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/export-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -51,7 +51,7 @@ public class ScriptServiceImplTest
     @Test
     public void testResolve()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/resolve/resolve-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/resolve/resolve-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -60,7 +60,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRequire()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/site/require/require-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/site/require/require-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
     }
@@ -68,7 +68,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRequire_3rd()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/site/require/3rd/require-3rd-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/site/require/3rd/require-3rd-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
     }
@@ -76,7 +76,7 @@ public class ScriptServiceImplTest
     @Test
     public void testCompileError()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/error/error-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/error/error-test.js" );
 
         try
         {
@@ -93,7 +93,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRuntimeError()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/error/error-in-export-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/error/error-in-export-test.js" );
         final ScriptExports exports = runTestScript( script );
 
         assertNotNull( exports );
@@ -106,14 +106,14 @@ public class ScriptServiceImplTest
         catch ( final ResourceProblemException e )
         {
             assertEquals( 1, e.getLineNumber() );
-            assertEquals( ResourceKey.from( "mymodule:/error/error-test.js" ), e.getResource() );
+            assertEquals( ResourceKey.from( "myapplication:/error/error-test.js" ), e.getResource() );
         }
     }
 
     @Test
     public void testCache()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/empty-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/empty-test.js" );
 
         final ScriptExports exports1 = runTestScript( script );
         final ScriptExports exports2 = runTestScript( script );
