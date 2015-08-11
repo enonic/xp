@@ -15,12 +15,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.ImageFilterBuilder;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
-import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -29,28 +25,21 @@ import com.enonic.xp.util.BinaryReference;
 public abstract class ImageBaseResourceTest
     extends BaseResourceTest
 {
-    private ImageFilterBuilder imageFilterBuilder;
-
-    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
-
     private TemporaryFolder temporaryFolder;
 
     protected ContentService contentService;
+
+    private ImageService imageService;
 
     @Override
     protected void configure()
         throws Exception
     {
-        this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
-        this.imageScaleFunctionBuilder = Mockito.mock( ImageScaleFunctionBuilder.class );
-        this.temporaryFolder = new TemporaryFolder();
-        this.temporaryFolder.create();
-        System.setProperty( "xp.home", this.temporaryFolder.getRoot().getPath() );
-        this.services.setImageFilterBuilder( this.imageFilterBuilder );
-        this.services.setImageScaleFunctionBuilder( this.imageScaleFunctionBuilder );
-
         this.contentService = Mockito.mock( ContentService.class );
+        this.imageService = Mockito.mock( ImageService.class );
+
         this.services.setContentService( this.contentService );
+        this.services.setImageService( this.imageService );
     }
 
     final void setupContent()
@@ -71,22 +60,8 @@ public abstract class ImageBaseResourceTest
 
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( ByteSource.wrap( imageData ) );
-        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( String.class ) ) ).
-            thenReturn( getImageFilterBuilder() );
-        Mockito.when( this.imageScaleFunctionBuilder.build( Mockito.isA( ScaleParams.class ), Mockito.isA( FocalPoint.class ) ) ).
-            thenReturn( getImageScaleFunctionBuilder() );
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageData );
     }
-
-    private ImageFilter getImageFilterBuilder()
-    {
-        return source -> source;
-    }
-
-    private ImageScaleFunction getImageScaleFunctionBuilder()
-    {
-        return source -> source;
-    }
-
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
