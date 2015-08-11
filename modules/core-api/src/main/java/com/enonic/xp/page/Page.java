@@ -22,15 +22,18 @@ public final class Page
 
     private final PropertyTree config;
 
+    private final boolean customized;
+
     private Page( final Builder builder )
     {
-        Preconditions.checkArgument( !( builder.controller != null && builder.template != null ),
-                                     "A Page cannot have both have a controller and a template set" );
+        Preconditions.checkArgument( !( !builder.customized && builder.controller != null && builder.template != null ),
+                                     "A Page cannot have both have a controller and a template set if page is not customized" );
 
         this.controller = builder.controller;
         this.template = builder.template;
         this.config = builder.config;
         this.regions = builder.regions;
+        this.customized = builder.customized;
     }
 
     public boolean hasController()
@@ -84,6 +87,10 @@ public final class Page
         return regions.getComponent( path );
     }
 
+    public boolean isCustomized() {
+        return customized;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -135,6 +142,8 @@ public final class Page
 
         private PropertyTree config;
 
+        private boolean customized;
+
         private Builder()
         {
             // Default
@@ -146,6 +155,7 @@ public final class Page
             this.controller = source.controller;
             this.regions = source.regions != null ? source.regions.copy() : null;
             this.config = source.config != null ? source.config.copy() : null;
+            this.customized = source.customized;
         }
 
         public Builder regions( final PageRegions value )
@@ -169,6 +179,12 @@ public final class Page
         public Builder config( final PropertyTree config )
         {
             this.config = config;
+            return this;
+        }
+
+        public Builder customized( final boolean customized )
+        {
+            this.customized = customized;
             return this;
         }
 
