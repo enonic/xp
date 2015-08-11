@@ -8,11 +8,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.FieldSetJson;
 import com.enonic.xp.form.FormItemSet;
-import com.enonic.xp.form.FormItemSetJson;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.InputJson;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.support.JsonTestHelper;
 
