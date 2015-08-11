@@ -24,7 +24,7 @@ public final class ContentTypeForms
             build() ).
         addFormItem( Input.create().
             name( "siteConfig" ).
-            label( "Site config" ).
+            label( "Applications" ).
             helpText( "Configure applications needed for the Site" ).
             inputType( InputTypes.SITE_CONFIGURATOR ).
             required( false ).
