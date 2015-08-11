@@ -6,63 +6,56 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
-public class TextLineTypeTest
+public class GeoPointTypeTest
     extends BaseInputTypeTest
 {
-    public TextLineTypeTest()
+    public GeoPointTypeTest()
     {
-        super( TextLineType.INSTANCE );
+        super( GeoPointType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "TextLine", this.type.getName() );
+        assertEquals( "GeoPoint", this.type.getName() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "TextLine", this.type.toString() );
+        assertEquals( "GeoPoint", this.type.toString() );
     }
 
     @Test
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "test", config );
+        final Value value = this.type.createPropertyValue( "1,2", config );
 
         assertNotNull( value );
-        assertSame( ValueTypes.STRING, value.getType() );
+        assertSame( ValueTypes.GEO_POINT, value.getType() );
     }
 
     @Test
     public void testCheckTypeValidity()
     {
-        this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
+        this.type.checkTypeValidity( geoPointProperty( "1,2" ) );
     }
 
     @Test
     public void testContract()
     {
-        this.type.checkBreaksRequiredContract( stringProperty( "test" ) );
+        this.type.checkBreaksRequiredContract( geoPointProperty( "1,2" ) );
     }
 
     @Test
     public void testCheckValidity()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, stringProperty( "test" ) );
+        this.type.checkValidity( config, geoPointProperty( "1,2" ) );
     }
 
     @Test

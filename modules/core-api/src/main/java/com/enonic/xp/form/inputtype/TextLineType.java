@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class TextLineType
     extends InputType
 {
-    public TextLineType()
+    public final static TextLineType INSTANCE = new TextLineType();
+
+    private TextLineType()
     {
         super( InputTypeName.TEXT_LINE );
     }

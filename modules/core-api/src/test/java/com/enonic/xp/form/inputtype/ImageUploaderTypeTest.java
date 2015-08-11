@@ -6,28 +6,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
-public class TextLineTypeTest
+public class ImageUploaderTypeTest
     extends BaseInputTypeTest
 {
-    public TextLineTypeTest()
+    public ImageUploaderTypeTest()
     {
-        super( TextLineType.INSTANCE );
+        super( ImageUploaderType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "TextLine", this.type.getName() );
+        assertEquals( "ImageUploader", this.type.getName() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "TextLine", this.type.toString() );
+        assertEquals( "ImageUploader", this.type.toString() );
     }
 
     @Test
@@ -37,19 +36,13 @@ public class TextLineTypeTest
         final Value value = this.type.createPropertyValue( "test", config );
 
         assertNotNull( value );
-        assertSame( ValueTypes.STRING, value.getType() );
+        assertSame( ValueTypes.PROPERTY_SET, value.getType() );
     }
 
     @Test
     public void testCheckTypeValidity()
     {
         this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
     }
 
     @Test

@@ -6,28 +6,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
-public class TextLineTypeTest
+public class SiteConfiguratorTypeTest
     extends BaseInputTypeTest
 {
-    public TextLineTypeTest()
+    public SiteConfiguratorTypeTest()
     {
-        super( TextLineType.INSTANCE );
+        super( SiteConfiguratorType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "TextLine", this.type.getName() );
+        assertEquals( "SiteConfigurator", this.type.getName() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "TextLine", this.type.toString() );
+        assertEquals( "SiteConfigurator", this.type.toString() );
     }
 
     @Test
@@ -44,12 +43,6 @@ public class TextLineTypeTest
     public void testCheckTypeValidity()
     {
         this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
     }
 
     @Test

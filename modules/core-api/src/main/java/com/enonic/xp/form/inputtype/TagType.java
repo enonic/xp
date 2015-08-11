@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class TagType
     extends InputType
 {
-    public TagType()
+    public final static TagType INSTANCE = new TagType();
+
+    private TagType()
     {
         super( InputTypeName.TAG );
     }

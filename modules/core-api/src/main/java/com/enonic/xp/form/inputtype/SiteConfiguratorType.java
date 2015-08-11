@@ -6,7 +6,9 @@ import com.enonic.xp.data.Value;
 final class SiteConfiguratorType
     extends InputType
 {
-    public SiteConfiguratorType()
+    public final static SiteConfiguratorType INSTANCE = new SiteConfiguratorType();
+
+    private SiteConfiguratorType()
     {
         super( InputTypeName.SITE_CONFIGURATOR );
     }

@@ -3,10 +3,12 @@ package com.enonic.xp.form.inputtype;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
 public abstract class BaseInputTypeTest
@@ -55,5 +57,29 @@ public abstract class BaseInputTypeTest
     {
         final PropertyTree tree = new PropertyTree();
         return tree.addLocalDate( "test", LocalDate.MAX );
+    }
+
+    protected final Property localTimeProperty()
+    {
+        final PropertyTree tree = new PropertyTree();
+        return tree.addLocalTime( "test", LocalTime.MAX );
+    }
+
+    protected final Property doubleProperty( final double value )
+    {
+        final PropertyTree tree = new PropertyTree();
+        return tree.addDouble( "test", value );
+    }
+
+    protected final Property geoPointProperty( final String value )
+    {
+        final PropertyTree tree = new PropertyTree();
+        return tree.addGeoPoint( "test", GeoPoint.from( value ) );
+    }
+
+    protected final Property longProperty( final long value )
+    {
+        final PropertyTree tree = new PropertyTree();
+        return tree.addLong( "test", value );
     }
 }

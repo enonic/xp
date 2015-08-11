@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class TimeType
     extends InputType
 {
-    public TimeType()
+    public final static TimeType INSTANCE = new TimeType();
+
+    private TimeType()
     {
         super( InputTypeName.TIME );
     }

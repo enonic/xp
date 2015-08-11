@@ -13,7 +13,9 @@ import com.enonic.xp.form.InvalidTypeException;
 final class ImageUploaderType
     extends InputType
 {
-    public ImageUploaderType()
+    public final static ImageUploaderType INSTANCE = new ImageUploaderType();
+
+    private ImageUploaderType()
     {
         super( InputTypeName.IMAGE_UPLOADER );
     }

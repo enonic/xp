@@ -11,7 +11,9 @@ import com.enonic.xp.util.Reference;
 final class ImageSelectorType
     extends InputType
 {
-    public ImageSelectorType()
+    public final static ImageSelectorType INSTANCE = new ImageSelectorType();
+
+    private ImageSelectorType()
     {
         super( InputTypeName.IMAGE_SELECTOR );
     }
@@ -37,7 +39,7 @@ final class ImageSelectorType
     public ObjectNode serializeConfig( final InputTypeConfig config )
     {
         final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
-        jsonConfig.put( "relationshipType", config.getValue( "relationshipType" ) );
+        jsonConfig.put( "relationshipType", config.getValue( "relationshipType", String.class, "system:reference" ) );
         return jsonConfig;
     }
 }

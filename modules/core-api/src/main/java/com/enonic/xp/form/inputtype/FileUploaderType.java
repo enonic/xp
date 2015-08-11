@@ -8,7 +8,9 @@ import com.enonic.xp.util.Reference;
 final class FileUploaderType
     extends InputType
 {
-    public FileUploaderType()
+    public final static FileUploaderType INSTANCE = new FileUploaderType();
+
+    private FileUploaderType()
     {
         super( InputTypeName.FILE_UPLOADER );
     }

@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class GeoPointType
     extends InputType
 {
-    public GeoPointType()
+    public final static GeoPointType INSTANCE = new GeoPointType();
+
+    private GeoPointType()
     {
         super( InputTypeName.GEO_POINT );
     }

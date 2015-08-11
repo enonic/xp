@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class TextAreaType
     extends InputType
 {
-    public TextAreaType()
+    public final static TextAreaType INSTANCE = new TextAreaType();
+
+    private TextAreaType()
     {
         super( InputTypeName.TEXT_AREA );
     }

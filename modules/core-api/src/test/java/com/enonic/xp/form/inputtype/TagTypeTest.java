@@ -10,24 +10,24 @@ import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
-public class TextLineTypeTest
+public class TagTypeTest
     extends BaseInputTypeTest
 {
-    public TextLineTypeTest()
+    public TagTypeTest()
     {
-        super( TextLineType.INSTANCE );
+        super( TagType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "TextLine", this.type.getName() );
+        assertEquals( "Tag", this.type.getName() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "TextLine", this.type.toString() );
+        assertEquals( "Tag", this.type.toString() );
     }
 
     @Test

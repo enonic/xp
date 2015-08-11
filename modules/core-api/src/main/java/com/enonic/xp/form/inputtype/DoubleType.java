@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class DoubleType
     extends InputType
 {
-    public DoubleType()
+    public final static DoubleType INSTANCE = new DoubleType();
+
+    private DoubleType()
     {
         super( InputTypeName.DOUBLE );
     }

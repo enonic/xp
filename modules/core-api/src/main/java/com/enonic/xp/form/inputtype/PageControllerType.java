@@ -10,7 +10,9 @@ import com.enonic.xp.data.ValueTypes;
 final class PageControllerType
     extends InputType
 {
-    public PageControllerType()
+    public final static PageControllerType INSTANCE = new PageControllerType();
+
+    private PageControllerType()
     {
         super( InputTypeName.PAGE_CONTROLLER );
     }

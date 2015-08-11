@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class LongType
     extends InputType
 {
-    public LongType()
+    public final static LongType INSTANCE = new LongType();
+
+    private LongType()
     {
         super( InputTypeName.LONG );
     }
