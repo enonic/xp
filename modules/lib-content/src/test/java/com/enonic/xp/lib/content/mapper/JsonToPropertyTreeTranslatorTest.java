@@ -193,13 +193,13 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "false" ).
+                inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

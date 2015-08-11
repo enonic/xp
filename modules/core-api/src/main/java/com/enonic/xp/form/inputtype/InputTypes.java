@@ -12,15 +12,15 @@ import com.enonic.xp.data.ValueTypes;
 @Beta
 public final class InputTypes
 {
-    public static final InputType COMBO_BOX = new ComboBoxType();
+    public static final InputType COMBO_BOX = ComboBoxType.INSTANCE;
 
-    public static final InputType DATE = new DateType();
+    public static final InputType DATE = DateType.INSTANCE;
 
     public static final InputType TIME = new TimeType();
 
-    public static final InputType DATE_TIME = new DateTimeType();
+    public static final InputType DATE_TIME = DateTimeType.INSTANCE;
 
-    public static final InputType CHECKBOX = new CheckboxType();
+    public static final InputType CHECKBOX = CheckboxType.INSTANCE;
 
     public static final InputType DOUBLE = new DoubleType();
 
@@ -36,9 +36,9 @@ public final class InputTypes
 
     public static final InputType FILE_UPLOADER = new FileUploaderType();
 
-    public static final InputType CONTENT_SELECTOR = new ContentSelectorType();
+    public static final InputType CONTENT_SELECTOR = ContentSelectorType.INSTANCE;
 
-    public static final InputType RADIO_BUTTONS = new RadioButtonsType();
+    public static final InputType RADIO_BUTTONS = RadioButtonsType.INSTANCE;
 
     public static final InputType TAG = new TagType();
 
@@ -50,7 +50,7 @@ public final class InputTypes
 
     public static final InputType PAGE_CONTROLLER = new PageControllerType();
 
-    public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilterType();
+    public static final InputType CONTENT_TYPE_FILTER = ContentTypeFilterType.INSTANCE;
 
     public static final InputType SITE_CONFIGURATOR = new SiteConfiguratorType();
 

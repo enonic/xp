@@ -1,0 +1,12 @@
+{
+  "options": [
+    {
+      "value": "one",
+      "label": "Value One"
+    },
+    {
+      "value": "two",
+      "label": "Value Two"
+    }
+  ]
+}

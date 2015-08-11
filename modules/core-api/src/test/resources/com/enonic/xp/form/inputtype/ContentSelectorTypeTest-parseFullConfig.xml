@@ -1,5 +1,0 @@
-<config>
-  <relationship-type>system:reference</relationship-type>
-  <allow-content-type>media:image</allow-content-type>
-  <allow-content-type>media:video</allow-content-type>
-</config>

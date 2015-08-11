@@ -61,8 +61,6 @@ public final class Input
         this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig.build();
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
-
-        this.type.validateOccurrences( this.occurrences );
     }
 
     @Override
@@ -369,12 +367,6 @@ public final class Input
         public Builder helpText( String value )
         {
             helpText = value;
-            return this;
-        }
-
-        public Builder inputTypeConfig( final InputTypeConfig config )
-        {
-            this.inputTypeConfig.config( config );
             return this;
         }
 

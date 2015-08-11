@@ -5,13 +5,14 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Occurrences;
 
 @Beta
 final class CheckboxType
     extends InputType
 {
-    public CheckboxType()
+    public final static CheckboxType INSTANCE = new CheckboxType();
+
+    private CheckboxType()
     {
         super( InputTypeName.CHECKBOX );
     }
@@ -25,17 +26,6 @@ final class CheckboxType
     public void checkTypeValidity( final Property property )
     {
         validateType( property, ValueTypes.BOOLEAN );
-    }
-
-    @Override
-    public void validateOccurrences( final Occurrences occurrences )
-    {
-        if ( occurrences.getMinimum() != 0 )
-        {
-            throw new IllegalArgumentException(
-                "An Input of type " + this.getClass().getSimpleName() + " can only have 0 as minimum occurrences: " +
-                    occurrences.getMinimum() );
-        }
     }
 
     @Override

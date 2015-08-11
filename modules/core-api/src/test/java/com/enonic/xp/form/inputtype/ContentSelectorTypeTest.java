@@ -1,78 +1,107 @@
 package com.enonic.xp.form.inputtype;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Strings;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.support.JsonTestHelper;
-import com.enonic.xp.support.XmlTestHelper;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.InputValidationException;
+import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
 public class ContentSelectorTypeTest
+    extends BaseInputTypeTest
 {
-    private final static ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapplication" );
-
-    private XmlTestHelper xmlHelper;
-
-    private JsonTestHelper jsonHelper;
-
-    private ContentSelectorType serializer = new ContentSelectorType();
-
-    @Before
-    public void before()
+    public ContentSelectorTypeTest()
     {
-        xmlHelper = new XmlTestHelper( this );
-        jsonHelper = new JsonTestHelper( this );
-    }
-
-    private InputTypeConfig parseXml( final String name )
-    {
-        return this.serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml( name ).getDocumentElement() );
+        super( ContentSelectorType.INSTANCE );
     }
 
     @Test
-    public void parseConfig()
+    public void testName()
     {
-        final InputTypeConfig parsed = parseXml( "parseConfig.xml" );
-        assertEquals( RelationshipTypeName.REFERENCE.toString(), parsed.getValue( "relationshipType" ) );
-        assertTrue( Strings.isNullOrEmpty( parsed.getValue( "allowedContentTypes" ) ) );
+        assertEquals( "ContentSelector", this.type.getName() );
     }
 
     @Test
-    public void parseFullConfig()
+    public void testToString()
     {
-        final InputTypeConfig parsed = parseXml( "parseFullConfig.xml" );
-        assertEquals( RelationshipTypeName.REFERENCE.toString(), parsed.getValue( "relationshipType" ) );
-        assertEquals( ContentTypeName.videoMedia().toString() + "," + ContentTypeName.imageMedia().toString(),
-                      parsed.getValue( "allowedContentTypes" ) );
+        assertEquals( "ContentSelector", this.type.toString() );
     }
 
     @Test
-    public void serializeConfig()
+    public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        final Value value = this.type.createPropertyValue( "name", config );
+
+        assertNotNull( value );
+        assertSame( ValueTypes.REFERENCE, value.getType() );
+    }
+
+    @Test
+    public void testCheckTypeValidity()
+    {
+        this.type.checkTypeValidity( referenceProperty( "value" ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckTypeValidity_invalid()
+    {
+        this.type.checkTypeValidity( booleanProperty( true ) );
+    }
+
+    @Test
+    public void testContract()
+    {
+        this.type.checkBreaksRequiredContract( referenceProperty( "name" ) );
+    }
+
+    @Test(expected = InputValidationException.class)
+    public void testContract_invalid()
+    {
+        this.type.checkBreaksRequiredContract( stringProperty( "" ) );
+    }
+
+    @Test
+    public void testCheckValidity()
+    {
+        final InputTypeConfig config = newEmptyConfig();
+        this.type.checkValidity( config, stringProperty( "name" ) );
+    }
+
+    @Test
+    public void testSerializeConfig_empty()
+    {
+        final InputTypeConfig config = newEmptyConfig();
+        final ObjectNode json = this.type.serializeConfig( config );
+
+        assertNotNull( json );
+        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "empty.json" ), json );
+    }
+
+    @Test
+    public void testSerializeConfig_full()
+    {
+        final InputTypeConfig config = newFullConfig();
+        final ObjectNode json = this.type.serializeConfig( config );
+
+        assertNotNull( json );
+        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "full.json" ), json );
+    }
+
+    private InputTypeConfig newEmptyConfig()
+    {
+        return InputTypeConfig.create().build();
+    }
+
+    private InputTypeConfig newFullConfig()
+    {
+        return InputTypeConfig.create().
+            property( "relationshipType", "system:parent" ).
+            property( "allowedContentTypes", "media:video,media:image" ).
             build();
-
-        final JsonNode json = this.serializer.serializeConfig( config );
-        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "serializeConfig.json" ), json );
-    }
-
-    @Test
-    public void serializeConfig_with_allowed_content_types()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().
-            property( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
-            property( "allowedContentTypes", ContentTypeName.imageMedia().toString() + "," + ContentTypeName.videoMedia() ).
-            build();
-
-        final JsonNode json = serializer.serializeConfig( config );
-        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "serializeFullConfig.json" ), json );
     }
 }

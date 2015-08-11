@@ -11,24 +11,24 @@ import com.enonic.xp.form.InvalidValueException;
 
 import static org.junit.Assert.*;
 
-public class RadioButtonsTypeTest
+public class ComboBoxTypeTest
     extends BaseInputTypeTest
 {
-    public RadioButtonsTypeTest()
+    public ComboBoxTypeTest()
     {
-        super( RadioButtonsType.INSTANCE );
+        super( ComboBoxType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "RadioButtons", this.type.getName() );
+        assertEquals( "ComboBox", this.type.getName() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "RadioButtons", this.type.toString() );
+        assertEquals( "ComboBox", this.type.toString() );
     }
 
     @Test

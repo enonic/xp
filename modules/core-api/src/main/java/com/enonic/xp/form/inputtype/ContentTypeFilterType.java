@@ -11,7 +11,9 @@ import com.enonic.xp.form.InvalidTypeException;
 public class ContentTypeFilterType
     extends InputType
 {
-    public ContentTypeFilterType()
+    public final static ContentTypeFilterType INSTANCE = new ContentTypeFilterType();
+
+    private ContentTypeFilterType()
     {
         super( InputTypeName.CONTENT_TYPE_FILTER );
     }

@@ -1,19 +1,16 @@
 package com.enonic.xp.form.inputtype;
 
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.InvalidTypeException;
-import com.enonic.xp.form.Occurrences;
 
 @Beta
 public abstract class InputType
@@ -38,11 +35,6 @@ public abstract class InputType
     public String toString()
     {
         return this.name.toString();
-    }
-
-    public void validateOccurrences( final Occurrences occurrences )
-    {
-        // Default: nothing
     }
 
     public abstract Value createPropertyValue( final String value, final InputTypeConfig config );
@@ -70,11 +62,6 @@ public abstract class InputType
         {
             throw new InputValidationException( property, this );
         }
-    }
-
-    public InputTypeConfig parseConfig( ApplicationKey app, Element elem )
-    {
-        return null;
     }
 
     public ObjectNode serializeConfig( InputTypeConfig config )

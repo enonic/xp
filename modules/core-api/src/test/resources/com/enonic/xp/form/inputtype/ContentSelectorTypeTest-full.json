@@ -1,5 +1,5 @@
 {
-  "relationshipType": "system:reference",
+  "relationshipType": "system:parent",
   "allowedContentTypes": [
     "media:video",
     "media:image"

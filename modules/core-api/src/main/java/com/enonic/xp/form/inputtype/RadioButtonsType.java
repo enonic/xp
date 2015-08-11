@@ -2,23 +2,21 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.Map;
 
-import org.w3c.dom.Element;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InvalidValueException;
-import com.enonic.xp.xml.DomHelper;
 
 final class RadioButtonsType
     extends InputType
 {
-    public RadioButtonsType()
+    public final static RadioButtonsType INSTANCE = new RadioButtonsType();
+
+    private RadioButtonsType()
     {
         super( InputTypeName.RADIO_BUTTONS );
     }
@@ -49,22 +47,6 @@ final class RadioButtonsType
         {
             throw new InvalidValueException( property, "Value is not a valid option" );
         }
-    }
-
-    @Override
-    public InputTypeConfig parseConfig( final ApplicationKey app, final Element elem )
-    {
-        final InputTypeConfig.Builder builder = InputTypeConfig.create();
-        final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
-
-        for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )
-        {
-            final String label = DomHelper.getChildElementValueByTagName( optionEl, "label" );
-            final String value = DomHelper.getChildElementValueByTagName( optionEl, "value" );
-            builder.property( "option." + value, label );
-        }
-
-        return builder.build();
     }
 
     @Override
