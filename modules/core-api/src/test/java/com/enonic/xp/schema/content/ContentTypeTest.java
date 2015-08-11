@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
@@ -17,6 +19,11 @@ import static org.junit.Assert.*;
 
 public class ContentTypeTest
 {
+    private static final Form MEDIA_DEFAULT = Form.create().
+        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Media" ).
+            inputType( InputTypes.FILE_UPLOADER ).build() ).
+        build();
 
     @Test
     public void layout()
@@ -135,10 +142,9 @@ public class ContentTypeTest
     {
         ContentTypeFilter.Builder builder = ContentTypeFilter.create().allowContentType( ContentTypeName.media() ).allowContentType(
             ContentTypeName.from( "myapplication:my_type" ) ).allowContentTypes(
-                ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
-                ContentTypeName.audioMedia() ).denyContentTypes(
-            ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType( "myapplication:my_type1" ).denyContentType(
-            "myapplication:my_type2" );
+            ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
+            ContentTypeName.audioMedia() ).denyContentTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType(
+            "myapplication:my_type1" ).denyContentType( "myapplication:my_type2" );
         ContentTypeFilter ctFilter = builder.build();
         ContentTypeFilter ctFilter1 = builder.build();
         assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type" ) ) );

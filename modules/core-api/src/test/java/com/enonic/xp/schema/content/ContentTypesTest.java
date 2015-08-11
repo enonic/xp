@@ -7,12 +7,25 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
 public class ContentTypesTest
 {
+    private static final Form PAGE_TEMPLATE = Form.create().
+        addFormItem( Input.create().
+            name( "supports" ).
+            label( "Supports" ).
+            helpText( "Choose which content types this page template supports" ).
+            inputType( InputTypes.CONTENT_TYPE_FILTER ).
+            required( true ).
+            multiple( true ).
+            build() ).
+        build();
 
     @Test
     public void add_array()
@@ -45,10 +58,11 @@ public class ContentTypesTest
     @Test
     public void contentTypes()
     {
-        ContentType.Builder builder = ContentType.create().name( ContentTypeName.media() ).form(
-            ContentTypeForms.PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
-            "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
-            Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder =
+            ContentType.create().name( ContentTypeName.media() ).form( PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent(
+                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
+                "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
+                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
         ContentTypes contentTypes = ContentTypes.create().add( contentType ).build();
         assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );

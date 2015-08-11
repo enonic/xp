@@ -24,8 +24,6 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.ContentSelectorTypeConfig;
-import com.enonic.xp.form.inputtype.DateTimeTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentType;
@@ -142,16 +140,12 @@ public class ContentServiceImplTest_update
             addFormItem( Input.create().
                 inputType( InputTypes.DATE_TIME ).
                 name( "myDateTime" ).
-                inputTypeConfig( DateTimeTypeConfig.create().
-                    withTimezone( true ).
-                    build() ).
+                inputTypeConfig( "withTimezone", "true" ).
                 build() ).
             addFormItem( Input.create().
                 inputType( InputTypes.CONTENT_SELECTOR ).
                 name( "myReference" ).
-                inputTypeConfig( ContentSelectorTypeConfig.create().
-                    addAllowedContentType( ContentTypeName.from( "myContentType" ) ).
-                    build() ).
+                inputTypeConfig( "allowedContentTypes", ContentTypeName.from( "myContentType" ).toString() ).
                 build() ).
             build();
     }
@@ -322,7 +316,7 @@ public class ContentServiceImplTest_update
         {
             this.contentService.update( updateContentParams );
         }
-        catch ( IllegalArgumentException e )
+        catch ( Exception e )
         {
             illegalArgumentExceptionThrown = true;
         }

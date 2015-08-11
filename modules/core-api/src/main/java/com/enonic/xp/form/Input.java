@@ -59,7 +59,7 @@ public final class Input
         this.customText = builder.customText;
         this.validationRegexp = builder.validationRegexp;
         this.helpText = builder.helpText;
-        this.inputTypeConfig = builder.inputTypeConfig;
+        this.inputTypeConfig = builder.inputTypeConfig.build();
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
 
         this.type.validateOccurrences( this.occurrences );
@@ -241,7 +241,7 @@ public final class Input
 
         private String helpText;
 
-        private InputTypeConfig inputTypeConfig;
+        private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
 
         private boolean maximizeUIInputWidth = false;
 
@@ -260,8 +260,12 @@ public final class Input
             this.customText = source.customText;
             this.validationRegexp = source.validationRegexp;
             this.helpText = source.helpText;
-            this.inputTypeConfig = source.inputTypeConfig;
             this.maximizeUIInputWidth = source.maximizeUIInputWidth;
+
+            if ( source.inputTypeConfig != null )
+            {
+                this.inputTypeConfig.config( source.inputTypeConfig );
+            }
         }
 
         public Builder name( String value )
@@ -368,9 +372,15 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeConfig( InputTypeConfig value )
+        public Builder inputTypeConfig( final InputTypeConfig config )
         {
-            inputTypeConfig = value;
+            this.inputTypeConfig.config( config );
+            return this;
+        }
+
+        public Builder inputTypeConfig( final String name, final String value )
+        {
+            this.inputTypeConfig.property( name, value );
             return this;
         }
 
