@@ -1,10 +1,13 @@
 module app.view.widget {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ViewItem = api.app.view.ViewItem;
+    import ContentSummary = api.content.ContentSummary;
+    import Widget = api.content.Widget;
 
     export class WidgetsPanel extends api.ui.panel.Panel {
 
-        private widgets: Widget[] = [];
+        private widgetViews: WidgetView[] = [];
         private labelEl: api.dom.SpanEl;
         private widgetsContainer: api.dom.DivEl = new api.dom.DivEl("widgets-container");
         private animationTimer;
@@ -19,18 +22,14 @@ module app.view.widget {
 
         private sizeChangedListeners: {() : void}[] = [];
 
+        private versionsPanel: ContentItemVersionsPanel;
+        private item: ViewItem<ContentSummary>;
+
         constructor(name?: string) {
             super("widgets-panel");
             this.setDoOffset(false);
 
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-
-            });
-
-            this.onShown((event) => {
-
-            });
-
+            this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
             this.splitter = new api.dom.DivEl("splitter");
             this.appendChild(this.splitter);
@@ -43,6 +42,55 @@ module app.view.widget {
             }
             this.appendChild(this.labelEl);
             this.appendChild(this.widgetsContainer)
+        }
+
+        public setItem(item: ViewItem<ContentSummary>) {
+
+            if (!this.item || (this.item && !this.item.equals(item))) {
+                this.item = item;
+                this.initWidgetsForItem();
+                this.versionsPanel.setItem(item);
+            }
+        }
+
+        private getWidgetsInterfaceName(): string {
+            return "some-widget-interface-name";
+        }
+
+        initWidgetsForItem() {
+            this.removeWidgets();
+
+            this.setName(this.item.getDisplayName());
+
+            this.initCommonWidgetsViews();
+            this.getAndInitCustomWidgetsViews();
+
+            this.onPanelSizeChanged(() => {
+                this.versionsPanel.ReRenderActivePanel();
+            });
+
+        }
+
+        private initCommonWidgetsViews() {
+            var versionsWidget = new WidgetView("Version history");
+            versionsWidget.setWidgetContents(this.versionsPanel);
+            this.addWidgets([versionsWidget]);
+        }
+
+        private getAndInitCustomWidgetsViews() {
+            var getWidgetsByInterfaceRequest = new api.content.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceName());
+
+            return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
+                widgets.forEach((widget) => {
+                    this.addWidget(WidgetView.fromWidget(widget));
+                })
+            }).catch((reason: any) => {
+                if (reason && reason.message) {
+                    //api.notify.showError(reason.message);
+                } else {
+                    //api.notify.showError('Could not load widget descriptors.');
+                }
+            }).done();
         }
 
         private onRenderedHandler() {
@@ -101,9 +149,16 @@ module app.view.widget {
             this.widgetsContainer.removeChildren();
         }
 
-        addWidget(widget: Widget) {
-            this.widgets.push(widget);
+        addWidget(widget: WidgetView) {
+            this.widgetViews.push(widget);
             this.widgetsContainer.appendChild(widget);
+        }
+
+        addWidgets(widgetViews: WidgetView[]) {
+            widgetViews.forEach((widget) => {
+                this.widgetViews.push(widget);
+                this.widgetsContainer.appendChild(widget);
+            })
         }
 
         setName(name: string) {
@@ -142,5 +197,26 @@ module app.view.widget {
                 this.animationTimer = null
             }, timer);
         }
+    }
+
+    export class WidgetsPanelToggleButton extends api.dom.DivEl {
+
+        private widgetsPanel: WidgetsPanel;
+
+        constructor(widgetsPanel: WidgetsPanel) {
+            super("widget-panel-toggle-button");
+
+            this.widgetsPanel = widgetsPanel;
+
+            this.onClicked((event) => {
+                this.toggleClass("expanded");
+                if (this.hasClass("expanded")) {
+                    this.widgetsPanel.slideIn();
+                } else {
+                    this.widgetsPanel.slideOut();
+                }
+            });
+        }
+
     }
 }
