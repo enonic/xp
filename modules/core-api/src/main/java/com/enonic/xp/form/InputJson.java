@@ -16,7 +16,7 @@ public class InputJson
 
     private final OccurrencesJson occurrences;
 
-    private final InputTypeJson inputType;
+    private final String inputType;
 
     private final ObjectNode configJson;
 
@@ -26,7 +26,7 @@ public class InputJson
 
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
 
-        this.inputType = new InputTypeJson( input.getInputType() );
+        this.inputType = input.getInputType().getName();
 
         final InputType type = input.getInputType();
         final InputTypeConfig config = input.getInputTypeConfig();
@@ -100,7 +100,7 @@ public class InputJson
         return occurrences;
     }
 
-    public InputTypeJson getInputType()
+    public String getInputType()
     {
         return this.inputType;
     }

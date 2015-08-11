@@ -8,9 +8,7 @@
                     "helpText": null,
                     "immutable": false,
                     "indexed": false,
-                    "inputType": {
-                        "name": "Double"
-                    },
+                    "inputType": "Double",
                   "label": "Columns",
                   "maximizeUIInputWidth": true,
                     "name": "columns",

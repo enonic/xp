@@ -10,9 +10,7 @@
               "helpText": null,
               "immutable": false,
               "indexed": false,
-              "inputType": {
-                "name": "Double"
-              },
+              "inputType": "Double",
               "label": "Columns",
               "maximizeUIInputWidth": false,
               "name": "columns",
@@ -49,9 +47,7 @@
               "helpText": null,
               "immutable": false,
               "indexed": false,
-              "inputType": {
-                "name": "Double"
-              },
+              "inputType": "Double",
               "label": "Columns",
               "maximizeUIInputWidth": false,
               "name": "columns",
