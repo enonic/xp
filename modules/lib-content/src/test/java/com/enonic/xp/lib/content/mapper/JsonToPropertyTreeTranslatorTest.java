@@ -13,9 +13,9 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.ComboBoxConfig;
-import com.enonic.xp.form.inputtype.ContentSelectorConfig;
-import com.enonic.xp.form.inputtype.DateTimeConfig;
+import com.enonic.xp.form.inputtype.ComboBoxTypeConfig;
+import com.enonic.xp.form.inputtype.ContentSelectorTypeConfig;
+import com.enonic.xp.form.inputtype.DateTimeTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -136,7 +136,7 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
-                inputTypeConfig( ComboBoxConfig.create().
+                inputTypeConfig( ComboBoxTypeConfig.create().
                     addOption( "label1", "value1" ).
                     addOption( "label2", "value2" ).
                     addOption( "label3", "value3" ).
@@ -161,7 +161,7 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypes.CONTENT_SELECTOR ).
-                inputTypeConfig( ContentSelectorConfig.create().
+                inputTypeConfig( ContentSelectorTypeConfig.create().
                     addAllowedContentType( ContentTypeName.folder() ).
                     relationshipType( RelationshipTypeName.REFERENCE ).
                     build() ).
@@ -200,7 +200,7 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( DateTimeConfig.create().
+                inputTypeConfig( DateTimeTypeConfig.create().
                     withTimezone( false ).
                     build() ).
                 build() ).
@@ -208,7 +208,7 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( DateTimeConfig.create().
+                inputTypeConfig( DateTimeTypeConfig.create().
                     withTimezone( true ).
                     build() ).
                 build() ).
