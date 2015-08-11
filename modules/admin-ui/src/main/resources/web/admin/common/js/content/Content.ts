@@ -53,9 +53,11 @@ module api.content {
         }
 
         getPageMode(): api.content.page.PageMode {
-
             if (this.isPage()) {
-                if (this.getPage().hasTemplate()) {
+                if (this.getPage().isCustomized()) {
+                    return api.content.page.PageMode.CUSTOMIZED;
+                }
+                else if(this.getPage().hasTemplate()) {
                     return api.content.page.PageMode.FORCED_TEMPLATE;
                 }
                 else {
