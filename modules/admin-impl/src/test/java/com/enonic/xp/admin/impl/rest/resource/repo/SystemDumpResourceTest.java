@@ -61,9 +61,7 @@ public class SystemDumpResourceTest
     {
         final NodeImportResult importResult = NodeImportResult.create().
             added( NodePath.create( "/path/to/node1" ).build() ).
-            added( NodePath.create( "/path/to/node2" ).build() ).
-            updated( NodePath.create( "/path/to/node3" ).build() ).
-            updated( NodePath.create( "/path/to/node4" ).build() ).
+            updated( NodePath.create( "/path/to/node2" ).build() ).
             dryRun( true ).
             build();
 

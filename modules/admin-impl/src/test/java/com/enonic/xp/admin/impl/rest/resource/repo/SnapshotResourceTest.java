@@ -36,7 +36,7 @@ public class SnapshotResourceTest
             reason( "because reasons" ).
             timestamp( Instant.ofEpochMilli( 1438866915875L ) ).
             state( SnapshotResult.State.SUCCESS ).
-            indices( Arrays.asList( "46f2a9", "bc02aa" ) ).
+            indices( Arrays.asList( "46f2a9" ) ).
             build();
 
         Mockito.when( this.nodeService.snapshot( isA( SnapshotParams.class ) ) ).thenReturn( snapshotResult );
@@ -56,7 +56,7 @@ public class SnapshotResourceTest
             repositoryId( RepositoryId.from( "repoId" ) ).
             name( "name" ).
             message( "He's dead, Jim." ).
-            indices( Arrays.asList( "46f2a9", "bc02aa" ) ).
+            indices( Arrays.asList( "bc02aa" ) ).
             failed( false ).
             build();
 
@@ -75,7 +75,6 @@ public class SnapshotResourceTest
     {
         final DeleteSnapshotsResult deleteResult = DeleteSnapshotsResult.create().
             add( "snapshot1" ).
-            add( "snapshot2" ).
             build();
 
         Mockito.when( this.nodeService.deleteSnapshot( isA( DeleteSnapshotParams.class ) ) ).thenReturn( deleteResult );
@@ -96,20 +95,11 @@ public class SnapshotResourceTest
             reason( "because reasons" ).
             timestamp( Instant.ofEpochMilli( 1438866915875L ) ).
             state( SnapshotResult.State.SUCCESS ).
-            indices( Arrays.asList( "46f2a9", "bc02aa" ) ).
-            build();
-
-        final SnapshotResult snapshotResult2 = SnapshotResult.create().
-            name( "name2" ).
-            reason( "because reasons" ).
-            timestamp( Instant.ofEpochMilli( 1438876915875L ) ).
-            state( SnapshotResult.State.IN_PROGRESS ).
-            indices( Arrays.asList( "cc82e4", "f35b49" ) ).
+            indices( Arrays.asList( "ac27b1" ) ).
             build();
 
         final SnapshotResults snapshotResults = SnapshotResults.create().
             add( snapshotResult1 ).
-            add( snapshotResult2 ).
             build();
 
         Mockito.when( this.nodeService.listSnapshots() ).thenReturn( snapshotResults );
