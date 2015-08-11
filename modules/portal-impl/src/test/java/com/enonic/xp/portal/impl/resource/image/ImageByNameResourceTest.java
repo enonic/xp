@@ -47,30 +47,4 @@ public class ImageByNameResourceTest
         assertEquals( 200, response.getStatus() );
         assertEquals( "image/png", response.getContentType() );
     }
-
-
-    @Test
-    public void getImageWithFilterAndCaching()
-        throws Exception
-    {
-        setupContent();
-
-        //First request
-        MockHttpServletRequest request = newGetRequest( "/master/path/to/image-name.jpg/_/image/image-name.jpg" );
-        request.setQueryString( "filter=sepia()&quality=75&background=0x0" );
-        MockHttpServletResponse response = executeRequest( request );
-
-        assertEquals( 200, response.getStatus() );
-        assertEquals( "image/png", response.getContentType() );
-        Mockito.verify( this.services.getImageFilterBuilder(), Mockito.atMost( 1 ) ).build( Mockito.isA( String.class ) );
-
-        //Second request using cache
-        request = newGetRequest( "/master/path/to/image-name.jpg/_/image/image-name.jpg" );
-        request.setQueryString( "filter=sepia()&quality=75&background=0x0" );
-        response = executeRequest( request );
-
-        assertEquals( 200, response.getStatus() );
-        assertEquals( "image/png", response.getContentType() );
-        Mockito.verify( this.services.getImageFilterBuilder(), Mockito.atMost( 1 ) ).build( Mockito.isA( String.class ) );
-    }
 }

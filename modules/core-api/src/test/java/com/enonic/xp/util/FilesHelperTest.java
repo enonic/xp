@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.util;
+package com.enonic.xp.util;
 
 import java.io.IOException;
 import java.nio.file.Path;

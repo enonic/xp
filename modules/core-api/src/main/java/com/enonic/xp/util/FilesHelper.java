@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.util;
+package com.enonic.xp.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,7 +51,7 @@ public class FilesHelper
         byte[] bytes = null;
 
         lock( path, LOCK_TYPE.READ );
-        
+
         try
         {
             if ( Files.exists( path ) )

@@ -1,11 +1,5 @@
 package com.enonic.xp.portal.impl.resource.image;
 
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -13,17 +7,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.io.ByteSource;
 
-import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
-import com.enonic.xp.portal.impl.util.FilesHelper;
+import com.enonic.xp.util.BinaryReference;
 
 public final class ImageHandleResource
     extends BaseResource
@@ -41,11 +32,9 @@ public final class ImageHandleResource
     @QueryParam("background")
     protected String background;
 
-    protected String id;
+    protected ContentId contentId;
 
-    protected String binaryRef;
-
-    protected ByteSource binary;
+    protected BinaryReference binaryReference;
 
     protected String mimeType;
 
@@ -61,81 +50,22 @@ public final class ImageHandleResource
     public Response handle()
         throws Exception
     {
-        final Path cachedImagePath = getCachedImagePath();
-        byte[] imageData = FilesHelper.readAllBytes( cachedImagePath );
-        if ( imageData == null )
-        {
-            final BufferedImage contentImage = toBufferedImage( this.binary );
-            final String format = getFormat( this.name );
-            BufferedImage image = applyCropping( contentImage );
-            image = applyScaling( image );
-            image = applyFilters( image, format );
+        final String format = getFormat( this.name );
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams().
+            contentId( this.contentId ).
+            binaryReference( this.binaryReference ).
+            cropping( this.cropping ).
+            scaleParams( this.scaleParams ).
+            focalPoint( this.focalPoint ).
+            filterParam( this.filterParam ).
+            backgroundColor( getBackgroundColor() ).
+            format( format ).
+            quality( getImageQuality() ).
+            build();
 
-            imageData = serializeImage( image, format );
-            FilesHelper.write( cachedImagePath, imageData );
-        }
+        final byte[] imageData = this.services.getImageService().readImage( readImageParams );
+
         return Response.ok().type( this.mimeType ).entity( imageData ).build();
-    }
-
-    private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
-    {
-        if ( Strings.isNullOrEmpty( this.filterParam ) )
-        {
-            return sourceImage;
-        }
-
-        final ImageFilter imageFilter = this.services.getImageFilterBuilder().build( this.filterParam );
-        final BufferedImage targetImage = imageFilter.filter( sourceImage );
-
-        if ( !ImageHelper.supportsAlphaChannel( format ) )
-        {
-            return ImageHelper.removeAlphaChannel( targetImage, getBackgroundColor() );
-        }
-        else
-        {
-            return targetImage;
-        }
-    }
-
-    private BufferedImage applyScaling( final BufferedImage sourceImage )
-    {
-        if ( this.scaleParams == null )
-        {
-            return sourceImage;
-        }
-
-        final ImageScaleFunction imageScaleFunction =
-            this.services.getImageScaleFunctionBuilder().build( this.scaleParams, this.focalPoint );
-        final BufferedImage targetImage = imageScaleFunction.scale( sourceImage );
-
-        return targetImage;
-    }
-
-    private BufferedImage applyCropping( final BufferedImage sourceImage )
-    {
-        if ( this.cropping == null )
-        {
-            return sourceImage;
-        }
-        final double width = sourceImage.getWidth();
-        final double height = sourceImage.getHeight();
-        return sourceImage.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ),
-                                        (int) ( width * cropping.width() ), (int) ( height * cropping.height() ) );
-    }
-
-    private BufferedImage toBufferedImage( final ByteSource byteSource )
-        throws Exception
-    {
-        try (final InputStream inputStream = byteSource.openStream())
-        {
-            return ImageIO.read( inputStream );
-        }
-    }
-
-    private byte[] serializeImage( final BufferedImage image, final String format )
-        throws Exception
-    {
-        return ImageHelper.writeImage( image, format, getImageQuality() );
     }
 
     private String getFormat( final String fileName )
@@ -169,20 +99,5 @@ public final class ImageHandleResource
         {
             return DEFAULT_BACKGROUND;
         }
-    }
-
-    private Path getCachedImagePath()
-    {
-        final String homeDir = HomeDir.get().toString();
-        final String scale = this.scaleParams != null ? this.scaleParams.toString() : "no-scale";
-        final String focal = this.focalPoint != null ? this.focalPoint.toString() : "no-focal";
-        final String cropping = this.cropping != null ? this.cropping.toString() : "no-cropping";
-        final String filter = this.filterParam != null ? this.filterParam : "no-filter";
-        final String quality = Integer.toString( this.quality );
-        final String background = this.background != null ? this.background : "no-background";
-
-        return Paths.get( homeDir, "work", "cache", "img", this.id, this.binaryRef, scale, focal, cropping, filter, quality, background,
-                          name ).
-            toAbsolutePath();
     }
 }
