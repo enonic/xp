@@ -13,7 +13,7 @@ module api.application {
             return this.resourcePath;
         }
 
-        fromJsonToModule(json: api.application.json.ApplicationJson): Application {
+        fromJsonToApplication(json: api.application.json.ApplicationJson): Application {
             return Application.fromJson(json);
         }
     }

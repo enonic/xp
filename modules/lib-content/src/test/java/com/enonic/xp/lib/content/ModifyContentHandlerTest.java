@@ -107,7 +107,7 @@ public class ModifyContentHandlerTest
         Mockito.when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
         final Mixin mixin1 = Mixin.create().
-            name( "com.enonic.mymodule:myschema" ).
+            name( "com.enonic.myapplication:myschema" ).
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
@@ -117,7 +117,7 @@ public class ModifyContentHandlerTest
         Mockito.when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
 
         final Mixin mixin2 = Mixin.create().
-            name( "com.enonic.mymodule:other" ).
+            name( "com.enonic.myapplication:other" ).
             addFormItem( Input.create().
                 label( "name" ).
                 name( "name" ).

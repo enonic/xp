@@ -10,9 +10,9 @@ module api.content.site {
 
         private siteConfigs: SiteConfig[];
 
-        private moduleAddedListeners: {(event: ModuleAddedEvent):void}[] = [];
+        private applicationAddedListeners: {(event: ApplicationAddedEvent):void}[] = [];
 
-        private moduleRemovedListeners: {(event: ModuleRemovedEvent):void}[] = [];
+        private applicationRemovedListeners: {(event: ApplicationRemovedEvent):void}[] = [];
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
@@ -29,7 +29,7 @@ module api.content.site {
                         this.siteConfigs = [];
                     }
                     this.siteConfigs.push(siteConfig);
-                    this.notifyModuleAdded(siteConfig);
+                    this.notifyApplicationAdded(siteConfig);
                 }
             });
 
@@ -40,7 +40,7 @@ module api.content.site {
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
                             !siteConfig.getApplicationKey().equals(applicationKey)
                     );
-                    this.notifyModuleRemoved(applicationKey);
+                    this.notifyApplicationRemoved(applicationKey);
                 }
             });
 
@@ -77,38 +77,38 @@ module api.content.site {
             })
         }
 
-        onModuleAdded(listener: (event: ModuleAddedEvent)=>void) {
-            this.moduleAddedListeners.push(listener);
+        onApplicationAdded(listener: (event: ApplicationAddedEvent)=>void) {
+            this.applicationAddedListeners.push(listener);
         }
 
-        unModuleAdded(listener: (event: ModuleAddedEvent)=>void) {
-            this.moduleAddedListeners =
-                this.moduleAddedListeners.filter((curr: (event: ModuleAddedEvent)=>void) => {
+        unApplicationAdded(listener: (event: ApplicationAddedEvent)=>void) {
+            this.applicationAddedListeners =
+            this.applicationAddedListeners.filter((curr: (event: ApplicationAddedEvent)=>void) => {
                     return listener != curr;
                 });
         }
 
-        private notifyModuleAdded(siteConfig: SiteConfig) {
-            var event = new ModuleAddedEvent(siteConfig);
-            this.moduleAddedListeners.forEach((listener: (event: ModuleAddedEvent)=>void) => {
+        private notifyApplicationAdded(siteConfig: SiteConfig) {
+            var event = new ApplicationAddedEvent(siteConfig);
+            this.applicationAddedListeners.forEach((listener: (event: ApplicationAddedEvent)=>void) => {
                 listener(event);
             })
         }
 
-        onModuleRemoved(listener: (event: ModuleRemovedEvent)=>void) {
-            this.moduleRemovedListeners.push(listener);
+        onApplicationRemoved(listener: (event: ApplicationRemovedEvent)=>void) {
+            this.applicationRemovedListeners.push(listener);
         }
 
-        unModuleRemoved(listener: (event: ModuleRemovedEvent)=>void) {
-            this.moduleRemovedListeners =
-                this.moduleRemovedListeners.filter((curr: (event: ModuleRemovedEvent)=>void) => {
+        unApplicationRemoved(listener: (event: ApplicationRemovedEvent)=>void) {
+            this.applicationRemovedListeners =
+            this.applicationRemovedListeners.filter((curr: (event: ApplicationRemovedEvent)=>void) => {
                     return listener != curr;
                 });
         }
 
-        private notifyModuleRemoved(applicationKey: ApplicationKey) {
-            var event = new ModuleRemovedEvent(applicationKey);
-            this.moduleRemovedListeners.forEach((listener: (event: ModuleRemovedEvent)=>void) => {
+        private notifyApplicationRemoved(applicationKey: ApplicationKey) {
+            var event = new ApplicationRemovedEvent(applicationKey);
+            this.applicationRemovedListeners.forEach((listener: (event: ApplicationRemovedEvent)=>void) => {
                 listener(event);
             })
         }

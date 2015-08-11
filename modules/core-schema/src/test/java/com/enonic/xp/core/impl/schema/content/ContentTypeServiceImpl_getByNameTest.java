@@ -14,12 +14,12 @@ public class ContentTypeServiceImpl_getByNameTest
     public void testGetByName()
         throws Exception
     {
-        register( createContentType( "mymodule:my-contenttype", "DisplayName" ) );
+        register( createContentType( "myapplication:my-contenttype", "DisplayName" ) );
 
-        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( "mymodule:my-contenttype" );
+        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( "myapplication:my-contenttype" );
         final ContentType contentType = this.service.getByName( params );
 
-        assertEquals( "mymodule:my-contenttype", contentType.getName().toString() );
+        assertEquals( "myapplication:my-contenttype", contentType.getName().toString() );
         assertEquals( "DisplayName", contentType.getDisplayName() );
     }
 }

@@ -19,7 +19,7 @@ public class ResourceTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private File modulesDir;
+    private File applicationsDir;
 
     private void writeFile( final File dir, final String path, final String value )
         throws Exception
@@ -33,9 +33,9 @@ public class ResourceTest
     public void setup()
         throws Exception
     {
-        modulesDir = this.temporaryFolder.newFolder( "modules" );
+        applicationsDir = this.temporaryFolder.newFolder( "applications" );
 
-        writeFile( modulesDir, "myapplication/a/b.txt", "a/b.txt" );
+        writeFile( applicationsDir, "myapplication/a/b.txt", "a/b.txt" );
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ResourceTest
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
 
-        final Resource resource = new Resource( key, new File( modulesDir, "myapplication/a/b.txt" ).toURI().toURL() );
+        final Resource resource = new Resource( key, new File( applicationsDir, "myapplication/a/b.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -62,7 +62,7 @@ public class ResourceTest
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );
 
-        final Resource resource = new Resource( key, new File( modulesDir, "myapplication/not/exists.txt" ).toURI().toURL() );
+        final Resource resource = new Resource( key, new File( applicationsDir, "myapplication/not/exists.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );

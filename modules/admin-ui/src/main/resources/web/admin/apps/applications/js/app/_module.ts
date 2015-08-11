@@ -1,1 +1,1 @@
-///<reference path='ModuleAppPanel.ts' />
+///<reference path='ApplicationAppPanel.ts' />

@@ -338,7 +338,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final Mixin mixin = Mixin.create().name( "mymodule:my_mixin" ).
+        final Mixin mixin = Mixin.create().name( "myapplication:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
@@ -352,7 +352,7 @@ public class ContentServiceImplTest_update
         Mockito.when( this.mixinService.getByLocalName( Mockito.isA( String.class ) ) ).
             thenReturn( mixin );
 
-        final ExtraData extraData = new ExtraData( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
+        final ExtraData extraData = new ExtraData( MixinName.from( "myapplication:my_mixin" ), new PropertyTree() );
 
         ExtraDatas extraDatas = ExtraDatas.from( Lists.newArrayList( extraData ) );
 

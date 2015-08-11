@@ -42,7 +42,7 @@ public class SiteDescriptorTest
 
         //Builds MixinNames
         List<MixinName> mixinNameList = Lists.newArrayList();
-        mixinNameList.add( MixinName.from( "mymodule:my" ) );
+        mixinNameList.add( MixinName.from( "myapplication:my" ) );
         MixinNames metaSteps = MixinNames.from( mixinNameList );
 
         //Builds a SiteDescriptor

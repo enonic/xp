@@ -22,9 +22,9 @@ module api.schema.content {
                         ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
                             typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
                         });
-                    var siteModules: {[key:string]: ApplicationKey} = {};
+                    var siteApplications: {[key:string]: ApplicationKey} = {};
                     parentSite.getApplicationKeys().forEach((applicationKey: ApplicationKey) => {
-                        siteModules[applicationKey.toString()] = applicationKey;
+                        siteApplications[applicationKey.toString()] = applicationKey;
                     });
 
                     var results = contentTypeArray.filter((item: ContentTypeSummary) => {
@@ -38,7 +38,7 @@ module api.schema.content {
                         else if (typesAllowedEverywhere[contentTypeName.toString()]) {
                             return true;
                         }
-                        else if (siteModules[contentTypeName.getApplicationKey().toString()]) {
+                        else if (siteApplications[contentTypeName.getApplicationKey().toString()]) {
                             return true;
                         }
                         else {

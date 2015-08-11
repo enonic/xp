@@ -9,11 +9,11 @@ import static org.junit.Assert.*;
 
 public class ResourceKeysTest
 {
-    private static final String RESOURCE_URI_1 = "mymodule-1.0.0:";
+    private static final String RESOURCE_URI_1 = "myapplication-1.0.0:";
 
-    private static final String RESOURCE_URI_2 = "mymodule-1.0.0:/a/b.txt";
+    private static final String RESOURCE_URI_2 = "myapplication-1.0.0:/a/b.txt";
 
-    private static final String RESOURCE_URI_3 = "mymodule-1.0.0:/a/c.txt";
+    private static final String RESOURCE_URI_3 = "myapplication-1.0.0:/a/c.txt";
 
 
     private static ArrayList<ResourceKey> list = new ArrayList();

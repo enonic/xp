@@ -8,12 +8,12 @@ module api.application {
 
         private name: string;
 
-        public static fromString(moduleName: string): ApplicationKey {
-            return new ApplicationKey(moduleName);
+        public static fromString(applicationName: string): ApplicationKey {
+            return new ApplicationKey(applicationName);
         }
 
-        constructor(moduleName: string) {
-            this.name = moduleName;
+        constructor(applicationName: string) {
+            this.name = applicationName;
         }
 
         getName(): string {
@@ -38,7 +38,7 @@ module api.application {
             return keys.map((key: ApplicationKey) => key.toString());
         }
 
-        static fromModules(applications: Application[]): ApplicationKey[] {
+        static fromApplications(applications: Application[]): ApplicationKey[] {
             return applications.map<ApplicationKey>((mod: Application) => mod.getApplicationKey());
         }
 

@@ -60,16 +60,16 @@ public final class ContentTypeRegistryImpl
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return this.map.computeIfAbsent( applicationKey, this::loadByModule );
+        return this.map.computeIfAbsent( applicationKey, this::loadByApplication );
     }
 
-    private ContentTypes loadByModule( final ApplicationKey applicationKey )
+    private ContentTypes loadByApplication( final ApplicationKey applicationKey )
     {
         ContentTypes contentTypes = null;
 
         if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
         {
-            contentTypes = new BuiltinContentTypeLoader().loadByModule( applicationKey );
+            contentTypes = new BuiltinContentTypeLoader().loadByApplication( applicationKey );
         }
         else
         {

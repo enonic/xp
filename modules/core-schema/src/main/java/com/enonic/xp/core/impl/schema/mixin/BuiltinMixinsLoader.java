@@ -145,7 +145,7 @@ public final class BuiltinMixinsLoader
         return Mixins.from( generatedSystemMixins );
     }
 
-    public Mixins loadByModule( final ApplicationKey applicationKey )
+    public Mixins loadByApplication( final ApplicationKey applicationKey )
     {
         final List<Mixin> systemMixinsByApplicationKey = MIXINS.stream().
             filter( mixin -> mixin.getName().getApplicationKey().equals( applicationKey ) ).

@@ -32,7 +32,7 @@ module api.application {
             }
             else {
                 return this.send().then((response: api.rest.JsonResponse<json.ApplicationJson>) => {
-                    appObj = this.fromJsonToModule(response.getResult());
+                    appObj = this.fromJsonToApplication(response.getResult());
                     cache.put(appObj);
                     return appObj;
                 });

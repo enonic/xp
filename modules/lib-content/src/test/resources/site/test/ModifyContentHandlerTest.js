@@ -28,14 +28,14 @@ var expectedJson = {
         "config": {
             "a": "1"
         },
-        "controller": "mymodule:mycontroller",
+        "controller": "myapplication:mycontroller",
         "regions": {
             "top": {
                 "components": [{
                     "config": {
                         "a": "1"
                     },
-                    "descriptor": "mymodule:mypart",
+                    "descriptor": "myapplication:mypart",
                     "name": "mypart",
                     "path": "top/0",
                     "type": "part"
@@ -43,7 +43,7 @@ var expectedJson = {
                     "config": {
                         "a": "1"
                     },
-                    "descriptor": "mymodule:mylayout",
+                    "descriptor": "myapplication:mylayout",
                     "name": "mylayout",
                     "path": "top/1",
                     "regions": {
@@ -52,7 +52,7 @@ var expectedJson = {
                                 "config": {
                                     "a": "1"
                                 },
-                                "descriptor": "mymodule:mypart",
+                                "descriptor": "myapplication:mypart",
                                 "name": "mypart",
                                 "path": "top/1/bottom/0",
                                 "type": "part"
@@ -69,7 +69,7 @@ var expectedJson = {
     "type": "test:myContentType",
     "valid": false,
     "x": {
-        "com-enonic-mymodule": {
+        "com-enonic-myapplication": {
             "myschema": {
                 "a": 1.0
             },
@@ -87,11 +87,11 @@ function editor(c) {
     c.data.c[1].d = false;
     c.data.c[1].e[1] = 42;
 
-    if (!c.x['com-enonic-mymodule']) {
-        c.x['com-enonic-mymodule'] = {};
+    if (!c.x['com-enonic-myapplication']) {
+        c.x['com-enonic-myapplication'] = {};
     }
 
-    c.x['com-enonic-mymodule'].other = {
+    c.x['com-enonic-myapplication'].other = {
         name: 'test'
     };
 

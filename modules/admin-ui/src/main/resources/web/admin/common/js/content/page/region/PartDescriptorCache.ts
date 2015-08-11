@@ -2,11 +2,11 @@ module api.content.page.region {
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
-    import ModuleCaches = api.application.ApplicationCaches;
+    import ApplicationCaches = api.application.ApplicationCaches;
     import ApplicationBasedCache = api.application.ApplicationBasedCache;
     import DescriptorKey = api.content.page.DescriptorKey;
 
-    export class PartDescriptorCache extends ApplicationBasedCache<PartDescriptorModuleCache,PartDescriptor,DescriptorKey> {
+    export class PartDescriptorCache extends ApplicationBasedCache<PartDescriptorApplicationCache,PartDescriptor,DescriptorKey> {
 
         private static instance: PartDescriptorCache;
 
@@ -28,7 +28,7 @@ module api.content.page.region {
             super();
         }
 
-        loadByModule(applicationKey: ApplicationKey) {
+        loadByApplication(applicationKey: ApplicationKey) {
             new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -44,12 +44,12 @@ module api.content.page.region {
             return super.getByKey(key, key.getApplicationKey());
         }
 
-        createApplicationCache(): PartDescriptorModuleCache {
-            return new PartDescriptorModuleCache();
+        createApplicationCache(): PartDescriptorApplicationCache {
+            return new PartDescriptorApplicationCache();
         }
     }
 
-    export class PartDescriptorModuleCache extends api.cache.Cache<PartDescriptor, DescriptorKey> {
+    export class PartDescriptorApplicationCache extends api.cache.Cache<PartDescriptor, DescriptorKey> {
 
         copy(object: PartDescriptor): PartDescriptor {
             return object.clone();

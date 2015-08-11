@@ -11,12 +11,12 @@ var expectedJson = {
             "config": {
                 "Field": 42
             },
-            "applicationKey": "mymodule"
+            "applicationKey": "myapplication"
         }
     },
     "hasChildren": false,
     "siteConfigs": {
-        "mymodule": {
+        "myapplication": {
             "Field": 42
         }
     },

@@ -151,7 +151,7 @@ public final class BuiltinContentTypeLoader
         return ContentTypes.from( generatedSystemContentTypes );
     }
 
-    public ContentTypes loadByModule( final ApplicationKey applicationKey )
+    public ContentTypes loadByApplication( final ApplicationKey applicationKey )
     {
         final List<ContentType> systemContentTypesByApplicationKey = CONTENT_TYPES.stream().
             filter( contentType -> contentType.getName().getApplicationKey().equals( applicationKey ) ).
