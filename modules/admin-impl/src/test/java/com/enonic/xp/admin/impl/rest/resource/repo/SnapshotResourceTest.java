@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -87,6 +88,7 @@ public class SnapshotResourceTest
         assertJson( "delete.json", result );
     }
 
+    @Ignore
     @Test
     public void list()
         throws Exception
