@@ -37,6 +37,7 @@ final class CreatePageCommand
             template( this.params.getPageTemplate() ).
             config( this.params.getConfig() ).
             regions( this.params.getRegions() ).
+            customized( this.params.isCustomized() ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().

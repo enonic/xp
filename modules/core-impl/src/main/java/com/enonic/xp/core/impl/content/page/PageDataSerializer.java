@@ -22,6 +22,8 @@ public class PageDataSerializer
 
     private static final String REGION = "region";
 
+    private static final String CUSTOMIZED = "customized";
+
     private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
 
     private final String propertyName;
@@ -58,6 +60,8 @@ public class PageDataSerializer
         {
             asSet.addSet( CONFIG, page.getConfig().getRoot().copy( asSet.getTree() ) );
         }
+
+        asSet.addBoolean( CUSTOMIZED, page.isCustomized() );
     }
 
     @Override
@@ -88,6 +92,12 @@ public class PageDataSerializer
         {
             page.config( asData.getSet( CONFIG ).toTree() );
         }
+
+        if ( asData.isNotNull( CUSTOMIZED ) )
+        {
+            page.customized( asData.getBoolean( CUSTOMIZED ) );
+        }
+
         return page.build();
     }
 
