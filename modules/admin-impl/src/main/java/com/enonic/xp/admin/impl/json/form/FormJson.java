@@ -1,4 +1,4 @@
-package com.enonic.xp.form;
+package com.enonic.xp.admin.impl.json.form;
 
 
 import java.util.ArrayList;
@@ -6,6 +6,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")

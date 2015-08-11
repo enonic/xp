@@ -1,4 +1,4 @@
-package com.enonic.xp.form;
+package com.enonic.xp.admin.impl.json.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
