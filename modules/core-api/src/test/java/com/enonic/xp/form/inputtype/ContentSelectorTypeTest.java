@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -30,100 +31,27 @@ public class ContentSelectorTypeTest
         jsonHelper = new JsonTestHelper( this );
     }
 
-    private InputTypeConfig parse( final String name )
+    private InputTypeConfig parseXml( final String name )
     {
-        // setup
-        ContentSelectorTypeConfig.Builder builder = ContentSelectorTypeConfig.create();
-        builder.relationshipType( RelationshipTypeName.REFERENCE );
-        ContentSelectorTypeConfig expected = builder.build();
-
-        // exercise
-        ContentSelectorTypeConfig parsed = (ContentSelectorTypeConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml(
-            "parseConfig.xml" ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
+        return this.serializer.parseConfig( CURRENT_APPLICATION, xmlHelper.parseXml( name ).getDocumentElement() );
     }
 
     @Test
     public void parseConfig()
     {
-        // setup
-        ContentSelectorTypeConfig.Builder builder = ContentSelectorTypeConfig.create();
-        builder.relationshipType( RelationshipTypeName.REFERENCE );
-        builder.addAllowedContentType( ContentTypeName.imageMedia() );
-        builder.addAllowedContentType( ContentTypeName.videoMedia() );
-        ContentSelectorTypeConfig expected = builder.build();
-
-        // exercise
-        ContentSelectorTypeConfig parsed = (ContentSelectorTypeConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml(
-            "parseFullConfig.xml" ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
+        final InputTypeConfig parsed = parseXml( "parseConfig.xml" );
+        assertEquals( RelationshipTypeName.REFERENCE.toString(), parsed.getValue( "relationshipType" ) );
+        assertTrue( Strings.isNullOrEmpty( parsed.getValue( "allowedContentTypes" ) ) );
     }
 
     @Test
-    public void parseConfig_with_allowed_content_types()
+    public void parseFullConfig()
     {
-        // setup
-        ContentSelectorTypeConfig.Builder builder = ContentSelectorTypeConfig.create();
-        builder.relationshipType( RelationshipTypeName.REFERENCE );
-        ContentSelectorTypeConfig expected = builder.build();
-
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "<content-type-filter></content-type-filter>" );
-        xml.append( "<relationship-type>system:reference</relationship-type>" );
-        xml.append( "</config>\n" );
-
-        // exercise
-        ContentSelectorTypeConfig parsed =
-            (ContentSelectorTypeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
+        final InputTypeConfig parsed = parseXml( "parseFullConfig.xml" );
+        assertEquals( RelationshipTypeName.REFERENCE.toString(), parsed.getValue( "relationshipType" ) );
+        assertEquals( ContentTypeName.videoMedia().toString() + "," + ContentTypeName.imageMedia().toString(),
+                      parsed.getValue( "allowedContentTypes" ) );
     }
-
-    @Test
-    public void parseConfig_relationshipType_as_empty()
-        throws IOException
-    {
-        // setup
-        ContentSelectorTypeConfig.Builder builder = ContentSelectorTypeConfig.create();
-        ContentSelectorTypeConfig expected = builder.build();
-
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "<relationship-type></relationship-type>" );
-        xml.append( "</config>\n" );
-
-        // exercise
-        ContentSelectorTypeConfig parsed =
-            (ContentSelectorTypeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-    }
-
-    @Test
-    public void parseConfig_relationshipType_not_existing()
-        throws IOException
-    {
-        // setup
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "</config>\n" );
-        ContentSelectorTypeConfig expected = ContentSelectorTypeConfig.create().build();
-
-        // exercise
-        ContentSelectorTypeConfig parsed =
-            (ContentSelectorTypeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
-    }
-
 
     @Test
     public void serializeConfig()

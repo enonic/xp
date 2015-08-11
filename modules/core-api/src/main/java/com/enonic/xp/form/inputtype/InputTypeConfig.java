@@ -70,6 +70,11 @@ public final class InputTypeConfig
         return result;
     }
 
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof InputTypeConfig ) && ( (InputTypeConfig) o ).map.equals( this.map );
+    }
+
     public static Builder create()
     {
         return new Builder();

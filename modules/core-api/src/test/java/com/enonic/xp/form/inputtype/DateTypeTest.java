@@ -29,57 +29,17 @@ public class DateTypeTest
         jsonHelper = new JsonTestHelper( this );
     }
 
+
     private InputTypeConfig parse( final String name )
     {
-        // setup
-        DateTypeConfig.Builder builder = DateTypeConfig.create();
-        builder.withTimezone( true );
-        DateTypeConfig expected = builder.build();
-
-        // exercise
-        DateTypeConfig parsed =
-            (DateTypeConfig) serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
+        return this.serializer.parseConfig( CURRENT_APPLICATION, this.xmlHelper.parseXml( name ).getDocumentElement() );
     }
 
     @Test
     public void parseConfig()
     {
-        // setup
-        DateTypeConfig.Builder builder = DateTypeConfig.create();
-        DateTypeConfig expected = builder.build();
-
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "<with-timezone></with-timezone>" );
-        xml.append( "</config>\n" );
-
-        // exercise
-        DateTypeConfig parsed =
-            (DateTypeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
-    }
-
-    @Test
-    public void parseConfig_timezone_not_specified()
-        throws IOException
-    {
-        // setup
-        StringBuilder xml = new StringBuilder();
-        xml.append( "<config>\n" );
-        xml.append( "</config>\n" );
-        DateTypeConfig expected = DateTypeConfig.create().build();
-
-        // exercise
-        DateTypeConfig parsed =
-            (DateTypeConfig) serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ).getDocumentElement() );
-
-        // verify
-        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
+        final InputTypeConfig parsed = parse( "parseConfig.xml" );
+        assertEquals( true, parsed.getValue( "withTimezone", boolean.class ) );
     }
 
     @Test

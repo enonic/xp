@@ -31,7 +31,7 @@ public class ImageSelectorTypeTest
 
     private InputTypeConfig parse( final String name )
     {
-        return this.serializer.parseConfig( CURRENT_MODULE, this.xmlHelper.parseXml( name ).getDocumentElement() );
+        return this.serializer.parseConfig( CURRENT_APPLICATION, this.xmlHelper.parseXml( name ).getDocumentElement() );
     }
 
     @Test
