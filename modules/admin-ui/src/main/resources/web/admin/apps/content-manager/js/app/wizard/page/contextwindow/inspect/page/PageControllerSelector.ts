@@ -33,7 +33,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
                 var pageDescriptor = event.getOption().displayValue;
                 var setController = new SetController(this).setDescriptor(pageDescriptor);
-                this.pageModel.setController(setController);
+                this.pageModel.setController(setController, this.pageModel.getMode() == api.content.page.PageMode.CUSTOMIZED);
             });
         }
 
@@ -69,7 +69,7 @@ module app.wizard.page.contextwindow.inspect.page {
             });
         }
 
-        private selectController(descriptorKey: DescriptorKey) {
+        selectController(descriptorKey: DescriptorKey) {
 
             var optionToSelect = this.getOptionByValue(descriptorKey.toString());
             if (optionToSelect) {

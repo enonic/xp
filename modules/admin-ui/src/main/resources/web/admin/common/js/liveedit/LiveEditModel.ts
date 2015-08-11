@@ -74,7 +74,7 @@ module api.liveedit {
                             setDescriptor(pageDescriptor).
                             setConfig(config).
                             setRegions(regions);
-                        pageModel.setController(setController);
+                        pageModel.initController(setController);
                     });
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
@@ -91,7 +91,7 @@ module api.liveedit {
                         setDescriptor(null).
                         setConfig(config).
                         setRegions(regions);
-                    pageModel.setController(setController);
+                    pageModel.initController(setController);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a PageTemplate: " + pageMode);
@@ -121,12 +121,43 @@ module api.liveedit {
                                 setTemplate(pageTemplate, pageDescriptor).
                                 setRegions(regions).
                                 setConfig(config);
-                            pageModel.setTemplate(setTemplate);
+                            pageModel.initTemplate(setTemplate);
                         });
                     });
                 }
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);
+                }
+                else if (pageMode == PageMode.CUSTOMIZED) {
+
+                    var pageTemplateKey = this.content.getPage().getTemplate();
+                    pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
+                    pageTemplatePromise.then((pageTemplate: PageTemplate) => {
+
+                        var pageDescriptorKey = this.content.getPage().getController();
+                        pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                        pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+
+                            var config = this.content.getPage().hasConfig() ?
+                                         this.content.getPage().getConfig().copy() :
+                                         pageTemplate.getConfig().copy();
+
+                            var regions = this.content.getPage().hasRegions() ?
+                                          this.content.getPage().getRegions().clone() :
+                                          pageTemplate.getRegions().clone();
+
+
+                            var setTemplate = new SetTemplate(this).
+                                setTemplate(pageTemplate, pageDescriptor);
+                            pageModel.initTemplate(setTemplate, false);
+
+                            var setController = new SetController(this).
+                                setDescriptor(pageDescriptor).
+                                setConfig(config).
+                                setRegions(regions);
+                            pageModel.initController(setController);
+                        });
+                    });
                 }
                 else {
                     throw new Error("Unsupported PageMode for a Content: " + pageMode);

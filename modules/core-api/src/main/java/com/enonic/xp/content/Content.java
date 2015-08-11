@@ -80,8 +80,8 @@ public class Content
 
         if ( builder.page != null )
         {
-            Preconditions.checkArgument( !( builder.page.getController() != null && builder.page.getTemplate() != null ),
-                                         "A Page cannot have both have a controller and a template set" );
+            Preconditions.checkArgument( !( !builder.page.isCustomized() && builder.page.getController() != null && builder.page.getTemplate() != null ),
+                                         "A Page cannot have both have a controller and a template set if page is not customized" );
         }
 
         if ( builder.type == null )
