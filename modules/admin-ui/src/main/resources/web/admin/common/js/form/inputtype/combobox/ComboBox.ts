@@ -46,9 +46,11 @@ module api.form.inputtype.combobox {
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
 
-            this.comboBoxConfig.options.forEach((option: ComboBoxOption) => {
-                this.comboBox.addOption({value: option.value, displayValue: option.label})
-            });
+            if (this.comboBoxConfig.options) {
+                this.comboBoxConfig.options.forEach((option: ComboBoxOption) => {
+                    this.comboBox.addOption({value: option.value, displayValue: option.label})
+                });
+            }
 
             var valueArray: string[] = [];
             this.getPropertyArray().forEach((property: Property) => {

@@ -4,7 +4,7 @@ module api.schema.relationshiptype {
 
     export class RelationshipTypeName extends api.application.ApplicationBasedName {
 
-        static REFERENCE = new RelationshipTypeName("reference");
+        static REFERENCE = new RelationshipTypeName("system:reference");
 
         constructor(name:string) {
             api.util.assertNotNull(name, "RelationshipType name can't be null");
