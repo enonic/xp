@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -138,6 +139,12 @@ public final class PageTemplateResource
                     {
                         return pageTemplate.hasPage();
                     }
+                }
+
+                final Page page = content.getPage();
+                if ( page != null && page.hasController() )
+                {
+                    return true;
                 }
             }
             return false;
