@@ -2,7 +2,6 @@ package com.enonic.xp.form.inputtype;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
@@ -27,7 +26,9 @@ public abstract class InputType
         return name.toString();
     }
 
-    public abstract void checkBreaksRequiredContract( final Property property );
+    public void checkBreaksRequiredContract( final Property property )
+    {
+    }
 
     public abstract void checkTypeValidity( final Property property );
 
@@ -62,11 +63,6 @@ public abstract class InputType
         {
             throw new InputValidationException( property, this );
         }
-    }
-
-    public ObjectNode serializeConfig( InputTypeConfig config )
-    {
-        return null;
     }
 
     public void checkValidity( InputTypeConfig config, Property property )

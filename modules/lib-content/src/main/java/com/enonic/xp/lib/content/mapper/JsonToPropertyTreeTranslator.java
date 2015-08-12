@@ -13,6 +13,8 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.InputType;
+import com.enonic.xp.form.inputtype.InputTypeServiceAccessor;
 
 public class JsonToPropertyTreeTranslator
 {
@@ -94,8 +96,8 @@ public class JsonToPropertyTreeTranslator
         }
         else
         {
-            final Value mappedPropertyValue =
-                input.getInputType().createPropertyValue( resolveStringValue( value ), input.getInputTypeConfig() );
+            final InputType type = InputTypeServiceAccessor.get().get( input.getInputType() );
+            final Value mappedPropertyValue = type.createPropertyValue( resolveStringValue( value ), input.getInputTypeConfig() );
 
             parent.addProperty( key, mappedPropertyValue );
         }

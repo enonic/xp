@@ -12,7 +12,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -36,12 +36,12 @@ public class CreateContentHandlerTest
             addFormItem( Input.create().
                 label( "f" ).
                 name( "f" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 label( "g" ).
                 name( "g" ).
-                inputType( InputTypes.CHECKBOX ).
+                inputType( InputTypeName.CHECKBOX ).
                 build() ).
             build();
 
@@ -56,18 +56,18 @@ public class CreateContentHandlerTest
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             addFormItem( Input.create().
                 label( "b" ).
                 name( "b" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             addFormItem( Input.create().
                 label( "c" ).
                 name( "c" ).
                 occurrences( 0, 10 ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( dSet ).
             build();
@@ -83,10 +83,11 @@ public class CreateContentHandlerTest
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( mixin );
+        Mockito.when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn(
+            mixin );
 
         runTestFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }

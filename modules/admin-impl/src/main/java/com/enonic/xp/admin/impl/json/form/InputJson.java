@@ -1,13 +1,11 @@
 package com.enonic.xp.admin.impl.json.form;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeConfig;
 
 @Beta
 public class InputJson
@@ -19,27 +17,14 @@ public class InputJson
 
     private final String inputType;
 
-    private final ObjectNode configJson;
+    private final Map<String, String> inputTypeConfig;
 
     public InputJson( final Input input )
     {
         this.input = input;
-
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
-
         this.inputType = input.getInputType().getName();
-
-        final InputType type = input.getInputType();
-        final InputTypeConfig config = input.getInputTypeConfig();
-        if ( config != null )
-        {
-            final ObjectNode json = type.serializeConfig( config );
-            this.configJson = json != null ? json : JsonNodeFactory.instance.objectNode();
-        }
-        else
-        {
-            this.configJson = JsonNodeFactory.instance.objectNode();
-        }
+        this.inputTypeConfig = input.getInputTypeConfig().asMap();
     }
 
     @JsonIgnore
@@ -106,8 +91,8 @@ public class InputJson
         return this.inputType;
     }
 
-    public ObjectNode getConfig()
+    public Map<String, String> getConfig()
     {
-        return configJson;
+        return inputTypeConfig;
     }
 }

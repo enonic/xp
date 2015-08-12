@@ -2,8 +2,6 @@ package com.enonic.xp.form.inputtype;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InputValidationException;
@@ -81,26 +79,6 @@ public class DateTimeTypeTest
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.checkValidity( config, stringProperty( "name" ) );
-    }
-
-    @Test
-    public void testSerializeConfig_empty()
-    {
-        final InputTypeConfig config = newEmptyConfig();
-        final ObjectNode json = this.type.serializeConfig( config );
-
-        assertNotNull( json );
-        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "empty.json" ), json );
-    }
-
-    @Test
-    public void testSerializeConfig_full()
-    {
-        final InputTypeConfig config = newFullConfig();
-        final ObjectNode json = this.type.serializeConfig( config );
-
-        assertNotNull( json );
-        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "full.json" ), json );
     }
 
     private InputTypeConfig newEmptyConfig()

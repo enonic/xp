@@ -24,7 +24,7 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -138,12 +138,12 @@ public class ContentServiceImplTest_update
             superType( ContentTypeName.documentMedia() ).
             name( "myContentType" ).
             addFormItem( Input.create().
-                inputType( InputTypes.DATE_TIME ).
+                inputType( InputTypeName.DATE_TIME ).
                 name( "myDateTime" ).
                 inputTypeConfig( "withTimezone", "true" ).
                 build() ).
             addFormItem( Input.create().
-                inputType( InputTypes.CONTENT_SELECTOR ).
+                inputType( InputTypeName.CONTENT_SELECTOR ).
                 name( "myReference" ).
                 inputTypeConfig( "allowedContentTypes", ContentTypeName.from( "myContentType" ).toString() ).
                 build() ).
@@ -336,7 +336,7 @@ public class ContentServiceImplTest_update
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
 

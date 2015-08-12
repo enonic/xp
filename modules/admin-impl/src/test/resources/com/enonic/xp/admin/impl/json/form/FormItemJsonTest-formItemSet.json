@@ -24,9 +24,7 @@
       },
       {
         "Input": {
-          "config": {
-            "withTimezone": false
-          },
+          "config": {},
           "customText": null,
           "helpText": null,
           "immutable": false,

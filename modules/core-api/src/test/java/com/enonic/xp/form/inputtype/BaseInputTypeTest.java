@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -15,12 +14,9 @@ public abstract class BaseInputTypeTest
 {
     protected final InputType type;
 
-    protected final JsonTestHelper jsonHelper;
-
     public BaseInputTypeTest( final InputType type )
     {
         this.type = type;
-        this.jsonHelper = new JsonTestHelper( this );
     }
 
     protected final Property booleanProperty( final boolean value )

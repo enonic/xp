@@ -2,8 +2,6 @@ package com.enonic.xp.form.inputtype;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
@@ -56,13 +54,5 @@ public class GeoPointTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, geoPointProperty( "1,2" ) );
-    }
-
-    @Test
-    public void testSerializeConfig()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final ObjectNode json = this.type.serializeConfig( config );
-        assertNull( json );
     }
 }

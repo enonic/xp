@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
@@ -21,7 +21,7 @@ public class ContentTypesTest
             name( "supports" ).
             label( "Supports" ).
             helpText( "Choose which content types this page template supports" ).
-            inputType( InputTypes.CONTENT_TYPE_FILTER ).
+            inputType( InputTypeName.CONTENT_TYPE_FILTER ).
             required( true ).
             multiple( true ).
             build() ).

@@ -1,9 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
@@ -35,16 +31,5 @@ final class ContentSelectorType
     {
         return Value.newReference( ValueTypes.REFERENCE.convert( value ) );
     }
-
-    @Override
-    public ObjectNode serializeConfig( final InputTypeConfig config )
-    {
-        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
-        jsonConfig.put( "relationshipType", config.getValue( "relationshipType", String.class, "system:reference" ) );
-
-        final ArrayNode contentTypesArray = jsonConfig.putArray( "allowedContentTypes" );
-        config.getValues( "allowedContentTypes" ).forEach( contentTypesArray::add );
-
-        return jsonConfig;
-    }
 }
+

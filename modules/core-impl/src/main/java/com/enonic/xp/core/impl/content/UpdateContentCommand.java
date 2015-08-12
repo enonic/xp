@@ -18,6 +18,7 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.form.inputtype.InputTypeServiceAccessor;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
@@ -177,6 +178,7 @@ final class UpdateContentCommand
             InputValidator.
                 create().
                 contentType( contentType ).
+                inputTypeService( InputTypeServiceAccessor.get() ).
                 build().
                 validate( editedContent.getData() );
         }
@@ -195,6 +197,7 @@ final class UpdateContentCommand
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
+            inputTypeService( InputTypeServiceAccessor.get() ).
             build().
             execute();
 

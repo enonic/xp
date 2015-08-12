@@ -2,8 +2,6 @@ package com.enonic.xp.form.inputtype;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InvalidTypeException;
@@ -71,16 +69,6 @@ public class RadioButtonsTypeTest
     {
         final InputTypeConfig config = newValidConfig();
         this.type.checkValidity( config, stringProperty( "unknown" ) );
-    }
-
-    @Test
-    public void testSerializeConfig()
-    {
-        final InputTypeConfig config = newValidConfig();
-        final ObjectNode json = this.type.serializeConfig( config );
-
-        assertNotNull( json );
-        this.jsonHelper.assertJsonEquals( this.jsonHelper.loadTestJson( "config.json" ), json );
     }
 
     private InputTypeConfig newValidConfig()

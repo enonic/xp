@@ -29,7 +29,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
@@ -256,12 +256,12 @@ final class ImageContentProcessor
                 if ( FormItemType.INPUT.equals( formItem.getType() ) )
                 {
                     Input input = (Input) formItem;
-                    if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
+                    if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
                     {
                         extraData.getData().addLocalDateTime( formItemName,
                                                               ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
                     }
-                    else if ( InputTypes.LONG.equals( input.getInputType() ) )
+                    else if ( InputTypeName.LONG.equals( input.getInputType() ) )
                     {
                         final Long[] longValues = entry.getValue().stream().map( Long::parseLong ).toArray( Long[]::new );
                         extraData.getData().addLongs( formItemName, longValues );

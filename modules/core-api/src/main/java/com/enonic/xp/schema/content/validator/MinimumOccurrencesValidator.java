@@ -8,17 +8,26 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.InputValidationException;
+import com.enonic.xp.form.inputtype.InputType;
+import com.enonic.xp.form.inputtype.InputTypeService;
 
 
 final class MinimumOccurrencesValidator
 {
+    private final InputTypeService inputTypeService;
+
     private final List<DataValidationError> validationErrors = Lists.newArrayList();
+
+    public MinimumOccurrencesValidator( final InputTypeService inputTypeService )
+    {
+        this.inputTypeService = inputTypeService;
+    }
 
     final List<DataValidationError> validationErrors()
     {
@@ -62,9 +71,11 @@ final class MinimumOccurrencesValidator
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
                     final Property property = parentDataSet.getProperty( input.getName(), i );
+                    final InputType type = this.inputTypeService.get( input.getInputType() );
+
                     try
                     {
-                        input.getInputType().checkBreaksRequiredContract( property );
+                        type.checkBreaksRequiredContract( property );
                     }
                     catch ( InputValidationException e )
                     {

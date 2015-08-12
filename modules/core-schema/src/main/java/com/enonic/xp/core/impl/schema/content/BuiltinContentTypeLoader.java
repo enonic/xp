@@ -14,7 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
@@ -42,7 +42,7 @@ public final class BuiltinContentTypeLoader
         addFormItem( Input.create().
             name( "description" ).
             label( "Description" ).
-            inputType( InputTypes.TEXT_AREA ).
+            inputType( InputTypeName.TEXT_AREA ).
             occurrences( 0, 1 ).
             helpText( "Description of the site. Optional" ).
             build() ).
@@ -50,7 +50,7 @@ public final class BuiltinContentTypeLoader
             name( "siteConfig" ).
             label( "Site config" ).
             helpText( "Configure applications needed for the Site" ).
-            inputType( InputTypes.SITE_CONFIGURATOR ).
+            inputType( InputTypeName.SITE_CONFIGURATOR ).
             required( false ).
             multiple( true ).
             maximizeUIInputWidth( true ).
@@ -62,7 +62,7 @@ public final class BuiltinContentTypeLoader
             name( "target" ).
             label( "Target" ).
             helpText( "Choose shortcut target" ).
-            inputType( InputTypes.CONTENT_SELECTOR ).
+            inputType( InputTypeName.CONTENT_SELECTOR ).
             inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
             required( true ).
             build() ).
@@ -72,24 +72,24 @@ public final class BuiltinContentTypeLoader
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Image" ).
             maximizeUIInputWidth( true ).
-            inputType( InputTypes.IMAGE_UPLOADER ).build() ).
+            inputType( InputTypeName.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.create().name( "caption" ).
-            inputType( InputTypes.TEXT_AREA ).
+            inputType( InputTypeName.TEXT_AREA ).
             label( "Caption" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "artist" ).
-            inputType( InputTypes.TAG ).
+            inputType( InputTypeName.TAG ).
             label( "Artist" ).
             occurrences( 0, 0 ).
             build() ).
         addFormItem( Input.create().name( "copyright" ).
-            inputType( InputTypes.TEXT_LINE ).
+            inputType( InputTypeName.TEXT_LINE ).
             label( "Copyright" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "tags" ).
-            inputType( InputTypes.TAG ).
+            inputType( InputTypeName.TAG ).
             label( "Tags" ).
             occurrences( 0, 0 ).
             build() ).
@@ -98,7 +98,7 @@ public final class BuiltinContentTypeLoader
     public static final Form MEDIA_DEFAULT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
-            inputType( InputTypes.FILE_UPLOADER ).build() ).
+            inputType( InputTypeName.FILE_UPLOADER ).build() ).
         build();
 
     private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
@@ -120,7 +120,7 @@ public final class BuiltinContentTypeLoader
             name( "supports" ).
             label( "Supports" ).
             helpText( "Choose which content types this page template supports" ).
-            inputType( InputTypes.CONTENT_TYPE_FILTER ).
+            inputType( InputTypeName.CONTENT_TYPE_FILTER ).
             required( true ).
             multiple( true ).
             build() ).

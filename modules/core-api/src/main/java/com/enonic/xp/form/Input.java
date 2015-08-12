@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
+import com.enonic.xp.form.inputtype.InputTypeName;
 
 @Beta
 public final class Input
@@ -17,7 +17,7 @@ public final class Input
 {
     private final String name;
 
-    private final InputType type;
+    private final InputTypeName type;
 
     private final String label;
 
@@ -74,7 +74,7 @@ public final class Input
         return FormItemType.INPUT;
     }
 
-    public InputType getInputType()
+    public InputTypeName getInputType()
     {
         return type;
     }
@@ -187,7 +187,7 @@ public final class Input
     {
         private String name;
 
-        private InputType inputType;
+        private InputTypeName inputType;
 
         private String label;
 
@@ -236,7 +236,7 @@ public final class Input
             return this;
         }
 
-        public Builder inputType( InputType value )
+        public Builder inputType( InputTypeName value )
         {
             inputType = value;
             return this;

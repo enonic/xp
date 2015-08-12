@@ -2,15 +2,10 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.LinkedHashMap;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.data.ValueType;
-import com.enonic.xp.data.ValueTypes;
-
-@Beta
-public final class InputTypes
+final class InputTypes
 {
     public static final InputType COMBO_BOX = ComboBoxType.INSTANCE;
 
@@ -64,6 +59,7 @@ public final class InputTypes
         add( GEO_POINT ).
         add( HTML_AREA ).
         add( IMAGE_UPLOADER ).
+        add( FILE_UPLOADER ).
         add( IMAGE_SELECTOR ).
         add( CONTENT_SELECTOR ).
         add( RADIO_BUTTONS ).
@@ -79,35 +75,15 @@ public final class InputTypes
 
     private static final LinkedHashMap<String, InputType> INPUT_TYPE_BY_NAME = new LinkedHashMap<>();
 
-    private static final LinkedHashMap<String, InputType> INPUT_TYPE_BY_SIMPLE_CLASS_NAME = new LinkedHashMap<>();
-
     static
     {
         INPUT_TYPES.forEach( com.enonic.xp.form.inputtype.InputTypes::register );
-
-        registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
-        registerDefaultInputType( ValueTypes.LOCAL_TIME, TIME );
-        registerDefaultInputType( ValueTypes.BOOLEAN, CHECKBOX );
-        registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
-        registerDefaultInputType( ValueTypes.LONG, LONG );
-        registerDefaultInputType( ValueTypes.DOUBLE, DOUBLE );
     }
 
     private static void register( InputType inputType )
     {
         Object previous = INPUT_TYPE_BY_NAME.put( inputType.getName(), inputType );
         Preconditions.checkState( previous == null, "InputType already registered: " + inputType.getName() );
-    }
-
-    private static void registerDefaultInputType( ValueType valueType, InputType inputType )
-    {
-        Object previousDataType = INPUT_TYPE_BY_SIMPLE_CLASS_NAME.put( valueType.getClass().getSimpleName(), inputType );
-        Preconditions.checkState( previousDataType == null, "Default InputType already registered for ValueType: " + valueType );
-    }
-
-    public static int size()
-    {
-        return INPUT_TYPE_BY_NAME.size();
     }
 
     public static InputType find( final String name )
@@ -121,10 +97,5 @@ public final class InputTypes
         }
 
         return null;
-    }
-
-    public static ImmutableList<InputType> list()
-    {
-        return INPUT_TYPES;
     }
 }

@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 
-import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
 import static org.junit.Assert.*;
 
 public class XmlPartDescriptorParserTest
@@ -56,7 +56,7 @@ public class XmlPartDescriptorParserTest
 
         final Form config = result.getConfig();
         assertNotNull( config );
-        assertEquals( DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
+        assertEquals( InputTypeName.DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
         assertEquals( "link-urls", config.getFormItem( "link-urls" ).toInlineMixin().getName() );
     }

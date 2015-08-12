@@ -1,7 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
@@ -51,13 +49,5 @@ final class DateTimeType
         {
             return Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
         }
-    }
-
-    @Override
-    public ObjectNode serializeConfig( final InputTypeConfig config )
-    {
-        final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
-        jsonConfig.put( "withTimezone", config.getValue( "timezone", boolean.class, false ) );
-        return jsonConfig;
     }
 }

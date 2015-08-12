@@ -9,7 +9,7 @@ import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -43,7 +43,7 @@ public class LayoutDescriptorResourceTest
                 name( "columns" ).
                 maximizeUIInputWidth( true ).
                 label( "Columns" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
 
@@ -71,7 +71,7 @@ public class LayoutDescriptorResourceTest
         throws Exception
     {
         final Form layoutForm = Form.create().
-            addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypeName.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().

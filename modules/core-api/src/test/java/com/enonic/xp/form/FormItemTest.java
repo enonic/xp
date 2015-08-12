@@ -2,7 +2,7 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 
@@ -12,7 +12,7 @@ public class FormItemTest
     public void setParent()
     {
         FormItemSet myParent = FormItemSet.create().name( "myParent" ).build();
-        Input input = Input.create().name( "myField" ).label( "Field" ).inputType( InputTypes.TEXT_LINE ).build();
+        Input input = Input.create().name( "myField" ).label( "Field" ).inputType( InputTypeName.TEXT_LINE ).build();
         myParent.add( input );
         assertEquals( "myParent.myField", input.getPath().toString() );
     }

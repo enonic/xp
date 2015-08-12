@@ -12,7 +12,7 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
@@ -22,7 +22,7 @@ public class ContentTypeTest
     private static final Form MEDIA_DEFAULT = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
-            inputType( InputTypes.FILE_UPLOADER ).build() ).
+            inputType( InputTypeName.FILE_UPLOADER ).build() ).
         build();
 
     @Test
@@ -32,7 +32,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -48,7 +48,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
             name( "personalia" ).
-            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = FormItemSet.create().name( "mySet" ).addFormItem( layout ).build();
@@ -61,15 +61,15 @@ public class ContentTypeTest
     public void address()
     {
         FormItemSet formItemSet = FormItemSet.create().name( "address" ).build();
-        formItemSet.add( Input.create().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( Input.create().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() );
-        formItemSet.add( Input.create().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "label" ).label( "Label" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "street" ).label( "Street" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "postalNo" ).label( "Postal No" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "country" ).label( "Country" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( "myapplication:test" ).
-            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
 
@@ -88,14 +88,14 @@ public class ContentTypeTest
             addFormItem( Input.create().
                 name( "myInput" ).
                 label( "Input" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( FormItemSet.create().
                 name( "inner-set" ).
                 addFormItem( Input.create().
                     name( "myInnerInput" ).
                     label( "Inner input" ).
-                    inputType( InputTypes.TEXT_LINE ).
+                    inputType( InputTypeName.TEXT_LINE ).
                     build() ).
                 build() ).
             build();

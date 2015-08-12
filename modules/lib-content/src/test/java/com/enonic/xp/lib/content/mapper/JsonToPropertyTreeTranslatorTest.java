@@ -13,7 +13,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
@@ -99,12 +99,12 @@ public class JsonToPropertyTreeTranslatorTest
             addFormItem( Input.create().
                 name( "setString" ).
                 label( "String" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "setDouble" ).
                 label( "Double" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
 
@@ -112,27 +112,27 @@ public class JsonToPropertyTreeTranslatorTest
             addFormItem( Input.create().
                 name( "textLine" ).
                 label( "Textline" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "stringArray" ).
                 label( "String array" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "double" ).
                 label( "Double" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 name( "long" ).
                 label( "Long" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
-                inputType( InputTypes.COMBO_BOX ).
+                inputType( InputTypeName.COMBOBOX ).
                 inputTypeConfig( "option.value1", "label1" ).
                 inputTypeConfig( "option.value2", "label2" ).
                 inputTypeConfig( "option.value3", "label3" ).
@@ -140,65 +140,65 @@ public class JsonToPropertyTreeTranslatorTest
             addFormItem( Input.create().
                 name( "checkbox" ).
                 label( "Checkbox" ).
-                inputType( InputTypes.CHECKBOX ).
+                inputType( InputTypeName.CHECKBOX ).
                 build() ).
             addFormItem( Input.create().
                 name( "tinyMce" ).
                 label( "tinyMce" ).
-                inputType( InputTypes.TINY_MCE ).
+                inputType( InputTypeName.TINY_MCE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
                 label( "Tag" ).
-                inputType( InputTypes.TAG ).
+                inputType( InputTypeName.TAG ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentSelector" ).
                 label( "Content selector" ).
-                inputType( InputTypes.CONTENT_SELECTOR ).
+                inputType( InputTypeName.CONTENT_SELECTOR ).
                 inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
                 label( "Content type filter" ).
-                inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
                 name( "siteConfigurator" ).
-                inputType( InputTypes.SITE_CONFIGURATOR ).
+                inputType( InputTypeName.SITE_CONFIGURATOR ).
                 label( "Site configurator" ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).
                 label( "Date" ).
-                inputType( InputTypes.DATE ).
+                inputType( InputTypeName.DATE ).
                 build() ).
             addFormItem( Input.create().
                 name( "time" ).
                 label( "Time" ).
-                inputType( InputTypes.TIME ).
+                inputType( InputTypeName.TIME ).
                 build() ).
             addFormItem( Input.create().
                 name( "geoPoint" ).
                 label( "Geo point" ).
-                inputType( InputTypes.GEO_POINT ).
+                inputType( InputTypeName.GEO_POINT ).
                 build() ).
             addFormItem( Input.create().
                 name( "htmlArea" ).
                 label( "Html area" ).
-                inputType( InputTypes.HTML_AREA ).
+                inputType( InputTypeName.HTML_AREA ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).
                 label( "Local datetime" ).
-                inputType( InputTypes.DATE_TIME ).
+                inputType( InputTypeName.DATE_TIME ).
                 inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
-                inputType( InputTypes.DATE_TIME ).
+                inputType( InputTypeName.DATE_TIME ).
                 inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).

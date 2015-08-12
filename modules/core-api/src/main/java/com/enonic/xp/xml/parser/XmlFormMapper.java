@@ -16,8 +16,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 
@@ -87,9 +86,7 @@ public final class XmlFormMapper
     {
         final Input.Builder builder = Input.create();
 
-        final InputType type = InputTypes.find( root.getAttribute( "type" ) );
-        builder.inputType( type );
-
+        builder.inputType( InputTypeName.from( root.getAttribute( "type" ) ) );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
         builder.customText( root.getChildValue( "custom-text" ) );

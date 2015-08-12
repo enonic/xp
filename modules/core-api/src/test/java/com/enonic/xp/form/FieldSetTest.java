@@ -3,7 +3,7 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +15,7 @@ public class FieldSetTest
         FieldSet myFieldSet = FieldSet.create().
             label( "My FieldSet" ).
             name( "myFieldSet" ).
-            addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
         assertEquals( "myInput", myFieldSet.getInput( "myInput" ).getPath().toString() );
@@ -26,7 +26,7 @@ public class FieldSetTest
             addFormItem( FieldSet.create().
                 label( "My inner FieldSet" ).
                 name( "myInnerFieldSet" ).
-                addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).
+                addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
         assertEquals( "myInput", myOuterFieldSet.getInput( "myInput" ).getPath().toString() );

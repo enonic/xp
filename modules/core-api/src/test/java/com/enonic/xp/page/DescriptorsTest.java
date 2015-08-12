@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -18,7 +18,7 @@ public class DescriptorsTest
     public void pageDescriptor()
     {
         final Form pageForm = Form.create().
-            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypeName.DOUBLE ).build() ).
             // add input of type region
                 build();
 
@@ -37,7 +37,7 @@ public class DescriptorsTest
     public void partDescriptor()
     {
         final Form partForm = Form.create().
-            addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypeName.DOUBLE ).build() ).
             build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().
@@ -57,7 +57,7 @@ public class DescriptorsTest
     public void layoutDescriptor()
     {
         final Form layoutForm = Form.create().
-            addFormItem( Input.create().name( "columns" ).label( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "columns" ).label( "columns" ).inputType( InputTypeName.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().

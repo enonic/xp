@@ -3,8 +3,6 @@ package com.enonic.xp.form.inputtype;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InputValidationException;
@@ -71,13 +69,5 @@ public class TimeTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, stringProperty( "name" ) );
-    }
-
-    @Test
-    public void testSerializeConfig()
-    {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final ObjectNode json = this.type.serializeConfig( config );
-        assertNull( json );
     }
 }

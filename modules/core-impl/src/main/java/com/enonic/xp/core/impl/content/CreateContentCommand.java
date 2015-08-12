@@ -25,6 +25,7 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.form.inputtype.InputTypeServiceAccessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -210,6 +211,7 @@ final class CreateContentCommand
                 InputValidator.
                     create().
                     contentType( contentType ).
+                    inputTypeService( InputTypeServiceAccessor.get() ).
                     build().
                     validate( params.getData() );
             }
@@ -333,6 +335,7 @@ final class CreateContentCommand
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
+            inputTypeService( InputTypeServiceAccessor.get() ).
             build().
             execute();
 
