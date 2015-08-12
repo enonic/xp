@@ -74,7 +74,7 @@ module api.liveedit {
                             setDescriptor(pageDescriptor).
                             setConfig(config).
                             setRegions(regions);
-                        pageModel.setController(setController);
+                        pageModel.initController(setController);
                     });
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
@@ -91,7 +91,7 @@ module api.liveedit {
                         setDescriptor(null).
                         setConfig(config).
                         setRegions(regions);
-                    pageModel.setController(setController);
+                    pageModel.initController(setController);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a PageTemplate: " + pageMode);
@@ -121,7 +121,7 @@ module api.liveedit {
                                 setTemplate(pageTemplate, pageDescriptor).
                                 setRegions(regions).
                                 setConfig(config);
-                            pageModel.setTemplate(setTemplate);
+                            pageModel.initTemplate(setTemplate);
                         });
                     });
                 }

@@ -18,11 +18,14 @@ public final class PageJson
 
     private final List<PropertyArrayJson> configJson;
 
+    private final boolean customized;
+
     public PageJson( final Page page )
     {
         this.page = page;
         this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions() ) : null;
         this.configJson = page.hasConfig() ? PropertyTreeJson.toJson( page.getConfig() ) : null;
+        this.customized = page.isCustomized();
     }
 
     public String getController()
@@ -43,6 +46,10 @@ public final class PageJson
     public List<PropertyArrayJson> getConfig()
     {
         return configJson;
+    }
+
+    public boolean isCustomized() {
+        return page.isCustomized();
     }
 
 }

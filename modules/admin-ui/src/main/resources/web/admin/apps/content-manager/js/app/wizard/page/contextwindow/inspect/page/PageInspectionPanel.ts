@@ -55,27 +55,28 @@ module app.wizard.page.contextwindow.inspect.page {
             this.pageControllerForm.hide();
             this.appendChild(this.pageControllerForm);
 
-            if (this.pageModel.isPageTemplate()) {
+            this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
-                this.inspectionHandler = new PageTemplateInspectionHandler();
-                this.inspectionHandler.
-                    setPageModel(this.pageModel).
-                    setPageInspectionPanel(this).
-                    setPageControllerForm(this.pageControllerForm).
-                    setPageTemplateForm(this.pageTemplateForm).
-                    setModel(liveEditModel);
+            if(!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen
+                this.pageControllerSelector.setModel(liveEditModel);
+                if(this.pageModel.isCustomized()) {
+                    this.addClass("customized");
+                    this.pageControllerForm.show();
+                }
             }
-            else {
-                this.inspectionHandler = new ContentInspectionHandler();
-                this.inspectionHandler.
-                    setPageModel(this.pageModel).
-                    setPageInspectionPanel(this).
-                    setPageControllerForm(this.pageControllerForm).
-                    setPageTemplateForm(this.pageTemplateForm).
-                    setModel(liveEditModel);
-            }
+
+            this.inspectionHandler.
+                setPageModel(this.pageModel).
+                setPageInspectionPanel(this).
+                setPageControllerForm(this.pageControllerForm).
+                setPageTemplateForm(this.pageTemplateForm).
+                setModel(liveEditModel);
 
             this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
+                    this.pageControllerForm.hide();
+                    this.removeClass("customized");
+                    this.pageModel.setCustomized(false);
+
                     if (pageTemplate) {
                         new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
                             then((pageDescriptor: PageDescriptor) => {
@@ -91,6 +92,12 @@ module app.wizard.page.contextwindow.inspect.page {
                     }
                 }
             );
+
+            this.pageTemplateForm.getSelector().onCustomizedSelected(() => {
+                this.addClass("customized");
+                this.pageControllerForm.show();
+                this.pageModel.setCustomized(true);
+            });
         }
 
         refreshInspectionHandler(liveEditModel: LiveEditModel) {

@@ -108,12 +108,15 @@ module api.content.page {
 
         private configPropertyChangedHandler;
 
+        private customized;
+
         constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor,
                     pageMode: api.content.page.PageMode) {
             this.liveEditModel = liveEditModel;
             this.defaultTemplate = defaultTemplate;
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
             this.mode = pageMode;
+            this.customized = liveEditModel.getContent().isPage() ? liveEditModel.getContent().getPage().isCustomized() : false;
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
@@ -166,6 +169,10 @@ module api.content.page {
             }
         }
 
+        setCustomized(value: boolean) {
+            this.customized = value;
+        }
+
         reset(eventSource?: any) {
 
             if (this.liveEditModel.getContent().isPageTemplate()) {
@@ -193,7 +200,10 @@ module api.content.page {
         setController(setController: SetController): PageModel {
 
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
-            this.controller = setController.descriptor;
+            var newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
+            var controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
+
+            this.setControllerData(setController);
 
             if (setController.descriptor) {
                 this.setMode(PageMode.FORCED_CONTROLLER);
@@ -201,6 +211,25 @@ module api.content.page {
             else {
                 this.setMode(PageMode.NO_CONTROLLER);
             }
+
+            if (controllerChanged) {
+                this.setIgnorePropertyChanges(true);
+                this.notifyPropertyChanged(PageModel.PROPERTY_CONTROLLER, oldControllerKey, newControllerKey, setController.eventSource);
+                this.setIgnorePropertyChanges(false);
+            }
+
+            return this;
+        }
+
+        initController(setController: SetController): PageModel {
+
+            this.setControllerData(setController);
+
+            return this;
+        }
+
+        private setControllerData(setController: SetController) {
+            this.controller = setController.descriptor;
 
             if (setController.config) {
                 this.setConfig(setController.config, setController.eventSource);
@@ -212,15 +241,6 @@ module api.content.page {
             if (this.regions && setController.descriptor) {
                 this.regions.changeRegionsTo(setController.descriptor.getRegions());
             }
-
-            var newControllerKey = this.controller ? this.controller.getKey() : null;
-            if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
-                this.setIgnorePropertyChanges(true);
-                this.notifyPropertyChanged(PageModel.PROPERTY_CONTROLLER, oldControllerKey, newControllerKey, setController.eventSource);
-                this.setIgnorePropertyChanges(false);
-            }
-
-            return this;
         }
 
         setAutomaticTemplate(eventSource?: any, ignoreRegionChanges: boolean = false): PageModel {
@@ -243,8 +263,11 @@ module api.content.page {
         }
 
         setTemplate(setTemplate: SetTemplate, ignoreRegionChanges: boolean = false): PageModel {
-
             var oldTemplateKey = this.template ? this.template.getKey() : null;
+            var newTemplateKey = setTemplate.template ? setTemplate.template.getKey() : null;
+            var templateChanged = !api.ObjectHelper.equals(oldTemplateKey, newTemplateKey);
+
+            this.setTemplateData(setTemplate, ignoreRegionChanges);
 
             if (setTemplate.template) {
                 this.setMode(PageMode.FORCED_TEMPLATE);
@@ -253,6 +276,22 @@ module api.content.page {
                 this.setMode(PageMode.AUTOMATIC);
             }
 
+            if (templateChanged) {
+                this.setIgnorePropertyChanges(true);
+                this.notifyPropertyChanged(PageModel.PROPERTY_TEMPLATE, oldTemplateKey, newTemplateKey, setTemplate.eventSource);
+                this.setIgnorePropertyChanges(false);
+            }
+            return this;
+        }
+
+        initTemplate(setTemplate: SetTemplate, ignoreRegionChanges: boolean = false): PageModel {
+
+            this.setTemplateData(setTemplate, ignoreRegionChanges);
+
+            return this;
+        }
+
+        private setTemplateData(setTemplate: SetTemplate, ignoreRegionChanges: boolean = false) {
             this.template = setTemplate.template;
             this.templateDescriptor = setTemplate.descriptor;
 
@@ -269,14 +308,6 @@ module api.content.page {
             if (this.regions) {
                 this.regions.changeRegionsTo(setTemplate.descriptor.getRegions());
             }
-
-            var newTemplateKey = this.template ? this.template.getKey() : null;
-            if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
-                this.setIgnorePropertyChanges(true);
-                this.notifyPropertyChanged(PageModel.PROPERTY_TEMPLATE, oldTemplateKey, newTemplateKey, setTemplate.eventSource);
-                this.setIgnorePropertyChanges(false);
-            }
-            return this;
         }
 
         setRegions(value: api.content.page.region.Regions, eventOrigin?: any, ignoreRegionChanges = false): PageModel {
@@ -337,6 +368,7 @@ module api.content.page {
                     setTemplate(this.getTemplateKey()).
                     setRegions(regions).
                     setConfig(config).
+                    setCustomized(this.isCustomized()).
                     build();
             }
             else if (this.mode == PageMode.FORCED_CONTROLLER) {
@@ -344,6 +376,7 @@ module api.content.page {
                     setController(this.controller.getKey()).
                     setRegions(this.regions).
                     setConfig(this.config).
+                    setCustomized(this.isCustomized()).
                     build();
             }
             else if (this.mode == PageMode.NO_CONTROLLER) {
@@ -401,6 +434,10 @@ module api.content.page {
 
         getConfig(): PropertyTree {
             return this.config;
+        }
+
+        isCustomized(): boolean {
+            return this.customized;
         }
 
         private registerRegionsListeners(regions: api.content.page.region.Regions) {

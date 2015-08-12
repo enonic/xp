@@ -53,7 +53,6 @@ module api.content {
         }
 
         getPageMode(): api.content.page.PageMode {
-
             if (this.isPage()) {
                 if (this.getPage().hasTemplate()) {
                     return api.content.page.PageMode.FORCED_TEMPLATE;

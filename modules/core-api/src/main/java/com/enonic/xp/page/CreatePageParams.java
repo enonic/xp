@@ -19,6 +19,8 @@ public final class CreatePageParams
 
     private PropertyTree config;
 
+    private boolean customized;
+
     public CreatePageParams content( ContentId value )
     {
         this.content = value;
@@ -49,6 +51,11 @@ public final class CreatePageParams
         return this;
     }
 
+    public CreatePageParams customized( boolean value) {
+        this.customized = value;
+        return this;
+    }
+
     public ContentId getContent()
     {
         return content;
@@ -73,6 +80,8 @@ public final class CreatePageParams
     {
         return config;
     }
+
+    public boolean isCustomized() { return customized; }
 
     public void validate()
     {
