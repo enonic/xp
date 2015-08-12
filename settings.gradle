@@ -19,6 +19,7 @@ include 'portal-api'
 include 'portal-impl'
 include 'portal-script'
 
+include 'admin-api'
 include 'admin-impl'
 include 'admin-event'
 include 'admin-ui'

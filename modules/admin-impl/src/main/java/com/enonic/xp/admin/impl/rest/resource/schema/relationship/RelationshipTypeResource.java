@@ -18,11 +18,11 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.admin.rest.resource.ResourceConstants;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.relationship.RelationshipType;

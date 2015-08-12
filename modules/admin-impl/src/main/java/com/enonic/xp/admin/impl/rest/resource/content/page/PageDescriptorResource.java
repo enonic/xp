@@ -12,11 +12,11 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByModulesParams;
+import com.enonic.xp.admin.rest.resource.ResourceConstants;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.page.DescriptorKey;

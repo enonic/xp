@@ -1,6 +1,7 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
+    compile project( ':admin-api' )
     compile project( ':portal-api' )
     compile project( ':web-jaxrs' )
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.1'
@@ -10,7 +11,7 @@ dependencies {
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP Admin - Impl'
+    instruction 'Bundle-Name', 'Enonic XP Admin - Im
 }
 
 checkstyle {
