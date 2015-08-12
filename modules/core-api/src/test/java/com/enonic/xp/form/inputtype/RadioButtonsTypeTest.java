@@ -74,8 +74,8 @@ public class RadioButtonsTypeTest
     private InputTypeConfig newValidConfig()
     {
         return InputTypeConfig.create().
-            property( "option.one", "Value One" ).
-            property( "option.two", "Value Two" ).
+            property( "option.value", "one", "two" ).
+            property( "option.label", "Value One", "Value Two" ).
             build();
     }
 }

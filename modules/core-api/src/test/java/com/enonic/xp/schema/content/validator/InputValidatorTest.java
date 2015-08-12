@@ -52,7 +52,7 @@ public class InputValidatorTest
         final PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addString( "color", "#12345" );
-        data.addString( "comboBox", "value3" );
+        data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", true );
         data.addString( "tinyMce", "<stuff>staff</stuff>" );
         data.addString( "phone", "+4797773223" );
@@ -228,9 +228,8 @@ public class InputValidatorTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypeName.COMBOBOX ).
-                inputTypeConfig( "option.value1", "label1" ).
-                inputTypeConfig( "option.value2", "label2" ).
-                inputTypeConfig( "option.value3", "label3" ).
+                inputTypeConfig( "option.value", "value1", "value2" ).
+                inputTypeConfig( "option.label", "label1", "label1" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
@@ -252,7 +251,7 @@ public class InputValidatorTest
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
@@ -288,13 +287,13 @@ public class InputValidatorTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "false" ).
+                inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

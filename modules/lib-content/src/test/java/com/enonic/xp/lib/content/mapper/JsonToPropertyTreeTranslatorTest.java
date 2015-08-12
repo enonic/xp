@@ -133,9 +133,8 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypeName.COMBOBOX ).
-                inputTypeConfig( "option.value1", "label1" ).
-                inputTypeConfig( "option.value2", "label2" ).
-                inputTypeConfig( "option.value3", "label3" ).
+                inputTypeConfig( "option.value", "value1", "value2", "value3" ).
+                inputTypeConfig( "option.label", "label1", "label2", "label3" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
@@ -156,7 +155,7 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
                 build() ).
             addFormItem( Input.create().

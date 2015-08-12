@@ -22,7 +22,7 @@
       {
         "Input": {
           "config": {
-            "timezone": "true"
+            "timezone": ["true"]
           },
           "customText": null,
           "helpText": null,

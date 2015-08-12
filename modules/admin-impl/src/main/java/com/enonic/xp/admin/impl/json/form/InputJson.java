@@ -1,8 +1,13 @@
 package com.enonic.xp.admin.impl.json.form;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Input;
@@ -17,25 +22,16 @@ public class InputJson
 
     private final String inputType;
 
-    private final Map<String, String> inputTypeConfig;
-
     public InputJson( final Input input )
     {
         this.input = input;
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
         this.inputType = input.getInputType().getName();
-        this.inputTypeConfig = input.getInputTypeConfig().asMap();
     }
 
     @JsonIgnore
     @Override
     public Input getFormItem()
-    {
-        return input;
-    }
-
-    @JsonIgnore
-    public Input getInput()
     {
         return input;
     }
@@ -91,8 +87,25 @@ public class InputJson
         return this.inputType;
     }
 
-    public Map<String, String> getConfig()
+    public ObjectNode getConfig()
     {
-        return inputTypeConfig;
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        for ( final Map.Entry<String, Collection<String>> entry : this.input.getInputTypeConfig().asMap().entrySet() )
+        {
+            json.set( entry.getKey(), toJson( entry.getValue() ) );
+        }
+
+        return json;
+    }
+
+    private static JsonNode toJson( final Collection<String> values )
+    {
+        final ArrayNode json = JsonNodeFactory.instance.arrayNode();
+        for ( final String value : values )
+        {
+            json.add( value );
+        }
+
+        return json;
     }
 }

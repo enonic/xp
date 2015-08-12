@@ -110,28 +110,6 @@ public class ContentServiceImplTest_update
         assertEquals( 1, attachments.getSize() );
     }
 
-    private Content createContentWithTransform()
-    {
-        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.contentService.setContentTypeService( contentTypeService );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createTestContentType() );
-
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data.addString( "myReference", "1234" );
-        data.addString( "myDateTime", "2015-03-13T10:00:00+02:00" );
-
-        return contentService.create( CreateContentParams.create().
-            type( ContentTypeName.from( "myContentType" ) ).
-            contentData( data ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            displayName( "my display-name" ).
-            build() );
-    }
-
-
     private ContentType createTestContentType()
     {
         return ContentType.create().
@@ -140,12 +118,12 @@ public class ContentServiceImplTest_update
             addFormItem( Input.create().
                 inputType( InputTypeName.DATE_TIME ).
                 name( "myDateTime" ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( Input.create().
                 inputType( InputTypeName.CONTENT_SELECTOR ).
                 name( "myReference" ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.from( "myContentType" ).toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.from( "myContentType" ).toString() ).
                 build() ).
             build();
     }

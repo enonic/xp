@@ -1,22 +1,19 @@
 package com.enonic.xp.form.inputtype;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.convert.Converters;
 
 @Beta
 public final class InputTypeConfig
 {
-    private final LinkedHashMap<String, String> map;
+    private final Multimap<String, String> map;
 
     private InputTypeConfig( final Builder builder )
     {
@@ -25,7 +22,8 @@ public final class InputTypeConfig
 
     public String getValue( final String name )
     {
-        return this.map.get( name );
+        final Collection<String> values = getValues( name );
+        return values.isEmpty() ? null : values.iterator().next();
     }
 
     public <T> T getValue( final String name, final Class<T> type )
@@ -45,29 +43,20 @@ public final class InputTypeConfig
         return converted != null ? converted : defValue;
     }
 
-    public boolean hasProperty( final String name )
+    public Collection<String> getValues( final String name )
     {
-        return this.map.containsKey( name );
+        final Collection<String> values = this.map.get( name );
+        return values != null ? values : Collections.emptyList();
     }
 
-    public Set<String> getValues( final String name )
+    public boolean hasValue( final String name, final String value )
     {
-        final String value = getValue( name );
-        return value != null ? Sets.newHashSet( Splitter.on( "," ).trimResults().split( value ) ) : Collections.emptySet();
+        return getValues( name ).contains( value );
     }
 
-    public Map<String, String> asMap()
+    public Map<String, Collection<String>> asMap()
     {
-        return Collections.unmodifiableMap( this.map );
-    }
-
-    public Map<String, String> toSubMap( final String prefix )
-    {
-        final LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
-        this.map.entrySet().stream().filter( e -> e.getKey().startsWith( prefix ) ).forEach(
-            e -> result.put( e.getKey().substring( prefix.length() ), e.getValue() ) );
-
-        return result;
+        return this.map.asMap();
     }
 
     public boolean equals( final Object o )
@@ -82,11 +71,11 @@ public final class InputTypeConfig
 
     public static class Builder
     {
-        private final LinkedHashMap<String, String> map;
+        private final Multimap<String, String> map;
 
         private Builder()
         {
-            this.map = Maps.newLinkedHashMap();
+            this.map = HashMultimap.create();
         }
 
         public Builder config( final InputTypeConfig config )
@@ -99,15 +88,14 @@ public final class InputTypeConfig
             return this;
         }
 
-        public Builder property( final String name, final String value )
+        public Builder property( final String name, final String... values )
         {
-            this.map.put( name.trim(), value.trim() );
-            return this;
-        }
+            for ( final String value : values )
+            {
+                this.map.put( name.trim(), value.trim() );
+            }
 
-        public Builder property( final String name, final Iterable<String> values )
-        {
-            return property( name, Joiner.on( "," ).skipNulls().join( values ) );
+            return this;
         }
 
         public InputTypeConfig build()

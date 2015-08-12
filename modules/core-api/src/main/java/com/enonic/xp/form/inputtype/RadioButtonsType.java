@@ -37,7 +37,7 @@ final class RadioButtonsType
     public void checkValidity( final InputTypeConfig config, final Property property )
     {
         final String valueAsString = property.getString();
-        if ( valueAsString != null && !config.hasProperty( "option." + valueAsString ) )
+        if ( valueAsString != null && !config.hasValue( "option.value", valueAsString ) )
         {
             throw new InvalidValueException( property, "Value is not a valid option" );
         }

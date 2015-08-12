@@ -269,7 +269,7 @@ public class AbstractContentServiceTest
         data.addDouble( "double", 1.4d );
         data.addLong( "long", 2l );
         data.addString( "color", "FFFFFF" );
-        data.addString( "comboBox", "value3" );
+        data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", false );
         data.addString( "tinyMce", "<p>paragraph</p>" );
         data.addString( "phone", "012345678" );
@@ -333,9 +333,8 @@ public class AbstractContentServiceTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypeName.COMBOBOX ).
-                inputTypeConfig( "option.value1", "label1" ).
-                inputTypeConfig( "option.value2", "label2" ).
-                inputTypeConfig( "option.value3", "label3" ).
+                inputTypeConfig( "option.value", "value1", "value2" ).
+                inputTypeConfig( "option.label", "label1", "label2" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
@@ -356,7 +355,7 @@ public class AbstractContentServiceTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
                 build() ).
             addFormItem( Input.create().
@@ -393,13 +392,13 @@ public class AbstractContentServiceTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "false" ).
+                inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

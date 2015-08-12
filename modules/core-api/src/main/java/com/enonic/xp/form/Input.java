@@ -334,9 +334,9 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeConfig( final String name, final String value )
+        public Builder inputTypeConfig( final String name, final String... values )
         {
-            this.inputTypeConfig.property( name, value );
+            this.inputTypeConfig.property( name, values );
             return this;
         }
 
