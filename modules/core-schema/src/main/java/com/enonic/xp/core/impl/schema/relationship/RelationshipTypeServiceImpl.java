@@ -80,10 +80,10 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return relationshipTypesMap.computeIfAbsent( applicationKey, this::loadByModule );
+        return relationshipTypesMap.computeIfAbsent( applicationKey, this::loadByApplication );
     }
 
-    private RelationshipTypes loadByModule( final ApplicationKey applicationKey )
+    private RelationshipTypes loadByApplication( final ApplicationKey applicationKey )
     {
         RelationshipTypes relationshipTypes = null;
 

@@ -18,7 +18,7 @@ public class ContentTypeServiceImpl_getChildrenTest
     {
         final ContentType contentType1 = ContentType.
             create().
-            name( "mymodule:my_content_type1" ).
+            name( "myapplication:my_content_type1" ).
             displayName( ContentTypeName.unstructured().toString() ).
             superType( null ).
             setBuiltIn().
@@ -26,23 +26,23 @@ public class ContentTypeServiceImpl_getChildrenTest
 
         final ContentType contentType2 = ContentType.
             create().
-            name( "mymodule:my_content_type2" ).
+            name( "myapplication:my_content_type2" ).
             displayName( "Display Name 2" ).
-            superType( ContentTypeName.from( "mymodule:my_content_type1" ) ).
+            superType( ContentTypeName.from( "myapplication:my_content_type1" ) ).
             build();
 
         final ContentType contentType3 = ContentType.
             create().
-            name( "mymodule:my_content_type3" ).
+            name( "myapplication:my_content_type3" ).
             displayName( "Display Name 3" ).
-            superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
+            superType( ContentTypeName.from( "myapplication:my_content_type2" ) ).
             build();
 
         final ContentType contentType4 = ContentType.
             create().
-            name( "mymodule:my_content_type4" ).
+            name( "myapplication:my_content_type4" ).
             displayName( "Display Name 4" ).
-            superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
+            superType( ContentTypeName.from( "myapplication:my_content_type2" ) ).
             build();
 
         final ContentType contentType5 = ContentType.
@@ -63,13 +63,13 @@ public class ContentTypeServiceImpl_getChildrenTest
         final ContentTypes types2 = this.service.getChildren( params2 );
 
         assertEquals( 1, types2.getSize() );
-        assertEquals( "mymodule:my_content_type2", types2.get( 0 ).getName().toString() );
+        assertEquals( "myapplication:my_content_type2", types2.get( 0 ).getName().toString() );
 
         final GetChildContentTypesParams params3 = new GetChildContentTypesParams().parentName( contentType2.getName() );
         final ContentTypes types3 = this.service.getChildren( params3 );
 
         assertEquals( 2, types3.getSize() );
-        assertEquals( "mymodule:my_content_type3", types3.get( 0 ).getName().toString() );
-        assertEquals( "mymodule:my_content_type4", types3.get( 1 ).getName().toString() );
+        assertEquals( "myapplication:my_content_type3", types3.get( 0 ).getName().toString() );
+        assertEquals( "myapplication:my_content_type4", types3.get( 1 ).getName().toString() );
     }
 }

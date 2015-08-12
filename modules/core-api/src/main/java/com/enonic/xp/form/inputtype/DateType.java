@@ -41,33 +41,27 @@ final class DateType
     @Override
     public ObjectNode serializeConfig( final InputTypeConfig config )
     {
-        if ( !( config instanceof DateTypeConfig ) )
-        {
-            return null;
-        }
-
-        final DateTypeConfig typedConfig = (DateTypeConfig) config;
         final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
-        jsonConfig.put( "withTimezone", typedConfig.isWithTimezone() );
+        jsonConfig.put( "withTimezone", config.getValue( "withTimezone", boolean.class, false ) );
         return jsonConfig;
     }
 
     @Override
     public InputTypeConfig parseConfig( final ApplicationKey app, final Element elem )
     {
-        final DateTypeConfig.Builder builder = DateTypeConfig.create();
+        final InputTypeConfig.Builder builder = InputTypeConfig.create();
         parseTimezone( elem, builder );
         return builder.build();
     }
 
-    private void parseTimezone( final Element elem, DateTypeConfig.Builder builder )
+    private void parseTimezone( final Element elem, final InputTypeConfig.Builder builder )
     {
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "with-timezone" );
 
         final String text = DomHelper.getTextValue( relationshipTypeEl );
         if ( text != null && StringUtils.isNotBlank( text ) )
         {
-            builder.withTimezone( Boolean.valueOf( text ) );
+            builder.property( "withTimezone", text );
         }
     }
 }

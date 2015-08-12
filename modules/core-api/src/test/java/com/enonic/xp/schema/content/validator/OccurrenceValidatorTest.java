@@ -27,7 +27,7 @@ public class OccurrenceValidatorTest
     public void before()
     {
         contentType = ContentType.create().
-            name( "mymodule:my_type" ).
+            name( "myapplication:my_type" ).
             superType( ContentTypeName.structured() ).
             build();
     }

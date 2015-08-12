@@ -15,25 +15,25 @@ public class MixinNameTest
             @Override
             public Object getObjectX()
             {
-                return MixinName.from( "mymodule:my_mixin" );
+                return MixinName.from( "myapplication:my_mixin" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{MixinName.from( "mymodule:my_other_mixin" )};
+                return new Object[]{MixinName.from( "myapplication:my_other_mixin" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return MixinName.from( "mymodule:my_mixin" );
+                return MixinName.from( "myapplication:my_mixin" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return MixinName.from( ApplicationKey.from( "mymodule" ), "my_mixin" );
+                return MixinName.from( ApplicationKey.from( "myapplication" ), "my_mixin" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

@@ -24,8 +24,6 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.ContentSelectorTypeConfig;
-import com.enonic.xp.form.inputtype.DateTimeTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentType;
@@ -142,16 +140,12 @@ public class ContentServiceImplTest_update
             addFormItem( Input.create().
                 inputType( InputTypes.DATE_TIME ).
                 name( "myDateTime" ).
-                inputTypeConfig( DateTimeTypeConfig.create().
-                    withTimezone( true ).
-                    build() ).
+                inputTypeConfig( "withTimezone", "true" ).
                 build() ).
             addFormItem( Input.create().
                 inputType( InputTypes.CONTENT_SELECTOR ).
                 name( "myReference" ).
-                inputTypeConfig( ContentSelectorTypeConfig.create().
-                    addAllowedContentType( ContentTypeName.from( "myContentType" ) ).
-                    build() ).
+                inputTypeConfig( "allowedContentTypes", ContentTypeName.from( "myContentType" ).toString() ).
                 build() ).
             build();
     }
@@ -322,7 +316,7 @@ public class ContentServiceImplTest_update
         {
             this.contentService.update( updateContentParams );
         }
-        catch ( IllegalArgumentException e )
+        catch ( Exception e )
         {
             illegalArgumentExceptionThrown = true;
         }
@@ -338,7 +332,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final Mixin mixin = Mixin.create().name( "mymodule:my_mixin" ).
+        final Mixin mixin = Mixin.create().name( "myapplication:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
@@ -352,7 +346,7 @@ public class ContentServiceImplTest_update
         Mockito.when( this.mixinService.getByLocalName( Mockito.isA( String.class ) ) ).
             thenReturn( mixin );
 
-        final ExtraData extraData = new ExtraData( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
+        final ExtraData extraData = new ExtraData( MixinName.from( "myapplication:my_mixin" ), new PropertyTree() );
 
         ExtraDatas extraDatas = ExtraDatas.from( Lists.newArrayList( extraData ) );
 

@@ -43,14 +43,13 @@ final class ImageSelectorType
     public InputTypeConfig parseConfig( final ApplicationKey app, final Element elem )
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( app );
+        final InputTypeConfig.Builder builder = InputTypeConfig.create();
 
-        final ImageSelectorTypeConfig.Builder builder = ImageSelectorTypeConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );
-
         final String text = DomHelper.getTextValue( relationshipTypeEl );
-        if ( text != null && StringUtils.isNotBlank( text ) )
+        if ( StringUtils.isNotBlank( text ) )
         {
-            builder.relationshipType( resolver.toRelationshipTypeName( text ) );
+            builder.property( "relationshipType", resolver.toRelationshipTypeName( text ).toString() );
         }
 
         return builder.build();
@@ -59,22 +58,8 @@ final class ImageSelectorType
     @Override
     public ObjectNode serializeConfig( final InputTypeConfig config )
     {
-        if ( !( config instanceof ImageSelectorTypeConfig ) )
-        {
-            return null;
-        }
-
-        final ImageSelectorTypeConfig typedConfig = (ImageSelectorTypeConfig) config;
         final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
-        if ( typedConfig.getRelationshipType() != null )
-        {
-            jsonConfig.put( "relationshipType", typedConfig.getRelationshipType().toString() );
-        }
-        else
-        {
-            jsonConfig.putNull( "relationshipType" );
-        }
-
+        jsonConfig.put( "relationshipType", config.getValue( "relationshipType" ) );
         return jsonConfig;
     }
 }

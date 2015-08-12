@@ -1,7 +1,6 @@
 {
   "branches": [
-    "branch1",
-    "branch2"
+    "branch1"
   ],
   "duration": "PT41.416S",
   "endTime": "2015-08-06T13:15:57.291Z",

@@ -28,7 +28,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( InlineMixin.create().mixin( "mymodule:mymixin" ).build() );
+        formItemSet.add( InlineMixin.create().mixin( "myapplication:mymixin" ).build() );
 
         // exercise
 

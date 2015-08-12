@@ -12,12 +12,13 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.impl.resource.underscore.UnderscoreResource;
-import com.enonic.xp.schema.content.ContentTypeForms;
 import com.enonic.xp.util.Reference;
 
 public final class PageResource
     extends RenderResource
 {
+    private static final String SHORTCUT_TARGET_PROPERTY = "target";
+
     @Path("_")
     public UnderscoreResource underscore()
     {
@@ -105,7 +106,7 @@ public final class PageResource
     private ShortcutControllerResource shortcut( final Content content )
     {
         final Reference shortcutTarget = content.getData().
-            getProperty( ContentTypeForms.SHORTCUT_TARGET_PROPERTY ).getReference();
+            getProperty( SHORTCUT_TARGET_PROPERTY ).getReference();
         if ( shortcutTarget == null || shortcutTarget.getNodeId() == null )
         {
             throw notFound( "Missing shortcut target" );

@@ -25,7 +25,7 @@ public class SnapshotResults
 
     public static class Builder
     {
-        private final Set<SnapshotResult> snapshotResults = Sets.newHashSet();
+        private final Set<SnapshotResult> snapshotResults = Sets.newLinkedHashSet();
 
 
         public Builder add( final SnapshotResult snapshotResult )

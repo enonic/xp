@@ -1,3 +1,4 @@
 {
-  "relationshipType": "system:reference"
+  "relationshipType": "system:reference",
+  "allowedContentTypes": []
 }

@@ -40,16 +40,16 @@ public class ContentTypeRegistryImplTest
     {
         super.setup();
 
-        //Mocks a module
-        startBundles( newBundle( "module2" ) );
-        myBundle = findBundle( "module2" );
+        //Mocks an application
+        startBundles( newBundle( "application2" ) );
+        myBundle = findBundle( "application2" );
         myApplicationKey = ApplicationKey.from( myBundle );
-        this.myContentType = createContentType( "module2:myContentType", "myContentType display name" );
+        this.myContentType = createContentType( "application2:myContentType", "myContentType display name" );
         myApplication = Mockito.mock( Application.class );
         Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
 
-        //Mocks the module service
+        //Mocks the application service
         applicationService = Mockito.mock( ApplicationService.class );
 
         //Mocks the ComponentContext
@@ -82,7 +82,7 @@ public class ContentTypeRegistryImplTest
     }
 
     @Test
-    public void test_add_removal_module()
+    public void test_add_removal_application()
     {
 
         Applications applications = Applications.from( myApplication );
@@ -108,7 +108,7 @@ public class ContentTypeRegistryImplTest
     }
 
     @Test
-    public void test_get_system_module()
+    public void test_get_system_application()
     {
 
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );

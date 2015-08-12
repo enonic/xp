@@ -13,12 +13,12 @@ public class BundleRelationshipTypeLoaderTest
     extends AbstractBundleTest
 {
     @Test
-    public void test_not_module()
+    public void test_not_application()
         throws Exception
     {
-        startBundles( newBundle( "not-module" ) );
+        startBundles( newBundle( "not-application" ) );
 
-        final Bundle bundle = findBundle( "not-module" );
+        final Bundle bundle = findBundle( "not-application" );
         assertNotNull( bundle );
 
         final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( bundle );
@@ -30,9 +30,9 @@ public class BundleRelationshipTypeLoaderTest
     public void test_loaded_relationship_types()
         throws Exception
     {
-        startBundles( newBundle( "module2" ) );
+        startBundles( newBundle( "application2" ) );
 
-        final Bundle bundle = findBundle( "module2" );
+        final Bundle bundle = findBundle( "application2" );
         assertNotNull( bundle );
 
         final BundleRelationshipTypeLoader bundleRelationshipTypeLoader = new BundleRelationshipTypeLoader( bundle );

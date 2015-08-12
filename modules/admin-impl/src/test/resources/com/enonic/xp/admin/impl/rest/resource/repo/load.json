@@ -2,41 +2,35 @@
   "nodeImportResults": [
     {
       "addedNodes": [
-        "/path/to/node2",
         "/path/to/node1"
       ],
       "dryRun": true,
       "importErrors": [],
       "importedBinaries": [],
       "updateNodes": [
-        "/path/to/node4",
-        "/path/to/node3"
+        "/path/to/node2"
       ]
     },
     {
       "addedNodes": [
-        "/path/to/node2",
         "/path/to/node1"
       ],
       "dryRun": true,
       "importErrors": [],
       "importedBinaries": [],
       "updateNodes": [
-        "/path/to/node4",
-        "/path/to/node3"
+        "/path/to/node2"
       ]
     },
     {
       "addedNodes": [
-        "/path/to/node2",
         "/path/to/node1"
       ],
       "dryRun": true,
       "importErrors": [],
       "importedBinaries": [],
       "updateNodes": [
-        "/path/to/node4",
-        "/path/to/node3"
+        "/path/to/node2"
       ]
     }
   ]

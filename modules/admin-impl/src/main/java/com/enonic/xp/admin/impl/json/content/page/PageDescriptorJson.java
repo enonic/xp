@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionDescriptorJson;
-import com.enonic.xp.form.FormJson;
+import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;

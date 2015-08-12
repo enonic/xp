@@ -1,5 +1,7 @@
 package com.enonic.xp.form.inputtype;
 
+import java.util.Map;
+
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -42,31 +44,24 @@ final class RadioButtonsType
     @Override
     public void checkValidity( final InputTypeConfig config, final Property property )
     {
-        if ( !( config instanceof RadioButtonsTypeConfig ) )
-        {
-            return;
-        }
-
-        final RadioButtonsTypeConfig typedConfig = (RadioButtonsTypeConfig) config;
         final String valueAsString = property.getString();
-        if ( valueAsString != null && !typedConfig.containsKey( valueAsString ) )
+        if ( valueAsString != null && !config.hasProperty( "option." + valueAsString ) )
         {
-            throw new InvalidValueException( property, "Value can only be of one the following strings: " +
-                typedConfig.optionValuesAsCommaSeparatedString() );
+            throw new InvalidValueException( property, "Value is not a valid option" );
         }
     }
 
     @Override
     public InputTypeConfig parseConfig( final ApplicationKey app, final Element elem )
     {
-        final RadioButtonsTypeConfig.Builder builder = RadioButtonsTypeConfig.create();
-
+        final InputTypeConfig.Builder builder = InputTypeConfig.create();
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
+
         for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )
         {
             final String label = DomHelper.getChildElementValueByTagName( optionEl, "label" );
             final String value = DomHelper.getChildElementValueByTagName( optionEl, "value" );
-            builder.addOption( label, value );
+            builder.property( "option." + value, label );
         }
 
         return builder.build();
@@ -75,20 +70,16 @@ final class RadioButtonsType
     @Override
     public ObjectNode serializeConfig( final InputTypeConfig config )
     {
-        if ( !( config instanceof RadioButtonsTypeConfig ) )
-        {
-            return null;
-        }
-
-        final RadioButtonsTypeConfig typedConfig = (RadioButtonsTypeConfig) config;
         final ObjectNode jsonConfig = JsonNodeFactory.instance.objectNode();
 
         final ArrayNode jsonArray = jsonConfig.putArray( "options" );
-        for ( Option option : typedConfig.getOptions() )
+        final Map<String, String> subConfig = config.toSubMap( "option." );
+
+        for ( final String key : subConfig.keySet() )
         {
             final ObjectNode jsonOption = jsonArray.addObject();
-            jsonOption.put( "label", option.getLabel() );
-            jsonOption.put( "value", option.getValue() );
+            jsonOption.put( "value", key );
+            jsonOption.put( "label", subConfig.get( key ) );
         }
 
         return jsonConfig;
