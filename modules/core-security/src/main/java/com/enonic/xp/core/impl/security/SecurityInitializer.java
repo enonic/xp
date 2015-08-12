@@ -161,13 +161,13 @@ public final class SecurityInitializer
 
         final CreateRoleParams createUserManagerAppRole = CreateRoleParams.create().
             roleKey( RoleKeys.USER_MANAGER_APP ).
-            displayName( "User Manager App" ).
+            displayName( "Users App" ).
             build();
         addRole( createUserManagerAppRole );
 
         final CreateRoleParams createUserManager = CreateRoleParams.create().
             roleKey( RoleKeys.USER_MANAGER_ADMIN ).
-            displayName( "User Manager Administrator" ).
+            displayName( "Users Administrator" ).
             build();
         addRole( createUserManager );
 
