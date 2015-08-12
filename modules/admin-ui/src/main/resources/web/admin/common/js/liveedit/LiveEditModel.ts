@@ -98,9 +98,10 @@ module api.liveedit {
                 }
             }
             else {
+                var page = this.content.getPage();
                 if (pageMode == PageMode.FORCED_TEMPLATE) {
 
-                    var pageTemplateKey = this.content.getPage().getTemplate();
+                    var pageTemplateKey = page.getTemplate();
                     pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
                     pageTemplatePromise.then((pageTemplate: PageTemplate) => {
 
@@ -125,11 +126,32 @@ module api.liveedit {
                         });
                     });
                 }
+                else if (pageMode == PageMode.FORCED_CONTROLLER) {
+
+                    var pageDescriptorKey = page.getController();
+                    pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                    pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+
+                        var config = page.hasConfig() ?
+                                     page.getConfig().copy() :
+                                     new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                        var regions = page.hasRegions() ?
+                                      page.getRegions().clone() :
+                                      Regions.create().build();
+
+                        var setController = new SetController(this).
+                            setDescriptor(pageDescriptor).
+                            setConfig(config).
+                            setRegions(regions);
+                        pageModel.initController(setController);
+                    });
+                }
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);
                 }
                 else {
-                    throw new Error("Unsupported PageMode for a Content: " + pageMode);
+                    throw new Error("Unsupported PageMode for a Content: " + PageMode[pageMode]);
                 }
             }
 
