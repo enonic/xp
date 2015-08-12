@@ -9,21 +9,30 @@ module api.form.inputtype.radiobuttons {
     import ValueTypes = api.data.ValueTypes;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
-    export interface RadioButtonsConfig {
-        options: {
-            label: string;
-            value: string;
-        }[]
-    }
-
-    export class RadioButtons extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<RadioButtonsConfig,string> {
+    export class RadioButtons extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private selector: api.dom.Element;
         private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
+        private radioButtonOptions: {label: string; value: string;}[];
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<RadioButtonsConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config, "radio-buttons");
+            this.readConfig(config.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [name: string]: string; }): void {
+            var options: {label: string; value: string;}[] = [];
+
+            for (var name in inputConfig) {
+                if (inputConfig.hasOwnProperty(name)) {
+                    var label = inputConfig[name];
+                    var value = name.substring(name.indexOf('.') + 1);
+                    console.log(label, value);
+                    options.push({label: label, value: value});
+                }
+            }
+            this.radioButtonOptions = options;
         }
 
         getValueType(): ValueType {
@@ -85,12 +94,11 @@ module api.form.inputtype.radiobuttons {
 
             var radioGroup = new api.ui.RadioGroup(name);
 
-            var inputConfig: RadioButtonsConfig = this.getContext().inputConfig;
-            if (inputConfig) {
-                for (var i = 0; i < inputConfig.options.length; i++) {
-                    var option = inputConfig.options[i];
-                    radioGroup.addOption(option.value, option.label);
-                }
+            var options = this.radioButtonOptions;
+            var l = options.length;
+            for (var i = 0; i < l; i++) {
+                var option = options[i];
+                radioGroup.addOption(option.value, option.label);
             }
 
             if (property.hasNonNullValue()) {

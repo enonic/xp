@@ -33,7 +33,7 @@ module api.content.form.inputtype.image {
 
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
-        private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
+        private config: api.content.form.inputtype.ContentInputTypeViewContext;
 
         private relationshipTypeName: RelationshipTypeName;
 
@@ -49,7 +49,9 @@ module api.content.form.inputtype.image {
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>) {
+        private relationshipType: string;
+
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("image-selector");
             this.addClass("input-type-view");
 
@@ -58,11 +60,7 @@ module api.content.form.inputtype.image {
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            if (config.inputConfig.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(config.inputConfig.relationshipType);
-            } else {
-                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
-            }
+            this.readConfig(config.inputConfig);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
@@ -87,6 +85,15 @@ module api.content.form.inputtype.image {
 
         }
 
+        private readConfig(inputConfig: { [name: string]: string; }): void {
+            var relationshipType = inputConfig['relationshipType'];
+            if (relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            } else {
+                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
+            }
+        }
+
         private updateSelectedItemsIcons() {
             if (this.contentComboBox.getSelectedOptions().length > 0) {
                 this.doLoadContent(this.getPropertyArray()).then((contents: ContentSummary[]) => {
@@ -103,7 +110,7 @@ module api.content.form.inputtype.image {
         }
 
         availableSizeChanged() {
-            if(this.selectedOptionsView) {
+            if (this.selectedOptionsView) {
                 this.selectedOptionsView.updateLayout();
             }
         }
@@ -170,13 +177,13 @@ module api.content.form.inputtype.image {
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached
-                if(this.uploader) {
+                if (this.uploader) {
                     this.uploader.hide();
                 }
             });
             comboBox.onShown((event: api.dom.ElementShownEvent) => {
                 // shown on occurrences between min and max
-                if(this.uploader) {
+                if (this.uploader) {
                     this.uploader.show();
                 }
             });

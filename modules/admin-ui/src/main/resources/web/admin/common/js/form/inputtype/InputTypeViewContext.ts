@@ -1,12 +1,12 @@
 module api.form.inputtype {
 
-    export interface InputTypeViewContext<INPUT_CONFIG> {
+    export interface InputTypeViewContext {
 
         formContext: api.form.FormContext;
 
         input: api.form.Input;
 
-        inputConfig:INPUT_CONFIG;
+        inputConfig: { [name: string]: string; };
 
         parentDataPath: api.data.PropertyPath;
     }

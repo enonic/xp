@@ -7,13 +7,13 @@ module api.content.form.inputtype.upload {
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
 
-    export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
+    export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private imageUploader: api.content.ImageUploader;
         private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config, "image");
             var input = config.input;
 
@@ -33,8 +33,8 @@ module api.content.form.inputtype.upload {
             this.appendChild(this.imageUploader);
         }
 
-        getContext(): api.content.form.inputtype.ContentInputTypeViewContext<any> {
-            return <api.content.form.inputtype.ContentInputTypeViewContext<any>>super.getContext();
+        getContext(): api.content.form.inputtype.ContentInputTypeViewContext {
+            return <api.content.form.inputtype.ContentInputTypeViewContext>super.getContext();
         }
 
         getValueType(): ValueType {

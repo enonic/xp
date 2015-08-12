@@ -14,7 +14,7 @@ module api.form.inputtype.text {
     import ImageModalDialog = api.form.inputtype.text.tiny.ImageModalDialog;
     import AnchorModalDialog = api.form.inputtype.text.tiny.AnchorModalDialog;
 
-    export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
+    export class TinyMCE extends support.BaseInputTypeNotManagingAdd<string> {
 
         private editors: TinyEditorOccurenceInfo[];
         private contentId: api.content.ContentId;
@@ -25,7 +25,7 @@ module api.form.inputtype.text {
         private previousScrollPos: number = 0;//fix for XP-736
         private isScrollProhibited: boolean = false;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
 
             this.addClass("tinymce-editor");

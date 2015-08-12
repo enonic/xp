@@ -20,9 +20,9 @@ module api.schema.content.inputtype {
 
         private combobox: ContentTypeComboBox;
 
-        private context: ContentInputTypeViewContext<any>;
+        private context: ContentInputTypeViewContext;
 
-        constructor(context: ContentInputTypeViewContext<any>) {
+        constructor(context: ContentInputTypeViewContext) {
             super('content-type-filter');
             this.context = context;
         }

@@ -6,25 +6,35 @@ module api.form.inputtype.combobox {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export interface ComboBoxConfig {
-        options: ComboBoxOption[]
-    }
-
     export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
-        private context: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>;
+        private context: api.form.inputtype.InputTypeViewContext;
 
-        private comboBoxConfig: ComboBoxConfig;
+        private comboBoxOptions: ComboBoxOption[];
 
         private comboBox: api.ui.selector.combobox.ComboBox<string>;
 
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
-        constructor(context: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>) {
+        constructor(context: api.form.inputtype.InputTypeViewContext) {
             super("combo-box");
             this.addClass("input-type-view");
             this.context = context;
-            this.comboBoxConfig = context.inputConfig;
+            this.readConfig(context.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [name: string]: string; }): void {
+            var options: ComboBoxOption[] = [];
+
+            for (var name in inputConfig) {
+                if (inputConfig.hasOwnProperty(name)) {
+                    var label = inputConfig[name];
+                    var value = name.substring(name.indexOf('.') + 1);
+                    console.log(label, value);
+                    options.push({label: label, value: value});
+                }
+            }
+            this.comboBoxOptions = options;
         }
 
         availableSizeChanged() {
@@ -45,8 +55,7 @@ module api.form.inputtype.combobox {
 
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
-
-            this.comboBoxConfig.options.forEach((option: ComboBoxOption) => {
+            this.comboBoxOptions.forEach((option: ComboBoxOption) => {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
@@ -111,7 +120,7 @@ module api.form.inputtype.combobox {
         }
 
         private isExistingValue(value: string): boolean {
-            return this.comboBoxConfig.options.some((option: ComboBoxOption) => {
+            return this.comboBoxOptions.some((option: ComboBoxOption) => {
                 return option.value == value;
             });
         }
