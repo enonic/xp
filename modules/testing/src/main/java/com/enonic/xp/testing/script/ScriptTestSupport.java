@@ -56,7 +56,7 @@ public abstract class ScriptTestSupport
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = ScriptTestSupport.class.getResource( resourceKey.getPath() );
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new Resource( resourceKey, resourceUrl );
         } );
 
         ServiceReference<ResourceService> resourceServiceReference = Mockito.mock( ServiceReference.class );

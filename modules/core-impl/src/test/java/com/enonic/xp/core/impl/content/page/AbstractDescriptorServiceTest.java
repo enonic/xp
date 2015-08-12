@@ -23,8 +23,8 @@ import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.Resources;
 
 public abstract class AbstractDescriptorServiceTest
 {
@@ -48,7 +48,7 @@ public abstract class AbstractDescriptorServiceTest
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
             final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new Resource( resourceKey, resourceUrl );
         } );
     }
 
@@ -115,16 +115,15 @@ public abstract class AbstractDescriptorServiceTest
                                         final boolean recurse, final String... paths )
         throws MalformedURLException
     {
-        List<Resource> resourceList = new ArrayList<Resource>();
+        List<ResourceKey> resourceKeyList = new ArrayList<ResourceKey>();
         for ( final String path : paths )
         {
             final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
-            final String filePath = application.getKey().toString() + path;
-            final File file = new File( this.applicationsDir, filePath );
-            resourceList.add( new Resource( resourceKey, file.toURI().toURL() ) );
+            resourceKeyList.add( resourceKey );
         }
-        Resources resources = Resources.from( resourceList );
+        ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
 
-        Mockito.when( this.resourceService.findResources( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn( resources );
+        Mockito.when( this.resourceService.findResourceKeys( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn(
+            resourceKeys );
     }
 }
