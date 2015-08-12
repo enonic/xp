@@ -20,10 +20,10 @@ public class XmlRelationshipTypeParserTest
     public void setup()
     {
         this.parser = new XmlRelationshipTypeParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = RelationshipType.create();
-        this.builder.name( "mymodule:name" );
+        this.builder.name( "myapplication:name" );
         this.parser.builder( this.builder );
     }
 
@@ -47,11 +47,11 @@ public class XmlRelationshipTypeParserTest
         throws Exception
     {
         final RelationshipType result = this.builder.build();
-        assertEquals( "mymodule:name", result.getName().toString() );
+        assertEquals( "myapplication:name", result.getName().toString() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "likes", result.getFromSemantic() );
         assertEquals( "liked by", result.getToSemantic() );
-        assertEquals( "[mymodule:animal, mymodule:person]", result.getAllowedFromTypes().toString() );
-        assertEquals( "[mymodule:vehicle]", result.getAllowedToTypes().toString() );
+        assertEquals( "[myapplication:animal, myapplication:person]", result.getAllowedFromTypes().toString() );
+        assertEquals( "[myapplication:vehicle]", result.getAllowedToTypes().toString() );
     }
 }

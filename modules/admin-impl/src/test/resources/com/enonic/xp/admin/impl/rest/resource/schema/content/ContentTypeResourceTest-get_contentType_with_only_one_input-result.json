@@ -18,9 +18,7 @@
                     "helpText": null,
                     "immutable": false,
                     "indexed": false,
-                    "inputType": {
-                        "name": "TextLine"
-                    },
+                  "inputType": "TextLine",
                     "label": "My text line",
                   "maximizeUIInputWidth": false,
                     "name": "myTextLine",

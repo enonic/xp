@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
@@ -17,11 +19,16 @@ import static org.junit.Assert.*;
 
 public class ContentTypeTest
 {
+    private static final Form MEDIA_DEFAULT = Form.create().
+        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
+            label( "Media" ).
+            inputType( InputTypes.FILE_UPLOADER ).build() ).
+        build();
 
     @Test
     public void layout()
     {
-        ContentType contentType = ContentType.create().superType( ContentTypeName.structured() ).name( "mymodule:test" ).build();
+        ContentType contentType = ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).build();
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
             name( "personalia" ).
@@ -36,7 +43,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        ContentType contentType = ContentType.create().name( "mymodule:test" ).superType( ContentTypeName.structured() ).build();
+        ContentType contentType = ContentType.create().name( "myapplication:test" ).superType( ContentTypeName.structured() ).build();
 
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
@@ -61,7 +68,7 @@ public class ContentTypeTest
 
         ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "mymodule:test" ).
+            name( "myapplication:test" ).
             addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -95,7 +102,7 @@ public class ContentTypeTest
 
         ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
-            name( "mymodule:test" ).
+            name( "myapplication:test" ).
             addFormItem( formItemSet ).
             build();
 
@@ -109,10 +116,11 @@ public class ContentTypeTest
     @Test
     public void contentTypeBuilder()
     {
-        ContentType.Builder builder = ContentType.create().name( ContentTypeName.media() ).form(
-            ContentTypeForms.MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent( true ).setBuiltIn().contentDisplayNameScript(
-            "contentDisplayNameScript" ).metadata( null ).displayName( "displayName" ).description( "description" ).modifiedTime(
-            Instant.now() ).createdTime( Instant.now() ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder =
+            ContentType.create().name( ContentTypeName.media() ).form( MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent(
+                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
+                "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
+                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
         ContentType contentType2 = ContentType.create( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );
@@ -134,17 +142,16 @@ public class ContentTypeTest
     public void contentTypeFilter()
     {
         ContentTypeFilter.Builder builder = ContentTypeFilter.create().allowContentType( ContentTypeName.media() ).allowContentType(
-                ContentTypeName.from( "mymodule:my_type" ) ).allowContentTypes(
-                ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
-                ContentTypeName.audioMedia() ).denyContentTypes(
-                ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType( "mymodule:my_type1" ).denyContentType(
-                "mymodule:my_type2" );
+            ContentTypeName.from( "myapplication:my_type" ) ).allowContentTypes(
+            ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
+            ContentTypeName.audioMedia() ).denyContentTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType(
+            "myapplication:my_type1" ).denyContentType( "myapplication:my_type2" );
         ContentTypeFilter ctFilter = builder.build();
         ContentTypeFilter ctFilter1 = builder.build();
-        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "mymodule:my_type" ) ) );
-        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "mymodule:my_type1" ) ) );
+        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type" ) ) );
+        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type1" ) ) );
         assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.archiveMedia() ) );
-        assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.from( "mymodule:my_type2" ) ) );
+        assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type2" ) ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.audioMedia() ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.documentMedia() ) );
         assertTrue( ctFilter.equals( ( ctFilter1 ) ) );
@@ -211,6 +218,4 @@ public class ContentTypeTest
         assertNotEquals( params1.isInlineMixinsToFormItems(), params2.isInlineMixinsToFormItems() );
         assertNotEquals( params1, null );
     }
-
-
 }

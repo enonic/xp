@@ -16,9 +16,7 @@
                         "helpText": "Help text line 1",
                         "immutable": false,
                         "indexed": false,
-                        "inputType": {
-                            "name": "TextLine"
-                        },
+                        "inputType": "TextLine",
                         "label": "Line Text 1",
                       "maximizeUIInputWidth": false,
                         "name": "input_text_1",
@@ -50,9 +48,7 @@
                         "helpText": "Help text area",
                         "immutable": false,
                         "indexed": false,
-                        "inputType": {
-                            "name": "TextArea"
-                        },
+                        "inputType": "TextArea",
                         "label": "Text Area",
                       "maximizeUIInputWidth": false,
                         "name": "text_area_2",

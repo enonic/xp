@@ -24,10 +24,10 @@ public class XmlPageDescriptorParserTest
     public void setup()
     {
         this.parser = new XmlPageDescriptorParser();
-        this.parser.currentApplication( ApplicationKey.from( "mymodule" ) );
+        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = PageDescriptor.create();
-        this.builder.key( DescriptorKey.from( "mymodule:mypage" ) );
+        this.builder.key( DescriptorKey.from( "myapplication:mypage" ) );
         this.parser.builder( this.builder );
     }
 
@@ -51,7 +51,7 @@ public class XmlPageDescriptorParserTest
         throws Exception
     {
         final PageDescriptor result = this.builder.build();
-        assertEquals( "mymodule:mypage", result.getKey().toString() );
+        assertEquals( "myapplication:mypage", result.getKey().toString() );
         assertEquals( "mypage", result.getName() );
         assertEquals( "Landing page", result.getDisplayName() );
 

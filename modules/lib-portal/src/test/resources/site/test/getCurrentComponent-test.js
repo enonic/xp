@@ -6,7 +6,7 @@ var expectedJson = {
     "config": {
         "a": "1"
     },
-    "descriptor": "mymodule:mylayout",
+    "descriptor": "myapplication:mylayout",
     "name": "mylayout",
     "path": "main/-1",
     "regions": {
@@ -15,7 +15,7 @@ var expectedJson = {
                 "config": {
                     "a": "1"
                 },
-                "descriptor": "mymodule:mypart",
+                "descriptor": "myapplication:mypart",
                 "name": "mypart",
                 "path": "main/-1/bottom/0",
                 "type": "part"

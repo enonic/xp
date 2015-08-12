@@ -36,7 +36,7 @@ final class UriResolverImpl
     {
         final ResourceKey resolvedResourceKey = base.resolve( "../" + href );
         final Resource resolvedResource = resourceService.getResource( resolvedResourceKey );
-        return resolvedResource == null ? null : new StreamSource( resolvedResource.getUrl().toString() );
+        return resolvedResource.exists() ? new StreamSource( resolvedResource.getUrl().toString() ) : null;
     }
 
     public void setResourceService( final ResourceService resourceService )

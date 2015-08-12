@@ -33,7 +33,7 @@ public abstract class AbstractFunctionTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = AbstractFunctionTest.class.getResource( "/site" + resourceKey.getPath() );
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new Resource( resourceKey, resourceUrl );
         } );
 
         this.processor = service.newProcessor();
@@ -52,7 +52,7 @@ public abstract class AbstractFunctionTest
     {
         final String name = "/test/url/" + baseName;
 
-        this.processor.setView( ResourceKey.from( "mymodule:" + name + ".xsl" ) );
+        this.processor.setView( ResourceKey.from( "myapplication:" + name + ".xsl" ) );
         this.processor.setModel( null );
         final String actual = cleanupXml( this.processor.process() );
 

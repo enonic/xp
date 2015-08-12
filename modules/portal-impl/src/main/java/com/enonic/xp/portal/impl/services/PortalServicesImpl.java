@@ -5,8 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.image.ImageFilterBuilder;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
@@ -25,21 +24,19 @@ public final class PortalServicesImpl
 
     private ContentService contentService;
 
-    private ImageFilterBuilder imageFilterBuilder;
-
     private RendererFactory rendererFactory;
 
     private PageTemplateService pageTemplateService;
 
     private PageDescriptorService pageDescriptorService;
 
-    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
-
     private PortalUrlService portalUrlService;
 
     private SiteService siteService;
 
     private ResourceService resourceService;
+
+    private ImageService imageService;
 
     @Override
     public ApplicationService getApplicationService()
@@ -57,12 +54,6 @@ public final class PortalServicesImpl
     public ContentService getContentService()
     {
         return this.contentService;
-    }
-
-    @Override
-    public ImageFilterBuilder getImageFilterBuilder()
-    {
-        return this.imageFilterBuilder;
     }
 
     @Override
@@ -84,12 +75,6 @@ public final class PortalServicesImpl
     }
 
     @Override
-    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder()
-    {
-        return this.imageScaleFunctionBuilder;
-    }
-
-    @Override
     public PortalUrlService getPortalUrlService()
     {
         return this.portalUrlService;
@@ -105,6 +90,12 @@ public final class PortalServicesImpl
     public ResourceService getResourceService()
     {
         return this.resourceService;
+    }
+
+    @Override
+    public ImageService getImageService()
+    {
+        return imageService;
     }
 
     @Reference
@@ -126,12 +117,6 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
-    {
-        this.imageFilterBuilder = imageFilterBuilder;
-    }
-
-    @Reference
     public void setRendererFactory( final RendererFactory rendererFactory )
     {
         this.rendererFactory = rendererFactory;
@@ -150,12 +135,6 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
-    {
-        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
-    }
-
-    @Reference
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
         this.portalUrlService = portalUrlService;
@@ -168,7 +147,14 @@ public final class PortalServicesImpl
     }
 
     @Reference
-    public void setResourceService( final ResourceService resourceService) {
+    public void setResourceService( final ResourceService resourceService )
+    {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setImageService( final ImageService imageService )
+    {
+        this.imageService = imageService;
     }
 }

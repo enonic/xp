@@ -54,7 +54,6 @@
   <bundle level="30">${group}:core-event:${version}</bundle>
   <bundle level="30">${group}:core-schema:${version}</bundle>
   <bundle level="30">${group}:core-repo:${version}</bundle>
-  <bundle level="30">${group}:core-relationship:${version}</bundle>
   <bundle level="30">${group}:core-security:${version}</bundle>
   <bundle level="30">${group}:core-image:${version}</bundle>
   <bundle level="30">${group}:core-export:${version}</bundle>

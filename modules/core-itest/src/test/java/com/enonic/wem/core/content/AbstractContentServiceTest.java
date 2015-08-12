@@ -51,9 +51,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.ComboBoxConfig;
-import com.enonic.xp.form.inputtype.ContentSelectorConfig;
-import com.enonic.xp.form.inputtype.DateTimeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.Repository;
@@ -353,11 +350,9 @@ public class AbstractContentServiceTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypes.COMBO_BOX ).
-                inputTypeConfig( ComboBoxConfig.create().
-                    addOption( "label1", "value1" ).
-                    addOption( "label2", "value2" ).
-                    addOption( "label3", "value3" ).
-                    build() ).
+                inputTypeConfig( "option.value1", "label1" ).
+                inputTypeConfig( "option.value2", "label2" ).
+                inputTypeConfig( "option.value3", "label3" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
@@ -378,10 +373,8 @@ public class AbstractContentServiceTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypes.CONTENT_SELECTOR ).
-                inputTypeConfig( ContentSelectorConfig.create().
-                    addAllowedContentType( ContentTypeName.folder() ).
-                    relationshipType( RelationshipTypeName.REFERENCE ).
-                    build() ).
+                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
@@ -417,17 +410,13 @@ public class AbstractContentServiceTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( DateTimeConfig.create().
-                    withTimezone( false ).
-                    build() ).
+                inputTypeConfig( "withTimezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( DateTimeConfig.create().
-                    withTimezone( true ).
-                    build() ).
+                inputTypeConfig( "withTimezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

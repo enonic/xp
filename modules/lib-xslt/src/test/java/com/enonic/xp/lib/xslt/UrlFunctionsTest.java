@@ -20,7 +20,7 @@ public class UrlFunctionsTest
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setApplicationKey( ApplicationKey.from( "mymodule" ) );
+        portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         portalRequest.setBaseUri( "/portal" );
 
         final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();

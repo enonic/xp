@@ -8,7 +8,7 @@
           "helpText": null,
           "immutable": false,
           "indexed": false,
-          "inputType": {"name": "TextLine"},
+          "inputType": "TextLine",
           "label": "myTextLine",
           "maximizeUIInputWidth": false,
           "name": "myTextLine",
@@ -21,12 +21,14 @@
       },
       {
         "Input": {
-          "config": {},
+          "config": {
+            "withTimezone": false
+          },
           "customText": null,
           "helpText": null,
           "immutable": false,
           "indexed": false,
-          "inputType": {"name": "Date"},
+          "inputType": "Date",
           "label": "myDate",
           "maximizeUIInputWidth": false,
           "name": "myDate",

@@ -16,7 +16,7 @@ module api.form.json{
 
         validationRegexp:string;
 
-        inputType:InputTypeJson;
+        inputType: string;
 
         config:any;
 

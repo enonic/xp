@@ -1,0 +1,10 @@
+{
+  "branches": [
+    "branch1"
+  ],
+  "duration": "PT41.416S",
+  "endTime": "2015-08-06T13:15:57.291Z",
+  "numberReindexed": 0,
+  "repositoryId": "repoId",
+  "startTime": "2015-08-06T13:15:15.875Z"
+}

@@ -14,7 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.Resources;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.support.ResourceTestHelper;
 
 import static org.junit.Assert.*;
@@ -75,6 +75,7 @@ public class ResourceServiceImplTest
         resourceKey = ResourceKey.from( applicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
         assertNotNull( resource );
+        assertTrue( resource.exists() );
         assertEquals( resourceKey, resource.getKey() );
         assertEquals( resourceUrl, resource.getUrl() );
 
@@ -82,18 +83,20 @@ public class ResourceServiceImplTest
         ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
         resourceKey = ResourceKey.from( incorrectApplicationKey, RESOURCE_PATH );
         resource = resourceService.getResource( resourceKey );
-        assertNull( resource );
+        assertNotNull( resource );
+        assertFalse( resource.exists() );
 
         //Retrieves a resource with an incorrect resource path
         resourceKey = ResourceKey.from( applicationKey, "c/resource.txt" );
         resource = resourceService.getResource( resourceKey );
-        assertNull( resource );
+        assertNotNull( resource );
+        assertFalse( resource.exists() );
     }
 
     @Test
-    public void find_resources()
+    public void find_resource_keys()
     {
-        Resources resources;
+        ResourceKeys resourceKeys;
 
         Mockito.when( bundle.findEntries( "/", RESOURCE_FILE_NAME, true ) ).thenReturn(
             Collections.enumeration( Collections.singleton( resourceUrl ) ) );
@@ -101,20 +104,20 @@ public class ResourceServiceImplTest
             Collections.enumeration( Arrays.asList( resourceUrl, resource2Url ) ) );
 
         //Finds resources for a specific path
-        resources = resourceService.findResources( applicationKey, "/", RESOURCE_FILE_NAME, true );
-        assertEquals( 1, resources.getSize() );
+        resourceKeys = resourceService.findResourceKeys( applicationKey, "/", RESOURCE_FILE_NAME, true );
+        assertEquals( 1, resourceKeys.getSize() );
 
         //Finds all text resources in a specific folder
-        resources = resourceService.findResources( applicationKey, "/a", "*", true );
-        assertEquals( 2, resources.getSize() );
+        resourceKeys = resourceService.findResourceKeys( applicationKey, "/a", "*", true );
+        assertEquals( 2, resourceKeys.getSize() );
 
         //Finds all resources in an non existing folder
-        resources = resourceService.findResources( applicationKey, "/b", "*", true );
-        assertEquals( 0, resources.getSize() );
+        resourceKeys = resourceService.findResourceKeys( applicationKey, "/b", "*", true );
+        assertEquals( 0, resourceKeys.getSize() );
 
         //Finds all resources for an incorrect application key
         ApplicationKey incorrectApplicationKey = ApplicationKey.from( "otherapplication" );
-        resources = resourceService.findResources( incorrectApplicationKey, "/", RESOURCE_FILE_NAME, true );
-        assertEquals( 0, resources.getSize() );
+        resourceKeys = resourceService.findResourceKeys( incorrectApplicationKey, "/", RESOURCE_FILE_NAME, true );
+        assertEquals( 0, resourceKeys.getSize() );
     }
 }

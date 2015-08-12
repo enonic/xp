@@ -1,0 +1,7 @@
+{
+  "relationshipType": "system:reference",
+  "allowedContentTypes": [
+    "media:video",
+    "media:image"
+  ]
+}

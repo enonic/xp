@@ -14,7 +14,7 @@ public class NewBeanScriptTest
     @Test
     public void testEmpty()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule:/bean/simple-test.js" );
+        final ResourceKey script = ResourceKey.from( "myapplication:/bean/simple-test.js" );
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );

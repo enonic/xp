@@ -95,16 +95,16 @@ public final class MixinServiceImpl
     @Override
     public Mixins getByApplication( final ApplicationKey applicationKey )
     {
-        return this.map.computeIfAbsent( applicationKey, this::loadByModule );
+        return this.map.computeIfAbsent( applicationKey, this::loadByApplication );
     }
 
-    private Mixins loadByModule( final ApplicationKey applicationKey )
+    private Mixins loadByApplication( final ApplicationKey applicationKey )
     {
         Mixins mixins = null;
 
         if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( applicationKey ) )
         {
-            mixins = new BuiltinMixinsLoader().loadByModule( applicationKey );
+            mixins = new BuiltinMixinsLoader().loadByApplication( applicationKey );
         }
         else
         {

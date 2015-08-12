@@ -5,24 +5,24 @@ module api.application {
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<api.application.Application>();
             builder.
                 setMaximumOccurrences(maximumOccurrences || 0).
-                setComboBoxName("moduleSelector").
+                setComboBoxName("applicationSelector").
                 setLoader(new api.application.ApplicationLoader()).
-                setSelectedOptionsView(new ModuleSelectedOptionsView()).
+                setSelectedOptionsView(new ApplicationSelectedOptionsView()).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
         }
     }
 
-    export class ModuleSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<api.application.Application> {
+    export class ApplicationSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<api.application.Application> {
 
         createSelectedOption(option: api.ui.selector.Option<api.application.Application>): api.ui.selector.combobox.SelectedOption<api.application.Application> {
-            var optionView = new ModuleSelectedOptionView(option);
+            var optionView = new ApplicationSelectedOptionView(option);
             return new api.ui.selector.combobox.SelectedOption<api.application.Application>(optionView, this.count());
         }
     }
 
-    export class ModuleSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.application.Application> {
+    export class ApplicationSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.application.Application> {
 
 
         constructor(option: api.ui.selector.Option<api.application.Application>) {

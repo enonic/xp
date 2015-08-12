@@ -73,7 +73,7 @@ public abstract class AbstractControllerTest
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 AbstractControllerTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new Resource( resourceKey, resourceUrl );
         } );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();

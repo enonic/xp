@@ -2,10 +2,10 @@ module api.content.page {
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
-    import ModuleCaches = api.application.ApplicationCaches;
+    import ApplicationCaches = api.application.ApplicationCaches;
     import ApplicationBasedCache = api.application.ApplicationBasedCache;
 
-    export class PageDescriptorCache extends ApplicationBasedCache<PageDescriptorModuleCache,PageDescriptor,DescriptorKey> {
+    export class PageDescriptorCache extends ApplicationBasedCache<PageDescriptorApplicationCache,PageDescriptor,DescriptorKey> {
 
         private static instance: PageDescriptorCache;
 
@@ -27,7 +27,7 @@ module api.content.page {
             super();
         }
 
-        loadByModule(applicationKey: ApplicationKey) {
+        loadByApplication(applicationKey: ApplicationKey) {
             new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -43,12 +43,12 @@ module api.content.page {
             return super.getByKey(key, key.getApplicationKey());
         }
 
-        createApplicationCache(): PageDescriptorModuleCache {
-            return new PageDescriptorModuleCache();
+        createApplicationCache(): PageDescriptorApplicationCache {
+            return new PageDescriptorApplicationCache();
         }
     }
 
-    export class PageDescriptorModuleCache extends api.cache.Cache<PageDescriptor, DescriptorKey> {
+    export class PageDescriptorApplicationCache extends api.cache.Cache<PageDescriptor, DescriptorKey> {
 
         copy(object: PageDescriptor): PageDescriptor {
             return object.clone();

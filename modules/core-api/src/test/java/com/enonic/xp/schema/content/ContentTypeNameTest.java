@@ -17,25 +17,25 @@ public class ContentTypeNameTest
             @Override
             public Object getObjectX()
             {
-                return ContentTypeName.from( "mymodule:mycontenttype" );
+                return ContentTypeName.from( "myapplication:mycontenttype" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{ContentTypeName.from( "mymodule:myothercontenttype" )};
+                return new Object[]{ContentTypeName.from( "myapplication:myothercontenttype" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return ContentTypeName.from( "mymodule:mycontenttype" );
+                return ContentTypeName.from( "myapplication:mycontenttype" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return ContentTypeName.from( "mymodule:mycontenttype" );
+                return ContentTypeName.from( "myapplication:mycontenttype" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

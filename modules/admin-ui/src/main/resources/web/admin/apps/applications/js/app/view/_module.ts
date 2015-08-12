@@ -1,1 +1,1 @@
-///<reference path='ModuleItemStatisticsPanel.ts' />
+///<reference path='ApplicationItemStatisticsPanel.ts' />
