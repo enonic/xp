@@ -2,10 +2,12 @@ package com.enonic.xp.portal.impl.resource.image;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,7 +18,10 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.image.BuilderContext;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
+
+import static com.google.common.primitives.Ints.checkedCast;
 
 public final class ImageHandleResource
     extends BaseResource
@@ -49,7 +54,25 @@ public final class ImageHandleResource
         final BufferedImage image = applyFilters( contentImage, format );
 
         final byte[] imageData = serializeImage( image, format );
-        return Response.ok().type( this.mimeType ).entity( imageData ).build();
+        return doHandle( imageData );
+    }
+
+    private Response doHandle( byte[] imageData )
+        throws Exception
+    {
+        final Response.ResponseBuilder response = Response.ok().type( this.mimeType ).entity( imageData );
+        setCacheHeaders( response );
+        return response.build();
+    }
+
+    private void setCacheHeaders( final Response.ResponseBuilder response )
+    {
+        if ( this.mode == RenderMode.LIVE )
+        {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setMaxAge( checkedCast( TimeUnit.MINUTES.toSeconds( 10 ) ) );
+            response.cacheControl( cacheControl );
+        }
     }
 
     private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
