@@ -7,7 +7,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.impl.resource.underscore.UnderscoreResource;
 import com.enonic.xp.schema.content.ContentTypeForms;
@@ -55,18 +57,21 @@ public final class PageResource
         else if ( !resource.content.hasPage() )
         {
             resource.pageTemplate = getDefaultPageTemplate( resource.content.getType(), resource.site );
-            if ( resource.pageTemplate == null )
-            {
-                throw notFound( "No template found for content" );
-            }
         }
-        else
+        else // hasPage
         {
             final Page page = getPage( resource.content );
-            resource.pageTemplate = getPageTemplate( page );
+            if ( page.hasTemplate() )
+            {
+                resource.pageTemplate = getPageTemplate( page );
+            }
+            else if ( page.hasController() )
+            {
+                resource.pageDescriptor = getPageDescriptor( page.getController() );
+            }
         }
 
-        if ( resource.pageTemplate.getController() != null )
+        if ( resource.pageTemplate != null && resource.pageTemplate.getController() != null )
         {
             resource.pageDescriptor = getPageDescriptor( resource.pageTemplate );
         }
@@ -84,6 +89,17 @@ public final class PageResource
         resource.content = effectiveContent;
         resource.renderer = this.services.getRendererFactory().getRenderer( effectiveContent );
         return resource;
+    }
+
+    private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )
+    {
+        final PageDescriptor pageDescriptor = this.services.getPageDescriptorService().getByKey( descriptorKey );
+        if ( pageDescriptor == null )
+        {
+            throw notFound( "Page descriptor [%s] not found", descriptorKey.getName() );
+        }
+
+        return pageDescriptor;
     }
 
     private ShortcutControllerResource shortcut( final Content content )

@@ -39,6 +39,10 @@ final class EffectivePageResolver
                     build();
             }
         }
+        else if ( template == null )
+        {
+            return content.getPage();
+        }
         else
         {
             final Page contentPage = content.getPage();

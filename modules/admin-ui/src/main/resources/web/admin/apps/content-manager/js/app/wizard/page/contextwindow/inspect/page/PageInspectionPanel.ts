@@ -57,9 +57,9 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
-            if(!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen
+            if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen
                 this.pageControllerSelector.setModel(liveEditModel);
-                if(this.pageModel.isCustomized()) {
+                if (this.pageModel.isCustomized()) {
                     this.addClass("customized");
                     this.pageControllerForm.show();
                 }
@@ -152,7 +152,7 @@ module app.wizard.page.contextwindow.inspect.page {
             }
 
             this.configForm =
-            new FormView(context ? context : new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
+                new FormView(context ? context : new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
             this.pageInspectionPanel.appendChild(this.configForm);
             this.pageModel.setIgnorePropertyChanges(true);
             this.configForm.layout().catch((reason: any) => {
@@ -214,7 +214,7 @@ module app.wizard.page.contextwindow.inspect.page {
                 this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
             }
             else {
-                throw new Error("Unsupported PageMode: " + pageMode);
+                throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
             }
         }
 
@@ -239,8 +239,11 @@ module app.wizard.page.contextwindow.inspect.page {
             else if (pageMode == PageMode.AUTOMATIC) {
                 this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
             }
+            else if (pageMode == PageMode.FORCED_CONTROLLER) {
+                this.showPageConfig(pageModel, liveEditModel.getFormContext());
+            }
             else {
-                throw new Error("Unsupported PageMode: " + pageMode);
+                throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
             }
 
             pageModel.onPropertyChanged(this.propertyChangedListener);
