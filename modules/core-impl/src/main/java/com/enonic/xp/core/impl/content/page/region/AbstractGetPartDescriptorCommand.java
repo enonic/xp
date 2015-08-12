@@ -11,8 +11,8 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.Resources;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
@@ -34,7 +34,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
-        if ( resource != null )
+        if ( resource.exists() )
         {
 
             final String descriptorXml = resource.readString();
@@ -90,11 +90,11 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private void readDescriptor( final Application application, final PartDescriptors.Builder partDescriptors )
     {
-        final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );
+        final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
 
-        for ( final Resource resource : resources )
+        for ( final ResourceKey resourceKey : resourceKeys )
         {
-            final String descriptorName = resource.getKey().getName();
+            final String descriptorName = resourceKey.getName();
             final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
             final PartDescriptor partDescriptor = getDescriptor( key );
             if ( partDescriptor != null )
