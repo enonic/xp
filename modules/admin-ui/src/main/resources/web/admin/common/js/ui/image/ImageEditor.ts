@@ -74,7 +74,7 @@ module api.ui.image {
         private dragMouseDownListener;
         private knobMouseDownListener;
 
-        private buttonsContainer: DivEl;
+        private stickyToolbar: DivEl;
 
         private modeSelector: TabMenu;
 
@@ -98,7 +98,6 @@ module api.ui.image {
 
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
-            this.buttonsContainer = this.createButtonsContainer();
 
             this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => {
@@ -156,11 +155,16 @@ module api.ui.image {
 
             this.canvas.appendChildren(this.image, this.clip);
 
-            this.frame.appendChildren(this.buttonsContainer, this.canvas);
+            this.frame.appendChild(this.canvas);
 
-            this.appendChildren(this.frame);
+            this.stickyToolbar = this.createStickyToolbar();
+            this.appendChildren(this.stickyToolbar, this.frame);
+
             // sticky toolbar needs to have access to parent elements
-            this.onAdded((event: api.dom.ElementAddedEvent) => this.prependChild(this.createStickyToolbar()));
+            this.onAdded((event: api.dom.ElementAddedEvent) => {
+                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll",
+                    (event) => this.updateStickyToolbar(this.stickyToolbar));
+            });
 
             if (src) {
                 this.setSrc(src);
@@ -171,11 +175,11 @@ module api.ui.image {
         }
 
         isElementInsideButtonsContainer(el: HTMLElement): boolean {
-            return this.buttonsContainer.getHTMLElement().contains(el);
+            return this.stickyToolbar.getHTMLElement().contains(el);
         }
 
         getLastButtonInContainer(): Element {
-            return (<api.dom.Element>this.buttonsContainer).getLastChild();
+            return this.uploadButton;
         }
 
         remove(): ImageEditor {
@@ -373,6 +377,8 @@ module api.ui.image {
         private createStickyToolbar(): DivEl {
             var toolbar = new DivEl('sticky-toolbar');
 
+            var editContainer = new DivEl('edit-container');
+
             this.modeSelector = new TabMenu();
             this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Mask').build());
             this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Autofocus').build());
@@ -420,11 +426,41 @@ module api.ui.image {
             this.onFocusAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
             this.onCropAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
 
-            var rightContainer = new DivEl('right-container');
-            rightContainer.appendChildren(resetButton, applyButton, cancelButton);
-            toolbar.appendChildren(this.modeSelector, rightContainer);
+            var editRightContainer = new DivEl('right-container');
+            editRightContainer.appendChildren(resetButton, applyButton, cancelButton);
 
-            wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll", (event) => this.updateStickyToolbar(toolbar));
+            editContainer.appendChildren(this.modeSelector, editRightContainer);
+
+            var standbyContainer = new DivEl('standby-container');
+
+            this.editButton = new Button('Edit');
+            this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.enableEditMode();
+            });
+
+            this.resetButton = new Button('Reset');
+            this.resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.resetCropPosition();
+                this.resetZoomPosition();
+                this.resetFocusPosition();
+            });
+
+            this.onCropAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.focusData.auto));
+            this.onFocusAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.cropData.auto));
+
+            this.uploadButton = new Button();
+            this.uploadButton.addClass('button-upload');
+
+            var standbyRightContainer = new DivEl('right-container');
+            standbyRightContainer.appendChildren(this.resetButton, this.uploadButton);
+
+            standbyContainer.appendChildren(this.editButton, standbyRightContainer);
+
+            toolbar.appendChildren(standbyContainer, editContainer);
 
             return toolbar;
         }
@@ -499,36 +535,6 @@ module api.ui.image {
 
         isEditMode(): boolean {
             return this.hasClass('edit-mode');
-        }
-
-        private createButtonsContainer(): DivEl {
-            var toolbar = new DivEl('buttons-container');
-
-            this.editButton = new Button('Edit');
-            this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
-                this.enableEditMode();
-            });
-
-            this.resetButton = new Button('Reset');
-            this.resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
-                this.resetCropPosition();
-                this.resetZoomPosition();
-                this.resetFocusPosition();
-            });
-
-            this.onCropAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.focusData.auto));
-            this.onFocusAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.cropData.auto));
-
-            this.uploadButton = new Button();
-            this.uploadButton.addClass('button-upload');
-
-            toolbar.appendChildren(this.editButton, this.resetButton, this.uploadButton);
-
-            return toolbar;
         }
 
 
