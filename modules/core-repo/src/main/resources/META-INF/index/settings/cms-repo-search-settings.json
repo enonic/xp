@@ -15,7 +15,7 @@
       "ngram": {
         "type": "nGram",
         "min_gram": "2",
-        "max_gram": "7",
+        "max_gram": "12",
         "token_chars": [
           "letter",
           "digit"
