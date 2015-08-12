@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
 
@@ -133,41 +132,6 @@ public final class Input
     public InputTypeConfig getInputTypeConfig()
     {
         return inputTypeConfig;
-    }
-
-    private void checkValidityAccordingToInputType( final Property property )
-    {
-        if ( type != null )
-        {
-            type.checkTypeValidity( property );
-        }
-    }
-
-    private void checkValidityAccordingToInputTypeConfig( final Property property )
-    {
-        if ( inputTypeConfig != null )
-        {
-            type.checkValidity( inputTypeConfig, property );
-        }
-    }
-
-    public void checkValidity( final Property property )
-        throws InvalidDataException
-    {
-        try
-        {
-            if ( property == null )
-            {
-                return;
-            }
-
-            checkValidityAccordingToInputType( property );
-            checkValidityAccordingToInputTypeConfig( property );
-        }
-        catch ( Exception e )
-        {
-            throw new InvalidDataException( property, e );
-        }
     }
 
     @Override

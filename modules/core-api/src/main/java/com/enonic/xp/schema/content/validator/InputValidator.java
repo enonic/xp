@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
+import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.schema.content.ContentType;
 
 
@@ -25,6 +26,25 @@ public final class InputValidator
         {
             final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree );
             inputValidationVisitor.traverse( form );
+        }
+    }
+
+    private static void checkValidity( final Input input, final Property property )
+        throws InvalidDataException
+    {
+        try
+        {
+            if ( property == null )
+            {
+                return;
+            }
+
+            input.getInputType().checkTypeValidity( property );
+            input.getInputType().checkValidity( input.getInputTypeConfig(), property );
+        }
+        catch ( final Exception e )
+        {
+            throw new InvalidDataException( property, e );
         }
     }
 
@@ -73,9 +93,8 @@ public final class InputValidator
 
             if ( property != null )
             {
-                input.checkValidity( property );
+                checkValidity( input, property );
             }
         }
     }
 }
-
