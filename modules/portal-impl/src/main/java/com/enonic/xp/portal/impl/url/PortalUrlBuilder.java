@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.web.servlet.OutOfScopeException;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -141,6 +142,10 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         if ( e instanceof NotFoundException )
         {
             return buildErrorUrl( 404, e.getMessage() );
+        }
+        else if ( e instanceof OutOfScopeException )
+        {
+            return buildErrorUrl( 400, e.getMessage() );
         }
         else
         {

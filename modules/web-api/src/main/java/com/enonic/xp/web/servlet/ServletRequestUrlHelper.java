@@ -186,10 +186,10 @@ public final class ServletRequestUrlHelper
                 newUriPrefix( normalizePath( vhost.getSource() ) ).
                 build();
         }
-
-        return resultBuilder.
-            rewrittenUri( normalizePath( uri ) ).
-            build();
+        else
+        {
+            throw new OutOfScopeException( "URI out of scope" );
+        }
     }
 
     private static String normalizePath( final String value )
