@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.resource.image;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -69,8 +71,14 @@ public final class ImageHandleResource
     }
 
     private String getFormat( final String fileName )
+        throws IOException
     {
-        return StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
+        String format = StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
+        if ( Strings.isNullOrEmpty( format ) )
+        {
+            format = this.services.getImageService().getFormatByMimeType( this.mimeType );
+        }
+        return format;
     }
 
     private int getImageQuality()
