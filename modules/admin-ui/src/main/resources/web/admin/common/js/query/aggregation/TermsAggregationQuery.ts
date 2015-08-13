@@ -44,6 +44,15 @@ module api.query.aggregation {
         public getSize(): number {
             return this.size;
         }
+
+        public setOrderByType(type: string) {
+            this.orderByType = type;
+        }
+
+        public setOrderByDirection(direction: string) {
+            this.orderByDirection = direction;
+        }
+
     }
 
     export class TermsAggregationOrderDirection {

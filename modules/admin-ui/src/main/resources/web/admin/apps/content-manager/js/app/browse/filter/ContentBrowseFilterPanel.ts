@@ -251,13 +251,15 @@ module app.browse.filter {
 
         private appendContentTypesAggregationQuery(contentQuery) {
             contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
-                QueryField.CONTENT_TYPE, 15));
+                QueryField.CONTENT_TYPE, 30));
         }
 
         private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {
             var termsAggregation = new TermsAggregationQuery(name);
             termsAggregation.setFieldName(fieldName);
             termsAggregation.setSize(size);
+            termsAggregation.setOrderByType(api.query.aggregation.TermsAggregationOrderType.DOC_COUNT);
+            termsAggregation.setOrderByDirection(api.query.aggregation.TermsAggregationOrderDirection.DESC);
             return termsAggregation;
         }
 
@@ -275,14 +277,16 @@ module app.browse.filter {
         private toggleAggregationsVisibility(aggregations: api.aggregation.Aggregation[]) {
             aggregations.forEach((aggregation: api.aggregation.BucketAggregation) => {
                 var aggregationIsEmpty = !aggregation.getBuckets().some((bucket: api.aggregation.Bucket) => {
-                    if(bucket.docCount > 0) {
+                    if (bucket.docCount > 0) {
                         return true;
                     }
                 })
 
-                var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME ? this.contentTypeAggregation : this.lastModifiedAggregation;
+                var aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
+                    ? this.contentTypeAggregation
+                    : this.lastModifiedAggregation;
 
-                if(aggregationIsEmpty) {
+                if (aggregationIsEmpty) {
                     aggregationGroupView.hide();
                 }
                 else {
