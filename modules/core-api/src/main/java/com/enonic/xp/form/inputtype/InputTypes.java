@@ -32,7 +32,6 @@ public final class InputTypes
         add( PageControllerType.INSTANCE ).
         add( ContentTypeFilterType.INSTANCE ).
         add( SiteConfiguratorType.INSTANCE ).
-        add( TinyMCEType.INSTANCE ).
         build();
 
     private final ImmutableMap<String, InputType> map;

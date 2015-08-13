@@ -54,7 +54,6 @@ public class InputValidatorTest
         data.addString( "color", "#12345" );
         data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", true );
-        data.addString( "tinyMce", "<stuff>staff</stuff>" );
         data.addString( "phone", "+4797773223" );
         data.addString( "tag", "myTag" );
         data.addReference( "contentSelector", new Reference( new NodeId() ) );
@@ -68,7 +67,7 @@ public class InputValidatorTest
         data.addLocalDate( "date", LocalDate.parse( "2015-01-15" ) );
         data.addLocalTime( "time", LocalTime.parse( "10:00:32.123" ) );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "-45,34" ) );
-        data.addString( "htmlArea", "<h1>test</h1>" );
+        data.addString( "htmlArea", "<stuff>staff</stuff>" );
 
         //Validates the correct data
         inputValidator.validate( data );
@@ -109,11 +108,6 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addDouble( "tinyMce", 1.0d );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addDouble( "tag", 1.0d );
         validateIncorrectInputType( invalidData );
 
@@ -144,7 +138,7 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addXml( "htmlArea", "<p>paragraph</p>" );
+        invalidData.addDouble( "htmlArea", 1.0d );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
@@ -235,11 +229,6 @@ public class InputValidatorTest
                 name( "checkbox" ).
                 label( "Checkbox" ).
                 inputType( InputTypeName.CHECKBOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tinyMce" ).
-                label( "Tinymce" ).
-                inputType( InputTypeName.TINY_MCE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).

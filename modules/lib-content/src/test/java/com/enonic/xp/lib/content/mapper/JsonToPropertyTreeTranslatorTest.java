@@ -142,11 +142,6 @@ public class JsonToPropertyTreeTranslatorTest
                 inputType( InputTypeName.CHECKBOX ).
                 build() ).
             addFormItem( Input.create().
-                name( "tinyMce" ).
-                label( "tinyMce" ).
-                inputType( InputTypeName.TINY_MCE ).
-                build() ).
-            addFormItem( Input.create().
                 name( "tag" ).
                 label( "Tag" ).
                 inputType( InputTypeName.TAG ).

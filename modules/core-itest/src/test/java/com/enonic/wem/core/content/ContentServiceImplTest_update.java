@@ -217,11 +217,6 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addDouble( "tinyMce", 1.0d );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addDouble( "tag", 1.0d );
         update_incorrect_content_data( content, invalidData );
 

@@ -271,7 +271,6 @@ public class AbstractContentServiceTest
         data.addString( "color", "FFFFFF" );
         data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", false );
-        data.addString( "tinyMce", "<p>paragraph</p>" );
         data.addString( "phone", "012345678" );
         data.addString( "tag", "tag" );
         data.addReference( "contentSelector", reference );
@@ -340,11 +339,6 @@ public class AbstractContentServiceTest
                 name( "checkbox" ).
                 label( "Checkbox" ).
                 inputType( InputTypeName.CHECKBOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tinyMce" ).
-                label( "Tinymce" ).
-                inputType( InputTypeName.TINY_MCE ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
