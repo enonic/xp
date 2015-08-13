@@ -145,7 +145,7 @@ module app.browse.filter {
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), false);
-                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits(), true);
                     this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
 
                     aggregationGroupView.forEach((aggregationGroupView: AggregationGroupView) => {
@@ -164,7 +164,7 @@ module app.browse.filter {
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
-                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
+                    this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits(), true);
                     this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
 
                     if (!suppressEvent) { // then fire usual reset event with content grid reloading
