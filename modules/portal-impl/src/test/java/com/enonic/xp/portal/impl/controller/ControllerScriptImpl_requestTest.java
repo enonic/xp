@@ -27,11 +27,12 @@ public class ControllerScriptImpl_requestTest
         throws Exception
     {
         this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setScheme( "http" );
+        this.portalRequest.setHost( "enonic.com" );
+        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setBranch( Branch.from( "master" ) );
         this.portalRequest.setMode( RenderMode.EDIT );
-        this.portalRequest.setUri( "http://enonic.com/my/page" );
-        this.portalRequest.setBaseUrl( "http://enonic.com/" );
-        this.portalRequest.setServerUrl( "http://enonic.com" );
         this.portalRequest.getParams().put( "debug", "true" );
         this.portalRequest.getHeaders().put( "Language", "en" );
         this.portalRequest.getHeaders().put( "Cookies", "mycookie=123; other=abc;" );

@@ -17,10 +17,11 @@ public class PortalRequestMapperTest
     public void setup()
     {
         this.portalRequest = new PortalRequest();
-        this.portalRequest.setUri( "/portal/live/master/a/b" );
-        this.portalRequest.setBaseUrl( "http://localhost.com/portal/live/master" );
-        this.portalRequest.setServerUrl( "http://localhost.com" );
         this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setScheme( "http" );
+        this.portalRequest.setHost( "localhost" );
+        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPath( "/portal/live/master/a/b" );
         this.portalRequest.getParams().put( "param1", "value1" );
         this.portalRequest.getParams().put( "param2", "value2" );
         this.portalRequest.getParams().put( "param3", "value3-A" );

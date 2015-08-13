@@ -23,10 +23,11 @@ public final class PortalRequestMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "uri", this.request.getUri() );
-        gen.value( "baseUrl", this.request.getBaseUrl() );
-        gen.value( "serverUrl", this.request.getServerUrl() );
         gen.value( "method", this.request.getMethod() );
+        gen.value( "scheme", this.request.getScheme() );
+        gen.value( "host", this.request.getHost() );
+        gen.value( "port", this.request.getPort() );
+        gen.value( "path", this.request.getPath() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         if ( this.request.getBranch() != null )
         {
