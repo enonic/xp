@@ -29,16 +29,15 @@ module api.content.form.inputtype.relationship {
             this.readConfig(config.inputConfig);
         }
 
-        private readConfig(inputConfig: { [name: string]: string; }): void {
-            var relationshipType = inputConfig['relationshipType'];
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+            var relationshipType = inputConfig['relationshipType'] && inputConfig['relationshipType'][0];
             if (relationshipType) {
                 this.relationshipTypeName = new RelationshipTypeName(relationshipType);
             } else {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
 
-            var allowedContentTypesStr = inputConfig['allowedContentTypes'] || '';
-            this.allowedContentTypes = allowedContentTypesStr.split(',').filter((ct)=> !!ct);
+            this.allowedContentTypes = inputConfig['allowedContentType'] || [];
         }
 
         availableSizeChanged() {

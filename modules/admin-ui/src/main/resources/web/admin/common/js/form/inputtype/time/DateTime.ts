@@ -20,8 +20,8 @@ module api.content.form.inputtype.time {
             this.readConfig(config.inputConfig);
         }
 
-        private readConfig(inputConfig: { [name: string]: string; }): void {
-            if (inputConfig["timezone"] === "true") {
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+            if ((inputConfig["timezone"] && inputConfig['timezone'][0]) === "true") {
                 this.withTimezone = true;
                 this.valueType = ValueTypes.DATE_TIME;
             }

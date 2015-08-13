@@ -23,16 +23,14 @@ module api.form.inputtype.combobox {
             this.readConfig(context.inputConfig);
         }
 
-        private readConfig(inputConfig: { [name: string]: string; }): void {
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
             var options: ComboBoxOption[] = [];
 
-            for (var name in inputConfig) {
-                if (inputConfig.hasOwnProperty(name)) {
-                    var label = inputConfig[name];
-                    var value = name.substring(name.indexOf('.') + 1);
-                    console.log(label, value);
-                    options.push({label: label, value: value});
-                }
+            var labels = inputConfig['option.label'] || [];
+            var values = inputConfig['option.value'] || [];
+            var l = Math.min(labels.length, values.length);
+            for (var i = 0; i < l; i++) {
+                options.push({label: labels[i], value: values[i]});
             }
             this.comboBoxOptions = options;
         }

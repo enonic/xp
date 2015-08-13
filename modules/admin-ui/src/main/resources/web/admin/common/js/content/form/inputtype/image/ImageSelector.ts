@@ -85,8 +85,8 @@ module api.content.form.inputtype.image {
 
         }
 
-        private readConfig(inputConfig: { [name: string]: string; }): void {
-            var relationshipType = inputConfig['relationshipType'];
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+            var relationshipType = inputConfig['relationshipType'] && inputConfig['relationshipType'][0];
             if (relationshipType) {
                 this.relationshipTypeName = new RelationshipTypeName(relationshipType);
             } else {
