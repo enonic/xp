@@ -9,7 +9,7 @@ import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 final class DateTimeType
-    extends InputType
+    extends InputTypeBase
 {
     public final static DateTimeType INSTANCE = new DateTimeType();
 
@@ -18,19 +18,13 @@ final class DateTimeType
         super( InputTypeName.DATE_TIME );
     }
 
-    @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
     private boolean useTimeZone( final InputTypeConfig config )
     {
         return config.getValue( "timezone", boolean.class, false );
     }
 
     @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         if ( useTimeZone( config ) )
         {
@@ -43,7 +37,7 @@ final class DateTimeType
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         if ( ( ValueTypes.DATE_TIME != property.getType() ) && ( ValueTypes.LOCAL_DATE_TIME != property.getType() ) )
         {

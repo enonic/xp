@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 
 @Beta
 final class CheckboxType
-    extends InputType
+    extends InputTypeBase
 {
     public final static CheckboxType INSTANCE = new CheckboxType();
 
@@ -18,13 +18,13 @@ final class CheckboxType
     }
 
     @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.BOOLEAN );
     }

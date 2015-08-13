@@ -32,29 +32,23 @@ public class GeoPointTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "1,2", config );
+        final Value value = this.type.createValue( "1,2", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.GEO_POINT, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( geoPointProperty( "1,2" ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, geoPointProperty( "1,2" ) );
+        this.type.validate( geoPointProperty( "1,2" ), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 }

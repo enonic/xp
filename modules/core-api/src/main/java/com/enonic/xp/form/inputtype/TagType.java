@@ -5,7 +5,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class TagType
-    extends InputType
+    extends InputTypeBase
 {
     public final static TagType INSTANCE = new TagType();
 
@@ -15,19 +15,13 @@ final class TagType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.STRING );
     }

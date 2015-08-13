@@ -5,7 +5,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class TimeType
-    extends InputType
+    extends InputTypeBase
 {
     public final static TimeType INSTANCE = new TimeType();
 
@@ -15,21 +15,14 @@ final class TimeType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.LOCAL_TIME );
     }
 }
-

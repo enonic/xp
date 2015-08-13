@@ -101,7 +101,7 @@ public class JsonToPropertyTreeTranslator
         else
         {
             final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
-            final Value mappedPropertyValue = type.createPropertyValue( resolveStringValue( value ), input.getInputTypeConfig() );
+            final Value mappedPropertyValue = type.createValue( resolveStringValue( value ), input.getInputTypeConfig() );
 
             parent.addProperty( key, mappedPropertyValue );
         }

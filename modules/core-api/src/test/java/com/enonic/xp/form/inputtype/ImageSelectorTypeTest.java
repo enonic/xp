@@ -32,30 +32,24 @@ public class ImageSelectorTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "name", config );
+        final Value value = this.type.createValue( "name", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.REFERENCE, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( referenceProperty( "name" ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.checkValidity( config, referenceProperty( "value" ) );
+        this.type.validate( referenceProperty( "value" ), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 
     private InputTypeConfig newEmptyConfig()

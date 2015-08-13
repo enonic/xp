@@ -6,7 +6,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.util.Reference;
 
 final class FileUploaderType
-    extends InputType
+    extends InputTypeBase
 {
     public final static FileUploaderType INSTANCE = new FileUploaderType();
 
@@ -16,18 +16,13 @@ final class FileUploaderType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newReference( Reference.from( value ) );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
     }
 }

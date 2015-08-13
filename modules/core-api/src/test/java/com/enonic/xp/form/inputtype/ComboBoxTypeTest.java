@@ -33,37 +33,31 @@ public class ComboBoxTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "one", config );
+        final Value value = this.type.createValue( "one", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( booleanProperty( true ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = newValidConfig();
-        this.type.checkValidity( config, stringProperty( "one" ) );
+        this.type.validate( stringProperty( "one" ), config );
     }
 
     @Test(expected = InvalidValueException.class)
-    public void testCheckValidity_invalidValue()
+    public void testValidate_invalidValue()
     {
         final InputTypeConfig config = newValidConfig();
-        this.type.checkValidity( config, stringProperty( "unknown" ) );
+        this.type.validate( stringProperty( "unknown" ), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = newValidConfig();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 
     private InputTypeConfig newValidConfig()

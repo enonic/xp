@@ -4,7 +4,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 
 final class SiteConfiguratorType
-    extends InputType
+    extends InputTypeBase
 {
     public final static SiteConfiguratorType INSTANCE = new SiteConfiguratorType();
 
@@ -14,19 +14,13 @@ final class SiteConfiguratorType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
     }
 }

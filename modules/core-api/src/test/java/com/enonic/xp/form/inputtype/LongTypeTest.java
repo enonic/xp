@@ -32,29 +32,23 @@ public class LongTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "13", config );
+        final Value value = this.type.createValue( "13", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.LONG, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( longProperty( 13 ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, longProperty( 13 ) );
+        this.type.validate( longProperty( 13 ), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 }

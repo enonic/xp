@@ -5,7 +5,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class DoubleType
-    extends InputType
+    extends InputTypeBase
 {
     public final static DoubleType INSTANCE = new DoubleType();
 
@@ -15,19 +15,13 @@ final class DoubleType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotNull( property, property.getDouble() );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.DOUBLE );
     }

@@ -32,29 +32,23 @@ public class TextLineTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createPropertyValue( "test", config );
+        final Value value = this.type.createValue( "test", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( stringProperty( "test" ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, stringProperty( "test" ) );
+        this.type.validate( stringProperty( "test" ), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 }

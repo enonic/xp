@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InvalidTypeException;
 
 final class ImageUploaderType
-    extends InputType
+    extends InputTypeBase
 {
     public final static ImageUploaderType INSTANCE = new ImageUploaderType();
 
@@ -18,12 +18,7 @@ final class ImageUploaderType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.DefaultPropertyIdProvider() );
         tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, value );
@@ -31,7 +26,7 @@ final class ImageUploaderType
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         boolean isAttachment = ContentPropertyNames.MEDIA_ATTACHMENT.equals( property.getName() );
         boolean isX = ContentPropertyNames.MEDIA_FOCAL_POINT_X.equals( property.getName() );

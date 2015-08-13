@@ -335,7 +335,6 @@ final class CreateContentCommand
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
-            inputTypeResolver( InputTypes.BUILTIN ).
             build().
             execute();
 

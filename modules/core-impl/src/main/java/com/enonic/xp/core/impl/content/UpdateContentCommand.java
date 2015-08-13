@@ -197,7 +197,6 @@ final class UpdateContentCommand
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
-            inputTypeResolver( InputTypes.BUILTIN ).
             build().
             execute();
 

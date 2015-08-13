@@ -12,7 +12,6 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypeName;
-import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -35,7 +34,7 @@ public class OccurrenceValidatorTest
 
     private OccurrenceValidator newValidator( final ContentType type )
     {
-        return new OccurrenceValidator( type.form(), InputTypes.BUILTIN );
+        return new OccurrenceValidator( type.form() );
     }
 
     @Test
@@ -97,20 +96,6 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_one_data_with_blank_value_when_validate_then_hasErrors_returns_true()
-    {
-        contentType.form().addFormItem(
-            Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 1 ).build() );
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myInput", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertEquals( "Missing required value for input [myInput] of type [TextLine]: ", validationResults.getFirst().getErrorMessage() );
-    }
-
-    @Test
     public void given_input_with_minOccur2_with_one_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         contentType.form().addFormItem(
@@ -142,22 +127,6 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur2_with_two_data_but_one_is_emty_string_when_validate_then_MissingRequiredValueValidationError()
-    {
-        contentType.form().addFormItem(
-            Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 2 ).build() );
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myInput[0]", "value 1" );
-        content.getData().setString( "myInput[1]", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
-        assertEquals( "Missing required value for input [myInput] of type [TextLine]: ", validationResults.getFirst().getErrorMessage() );
-    }
-
-    @Test
     public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
 
@@ -184,57 +153,6 @@ public class OccurrenceValidatorTest
         DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
-    }
-
-    @Test
-    public void given_required_field_with_empty_string_within_set_within_layout_when_validate_then_MissingRequiredValueValidationError()
-    {
-        Input myInput = Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = FormItemSet.create().name( "mySet" ).addFormItem( myInput ).build();
-        FieldSet myLayout = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( mySet ).build();
-        contentType.form().addFormItem( myLayout );
-        Content content = Content.create().path( MY_CONTENT_PATH ).build();
-        content.getData().setString( "mySet.myInput", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
-    }
-
-    @Test
-    public void given_required_input_with_empty_string_within_set_when_validate_then_MissingRequiredValueValidationError()
-    {
-        Input myInput = Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( true ).addFormItem( myInput ).build();
-        contentType.form().addFormItem( mySet );
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "mySet.myInput", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
-    }
-
-    @Test
-    public void given_required_field_with_empty_string_within_layout_within_a_set_when_validate_then_MissingRequiredValueValidationError()
-    {
-        Input myRequiredInput =
-            Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
-        FieldSet myLayout = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( myRequiredInput ).build();
-        FormItemSet myRequiredSet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myLayout ).build();
-
-        contentType.form().addFormItem( myRequiredSet );
-        Content content = Content.create().path( MY_CONTENT_PATH ).build();
-        content.getData().setString( "mySet.myRequiredInput", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-
-        // verify
-        assertTrue( validationResults.hasErrors() );
-        assertTrue( validationResults.getFirst() instanceof MissingRequiredValueValidationError );
     }
 
     @Test()
@@ -324,23 +242,6 @@ public class OccurrenceValidatorTest
         DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
         assertEquals( 0, validationResults.size() );
-    }
-
-    @Test
-    public void todo_required_data_not_given_in_second_instance_of_unrequired_set()
-    {
-        Input myInput =
-            Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
-        FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).multiple( true ).addFormItem( myInput ).build();
-        contentType.form().addFormItem( mySet );
-        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "mySet[0].myRequiredInput", "1" );
-        content.getData().setString( "mySet[1].myRequiredInput", "" );
-
-        // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
-        assertTrue( validationResults.hasErrors() );
-        assertEquals( 1, validationResults.size() );
     }
 
     @Test

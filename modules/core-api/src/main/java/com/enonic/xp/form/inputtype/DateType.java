@@ -5,7 +5,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 final class DateType
-    extends InputType
+    extends InputTypeBase
 {
     public final static DateType INSTANCE = new DateType();
 
@@ -15,19 +15,13 @@ final class DateType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.LOCAL_DATE );
     }

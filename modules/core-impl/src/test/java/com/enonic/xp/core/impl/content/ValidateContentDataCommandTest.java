@@ -9,7 +9,6 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypeName;
-import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -67,7 +66,6 @@ public class ValidateContentDataCommandTest
             contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
-            inputTypeResolver( InputTypes.BUILTIN ).
             build().
             execute();
 
@@ -103,7 +101,6 @@ public class ValidateContentDataCommandTest
             contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
-            inputTypeResolver( InputTypes.BUILTIN ).
             build().
             execute();
 

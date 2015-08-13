@@ -6,7 +6,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InvalidValueException;
 
 final class ComboBoxType
-    extends InputType
+    extends InputTypeBase
 {
     public final static ComboBoxType INSTANCE = new ComboBoxType();
 
@@ -16,19 +16,13 @@ final class ComboBoxType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-        validateNotBlank( property );
-    }
-
-    @Override
-    public Value createPropertyValue( final String value, final InputTypeConfig config )
+    public Value createValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
     }
 
     @Override
-    public void checkValidity( final InputTypeConfig config, final Property property )
+    public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.STRING );
 

@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
@@ -34,36 +33,24 @@ public class DateTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = newEmptyConfig();
-        final Value value = this.type.createPropertyValue( "2015-01-02", config );
+        final Value value = this.type.createValue( "2015-01-02", config );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE, value.getType() );
     }
 
     @Test
-    public void testContract()
-    {
-        this.type.checkBreaksRequiredContract( referenceProperty( "name" ) );
-    }
-
-    @Test(expected = InputValidationException.class)
-    public void testContract_invalid()
-    {
-        this.type.checkBreaksRequiredContract( stringProperty( "" ) );
-    }
-
-    @Test
-    public void testCheckValidity()
+    public void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.checkValidity( config, localDateProperty() );
+        this.type.validate( localDateProperty(), config );
     }
 
     @Test(expected = InvalidTypeException.class)
-    public void testCheckValidity_invalidType()
+    public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.checkValidity( config, booleanProperty( true ) );
+        this.type.validate( booleanProperty( true ), config );
     }
 
     private InputTypeConfig newEmptyConfig()
