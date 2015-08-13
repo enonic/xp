@@ -23,7 +23,7 @@ module api.form.inputtype.text.tiny {
         private elementContainer: HTMLElement;
         private callback: Function;
 
-        constructor(config: api.form.inputtype.text.TinyMCEImage, contentId: api.content.ContentId) {
+        constructor(config: api.form.inputtype.text.HtmlAreaImage, contentId: api.content.ContentId) {
             this.imageElement = <HTMLImageElement>config.element;
             this.elementContainer = config.container;
             this.contentId = contentId;
@@ -112,7 +112,7 @@ module api.form.inputtype.text.tiny {
             var imageEl = new api.dom.ImgEl(src);
             imageEl.getEl().setAttribute("alt", alt);
             imageEl.getEl().setAttribute("style", "width: 100%;");
-            imageEl.getEl().setAttribute("data-src", TinyMCE.imagePrefix + contentId);
+            imageEl.getEl().setAttribute("data-src", HtmlArea.imagePrefix + contentId);
 
             return imageEl;
         }
@@ -122,7 +122,7 @@ module api.form.inputtype.text.tiny {
                 imgUrl = new api.content.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
-                    setSize(TinyMCE.maxImageWidth).
+                    setSize(HtmlArea.maxImageWidth).
                     resolve();
 
             this.image = this.createImgEl(imgUrl, imageContent.getDisplayName(), contentId);

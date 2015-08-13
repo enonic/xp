@@ -47,8 +47,6 @@ public final class InputTypeName
 
     public final static InputTypeName TIME = InputTypeName.from( "Time" );
 
-    public final static InputTypeName TINY_MCE = InputTypeName.from( "TinyMCE" );
-
     private final String name;
 
     private InputTypeName( final String name )

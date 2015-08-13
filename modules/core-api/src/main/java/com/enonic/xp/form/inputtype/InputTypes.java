@@ -23,8 +23,6 @@ final class InputTypes
 
     public static final InputType HTML_AREA = new HtmlAreaType();
 
-    public static final InputType TINY_MCE = new TinyMCEType();
-
     public static final InputType IMAGE_UPLOADER = ImageUploaderType.INSTANCE;
 
     public static final InputType IMAGE_SELECTOR = ImageSelectorType.INSTANCE;
@@ -70,7 +68,6 @@ final class InputTypes
         add( PAGE_CONTROLLER ).
         add( CONTENT_TYPE_FILTER ).
         add( SITE_CONFIGURATOR ).
-        add( TINY_MCE ).
         build();
 
     private static final LinkedHashMap<String, InputType> INPUT_TYPE_BY_NAME = new LinkedHashMap<>();
