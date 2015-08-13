@@ -750,7 +750,6 @@ module api.ui.image {
             this.focusData.auto = auto;
 
             this.toggleClass('focused', !auto);
-            this.editFocusButton.toggleClass('manual', !auto);
 
             if (autoChanged) {
                 this.notifyFocusAutoPositionedChanged(auto);
@@ -1005,8 +1004,6 @@ module api.ui.image {
             }
             var autoChanged = this.cropData.auto != auto;
             this.cropData.auto = auto;
-
-            this.editCropButton.toggleClass('manual', !auto);
 
             if (autoChanged) {
                 this.notifyCropAutoPositionedChanged(auto);
