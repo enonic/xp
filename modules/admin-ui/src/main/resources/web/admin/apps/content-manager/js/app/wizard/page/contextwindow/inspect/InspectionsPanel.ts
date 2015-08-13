@@ -74,7 +74,7 @@ module app.wizard.page.contextwindow.inspect {
         }
 
         public clearInspection() {
-            this.showInspectionPanel(this.noSelectionPanel);
+            this.showInspectionPanel(this.pageInspectionPanel);
         }
 
         public isInspecting(): boolean {
