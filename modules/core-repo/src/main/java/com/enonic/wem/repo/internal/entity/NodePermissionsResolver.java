@@ -44,12 +44,6 @@ public final class NodePermissionsResolver
         }
     }
 
-    public static boolean contextUserHasPermission( final Permission permission, final Node node )
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return userHasPermission( authInfo, permission, node );
-    }
-
     public static boolean contextUserHasPermissionOrAdmin( final Permission permission, final Node node )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
@@ -80,5 +74,4 @@ public final class NodePermissionsResolver
 
         return principalsAllowed.stream().anyMatch( ( authInfoPrincipals::contains ) );
     }
-
 }
