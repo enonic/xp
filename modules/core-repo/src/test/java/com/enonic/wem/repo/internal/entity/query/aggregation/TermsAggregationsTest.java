@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.xp.aggregation.Aggregation;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
@@ -16,7 +17,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static org.junit.Assert.*;
 
@@ -181,15 +181,20 @@ public class TermsAggregationsTest
     public void nested_term_aggregation()
         throws Exception
     {
-        createNode( "c1", "d1", "n1", NodePath.ROOT );
-        createNode( "c1", "d1", "n2", NodePath.ROOT );
-        createNode( "c1", "d2", "n3", NodePath.ROOT );
-        createNode( "c1", "d3", "n4", NodePath.ROOT );
+        createNode( "c1", "d1", "node1", NodePath.ROOT );
+        createNode( "c1", "d1", "node2", NodePath.ROOT );
+        createNode( "c1", "d2", "node3", NodePath.ROOT );
+        createNode( "c1", "d3", "node4", NodePath.ROOT );
 
-        createNode( "c2", "d1", "n5", NodePath.ROOT );
-        createNode( "c2", "d2", "n6", NodePath.ROOT );
+        createNode( "c2", "d1", "node5", NodePath.ROOT );
+        createNode( "c2", "d2", "node6", NodePath.ROOT );
+        createNode( "c2", "d2", "node7", NodePath.ROOT );
+        createNode( "c2", "d3", "node8", NodePath.ROOT );
 
-        createNode( "c3", "d1", "n7", NodePath.ROOT );
+        createNode( "c3", "d1", "node9", NodePath.ROOT );
+        createNode( "c3", "d2", "node10", NodePath.ROOT );
+        createNode( "c3", "d3", "node11", NodePath.ROOT );
+        createNode( "c3", "d3", "node12", NodePath.ROOT );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -214,9 +219,11 @@ public class TermsAggregationsTest
 
         final Iterator<Bucket> bucketIterator = categoryAgg.getBuckets().iterator();
 
+        // Verify the number of values for each category, e.g in category
+        // c1, there are 2 'd1's, 1 'd2' and 1 'd3'
         verifySubAggregation( bucketIterator.next(), "c1", 2, 1, 1 );
-        verifySubAggregation( bucketIterator.next(), "c2", 1, 1, 0 );
-        verifySubAggregation( bucketIterator.next(), "c3", 1, 0, 0 );
+        verifySubAggregation( bucketIterator.next(), "c2", 1, 2, 1 );
+        verifySubAggregation( bucketIterator.next(), "c3", 1, 1, 2 );
     }
 
     private void verifySubAggregation( final Bucket parentBucket, String parentBucketKey, int first, int second, int third )
