@@ -18,19 +18,14 @@ final class CheckboxType
     }
 
     @Override
-    public void checkBreaksRequiredContract( final Property property )
-    {
-    }
-
-    @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.BOOLEAN );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.BOOLEAN );
     }
 }

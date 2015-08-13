@@ -39,18 +39,6 @@ public class TagTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( stringProperty( "test" ) );
@@ -61,6 +49,13 @@ public class TagTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, stringProperty( "test" ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }
 

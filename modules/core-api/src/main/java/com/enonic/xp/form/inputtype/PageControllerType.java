@@ -24,14 +24,14 @@ final class PageControllerType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.STRING );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.STRING );
     }
 }

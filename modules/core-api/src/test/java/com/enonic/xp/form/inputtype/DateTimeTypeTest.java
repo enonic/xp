@@ -50,19 +50,6 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( dateTimeProperty() );
-        this.type.checkTypeValidity( localDateTimeProperty() );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( referenceProperty( "name" ) );
@@ -75,10 +62,24 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCheckValidity()
+    public void testCheckValidity_dateTime()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.checkValidity( config, stringProperty( "name" ) );
+        this.type.checkValidity( config, dateTimeProperty() );
+    }
+
+    @Test
+    public void testCheckValidity_localDateTime()
+    {
+        final InputTypeConfig config = newEmptyConfig();
+        this.type.checkValidity( config, localDateTimeProperty() );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = newEmptyConfig();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 
     private InputTypeConfig newEmptyConfig()

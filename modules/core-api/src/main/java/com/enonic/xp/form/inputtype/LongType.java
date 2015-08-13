@@ -21,14 +21,14 @@ final class LongType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.LONG );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLong( ValueTypes.LONG.convert( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.LONG );
     }
 }

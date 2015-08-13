@@ -38,12 +38,6 @@ public class FileUploaderTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( referenceProperty( "test" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( referenceProperty( "test" ) );

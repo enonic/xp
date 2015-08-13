@@ -20,14 +20,13 @@ final class SiteConfiguratorType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newString( value );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
     }
 }

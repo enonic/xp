@@ -24,15 +24,6 @@ final class DateTimeType
         validateNotBlank( property );
     }
 
-    @Override
-    public void checkTypeValidity( final Property property )
-    {
-        if ( ( ValueTypes.DATE_TIME != property.getType() ) && ( ValueTypes.LOCAL_DATE_TIME != property.getType() ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.DATE_TIME );
-        }
-    }
-
     private boolean useTimeZone( final InputTypeConfig config )
     {
         return config.getValue( "timezone", boolean.class, false );
@@ -48,6 +39,15 @@ final class DateTimeType
         else
         {
             return Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+        }
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        if ( ( ValueTypes.DATE_TIME != property.getType() ) && ( ValueTypes.LOCAL_DATE_TIME != property.getType() ) )
+        {
+            throw new InvalidTypeException( property, ValueTypes.DATE_TIME );
         }
     }
 }

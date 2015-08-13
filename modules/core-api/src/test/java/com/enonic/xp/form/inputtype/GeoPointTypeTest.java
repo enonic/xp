@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
@@ -38,12 +39,6 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( geoPointProperty( "1,2" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( geoPointProperty( "1,2" ) );
@@ -54,5 +49,12 @@ public class GeoPointTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, geoPointProperty( "1,2" ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }

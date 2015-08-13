@@ -29,8 +29,6 @@ public abstract class InputType
     {
     }
 
-    public abstract void checkTypeValidity( final Property property );
-
     @Override
     public String toString()
     {
@@ -64,7 +62,5 @@ public abstract class InputType
         }
     }
 
-    public void checkValidity( InputTypeConfig config, Property property )
-    {
-    }
+    public abstract void checkValidity( InputTypeConfig config, Property property );
 }

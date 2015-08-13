@@ -42,7 +42,6 @@ final class InputValidationVisitor
             }
 
             final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
-            type.checkTypeValidity( property );
             type.checkValidity( input.getInputTypeConfig(), property );
         }
         catch ( final Exception e )

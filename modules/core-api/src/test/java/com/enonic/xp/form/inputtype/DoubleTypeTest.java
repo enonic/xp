@@ -39,18 +39,6 @@ public class DoubleTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( doubleProperty( 1.3 ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( stringProperty( "value" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( doubleProperty( 1.3 ) );
@@ -61,5 +49,12 @@ public class DoubleTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, doubleProperty( 1.3 ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }

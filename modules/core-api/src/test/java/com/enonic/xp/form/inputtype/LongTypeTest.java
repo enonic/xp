@@ -39,18 +39,6 @@ public class LongTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( longProperty( 13 ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( longProperty( 13 ) );
@@ -61,5 +49,12 @@ public class LongTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, longProperty( 13 ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }

@@ -21,14 +21,14 @@ final class GeoPointType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.GEO_POINT );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.GEO_POINT );
     }
 }

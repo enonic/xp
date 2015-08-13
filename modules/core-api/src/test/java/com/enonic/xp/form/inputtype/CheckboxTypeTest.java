@@ -39,18 +39,6 @@ public class CheckboxTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( stringProperty( "value" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( booleanProperty( true ) );
@@ -58,6 +46,13 @@ public class CheckboxTypeTest
 
     @Test
     public void testCheckValidity()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, stringProperty( "value" ) );

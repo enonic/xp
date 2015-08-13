@@ -21,14 +21,14 @@ final class ImageSelectorType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.REFERENCE );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newReference( Reference.from( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.REFERENCE );
     }
 }

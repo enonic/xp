@@ -40,18 +40,6 @@ public class ComboBoxTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( stringProperty( "value" ) );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( booleanProperty( true ) );
@@ -65,10 +53,17 @@ public class ComboBoxTypeTest
     }
 
     @Test(expected = InvalidValueException.class)
-    public void testCheckValidity_invalid()
+    public void testCheckValidity_invalidValue()
     {
         final InputTypeConfig config = newValidConfig();
         this.type.checkValidity( config, stringProperty( "unknown" ) );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = newValidConfig();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 
     private InputTypeConfig newValidConfig()

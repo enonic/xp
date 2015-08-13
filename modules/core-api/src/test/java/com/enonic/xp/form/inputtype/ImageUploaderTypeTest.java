@@ -38,12 +38,6 @@ public class ImageUploaderTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( stringProperty( "test" ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( stringProperty( "test" ) );
@@ -54,5 +48,12 @@ public class ImageUploaderTypeTest
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.checkValidity( config, stringProperty( "test" ) );
+    }
+
+    @Test
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }

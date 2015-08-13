@@ -21,13 +21,13 @@ final class FileUploaderType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newReference( Reference.from( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
     }
 }

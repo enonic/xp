@@ -21,14 +21,14 @@ final class DateType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.LOCAL_DATE );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.LOCAL_DATE );
     }
 }

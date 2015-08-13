@@ -21,15 +21,15 @@ final class TimeType
     }
 
     @Override
-    public void checkTypeValidity( final Property property )
-    {
-        validateType( property, ValueTypes.LOCAL_TIME );
-    }
-
-    @Override
     public Value createPropertyValue( final String value, final InputTypeConfig config )
     {
         return Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
+    }
+
+    @Override
+    public void checkValidity( final InputTypeConfig config, final Property property )
+    {
+        validateType( property, ValueTypes.LOCAL_TIME );
     }
 }
 

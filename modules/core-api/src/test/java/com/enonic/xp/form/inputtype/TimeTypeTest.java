@@ -1,6 +1,5 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.junit.Test;
 
 import com.enonic.xp.data.Value;
@@ -41,18 +40,6 @@ public class TimeTypeTest
     }
 
     @Test
-    public void testCheckTypeValidity()
-    {
-        this.type.checkTypeValidity( localTimeProperty() );
-    }
-
-    @Test(expected = InvalidTypeException.class)
-    public void testCheckTypeValidity_invalid()
-    {
-        this.type.checkTypeValidity( booleanProperty( true ) );
-    }
-
-    @Test
     public void testContract()
     {
         this.type.checkBreaksRequiredContract( referenceProperty( "name" ) );
@@ -68,6 +55,13 @@ public class TimeTypeTest
     public void testCheckValidity()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.checkValidity( config, stringProperty( "name" ) );
+        this.type.checkValidity( config, localTimeProperty() );
+    }
+
+    @Test(expected = InvalidTypeException.class)
+    public void testCheckValidity_invalidType()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().build();
+        this.type.checkValidity( config, booleanProperty( true ) );
     }
 }
