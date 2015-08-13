@@ -25,9 +25,12 @@ public final class XmlFormMapper
 {
     private final ApplicationKey currentApplication;
 
+    private final ApplicationRelativeResolver relativeResolver;
+
     public XmlFormMapper( final ApplicationKey currentApplication )
     {
         this.currentApplication = currentApplication;
+        this.relativeResolver = new ApplicationRelativeResolver( this.currentApplication );
     }
 
     public Form buildForm( final DomElement root )
@@ -152,8 +155,29 @@ public final class XmlFormMapper
 
             if ( !Strings.isNullOrEmpty( name ) && !Strings.isNullOrEmpty( value ) )
             {
-                builder.inputTypeConfig( name, value );
+                builder.inputTypeConfig( name, resolveConfigValue( name, value ) );
             }
+        }
+    }
+
+    private String resolveConfigValue( final String name, final String value )
+    {
+        final String lowerCasedName = name.toLowerCase();
+        if ( lowerCasedName.endsWith( "contenttype" ) )
+        {
+            return this.relativeResolver.toContentTypeName( value ).toString();
+        }
+        else if ( lowerCasedName.endsWith( "mixintype" ) )
+        {
+            return this.relativeResolver.toMixinName( value ).toString();
+        }
+        else if ( lowerCasedName.endsWith( "relationshiptype" ) )
+        {
+            return this.relativeResolver.toRelationshipTypeName( value ).toString();
+        }
+        else
+        {
+            return value;
         }
     }
 }

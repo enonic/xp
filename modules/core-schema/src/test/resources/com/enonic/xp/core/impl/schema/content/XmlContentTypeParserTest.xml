@@ -16,6 +16,12 @@
       <occurrences minimum="0" maximum="1"/>
       <config>
         <property name="timezone">true</property>
+        <property name="someContentType">myapp:test1</property>
+        <property name="someContentType">test2</property>
+        <property name="someRelationshipType">myapp:test1</property>
+        <property name="someRelationshipType">test2</property>
+        <property name="someMixinType">myapp:test1</property>
+        <property name="someMixinType">test2</property>
       </config>
     </input>
     <item-set name="mySet">
