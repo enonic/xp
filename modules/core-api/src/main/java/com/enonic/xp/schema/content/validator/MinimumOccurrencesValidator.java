@@ -15,18 +15,17 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeService;
-
+import com.enonic.xp.form.inputtype.InputTypeResolver;
 
 final class MinimumOccurrencesValidator
 {
-    private final InputTypeService inputTypeService;
+    private final InputTypeResolver inputTypeResolver;
 
     private final List<DataValidationError> validationErrors = Lists.newArrayList();
 
-    public MinimumOccurrencesValidator( final InputTypeService inputTypeService )
+    public MinimumOccurrencesValidator( final InputTypeResolver inputTypeResolver )
     {
-        this.inputTypeService = inputTypeService;
+        this.inputTypeResolver = inputTypeResolver;
     }
 
     final List<DataValidationError> validationErrors()
@@ -71,7 +70,7 @@ final class MinimumOccurrencesValidator
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
                     final Property property = parentDataSet.getProperty( input.getName(), i );
-                    final InputType type = this.inputTypeService.get( input.getInputType() );
+                    final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
 
                     try
                     {

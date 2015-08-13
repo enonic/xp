@@ -14,13 +14,16 @@ import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeServiceAccessor;
+import com.enonic.xp.form.inputtype.InputTypeResolver;
+import com.enonic.xp.form.inputtype.InputTypes2;
 
 public class JsonToPropertyTreeTranslator
 {
     private final FormItems formItems;
 
     private final PropertyTree propertyTree;
+
+    private final InputTypeResolver inputTypeResolver;
 
     private final Mode mode;
 
@@ -29,6 +32,7 @@ public class JsonToPropertyTreeTranslator
         this.formItems = builder.formItems != null ? builder.formItems : Form.create().build().getFormItems();
         this.mode = builder.mode;
         this.propertyTree = new PropertyTree();
+        this.inputTypeResolver = InputTypes2.BUILTIN;
     }
 
     public PropertyTree translate( final JsonNode json )
@@ -96,7 +100,7 @@ public class JsonToPropertyTreeTranslator
         }
         else
         {
-            final InputType type = InputTypeServiceAccessor.get().get( input.getInputType() );
+            final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
             final Value mappedPropertyValue = type.createPropertyValue( resolveStringValue( value ), input.getInputTypeConfig() );
 
             parent.addProperty( key, mappedPropertyValue );

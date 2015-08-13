@@ -10,7 +10,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.inputtype.InputTypeService;
+import com.enonic.xp.form.inputtype.InputTypeResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -44,7 +44,7 @@ final class ValidateContentDataCommand
 
     private final DataValidationErrors.Builder resultBuilder;
 
-    private final InputTypeService inputTypeService;
+    private final InputTypeResolver inputTypeResolver;
 
     private ValidateContentDataCommand( Builder builder )
     {
@@ -54,7 +54,7 @@ final class ValidateContentDataCommand
         contentData = builder.contentData;
         extraDatas = builder.extraDatas;
         contentType = builder.contentType;
-        inputTypeService = builder.inputTypeService;
+        inputTypeResolver = builder.inputTypeResolver;
         resultBuilder = DataValidationErrors.create();
     }
 
@@ -104,7 +104,7 @@ final class ValidateContentDataCommand
 
                         if ( siteDescriptor != null )
                         {
-                            this.resultBuilder.addAll( new OccurrenceValidator( siteDescriptor.getForm(), this.inputTypeService ).validate(
+                            this.resultBuilder.addAll( new OccurrenceValidator( siteDescriptor.getForm(), this.inputTypeResolver ).validate(
                                 siteConfig.getConfig().getRoot() ) );
                         }
 
@@ -119,7 +119,7 @@ final class ValidateContentDataCommand
         if ( contentType != null )
         {
             this.resultBuilder.addAll(
-                new OccurrenceValidator( contentType.form(), this.inputTypeService ).validate( contentData.getRoot() ) );
+                new OccurrenceValidator( contentType.form(), this.inputTypeResolver ).validate( contentData.getRoot() ) );
         }
     }
 
@@ -141,7 +141,7 @@ final class ValidateContentDataCommand
                 final Form mixinForm = Form.create().addFormItems( mixin.getFormItems() ).build();
 
                 this.resultBuilder.addAll(
-                    new OccurrenceValidator( mixinForm, this.inputTypeService ).validate( extraData.getData().getRoot() ) );
+                    new OccurrenceValidator( mixinForm, this.inputTypeResolver ).validate( extraData.getData().getRoot() ) );
             }
         }
     }
@@ -161,7 +161,7 @@ final class ValidateContentDataCommand
 
         private ContentTypeName contentType;
 
-        private InputTypeService inputTypeService;
+        private InputTypeResolver inputTypeResolver;
 
         private Builder()
         {
@@ -203,9 +203,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder inputTypeService( InputTypeService inputTypeService )
+        public Builder inputTypeResolver( InputTypeResolver inputTypeResolver )
         {
-            this.inputTypeService = inputTypeService;
+            this.inputTypeResolver = inputTypeResolver;
             return this;
         }
 

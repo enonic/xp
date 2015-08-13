@@ -4,27 +4,26 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.inputtype.InputTypeService;
+import com.enonic.xp.form.inputtype.InputTypeResolver;
 import com.enonic.xp.schema.content.ContentType;
-
 
 public final class InputValidator
 {
     private final Form form;
 
-    private final InputTypeService inputTypeService;
+    private final InputTypeResolver inputTypeResolver;
 
     private InputValidator( final Builder builder )
     {
         this.form = builder.contentType.form();
-        this.inputTypeService = builder.inputTypeService;
+        this.inputTypeResolver = builder.inputTypeResolver;
     }
 
     public final void validate( final PropertyTree propertyTree )
     {
         if ( this.form != null )
         {
-            final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree, this.inputTypeService );
+            final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree, this.inputTypeResolver );
             inputValidationVisitor.traverse( this.form );
         }
     }
@@ -38,7 +37,7 @@ public final class InputValidator
     {
         private ContentType contentType;
 
-        private InputTypeService inputTypeService;
+        private InputTypeResolver inputTypeResolver;
 
         public Builder contentType( final ContentType contentType )
         {
@@ -46,16 +45,16 @@ public final class InputValidator
             return this;
         }
 
-        public Builder inputTypeService( final InputTypeService inputTypeService )
+        public Builder inputTypeResolver( final InputTypeResolver inputTypeResolver )
         {
-            this.inputTypeService = inputTypeService;
+            this.inputTypeResolver = inputTypeResolver;
             return this;
         }
 
         private void validate()
         {
             Preconditions.checkNotNull( this.contentType, "ContentType is required" );
-            Preconditions.checkNotNull( this.inputTypeService, "InputTypeService is required" );
+            Preconditions.checkNotNull( this.inputTypeResolver, "InputTypeResolver is required" );
         }
 
         public InputValidator build()

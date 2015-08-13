@@ -6,19 +6,19 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeService;
+import com.enonic.xp.form.inputtype.InputTypeResolver;
 
 final class InputValidationVisitor
     extends InputVisitor
 {
     private final PropertyTree propertyTree;
 
-    private final InputTypeService inputTypeService;
+    private final InputTypeResolver inputTypeResolver;
 
-    public InputValidationVisitor( final PropertyTree propertyTree, final InputTypeService inputTypeService )
+    public InputValidationVisitor( final PropertyTree propertyTree, final InputTypeResolver inputTypeResolver )
     {
         this.propertyTree = propertyTree;
-        this.inputTypeService = inputTypeService;
+        this.inputTypeResolver = inputTypeResolver;
     }
 
     @Override
@@ -41,7 +41,7 @@ final class InputValidationVisitor
                 return;
             }
 
-            final InputType type = this.inputTypeService.get( input.getInputType() );
+            final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
             type.checkTypeValidity( property );
             type.checkValidity( input.getInputTypeConfig(), property );
         }

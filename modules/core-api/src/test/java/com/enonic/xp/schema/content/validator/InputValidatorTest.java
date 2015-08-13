@@ -15,7 +15,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.form.inputtype.InputTypeName;
-import com.enonic.xp.form.inputtype.InputTypeServiceAccessor;
+import com.enonic.xp.form.inputtype.InputTypes2;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -36,7 +36,7 @@ public class InputValidatorTest
         this.inputValidator = InputValidator.
             create().
             contentType( contentType ).
-            inputTypeService( InputTypeServiceAccessor.get() ).
+            inputTypeResolver( InputTypes2.BUILTIN ).
             build();
     }
 
