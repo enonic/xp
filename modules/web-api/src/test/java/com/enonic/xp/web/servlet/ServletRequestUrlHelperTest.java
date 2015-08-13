@@ -116,12 +116,18 @@ public class ServletRequestUrlHelperTest
         assertEquals( "/admin/path/to/page", uri1 );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
-
-        final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        assertEquals( "/path/to/page", uri2 );
+        boolean outOfScopeException = false;
+        try
+        {
+            final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
+        }
+        catch ( OutOfScopeException e )
+        {
+            outOfScopeException = true;
+        }
+        assertTrue( outOfScopeException );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
-
         final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
         assertEquals( "/admin/page", uri3 );
     }
