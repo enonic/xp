@@ -107,7 +107,7 @@ module app.browse {
             var draggableRow = args.rows[0];
 
             var rowDataId = dataView.getItem(draggableRow).getData().getContentId();
-            var insertBefore = this.getCorrectedInsertBefore(args);
+            var insertBefore = this.getCorrectedInsertBefore(args, draggableRow);
             var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
                 ? null
                 : dataView.getItem(insertBefore).getData().getContentId();
@@ -140,7 +140,7 @@ module app.browse {
 
         private getCorrectedInsertBefore(args: DragEventData, draggableRow: number) {
             var insertBefore = <number>args.insertBefore;
-            if (draggableRow > insertBefore) {
+            if (insertBefore != 0 && draggableRow > insertBefore) {
                 insertBefore = insertBefore - 1;
             }
             return insertBefore;
