@@ -31,6 +31,12 @@
     }
 
     &.edit-focus {
+      .sticky-toolbar {
+        .button-focus {
+          .button-foreground(@admin-blue);
+        }
+      }
+
       .image-frame {
         .image-canvas {
           .focus-group {
@@ -41,6 +47,12 @@
     }
 
     &.edit-crop {
+      .sticky-toolbar {
+        .button-crop {
+          .button-foreground(@admin-blue);
+        }
+      }
+
       .image-frame {
         overflow: visible;
 
@@ -204,28 +216,46 @@
       display: none;
     }
 
-    .button-edit, .button-reset {
+    .button {
+      margin: 0 10px 0 0;
 
-      span {
-        line-height: 34px;
+      &.button-focus,
+      &.button-crop,
+      &.button-upload {
+        height: 38px;
+        vertical-align: top;
+        padding: 0;
+        .button-foreground(@admin-font-gray2);
+
+        &.manual {
+          .button-foreground(@admin-blue);
+        }
+
+        span {
+          display: none;
+        }
+
+        &:before {
+          font-size: 34px;
+        }
       }
-    }
 
-    .button-upload {
-      width: 38px;
-      height: 38px;
-      background-image: url("../../common/images/upload_white.png");
-      background-repeat: no-repeat;
-      background-size: 20px;
-      background-position: 10px 9px;
-      vertical-align: top;
-
-      &:before {
-        color: transparent;
+      &.button-reset {
+        span {
+          line-height: 34px;
+        }
       }
 
-      span {
-        display: none;
+      &.button-upload {
+        width: 38px;
+        background-image: url("../../common/images/upload_white.png");
+        background-repeat: no-repeat;
+        background-size: 20px;
+        background-position: 9px;
+
+        &:before {
+          color: transparent;
+        }
       }
     }
 
@@ -245,7 +275,7 @@
       float: right;
 
       .button {
-        margin-left: 10px;
+        margin: 0 0 0 10px;
 
         &.close-button {
           .button(@form-button-font, @form-button-bg);
