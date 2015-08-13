@@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.util.DoubleHelper;
+
 public final class Cropping
 {
 
@@ -33,11 +35,11 @@ public final class Cropping
 
     public boolean isUnmodified()
     {
-        return Objects.equal( top, 0.0 ) &&
-            Objects.equal( left, 0.0 ) &&
-            Objects.equal( bottom, 1.0 ) &&
-            Objects.equal( right, 1.0 ) &&
-            Objects.equal( zoom, 1.0 );
+        return DoubleHelper.fuzzyCompare( top, 0.0 ) &&
+            DoubleHelper.fuzzyCompare( left, 0.0 ) &&
+            DoubleHelper.fuzzyCompare( bottom, 1.0 ) &&
+            DoubleHelper.fuzzyCompare( right, 1.0 ) &&
+            DoubleHelper.fuzzyCompare( zoom, 1.0 );
     }
 
     public double top()
