@@ -39,6 +39,10 @@ module app.wizard.page.contextwindow {
 
         private splitter: api.dom.DivEl;
 
+        private buttonBar: api.dom.DivEl;
+
+        private componentsView: app.wizard.PageComponentsView;
+
         private ghostDragger: api.dom.DivEl;
 
         private mask: api.ui.mask.DragMask;
@@ -77,12 +81,35 @@ module app.wizard.page.contextwindow {
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
 
+            this.componentsView = new app.wizard.PageComponentsView();
+            this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
+            this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
+
+            var button = new api.ui.button.Button('Show Components View');
+            button.addClass('transparent').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
+            });
+
+            this.buttonBar = new api.dom.DivEl('button-bar');
+            this.buttonBar.appendChild(button);
+            this.appendChild(this.buttonBar);
+
             this.onRendered(() => this.onRenderedHandler());
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
             });
+        }
+
+        setPageView(pageView: api.liveedit.PageView) {
+            this.componentsView.setPageView(pageView);
+        }
+
+        setContent(content: Content) {
+            this.componentsView.setContent(content);
         }
 
         private onRenderedHandler() {
