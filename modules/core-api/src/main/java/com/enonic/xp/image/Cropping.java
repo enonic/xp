@@ -33,7 +33,11 @@ public final class Cropping
 
     public boolean isUnmodified()
     {
-        return top == 0.0 && left == 0.0 && bottom == 1.0 && right == 1.0 && zoom == 1.0;
+        return Objects.equal( top, 0.0 ) &&
+            Objects.equal( left, 0.0 ) &&
+            Objects.equal( bottom, 1.0 ) &&
+            Objects.equal( right, 1.0 ) &&
+            Objects.equal( zoom, 1.0 );
     }
 
     public double top()
