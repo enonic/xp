@@ -8,7 +8,9 @@ import com.enonic.xp.data.ValueTypes;
 final class TinyMCEType
     extends InputType
 {
-    public TinyMCEType()
+    public final static TinyMCEType INSTANCE = new TinyMCEType();
+
+    private TinyMCEType()
     {
         super( InputTypeName.TINY_MCE );
     }

@@ -1,24 +1,26 @@
 package com.enonic.xp.form.inputtype;
 
-
 import org.junit.Test;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.InputValidationException;
 
 public class HtmlAreaTypeTest
+    extends BaseInputTypeTest
 {
-    @Test(expected = InputValidationException.class)
-    public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
+    public HtmlAreaTypeTest()
     {
-        new HtmlAreaType().checkBreaksRequiredContract(
-            new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ).setString( "myHtml", "" ) );
+        super( HtmlAreaType.INSTANCE );
+    }
+
+    @Test
+    public void testContract()
+    {
+        this.type.checkBreaksRequiredContract( stringProperty( "myHtml" ) );
     }
 
     @Test(expected = InputValidationException.class)
-    public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
+    public void testContract_breaks()
     {
-        new HtmlAreaType().checkBreaksRequiredContract(
-            new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ).setString( "myHtml", " " ) );
+        this.type.checkBreaksRequiredContract( stringProperty( "" ) );
     }
 }

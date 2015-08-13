@@ -6,13 +6,13 @@ import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 
-public class InputTypes2Test
+public class InputTypesTest
 {
-    private final InputTypes2 types;
+    private final InputTypes types;
 
-    public InputTypes2Test()
+    public InputTypesTest()
     {
-        this.types = InputTypes2.BUILTIN;
+        this.types = InputTypes.BUILTIN;
     }
 
     @Test

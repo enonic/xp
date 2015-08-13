@@ -7,7 +7,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.InvalidTypeException;
 
@@ -44,7 +43,7 @@ public abstract class InputType
     {
         if ( property.getType() != type )
         {
-            throw new InvalidTypeException( property, ValueTypes.STRING );
+            throw new InvalidTypeException( property, type );
         }
     }
 

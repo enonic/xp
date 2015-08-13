@@ -12,7 +12,7 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypeName;
-import com.enonic.xp.form.inputtype.InputTypes2;
+import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -35,7 +35,7 @@ public class OccurrenceValidatorTest
 
     private OccurrenceValidator newValidator( final ContentType type )
     {
-        return new OccurrenceValidator( type.form(), InputTypes2.BUILTIN );
+        return new OccurrenceValidator( type.form(), InputTypes.BUILTIN );
     }
 
     @Test

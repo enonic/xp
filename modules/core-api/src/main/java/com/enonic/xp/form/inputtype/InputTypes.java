@@ -8,10 +8,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public final class InputTypes2
+public final class InputTypes
     implements Iterable<InputType>, InputTypeResolver
 {
-    public final static InputTypes2 BUILTIN = InputTypes2.create().
+    public final static InputTypes BUILTIN = InputTypes.create().
         add( ComboBoxType.INSTANCE ).
         add( DateType.INSTANCE ).
         add( TimeType.INSTANCE ).
@@ -19,7 +19,7 @@ public final class InputTypes2
         add( CheckboxType.INSTANCE ).
         add( DoubleType.INSTANCE ).
         add( GeoPointType.INSTANCE ).
-        add( new HtmlAreaType() ).
+        add( HtmlAreaType.INSTANCE ).
         add( ImageUploaderType.INSTANCE ).
         add( FileUploaderType.INSTANCE ).
         add( ImageSelectorType.INSTANCE ).
@@ -32,12 +32,12 @@ public final class InputTypes2
         add( PageControllerType.INSTANCE ).
         add( ContentTypeFilterType.INSTANCE ).
         add( SiteConfiguratorType.INSTANCE ).
-        add( new TinyMCEType() ).
+        add( TinyMCEType.INSTANCE ).
         build();
 
     private final ImmutableMap<String, InputType> map;
 
-    private InputTypes2( final Builder builder )
+    private InputTypes( final Builder builder )
     {
         this.map = ImmutableMap.copyOf( builder.map );
     }
@@ -95,9 +95,9 @@ public final class InputTypes2
             return this;
         }
 
-        public InputTypes2 build()
+        public InputTypes build()
         {
-            return new InputTypes2( this );
+            return new InputTypes( this );
         }
     }
 }

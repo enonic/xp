@@ -7,7 +7,9 @@ import com.enonic.xp.data.ValueTypes;
 final class HtmlAreaType
     extends InputType
 {
-    public HtmlAreaType()
+    public final static HtmlAreaType INSTANCE = new HtmlAreaType();
+
+    private HtmlAreaType()
     {
         super( InputTypeName.HTML_AREA );
     }
