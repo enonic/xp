@@ -48,111 +48,88 @@ public final class ServletRequestUrlHelper
         return rewriteUri( req, str.toString() ).getRewrittenUri();
     }
 
-    public static String createUriWithHost( final String path )
-    {
-        return createUriWithHost( ServletRequestHolder.getRequest(), path );
-    }
-
-    private static String createUriWithHost( final HttpServletRequest req, final String path )
-    {
-        final StringBuilder str = new StringBuilder();
-
-        str.append( createServerUrl( req ) );
-        str.append( createUri( path ) );
-
-        return str.toString();
-    }
-
     public static String createServerUrl()
     {
         return createServerUrl( ServletRequestHolder.getRequest() );
     }
 
-    public static String createServerUrl( final HttpServletRequest req )
+    private static String createServerUrl( final HttpServletRequest httpServletRequest )
     {
         final StringBuilder str = new StringBuilder();
 
         //Appends the scheme part
-        String scheme = req.getHeader( X_FORWARDED_PROTO );
-        if ( scheme == null )
-        {
-            scheme = req.getScheme();
-        }
-        str.append( scheme ).append( "://" );
+        String scheme = getScheme( httpServletRequest );
+        str.append( scheme );
 
-        //Appends the server name and port
-        String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
-        if ( xForwardedHost != null )
-        {
-            str.append( xForwardedHost );
-        }
-        else
-        {
-            final String serverName = req.getServerName();
-            final int port = req.getServerPort();
+        //Appends the host
+        str.append( "://" ).append( getHost( httpServletRequest ) );
 
-            str.append( serverName );
-
-            if ( needPortNumber( scheme, port ) )
-            {
-                str.append( ":" ).append( port );
-            }
+        //Appends the port if necessary
+        final String port = getPort( httpServletRequest );
+        if ( needPortNumber( scheme, port ) )
+        {
+            str.append( ":" ).append( port );
         }
 
         return str.toString();
     }
 
-    public static String createBaseUrl( final String baseUri, final String branch, final String contentPath )
+    public static String getScheme()
     {
-        return createBaseUrl( ServletRequestHolder.getRequest(), baseUri, branch, contentPath );
+        return getScheme( ServletRequestHolder.getRequest() );
     }
 
-    public static String createBaseUrl( final HttpServletRequest req, final String baseUri, final String branch, final String contentPath )
+    private static String getScheme( final HttpServletRequest httpServletRequest )
     {
-        final String host = createServerUrl( req );
-        final String normalizedBaseUri = normalizePath( baseUri );
-        final String normalizedBranch = normalizePath( branch );
-        final String normalizedContentPath = normalizePath( contentPath );
-        final String baseUriAndBranch = normalizedBaseUri + normalizedBranch;
-        final String uri = normalizedBaseUri + normalizedBranch + normalizedContentPath;
-
-        //The base URL starts with the host
-        final StringBuilder baseUrl = new StringBuilder( host );
-
-        //If the URI is rewritten
-        final UriRewritingResult rewritingResult = rewriteUri( req, uri );
-        if ( rewritingResult.getNewUriPrefix() != null )
+        String scheme = httpServletRequest.getHeader( X_FORWARDED_PROTO );
+        if ( scheme == null )
         {
-            //Appends the rewritten part to the host
-            baseUrl.append( rewritingResult.getNewUriPrefix() );
+            scheme = httpServletRequest.getScheme();
+        }
+        return scheme;
+    }
 
-            if ( rewritingResult.getDeletedUriPrefix().startsWith( normalizedBaseUri ) )
-            {
-                if ( !rewritingResult.getDeletedUriPrefix().startsWith( baseUriAndBranch ) )
-                {
-                    //If the baseUri has been rewritten but not the branch, append the branch to the rewritten part
-                    baseUrl.append( normalizedBranch );
-                }
-            }
-            else
-            {
-                // If the baseUri has not been rewritten, appends the baseUri and the branch to the rewritten part
-                baseUrl.append( baseUriAndBranch );
-            }
+    public static String getHost()
+    {
+        return getHost( ServletRequestHolder.getRequest() );
+    }
+
+    private static String getHost( final HttpServletRequest httpServletRequest )
+    {
+        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
+        if ( xForwardedHost != null )
+        {
+            return xForwardedHost.split( ":" )[0];
         }
         else
         {
-            //If there is no rewriting, appends the baseUri and the branch to the host
-            baseUrl.append( baseUriAndBranch );
+            return httpServletRequest.getServerName();
         }
-
-        return baseUrl.toString();
     }
 
-    private static boolean needPortNumber( final String scheme, final int port )
+    public static String getPort()
     {
-        final boolean isHttp = "http".equals( scheme ) && ( port == 80 );
-        final boolean isHttps = "https".equals( scheme ) && ( port == 443 );
+        return getPort( ServletRequestHolder.getRequest() );
+    }
+
+    private static String getPort( final HttpServletRequest httpServletRequest )
+    {
+        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
+        if ( xForwardedHost != null )
+        {
+            final String port = xForwardedHost.split( ":" )[1];
+            return port == null ? "" : port;
+        }
+        else
+        {
+            return Integer.toString( httpServletRequest.getServerPort() );
+        }
+    }
+
+    private static boolean needPortNumber( final String scheme, final String port )
+    {
+        final boolean isHttp = "http".equals( scheme ) && ( "80".equals( port ) );
+        final boolean isHttps = "https".equals( scheme ) && ( "443".equals( port ) );
         return !( isHttp || isHttps );
     }
 

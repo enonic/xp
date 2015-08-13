@@ -19,6 +19,46 @@ public class PortalRequestTest
     }
 
     @Test
+    public void setScheme()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getScheme() );
+
+        request.setScheme( "http" );
+        assertEquals( "http", request.getScheme() );
+    }
+
+    @Test
+    public void setHost()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getHost() );
+
+        request.setHost( "localhost" );
+        assertEquals( "localhost", request.getHost() );
+    }
+
+    @Test
+    public void setPort()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getPort() );
+
+        request.setPort( "8080" );
+        assertEquals( "8080", request.getPort() );
+    }
+
+    @Test
+    public void setPath()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getPath() );
+
+        request.setPath( "/root" );
+        assertEquals( "/root", request.getPath() );
+    }
+
+    @Test
     public void setMode()
     {
         final PortalRequest request = new PortalRequest();
@@ -37,27 +77,6 @@ public class PortalRequestTest
 
         request.setBranch( Branch.from( "another" ) );
         assertEquals( Branch.from( "another" ), request.getBranch() );
-    }
-
-    @Test
-    public void setBaseUrl()
-    {
-        final PortalRequest request = new PortalRequest();
-        assertEquals( "", request.getBaseUrl() );
-
-        request.setBaseUrl( "baseUrl" );
-        assertEquals( "baseUrl", request.getBaseUrl() );
-    }
-
-
-    @Test
-    public void setServerUrl()
-    {
-        final PortalRequest request = new PortalRequest();
-        assertEquals( "", request.getServerUrl() );
-
-        request.setServerUrl( "serverUrl" );
-        assertEquals( "serverUrl", request.getServerUrl() );
     }
 
     @Test

@@ -1,8 +1,9 @@
 {
-  "uri": "/portal/live/master/a/b",
-  "baseUrl": "http://localhost.com/portal/live/master",
-  "serverUrl": "http://localhost.com",
   "method": "GET",
+  "scheme": "http",
+  "host": "localhost",
+  "port": "80",
+  "path": "/portal/live/master/a/b",
   "mode": "live",
   "branch": "draft",
   "params": {
