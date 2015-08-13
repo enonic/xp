@@ -15,29 +15,29 @@ public class DoubleHelperTest
     @Test
     public void test_compare()
     {
-        assertTrue( DoubleHelper.fuzzyCompare( ONE, 1.0 ) );
-        assertTrue( DoubleHelper.fuzzyCompare( ONE, 1.00000000000000001 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.0 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.00000000000000001 ) );
 
-        assertFalse( DoubleHelper.fuzzyCompare( ONE, 1.0001 ) );
-        assertFalse( DoubleHelper.fuzzyCompare( ONE, -1.0 ) );
+        assertFalse( DoubleHelper.fuzzyEquals( ONE, 1.0001 ) );
+        assertFalse( DoubleHelper.fuzzyEquals( ONE, -1.0 ) );
     }
 
     @Test
     public void test_compare_zero()
     {
-        assertTrue( DoubleHelper.fuzzyCompare( ZERO, 0.0 ) );
-        assertTrue( DoubleHelper.fuzzyCompare( ZERO, 0.000000000000000001 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.0 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.000000000000000001 ) );
 
-        assertFalse( DoubleHelper.fuzzyCompare( ZERO, 0.0001 ) );
+        assertFalse( DoubleHelper.fuzzyEquals( ZERO, 0.0001 ) );
     }
 
     @Test
     public void test_compare_with_diff_zero()
     {
-        assertTrue( DoubleHelper.fuzzyCompare( ZERO, -0.0 ) );
-        assertTrue( DoubleHelper.fuzzyCompare( ZERO, -0.0000000000000001 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ZERO, -0.0 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ZERO, -0.0000000000000001 ) );
 
-        assertFalse( DoubleHelper.fuzzyCompare( ZERO, -0.00001 ) );
+        assertFalse( DoubleHelper.fuzzyEquals( ZERO, -0.00001 ) );
     }
 
 

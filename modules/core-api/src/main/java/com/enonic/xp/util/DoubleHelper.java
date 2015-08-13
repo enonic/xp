@@ -7,7 +7,7 @@ public class DoubleHelper
 {
     private static final Double EPSILON = 1.11e-16;
 
-    public static boolean fuzzyCompare( final double first, final double second )
+    public static boolean fuzzyEquals( final double first, final double second )
     {
         return DoubleMath.fuzzyEquals( first, second, EPSILON );
     }

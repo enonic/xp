@@ -35,11 +35,11 @@ public final class Cropping
 
     public boolean isUnmodified()
     {
-        return DoubleHelper.fuzzyCompare( top, 0.0 ) &&
-            DoubleHelper.fuzzyCompare( left, 0.0 ) &&
-            DoubleHelper.fuzzyCompare( bottom, 1.0 ) &&
-            DoubleHelper.fuzzyCompare( right, 1.0 ) &&
-            DoubleHelper.fuzzyCompare( zoom, 1.0 );
+        return DoubleHelper.fuzzyEquals( top, 0.0 ) &&
+            DoubleHelper.fuzzyEquals( left, 0.0 ) &&
+            DoubleHelper.fuzzyEquals( bottom, 1.0 ) &&
+            DoubleHelper.fuzzyEquals( right, 1.0 ) &&
+            DoubleHelper.fuzzyEquals( zoom, 1.0 );
     }
 
     public double top()
