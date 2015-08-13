@@ -2,7 +2,6 @@
   "textLine": "myValue",
   "comboBox": "1234",
   "checkbox": true,
-  "tinyMce": "<stuff>staff</stuff>",
   "tag": "myTag",
   "contentSelector": "1234abc",
   "contentTypeFilter": "article",
@@ -19,7 +18,7 @@
   "date": "2015-01-15",
   "time": "10:00:32.123",
   "geoPoint": "-45,34",
-  "htmlArea": "<h1>test</h1>",
+  "htmlArea": "<stuff>staff</stuff>",
   "set": {
     "setString": "ost",
     "setDouble": 123

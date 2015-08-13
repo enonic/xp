@@ -23,7 +23,7 @@ module api.form.inputtype.text.tiny {
 
             this.editor = editor;
 
-            this.getEl().addClass("tinymce-modal-dialog");
+            this.getEl().addClass("modal-dialog");
 
             this.layout();
             this.initializeActions();
