@@ -18,13 +18,13 @@ public class CheckboxTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Checkbox", this.type.getName().toString() );
+        assertEquals( "CheckBox", this.type.getName().toString() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "Checkbox", this.type.toString() );
+        assertEquals( "CheckBox", this.type.toString() );
     }
 
     @Test

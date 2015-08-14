@@ -66,7 +66,7 @@ public class ModifyContentHandlerTest
             addFormItem( Input.create().
                 label( "d" ).
                 name( "d" ).
-                inputType( InputTypeName.CHECKBOX ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             addFormItem( Input.create().
                 label( "e" ).

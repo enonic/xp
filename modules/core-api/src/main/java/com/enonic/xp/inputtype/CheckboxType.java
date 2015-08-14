@@ -14,7 +14,7 @@ final class CheckboxType
 
     private CheckboxType()
     {
-        super( InputTypeName.CHECKBOX );
+        super( InputTypeName.CHECK_BOX );
     }
 
     @Override

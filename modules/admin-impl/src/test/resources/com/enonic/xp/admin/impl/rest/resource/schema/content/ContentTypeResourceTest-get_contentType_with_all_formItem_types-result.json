@@ -36,7 +36,7 @@
           "helpText": null,
           "immutable": false,
           "indexed": false,
-          "inputType": "Checkbox",
+          "inputType": "CheckBox",
           "label": "My checkbox input",
           "maximizeUIInputWidth": false,
           "name": "myCheckbox",

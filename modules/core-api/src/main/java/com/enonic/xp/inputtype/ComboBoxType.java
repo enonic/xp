@@ -11,7 +11,7 @@ final class ComboBoxType
 
     private ComboBoxType()
     {
-        super( InputTypeName.COMBOBOX );
+        super( InputTypeName.COMBO_BOX );
     }
 
     @Override

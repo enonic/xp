@@ -44,7 +44,7 @@ public final class InputTypes
     @Override
     public InputType resolve( final InputTypeName name )
     {
-        final InputType type = this.map.get( name.toString() );
+        final InputType type = this.map.get( name.toString().toLowerCase() );
         if ( type != null )
         {
             return type;
@@ -75,7 +75,7 @@ public final class InputTypes
 
         private void register( final InputType type )
         {
-            final Object previous = this.map.put( type.getName().toString(), type );
+            final Object previous = this.map.put( type.getName().toString().toLowerCase(), type );
             Preconditions.checkState( previous == null, "InputType already registered: " + type.getName() );
         }
 

@@ -222,14 +222,14 @@ public class InputValidatorTest
             addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
-                inputType( InputTypeName.COMBOBOX ).
+                inputType( InputTypeName.COMBO_BOX ).
                 inputTypeConfig( "option.value", "value1", "value2" ).
                 inputTypeConfig( "option.label", "label1", "label1" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
                 label( "Checkbox" ).
-                inputType( InputTypeName.CHECKBOX ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).

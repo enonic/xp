@@ -103,7 +103,7 @@ public class ContentTypeResourceTest
 
         Input myCustomInput = Input.create().
             name( "myCheckbox" ).
-            inputType( InputTypeName.CHECKBOX ).
+            inputType( InputTypeName.CHECK_BOX ).
             label( "My checkbox input" ).
             required( false ).
             build();

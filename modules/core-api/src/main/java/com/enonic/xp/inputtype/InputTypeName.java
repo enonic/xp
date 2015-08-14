@@ -7,9 +7,9 @@ import com.google.common.annotations.Beta;
 @Beta
 public final class InputTypeName
 {
-    public final static InputTypeName CHECKBOX = InputTypeName.from( "Checkbox" );
+    public final static InputTypeName CHECK_BOX = InputTypeName.from( "CheckBox" );
 
-    public final static InputTypeName COMBOBOX = InputTypeName.from( "ComboBox" );
+    public final static InputTypeName COMBO_BOX = InputTypeName.from( "ComboBox" );
 
     public final static InputTypeName CONTENT_SELECTOR = InputTypeName.from( "ContentSelector" );
 

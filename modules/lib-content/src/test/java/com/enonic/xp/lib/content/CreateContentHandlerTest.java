@@ -41,7 +41,7 @@ public class CreateContentHandlerTest
             addFormItem( Input.create().
                 label( "g" ).
                 name( "g" ).
-                inputType( InputTypeName.CHECKBOX ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             build();
 

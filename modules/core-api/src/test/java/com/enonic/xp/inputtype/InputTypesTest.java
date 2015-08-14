@@ -29,6 +29,14 @@ public class InputTypesTest
         assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName().toString() );
     }
 
+    @Test
+    public void resolveType_ignoreCase()
+    {
+        final InputType type = this.types.resolve( InputTypeName.from( "textline" ) );
+        assertNotNull( type );
+        assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName().toString() );
+    }
+
     @Test(expected = InputTypeNotFoundException.class)
     public void resolveType_unknown()
     {
