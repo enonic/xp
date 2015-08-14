@@ -18,19 +18,39 @@
     </property-set>
     <property-set name="x">
       <property-set name="media">
-        <property-set name="image-info">
-          <long isNull="true" name="pixelSize"/>
-        </property-set>
         <property-set name="photo-info">
-          <localDateTime isNull="true" name="date"/>
-          <string isNull="true" name="make"/>
+          <string name="focalLength">38.0 mm</string>
+          <string name="aperture">F8</string>
+          <string name="make">NIKON CORPORATION</string>
+          <string name="meteringMode">Center weighted average</string>
+          <string name="orientation">Top, left side (Horizontal / normal)</string>
+          <string name="model">NIKON D800E</string>
+          <string name="whiteBalance">Auto white balance</string>
+          <localDateTime name="date">2014-01-21T11:45:17.000Z</localDateTime>
+          <string name="focalLength35">38mm</string>
+          <string name="exposureProgram">Aperture priority</string>
+          <string name="shutterTime">10/600 sec</string>
+          <string name="iso">160</string>
+          <string name="flash">Flash did not fire, auto</string>
+          <string name="exposureBias">0 EV</string>
+          <string name="focusDistance">Unknown</string>
+          <string name="exposureMode">Auto exposure</string>
+        </property-set>
+        <property-set name="image-info">
+          <string name="fileSource">Digital Still Camera (DSC)</string>
+          <string name="colorSpace">RGB</string>
+          <string name="colorSpace">sRGB</string>
+          <long name="imageWidth">7244</long>
+          <long name="imageHeight">4765</long>
+          <string name="contentType">image/jpeg</string>
+          <long name="bytesize">4541342</long>
+          <long name="pixelSize">34517660</long>
         </property-set>
       </property-set>
       <property-set name="base">
         <property-set name="gps-info">
-          <geoPoint isNull="true" name="geoPoint"/>
-          <string isNull="true" name="altitude"/>
-          <string isNull="true" name="direction"/>
+          <string name="altitude">2813 metres</string>
+          <geoPoint name="geoPoint">27.904278,89.728673</geoPoint>
         </property-set>
       </property-set>
     </property-set>
