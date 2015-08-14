@@ -17,7 +17,6 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
@@ -182,7 +181,7 @@ final class UpdateContentCommand
                 build().
                 validate( editedContent.getData() );
         }
-        catch ( InvalidDataException e )
+        catch ( final Exception e )
         {
             throw new IllegalArgumentException( "Incorrect property for content: " + editedContent.getPath(), e );
         }

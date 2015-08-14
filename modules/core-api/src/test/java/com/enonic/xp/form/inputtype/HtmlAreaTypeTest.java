@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +44,7 @@ public class HtmlAreaTypeTest
         this.type.validate( stringProperty( "test" ), config );
     }
 
-    @Test(expected = InvalidTypeException.class)
+    @Test(expected = InputTypeValidationException.class)
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

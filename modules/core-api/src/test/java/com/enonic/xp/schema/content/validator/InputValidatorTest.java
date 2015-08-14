@@ -13,7 +13,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.form.inputtype.InputTypeValidationException;
 import com.enonic.xp.form.inputtype.InputTypeName;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
@@ -173,10 +173,11 @@ public class InputValidatorTest
         {
             inputValidator.validate( invalidData );
         }
-        catch ( InvalidDataException e )
+        catch ( final InputTypeValidationException e )
         {
             invalidDataExceptionThrown = true;
         }
+
         assertTrue( invalidDataExceptionThrown );
     }
 

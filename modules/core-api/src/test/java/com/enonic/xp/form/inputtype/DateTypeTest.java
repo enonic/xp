@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +45,7 @@ public class DateTypeTest
         this.type.validate( localDateProperty(), config );
     }
 
-    @Test(expected = InvalidTypeException.class)
+    @Test(expected = InputTypeValidationException.class)
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();

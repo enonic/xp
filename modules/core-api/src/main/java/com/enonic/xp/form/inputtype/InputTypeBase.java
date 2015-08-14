@@ -5,7 +5,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
-import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 public abstract class InputTypeBase
@@ -32,12 +31,43 @@ public abstract class InputTypeBase
 
     public abstract Value createValue( final String value, final InputTypeConfig config );
 
-    protected final void validateType( final Property property, final ValueType type )
+    protected final void validateType( final Property property, final ValueType expectedType )
     {
-        if ( property.getType() != type )
+        final ValueType actualType = property.getType();
+        if ( actualType != expectedType )
         {
-            throw new InvalidTypeException( property, type );
+            throw InputTypeValidationException.invalidType( property, actualType, expectedType );
         }
+    }
+
+    protected final void validateType( final Property property, final ValueType... expectedTypes )
+    {
+        final ValueType actualType = property.getType();
+        if ( !inSet( actualType, expectedTypes ) )
+        {
+            throw InputTypeValidationException.invalidType( property, expectedTypes );
+        }
+    }
+
+    protected final void validateValue( final Property property, final boolean flag, final String message )
+    {
+        if ( !flag )
+        {
+            throw InputTypeValidationException.invalidValue( property, message );
+        }
+    }
+
+    private static boolean inSet( final ValueType check, final ValueType... types )
+    {
+        for ( final ValueType type : types )
+        {
+            if ( type == check )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public abstract void validate( Property property, InputTypeConfig config );

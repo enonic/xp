@@ -4,7 +4,6 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
-import com.enonic.xp.form.InvalidDataException;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeResolver;
 
@@ -32,21 +31,13 @@ final class InputValidationVisitor
     }
 
     private void checkValidity( final Input input, final Property property )
-        throws InvalidDataException
     {
-        try
+        if ( property == null )
         {
-            if ( property == null )
-            {
-                return;
-            }
+            return;
+        }
 
-            final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
-            type.validate( property, input.getInputTypeConfig() );
-        }
-        catch ( final Exception e )
-        {
-            throw new InvalidDataException( property, e );
-        }
+        final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
+        type.validate( property, input.getInputTypeConfig() );
     }
 }

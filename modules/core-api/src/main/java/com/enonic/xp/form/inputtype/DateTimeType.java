@@ -5,7 +5,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.InvalidTypeException;
 
 @Beta
 final class DateTimeType
@@ -39,9 +38,6 @@ final class DateTimeType
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
-        if ( ( ValueTypes.DATE_TIME != property.getType() ) && ( ValueTypes.LOCAL_DATE_TIME != property.getType() ) )
-        {
-            throw new InvalidTypeException( property, ValueTypes.DATE_TIME );
-        }
+        validateType( property, ValueTypes.DATE_TIME, ValueTypes.LOCAL_DATE_TIME );
     }
 }
