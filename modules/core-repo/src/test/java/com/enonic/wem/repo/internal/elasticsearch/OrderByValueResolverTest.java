@@ -50,8 +50,6 @@ public class OrderByValueResolverTest
     public void ensureOrderingCorrectForLongValues()
         throws Exception
     {
-        //     createSearchIndex( this.repository );
-        refresh();
 
         final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000.0 ) ) );
         final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000.0 ) ) );

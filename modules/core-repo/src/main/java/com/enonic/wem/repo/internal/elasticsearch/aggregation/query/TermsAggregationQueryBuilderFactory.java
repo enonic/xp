@@ -4,8 +4,8 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
-import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 
 class TermsAggregationQueryBuilderFactory
 {
@@ -14,7 +14,7 @@ class TermsAggregationQueryBuilderFactory
         final String fieldName = IndexQueryFieldNameResolver.resolveStringFieldName( aggregationQuery.getFieldName() );
 
         final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
-            minDocCount( 0 ).
+            minDocCount( aggregationQuery.getMinDocCount() ).
             field( fieldName ).
             size( aggregationQuery.getSize() );
 

@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
-import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.Resources;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 
 final class GetPageDescriptorsByApplicationCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByApplicationCommand>
@@ -42,11 +42,11 @@ final class GetPageDescriptorsByApplicationCommand
     private PageDescriptors getDescriptorsFromApplication( final Application application )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        final Resources resources = this.resourceService.findResources( application.getKey(), PATH, "*", false );
+        final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
 
-        for ( final Resource resource : resources )
+        for ( final ResourceKey resourceKey : resourceKeys )
         {
-            final String descriptorName = resource.getKey().getName();
+            final String descriptorName = resourceKey.getName();
             final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
             final PageDescriptor pageDescriptor = getDescriptor( key );
             if ( pageDescriptor != null )

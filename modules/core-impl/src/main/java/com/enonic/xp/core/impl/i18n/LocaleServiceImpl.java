@@ -7,23 +7,18 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
     implements LocaleService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
-
     private static final String PHRASE_FOLDER = "site/i18n/phrases";
 
     private static final String DELIMITER = "_";
@@ -82,25 +77,18 @@ public final class LocaleServiceImpl
         Properties properties = getOrCreateProperties( applicationKey );
 
         final ResourceKey resourceKey = ResourceKey.from( applicationKey, PHRASE_FOLDER + bundleExtension + ".properties" );
-        try
-        {
-            final Resource resource = resourceService.getResource( resourceKey );
+        final Resource resource = resourceService.getResource( resourceKey );
 
-            if ( resource != null )
-            {
-                try
-                {
-                    properties.load( resource.openStream() );
-                }
-                catch ( final IOException e )
-                {
-                    throw new LocalizationException( "Not able to load resource for: " + applicationKey.toString(), e );
-                }
-            }
-        }
-        catch ( ResourceNotFoundException e )
+        if ( resource.exists() )
         {
-            LOG.info( "Resource not found: " + resourceKey.toString() );
+            try
+            {
+                properties.load( resource.openStream() );
+            }
+            catch ( final IOException e )
+            {
+                throw new LocalizationException( "Not able to load resource for: " + applicationKey.toString(), e );
+            }
         }
 
         return properties;

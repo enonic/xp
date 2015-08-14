@@ -42,6 +42,8 @@ module api.app.browse {
 
         private filterPanelToBeShownFullScreen: boolean = false;
 
+        private filterPanelIsHiddenByDefault: boolean = true;
+
         private toggleFilterPanelAction: api.ui.Action;
 
         constructor(params: BrowsePanelParams<M>) {
@@ -65,6 +67,9 @@ module api.app.browse {
 
             if (this.filterPanel) {
                 this.setupFilterPanel();
+                if(this.filterPanelIsHiddenByDefault) {
+                    this.hideFilterPanel();
+                }
             } else {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
@@ -88,7 +93,10 @@ module api.app.browse {
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
 
-                this.toggleFilterPanelDependingOnScreenSize(item);
+                if(!this.filterPanelIsHiddenByDefault) { //not relevant if filter panel is hidden by default
+                    this.toggleFilterPanelDependingOnScreenSize(item);
+                }
+
                 this.togglePreviewPanelDependingOnScreenSize(item);
             });
         }
