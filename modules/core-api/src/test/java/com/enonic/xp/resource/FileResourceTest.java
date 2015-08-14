@@ -2,13 +2,12 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class UrlResourceTest
+public class FileResourceTest
     extends AbstractResourceTest
 {
     @Test
@@ -16,15 +15,15 @@ public class UrlResourceTest
         throws Exception
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
-        final URL resourceUrl = new File( applicationsDir, "myapplication/a/b.txt" ).toURI().toURL();
+        final File resourceFile = new File( applicationsDir, "myapplication/a/b.txt" );
 
-        final Resource resource = new UrlResource( key, resourceUrl );
+        final Resource resource = new FileResource( key, resourceFile );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
         assertTrue( resource.getTimestamp() > 0 );
         assertTrue( resource.exists() );
-        assertEquals( resourceUrl, resource.getUrl() );
+        assertEquals( resourceFile.toURI().toURL(), resource.getUrl() );
 
         resource.requireExists();
         assertNotNull( resource.openStream() );
@@ -38,15 +37,15 @@ public class UrlResourceTest
         throws MalformedURLException
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );
-        final URL resourceUrl = new File( applicationsDir, "myapplication/not/exists.txt" ).toURI().toURL();
+        final File resourceFile = new File( applicationsDir, "myapplication/not/exists.txt" );
 
-        final Resource resource = new UrlResource( key, resourceUrl );
+        final Resource resource = new FileResource( key, resourceFile );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );
         assertEquals( -1, resource.getTimestamp() );
         assertFalse( resource.exists() );
-        assertEquals( resourceUrl, resource.getUrl() );
+        assertEquals( resourceFile.toURI().toURL(), resource.getUrl() );
 
         boolean requireExistExceptionCaught = false;
         try

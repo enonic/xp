@@ -44,9 +44,9 @@ public class ResourcesTest
         final ResourceKey resourceKey1 = ResourceKey.from( RESOURCE_URI_1 );
         final ResourceKey resourceKey2 = ResourceKey.from( RESOURCE_URI_2 );
         final ResourceKey resourceKey3 = ResourceKey.from( RESOURCE_URI_3 );
-        resource1 = new UrlResource( resourceKey1, new File( applicationsDir, "myapplication-1.0.0" ).toURI().toURL() );
-        resource2 = new UrlResource( resourceKey2, new File( applicationsDir, "myapplication-1.0.0/a/b.txt" ).toURI().toURL() );
-        resource3 = new UrlResource( resourceKey3, new File( applicationsDir, "myapplication-1.0.0/a/c.txt" ).toURI().toURL() );
+        resource1 = new FileResource( resourceKey1, new File( applicationsDir, "myapplication-1.0.0" ) );
+        resource2 = new FileResource( resourceKey2, new File( applicationsDir, "myapplication-1.0.0/a/b.txt" ) );
+        resource3 = new FileResource( resourceKey3, new File( applicationsDir, "myapplication-1.0.0/a/c.txt" ) );
 
         this.list = new ArrayList();
         this.list.add( resource1 );
