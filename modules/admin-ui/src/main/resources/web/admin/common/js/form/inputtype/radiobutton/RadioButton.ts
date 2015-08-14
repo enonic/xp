@@ -1,4 +1,4 @@
-module api.form.inputtype.radiobuttons {
+module api.form.inputtype.radiobutton {
 
     import Option = api.ui.selector.Option;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -9,21 +9,21 @@ module api.form.inputtype.radiobuttons {
     import ValueTypes = api.data.ValueTypes;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
-    export interface RadioButtonsConfig {
+    export interface RadioButtonConfig {
         options: {
             label: string;
             value: string;
         }[]
     }
 
-    export class RadioButtons extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<RadioButtonsConfig,string> {
+    export class RadioButton extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<RadioButtonConfig,string> {
 
         private selector: api.dom.Element;
         private property: Property;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<RadioButtonsConfig>) {
-            super(config, "radio-buttons");
+        constructor(config: api.form.inputtype.InputTypeViewContext<RadioButtonConfig>) {
+            super(config, "radio-button");
         }
 
         getValueType(): ValueType {
@@ -85,7 +85,7 @@ module api.form.inputtype.radiobuttons {
 
             var radioGroup = new api.ui.RadioGroup(name);
 
-            var inputConfig: RadioButtonsConfig = this.getContext().inputConfig;
+            var inputConfig: RadioButtonConfig = this.getContext().inputConfig;
             if (inputConfig) {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
@@ -111,5 +111,5 @@ module api.form.inputtype.radiobuttons {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("RadioButtons", RadioButtons));
+    api.form.inputtype.InputTypeManager.register(new api.Class("RadioButton", RadioButton));
 }
