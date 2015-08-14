@@ -158,6 +158,9 @@ module app.wizard {
                     applications: site.getApplicationKeys()
                 });
             }
+            else if (contentType.isSite()) {
+                return wemQ<DefaultModels>(new DefaultModels(null, null));
+            }
             else {
                 return wemQ<DefaultModels>(null);
             }

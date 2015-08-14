@@ -57,10 +57,14 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
-            if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen
+            if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen or no template presents
                 this.pageControllerSelector.setModel(liveEditModel);
+
                 if (this.pageModel.isCustomized()) {
                     this.addClass("customized");
+                }
+
+                if (this.pageModeImpliesPageControllerShown()) {
                     this.pageControllerForm.show();
                 }
             }
@@ -95,13 +99,25 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.pageTemplateForm.getSelector().onCustomizedSelected(() => {
                 this.addClass("customized");
+                this.pageControllerForm.getSelector().reset();
                 this.pageControllerForm.show();
                 this.pageModel.setCustomized(true);
             });
+
+            this.pageModel.onReset(() => {
+                this.pageControllerForm.getSelector().reset();
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getDefaultPageTemplate()) {
+                    this.pageControllerForm.hide()
+                }
+            })
         }
 
         refreshInspectionHandler(liveEditModel: LiveEditModel) {
             this.inspectionHandler.refreshConfigView(liveEditModel);
+        }
+
+        private pageModeImpliesPageControllerShown(): boolean {
+            return this.pageModel.isCustomized() || this.pageModel.getMode() == PageMode.FORCED_CONTROLLER || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
         }
     }
 
@@ -222,6 +238,10 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var pageModel = liveEditModel.getPageModel();
 
+            if(!this.contentModelCanBeInitialized(pageModel)) {
+                return;
+            }
+
             if (this.propertyChangedListener) {
                 pageModel.unPropertyChanged(this.propertyChangedListener);
             }
@@ -284,6 +304,13 @@ module app.wizard.page.contextwindow.inspect.page {
             var controller = pageModel.getDefaultPageTemplateController();
             var config = pageModel.getConfig();
             this.refreshConfigForm(controller, config, formContext);
+        }
+
+        private contentModelCanBeInitialized(pageModel: PageModel): boolean {
+            var pageModeIsCustomizedAndTemplateCanBeSet = pageModel.isCustomized() && !!pageModel.getDefaultPageTemplate();
+            var templateIsSetOrCanBeSet = pageModel.getMode() == PageMode.FORCED_TEMPLATE || pageModel.getMode() == PageMode.AUTOMATIC;
+
+            return pageModeIsCustomizedAndTemplateCanBeSet || templateIsSetOrCanBeSet;
         }
     }
 }
