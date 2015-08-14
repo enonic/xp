@@ -10,9 +10,9 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 public abstract class AbstractScriptTest
 {
@@ -41,7 +41,7 @@ public abstract class AbstractScriptTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = AbstractScriptTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
-            return new Resource( resourceKey, resourceUrl );
+            return new UrlResource( resourceKey, resourceUrl );
         } );
 
         this.scriptService.setApplicationService( applicationService );

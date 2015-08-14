@@ -14,7 +14,7 @@ import com.google.common.io.ByteSource;
 
 import static org.junit.Assert.*;
 
-public class ResourceTest
+public class UrlResourceTest
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -44,7 +44,7 @@ public class ResourceTest
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
 
-        final Resource resource = new Resource( key, new File( applicationsDir, "myapplication/a/b.txt" ).toURI().toURL() );
+        final Resource resource = new UrlResource( key, new File( applicationsDir, "myapplication/a/b.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -62,7 +62,7 @@ public class ResourceTest
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );
 
-        final Resource resource = new Resource( key, new File( applicationsDir, "myapplication/not/exists.txt" ).toURI().toURL() );
+        final Resource resource = new UrlResource( key, new File( applicationsDir, "myapplication/not/exists.txt" ).toURI().toURL() );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );

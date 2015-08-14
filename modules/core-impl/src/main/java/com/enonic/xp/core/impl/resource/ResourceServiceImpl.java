@@ -17,6 +17,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 @Component(immediate = true)
 public class ResourceServiceImpl
@@ -36,7 +37,7 @@ public class ResourceServiceImpl
             resourceUrl = application.getBundle().getResource( resourcePath );
         }
 
-        return new Resource( resourceKey, resourceUrl );
+        return new UrlResource( resourceKey, resourceUrl );
     }
 
     @Override

@@ -16,9 +16,9 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 import static org.junit.Assert.*;
 
@@ -57,7 +57,7 @@ public class LocaleServiceImplTest
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
             final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return resourceUrl == null ? null : new UrlResource( resourceKey, resourceUrl );
         } );
         localeService.setResourceService( resourceService );
     }

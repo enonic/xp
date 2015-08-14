@@ -14,6 +14,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 public abstract class ApplicationBaseResourceTest
     extends BaseResourceTest
@@ -45,7 +46,7 @@ public abstract class ApplicationBaseResourceTest
 
         final ResourceKey applicationResourceKey = ResourceKey.from( key );
         final URL resourcePathUrl = filePath.toUri().toURL();
-        final Resource resource = new Resource( applicationResourceKey, resourcePathUrl );
+        final Resource resource = new UrlResource( applicationResourceKey, resourcePathUrl );
         Mockito.when( this.resourceService.getResource( applicationResourceKey ) ).thenReturn( resource );
 
     }

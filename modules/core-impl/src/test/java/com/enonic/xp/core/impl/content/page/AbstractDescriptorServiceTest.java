@@ -21,10 +21,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 public abstract class AbstractDescriptorServiceTest
 {
@@ -48,7 +48,7 @@ public abstract class AbstractDescriptorServiceTest
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
             final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return new Resource( resourceKey, resourceUrl );
+            return new UrlResource( resourceKey, resourceUrl );
         } );
     }
 
