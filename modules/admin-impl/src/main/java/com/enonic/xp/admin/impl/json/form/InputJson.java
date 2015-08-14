@@ -26,7 +26,7 @@ public class InputJson
     {
         this.input = input;
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
-        this.inputType = input.getInputType().getName();
+        this.inputType = input.getInputType().toString();
     }
 
     @JsonIgnore

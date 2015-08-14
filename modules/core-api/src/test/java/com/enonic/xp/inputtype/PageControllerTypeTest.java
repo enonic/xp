@@ -18,7 +18,7 @@ public class PageControllerTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "PageController", this.type.getName() );
+        assertEquals( "PageController", this.type.getName().toString() );
     }
 
     @Test

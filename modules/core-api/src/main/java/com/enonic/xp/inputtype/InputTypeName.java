@@ -54,11 +54,6 @@ public final class InputTypeName
         this.name = name;
     }
 
-    public String getName()
-    {
-        return this.name;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -78,7 +73,7 @@ public final class InputTypeName
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.name );
+        return this.name.hashCode();
     }
 
     @Override

@@ -19,7 +19,7 @@ public class DateTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Date", this.type.getName() );
+        assertEquals( "Date", this.type.getName().toString() );
     }
 
     @Test

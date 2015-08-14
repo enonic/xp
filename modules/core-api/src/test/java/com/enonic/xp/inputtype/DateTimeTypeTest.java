@@ -18,7 +18,7 @@ public class DateTimeTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "DateTime", this.type.getName() );
+        assertEquals( "DateTime", this.type.getName().toString() );
     }
 
     @Test

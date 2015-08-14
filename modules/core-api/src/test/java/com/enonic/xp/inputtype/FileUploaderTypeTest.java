@@ -18,7 +18,7 @@ public class FileUploaderTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "FileUploader", this.type.getName() );
+        assertEquals( "FileUploader", this.type.getName().toString() );
     }
 
     @Test

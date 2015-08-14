@@ -18,7 +18,7 @@ public class TagTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Tag", this.type.getName() );
+        assertEquals( "Tag", this.type.getName().toString() );
     }
 
     @Test

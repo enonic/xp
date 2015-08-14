@@ -18,7 +18,7 @@ public class ComboBoxTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ComboBox", this.type.getName() );
+        assertEquals( "ComboBox", this.type.getName().toString() );
     }
 
     @Test

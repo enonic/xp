@@ -18,7 +18,7 @@ public class ContentTypeFilterTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ContentTypeFilter", this.type.getName() );
+        assertEquals( "ContentTypeFilter", this.type.getName().toString() );
     }
 
     @Test

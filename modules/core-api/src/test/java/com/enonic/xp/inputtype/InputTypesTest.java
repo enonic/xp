@@ -26,7 +26,7 @@ public class InputTypesTest
     {
         final InputType type = this.types.resolve( InputTypeName.TEXT_LINE );
         assertNotNull( type );
-        assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName() );
+        assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName().toString() );
     }
 
     @Test(expected = InputTypeNotFoundException.class)

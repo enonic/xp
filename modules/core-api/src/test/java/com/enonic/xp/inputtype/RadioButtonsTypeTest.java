@@ -18,7 +18,7 @@ public class RadioButtonsTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "RadioButtons", this.type.getName() );
+        assertEquals( "RadioButtons", this.type.getName().toString() );
     }
 
     @Test

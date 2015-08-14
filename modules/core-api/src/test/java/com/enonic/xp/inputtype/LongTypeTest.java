@@ -18,7 +18,7 @@ public class LongTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Long", this.type.getName() );
+        assertEquals( "Long", this.type.getName().toString() );
     }
 
     @Test

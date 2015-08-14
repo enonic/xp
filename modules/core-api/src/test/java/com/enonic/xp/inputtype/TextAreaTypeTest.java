@@ -18,7 +18,7 @@ public class TextAreaTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "TextArea", this.type.getName() );
+        assertEquals( "TextArea", this.type.getName().toString() );
     }
 
     @Test

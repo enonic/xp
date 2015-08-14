@@ -18,7 +18,7 @@ public class HtmlAreaTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "HtmlArea", this.type.getName() );
+        assertEquals( "HtmlArea", this.type.getName().toString() );
     }
 
     @Test

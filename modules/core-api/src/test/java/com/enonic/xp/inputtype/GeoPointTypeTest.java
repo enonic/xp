@@ -18,7 +18,7 @@ public class GeoPointTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "GeoPoint", this.type.getName() );
+        assertEquals( "GeoPoint", this.type.getName().toString() );
     }
 
     @Test

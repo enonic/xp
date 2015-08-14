@@ -18,7 +18,7 @@ public class TextLineTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "TextLine", this.type.getName() );
+        assertEquals( "TextLine", this.type.getName().toString() );
     }
 
     @Test

@@ -75,7 +75,7 @@ public final class InputTypes
 
         private void register( final InputType type )
         {
-            final Object previous = this.map.put( type.getName(), type );
+            final Object previous = this.map.put( type.getName().toString(), type );
             Preconditions.checkState( previous == null, "InputType already registered: " + type.getName() );
         }
 

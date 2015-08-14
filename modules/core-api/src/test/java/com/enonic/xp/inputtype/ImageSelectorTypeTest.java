@@ -18,7 +18,7 @@ public class ImageSelectorTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ImageSelector", this.type.getName() );
+        assertEquals( "ImageSelector", this.type.getName().toString() );
     }
 
     @Test

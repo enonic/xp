@@ -18,7 +18,7 @@ public class SiteConfiguratorTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "SiteConfigurator", this.type.getName() );
+        assertEquals( "SiteConfigurator", this.type.getName().toString() );
     }
 
     @Test

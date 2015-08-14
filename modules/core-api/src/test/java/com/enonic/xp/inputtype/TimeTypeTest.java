@@ -18,7 +18,7 @@ public class TimeTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Time", this.type.getName() );
+        assertEquals( "Time", this.type.getName().toString() );
     }
 
     @Test

@@ -8,7 +8,7 @@ import com.enonic.xp.data.Value;
 @Beta
 public interface InputType
 {
-    String getName();
+    InputTypeName getName();
 
     Value createValue( String value, InputTypeConfig config );
 

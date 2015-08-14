@@ -18,7 +18,7 @@ public class ContentSelectorTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ContentSelector", this.type.getName() );
+        assertEquals( "ContentSelector", this.type.getName().toString() );
     }
 
     @Test

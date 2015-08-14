@@ -18,7 +18,7 @@ public class DoubleTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Double", this.type.getName() );
+        assertEquals( "Double", this.type.getName().toString() );
     }
 
     @Test

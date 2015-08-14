@@ -18,7 +18,7 @@ public class CheckboxTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "Checkbox", this.type.getName() );
+        assertEquals( "Checkbox", this.type.getName().toString() );
     }
 
     @Test

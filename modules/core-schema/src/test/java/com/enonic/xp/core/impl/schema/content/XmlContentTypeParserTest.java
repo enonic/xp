@@ -70,7 +70,7 @@ public class XmlContentTypeParserTest
         assertNotNull( item );
 
         final Input input = (Input) item;
-        assertEquals( InputTypeName.DATE.toString(), input.getInputType().getName() );
+        assertEquals( InputTypeName.DATE.toString(), input.getInputType().toString() );
 
         final InputTypeConfig config = input.getInputTypeConfig();
         assertNotNull( config );

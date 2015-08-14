@@ -18,9 +18,9 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public final String getName()
+    public final InputTypeName getName()
     {
-        return name.toString();
+        return name;
     }
 
     @Override
