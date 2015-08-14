@@ -68,7 +68,7 @@ module app.wizard.page.contextwindow.inspect.page {
                             if (pageTemplateKey) {
                                 this.selectTemplate(pageTemplateKey);
                             } else {
-                                this.selectOption(pageTemplateOptions.getDefault());
+                                this.selectOption(pageTemplateOptions.getDefault(), true);
                             }
                         }
                     });
