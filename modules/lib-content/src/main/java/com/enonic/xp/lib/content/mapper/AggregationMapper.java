@@ -61,7 +61,7 @@ public final class AggregationMapper
     {
         gen.map();
         gen.value( "key", value.getKey() );
-        gen.value( "doc_count", value.getDocCount() );
+        gen.value( "docCount", value.getDocCount() );
         if ( value instanceof DateRangeBucket )
         {
             serializeDateBucket( gen, (DateRangeBucket) value );
