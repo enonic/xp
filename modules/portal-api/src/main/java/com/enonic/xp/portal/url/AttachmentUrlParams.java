@@ -82,6 +82,7 @@ public final class AttachmentUrlParams
     @Override
     public AttachmentUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         id( singleValue( map, "_id" ) );
         path( singleValue( map, "_path" ) );
         name( singleValue( map, "_name" ) );

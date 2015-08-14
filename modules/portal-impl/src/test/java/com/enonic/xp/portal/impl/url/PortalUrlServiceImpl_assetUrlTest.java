@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -22,7 +23,6 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-//        assertEquals( "/portal/draft/context/path/_/asset/myapplication/css/my.css", url );
         assertEquals( "/portal/draft/_/asset/myapplication/css/my.css", url );
     }
 
@@ -90,5 +90,20 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         //Post treatment
         ServletRequestHolder.setRequest( null );
+    }
+
+    @Test
+    public void createUrl_absolute()
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            type( UrlTypeConstants.ABSOLUTE ).
+            portalRequest( this.portalRequest ).
+            path( "css/my.css" );
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        ServletRequestHolder.setRequest( req );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "http://localhost/portal/draft/_/asset/myapplication/css/my.css", url );
     }
 }

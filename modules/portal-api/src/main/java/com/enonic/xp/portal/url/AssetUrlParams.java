@@ -38,6 +38,7 @@ public final class AssetUrlParams
     @Override
     public AssetUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         path( singleValue( map, "_path" ) );
         application( singleValue( map, "_application" ) );
         getParams().putAll( map );

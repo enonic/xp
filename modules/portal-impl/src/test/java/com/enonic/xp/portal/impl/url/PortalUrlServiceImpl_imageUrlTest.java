@@ -2,12 +2,15 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -101,6 +104,23 @@ public class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
         assertEquals( "/portal/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
                       url );
+    }
+
+    @Test
+    public void createUrl_absolute()
+    {
+        this.portalRequest.setContent( createContent() );
+
+        final ImageUrlParams params = new ImageUrlParams().
+            type( UrlTypeConstants.ABSOLUTE ).
+            portalRequest( this.portalRequest ).
+            scale( "max(300)" );
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        ServletRequestHolder.setRequest( req );
+
+        final String url = this.service.imageUrl( params );
+        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/image/123456/max-300/mycontent", url );
     }
 
     private Content createContent()

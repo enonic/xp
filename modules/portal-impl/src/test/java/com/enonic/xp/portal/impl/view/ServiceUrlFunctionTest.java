@@ -20,6 +20,6 @@ public class ServiceUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "serviceUrl", "_service=a", "b=2" );
-        assertEquals( "ServiceUrlParams{params={b=[2]}, service=a}", result );
+        assertEquals( "ServiceUrlParams{type=server, params={b=[2]}, service=a}", result );
     }
 }

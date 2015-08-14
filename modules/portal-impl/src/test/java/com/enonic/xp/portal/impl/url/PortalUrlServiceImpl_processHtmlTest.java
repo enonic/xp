@@ -2,12 +2,15 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -207,6 +210,27 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals( "<a href=\"/portal/draft/context/path/_/error/500\">Image</a>", processedHtml );
+    }
+
+    @Test
+    public void process_absolute()
+    {
+        //Creates a content
+        final Content content = ContentFixtures.newContent();
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            type( UrlTypeConstants.ABSOLUTE ).
+            portalRequest( this.portalRequest ).
+            value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        ServletRequestHolder.setRequest( req );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<a href=\"http://localhost/portal/draft" + content.getPath() + "\">Content</a>", processedHtml );
     }
 
 }

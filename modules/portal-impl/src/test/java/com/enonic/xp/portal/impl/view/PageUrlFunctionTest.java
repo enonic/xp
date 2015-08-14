@@ -20,6 +20,6 @@ public class PageUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "pageUrl", "_path=some/path", "a=1", "b=2" );
-        assertEquals( "PageUrlParams{params={a=[1], b=[2]}, path=some/path}", result );
+        assertEquals( "PageUrlParams{type=server, params={a=[1], b=[2]}, path=some/path}", result );
     }
 }

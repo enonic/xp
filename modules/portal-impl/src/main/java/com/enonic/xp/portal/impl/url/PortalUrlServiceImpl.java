@@ -117,6 +117,7 @@ public final class PortalUrlServiceImpl
                 if ( CONTENT_TYPE.equals( type ) )
                 {
                     PageUrlParams pageUrlParams = new PageUrlParams().
+                        type( params.getType() ).
                         id( id ).
                         portalRequest( params.getPortalRequest() );
 
@@ -127,6 +128,7 @@ public final class PortalUrlServiceImpl
                 else if ( IMAGE_TYPE.equals( type ) )
                 {
                     ImageUrlParams imageUrlParams = new ImageUrlParams().
+                        type( params.getType() ).
                         id( id ).
                         scale( IMAGE_SCALE ).
                         format( IMAGE_FORMAT ).
@@ -139,6 +141,7 @@ public final class PortalUrlServiceImpl
                 else
                 {
                     AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
+                        type( params.getType() ).
                         id( id ).
                         download( DOWNLOAD_MODE.equals( mode ) ).
                         portalRequest( params.getPortalRequest() );

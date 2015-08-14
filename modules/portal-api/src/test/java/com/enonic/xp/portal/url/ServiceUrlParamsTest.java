@@ -50,6 +50,6 @@ public class ServiceUrlParamsTest
         assertEquals( "myservice", params.getService() );
         assertEquals( "otherapplication", params.getApplication() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ServiceUrlParams{params={a=[1]}, service=myservice, application=otherapplication}", params.toString() );
+        assertEquals( "ServiceUrlParams{type=server, params={a=[1]}, service=myservice, application=otherapplication}", params.toString() );
     }
 }

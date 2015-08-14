@@ -38,6 +38,7 @@ public final class PageUrlParams
     @Override
     public PageUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         id( singleValue( map, "_id" ) );
         path( singleValue( map, "_path" ) );
         getParams().putAll( map );

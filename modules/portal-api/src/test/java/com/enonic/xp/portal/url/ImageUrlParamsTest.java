@@ -110,7 +110,8 @@ public class ImageUrlParamsTest
         assertEquals( (Integer) 90, params.getQuality() );
         assertEquals( "scale(10,10)", params.getFilter() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ImageUrlParams{params={a=[1]}, id=123456, path=/a/b, format=png, quality=90, filter=scale(10,10), background=00ff00}",
-                      params.toString() );
+        assertEquals(
+            "ImageUrlParams{type=server, params={a=[1]}, id=123456, path=/a/b, format=png, quality=90, filter=scale(10,10), background=00ff00}",
+            params.toString() );
     }
 }

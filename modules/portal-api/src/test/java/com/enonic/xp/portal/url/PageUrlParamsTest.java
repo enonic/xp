@@ -50,6 +50,6 @@ public class PageUrlParamsTest
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "PageUrlParams{params={a=[1]}, id=123456, path=/a/b}", params.toString() );
+        assertEquals( "PageUrlParams{type=server, params={a=[1]}, id=123456, path=/a/b}", params.toString() );
     }
 }
