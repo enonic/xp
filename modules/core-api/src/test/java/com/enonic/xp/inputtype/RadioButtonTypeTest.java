@@ -7,24 +7,24 @@ import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
 
-public class RadioButtonsTypeTest
+public class RadioButtonTypeTest
     extends BaseInputTypeTest
 {
-    public RadioButtonsTypeTest()
+    public RadioButtonTypeTest()
     {
-        super( RadioButtonsType.INSTANCE );
+        super( RadioButtonType.INSTANCE );
     }
 
     @Test
     public void testName()
     {
-        assertEquals( "RadioButtons", this.type.getName().toString() );
+        assertEquals( "RadioButton", this.type.getName().toString() );
     }
 
     @Test
     public void testToString()
     {
-        assertEquals( "RadioButtons", this.type.toString() );
+        assertEquals( "RadioButton", this.type.toString() );
     }
 
     @Test
