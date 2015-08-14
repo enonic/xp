@@ -20,6 +20,6 @@ public class ProcessHtmlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "processHtml", "_value=<html/>", "a=1", "b=2" );
-        assertEquals( "ProcessHtmlParams{params={a=[1], b=[2]}, value=<html/>}", result );
+        assertEquals( "ProcessHtmlParams{type=server, params={a=[1], b=[2]}, value=<html/>}", result );
     }
 }

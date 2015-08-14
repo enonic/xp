@@ -25,6 +25,7 @@ public final class ProcessHtmlParams
     @Override
     public ProcessHtmlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         value( singleValue( map, "_value" ) );
         getParams().putAll( map );
         return this;

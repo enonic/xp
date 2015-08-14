@@ -35,6 +35,6 @@ public class ProcessHtmlParamsTest
 
         assertEquals( "<html/>", params.getValue() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ProcessHtmlParams{params={a=[1]}, value=<html/>}", params.toString() );
+        assertEquals( "ProcessHtmlParams{type=server, params={a=[1]}, value=<html/>}", params.toString() );
     }
 }

@@ -65,7 +65,7 @@ public class ComponentUrlParamsTest
         assertEquals( "/a/b", params.getPath() );
         assertEquals( "main/0", params.getComponent() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ComponentUrlParams{params={a=[1]}, id=123456, path=/a/b, component=main/0}", params.toString() );
+        assertEquals( "ComponentUrlParams{type=server, params={a=[1]}, id=123456, path=/a/b, component=main/0}", params.toString() );
     }
 }
 

@@ -11,7 +11,7 @@ exports.assetUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('AssetUrlParams{params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
+    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
     return true;
 };
 
@@ -25,7 +25,7 @@ exports.attachmentUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('AttachmentUrlParams{params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
+    assert.assertEquals('AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
     return true;
 };
 
@@ -39,7 +39,7 @@ exports.componentUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ComponentUrlParams{params={a=[1], b=[1, 2]}, component=mycomp}', result);
+    assert.assertEquals('ComponentUrlParams{type=server, params={a=[1], b=[1, 2]}, component=mycomp}', result);
     return true;
 };
 
@@ -56,7 +56,8 @@ exports.imageUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ImageUrlParams{params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}', result);
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
+        result);
     return true;
 };
 
@@ -70,7 +71,7 @@ exports.pageUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('PageUrlParams{params={a=[1], b=[1, 2]}, path=a/b}', result);
+    assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=a/b}', result);
     return true;
 };
 
@@ -84,7 +85,7 @@ exports.serviceUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ServiceUrlParams{params={a=[1], b=[1, 2]}, service=myservice}', result);
+    assert.assertEquals('ServiceUrlParams{type=server, params={a=[1], b=[1, 2]}, service=myservice}', result);
     return true;
 };
 
@@ -94,7 +95,7 @@ exports.processHtmlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ProcessHtmlParams{params={}, value=<p><a title="Link tooltip" ' +
+    assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
                         'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };

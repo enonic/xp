@@ -20,6 +20,6 @@ public class ComponentUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "componentUrl", "_component=a" );
-        assertEquals( "ComponentUrlParams{params={}, component=a}", result );
+        assertEquals( "ComponentUrlParams{type=server, params={}, component=a}", result );
     }
 }

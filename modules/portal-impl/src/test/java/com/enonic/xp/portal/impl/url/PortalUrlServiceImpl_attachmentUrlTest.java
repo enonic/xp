@@ -2,12 +2,15 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -92,6 +95,23 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
+    }
+
+    @Test
+    public void createUrl_absolute()
+    {
+        this.portalRequest.setContent( createContent() );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().
+            type( UrlTypeConstants.ABSOLUTE ).
+            portalRequest( this.portalRequest ).
+            param( "a", 3 );
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        ServletRequestHolder.setRequest( req );
+
+        final String url = this.service.attachmentUrl( params );
+        assertEquals( "http://localhost/portal/draft/a/b/mycontent/_/attachment/inline/123456/a2.jpg?a=3", url );
     }
 
     private Content createContent()

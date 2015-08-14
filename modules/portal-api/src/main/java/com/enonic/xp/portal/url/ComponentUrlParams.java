@@ -51,6 +51,7 @@ public final class ComponentUrlParams
     @Override
     public ComponentUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         id( singleValue( map, "_id" ) );
         path( singleValue( map, "_path" ) );
         component( singleValue( map, "_component" ) );

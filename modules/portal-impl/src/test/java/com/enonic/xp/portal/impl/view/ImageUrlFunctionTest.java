@@ -20,6 +20,6 @@ public class ImageUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "imageUrl", "_id=1" );
-        assertEquals( "ImageUrlParams{params={}, id=1}", result );
+        assertEquals( "ImageUrlParams{type=server, params={}, id=1}", result );
     }
 }

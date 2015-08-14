@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -15,11 +16,18 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
     private PortalRequest portalRequest;
 
+    private String type = UrlTypeConstants.SERVER_RELATIVE;
+
     private final Multimap<String, String> params;
 
     public AbstractUrlParams()
     {
         this.params = HashMultimap.create();
+    }
+
+    public String getType()
+    {
+        return type;
     }
 
     public final Multimap<String, String> getParams()
@@ -30,6 +38,19 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     public final PortalRequest getPortalRequest()
     {
         return this.portalRequest;
+    }
+
+    public final T type( final String value )
+    {
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            this.type = UrlTypeConstants.SERVER_RELATIVE;
+        }
+        else
+        {
+            this.type = value;
+        }
+        return typecastThis();
     }
 
     public final T param( final String name, final Object value )
@@ -45,7 +66,11 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return typecastThis();
     }
 
-    public abstract T setAsMap( Multimap<String, String> map );
+    public T setAsMap( Multimap<String, String> map )
+    {
+        type( singleValue( map, "_type" ) );
+        return typecastThis();
+    }
 
     protected static String singleValue( final Multimap<String, String> map, final String name )
     {
@@ -66,6 +91,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     protected void buildToString( final MoreObjects.ToStringHelper helper )
     {
         helper.omitNullValues();
+        helper.add( "type", this.type );
         helper.add( "params", this.params );
     }
 
