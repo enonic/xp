@@ -194,7 +194,7 @@ module api.liveedit {
 
         private isPageModified(pageModel: PageModel): boolean {
             // default template regions differing from page regions means it has been modified
-            return pageModel.getDefaultPageTemplate().isPage() &&
+            return !!pageModel.getDefaultPageTemplate() && pageModel.getDefaultPageTemplate().isPage() &&
                    !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
         }
 

@@ -52,17 +52,25 @@ module api.content {
             return !!propertyName ? this.data.getProperty(propertyName) : null;
         }
 
-        getPageMode(): api.content.page.PageMode {
+        getPageMode(defaultTemplatePresents?: boolean): api.content.page.PageMode {
             if (this.isPage()) {
                 if (this.getPage().hasTemplate()) {
-                    return api.content.page.PageMode.FORCED_TEMPLATE;
+                    if(defaultTemplatePresents) {//in case content's template was deleted or updated to not support content's type
+                        return api.content.page.PageMode.FORCED_TEMPLATE;
+                    }
+                    else {
+                        return api.content.page.PageMode.NO_CONTROLLER;
+                    }
                 }
                 else {
                     return api.content.page.PageMode.FORCED_CONTROLLER;
                 }
             }
-            else {
+            else if (defaultTemplatePresents) {
                 return api.content.page.PageMode.AUTOMATIC;
+            }
+            else {
+                return api.content.page.PageMode.NO_CONTROLLER;
             }
         }
 

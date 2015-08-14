@@ -48,7 +48,7 @@ module api.liveedit {
 
             var deferred = wemQ.defer<PageModel>();
 
-            var pageMode = this.content.getPageMode();
+            var pageMode = this.content.getPageMode(!!defaultPageTemplate);
             var pageModel = new PageModel(this, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
             var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
@@ -149,6 +149,17 @@ module api.liveedit {
                 }
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);
+                }
+                else if (pageMode == PageMode.NO_CONTROLLER) {
+                    var config = new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                    var regions = Regions.create().build();
+
+                    var setController = new SetController(this).
+                        setDescriptor(null).
+                        setConfig(config).
+                        setRegions(regions);
+                    pageModel.initController(setController);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a Content: " + PageMode[pageMode]);
