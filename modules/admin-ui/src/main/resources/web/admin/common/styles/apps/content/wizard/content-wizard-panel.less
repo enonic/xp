@@ -68,7 +68,6 @@
       }
 
       .minimize-edit {
-        background-color: @admin-bg-light-gray;
         &:before {
           transform: rotate(0deg);
         }
@@ -81,7 +80,8 @@
       height: 40px;
       width: 40px;
       margin-left: -40px;
-      background-color: @admin-white;
+      background-color: @admin-bg-light-gray;
+      opacity: 0.5;
       text-align: center;
       line-height: 40px;
       overflow: hidden;
@@ -95,7 +95,7 @@
     }
 
       &:hover {
-        background-color: @admin-bg-light-gray;
+        opacity: 1;
       }
   }
   }
