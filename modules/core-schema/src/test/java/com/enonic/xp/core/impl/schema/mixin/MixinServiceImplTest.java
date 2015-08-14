@@ -164,7 +164,7 @@ public class MixinServiceImplTest
         mixin = service.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
         assertNotNull( mixin );
 
-        mixin = service.getByName( MediaInfo.PHOTO_INFO_METADATA_NAME );
+        mixin = service.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
         assertNotNull( mixin );
     }
 
