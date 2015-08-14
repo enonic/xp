@@ -68,7 +68,7 @@
       </options>
     </config>
   </input>
-  <input name="myRadioButtons" type="RadioButtons">
+  <input name="myRadioButton" type="RadioButton">
     <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>

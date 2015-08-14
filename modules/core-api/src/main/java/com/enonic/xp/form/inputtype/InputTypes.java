@@ -38,7 +38,7 @@ public final class InputTypes
 
     public static final InputType CONTENT_SELECTOR = new ContentSelectorType();
 
-    public static final InputType RADIO_BUTTONS = new RadioButtonsType();
+    public static final InputType RADIO_BUTTON = new RadioButtonType();
 
     public static final InputType TAG = new TagType();
 
@@ -66,7 +66,7 @@ public final class InputTypes
         add( IMAGE_UPLOADER ).
         add( IMAGE_SELECTOR ).
         add( CONTENT_SELECTOR ).
-        add( RADIO_BUTTONS ).
+        add( RADIO_BUTTON ).
         add( TAG ).
         add( TEXT_AREA ).
         add( TEXT_LINE ).

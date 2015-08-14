@@ -15,12 +15,12 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.InvalidValueException;
 import com.enonic.xp.xml.DomHelper;
 
-final class RadioButtonsType
+final class RadioButtonType
     extends InputType
 {
-    public RadioButtonsType()
+    public RadioButtonType()
     {
-        super( InputTypeName.RADIO_BUTTONS );
+        super( InputTypeName.RADIO_BUTTON );
     }
 
     @Override
