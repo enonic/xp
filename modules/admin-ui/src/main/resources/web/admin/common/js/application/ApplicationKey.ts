@@ -2,6 +2,7 @@ module api.application {
 
     export class ApplicationKey implements api.Equitable {
 
+        static SYSTEM: ApplicationKey = ApplicationKey.fromString('system');
         static BASE: ApplicationKey = ApplicationKey.fromString('base');
         static PORTAL: ApplicationKey = ApplicationKey.fromString('portal');
         static MEDIA: ApplicationKey = ApplicationKey.fromString('media');

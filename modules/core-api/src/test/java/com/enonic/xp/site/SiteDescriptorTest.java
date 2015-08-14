@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 
@@ -33,7 +33,7 @@ public class SiteDescriptorTest
         final FormItem formItem = Input.create().
             name( "input" ).
             label( "Input" ).
-            inputType( InputTypes.DOUBLE ).
+            inputType( InputTypeName.DOUBLE ).
             build();
 
         final Form form = Form.create().

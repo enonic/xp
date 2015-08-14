@@ -8,13 +8,13 @@ module api.form.inputtype.support {
 
     export class InputOccurrencesBuilder {
 
-        baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>;
+        baseInputTypeView: BaseInputTypeNotManagingAdd<any>;
 
         input: api.form.Input;
 
         propertyArray: PropertyArray;
 
-        setBaseInputTypeView(value: BaseInputTypeNotManagingAdd<any,any>): InputOccurrencesBuilder {
+        setBaseInputTypeView(value: BaseInputTypeNotManagingAdd<any>): InputOccurrencesBuilder {
             this.baseInputTypeView = value;
             return this;
         }
@@ -39,7 +39,7 @@ module api.form.inputtype.support {
      */
     export class InputOccurrences extends api.form.FormItemOccurrences<InputOccurrenceView> {
 
-        private baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>;
+        private baseInputTypeView: BaseInputTypeNotManagingAdd<any>;
 
         private input: api.form.Input;
 

@@ -10,7 +10,7 @@ module api.form.inputtype.support {
 
         private property: Property;
 
-        private inputTypeView: BaseInputTypeNotManagingAdd<any,any>;
+        private inputTypeView: BaseInputTypeNotManagingAdd<any>;
 
         private inputElement: api.dom.Element;
 
@@ -20,7 +20,7 @@ module api.form.inputtype.support {
 
         private requiredContractBroken: boolean;
 
-        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>, property: Property) {
+        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any>, property: Property) {
             super("input-occurrence-view", inputOccurrence);
 
             this.property = property;

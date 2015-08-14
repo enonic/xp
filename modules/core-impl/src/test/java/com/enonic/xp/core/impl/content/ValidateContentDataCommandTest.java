@@ -8,7 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -48,7 +48,7 @@ public class ValidateContentDataCommandTest
                 label( "My layout" ).
                 name( "myLayout" ).
                 addFormItem( FormItemSet.create().name( "mySet" ).required( true ).
-                    addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).
+                    addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).
                         build() ).
                     build() ).
                 build() ).
@@ -82,7 +82,7 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
-                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( "myapplication:my_type" ).

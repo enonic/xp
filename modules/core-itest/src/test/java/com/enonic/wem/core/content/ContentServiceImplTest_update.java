@@ -24,7 +24,7 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -110,42 +110,20 @@ public class ContentServiceImplTest_update
         assertEquals( 1, attachments.getSize() );
     }
 
-    private Content createContentWithTransform()
-    {
-        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.contentService.setContentTypeService( contentTypeService );
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createTestContentType() );
-
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data.addString( "myReference", "1234" );
-        data.addString( "myDateTime", "2015-03-13T10:00:00+02:00" );
-
-        return contentService.create( CreateContentParams.create().
-            type( ContentTypeName.from( "myContentType" ) ).
-            contentData( data ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            displayName( "my display-name" ).
-            build() );
-    }
-
-
     private ContentType createTestContentType()
     {
         return ContentType.create().
             superType( ContentTypeName.documentMedia() ).
             name( "myContentType" ).
             addFormItem( Input.create().
-                inputType( InputTypes.DATE_TIME ).
+                inputType( InputTypeName.DATE_TIME ).
                 name( "myDateTime" ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( Input.create().
-                inputType( InputTypes.CONTENT_SELECTOR ).
+                inputType( InputTypeName.CONTENT_SELECTOR ).
                 name( "myReference" ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.from( "myContentType" ).toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.from( "myContentType" ).toString() ).
                 build() ).
             build();
     }
@@ -235,11 +213,6 @@ public class ContentServiceImplTest_update
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
         invalidData.addDouble( "checkbox", 1.0d );
-        update_incorrect_content_data( content, invalidData );
-
-        //Updates the content with an incorrect value
-        invalidData = new PropertyTree();
-        invalidData.addDouble( "tinyMce", 1.0d );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
@@ -336,7 +309,7 @@ public class ContentServiceImplTest_update
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
 

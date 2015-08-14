@@ -13,8 +13,9 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.InvalidDataException;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeValidationException;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -35,6 +36,7 @@ public class InputValidatorTest
         this.inputValidator = InputValidator.
             create().
             contentType( contentType ).
+            inputTypeResolver( InputTypes.BUILTIN ).
             build();
     }
 
@@ -50,9 +52,8 @@ public class InputValidatorTest
         final PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addString( "color", "#12345" );
-        data.addString( "comboBox", "value3" );
+        data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", true );
-        data.addString( "tinyMce", "<stuff>staff</stuff>" );
         data.addString( "phone", "+4797773223" );
         data.addString( "tag", "myTag" );
         data.addReference( "contentSelector", new Reference( new NodeId() ) );
@@ -66,7 +67,7 @@ public class InputValidatorTest
         data.addLocalDate( "date", LocalDate.parse( "2015-01-15" ) );
         data.addLocalTime( "time", LocalTime.parse( "10:00:32.123" ) );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "-45,34" ) );
-        data.addString( "htmlArea", "<h1>test</h1>" );
+        data.addString( "htmlArea", "<stuff>staff</stuff>" );
 
         //Validates the correct data
         inputValidator.validate( data );
@@ -107,11 +108,6 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addDouble( "tinyMce", 1.0d );
-        validateIncorrectInputType( invalidData );
-
-        //Validates an incorrect value
-        invalidData = new PropertyTree();
         invalidData.addDouble( "tag", 1.0d );
         validateIncorrectInputType( invalidData );
 
@@ -142,7 +138,7 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addXml( "htmlArea", "<p>paragraph</p>" );
+        invalidData.addDouble( "htmlArea", 1.0d );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
@@ -177,10 +173,11 @@ public class InputValidatorTest
         {
             inputValidator.validate( invalidData );
         }
-        catch ( InvalidDataException e )
+        catch ( final InputTypeValidationException e )
         {
             invalidDataExceptionThrown = true;
         }
+
         assertTrue( invalidDataExceptionThrown );
     }
 
@@ -191,12 +188,12 @@ public class InputValidatorTest
             addFormItem( Input.create().
                 name( "setString" ).
                 label( "Set string" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "setDouble" ).
                 label( "Set double" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
         return ContentType.create().
@@ -205,94 +202,88 @@ public class InputValidatorTest
             addFormItem( Input.create().
                 name( "textLine" ).
                 label( "Textline" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "stringArray" ).
                 label( "String array" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "double" ).
                 label( "Double" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 name( "long" ).
                 label( "Long" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
-                inputType( InputTypes.COMBO_BOX ).
-                inputTypeConfig( "option.value1", "label1" ).
-                inputTypeConfig( "option.value2", "label2" ).
-                inputTypeConfig( "option.value3", "label3" ).
+                inputType( InputTypeName.COMBO_BOX ).
+                inputTypeConfig( "option.value", "value1", "value2" ).
+                inputTypeConfig( "option.label", "label1", "label1" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
                 label( "Checkbox" ).
-                inputType( InputTypes.CHECKBOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tinyMce" ).
-                label( "Tinymce" ).
-                inputType( InputTypes.TINY_MCE ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
                 label( "Tag" ).
-                inputType( InputTypes.TAG ).
+                inputType( InputTypeName.TAG ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentSelector" ).
                 label( "Content selector" ).
-                inputType( InputTypes.CONTENT_SELECTOR ).
+                inputType( InputTypeName.CONTENT_SELECTOR ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
                 label( "Contenttype filter" ).
-                inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
                 name( "siteConfigurator" ).
-                inputType( InputTypes.SITE_CONFIGURATOR ).
+                inputType( InputTypeName.SITE_CONFIGURATOR ).
                 label( "Site configurator" ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).
                 label( "Date" ).
-                inputType( InputTypes.DATE ).
+                inputType( InputTypeName.DATE ).
                 build() ).
             addFormItem( Input.create().
                 name( "time" ).
                 label( "Time" ).
-                inputType( InputTypes.TIME ).
+                inputType( InputTypeName.TIME ).
                 build() ).
             addFormItem( Input.create().
                 name( "geoPoint" ).
                 label( "Geo point" ).
-                inputType( InputTypes.GEO_POINT ).
+                inputType( InputTypeName.GEO_POINT ).
                 build() ).
             addFormItem( Input.create().
                 name( "htmlArea" ).
                 label( "Html area" ).
-                inputType( InputTypes.HTML_AREA ).
+                inputType( InputTypeName.HTML_AREA ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).
                 label( "Local datetime" ).
-                inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "false" ).
+                inputType( InputTypeName.DATE_TIME ).
+                inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
-                inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputType( InputTypeName.DATE_TIME ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

@@ -20,6 +20,7 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -28,8 +29,6 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static com.enonic.xp.form.inputtype.InputTypes.CHECKBOX;
-import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
 import static org.junit.Assert.*;
 
 
@@ -72,7 +71,7 @@ public class ContentTypeResourceTest
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
-                inputType( TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 label( "My text line" ).
                 required( true ).
                 build() ).
@@ -97,14 +96,14 @@ public class ContentTypeResourceTest
 
         Input myTextLine = Input.create().
             name( "myTextLine" ).
-            inputType( TEXT_LINE ).
+            inputType( InputTypeName.TEXT_LINE ).
             label( "My text line" ).
             required( true ).
             build();
 
         Input myCustomInput = Input.create().
             name( "myCheckbox" ).
-            inputType( CHECKBOX ).
+            inputType( InputTypeName.CHECK_BOX ).
             label( "My checkbox input" ).
             required( false ).
             build();
@@ -114,7 +113,7 @@ public class ContentTypeResourceTest
             label( "My field set" ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
-                inputType( TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 label( "My text line" ).
                 required( false ).
                 build() ).
@@ -125,7 +124,7 @@ public class ContentTypeResourceTest
             label( "My form item set" ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
-                inputType( TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 label( "My text line" ).
                 required( false ).
                 build() ).
@@ -170,7 +169,7 @@ public class ContentTypeResourceTest
             superType( ContentTypeName.unstructured() ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
-                inputType( TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 label( "My text line" ).
                 required( true ).
                 build() ).

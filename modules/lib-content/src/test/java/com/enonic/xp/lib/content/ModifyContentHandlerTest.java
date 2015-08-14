@@ -11,7 +11,7 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -66,18 +66,18 @@ public class ModifyContentHandlerTest
             addFormItem( Input.create().
                 label( "d" ).
                 name( "d" ).
-                inputType( InputTypes.CHECKBOX ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             addFormItem( Input.create().
                 label( "e" ).
                 name( "e" ).
                 occurrences( 0, 0 ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 label( "f" ).
                 name( "f" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             build();
 
@@ -87,19 +87,19 @@ public class ModifyContentHandlerTest
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 label( "b" ).
                 name( "b" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( cSet ).
             addFormItem( Input.create().
                 label( "z" ).
                 name( "z" ).
                 occurrences( 0, 10 ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
 
@@ -111,7 +111,7 @@ public class ModifyContentHandlerTest
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
         Mockito.when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
@@ -121,7 +121,7 @@ public class ModifyContentHandlerTest
             addFormItem( Input.create().
                 label( "name" ).
                 name( "name" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
         Mockito.when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );

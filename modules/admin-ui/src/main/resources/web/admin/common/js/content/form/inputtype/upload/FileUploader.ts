@@ -5,11 +5,11 @@ module api.content.form.inputtype.upload {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
+    export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private fileUploader: api.content.MediaUploader;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config, "file");
             var input = config.input;
 
@@ -25,8 +25,8 @@ module api.content.form.inputtype.upload {
             this.appendChild(this.fileUploader);
         }
 
-        getContext(): api.content.form.inputtype.ContentInputTypeViewContext<any> {
-            return <api.content.form.inputtype.ContentInputTypeViewContext<any>>super.getContext();
+        getContext(): api.content.form.inputtype.ContentInputTypeViewContext {
+            return <api.content.form.inputtype.ContentInputTypeViewContext>super.getContext();
         }
 
         getValueType(): ValueType {

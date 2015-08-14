@@ -10,9 +10,9 @@ module api.content.form.inputtype.time {
     /**
      * Uses [[api.data.ValueType]] [[api.data.ValueTypeLocalDate]].
      */
-    export class Date extends support.BaseInputTypeNotManagingAdd<any,Date> {
+    export class Date extends support.BaseInputTypeNotManagingAdd<Date> {
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
         }
 

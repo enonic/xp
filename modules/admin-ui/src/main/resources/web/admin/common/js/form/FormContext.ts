@@ -20,9 +20,9 @@ module api.form {
         }
 
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
-                                   input: Input): api.form.inputtype.InputTypeViewContext<any> {
+                                   input: Input): api.form.inputtype.InputTypeViewContext {
 
-            return <api.form.inputtype.InputTypeViewContext<any>> {
+            return <api.form.inputtype.InputTypeViewContext> {
                 formContext: this,
                 input: input,
                 inputConfig: inputTypeConfig,

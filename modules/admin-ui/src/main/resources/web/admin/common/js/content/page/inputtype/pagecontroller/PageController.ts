@@ -15,9 +15,9 @@ module api.content.page.inputtype.pagecontroller {
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-    export class PageController extends support.BaseInputTypeNotManagingAdd<any, string> {
+    export class PageController extends support.BaseInputTypeNotManagingAdd<string> {
 
-        constructor(context: ContentInputTypeViewContext<any>) {
+        constructor(context: ContentInputTypeViewContext) {
             super(context);
         }
 
@@ -30,7 +30,7 @@ module api.content.page.inputtype.pagecontroller {
         }
 
         createInputOccurrenceElement(index: number, property: Property): Element {
-            var context = <ContentInputTypeViewContext<any>>this.getContext(),
+            var context = <ContentInputTypeViewContext>this.getContext(),
                 applicationKeys = context.site.getApplicationKeys(),
                 request = new GetPageDescriptorsByApplicationsRequest(applicationKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);

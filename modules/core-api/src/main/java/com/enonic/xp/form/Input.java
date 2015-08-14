@@ -8,9 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 
 @Beta
 public final class Input
@@ -18,7 +17,7 @@ public final class Input
 {
     private final String name;
 
-    private final InputType type;
+    private final InputTypeName type;
 
     private final String label;
 
@@ -61,8 +60,6 @@ public final class Input
         this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig.build();
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
-
-        this.type.validateOccurrences( this.occurrences );
     }
 
     @Override
@@ -77,7 +74,7 @@ public final class Input
         return FormItemType.INPUT;
     }
 
-    public InputType getInputType()
+    public InputTypeName getInputType()
     {
         return type;
     }
@@ -137,41 +134,6 @@ public final class Input
         return inputTypeConfig;
     }
 
-    private void checkValidityAccordingToInputType( final Property property )
-    {
-        if ( type != null )
-        {
-            type.checkTypeValidity( property );
-        }
-    }
-
-    private void checkValidityAccordingToInputTypeConfig( final Property property )
-    {
-        if ( inputTypeConfig != null )
-        {
-            type.checkValidity( inputTypeConfig, property );
-        }
-    }
-
-    public void checkValidity( final Property property )
-        throws InvalidDataException
-    {
-        try
-        {
-            if ( property == null )
-            {
-                return;
-            }
-
-            checkValidityAccordingToInputType( property );
-            checkValidityAccordingToInputTypeConfig( property );
-        }
-        catch ( Exception e )
-        {
-            throw new InvalidDataException( property, e );
-        }
-    }
-
     @Override
     public Input copy()
     {
@@ -225,7 +187,7 @@ public final class Input
     {
         private String name;
 
-        private InputType inputType;
+        private InputTypeName inputType;
 
         private String label;
 
@@ -274,7 +236,7 @@ public final class Input
             return this;
         }
 
-        public Builder inputType( InputType value )
+        public Builder inputType( InputTypeName value )
         {
             inputType = value;
             return this;
@@ -372,15 +334,9 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeConfig( final InputTypeConfig config )
+        public Builder inputTypeConfig( final String name, final String... values )
         {
-            this.inputTypeConfig.config( config );
-            return this;
-        }
-
-        public Builder inputTypeConfig( final String name, final String value )
-        {
-            this.inputTypeConfig.property( name, value );
+            this.inputTypeConfig.property( name, values );
             return this;
         }
 

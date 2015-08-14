@@ -6,9 +6,9 @@ module api.form.inputtype.text {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export class TextArea extends support.BaseInputTypeNotManagingAdd<{},string> {
+    export class TextArea extends support.BaseInputTypeNotManagingAdd<string> {
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<{}>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
         }
 

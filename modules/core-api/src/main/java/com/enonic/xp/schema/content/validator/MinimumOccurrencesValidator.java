@@ -6,15 +6,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.form.InputValidationException;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-
 
 final class MinimumOccurrencesValidator
 {
@@ -58,20 +55,6 @@ final class MinimumOccurrencesValidator
             for ( PropertySet parentDataSet : parentDataSets )
             {
                 final int entryCount = parentDataSet.countProperties( input.getName() );
-                final int occurrencesToCheck = Math.min( entryCount, input.getOccurrences().getMinimum() );
-                for ( int i = 0; i < occurrencesToCheck; i++ )
-                {
-                    final Property property = parentDataSet.getProperty( input.getName(), i );
-                    try
-                    {
-                        input.getInputType().checkBreaksRequiredContract( property );
-                    }
-                    catch ( InputValidationException e )
-                    {
-                        validationErrors.add( new MissingRequiredValueValidationError( input, e.getProperty() ) );
-                    }
-                }
-
                 if ( entryCount < input.getOccurrences().getMinimum() )
                 {
                     validationErrors.add( new MinimumOccurrencesValidationError( input, entryCount ) );

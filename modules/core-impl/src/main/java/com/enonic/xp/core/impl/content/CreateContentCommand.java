@@ -24,7 +24,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.form.InvalidDataException;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -210,10 +210,11 @@ final class CreateContentCommand
                 InputValidator.
                     create().
                     contentType( contentType ).
+                    inputTypeResolver( InputTypes.BUILTIN ).
                     build().
                     validate( params.getData() );
             }
-            catch ( InvalidDataException e )
+            catch ( final Exception e )
             {
                 final String name = params.getName() == null ? "" : params.getName().toString();
                 final ContentPath path = ContentPath.from( params.getParent(), name );
@@ -225,8 +226,7 @@ final class CreateContentCommand
     private CreateContentParams processCreateContentParams()
     {
         final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        final CreateContentParams processedParams = runContentProcessors( this.params, type );
-        return processedParams;
+        return runContentProcessors( this.params, type );
     }
 
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )

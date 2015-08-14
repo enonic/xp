@@ -6,9 +6,9 @@ module api.content.form.inputtype.long {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export class Long extends BaseInputTypeNotManagingAdd<any,number> {
+    export class Long extends BaseInputTypeNotManagingAdd<number> {
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
         }
 

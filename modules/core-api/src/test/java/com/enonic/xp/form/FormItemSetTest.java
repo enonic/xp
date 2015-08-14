@@ -3,7 +3,7 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         // exercise
 
@@ -62,7 +62,7 @@ public class FormItemSetTest
     {
         // exercise
         FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
+        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         // verify
         assertEquals( "parent.child", parent.getInput( "child" ).getPath().toString() );
@@ -73,7 +73,7 @@ public class FormItemSetTest
     {
 
         FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypes.TEXT_LINE ).build() );
+        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet newParent = FormItemSet.create().name( "newParent" ).label( "New Parent" ).build();
@@ -107,7 +107,7 @@ public class FormItemSetTest
     {
         // setup
         FormItem formItem =
-            Input.create().name( "myFieldSet" ).label( "field set" ).inputType( InputTypes.DATE ).label( "My label" ).build();
+            Input.create().name( "myFieldSet" ).label( "field set" ).inputType( InputTypeName.DATE ).label( "My label" ).build();
 
         // exercise
         try
@@ -127,7 +127,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypes.TEXT_LINE ).build() );
+        formItemSet.add( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         // exercise
         FormItemSet copy = formItemSet.copy();
