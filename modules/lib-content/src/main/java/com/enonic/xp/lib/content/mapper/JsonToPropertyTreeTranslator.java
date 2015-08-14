@@ -13,9 +13,9 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeResolver;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputType;
+import com.enonic.xp.inputtype.InputTypeResolver;
+import com.enonic.xp.inputtype.InputTypes;
 
 public class JsonToPropertyTreeTranslator
 {

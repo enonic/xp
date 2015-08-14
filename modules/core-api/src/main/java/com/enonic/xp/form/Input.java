@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.form.inputtype.InputTypeConfig;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 
 @Beta
 public final class Input

@@ -16,7 +16,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;

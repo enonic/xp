@@ -17,7 +17,7 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;

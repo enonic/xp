@@ -24,7 +24,7 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;

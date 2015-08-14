@@ -7,7 +7,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 

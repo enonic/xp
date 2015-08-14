@@ -4,7 +4,7 @@ package com.enonic.xp.form;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;

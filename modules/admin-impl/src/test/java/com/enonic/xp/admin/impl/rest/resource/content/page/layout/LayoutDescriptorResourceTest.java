@@ -9,7 +9,7 @@ import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;

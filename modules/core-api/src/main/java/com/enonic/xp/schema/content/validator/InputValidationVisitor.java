@@ -4,8 +4,8 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeResolver;
+import com.enonic.xp.inputtype.InputType;
+import com.enonic.xp.inputtype.InputTypeResolver;
 
 final class InputValidationVisitor
     extends InputVisitor

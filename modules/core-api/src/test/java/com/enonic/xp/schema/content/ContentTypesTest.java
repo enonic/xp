@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;

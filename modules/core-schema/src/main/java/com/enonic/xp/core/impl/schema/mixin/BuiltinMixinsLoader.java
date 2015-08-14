@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.Mixins;

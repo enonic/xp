@@ -2,7 +2,7 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 

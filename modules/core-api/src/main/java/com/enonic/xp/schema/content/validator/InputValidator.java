@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.inputtype.InputTypeResolver;
+import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.schema.content.ContentType;
 
 public final class InputValidator
