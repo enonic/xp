@@ -7,12 +7,12 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
 @Beta
-final class Checkbox1Type
+final class CheckBoxType
     extends InputTypeBase
 {
-    public final static Checkbox1Type INSTANCE = new Checkbox1Type();
+    public final static CheckBoxType INSTANCE = new CheckBoxType();
 
-    private Checkbox1Type()
+    private CheckBoxType()
     {
         super( InputTypeName.CHECK_BOX );
     }

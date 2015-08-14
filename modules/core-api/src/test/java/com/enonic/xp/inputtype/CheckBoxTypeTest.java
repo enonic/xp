@@ -7,12 +7,12 @@ import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
 
-public class Checkbox1TypeTest
+public class CheckBoxTypeTest
     extends BaseInputTypeTest
 {
-    public Checkbox1TypeTest()
+    public CheckBoxTypeTest()
     {
-        super( Checkbox1Type.INSTANCE );
+        super( CheckBoxType.INSTANCE );
     }
 
     @Test

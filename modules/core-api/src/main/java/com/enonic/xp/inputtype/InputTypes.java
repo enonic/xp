@@ -16,7 +16,7 @@ public final class InputTypes
         add( DateType.INSTANCE ).
         add( TimeType.INSTANCE ).
         add( DateTimeType.INSTANCE ).
-        add( Checkbox1Type.INSTANCE ).
+        add( CheckBoxType.INSTANCE ).
         add( DoubleType.INSTANCE ).
         add( GeoPointType.INSTANCE ).
         add( HtmlAreaType.INSTANCE ).
