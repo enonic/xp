@@ -107,12 +107,18 @@
       .toolbar-publish-controls {
 
         display: inherit;
-        border: 1px solid transparent;
-        margin: 0px 14px;
+        height: 100%;
 
         .button.content-wizard-toolbar-publish-button {
           .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
-          padding: 6px 39px 6px 39px;
+          &:disabled {
+            background-color: @admin-font-gray1;
+          }
+          border: none;
+          height: 100%;
+          box-sizing: content-box;
+          padding: 1px 39px 0px 39px;
+          position: relative;
         }
 
         span.content-status {
