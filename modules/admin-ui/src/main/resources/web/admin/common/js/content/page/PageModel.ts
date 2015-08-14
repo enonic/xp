@@ -198,7 +198,6 @@ module api.content.page {
         }
 
         setController(setController: SetController): PageModel {
-
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
             var newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
             var controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
@@ -212,11 +211,17 @@ module api.content.page {
                 this.setMode(PageMode.NO_CONTROLLER);
             }
 
+            if (!this.isPageTemplate()) {
+                this.setCustomized(true);
+            }
+
             if (controllerChanged) {
                 this.setIgnorePropertyChanges(true);
                 this.notifyPropertyChanged(PageModel.PROPERTY_CONTROLLER, oldControllerKey, newControllerKey, setController.eventSource);
                 this.setIgnorePropertyChanges(false);
             }
+
+            this.template = null;
 
             return this;
         }
@@ -265,7 +270,7 @@ module api.content.page {
         setTemplate(setTemplate: SetTemplate, ignoreRegionChanges: boolean = false): PageModel {
             var oldTemplateKey = this.template ? this.template.getKey() : null;
             var newTemplateKey = setTemplate.template ? setTemplate.template.getKey() : null;
-            var templateChanged = !api.ObjectHelper.equals(oldTemplateKey, newTemplateKey);
+            var templateOrModeChanged = !api.ObjectHelper.equals(oldTemplateKey, newTemplateKey) || this.hasController();
 
             this.setTemplateData(setTemplate, ignoreRegionChanges);
 
@@ -276,11 +281,14 @@ module api.content.page {
                 this.setMode(PageMode.AUTOMATIC);
             }
 
-            if (templateChanged) {
+            if (templateOrModeChanged) {
                 this.setIgnorePropertyChanges(true);
                 this.notifyPropertyChanged(PageModel.PROPERTY_TEMPLATE, oldTemplateKey, newTemplateKey, setTemplate.eventSource);
                 this.setIgnorePropertyChanges(false);
             }
+
+            this.controller = null;
+
             return this;
         }
 
@@ -349,6 +357,11 @@ module api.content.page {
          * ForcedTemplate:      Content has a Page set with at Page.template set
          *
          * ForcedController:    Content has a Page set with at Page.controller set
+         *
+         * NoController:        Content is:
+         *                      1. PageTemplate with no controller set
+         *                      2. Content that has no Page set and no any template that can be used as default
+         *                      3. Content that has a Page set with at Page.template set but template was deleted or updated to not support content's type
          */
         getPage(): Page {
 

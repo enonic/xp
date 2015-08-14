@@ -146,6 +146,8 @@ public final class PageTemplateResource
                 {
                     return true;
                 }
+
+                return true;
             }
             return false;
         }
