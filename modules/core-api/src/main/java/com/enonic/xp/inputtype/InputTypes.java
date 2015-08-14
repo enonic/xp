@@ -24,7 +24,7 @@ public final class InputTypes
         add( FileUploaderType.INSTANCE ).
         add( ImageSelectorType.INSTANCE ).
         add( ContentSelectorType.INSTANCE ).
-        add( RadioButtonsType.INSTANCE ).
+        add( RadioButtonType.INSTANCE ).
         add( TagType.INSTANCE ).
         add( TextAreaType.INSTANCE ).
         add( TextLineType.INSTANCE ).

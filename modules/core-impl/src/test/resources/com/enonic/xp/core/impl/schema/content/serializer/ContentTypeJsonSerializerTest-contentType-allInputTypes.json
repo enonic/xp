@@ -221,7 +221,7 @@
         },
         {
             "Input": {
-              "name": "myRadioButtons",
+                "name": "myRadioButton",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -233,7 +233,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                  "name": "RadioButtons",
+                    "name": "RadioButton",
                     "config": {
                         "options": [
                             {

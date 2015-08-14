@@ -4,14 +4,14 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 
-final class RadioButtonsType
+final class RadioButtonType
     extends InputTypeBase
 {
-    public final static RadioButtonsType INSTANCE = new RadioButtonsType();
+    public final static RadioButtonType INSTANCE = new RadioButtonType();
 
-    private RadioButtonsType()
+    private RadioButtonType()
     {
-        super( InputTypeName.RADIO_BUTTONS );
+        super( InputTypeName.RADIO_BUTTON );
     }
 
     @Override

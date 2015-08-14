@@ -35,7 +35,7 @@ public final class InputTypeName
 
     public final static InputTypeName PAGE_CONTROLLER = InputTypeName.from( "PageController" );
 
-    public final static InputTypeName RADIO_BUTTONS = InputTypeName.from( "RadioButtons" );
+    public final static InputTypeName RADIO_BUTTON = InputTypeName.from( "RadioButton" );
 
     public final static InputTypeName SITE_CONFIGURATOR = InputTypeName.from( "SiteConfigurator" );
 
