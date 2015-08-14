@@ -152,7 +152,9 @@ module api.ui.image {
                 return false
             };
 
-            this.canvas.appendChildren(this.image, this.clip);
+            var imageMask = new api.dom.DivEl("image-bg-mask");
+
+            this.canvas.appendChildren(imageMask, this.image, this.clip);
 
             this.frame.appendChild(this.canvas);
 
