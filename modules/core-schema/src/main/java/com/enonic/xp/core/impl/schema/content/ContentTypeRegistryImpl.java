@@ -74,7 +74,7 @@ public final class ContentTypeRegistryImpl
         else
         {
             final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null )
+            if ( application != null && application.isStarted() )
             {
                 final ContentTypeLoader mixinLoader = new ContentTypeLoader( application.getBundle() );
                 contentTypes = mixinLoader.load();
@@ -120,7 +120,7 @@ public final class ContentTypeRegistryImpl
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
+        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
         {
             this.map.remove( ApplicationKey.from( event.getBundle() ) );
         }

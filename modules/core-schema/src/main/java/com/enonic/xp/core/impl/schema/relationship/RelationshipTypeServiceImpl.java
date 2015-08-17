@@ -98,7 +98,7 @@ public final class RelationshipTypeServiceImpl
         {
             //Else, loads the corresponding bundle relation types
             final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null )
+            if ( application != null && application.isStarted() )
             {
                 final BundleRelationshipTypeLoader bundleRelationshipTypeLoader =
                     new BundleRelationshipTypeLoader( application.getBundle() );
@@ -123,7 +123,7 @@ public final class RelationshipTypeServiceImpl
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
+        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
         {
             this.relationshipTypesMap.remove( ApplicationKey.from( event.getBundle() ) );
         }
