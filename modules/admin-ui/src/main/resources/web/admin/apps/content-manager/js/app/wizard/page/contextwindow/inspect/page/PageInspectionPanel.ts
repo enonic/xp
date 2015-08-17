@@ -14,7 +14,6 @@ module app.wizard.page.contextwindow.inspect.page {
     import LiveEditModel = api.liveedit.LiveEditModel;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import PageController = api.content.page.inputtype.pagecontroller.PageController;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 
     export class PageInspectionPanel extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
@@ -50,7 +49,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.pageTemplateForm.hide();
             this.appendChild(this.pageTemplateForm);
 
-            this.pageControllerSelector = new PageControllerSelector();
+            this.pageControllerSelector = new PageControllerSelector(liveEditModel);
             this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
             this.pageControllerForm.hide();
             this.appendChild(this.pageControllerForm);
@@ -58,7 +57,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
             if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen or no template presents
-                this.pageControllerSelector.setModel(liveEditModel);
+                this.pageControllerSelector.load();
 
                 if (this.pageModel.isCustomized()) {
                     this.addClass("customized");
@@ -189,7 +188,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var pageModel = liveEditModel.getPageModel();
 
-            this.pageControllerForm.getSelector().setModel(liveEditModel);
+            this.pageControllerForm.getSelector().load();
             this.pageControllerForm.show();
 
             this.refreshConfigForm(pageModel.getController(), pageModel.getConfig(), liveEditModel.getFormContext());

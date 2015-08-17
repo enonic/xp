@@ -4,11 +4,8 @@ module api.content.page {
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import Option = api.ui.selector.Option;
-
-    export interface PageDescriptorDropdownConfig {
-
-        loader: api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>
-    }
+    import SiteModel = api.content.site.SiteModel;
+    import LiveEditModel = api.liveedit.LiveEditModel;
 
     export class PageDescriptorDropdown extends Dropdown<PageDescriptor> {
 
@@ -16,13 +13,45 @@ module api.content.page {
 
         private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>):void}[] = [];
 
-        constructor(name: string, config: PageDescriptorDropdownConfig) {
-            super(name, <DropdownConfig<PageDescriptor>>{
+        private getPageDescriptorsByApplicationsRequest: GetPageDescriptorsByApplicationsRequest;
+
+        private siteModel: SiteModel;
+
+        constructor(model: LiveEditModel) {
+            super('page-controller', <DropdownConfig<PageDescriptor>>{
                 optionDisplayValueViewer: new PageDescriptorViewer(),
                 dataIdProperty: 'value'
             });
 
-            this.loader = config.loader;
+            this.siteModel = model.getSiteModel();
+
+            this.initLoader();
+
+            this.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
+                var pageDescriptor = event.getOption().displayValue;
+                var setController = new SetController(this).setDescriptor(pageDescriptor);
+                model.getPageModel().setController(setController);
+            });
+
+            this.siteModel.onApplicationAdded((event: api.content.site.ApplicationAddedEvent) => {
+                this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
+                this.removeAllOptions();
+                this.load();
+            });
+
+            this.siteModel.onApplicationRemoved((event: api.content.site.ApplicationRemovedEvent) => {
+                this.getPageDescriptorsByApplicationsRequest.setApplicationKeys(this.siteModel.getApplicationKeys());
+                this.removeAllOptions();
+                this.load();
+            });
+        }
+
+        private initLoader() {
+            this.getPageDescriptorsByApplicationsRequest = new GetPageDescriptorsByApplicationsRequest(this.siteModel.getApplicationKeys());
+
+            this.loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByApplicationsRequest).
+                setComparator(new api.content.page.DescriptorByDisplayNameComparator());
+
             this.loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
                 event.getData().forEach((descriptor: PageDescriptor) => {
                     var option = <Option<PageDescriptor>>{
