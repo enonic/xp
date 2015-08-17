@@ -52,6 +52,7 @@ public class MixinServiceImplTest
         myApplication = Mockito.mock( Application.class );
         Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
+        Mockito.when( myApplication.isStarted() ).thenReturn( true );
 
         //Mocks the application service
         applicationService = Mockito.mock( ApplicationService.class );
@@ -139,7 +140,7 @@ public class MixinServiceImplTest
 
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
         Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
-        service.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
+        service.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
 
         test_empty();
     }

@@ -51,6 +51,7 @@ public class RelationshipTypeServiceImplTest
         myApplication = Mockito.mock( Application.class );
         Mockito.when( myApplication.getKey() ).thenReturn( myApplicationKey );
         Mockito.when( myApplication.getBundle() ).thenReturn( myBundle );
+        Mockito.when( myApplication.isStarted() ).thenReturn( true );
 
         //Mocks the application service
         applicationService = Mockito.mock( ApplicationService.class );
@@ -103,7 +104,7 @@ public class RelationshipTypeServiceImplTest
 
         Mockito.when( applicationService.getAllApplications() ).thenReturn( Applications.empty() );
         Mockito.when( applicationService.getApplication( myApplicationKey ) ).thenReturn( null );
-        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, myBundle ) );
+        relationshipTypeService.bundleChanged( new BundleEvent( BundleEvent.STOPPED, myBundle ) );
 
         test_empty();
     }
