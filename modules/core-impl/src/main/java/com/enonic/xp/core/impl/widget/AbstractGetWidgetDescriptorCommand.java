@@ -14,7 +14,7 @@ abstract class AbstractGetWidgetDescriptorCommand<T extends AbstractGetWidgetDes
     protected WidgetDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey =
-            ResourceKey.from( key.getApplicationKey(), "/widgets/" + key.getName() + "/" + key.getName() + ".xml" );
+            ResourceKey.from( key.getApplicationKey(), "ui/widgets/" + key.getName() + "/" + key.getName() + ".xml" );
         final Resource resource = Resource.from( resourceKey );
 
         final WidgetDescriptor.Builder builder = WidgetDescriptor.create();
