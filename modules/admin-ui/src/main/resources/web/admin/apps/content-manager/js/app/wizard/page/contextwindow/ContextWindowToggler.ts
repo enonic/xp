@@ -6,7 +6,7 @@ module app.wizard.page.contextwindow {
 
         constructor() {
             super();
-            this.addClass("toggle-button icon-menu3 icon-medium");
+            this.addClass("toggle-button icon-cog icon-medium");
             this.setActive(false);
             this.setEnabled(false);
 
