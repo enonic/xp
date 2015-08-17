@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.FileResource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
@@ -47,8 +46,8 @@ public abstract class AbstractDescriptorServiceTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
-            final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return new Resource( resourceKey, resourceUrl );
+            final File resourceFile = new File( applicationsDir, path );
+            return new FileResource( resourceKey, resourceFile );
         } );
     }
 

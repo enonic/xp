@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URL;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -16,7 +15,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.FileResource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
@@ -56,8 +55,8 @@ public class LocaleServiceImplTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
-            final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            final File resourceFile = new File( applicationsDir, path );
+            return new FileResource( resourceKey, resourceFile );
         } );
         localeService.setResourceService( resourceService );
     }

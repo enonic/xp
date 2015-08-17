@@ -12,9 +12,9 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.xml.DomHelper;
 
 import static org.junit.Assert.*;
@@ -33,7 +33,7 @@ public abstract class AbstractFunctionTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = AbstractFunctionTest.class.getResource( "/site" + resourceKey.getPath() );
-            return new Resource( resourceKey, resourceUrl );
+            return new UrlResource( resourceKey, resourceUrl );
         } );
 
         this.processor = service.newProcessor();
