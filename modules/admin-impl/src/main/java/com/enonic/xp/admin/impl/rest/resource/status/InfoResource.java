@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.status.GCStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.JVMStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.MemoryStatusInfoBuilder;

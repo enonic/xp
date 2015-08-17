@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.jaxrs.JaxRsHandler;
 

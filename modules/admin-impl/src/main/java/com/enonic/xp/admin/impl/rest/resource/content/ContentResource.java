@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
