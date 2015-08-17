@@ -48,7 +48,7 @@ module api.liveedit {
 
             var deferred = wemQ.defer<PageModel>();
 
-            var pageMode = this.content.getPageMode(!!defaultPageTemplate);
+            var pageMode = this.getPageMode(this.content, !!defaultPageTemplate);
             var pageModel = new PageModel(this, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
             var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
@@ -187,6 +187,29 @@ module api.liveedit {
             }
 
             return deferred.promise;
+        }
+
+        private getPageMode(content: Content, defaultTemplatePresents: boolean): api.content.page.PageMode {
+            if (content.isPage()) {
+                if (content.getPage().hasTemplate()) {
+                    //in case content's template was deleted or updated to not support content's type
+                    if (defaultTemplatePresents) {
+                        return api.content.page.PageMode.FORCED_TEMPLATE;
+                    }
+                    else {
+                        return api.content.page.PageMode.NO_CONTROLLER;
+                    }
+                }
+                else {
+                    return api.content.page.PageMode.FORCED_CONTROLLER;
+                }
+            }
+            else if (defaultTemplatePresents) {
+                return api.content.page.PageMode.AUTOMATIC;
+            }
+            else {
+                return api.content.page.PageMode.NO_CONTROLLER;
+            }
         }
 
         private loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {

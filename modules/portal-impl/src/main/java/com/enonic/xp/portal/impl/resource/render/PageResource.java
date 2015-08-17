@@ -65,7 +65,8 @@ public final class PageResource
             if ( page.hasTemplate() )
             {
                 PageTemplate pageTemplate = getPageTemplate( page );
-                if ( pageTemplate.canRender( resource.content.getType() ) ) {  //template may be deleted or updated to not support content type after content had been created
+                if ( pageTemplate.canRender( resource.content.getType() ) )
+                {  //template may be deleted or updated to not support content type after content had been created
                     resource.pageTemplate = getPageTemplate( page );
                 }
             }

@@ -28,6 +28,8 @@ module app.wizard {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
+    import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
+    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -521,17 +523,27 @@ module app.wizard {
             this.contextWindowToggler.setVisible(false);
             this.cycleViewModeButton.setVisible(false);
 
-            new IsRenderableRequest(content.getContentId()).sendAndParse().
-                then((renderable: boolean): void => {
-                    this.showLiveEditAction.setVisible(renderable);
-                    this.showLiveEditAction.setEnabled(renderable);
-                    this.showSplitEditAction.setEnabled(renderable);
-                    this.previewAction.setVisible(renderable);
-                    this.contextWindowToggler.setVisible(renderable);
-                    this.cycleViewModeButton.setVisible(renderable);
+            var renderablePromises = [
+                new GetNearestSiteRequest(content.getContentId()).sendAndParse(),
+                new IsRenderableRequest(content.getContentId()).sendAndParse()
+            ];
 
-                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
-                        this.wizardActions.getShowSplitEditAction().execute();
+            wemQ.all(renderablePromises).
+                spread((parentSite: Site, renderable: boolean) => {
+                    // content is renderable in Live Edit if: supported by page-template, or is Site, or under site with applications containing page descriptors
+                    renderable = renderable || content.isSite();
+
+                    if (!renderable && (parentSite && (parentSite.getApplicationKeys().length > 0))) {
+                        // content not renderable, but inside a site => check if Site has controllers to select from (customized)
+                        new GetPageDescriptorsByApplicationsRequest(parentSite.getApplicationKeys()).sendAndParse().
+                            then((pageDescriptors: PageDescriptor[]): void => {
+                                this.setupWizardLiveEdit(pageDescriptors.length > 0);
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason);
+                            }).done();
+
+                    } else {
+                        this.setupWizardLiveEdit(renderable);
                     }
 
                 }).catch((reason: any) => {
@@ -598,6 +610,19 @@ module app.wizard {
                     return wemQ(null);
                 });
             });
+        }
+
+        private setupWizardLiveEdit(renderable) {
+            this.showLiveEditAction.setVisible(renderable);
+            this.showLiveEditAction.setEnabled(renderable);
+            this.showSplitEditAction.setEnabled(renderable);
+            this.previewAction.setVisible(renderable);
+            this.contextWindowToggler.setVisible(renderable);
+            this.cycleViewModeButton.setVisible(renderable);
+
+            if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
+                this.wizardActions.getShowSplitEditAction().execute();
+            }
         }
 
         private initSiteModelListeners() {

@@ -92,9 +92,10 @@ public abstract class RenderResource
             contentType( contentType ).
             build();
         final PageTemplate pageTemplate = this.services.getPageTemplateService().getDefault( getDefPageTemplate );
-        if ( pageTemplate == null )
+        if ( pageTemplate == null && this.mode != RenderMode.EDIT )
         {
-           // throw notFound( "No template found for content" );
+            // we can render default empty page in Live-Edit, for selecting controller when page customized
+            throw notFound( "No template found for content" );
         }
 
         return pageTemplate;
