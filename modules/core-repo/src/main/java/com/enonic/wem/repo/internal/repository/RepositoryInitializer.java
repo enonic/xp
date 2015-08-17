@@ -83,11 +83,14 @@ public final class RepositoryInitializer
         LOG.info( "Create storage-index for repositoryId {}", repositoryId );
         final String storageIndexName = getStoreIndexName( repositoryId );
         final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
+        LOG.info( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
         indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
+
 
         LOG.info( "Create search-index for repositoryId {}", repositoryId );
         final String searchIndexName = getSearchIndexName( repositoryId );
         final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        LOG.info( "Applying search-index settings for repo {}: {}", repositoryId, searchIndexSettings.getSettingsAsString() );
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
     }
 
