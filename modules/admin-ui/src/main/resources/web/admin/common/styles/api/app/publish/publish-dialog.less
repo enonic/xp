@@ -1,8 +1,12 @@
-.publish-dialog {
+.modal-dialog.publish-dialog {
+
+  @media screen and (max-height: 360px) {
+    max-height: 200px;
+  }
 
   .dialog-content {
 
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
 
     @media screen and (max-height: 720px) {
