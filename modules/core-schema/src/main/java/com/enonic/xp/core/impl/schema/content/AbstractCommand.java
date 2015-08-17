@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.schema.content;
 
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeRegistry;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -26,11 +25,10 @@ abstract class AbstractCommand
 
     private final ContentTypes doTransformInlineMixins( final ContentTypes contentTypes )
     {
-        final InlineMixinsToFormItemsTransformer transformer = new InlineMixinsToFormItemsTransformer( this.mixinService );
         final ContentTypes.Builder transformedContentTypes = ContentTypes.create();
         for ( final ContentType contentType : contentTypes )
         {
-            final Form transformedForm = transformer.transformForm( contentType.form() );
+            final Form transformedForm = mixinService.inlineFormItems( contentType.form() );
             final ContentType transformedCty = ContentType.create( contentType ).form( transformedForm ).build();
             transformedContentTypes.add( transformedCty );
         }

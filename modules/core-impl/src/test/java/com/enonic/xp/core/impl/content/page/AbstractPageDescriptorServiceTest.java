@@ -16,6 +16,7 @@ public abstract class AbstractPageDescriptorServiceTest
         this.service = new PageDescriptorServiceImpl();
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
+        this.service.setMixinService( this.mixinService );
     }
 
     @Override

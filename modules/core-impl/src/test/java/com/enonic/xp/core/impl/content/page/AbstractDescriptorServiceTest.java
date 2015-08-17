@@ -19,11 +19,13 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.FileResource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.mixin.MixinService;
 
 public abstract class AbstractDescriptorServiceTest
 {
@@ -35,6 +37,8 @@ public abstract class AbstractDescriptorServiceTest
     protected ApplicationService applicationService;
 
     protected ResourceService resourceService;
+
+    protected MixinService mixinService;
 
     @Before
     public final void setup()
@@ -49,6 +53,8 @@ public abstract class AbstractDescriptorServiceTest
             final File resourceFile = new File( applicationsDir, path );
             return new FileResource( resourceKey, resourceFile );
         } );
+        mixinService = Mockito.mock( MixinService.class );
+        Mockito.when( mixinService.inlineFormItems( Mockito.any() ) ).thenReturn( Form.create().build() );
     }
 
     protected final void createFile( final ResourceKey key, final String content )

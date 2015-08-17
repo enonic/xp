@@ -18,6 +18,7 @@ public abstract class AbstractLayoutDescriptorServiceTest
         this.service = new LayoutDescriptorServiceImpl();
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
+        this.service.setMixinService( this.mixinService );
     }
 
     @Override
