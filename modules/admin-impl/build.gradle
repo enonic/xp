@@ -11,7 +11,7 @@ dependencies {
 }
 
 bundle {
-    instruction 'Bundle-Name', 'Enonic XP Admin - Im
+    instruction 'Bundle-Name', 'Enonic XP Admin - Impl'
 }
 
 checkstyle {
