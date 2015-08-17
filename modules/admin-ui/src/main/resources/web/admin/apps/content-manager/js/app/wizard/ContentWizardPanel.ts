@@ -183,10 +183,8 @@ module app.wizard {
             ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
 
             var isSiteOrWithinSite = this.site || this.createSite;
-            var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
-            var hasSiteAndPageTemplate = isSiteOrWithinSite && hasPageTemplate;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
-            if (hasSiteAndPageTemplate || isPageTemplate) {
+            if (isSiteOrWithinSite || isPageTemplate) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,

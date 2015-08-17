@@ -13,6 +13,8 @@ module api.liveedit {
 
         private pageView: PageView;
 
+        private infoBlock: api.dom.DivEl;
+
         private controllerDropdown: api.content.page.PageDescriptorDropdown;
 
         constructor(pageView: PageView) {
@@ -38,6 +40,11 @@ module api.liveedit {
 
             this.appendChild(this.controllerDropdown);
 
+            if (!this.pageView.liveEditModel.getPageModel().isPageTemplate()) {
+                this.infoBlock = this.initInfoBlock();
+                this.appendChild(this.infoBlock);
+            }
+
             this.controllerDropdown.onClicked((event: MouseEvent) => {
                 this.select();
                 event.stopPropagation();
@@ -57,6 +64,19 @@ module api.liveedit {
 
         deselect() {
 
+        }
+
+        private initInfoBlock(): api.dom.DivEl {
+            var wrapperDiv = new api.dom.DivEl("page-placeholder-info");
+
+            var line1 = new api.dom.DivEl("page-placeholder-info-line1");
+            line1.setHtml('No template found for "' + this.pageView.getLocalType() + '"');
+            var line2 = new api.dom.DivEl("page-placeholder-info-line2");
+            line2.setHtml("Select a controller below to setup a page for this item");
+
+            wrapperDiv.appendChildren(line1, line2);
+
+            return wrapperDiv;
         }
     }
 }

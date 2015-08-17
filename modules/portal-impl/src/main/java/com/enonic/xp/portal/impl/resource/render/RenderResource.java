@@ -94,7 +94,7 @@ public abstract class RenderResource
         final PageTemplate pageTemplate = this.services.getPageTemplateService().getDefault( getDefPageTemplate );
         if ( pageTemplate == null )
         {
-            throw notFound( "No template found for content" );
+           // throw notFound( "No template found for content" );
         }
 
         return pageTemplate;
