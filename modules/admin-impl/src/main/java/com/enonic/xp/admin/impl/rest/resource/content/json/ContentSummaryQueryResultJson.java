@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentSummaryQueryResultJson
     extends AbstractContentQueryResultJson<ContentSummaryJson>
@@ -37,8 +36,7 @@ public class ContentSummaryQueryResultJson
         }
 
         @Override
-        public Builder addContent( final Content content,
-                                   final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
+        public Builder addContent( final Content content )
         {
             this.contents.add( new ContentSummaryJson( content, iconUrlResolver ) );
             return this;
