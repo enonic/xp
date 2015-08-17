@@ -109,7 +109,7 @@ public final class MixinServiceImpl
         else
         {
             final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null )
+            if ( application != null && application.isStarted() )
             {
                 final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );
                 mixins = mixinLoader.loadMixins();
@@ -127,7 +127,7 @@ public final class MixinServiceImpl
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
+        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
         {
             this.map.remove( ApplicationKey.from( event.getBundle() ) );
         }
