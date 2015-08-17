@@ -711,7 +711,6 @@ module api.ui.treegrid {
             }
             var isRootParentNode: boolean = (parentNode == root);
 
-            debugger;
             if (!parentNode.hasChildren() && !isRootParentNode) {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
