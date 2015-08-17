@@ -156,7 +156,7 @@ module app.browse {
             });
 
             this.initData(nodeList);
-            this.resetAndRender();
+            this.invalidate();
         }
 
         appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
@@ -177,7 +177,7 @@ module app.browse {
 
                 if (!this.getRoot().isFiltered()) {
                     this.initData(this.getRoot().getDefaultRoot().treeToList());
-                    this.resetAndRender();
+                    this.invalidate();
                 }
 
             } else { // Principal type

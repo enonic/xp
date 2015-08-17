@@ -13,10 +13,13 @@ module app.wizard.page.contextwindow {
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
+    import ContentWizardPanel = app.wizard.ContentWizardPanel;
 
     export interface ContextWindowConfig {
 
         liveFormPanel:LiveFormPanel;
+
+        contentWizardPanel: ContentWizardPanel;
 
         inspectionPanel:InspectionsPanel;
 
@@ -38,6 +41,10 @@ module app.wizard.page.contextwindow {
         private contextWindowState: ContextWindowState = ContextWindowState.HIDDEN;
 
         private splitter: api.dom.DivEl;
+
+        private buttonBar: api.dom.DivEl;
+
+        private componentsView: app.wizard.PageComponentsView;
 
         private ghostDragger: api.dom.DivEl;
 
@@ -77,12 +84,40 @@ module app.wizard.page.contextwindow {
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
 
+            this.componentsView = new app.wizard.PageComponentsView();
+            this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
+            this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
+
+            var button = new api.ui.button.Button('Show Components View');
+            button.addClass('transparent').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                if (!this.componentsView.getParentElement()) {
+                    // append it on click only to be sure that content wizard panel is ready
+                    config.contentWizardPanel.appendChild(this.componentsView);
+                }
+
+                this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
+            });
+
+            this.buttonBar = new api.dom.DivEl('button-bar');
+            this.buttonBar.appendChild(button);
+            this.appendChild(this.buttonBar);
+
             this.onRendered(() => this.onRenderedHandler());
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
             });
+        }
+
+        setPageView(pageView: api.liveedit.PageView) {
+            this.componentsView.setPageView(pageView);
+        }
+
+        setContent(content: Content) {
+            this.componentsView.setContent(content);
         }
 
         private onRenderedHandler() {
