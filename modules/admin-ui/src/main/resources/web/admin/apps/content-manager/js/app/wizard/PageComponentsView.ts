@@ -22,6 +22,7 @@ module app.wizard {
         private mouseDownListener: (event: MouseEvent) => void;
         private mouseUpListener: (event: MouseEvent) => void;
         private mouseMoveListener: (event: MouseEvent) => void;
+        private clickListener: (event, data) => void;
         private mouseDown: boolean = false;
 
         constructor() {
@@ -37,38 +38,42 @@ module app.wizard {
 
             this.setModal(false).setFloating(true).setDraggable(true);
 
-            var body = api.dom.Body.get();
-
-            ResponsiveManager.onAvailableSizeChanged(body, (item: ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
+                if (!smallSize) {
+                    this.constrainToParent();
+                }
                 this.setModal(smallSize).setDraggable(!smallSize);
             });
-
-            body.appendChild(this);
         }
 
         setPageView(pageView: PageView) {
             this.pageView = pageView;
-            if (this.content && this.pageView) {
+            if (!this.tree && this.content && this.pageView) {
                 this.createTree(this.content, this.pageView);
+            } else if (this.tree) {
+                this.tree.setPageView(pageView);
             }
         }
 
         setContent(content: Content) {
             this.content = content;
-            if (this.content && this.pageView) {
+            if (!this.tree && this.content && this.pageView) {
                 this.createTree(this.content, this.pageView);
             }
         }
 
         private createTree(content: Content, pageView: PageView) {
             this.tree = new PageComponentsTreeGrid(content, pageView);
-            this.tree.getGrid().subscribeOnClick((event, data) => {
+            this.clickListener = (event, data) => {
                 if (this.isModal()) {
                     this.hide();
                 }
-            });
+            };
+            this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.appendChild(this.tree);
+
+            this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
         }
 
         isDraggable(): boolean {
@@ -107,10 +112,7 @@ module app.wizard {
                                     left: offset.left + newPos.x - lastPos.x
                                 };
 
-                            el.setOffset({
-                                top: Math.max(0, Math.min(newOffset.top, window.innerHeight - el.getHeightWithBorder())),
-                                left: Math.max(0, Math.min(newOffset.left, window.innerWidth - el.getWidthWithBorder()))
-                            });
+                            el.setOffset(this.constrainToParent(newOffset));
 
                             lastPos = newPos;
                         }
@@ -125,7 +127,34 @@ module app.wizard {
                 body.unMouseMove(this.mouseMoveListener);
             }
             this.draggable = draggable;
+            this.toggleClass('draggable', draggable);
             return this;
+        }
+
+        private constrainToParent(offset?: {top: number; left: number}) {
+
+            var parentEl, parentOffset,
+                el = this.getEl(),
+                offset = offset || el.getOffset();
+
+            if (this.getParentElement()) {
+                parentEl = this.getParentElement().getEl();
+                parentOffset = parentEl.getOffset();
+            }
+            else {
+                parentEl = api.dom.WindowDOM.get();
+                parentOffset = {
+                    top: 0,
+                    left: 0
+                }
+            }
+
+            return {
+                top: Math.max(parentOffset.top,
+                    Math.min(offset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
+                left: Math.max(parentOffset.left,
+                    Math.min(offset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
+            }
         }
 
         isFloating(): boolean {

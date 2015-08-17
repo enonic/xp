@@ -48,12 +48,18 @@ module app.wizard {
                     build()).
                 setShowToolbar(false).
                 setAutoLoad(true).
+                setExpandAll(true).
                 prependClasses("components-grid"));
 
             this.getGrid().subscribeOnClick((event, data) => {
                 var treeNode: TreeNode<ItemView> = this.getGrid().getDataView().getItem(data.row);
                 treeNode.getData().select();
             });
+        }
+
+        setPageView(pageView: PageView) {
+            this.pageView = pageView;
+            this.reload();
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ItemView>) {

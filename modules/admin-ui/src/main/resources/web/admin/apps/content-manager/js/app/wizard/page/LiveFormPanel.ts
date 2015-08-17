@@ -172,6 +172,7 @@ module app.wizard.page {
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
                 liveFormPanel: this,
+                contentWizardPanel: config.contentWizardPanel,
                 inspectionPanel: this.inspectionsPanel,
                 emulatorPanel: this.emulatorPanel,
                 insertablesPanel: this.insertablesPanel

@@ -13,10 +13,13 @@ module app.wizard.page.contextwindow {
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
+    import ContentWizardPanel = app.wizard.ContentWizardPanel;
 
     export interface ContextWindowConfig {
 
         liveFormPanel:LiveFormPanel;
+
+        contentWizardPanel: ContentWizardPanel;
 
         inspectionPanel:InspectionsPanel;
 
@@ -88,6 +91,11 @@ module app.wizard.page.contextwindow {
             var button = new api.ui.button.Button('Show Components View');
             button.addClass('transparent').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
+
+                if (!this.componentsView.getParentElement()) {
+                    // append it on click only to be sure that content wizard panel is ready
+                    config.contentWizardPanel.appendChild(this.componentsView);
+                }
 
                 this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
             });

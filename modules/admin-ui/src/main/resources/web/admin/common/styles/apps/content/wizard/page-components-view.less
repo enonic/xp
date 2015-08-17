@@ -15,6 +15,12 @@
     margin-left: 0;
   }
 
+  &.draggable {
+    .header {
+      cursor: move;
+    }
+  }
+
   .close-button {
     position: absolute;
     top: 12px;
@@ -23,10 +29,6 @@
 
   .header {
     padding: 5px 41px 5px 15px;
-
-    .draggable & {
-      cursor: move;
-    }
   }
 
   .tree-grid {
