@@ -16,7 +16,7 @@ import com.google.common.io.Resources;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.xp.repository.RepositoryId;
 
-public abstract class AbstractRepositorySettingsProvider
+public class AbstractRepositorySettingsProvider
 {
     private final static ObjectMapper mapper = create();
 
