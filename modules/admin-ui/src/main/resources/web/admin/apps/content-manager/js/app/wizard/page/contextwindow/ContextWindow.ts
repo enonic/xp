@@ -83,7 +83,7 @@ module app.wizard.page.contextwindow {
             this.addItem("Insert", false, this.insertablesPanel);
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
-
+            /*
             this.componentsView = new app.wizard.PageComponentsView();
             this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
             this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
@@ -103,6 +103,7 @@ module app.wizard.page.contextwindow {
             this.buttonBar = new api.dom.DivEl('button-bar');
             this.buttonBar.appendChild(button);
             this.appendChild(this.buttonBar);
+             */
 
             this.onRendered(() => this.onRenderedHandler());
 
@@ -113,11 +114,11 @@ module app.wizard.page.contextwindow {
         }
 
         setPageView(pageView: api.liveedit.PageView) {
-            this.componentsView.setPageView(pageView);
+            // this.componentsView.setPageView(pageView);
         }
 
         setContent(content: Content) {
-            this.componentsView.setContent(content);
+            // this.componentsView.setContent(content);
         }
 
         private onRenderedHandler() {
