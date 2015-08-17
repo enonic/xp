@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.content.validator;
+package com.enonic.xp.core.impl.content.validate;
 
 
 import java.util.Iterator;

@@ -1,11 +1,8 @@
-package com.enonic.xp.schema.content.validator;
-
-import com.google.common.annotations.Beta;
+package com.enonic.xp.core.impl.content.validate;
 
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 
-@Beta
 public final class MinimumOccurrencesValidationError
     extends DataValidationError
 {

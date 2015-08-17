@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.content.validator;
+package com.enonic.xp.core.impl.schema.content;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.content.validator.ContentTypeValidationError;
+import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
 import static org.junit.Assert.*;
 

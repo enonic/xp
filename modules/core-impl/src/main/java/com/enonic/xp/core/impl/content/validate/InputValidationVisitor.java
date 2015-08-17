@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.content.validator;
+package com.enonic.xp.core.impl.content.validate;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;

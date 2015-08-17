@@ -26,9 +26,9 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.content.validator.DataValidationError;
-import com.enonic.xp.schema.content.validator.DataValidationErrors;
-import com.enonic.xp.schema.content.validator.InputValidator;
+import com.enonic.xp.core.impl.content.validate.DataValidationError;
+import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand

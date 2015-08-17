@@ -1,14 +1,13 @@
-package com.enonic.xp.schema.content.validator;
-
-import com.google.common.annotations.Beta;
+package com.enonic.xp.core.impl.schema.content;
 
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.content.validator.ContentTypeValidationError;
+import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
-@Beta
-public class ContentTypeSuperTypeValidator
+final class ContentTypeSuperTypeValidator
 {
     private final ContentTypeService contentTypeService;
 
