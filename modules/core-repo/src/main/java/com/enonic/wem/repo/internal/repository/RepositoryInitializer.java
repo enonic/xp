@@ -80,18 +80,26 @@ public final class RepositoryInitializer
 
     private void createIndexes( final RepositoryId repositoryId )
     {
-        LOG.info( "Create storage-index for repositoryId {}", repositoryId );
-        final String storageIndexName = getStoreIndexName( repositoryId );
-        final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
-        LOG.info( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
-        indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
+        createStorageIndex( repositoryId );
+        createSearchIndex( repositoryId );
+    }
 
-
+    private void createSearchIndex( final RepositoryId repositoryId )
+    {
         LOG.info( "Create search-index for repositoryId {}", repositoryId );
         final String searchIndexName = getSearchIndexName( repositoryId );
         final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
         LOG.info( "Applying search-index settings for repo {}: {}", repositoryId, searchIndexSettings.getSettingsAsString() );
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
+    }
+
+    private void createStorageIndex( final RepositoryId repositoryId )
+    {
+        LOG.info( "Create storage-index for repositoryId {}", repositoryId );
+        final String storageIndexName = getStoreIndexName( repositoryId );
+        final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
+        LOG.info( "Applying storage-index settings for repo {}: {}", repositoryId, storageIndexSettings.getSettingsAsString() );
+        indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
     }
 
     private void deleteExistingRepoIndices( final RepositoryId repositoryId )

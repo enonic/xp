@@ -97,6 +97,8 @@ public class IndexServiceImpl
 
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
 
+        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
+
         indexServiceInternal.applyMapping( searchIndexName, IndexType.SEARCH,
                                            RepositoryIndexMappingProvider.getSearchMappings( repositoryId ) );
 
