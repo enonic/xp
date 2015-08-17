@@ -4,16 +4,16 @@ import java.util.Set;
 
 import org.elasticsearch.common.unit.TimeValue;
 
+import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 
 public interface IndexServiceInternal
 {
-    public void createIndex( final String indexName, final String settings );
+    public void createIndex( final String indexName, final IndexSettings settings );
 
     public void deleteIndices( final String... indexNames );
 

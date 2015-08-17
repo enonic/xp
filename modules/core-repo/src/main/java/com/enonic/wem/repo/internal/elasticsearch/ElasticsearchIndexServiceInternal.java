@@ -34,6 +34,7 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
+import com.enonic.wem.repo.internal.index.IndexSettings;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
@@ -80,17 +81,19 @@ public class ElasticsearchIndexServiceInternal
     }
 
     @Override
-    public void createIndex( final String indexName, final String settings )
+    public void createIndex( final String indexName, final IndexSettings settings )
     {
         LOG.info( "creating index {}", indexName );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
-        createIndexRequest.settings( settings );
+        createIndexRequest.settings( settings.getSettingsAsString() );
 
         try
         {
-            final CreateIndexResponse createIndexResponse =
-                client.admin().indices().create( createIndexRequest ).actionGet( CREATE_TIMEOUT );
+            final CreateIndexResponse createIndexResponse = client.admin().
+                indices().
+                create( createIndexRequest ).
+                actionGet( CREATE_TIMEOUT );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }

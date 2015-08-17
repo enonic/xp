@@ -8,11 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
+import com.enonic.wem.repo.internal.index.IndexSettings;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.repository.RepositoryId;
 
 public final class RepositoryInitializer
 {
@@ -81,12 +82,12 @@ public final class RepositoryInitializer
     {
         LOG.info( "Create storage-index for repositoryId {}", repositoryId );
         final String storageIndexName = getStoreIndexName( repositoryId );
-        final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
+        final IndexSettings storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
         indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
 
         LOG.info( "Create search-index for repositoryId {}", repositoryId );
         final String searchIndexName = getSearchIndexName( repositoryId );
-        final String searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
     }
 

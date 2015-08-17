@@ -7,14 +7,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.IndexService;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.index.PurgeIndexParams;
-import com.enonic.xp.index.ReindexParams;
-import com.enonic.xp.index.ReindexResult;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
@@ -25,6 +17,14 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 import com.enonic.wem.repo.internal.repository.RepositorySearchIndexSettingsProvider;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.index.PurgeIndexParams;
+import com.enonic.xp.index.ReindexParams;
+import com.enonic.xp.index.ReindexResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class IndexServiceImpl
@@ -93,7 +93,7 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final String searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        final IndexSettings searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
 
         indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
 
