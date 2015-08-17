@@ -98,7 +98,7 @@ public class AbstractContentServiceTest
         build();
 
     @Rule
-    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+    public TemporaryFolder xpHome = new TemporaryFolder();
 
     protected ContentServiceImpl contentService;
 
@@ -128,7 +128,7 @@ public class AbstractContentServiceTest
     {
         super.setUp();
 
-        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 

@@ -64,7 +64,7 @@ public class SecurityServiceImplTest
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
     @Rule
-    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+    public TemporaryFolder xpHome = new TemporaryFolder();
 
     private SecurityServiceImpl securityService;
 
@@ -87,7 +87,7 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
-        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         this.branchService = new ElasticsearchBranchService();
         this.branchService.setElasticsearchDao( elasticsearchDao );
