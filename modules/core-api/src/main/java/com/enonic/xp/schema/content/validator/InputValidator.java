@@ -2,29 +2,29 @@ package com.enonic.xp.schema.content.validator;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.form.InputVisitor;
+import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.schema.content.ContentType;
-
 
 public final class InputValidator
 {
     private final Form form;
 
-    private InputValidator( final ContentType contentType )
+    private final InputTypeResolver inputTypeResolver;
+
+    private InputValidator( final Builder builder )
     {
-        form = contentType.form();
+        this.form = builder.contentType.form();
+        this.inputTypeResolver = builder.inputTypeResolver;
     }
 
     public final void validate( final PropertyTree propertyTree )
     {
-        if ( form != null )
+        if ( this.form != null )
         {
-            final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree );
-            inputValidationVisitor.traverse( form );
+            final InputValidationVisitor inputValidationVisitor = new InputValidationVisitor( propertyTree, this.inputTypeResolver );
+            inputValidationVisitor.traverse( this.form );
         }
     }
 
@@ -37,45 +37,30 @@ public final class InputValidator
     {
         private ContentType contentType;
 
+        private InputTypeResolver inputTypeResolver;
+
         public Builder contentType( final ContentType contentType )
         {
             this.contentType = contentType;
             return this;
         }
 
+        public Builder inputTypeResolver( final InputTypeResolver inputTypeResolver )
+        {
+            this.inputTypeResolver = inputTypeResolver;
+            return this;
+        }
+
         private void validate()
         {
-            Preconditions.checkNotNull( contentType, "No content type given" );
+            Preconditions.checkNotNull( this.contentType, "ContentType is required" );
+            Preconditions.checkNotNull( this.inputTypeResolver, "InputTypeResolver is required" );
         }
 
         public InputValidator build()
         {
-            this.validate();
-            return new InputValidator( this.contentType );
-        }
-    }
-
-    private class InputValidationVisitor
-        extends InputVisitor
-    {
-        private PropertyTree propertyTree;
-
-        public InputValidationVisitor( final PropertyTree propertyTree )
-        {
-            this.propertyTree = propertyTree;
-        }
-
-        @Override
-        public void visit( final Input input )
-        {
-
-            final Property property = propertyTree.getProperty( input.getPath().toString() );
-
-            if ( property != null )
-            {
-                input.checkValidity( property );
-            }
+            validate();
+            return new InputValidator( this );
         }
     }
 }
-

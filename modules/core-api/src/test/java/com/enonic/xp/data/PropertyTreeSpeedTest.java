@@ -13,8 +13,8 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        Value myValue = Value.newString( "myValue" );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        Value myValue = ValueFactory.newString( "myValue" );
 
         stopwatch.start();
         for ( int i = 0; i < ONE_MILLION; i++ )
@@ -31,12 +31,12 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
 
         stopwatch.start();
         for ( int i = 0; i < ONE_MILLION; i++ )
         {
-            tree.addProperty( "myProp", Value.newLong( (long) i ) );
+            tree.addProperty( "myProp", ValueFactory.newLong( (long) i ) );
         }
         stopwatch.stop();
 
@@ -48,13 +48,13 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
 
         stopwatch.start();
         for ( int i = 0; i < 10; i++ )
         {
             PropertySet set = tree.newSet();
-            tree.addProperty( "myProp", Value.newData( set ) );
+            tree.addProperty( "myProp", ValueFactory.newPropertySet( set ) );
             generateBranch( set, 10, 5 );
         }
         stopwatch.stop();
@@ -70,7 +70,7 @@ public class PropertyTreeSpeedTest
             for ( int i = 0; i < numberOfChildNodes; i++ )
             {
                 PropertySet set = parent.newSet();
-                parent.addProperty( "myProp", Value.newData( set ) );
+                parent.addProperty( "myProp", ValueFactory.newPropertySet( set ) );
                 generateBranch( set, numberOfChildNodes, depth - 1 );
 
             }

@@ -95,7 +95,7 @@ public class AttachmentUrlParamsTest
         assertEquals( "media", params.getLabel() );
         assertEquals( true, params.isDownload() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "AttachmentUrlParams{params={a=[1]}, id=123456, path=/a/b, name=myfile.pdf, label=media, download=true}",
+        assertEquals( "AttachmentUrlParams{type=server, params={a=[1]}, id=123456, path=/a/b, name=myfile.pdf, label=media, download=true}",
                       params.toString() );
     }
 }

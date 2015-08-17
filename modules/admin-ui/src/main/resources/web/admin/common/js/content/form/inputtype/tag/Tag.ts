@@ -14,7 +14,7 @@ module api.content.form.inputtype.tag {
 
         private tagSuggester: ContentTagSuggester;
 
-        constructor(context: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("tag");
 
             this.addClass("input-type-view");
@@ -30,7 +30,7 @@ module api.content.form.inputtype.tag {
             this.appendChild(this.tags);
         }
 
-        private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext<any>): PropertyPath {
+        private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext): PropertyPath {
             if (context.parentDataPath) {
                 return PropertyPath.fromParent(context.parentDataPath, PropertyPathElement.fromString(context.input.getName()));
             }

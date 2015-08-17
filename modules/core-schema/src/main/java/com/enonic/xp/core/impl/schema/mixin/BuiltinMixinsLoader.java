@@ -12,18 +12,18 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.Mixins;
 
+import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
-import static com.enonic.xp.media.MediaInfo.PHOTO_INFO_METADATA_NAME;
 
 @Component(immediate = true)
 public final class BuiltinMixinsLoader
@@ -36,8 +36,8 @@ public final class BuiltinMixinsLoader
         formItems( createImageInfoMixinForm() ).
         build();
 
-    private static final Mixin PHOTO_METADATA = Mixin.create().
-        name( PHOTO_INFO_METADATA_NAME ).
+    private static final Mixin CAMERA_METADATA = Mixin.create().
+        name( CAMERA_INFO_METADATA_NAME ).
         displayName( "Photo Info" ).
         formItems( createPhotoInfoMixinForm() ).
         build();
@@ -48,7 +48,7 @@ public final class BuiltinMixinsLoader
         formItems( createGpsInfoMixinForm() ).
         build();
 
-    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, PHOTO_METADATA, GPS_METADATA );
+    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA );
 
     private static FormItems createImageInfoMixinForm()
     {
@@ -103,22 +103,22 @@ public final class BuiltinMixinsLoader
 
     private static Input.Builder createTextLine( final String name, final String label )
     {
-        return Input.create().inputType( InputTypes.TEXT_LINE ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createLong( final String name, final String label )
     {
-        return Input.create().inputType( InputTypes.LONG ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createDate( final String name, final String label )
     {
-        return Input.create().inputType( InputTypes.DATE_TIME ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).immutable( true );
     }
 
     private static Input.Builder createGeoPoint( final String name, final String label )
     {
-        return Input.create().inputType( InputTypes.GEO_POINT ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).immutable( true );
     }
 
     private List<Mixin> generateSystemMixins()

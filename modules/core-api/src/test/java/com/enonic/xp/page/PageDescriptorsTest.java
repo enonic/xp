@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.region.RegionDescriptors;
 
 import static org.junit.Assert.*;
@@ -23,7 +23,7 @@ public class PageDescriptorsTest
     public void from()
     {
         final Form pageForm = Form.create().
-            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypeName.DOUBLE ).build() ).
             // add input of type region
                 build();
 

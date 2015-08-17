@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.data.Value;
 import com.enonic.wem.repo.internal.entity.NodeManualOrderValueResolver;
+import com.enonic.xp.data.ValueFactory;
 
 import static org.junit.Assert.*;
 
@@ -23,13 +23,13 @@ public class OrderbyValueResolverTestJava
 
         List<String> orderStrings = Lists.newArrayList();
         final String third = OrderbyValueResolver.getOrderbyValue(
-            Value.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE + NodeManualOrderValueResolver.ORDER_SPACE ) );
+            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE + NodeManualOrderValueResolver.ORDER_SPACE ) );
         orderStrings.add( third );
         final String second =
-            OrderbyValueResolver.getOrderbyValue( Value.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE ) );
+            OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE ) );
         orderStrings.add( second );
         final String first = OrderbyValueResolver.getOrderbyValue(
-            Value.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE - NodeManualOrderValueResolver.ORDER_SPACE ) );
+            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE - NodeManualOrderValueResolver.ORDER_SPACE ) );
         orderStrings.add( first );
         Collections.sort( orderStrings );
 

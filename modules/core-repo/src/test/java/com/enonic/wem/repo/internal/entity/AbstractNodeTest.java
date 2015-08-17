@@ -81,7 +81,7 @@ public abstract class AbstractNodeTest
         build();
 
     @Rule
-    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+    public TemporaryFolder xpHome = new TemporaryFolder();
 
     public BlobStore binaryBlobStore;
 
@@ -103,7 +103,7 @@ public abstract class AbstractNodeTest
     {
         super.setUp();
 
-        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 

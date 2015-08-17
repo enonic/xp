@@ -3,6 +3,7 @@ package com.enonic.xp.region;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.support.AbstractEqualsTest;
 
@@ -18,7 +19,7 @@ public class ImageComponentTest
             @Override
             public Object getObjectX()
             {
-                final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -36,14 +37,14 @@ public class ImageComponentTest
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
                     build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), ImageComponent.create().
-                        image( ContentId.from( "image" ) ).
-                        build(), new Object()};
+                    image( ContentId.from( "image" ) ).
+                    build(), new Object()};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -56,7 +57,7 @@ public class ImageComponentTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -72,7 +73,7 @@ public class ImageComponentTest
     @Test
     public void copy()
     {
-        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
         config1.addString( "some", "config" );
 
         final ImageComponent source = ImageComponent.create().

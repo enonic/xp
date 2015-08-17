@@ -16,6 +16,8 @@ public class TermsAggregationQuery
 
     private final Type orderType;
 
+    private final long minDocCount;
+
     private TermsAggregationQuery( final Builder builder )
     {
         super( builder );
@@ -23,6 +25,7 @@ public class TermsAggregationQuery
         this.size = builder.size;
         this.orderDirection = builder.direction;
         this.orderType = builder.type;
+        this.minDocCount = builder.minDocCount;
     }
 
     public String getFieldName()
@@ -45,6 +48,11 @@ public class TermsAggregationQuery
         return orderType;
     }
 
+    public long getMinDocCount()
+    {
+        return minDocCount;
+    }
+
     public static Builder create( final String name )
     {
         return new Builder( name );
@@ -58,6 +66,8 @@ public class TermsAggregationQuery
         private Type type = Type.TERM;
 
         private String fieldName;
+
+        private long minDocCount = 1;
 
         public Builder( final String name )
         {
@@ -75,6 +85,12 @@ public class TermsAggregationQuery
         public Builder size( final Integer size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder minDoccount( final long minDocCount )
+        {
+            this.minDocCount = minDocCount;
             return this;
         }
 

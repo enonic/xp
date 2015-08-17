@@ -5,25 +5,25 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
 
-    export class BaseInputTypeSingleOccurrence<CONTEXT,RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
+    export class BaseInputTypeSingleOccurrence<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
-        private context: api.form.inputtype.InputTypeViewContext<CONTEXT>;
+        private context: api.form.inputtype.InputTypeViewContext;
 
         protected input: api.form.Input;
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
-        constructor(CONTEXT: api.form.inputtype.InputTypeViewContext<CONTEXT>, className?: string) {
+        constructor(ctx: api.form.inputtype.InputTypeViewContext, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(CONTEXT, "CONTEXT cannot be null");
-            this.context = CONTEXT;
+            api.util.assertNotNull(ctx, "CONTEXT cannot be null");
+            this.context = ctx;
         }
 
         availableSizeChanged() {
 
         }
 
-        public getContext(): api.form.inputtype.InputTypeViewContext<CONTEXT> {
+        public getContext(): api.form.inputtype.InputTypeViewContext {
             return this.context;
         }
 

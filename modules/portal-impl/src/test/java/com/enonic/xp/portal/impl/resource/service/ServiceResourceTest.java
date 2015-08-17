@@ -12,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -28,6 +29,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -82,11 +84,12 @@ public class ServiceResourceTest
     }
 
     @Test
-    public void verifyUriSet()
+    public void verifyUrlSet()
         throws Exception
     {
         final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/service/demo/test" );
         request.setQueryString( "a=b" );
+        ServletRequestHolder.setRequest( request );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -96,10 +99,10 @@ public class ServiceResourceTest
         Mockito.verify( this.controllerScript ).execute( jsRequest.capture() );
 
         final PortalRequest portalRequest = jsRequest.getValue();
-
-        assertEquals( "http://localhost/portal/master/path/to/content/_/service/demo/test?a=b", portalRequest.getUri() );
-        assertEquals( "http://localhost/portal/master", portalRequest.getBaseUrl() );
-        assertEquals( "http://localhost", portalRequest.getServerUrl() );
+        assertEquals( "http", portalRequest.getScheme() );
+        assertEquals( "localhost", portalRequest.getHost() );
+        assertEquals( "80", portalRequest.getPort() );
+        assertEquals( "/portal/master/path/to/content/_/service/demo/test", portalRequest.getPath() );
     }
 
     @Test
@@ -140,7 +143,7 @@ public class ServiceResourceTest
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.addString( "property1", "value1" );
 
         final Content.Builder content = Content.create().

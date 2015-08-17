@@ -27,7 +27,6 @@ import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchServ
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -51,8 +50,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.index.IndexType;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -100,7 +98,7 @@ public class AbstractContentServiceTest
         build();
 
     @Rule
-    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+    public TemporaryFolder xpHome = new TemporaryFolder();
 
     protected ContentServiceImpl contentService;
 
@@ -130,7 +128,7 @@ public class AbstractContentServiceTest
     {
         super.setUp();
 
-        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
@@ -233,21 +231,6 @@ public class AbstractContentServiceTest
             build() );
     }
 
-    protected void printContentRepoIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
-    }
-
-    protected void printBranchIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
-    }
-
-    protected void printVersionIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
-    }
-
     protected Content createContent( ContentPath parentPath )
         throws Exception
     {
@@ -286,9 +269,8 @@ public class AbstractContentServiceTest
         data.addDouble( "double", 1.4d );
         data.addLong( "long", 2l );
         data.addString( "color", "FFFFFF" );
-        data.addString( "comboBox", "value3" );
+        data.addString( "comboBox", "value2" );
         data.addBoolean( "checkbox", false );
-        data.addString( "tinyMce", "<p>paragraph</p>" );
         data.addString( "phone", "012345678" );
         data.addString( "tag", "tag" );
         data.addReference( "contentSelector", reference );
@@ -314,12 +296,12 @@ public class AbstractContentServiceTest
             addFormItem( Input.create().
                 label( "String" ).
                 name( "setString" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 label( "Double" ).
                 name( "setDouble" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
 
@@ -329,94 +311,88 @@ public class AbstractContentServiceTest
             addFormItem( Input.create().
                 label( "Textline" ).
                 name( "textLine" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "stringArray" ).
                 label( "String array" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             addFormItem( Input.create().
                 name( "double" ).
                 label( "Double" ).
-                inputType( InputTypes.DOUBLE ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             addFormItem( Input.create().
                 name( "long" ).
                 label( "Long" ).
-                inputType( InputTypes.LONG ).
+                inputType( InputTypeName.LONG ).
                 build() ).
             addFormItem( Input.create().
                 name( "comboBox" ).
                 label( "Combobox" ).
-                inputType( InputTypes.COMBO_BOX ).
-                inputTypeConfig( "option.value1", "label1" ).
-                inputTypeConfig( "option.value2", "label2" ).
-                inputTypeConfig( "option.value3", "label3" ).
+                inputType( InputTypeName.COMBO_BOX ).
+                inputTypeConfig( "option.value", "value1", "value2" ).
+                inputTypeConfig( "option.label", "label1", "label2" ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
                 label( "Checkbox" ).
-                inputType( InputTypes.CHECKBOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tinyMce" ).
-                label( "Tinymce" ).
-                inputType( InputTypes.TINY_MCE ).
+                inputType( InputTypeName.CHECK_BOX ).
                 build() ).
             addFormItem( Input.create().
                 name( "tag" ).
                 label( "Tag" ).
-                inputType( InputTypes.TAG ).
+                inputType( InputTypeName.TAG ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentSelector" ).
                 label( "Content selector" ).
-                inputType( InputTypes.CONTENT_SELECTOR ).
-                inputTypeConfig( "allowedContentTypes", ContentTypeName.folder().toString() ).
+                inputType( InputTypeName.CONTENT_SELECTOR ).
+                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
                 inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
                 label( "Content type filter" ).
-                inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
                 build() ).
             addFormItem( Input.create().
                 name( "siteConfigurator" ).
-                inputType( InputTypes.SITE_CONFIGURATOR ).
+                inputType( InputTypeName.SITE_CONFIGURATOR ).
                 label( "Site configurator" ).
                 build() ).
             addFormItem( Input.create().
                 name( "date" ).
                 label( "Date" ).
-                inputType( InputTypes.DATE ).
+                inputType( InputTypeName.DATE ).
                 build() ).
             addFormItem( Input.create().
                 name( "time" ).
                 label( "Time" ).
-                inputType( InputTypes.TIME ).
+                inputType( InputTypeName.TIME ).
                 build() ).
             addFormItem( Input.create().
                 name( "geoPoint" ).
                 label( "Geopoint" ).
-                inputType( InputTypes.GEO_POINT ).
+                inputType( InputTypeName.GEO_POINT ).
                 build() ).
             addFormItem( Input.create().
                 name( "htmlArea" ).
                 label( "Htmlarea" ).
-                inputType( InputTypes.HTML_AREA ).
+                inputType( InputTypeName.HTML_AREA ).
                 build() ).
             addFormItem( Input.create().
                 name( "localDateTime" ).
                 label( "Local datetime" ).
-                inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "false" ).
+                inputType( InputTypeName.DATE_TIME ).
+                inputTypeConfig( "timezone", "false" ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
-                inputType( InputTypes.DATE_TIME ).
-                inputTypeConfig( "withTimezone", "true" ).
+                inputType( InputTypeName.DATE_TIME ).
+                inputTypeConfig( "timezone", "true" ).
                 build() ).
             addFormItem( set ).
             build();

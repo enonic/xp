@@ -1,17 +1,18 @@
 {
   "mode": "edit",
+  "path": "/my/page",
   "headers": {
     "Language": "en",
     "Cookies": "mycookie=123; other=abc;"
   },
-  "baseUrl": "http://enonic.com/",
   "method": "GET",
+  "scheme": "http",
+  "port": "80",
   "formParams": {},
-  "serverUrl": "http://enonic.com",
+  "host": "enonic.com",
   "params": {
     "debug": "true"
   },
-  "uri": "http://enonic.com/my/page",
   "branch": "master",
   "cookies": {
     "mycookie": "123",

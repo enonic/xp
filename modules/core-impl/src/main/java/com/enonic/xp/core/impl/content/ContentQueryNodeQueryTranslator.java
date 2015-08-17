@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -18,7 +18,7 @@ class ContentQueryNodeQueryTranslator
 
         final ValueFilter contentCollectionFilter = ValueFilter.create().
             fieldName( NodeIndexPath.NODE_TYPE.getPath() ).
-            addValue( Value.newString( ContentConstants.CONTENT_NODE_COLLECTION.getName() ) ).
+            addValue( ValueFactory.newString( ContentConstants.CONTENT_NODE_COLLECTION.getName() ) ).
             build();
 
         builder.query( contentQuery.getQueryExpr() ).
@@ -47,7 +47,7 @@ class ContentQueryNodeQueryTranslator
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )
             {
-                contentTypeFilterBuilder.addValue( Value.newString( contentTypeName.toString() ) );
+                contentTypeFilterBuilder.addValue( ValueFactory.newString( contentTypeName.toString() ) );
             }
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );

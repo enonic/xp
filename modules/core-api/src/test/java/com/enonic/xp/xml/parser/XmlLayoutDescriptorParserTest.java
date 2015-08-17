@@ -5,12 +5,11 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static com.enonic.xp.form.inputtype.InputTypes.DOUBLE;
-import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
 import static org.junit.Assert.*;
 
 public class XmlLayoutDescriptorParserTest
@@ -58,11 +57,11 @@ public class XmlLayoutDescriptorParserTest
 
         final Form config = result.getConfig();
         assertNotNull( config );
-        assertEquals( DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );
+        assertEquals( InputTypeName.DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );
         assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );
         assertNotNull( config.getFormItem( "myFormItemSet" ).toFormItemSet() );
         assertEquals( "My form item set", config.getFormItem( "myFormItemSet" ).toFormItemSet().getLabel() );
-        assertEquals( TEXT_LINE, config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getInputType() );
+        assertEquals( InputTypeName.TEXT_LINE, config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getInputType() );
         assertEquals( "Field set Item", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabel() );
 
         final RegionDescriptors regions = result.getRegions();

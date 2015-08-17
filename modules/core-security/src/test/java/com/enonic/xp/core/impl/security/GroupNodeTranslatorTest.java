@@ -6,6 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -52,7 +53,7 @@ public class GroupNodeTranslatorTest
     {
         final PrincipalKey groupKey = PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" );
 
-        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "Group A" );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getUserStore().toString() );

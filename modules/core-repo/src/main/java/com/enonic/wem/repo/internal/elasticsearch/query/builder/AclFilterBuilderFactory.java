@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -30,7 +30,7 @@ public class AclFilterBuilderFactory
 
         for ( final PrincipalKey principalKey : principalsKeys )
         {
-            valueFilterBuilder.addValue( Value.newString( principalKey.toString() ) );
+            valueFilterBuilder.addValue( ValueFactory.newString( principalKey.toString() ) );
         }
 
         return valueFilterBuilder.build();
@@ -40,7 +40,7 @@ public class AclFilterBuilderFactory
     {
         return ValueFilter.create().
             fieldName( NodeIndexPath.PERMISSIONS_READ.toString() ).
-            addValue( Value.newString( PrincipalKey.ofAnonymous().toString() ) ).
+            addValue( ValueFactory.newString( PrincipalKey.ofAnonymous().toString() ) ).
             build();
     }
 

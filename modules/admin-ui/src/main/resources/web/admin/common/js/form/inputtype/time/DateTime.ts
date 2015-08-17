@@ -7,21 +7,21 @@ module api.content.form.inputtype.time {
     import ValueTypes = api.data.ValueTypes;
     import Timezone = api.util.Timezone;
 
-    export interface DateTimeConfig {
-        withTimezone: boolean
-    }
-
     /**
      * Uses [[api.data.ValueType]] [[api.data.ValueTypeLocalDateTime]].
      */
-    export class DateTime extends support.BaseInputTypeNotManagingAdd<any,Date> {
+    export class DateTime extends support.BaseInputTypeNotManagingAdd<Date> {
 
         withTimezone: boolean = false;
         valueType: ValueType = ValueTypes.LOCAL_DATE_TIME;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<DateTimeConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
-            if (config.inputConfig.withTimezone && <any>config.inputConfig.withTimezone == true) {
+            this.readConfig(config.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+            if ((inputConfig["timezone"] && inputConfig['timezone'][0]) === "true") {
                 this.withTimezone = true;
                 this.valueType = ValueTypes.DATE_TIME;
             }
@@ -36,7 +36,7 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            if(this.valueType == ValueTypes.DATE_TIME) {
+            if (this.valueType == ValueTypes.DATE_TIME) {
                 return this.createInputAsDateTime(property, this.valueType);
             } else {
                 return this.createInputAsLocalDateTime(property, this.valueType);
@@ -80,8 +80,7 @@ module api.content.form.inputtype.time {
             var dateTimeBuilder = new api.ui.time.DateTimePickerBuilder();
             dateTimeBuilder.setUseLocalTimezoneIfNotPresent(true);
             if (property.hasNonNullValue()) {
-                var date : api.util.DateTime = property.getDateTime();
-
+                var date: api.util.DateTime = property.getDateTime();
                 dateTimeBuilder.
                     setYear(date.getYear()).
                     setMonth(date.getMonth()).

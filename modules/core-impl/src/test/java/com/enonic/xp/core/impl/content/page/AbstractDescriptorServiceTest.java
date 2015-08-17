@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +20,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.FileResource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.Resources;
 
 public abstract class AbstractDescriptorServiceTest
 {
@@ -47,8 +46,8 @@ public abstract class AbstractDescriptorServiceTest
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
-            final URL resourceUrl = new File( applicationsDir, path ).toURI().toURL();
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            final File resourceFile = new File( applicationsDir, path );
+            return new FileResource( resourceKey, resourceFile );
         } );
     }
 
@@ -115,16 +114,15 @@ public abstract class AbstractDescriptorServiceTest
                                         final boolean recurse, final String... paths )
         throws MalformedURLException
     {
-        List<Resource> resourceList = new ArrayList<Resource>();
+        List<ResourceKey> resourceKeyList = new ArrayList<ResourceKey>();
         for ( final String path : paths )
         {
             final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
-            final String filePath = application.getKey().toString() + path;
-            final File file = new File( this.applicationsDir, filePath );
-            resourceList.add( new Resource( resourceKey, file.toURI().toURL() ) );
+            resourceKeyList.add( resourceKey );
         }
-        Resources resources = Resources.from( resourceList );
+        ResourceKeys resourceKeys = ResourceKeys.from( resourceKeyList );
 
-        Mockito.when( this.resourceService.findResources( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn( resources );
+        Mockito.when( this.resourceService.findResourceKeys( application.getKey(), rootPath, filePattern, recurse ) ).thenReturn(
+            resourceKeys );
     }
 }

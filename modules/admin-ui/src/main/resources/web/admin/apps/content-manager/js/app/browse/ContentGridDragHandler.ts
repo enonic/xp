@@ -107,7 +107,7 @@ module app.browse {
             var draggableRow = args.rows[0];
 
             var rowDataId = dataView.getItem(draggableRow).getData().getContentId();
-            var insertBefore = this.getCorrectedInsertBefore(args);
+            var insertBefore = this.getCorrectedInsertBefore(args, draggableRow);
             var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
                 ? null
                 : dataView.getItem(insertBefore).getData().getContentId();
@@ -138,12 +138,12 @@ module app.browse {
             this.notifyPositionChanged();
         }
 
-        private getCorrectedInsertBefore(args: DragEventData) {
-            var result = <number>args.insertBefore;
-            if (result > 0) {
-                result = result - 1;
+        private getCorrectedInsertBefore(args: DragEventData, draggableRow: number) {
+            var insertBefore = <number>args.insertBefore;
+            if (insertBefore != 0 && draggableRow > insertBefore) {
+                insertBefore = insertBefore - 1;
             }
-            return result;
+            return insertBefore;
         }
 
         private makeMovementInNodes(draggableRow: number, insertBefore: number, data: TreeNode<ContentSummaryAndCompareStatus>[]) {

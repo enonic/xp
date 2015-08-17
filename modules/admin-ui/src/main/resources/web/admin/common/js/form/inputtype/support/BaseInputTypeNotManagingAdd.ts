@@ -5,9 +5,9 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
 
-    export class BaseInputTypeNotManagingAdd<CONFIG,RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> {
+    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> {
 
-        private context: api.form.inputtype.InputTypeViewContext<CONFIG>;
+        private context: api.form.inputtype.InputTypeViewContext;
 
         private input: api.form.Input;
 
@@ -24,7 +24,7 @@ module api.form.inputtype.support {
          */
         private draggingIndex: number;
 
-        constructor(context: api.form.inputtype.InputTypeViewContext<CONFIG>, className?: string) {
+        constructor(context: api.form.inputtype.InputTypeViewContext, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
             api.util.assertNotNull(context, "context cannot be null");
             this.context = context;
@@ -67,7 +67,7 @@ module api.form.inputtype.support {
 
         }
 
-        public getContext(): api.form.inputtype.InputTypeViewContext<CONFIG> {
+        public getContext(): api.form.inputtype.InputTypeViewContext {
             return this.context;
         }
 

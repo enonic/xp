@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
@@ -46,8 +46,8 @@ public class QueryBuilderFactoryTest
 
         final ValueFilter queryFilter = ValueFilter.create().
             fieldName( "myField" ).
-            addValue( Value.newString( "myValue1" ) ).
-            addValue( Value.newString( "myValue2" ) ).
+            addValue( ValueFactory.newString( "myValue1" ) ).
+            addValue( ValueFactory.newString( "myValue2" ) ).
             build();
 
         final QueryExpr query = QueryParser.parse( "not( myField > 1) " );

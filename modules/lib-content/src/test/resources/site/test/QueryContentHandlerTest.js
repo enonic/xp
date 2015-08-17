@@ -5,22 +5,22 @@ var expectedJson = {
     "aggregations": {
         "by_month": {
             "buckets": [{
-                "doc_count": 8,
+                "docCount": 8,
                 "key": "2014-01"
             }, {
-                "doc_count": 10,
+                "docCount": 10,
                 "key": "2014-02"
             }, {
-                "doc_count": 12,
+                "docCount": 12,
                 "key": "2014-03"
             }]
         },
         "genders": {
             "buckets": [{
-                "doc_count": 10,
+                "docCount": 10,
                 "key": "male"
             }, {
-                "doc_count": 12,
+                "docCount": 12,
                 "key": "female"
             }]
         },
@@ -33,29 +33,29 @@ var expectedJson = {
         },
         "my_date_range": {
             "buckets": [{
-                "doc_count": 2,
+                "docCount": 2,
                 "from": "2014-09-01T00:00:00Z"
             }, {
-                "doc_count": 5,
+                "docCount": 5,
                 "from": "2014-10-01T00:00:00Z",
                 "to": "2014-09-01T00:00:00Z"
             }, {
-                "doc_count": 7,
+                "docCount": 7,
                 "to": "2014-11-01T00:00:00Z"
             }]
         },
         "price_ranges": {
             "buckets": [{
-                "doc_count": 2,
+                "docCount": 2,
                 "key": "a",
                 "to": 50
             }, {
-                "doc_count": 4,
+                "docCount": 4,
                 "from": 50,
                 "key": "b",
                 "to": 100
             }, {
-                "doc_count": 4,
+                "docCount": 4,
                 "from": 100,
                 "key": "c"
             }]

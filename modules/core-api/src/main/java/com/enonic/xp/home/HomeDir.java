@@ -41,12 +41,6 @@ public final class HomeDir
 
     private static String getHomeProperty()
     {
-        final String str = System.getProperty( "xp.home" );
-        if ( Strings.isNullOrEmpty( str ) )
-        {
-            return System.getProperty( "wem.home" );
-        }
-
-        return str;
+        return System.getProperty( "xp.home" );
     }
 }

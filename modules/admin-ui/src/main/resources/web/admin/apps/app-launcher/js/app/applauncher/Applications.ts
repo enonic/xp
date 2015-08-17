@@ -39,7 +39,7 @@ module app.launcher {
         private static createApps(): api.app.Application[] {
             return [
                 new api.app.Application('content-manager', 'Content Manager', 'CM', 'database'),
-                new api.app.Application('user-manager', 'User Manager', 'UM', 'users'),
+                new api.app.Application('user-manager', 'Users', 'UM', 'users'),
                 new api.app.Application('applications', 'Applications', 'AM', 'puzzle')
             ];
         }

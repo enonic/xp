@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
@@ -21,6 +22,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -69,7 +71,7 @@ public class PageResourceTest
     }
 
     @Test
-    public void verifyUriSet()
+    public void verifyUrlSet()
         throws Exception
     {
         setupContentAndSite();
@@ -83,15 +85,17 @@ public class PageResourceTest
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
+        ServletRequestHolder.setRequest( request );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
         ArgumentCaptor<Page> renderable = ArgumentCaptor.forClass( Page.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsRequest.capture() );
 
-        assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUri() );
-        assertEquals( "http://localhost/portal/master", jsRequest.getValue().getBaseUrl() );
-        assertEquals( "http://localhost", jsRequest.getValue().getServerUrl() );
+        assertEquals( "http", jsRequest.getValue().getScheme() );
+        assertEquals( "localhost", jsRequest.getValue().getHost() );
+        assertEquals( "80", jsRequest.getValue().getPort() );
+        assertEquals( "/portal/master/site/somepath/content", jsRequest.getValue().getPath() );
     }
 
     @Test
@@ -160,7 +164,7 @@ public class PageResourceTest
     public void getContentShortcut()
         throws Exception
     {
-        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.addReference( "target", Reference.from( "ref" ) );
 
         final Content content = Content.create().

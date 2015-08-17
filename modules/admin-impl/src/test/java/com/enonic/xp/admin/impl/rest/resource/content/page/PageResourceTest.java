@@ -15,6 +15,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -39,7 +40,7 @@ public class PageResourceTest
     @Before
     public void before()
     {
-        PropertyIdProviderAccessor.instance().set( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyIdProviderAccessor.instance().set( new CounterPropertyIdProvider() );
     }
 
     @Override
@@ -109,7 +110,7 @@ public class PageResourceTest
 
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
 
         rootDataSet.addString( "property1", "value1" );
 

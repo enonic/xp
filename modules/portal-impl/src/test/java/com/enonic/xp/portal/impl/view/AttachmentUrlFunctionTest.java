@@ -20,6 +20,6 @@ public class AttachmentUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "attachmentUrl", "_name=test" );
-        assertEquals( "AttachmentUrlParams{params={}, name=test, download=false}", result );
+        assertEquals( "AttachmentUrlParams{type=server, params={}, name=test, download=false}", result );
     }
 }

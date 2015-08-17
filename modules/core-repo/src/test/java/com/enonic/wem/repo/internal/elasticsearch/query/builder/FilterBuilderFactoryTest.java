@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filters;
@@ -19,8 +19,8 @@ public class FilterBuilderFactoryTest
     {
         final ValueFilter queryFilter = ValueFilter.create().
             fieldName( "myField" ).
-            addValue( Value.newString( "myValue1" ) ).
-            addValue( Value.newString( "myValue2" ) ).
+            addValue( ValueFactory.newString( "myValue1" ) ).
+            addValue( ValueFactory.newString( "myValue2" ) ).
             build();
 
         final String expected = load( "filter_values_string.json" );
@@ -35,8 +35,8 @@ public class FilterBuilderFactoryTest
     {
         final ValueFilter queryFilter = ValueFilter.create().
             fieldName( "myField" ).
-            addValue( Value.newDouble( 1.0 ) ).
-            addValue( Value.newDouble( 2.0 ) ).
+            addValue( ValueFactory.newDouble( 1.0 ) ).
+            addValue( ValueFactory.newDouble( 2.0 ) ).
             build();
 
         final String expected = load( "filter_values_number.json" );

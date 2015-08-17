@@ -53,7 +53,10 @@ public final class ImageUrlParams
         return this.format;
     }
 
-    public String getScale() { return this.scale; }
+    public String getScale()
+    {
+        return this.scale;
+    }
 
     public ImageUrlParams id( final String value )
     {
@@ -105,6 +108,7 @@ public final class ImageUrlParams
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         id( singleValue( map, "_id" ) );
         path( singleValue( map, "_path" ) );
         format( singleValue( map, "_format" ) );

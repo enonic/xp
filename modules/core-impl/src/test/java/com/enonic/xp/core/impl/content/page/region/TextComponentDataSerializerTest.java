@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.TextComponent;
@@ -15,7 +16,7 @@ public class TextComponentDataSerializerTest
     {
         // setup
         TextComponent textComponent = TextComponent.create().name( "myText" ).text( "some text" ).build();
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
 
         // exercise
         new TextComponentDataSerializer().toData( textComponent, tree.getRoot() );
@@ -30,7 +31,7 @@ public class TextComponentDataSerializerTest
     public void fromData()
     {
         // setup
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
         PropertySet data = tree.addSet( TextComponent.class.getSimpleName() );
         data.setString( "name", "myText" );
         data.setString( "text", "some text" );

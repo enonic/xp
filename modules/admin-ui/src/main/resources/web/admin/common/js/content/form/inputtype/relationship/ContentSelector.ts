@@ -6,15 +6,11 @@ module api.content.form.inputtype.relationship {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
-
-    export interface ContentSelectorConfig {
-        relationshipType: string
-        allowedContentTypes: string[];
-    }
+    import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 
     export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
-        private config: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>;
+        private config: api.content.form.inputtype.ContentInputTypeViewContext;
 
         private relationshipTypeName: api.schema.relationshiptype.RelationshipTypeName;
 
@@ -22,13 +18,26 @@ module api.content.form.inputtype.relationship {
 
         private draggingIndex: number;
 
-        constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext<ContentSelectorConfig>) {
+        private relationshipType: string;
+
+        private allowedContentTypes: string[];
+
+        constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("relationship");
             this.addClass("input-type-view");
             this.config = config;
-            this.relationshipTypeName = config.inputConfig.relationshipType ?
-                                        new api.schema.relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType) :
-                                        api.schema.relationshiptype.RelationshipTypeName.REFERENCE;
+            this.readConfig(config.inputConfig);
+        }
+
+        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+            var relationshipType = inputConfig['relationshipType'] && inputConfig['relationshipType'][0];
+            if (relationshipType) {
+                this.relationshipTypeName = new RelationshipTypeName(relationshipType);
+            } else {
+                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
+            }
+
+            this.allowedContentTypes = inputConfig['allowedContentType'] || [];
         }
 
         availableSizeChanged() {
@@ -60,7 +69,7 @@ module api.content.form.inputtype.relationship {
                 then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
-                    var inputAllowedContentTypes = this.config.inputConfig.allowedContentTypes || [];
+                    var inputAllowedContentTypes = this.allowedContentTypes || [];
                     var relationshipAllowedContentTypes = relationshipType.getAllowedToTypes() || [];
                     var allowedContentTypes = inputAllowedContentTypes.length ? inputAllowedContentTypes : relationshipAllowedContentTypes;
                     relationshipLoader.setAllowedContentTypes(allowedContentTypes);

@@ -22,7 +22,7 @@ module api.content.site.inputtype.siteconfigurator {
 
     export class SiteConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<SiteView> {
 
-        private context: api.form.inputtype.InputTypeViewContext<any>;
+        private context: api.form.inputtype.InputTypeViewContext;
 
         private comboBox: SiteConfiguratorComboBox;
 
@@ -30,7 +30,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: api.content.form.ContentFormContext;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super("site-configurator");
             this._displayValidationErrors = false;
             this.context = config;

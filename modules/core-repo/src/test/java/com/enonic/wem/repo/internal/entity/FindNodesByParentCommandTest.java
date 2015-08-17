@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -126,7 +127,7 @@ public class FindNodesByParentCommandTest
         for ( int i = 0; i < size; i++ )
         {
             // Add numeric order value to ensure numeric ordering
-            final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+            final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
             data.setDouble( "myOrderNumber", (double) i );
 
             createNode( CreateNodeParams.create().
@@ -252,7 +253,7 @@ public class FindNodesByParentCommandTest
 
     private PropertyTree createOrderProperty( final Double value )
     {
-        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setDouble( "order", value );
         return rootDataSet;
     }

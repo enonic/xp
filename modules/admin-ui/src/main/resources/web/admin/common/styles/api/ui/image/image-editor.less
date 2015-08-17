@@ -6,10 +6,6 @@
     .image-frame {
       .image-canvas {
 
-        .image-bg {
-          .opacity(.2);
-        }
-
         > svg {
           display: block;
 
@@ -21,27 +17,53 @@
       }
     }
 
-    .image-toolbar, .sticky-toolbar {
-      display: block;
+    .sticky-toolbar {
+      .standby-container {
+        display: none;
+      }
+      .edit-container {
+        display: block;
+      }
     }
 
     &.edit-focus {
+      .sticky-toolbar {
+        .button-focus {
+          .button-foreground(@admin-blue);
+        }
+      }
+
       .image-frame {
         .image-canvas {
           .focus-group {
             display: block;
+          }
+          .image-bg-mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
           }
         }
       }
     }
 
     &.edit-crop {
+      .sticky-toolbar {
+        .button-crop {
+          .button-foreground(@admin-blue);
+        }
+      }
+
       .image-frame {
         overflow: visible;
 
         .image-canvas {
           .crop-group {
             display: block;
+          }
+          .image-bg {
+            .opacity(.2);
           }
         }
       }
@@ -59,53 +81,7 @@
     }
   }
 
-  &.edit-mode.selected {
-    .image-frame .buttons-container {
-      display: none;
-    }
-  }
-
   &.selected {
-    .image-frame .buttons-container {
-      z-index: 10;
-      text-align: center;
-      position: absolute;
-      top: 50%;
-      margin-top: -50px;
-      height: 100px;
-      display: block;
-      width: inherit;
-      background-color: rgba(255, 255, 255, .6);
-
-      .button {
-        margin: 30px 10px 0;
-
-        .filter(contrast(1.5));
-      }
-
-      .button-edit, .button-reset {
-
-        span {
-          line-height: 36px;
-        }
-      }
-
-      .button-upload {
-        width: 40px;
-        height: 40px;
-        background-image: url("../../common/images/upload_white.png");
-        background-repeat: no-repeat;
-        background-size: 20px;
-        background-position: 10px;
-        vertical-align: top;
-
-        .button-background(#6C6A73);
-
-        &:before {
-          color: transparent;
-        }
-      }
-    }
 
     &.focused:not(.edit-mode) {
       .image-frame .image-canvas {
@@ -121,10 +97,7 @@
 
   &.sticky-mode {
     position: relative;
-
-    &.edit-mode {
-      padding-top: 56px; // equals to the height of sticky toolbar;
-    }
+    padding-top: 56px; // equals to the height of sticky toolbar;
 
     .sticky-toolbar {
       position: absolute;
@@ -136,10 +109,6 @@
     position: relative;
     box-shadow: none;
     border-bottom: 2px solid @admin-white;
-
-    .buttons-container {
-      display: none;
-    }
 
     .image-canvas {
       position: absolute;
@@ -233,30 +202,8 @@
 
   }
 
-  .image-toolbar {
-    display: none;
-    padding: 10px;
-    position: relative;
-    z-index: @z-index-mask + 1;
-    .clearfix();
-
-    .edit-container {
-      text-align: center;
-
-      button {
-        margin-left: 10px;
-
-        span {
-          // make text buttons equal height with icon ones
-          line-height: 30px;
-        }
-      }
-    }
-
-  }
-
   .sticky-toolbar {
-    display: none;
+    display: block;
     position: relative;
     z-index: @z-index-mask; // to have it on top of zoomed image
     left: 1px; // account for image editor border
@@ -266,6 +213,52 @@
 
     .box-sizing(border-box);
     .clearfix();
+
+    .standby-container {
+      display: block;
+    }
+    .edit-container {
+      display: none;
+    }
+
+    .button {
+      margin: 0 10px 0 0;
+
+      &.button-focus,
+      &.button-crop,
+      &.button-upload {
+        height: 38px;
+        vertical-align: top;
+        padding: 0;
+        .button-foreground(@admin-font-gray2);
+
+        span {
+          display: none;
+        }
+
+        &:before {
+          font-size: 34px;
+        }
+      }
+
+      &.button-reset {
+        span {
+          line-height: 34px;
+        }
+      }
+
+      &.button-upload {
+        width: 38px;
+        background-image: url("../../common/images/upload_white.png");
+        background-repeat: no-repeat;
+        background-size: 20px;
+        background-position: 9px;
+
+        &:before {
+          color: transparent;
+        }
+      }
+    }
 
     .tab-menu {
       width: 140px;
@@ -283,7 +276,7 @@
       float: right;
 
       .button {
-        margin-left: 10px;
+        margin: 0 0 0 10px;
 
         &.close-button {
           .button(@form-button-font, @form-button-bg);

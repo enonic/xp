@@ -59,11 +59,11 @@ public final class ValueAndPropertyIdJson
                 {
                     propertyArrayJson.fromJson( newSet );
                 }
-                value = Value.newData( newSet );
+                value = ValueFactory.newPropertySet( newSet );
             }
             else
             {
-                value = Value.newData( null );
+                value = ValueFactory.newPropertySet( null );
             }
         }
         else

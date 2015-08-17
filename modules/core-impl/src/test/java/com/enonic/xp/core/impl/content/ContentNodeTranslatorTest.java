@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -48,7 +49,7 @@ public class ContentNodeTranslatorTest
     public void toCreateNode_contentData_to_rootdataset()
         throws Exception
     {
-        final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree contentData = new PropertyTree( new CounterPropertyIdProvider() );
         contentData.setString( "test", "testValue" );
 
         final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
@@ -70,7 +71,7 @@ public class ContentNodeTranslatorTest
     public void translate_entityIndexConfig_decide_by_type_for_contentdata()
         throws Exception
     {
-        final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree contentData = new PropertyTree( new CounterPropertyIdProvider() );
         contentData.setString( "test", "testValue" );
 
         final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
@@ -101,7 +102,7 @@ public class ContentNodeTranslatorTest
             add( new AttachedBinary( BinaryReference.from( AttachmentNames.THUMBNAIL ), "myBlobKey" ) ).
             build();
 
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         data.addString( "type", "my-type" );
         data.addBoolean( "valid", true );
         data.addSet( "data" );
@@ -140,7 +141,7 @@ public class ContentNodeTranslatorTest
             build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
 
-        final PropertyTree contentAsData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree contentAsData = new PropertyTree( new CounterPropertyIdProvider() );
         contentAsData.addString( "type", "my-type" );
         contentAsData.addBoolean( "valid", true );
         contentAsData.addSet( "data" );

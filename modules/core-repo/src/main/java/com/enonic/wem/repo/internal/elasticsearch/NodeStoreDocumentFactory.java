@@ -13,6 +13,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.Node;
@@ -85,45 +86,46 @@ class NodeStoreDocumentFactory
     {
         if ( this.nodeVersionId != null )
         {
-            final Value nodeVersionIdValue = Value.newString( this.nodeVersionId.toString() );
+            final Value nodeVersionIdValue = ValueFactory.newString( this.nodeVersionId.toString() );
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.VERSION, nodeVersionIdValue, IndexConfig.MINIMAL ) );
         }
 
         if ( this.node.name() != null )
         {
-            final Value nameValue = Value.newString( this.node.name().toString() );
+            final Value nameValue = ValueFactory.newString( this.node.name().toString() );
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.NAME, nameValue, IndexConfig.FULLTEXT ) );
         }
 
         if ( this.node.path() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PATH, Value.newString( this.node.path().toString() ),
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ),
                                                                  IndexConfig.MINIMAL ) );
         }
 
         if ( this.node.parentPath() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( this.node.parentPath().toString() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, ValueFactory.newString( this.node.parentPath().toString() ),
                                                  IndexConfig.MINIMAL ) );
         }
 
         if ( this.node.getManualOrderValue() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, Value.newLong( this.node.getManualOrderValue() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.node.getManualOrderValue() ),
                                                  IndexConfig.MINIMAL ) );
         }
 
         if ( this.node.getNodeType() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.NODE_TYPE, Value.newString( this.node.getNodeType().getName() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.node.getNodeType().getName() ),
                                                  IndexConfig.MINIMAL ) );
         }
 
-        builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.STATE, Value.newString( this.node.getNodeState().value() ),
-                                                             IndexConfig.MINIMAL ) );
+        builder.addEntries(
+            StoreDocumentItemFactory.create( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
+                                             IndexConfig.MINIMAL ) );
     }
 
     private void addNodeDataProperties( final StoreDocument.Builder builder )

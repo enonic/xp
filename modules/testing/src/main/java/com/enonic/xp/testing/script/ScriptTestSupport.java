@@ -20,9 +20,9 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 public abstract class ScriptTestSupport
 {
@@ -56,7 +56,7 @@ public abstract class ScriptTestSupport
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = ScriptTestSupport.class.getResource( resourceKey.getPath() );
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new UrlResource( resourceKey, resourceUrl );
         } );
 
         ServiceReference<ResourceService> resourceServiceReference = Mockito.mock( ServiceReference.class );

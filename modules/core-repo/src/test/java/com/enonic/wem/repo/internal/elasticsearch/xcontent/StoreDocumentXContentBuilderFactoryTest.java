@@ -11,9 +11,6 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentDateItem;
@@ -21,6 +18,9 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentGeoPoint
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentNumberItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentStringItem;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
@@ -85,10 +85,10 @@ public class StoreDocumentXContentBuilderFactoryTest
             addEntry( new StoreDocumentNumberItem( IndexPath.from( "myNumericField" ), 2.0 ) ).
             addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
             addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
-            addEntry(
-                new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( GeoPoint.from( "80,80" ) ).toString() ) ).
-            addEntry(
-                new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( GeoPoint.from( "81,81" ) ).toString() ) ).
+            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ),
+                                                     ValueFactory.newGeoPoint( GeoPoint.from( "80,80" ) ).toString() ) ).
+            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ),
+                                                     ValueFactory.newGeoPoint( GeoPoint.from( "81,81" ) ).toString() ) ).
             build();
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );

@@ -38,6 +38,7 @@ public final class ServiceUrlParams
     @Override
     public ServiceUrlParams setAsMap( final Multimap<String, String> map )
     {
+        super.setAsMap( map );
         service( singleValue( map, "_service" ) );
         application( singleValue( map, "_application" ) );
         getParams().putAll( map );

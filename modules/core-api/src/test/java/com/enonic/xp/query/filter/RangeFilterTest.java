@@ -2,7 +2,7 @@ package com.enonic.xp.query.filter;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 
 import static org.junit.Assert.*;
 
@@ -12,14 +12,14 @@ public class RangeFilterTest
     public void testBuilder()
     {
         final RangeFilter rangeFilter = RangeFilter.create().
-            from( Value.newDouble( 2.0 ) ).
-            to( Value.newDouble( 50.0 ) ).
+            from( ValueFactory.newDouble( 2.0 ) ).
+            to( ValueFactory.newDouble( 50.0 ) ).
             setCache( true ).
             build();
 
         assertNotNull( rangeFilter );
-        assertEquals( Value.newDouble( 2.0 ), rangeFilter.getFrom() );
-        assertEquals( Value.newDouble( 50.0 ), rangeFilter.getTo() );
+        assertEquals( ValueFactory.newDouble( 2.0 ), rangeFilter.getFrom() );
+        assertEquals( ValueFactory.newDouble( 50.0 ), rangeFilter.getTo() );
         assertTrue( rangeFilter.isCache() );
     }
 

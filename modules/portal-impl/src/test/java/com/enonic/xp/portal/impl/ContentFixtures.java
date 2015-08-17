@@ -11,7 +11,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -152,7 +152,7 @@ public final class ContentFixtures
     public static PageDescriptor newPageDescriptor()
     {
         Form pageForm = Form.create().
-            addFormItem( Input.create().name( "pause" ).label( "Pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            addFormItem( Input.create().name( "pause" ).label( "Pause" ).inputType( InputTypeName.DOUBLE ).build() ).
             build();
 
         return PageDescriptor.create().

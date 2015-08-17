@@ -2,21 +2,28 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="xml" indent="yes"/>
 
-  <xsl:template match="property-set/@name[.='gps-info']">
+  <xsl:template match="/node/data/property-set[@name='x']/property-set[@name='base']/property-set/@name[.='gps-info']">
     <xsl:attribute name="name">
       <xsl:value-of select="'gpsInfo'"/>
     </xsl:attribute>
   </xsl:template>
 
-  <xsl:template match="property-set/@name[.='photo-info']">
+  <xsl:template match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set/@name[.='photo-info']">
     <xsl:attribute name="name">
       <xsl:value-of select="'cameraInfo'"/>
     </xsl:attribute>
   </xsl:template>
 
-  <xsl:template match="property-set/@name[.='image-info']">
+  <xsl:template match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set/@name[.='image-info']">
     <xsl:attribute name="name">
       <xsl:value-of select="'imageInfo'"/>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template
+      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/long/@name[.='bytesize']">
+    <xsl:attribute name="name">
+      <xsl:value-of select="'byteSize'"/>
     </xsl:attribute>
   </xsl:template>
 

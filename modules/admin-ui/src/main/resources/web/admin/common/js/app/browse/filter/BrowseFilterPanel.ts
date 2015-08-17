@@ -190,12 +190,16 @@ module api.app.browse.filter {
             });
         }
 
-        updateHitsCounter(hits: number) {
-            if(hits != 1) {
-                this.hitsCounterEl.setHtml(hits + " hits");
-            }
-            else {
-                this.hitsCounterEl.setHtml(hits + " hit");
+        updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
+            if (!emptyFilterValue) {
+                if (hits != 1) {
+                    this.hitsCounterEl.setHtml(hits + " hits");
+                }
+                else {
+                    this.hitsCounterEl.setHtml(hits + " hit");
+                }
+            } else {
+                this.hitsCounterEl.setHtml(hits + " total");
             }
 
             if(hits != 0) {

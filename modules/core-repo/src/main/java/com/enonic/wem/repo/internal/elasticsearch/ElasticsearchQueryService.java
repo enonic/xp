@@ -24,7 +24,7 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
@@ -113,7 +113,7 @@ public class ElasticsearchQueryService
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.PATH.getPath() ).
-                addValue( Value.newString( nodePath.toString() ) ).
+                addValue( ValueFactory.newString( nodePath.toString() ) ).
                 build() ).
             build();
 
@@ -242,7 +242,7 @@ public class ElasticsearchQueryService
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.PARENT_PATH.getPath() ).
-                addValue( Value.newString( parentPath.toString() ) ).
+                addValue( ValueFactory.newString( parentPath.toString() ) ).
                 build() ).
             build();
 

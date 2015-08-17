@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -29,10 +30,10 @@ public class EffectivePageResolverTest
     @Before
     public void before()
     {
-        configA = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        configA = new PropertyTree( new CounterPropertyIdProvider() );
         configA.addString( "a", "1" );
 
-        configB = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        configB = new PropertyTree( new CounterPropertyIdProvider() );
         configB.addString( "b", "1" );
 
         regionsA = PageRegions.create().

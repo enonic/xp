@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -101,7 +102,7 @@ public class FindNodesByQueryCommandTest
             query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.number( 10l ) ) ) ).
             addPostFilter( RangeFilter.create().
                 fieldName( "MYProperty" ).
-                from( Value.newLong( 0l ) ).to( Value.newLong( 15l ) ).
+                from( ValueFactory.newLong( 0l ) ).to( ValueFactory.newLong( 15l ) ).
                 build() ).
             addAggregationQuery( TermsAggregationQuery.create( "categories" ).
                 fieldName( "myCategory" ).
@@ -147,8 +148,8 @@ public class FindNodesByQueryCommandTest
             data( data13 ).
             build() );
 
-        final Value from = Value.newInstant( BASE_INSTANT );
-        final Value to = Value.newInstant( BASE_INSTANT.plus( 15, ChronoUnit.DAYS ) );
+        final Value from = ValueFactory.newDateTime( BASE_INSTANT );
+        final Value to = ValueFactory.newDateTime( BASE_INSTANT.plus( 15, ChronoUnit.DAYS ) );
         final QueryExpr queryExpr = QueryExpr.from(
             CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.instant( BASE_INSTANT.plus( 10, ChronoUnit.DAYS ).toString() ) ) );
         final NodeQuery query = NodeQuery.create().

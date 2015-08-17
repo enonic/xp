@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -24,36 +23,6 @@ import com.enonic.xp.util.Reference;
 public final class PropertyTree
     implements PropertyIdProvider
 {
-    /**
-     * A not Thread safe PropertyIdProvider that returns predictive ids. A int counter starting at 1.
-     */
-    public final static class PredictivePropertyIdProvider
-        implements PropertyIdProvider
-    {
-        private int nextId = 1;
-
-        @Override
-        public PropertyId nextId()
-        {
-            // Note: Using UUID as value  takes 3.611 s for one million creations, compared to a counter which takes only 310 ms )
-            return new PropertyId( String.valueOf( nextId++ ) );
-        }
-    }
-
-    /**
-     * Ensures an unique id for each Property without any dependencies.
-     */
-    public final static class DefaultPropertyIdProvider
-        implements PropertyIdProvider
-    {
-        @Override
-        public PropertyId nextId()
-        {
-            // Note: Using UUID as value  takes 3.611 s for one million creations, compared to a counter which takes only 310 ms )
-            return new PropertyId( UUID.randomUUID().toString() );
-        }
-    }
-
     private final PropertyIdProvider idProvider;
 
     private final PropertySet root;

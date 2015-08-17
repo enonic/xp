@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -15,7 +16,7 @@ public class PageTemplateTest
     @Test
     public void pageTemplate()
     {
-        final PropertyTree pageTemplateConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree pageTemplateConfig = new PropertyTree( new CounterPropertyIdProvider() );
         pageTemplateConfig.addLong( "pause", 10000L );
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate().

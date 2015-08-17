@@ -80,6 +80,11 @@
 
   &.transparent {
     .button(@admin-button-blue1, transparent, @admin-button-blue2, transparent);
+
+    &:focus:not(:disabled) {
+      .box-shadow(none);
+      border: 1px solid transparent;
+    }
   }
 
   &.green {

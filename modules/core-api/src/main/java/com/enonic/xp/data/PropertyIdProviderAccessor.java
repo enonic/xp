@@ -3,7 +3,7 @@ package com.enonic.xp.data;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class PropertyIdProviderAccessor
+public final class PropertyIdProviderAccessor
     extends ThreadLocal<PropertyIdProvider>
 {
     private static final PropertyIdProviderAccessor INSTANCE = new PropertyIdProviderAccessor();
@@ -11,7 +11,7 @@ public class PropertyIdProviderAccessor
     @Override
     protected PropertyIdProvider initialValue()
     {
-        return new PropertyTree.DefaultPropertyIdProvider();
+        return new UUIDPropertyIdProvider();
     }
 
     public static PropertyIdProviderAccessor instance()

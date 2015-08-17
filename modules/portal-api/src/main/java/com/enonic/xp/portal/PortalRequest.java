@@ -23,8 +23,6 @@ public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
-    private String uri;
-
     private String method;
 
     private final Multimap<String, String> params;
@@ -35,6 +33,14 @@ public final class PortalRequest
 
     private final Map<String, String> cookies;
 
+    private String scheme;
+
+    private String host;
+
+    private String port;
+
+    private String path;
+
     private RenderMode mode;
 
     private Branch branch;
@@ -42,10 +48,6 @@ public final class PortalRequest
     private ContentPath contentPath;
 
     private String baseUri;
-
-    private String baseUrl;
-
-    private String serverUrl;
 
     private Site site;
 
@@ -61,10 +63,7 @@ public final class PortalRequest
 
     public PortalRequest()
     {
-        this.uri = "";
         this.baseUri = "";
-        this.baseUrl = "";
-        this.serverUrl = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
@@ -72,11 +71,6 @@ public final class PortalRequest
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
         this.cookies = Maps.newHashMap();
-    }
-
-    public String getUri()
-    {
-        return this.uri;
     }
 
     public String getMethod()
@@ -99,19 +93,54 @@ public final class PortalRequest
         return this.formParams;
     }
 
+    public String getScheme()
+    {
+        return scheme;
+    }
+
+    public String getHost()
+    {
+        return host;
+    }
+
+    public String getPort()
+    {
+        return port;
+    }
+
+    public String getPath()
+    {
+        return path;
+    }
+
     public RenderMode getMode()
     {
         return this.mode;
     }
 
-    public void setUri( final String uri )
-    {
-        this.uri = uri;
-    }
-
     public void setMethod( final String method )
     {
         this.method = method;
+    }
+
+    public void setScheme( final String scheme )
+    {
+        this.scheme = scheme;
+    }
+
+    public void setHost( final String host )
+    {
+        this.host = host;
+    }
+
+    public void setPort( final String port )
+    {
+        this.port = port;
+    }
+
+    public void setPath( final String path )
+    {
+        this.path = path;
     }
 
     public void setMode( final RenderMode mode )
@@ -217,25 +246,5 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
-    }
-
-    public String getBaseUrl()
-    {
-        return this.baseUrl;
-    }
-
-    public void setBaseUrl( final String baseUrl )
-    {
-        this.baseUrl = baseUrl;
-    }
-
-    public String getServerUrl()
-    {
-        return this.serverUrl;
-    }
-
-    public void setServerUrl( final String serverUrl )
-    {
-        this.serverUrl = serverUrl;
     }
 }

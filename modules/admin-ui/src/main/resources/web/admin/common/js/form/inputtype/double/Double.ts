@@ -6,9 +6,9 @@ module api.content.form.inputtype.double {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export class Double extends BaseInputTypeNotManagingAdd<any,number> {
+    export class Double extends BaseInputTypeNotManagingAdd<number> {
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
         }
 

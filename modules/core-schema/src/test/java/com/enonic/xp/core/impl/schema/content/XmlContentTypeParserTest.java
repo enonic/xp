@@ -3,7 +3,13 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Joiner;
+
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
@@ -57,7 +63,21 @@ public class XmlContentTypeParserTest
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
-        assertEquals( 1, result.form().size() );
+        assertEquals( 2, result.form().size() );
         assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
+
+        final FormItem item = result.form().getFormItem( "myDate" );
+        assertNotNull( item );
+
+        final Input input = (Input) item;
+        assertEquals( InputTypeName.DATE.toString(), input.getInputType().toString() );
+
+        final InputTypeConfig config = input.getInputTypeConfig();
+        assertNotNull( config );
+
+        assertEquals( "true", config.getValue( "timezone" ) );
+        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someContentType" ) ) );
+        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someMixinType" ) ) );
+        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someRelationshipType" ) ) );
     }
 }

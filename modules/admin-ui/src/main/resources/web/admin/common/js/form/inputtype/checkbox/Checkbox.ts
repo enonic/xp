@@ -6,11 +6,11 @@ module api.content.form.inputtype.checkbox {
     import ValueTypes = api.data.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
 
-    export class Checkbox extends BaseInputTypeSingleOccurrence<any,boolean> {
+    export class Checkbox extends BaseInputTypeSingleOccurrence<boolean> {
 
         private checkbox: api.ui.Checkbox;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
 
             this.checkbox = new api.ui.Checkbox();

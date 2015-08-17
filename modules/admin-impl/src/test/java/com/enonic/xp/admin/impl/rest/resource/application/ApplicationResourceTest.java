@@ -15,7 +15,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -145,7 +145,7 @@ public class ApplicationResourceTest
     private SiteDescriptor createSiteDescriptor()
     {
         final Form config = Form.create().
-            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
         return SiteDescriptor.create().form( config ).build();
     }

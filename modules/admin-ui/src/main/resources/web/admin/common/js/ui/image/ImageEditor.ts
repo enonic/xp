@@ -74,12 +74,11 @@ module api.ui.image {
         private dragMouseDownListener;
         private knobMouseDownListener;
 
-        private buttonsContainer: DivEl;
+        private stickyToolbar: DivEl;
 
-        private modeSelector: TabMenu;
-
-        private editButton: Button;
-        private resetButton: Button;
+        private editCropButton: Button;
+        private editFocusButton: Button;
+        private editResetButton: Button;
         private uploadButton: api.dom.ButtonEl;
 
         private editModeListeners: {(edit: boolean, position: Rect, zoom: Rect, focus: Point): void}[] = [];
@@ -98,7 +97,6 @@ module api.ui.image {
 
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
-            this.buttonsContainer = this.createButtonsContainer();
 
             this.image = new ImgEl(null, 'image-bg');
             this.image.onLoaded((event: UIEvent) => {
@@ -154,13 +152,20 @@ module api.ui.image {
                 return false
             };
 
-            this.canvas.appendChildren(this.image, this.clip);
+            var imageMask = new api.dom.DivEl("image-bg-mask");
 
-            this.frame.appendChildren(this.buttonsContainer, this.canvas);
+            this.canvas.appendChildren(imageMask, this.image, this.clip);
 
-            this.appendChildren(this.frame);
+            this.frame.appendChild(this.canvas);
+
+            this.stickyToolbar = this.createStickyToolbar();
+            this.appendChildren(this.stickyToolbar, this.frame);
+
             // sticky toolbar needs to have access to parent elements
-            this.onAdded((event: api.dom.ElementAddedEvent) => this.prependChild(this.createStickyToolbar()));
+            this.onAdded((event: api.dom.ElementAddedEvent) => {
+                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll",
+                    (event) => this.updateStickyToolbar(this.stickyToolbar));
+            });
 
             if (src) {
                 this.setSrc(src);
@@ -171,11 +176,11 @@ module api.ui.image {
         }
 
         isElementInsideButtonsContainer(el: HTMLElement): boolean {
-            return this.buttonsContainer.getHTMLElement().contains(el);
+            return this.stickyToolbar.getHTMLElement().contains(el);
         }
 
         getLastButtonInContainer(): Element {
-            return (<api.dom.Element>this.buttonsContainer).getLastChild();
+            return this.uploadButton;
         }
 
         remove(): ImageEditor {
@@ -373,26 +378,10 @@ module api.ui.image {
         private createStickyToolbar(): DivEl {
             var toolbar = new DivEl('sticky-toolbar');
 
-            this.modeSelector = new TabMenu();
-            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Mask').build());
-            this.modeSelector.addNavigationItem(<TabMenuItem>new TabMenuItemBuilder().setLabel('Autofocus').build());
+            var editContainer = new DivEl('edit-container');
 
-            this.modeSelector.onNavigationItemSelected((event: NavigatorEvent) => {
-                switch (event.getItem().getIndex()) {
-                case 1:
-                    this.enableFocusEditMode();
-                    resetButton.setLabel('Reset Autofocus').setVisible(!this.focusData.auto);
-                    break;
-                case 0:
-                default:
-                    this.enableCropEditMode();
-                    resetButton.setLabel('Reset Mask').setVisible(!this.cropData.auto);
-                    break;
-                }
-            });
-
-            var resetButton = new Button('Reset');
-            resetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
+            this.editResetButton = new Button('Reset');
+            this.editResetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
                 if (this.isFocusEditMode()) {
@@ -407,24 +396,85 @@ module api.ui.image {
             applyButton.addClass('blue').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
-                this.disableEditMode();
+                if (this.isCropEditMode()) {
+                    this.disableCropEditMode();
+                } else if (this.isFocusEditMode()) {
+                    this.disableFocusEditMode();
+                }
             });
 
             var cancelButton = new api.ui.button.CloseButton();
             cancelButton.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
-                this.disableEditMode(false);
+                if (this.isCropEditMode()) {
+                    this.disableCropEditMode(false);
+                } else if (this.isFocusEditMode()) {
+                    this.disableFocusEditMode(false);
+                }
             });
 
-            this.onFocusAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
-            this.onCropAutoPositionedChanged((auto) => resetButton.setVisible(!auto));
+            editContainer.appendChildren(this.editResetButton, applyButton, cancelButton);
+
+            var standbyContainer = new DivEl('standby-container');
+            var resetButton = new Button('Reset');
+            resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                this.resetCropPosition();
+                this.resetZoomPosition();
+                this.resetFocusPosition();
+            });
+
+            this.onFocusAutoPositionedChanged((auto) => {
+                this.editResetButton.setVisible(!auto);
+                resetButton.setVisible(!auto || !this.focusData.auto);
+            });
+            this.onCropAutoPositionedChanged((auto) => {
+                this.editResetButton.setVisible(!auto);
+                resetButton.setVisible(!auto || !this.cropData.auto);
+            });
+
+            this.uploadButton = new Button();
+            this.uploadButton.addClass('button-upload');
+            standbyContainer.appendChildren(resetButton, this.uploadButton);
+
+            this.editCropButton = new Button();
+            this.editCropButton.addClass('button-crop transparent icon-crop').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                if (this.isCropEditMode()) {
+                    this.disableCropEditMode();
+                } else {
+                    if (this.isFocusEditMode()) {
+                        this.disableFocusEditMode(true, false);
+                        this.enableCropEditMode(true, false);
+                    } else {
+                        this.enableCropEditMode();
+                    }
+                }
+            });
+
+            this.editFocusButton = new Button();
+            this.editFocusButton.addClass('button-focus transparent icon-center_focus_strong').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                if (this.isFocusEditMode()) {
+                    this.disableFocusEditMode();
+                } else {
+                    if (this.isCropEditMode()) {
+                        this.disableCropEditMode(true, false);
+                        this.enableFocusEditMode(true, false);
+                    } else {
+                        this.enableFocusEditMode();
+                    }
+                }
+            });
 
             var rightContainer = new DivEl('right-container');
-            rightContainer.appendChildren(resetButton, applyButton, cancelButton);
-            toolbar.appendChildren(this.modeSelector, rightContainer);
+            rightContainer.appendChildren(standbyContainer, editContainer);
 
-            wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll", (event) => this.updateStickyToolbar(toolbar));
+            toolbar.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
 
             return toolbar;
         }
@@ -456,38 +506,49 @@ module api.ui.image {
             return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
         }
 
-        enableEditMode() {
-            // should be done here to occur on edit mode activation only
-            this.updateRevertCropData();
-            this.updateRevertZoomData();
-            this.updateRevertFocusData();
-
-            // enable crop mode by default
-            this.modeSelector.selectNavigationItem(0);
-
-            this.setEditMode(true, false);
-        }
-
-        disableEditMode(applyChanges: boolean = true) {
-            // disable both modes in case they have been modified
-            this.disableFocusEditMode(applyChanges);
-            this.disableCropEditMode(applyChanges);
-
-            this.setEditMode(false, applyChanges);
-        }
 
         private setEditMode(edit: boolean, applyChanges: boolean = true) {
             if (ImageEditor.debug) {
                 console.group('setEditMode');
+                console.log('edit=' + edit + ', applyChanges=' + applyChanges);
             }
+
             this.toggleClass('edit-mode', edit);
 
             var crop, zoom, focus;
-            if (!edit && applyChanges) {
+
+            if (edit) {
+                this.updateRevertCropData();
+                this.updateRevertZoomData();
+                this.updateRevertFocusData();
+
+                if (ImageEditor.debug) {
+                    console.log('updated revert data');
+                }
+            } else if (applyChanges) {
                 crop = this.getCropPosition();
                 zoom = this.getZoomPosition();
                 focus = this.getFocusPosition();
-                console.log('Crop', crop, '\nZoom', zoom, '\nFocus', focus);
+
+                if (ImageEditor.debug) {
+                    console.log('Crop', crop, '\nZoom', zoom, '\nFocus', focus);
+                }
+            } else {
+                if (ImageEditor.debug) {
+                    console.log('reverting focus to', this.revertFocusData);
+                    console.log('reverting crop to', this.revertCropData);
+                    console.log('reverting zoom to', this.revertZoomData);
+                }
+                this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
+                this.setFocusRadiusPx(this.revertFocusData.r, false);
+                this.setFocusAutoPositioned(this.revertFocusData.auto);
+                this.revertFocusData = undefined;
+
+                this.setZoomPositionPx(this.revertZoomData, false);
+                this.setCropPositionPx(this.revertCropData, false);
+                this.setCropAutoPositioned(this.revertCropData.auto);
+                this.revertCropData = undefined;
+                this.revertZoomData = undefined;
             }
 
             this.notifyEditModeChanged(edit, crop, zoom, focus);
@@ -501,67 +562,44 @@ module api.ui.image {
             return this.hasClass('edit-mode');
         }
 
-        private createButtonsContainer(): DivEl {
-            var toolbar = new DivEl('buttons-container');
-
-            this.editButton = new Button('Edit');
-            this.editButton.addClass('button-edit blue').onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
-                this.enableEditMode();
-            });
-
-            this.resetButton = new Button('Reset');
-            this.resetButton.addClass('button-reset red').setVisible(false).onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
-                this.resetCropPosition();
-                this.resetZoomPosition();
-                this.resetFocusPosition();
-            });
-
-            this.onCropAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.focusData.auto));
-            this.onFocusAutoPositionedChanged((auto) => this.resetButton.setVisible(!auto || !this.cropData.auto));
-
-            this.uploadButton = new Button();
-            this.uploadButton.addClass('button-upload');
-
-            toolbar.appendChildren(this.editButton, this.resetButton, this.uploadButton);
-
-            return toolbar;
-        }
-
 
         /*
          *  Focus related methods
          */
 
-        private enableFocusEditMode() {
-            if (this.isCropEditMode()) {
-                this.disableCropEditMode();
+        private enableFocusEditMode(applyChanges: boolean = true, enterEditMode: boolean = true) {
+
+            if (ImageEditor.debug) {
+                console.log('enableFocusEditMode, applyChanges=' + applyChanges + ', enterEditMode=' + enterEditMode);
             }
+            this.editResetButton.setLabel('Reset Autofocus').setVisible(!this.focusData.auto);
 
             this.bindFocusMouseListeners();
-
             this.updateFocusMaskPosition();
-
             this.setFocusEditMode(true);
+
+            if (enterEditMode) {
+                this.setEditMode(true, applyChanges);
+            }
         }
 
-        private disableFocusEditMode(applyChanges: boolean = true) {
-            this.unbindFocusMouseListeners();
+        private disableFocusEditMode(applyChanges: boolean = true, exitEditMode: boolean = true) {
 
-            if (!applyChanges) {
-                this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
-                this.setFocusRadiusPx(this.revertFocusData.r, false);
-                this.setFocusAutoPositioned(this.revertFocusData.auto);
-                this.revertFocusData = undefined;
+            if (ImageEditor.debug) {
+                console.log('disableFocusEditMode, applyChanges=' + applyChanges + ', exitEditMode=' + exitEditMode);
             }
-
+            this.unbindFocusMouseListeners();
             this.setFocusEditMode(false);
+
+            if (exitEditMode) {
+                this.setEditMode(false, applyChanges);
+            }
         }
 
         private setFocusEditMode(edit: boolean) {
+            if (ImageEditor.debug) {
+                console.log('setFocusEditMode', edit);
+            }
             this.toggleClass('edit-focus', edit);
             this.setImageClipPath(this.focusClipPath);
             this.setShaderVisible(edit);
@@ -642,11 +680,15 @@ module api.ui.image {
         }
 
         resetFocusPosition() {
+            if (ImageEditor.debug) {
+                console.log('resetFocusPosition');
+            }
+
             var denormalizedPoint = this.denormalizePoint(0.5, 0.5);
             // make sure it resets to the center of the crop area
             this.setFocusPositionPx({
-                x: denormalizedPoint.x + this.cropData.x,
-                y: denormalizedPoint.y + this.cropData.y
+                x: denormalizedPoint.x,
+                y: denormalizedPoint.y
             }, false);
             this.setFocusAutoPositioned(true);
         }
@@ -703,6 +745,9 @@ module api.ui.image {
         }
 
         private setFocusAutoPositioned(auto: boolean) {
+            if (ImageEditor.debug) {
+                console.log('setFocusAutoPositioned', auto);
+            }
             var autoChanged = this.focusData.auto != auto;
             this.focusData.auto = auto;
 
@@ -818,35 +863,40 @@ module api.ui.image {
          *  Crop related methods
          */
 
-        private enableCropEditMode() {
-            if (this.isFocusEditMode()) {
-                this.disableFocusEditMode();
+        private enableCropEditMode(applyChanges: boolean = true, enterEditMode: boolean = true) {
+
+            if (ImageEditor.debug) {
+                console.log('enableCropEditMode, applyChanges=' + applyChanges + ', enterEditMode=' + enterEditMode);
             }
+            this.editResetButton.setLabel('Reset Mask').setVisible(!this.cropData.auto);
 
             this.bindCropMouseListeners();
-
-            // update mask position in case it was updated during stand by
             this.updateCropMaskPosition();
             this.updateZoomPosition();
 
+            if (enterEditMode) {
+                this.setEditMode(true, applyChanges);
+            }
             this.setCropEditMode(true);
         }
 
-        private disableCropEditMode(applyChanges: boolean = true) {
-            this.unbindCropMouseListeners();
+        private disableCropEditMode(applyChanges: boolean = true, exitEditMode: boolean = true) {
 
-            if (!applyChanges) {
-                this.setZoomPositionPx(this.revertZoomData, false);
-                this.setCropPositionPx(this.revertCropData, false);
-                this.setCropAutoPositioned(this.revertCropData.auto);
-                this.revertCropData = undefined;
-                this.revertZoomData = undefined;
+            if (ImageEditor.debug) {
+                console.log('disableCropEditMode, applyChanges=' + applyChanges + ', exitEditMode=' + exitEditMode);
             }
-
+            this.unbindCropMouseListeners();
             this.setCropEditMode(false);
+
+            if (exitEditMode) {
+                this.setEditMode(false, applyChanges);
+            }
         }
 
         private setCropEditMode(edit: boolean) {
+            if (ImageEditor.debug) {
+                console.log('setCropEditMode, edit=' + edit);
+            }
             this.toggleClass('edit-crop', edit);
             this.setImageClipPath(this.cropClipPath);
             this.setShaderVisible(edit);
@@ -951,6 +1001,9 @@ module api.ui.image {
         }
 
         private setCropAutoPositioned(auto: boolean) {
+            if (ImageEditor.debug) {
+                console.log('setCropAutoPositioned', auto);
+            }
             var autoChanged = this.cropData.auto != auto;
             this.cropData.auto = auto;
 

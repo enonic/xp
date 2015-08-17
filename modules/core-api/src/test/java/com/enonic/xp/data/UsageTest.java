@@ -11,12 +11,12 @@ public class UsageTest
     @Test
     public void setting_property()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
 
         tree.setString( "myProp", 0, "myString" );
         tree.setString( "myProp[1]", "myString" );
-        tree.setProperty( "myProp", 2, Value.newString( "myString" ) );
-        tree.setProperty( "myProp[3]", Value.newString( "myString" ) );
+        tree.setProperty( "myProp", 2, ValueFactory.newString( "myString" ) );
+        tree.setProperty( "myProp[3]", ValueFactory.newString( "myString" ) );
 
         assertEquals( 4, tree.getTotalSize() );
     }
@@ -24,10 +24,10 @@ public class UsageTest
     @Test
     public void adding_property()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
 
         tree.addString( "myProp", "myString" );
-        tree.addProperty( "myProp", Value.newString( "myString" ) );
+        tree.addProperty( "myProp", ValueFactory.newString( "myString" ) );
 
         assertEquals( 2, tree.getTotalSize() );
     }
@@ -35,7 +35,7 @@ public class UsageTest
     @Test
     public void getting_value()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
 
@@ -49,10 +49,10 @@ public class UsageTest
     @Test
     public void getting_set()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
         PropertySet set = tree.newSet();
         set.setString( "myProp", "myValue" );
-        tree.addProperty( "mySet", Value.newData( set ) );
+        tree.addProperty( "mySet", ValueFactory.newPropertySet( set ) );
 
         assertSame( set, tree.getProperty( "mySet", 0 ).getSet() );
         assertSame( set, tree.getValue( "mySet", 0 ).asData() );
@@ -64,13 +64,13 @@ public class UsageTest
     @Test
     public void getting_sets()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
         PropertySet set1 = tree.newSet();
         set1.setString( "myProp", "myValue" );
-        tree.addProperty( "mySet", Value.newData( set1 ) );
+        tree.addProperty( "mySet", ValueFactory.newPropertySet( set1 ) );
         PropertySet set2 = tree.newSet();
         set1.setString( "myProp", "myValue" );
-        tree.addProperty( "mySet", Value.newData( set2 ) );
+        tree.addProperty( "mySet", ValueFactory.newPropertySet( set2 ) );
 
         assertEquals( Lists.newArrayList( set1, set2 ), tree.getSets( "mySet" ) );
         assertSame( set1, tree.getSets( "mySet" ).iterator().next() );

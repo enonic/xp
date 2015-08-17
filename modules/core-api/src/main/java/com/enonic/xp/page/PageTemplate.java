@@ -1,15 +1,15 @@
 package com.enonic.xp.page;
 
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
@@ -46,14 +46,9 @@ public final class PageTemplate
 
     public ContentTypeNames getCanRender()
     {
-        final ArrayList<ContentTypeName> list = new ArrayList<>( this.getData().countNames( "supports" ) );
-        for ( final Property property : this.getData().getProperties( "supports" ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                list.add( ContentTypeName.from( property.getString() ) );
-            }
-        }
+        final List<ContentTypeName> list =
+            this.getData().getProperties( "supports" ).stream().filter( property -> !property.hasNullValue() ).map(
+                property -> ContentTypeName.from( property.getString() ) ).collect( Collectors.toList() );
         return ContentTypeNames.from( list );
     }
 
@@ -75,11 +70,6 @@ public final class PageTemplate
     public static PageTemplate.Builder newPageTemplate()
     {
         return new Builder();
-    }
-
-    public static PageTemplate.Builder newPageTemplate( final PageTemplate source )
-    {
-        return new Builder( source );
     }
 
     public static PageTemplate.Builder copyOf( final PageTemplate pageTemplate )
@@ -138,7 +128,7 @@ public final class PageTemplate
         {
             for ( ContentTypeName name : names )
             {
-                this.data.addProperty( "supports", Value.newString( name.toString() ) );
+                this.data.addProperty( "supports", ValueFactory.newString( name.toString() ) );
             }
             return this;
         }

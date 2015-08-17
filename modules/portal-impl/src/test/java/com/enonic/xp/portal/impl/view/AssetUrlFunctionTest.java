@@ -20,6 +20,6 @@ public class AssetUrlFunctionTest
     public void testExecute()
     {
         final Object result = execute( "assetUrl", "_path=a", "b=2" );
-        assertEquals( "AssetUrlParams{params={b=[2]}, path=a}", result );
+        assertEquals( "AssetUrlParams{type=server, params={b=[2]}, path=a}", result );
     }
 }

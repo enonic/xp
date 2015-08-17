@@ -15,15 +15,15 @@ public final class MediaInfo
 
     private final ImmutableMultimap<String, String> metadata;
 
-    public static final String PHOTO_INFO = "photo-info";
+    public static final String CAMERA_INFO = "cameraInfo";
 
-    public static final String GPS_INFO = "gps-info";
+    public static final String GPS_INFO = "gpsInfo";
 
-    public static final String IMAGE_INFO = "image-info";
+    public static final String IMAGE_INFO = "imageInfo";
 
     public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
 
-    public static final MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, PHOTO_INFO );
+    public static final MixinName CAMERA_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, CAMERA_INFO );
 
     public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
 
@@ -33,7 +33,7 @@ public final class MediaInfo
 
     public static final String IMAGE_INFO_IMAGE_WIDTH = "imageWidth";
 
-    public static final String MEDIA_INFO_BYTE_SIZE = "bytesize";
+    public static final String MEDIA_INFO_BYTE_SIZE = "byteSize";
 
 
     public static final String BINARY_FILE_MIME = "application/octet-stream";

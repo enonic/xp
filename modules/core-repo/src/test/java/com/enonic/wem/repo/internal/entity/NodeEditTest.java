@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -64,7 +65,7 @@ public class NodeEditTest
 
     private Node createNode()
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setDouble( "a.b.c", 2.0 );
         rootDataSet.setLocalDate( "b", LocalDate.now() );
         rootDataSet.setString( "c", "runar" );

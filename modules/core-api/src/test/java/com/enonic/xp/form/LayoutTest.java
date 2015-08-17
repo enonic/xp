@@ -3,7 +3,7 @@ package com.enonic.xp.form;
 
 import org.junit.Test;
 
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +27,7 @@ public class LayoutTest
     public void toLayout_given_FormItem_of_type_Input_then_exception_is_thrown()
     {
         // setup
-        FormItem formItem = Input.create().name( "myFieldSet" ).inputType( InputTypes.DATE ).label( "My label" ).build();
+        FormItem formItem = Input.create().name( "myFieldSet" ).inputType( InputTypeName.DATE ).label( "My label" ).build();
 
         // exercise
         try

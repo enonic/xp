@@ -50,6 +50,6 @@ public class AssetUrlParamsTest
         assertEquals( "/a/b", params.getPath() );
         assertEquals( "otherapplication", params.getApplication() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "AssetUrlParams{params={a=[1]}, path=/a/b, application=otherapplication}", params.toString() );
+        assertEquals( "AssetUrlParams{type=server, params={a=[1]}, path=/a/b, application=otherapplication}", params.toString() );
     }
 }

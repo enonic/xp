@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
@@ -14,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class PageDataSerializerTest
 {
-    private PropertyIdProvider propertyIdProvider = new PropertyTree.PredictivePropertyIdProvider();
+    private PropertyIdProvider propertyIdProvider = new CounterPropertyIdProvider();
 
     private PageDataSerializer pageDataSerializer = new PageDataSerializer( "page" );
 

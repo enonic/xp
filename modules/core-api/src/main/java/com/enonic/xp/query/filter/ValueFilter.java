@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 
 @Beta
 public class ValueFilter
@@ -63,7 +64,7 @@ public class ValueFilter
 
         private Builder doAddValues( final Collection<String> values )
         {
-            this.values.addAll( Collections2.transform( values, Value::newString ) );
+            this.values.addAll( Collections2.transform( values, ValueFactory::newString ) );
             return this;
         }
 

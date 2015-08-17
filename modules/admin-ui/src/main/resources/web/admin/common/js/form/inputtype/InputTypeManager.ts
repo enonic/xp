@@ -5,55 +5,50 @@ module api.form.inputtype {
      */
     export class InputTypeManager {
 
-        private static inputTypes: { [index: string]: api.Class; } = {};
+        private static inputTypes: { [name: string]: api.Class; } = {};
 
-        static isRegistered(inputTypeClassName: string): boolean {
-            return InputTypeManager.inputTypes[inputTypeClassName] != undefined;
+        static isRegistered(inputTypeName: string): boolean {
+            var name = InputTypeManager.normalize(inputTypeName);
+            return InputTypeManager.inputTypes[name] != undefined;
         }
 
         static register(inputTypeClass: api.Class) {
+            var name = InputTypeManager.normalize(inputTypeClass.getName());
 
-            if (!InputTypeManager.isRegistered(inputTypeClass.getName())) {
-                InputTypeManager.inputTypes[inputTypeClass.getName()] = inputTypeClass;
-                //console.log('Registered input type [' + inputTypeName + "]");
+            if (!InputTypeManager.isRegistered(name)) {
+                InputTypeManager.inputTypes[name] = inputTypeClass;
             }
             else {
-                throw new Error('Input type [' + inputTypeClass.getName() + '] is already registered, unregister it first.');
+                throw new Error('Input type [' + name + '] is already registered, unregister it first.');
             }
         }
 
         static unregister(inputTypeName: string) {
+            var name = InputTypeManager.normalize(inputTypeName);
 
-            if (InputTypeManager.isRegistered(inputTypeName)) {
-                InputTypeManager.inputTypes[inputTypeName] = undefined;
-                console.log('Unregistered input type [' + inputTypeName + "]");
+            if (InputTypeManager.isRegistered(name)) {
+                InputTypeManager.inputTypes[name] = undefined;
+                console.log('Unregistered input type [' + name + "]");
             }
             else {
-                throw new Error('Input type [' + inputTypeName + '] is not registered.');
+                throw new Error('Input type [' + name + '] is not registered.');
             }
         }
 
-        static createView(inputTypeClassName: string, context: InputTypeViewContext<any>): InputTypeView<any> {
+        static createView(inputTypeName: string, context: InputTypeViewContext): InputTypeView<any> {
+            var name = InputTypeManager.normalize(inputTypeName);
 
-            if (InputTypeManager.isRegistered(inputTypeClassName)) {
-                var inputTypeClass = InputTypeManager.inputTypes[inputTypeClassName];
+            if (InputTypeManager.isRegistered(name)) {
+                var inputTypeClass = InputTypeManager.inputTypes[name];
                 return inputTypeClass.newInstance(context);
             }
             else {
-                throw new Error("Input type [" + inputTypeClassName + "] need to be registered first.");
+                throw new Error("Input type [" + name + "] need to be registered first.");
             }
         }
+
+        private static normalize(inputTypeName: string): string {
+            return (inputTypeName || '').toLowerCase();
+        }
     }
-}
-
-/**
- *      Alias to expose InputTypeManager to third parties
- *      To be used for custom javascript development only, use InputTypeManager in typescript instead.
- *
- *      Usage: wem.inputTypes.isRegistered('inputTypeName');
- */
-module wem {
-
-    export var inputTypes = api.form.inputtype.InputTypeManager;
-
 }

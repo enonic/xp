@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -133,7 +134,7 @@ public class ImportNodeCommandTest
     @Test
     public void import_existing_node()
     {
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         data.addString( "name", "value" );
 
         final Node importNode = Node.create().
@@ -148,7 +149,7 @@ public class ImportNodeCommandTest
         assertNotNull( abc );
         assertEquals( data, abc.data() );
 
-        PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data2 = new PropertyTree( new CounterPropertyIdProvider() );
         data2.addString( "name", "valueUpdated" );
 
         final Node importNode2 = Node.create().

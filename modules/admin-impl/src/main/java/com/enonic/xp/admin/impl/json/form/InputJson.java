@@ -1,13 +1,16 @@
 package com.enonic.xp.admin.impl.json.form;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputType;
-import com.enonic.xp.form.inputtype.InputTypeConfig;
 
 @Beta
 public class InputJson
@@ -19,38 +22,16 @@ public class InputJson
 
     private final String inputType;
 
-    private final ObjectNode configJson;
-
     public InputJson( final Input input )
     {
         this.input = input;
-
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
-
-        this.inputType = input.getInputType().getName();
-
-        final InputType type = input.getInputType();
-        final InputTypeConfig config = input.getInputTypeConfig();
-        if ( config != null )
-        {
-            final ObjectNode json = type.serializeConfig( config );
-            this.configJson = json != null ? json : JsonNodeFactory.instance.objectNode();
-        }
-        else
-        {
-            this.configJson = JsonNodeFactory.instance.objectNode();
-        }
+        this.inputType = input.getInputType().toString();
     }
 
     @JsonIgnore
     @Override
     public Input getFormItem()
-    {
-        return input;
-    }
-
-    @JsonIgnore
-    public Input getInput()
     {
         return input;
     }
@@ -108,6 +89,23 @@ public class InputJson
 
     public ObjectNode getConfig()
     {
-        return configJson;
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        for ( final Map.Entry<String, Collection<String>> entry : this.input.getInputTypeConfig().asMap().entrySet() )
+        {
+            json.set( entry.getKey(), toJson( entry.getValue() ) );
+        }
+
+        return json;
+    }
+
+    private static JsonNode toJson( final Collection<String> values )
+    {
+        final ArrayNode json = JsonNodeFactory.instance.arrayNode();
+        for ( final String value : values )
+        {
+            json.add( value );
+        }
+
+        return json;
     }
 }

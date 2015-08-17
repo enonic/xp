@@ -21,21 +21,21 @@ public class ValueTest
     @Test
     public void tostring()
     {
-        assertEquals( "abc", Value.newString( "abc" ).toString() );
-        assertEquals( "<xml></xml>", Value.newXml( "<xml></xml>" ).toString() );
-        assertEquals( "false", Value.newBoolean( false ).toString() );
-        assertEquals( "abc", Value.newReference( Reference.from( "abc" ) ).toString() );
-        assertEquals( "1.1,-1.1", Value.newGeoPoint( GeoPoint.from( "1.1,-1.1" ) ).toString() );
-        assertEquals( "1.1", Value.newDouble( 1.1 ).toString() );
-        assertEquals( "1", Value.newLong( 1L ).toString() );
-        assertEquals( "2012-01-01", Value.newLocalDate( LocalDate.of( 2012, 1, 1 ) ).toString() );
-        assertEquals( "2012-01-01T12:00:00", Value.newLocalDateTime( LocalDateTime.of( 2012, 1, 1, 12, 0, 0 ) ).toString() );
+        assertEquals( "abc", ValueFactory.newString( "abc" ).toString() );
+        assertEquals( "<xml></xml>", ValueFactory.newXml( "<xml></xml>" ).toString() );
+        assertEquals( "false", ValueFactory.newBoolean( false ).toString() );
+        assertEquals( "abc", ValueFactory.newReference( Reference.from( "abc" ) ).toString() );
+        assertEquals( "1.1,-1.1", ValueFactory.newGeoPoint( GeoPoint.from( "1.1,-1.1" ) ).toString() );
+        assertEquals( "1.1", ValueFactory.newDouble( 1.1 ).toString() );
+        assertEquals( "1", ValueFactory.newLong( 1L ).toString() );
+        assertEquals( "2012-01-01", ValueFactory.newLocalDate( LocalDate.of( 2012, 1, 1 ) ).toString() );
+        assertEquals( "2012-01-01T12:00:00", ValueFactory.newLocalDateTime( LocalDateTime.of( 2012, 1, 1, 12, 0, 0 ) ).toString() );
     }
 
     @Test
     public void tostring_PropertySet()
     {
-        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
         tree.addSet( "myEmptySet" );
         PropertySet mySet = tree.addSet( "mySet" );
         mySet.addStrings( "strings", "a", "b", "c" );
@@ -47,19 +47,19 @@ public class ValueTest
     @Test
     public void checkValueType()
     {
-        assertTrue( Value.newString( "string" ).isString() );
-        assertTrue( Value.newLocalDate( LocalDate.now() ).isDateType() );
-        assertTrue( Value.newLong( 1L ).isNumericType() );
-        assertTrue( Value.newGeoPoint( GeoPoint.from( "20,20" ) ).isGeoPoint() );
-        assertTrue( Value.newDouble( 2.0 ).isJavaType( Double.class ) );
-        assertEquals( ValueTypes.STRING, Value.newString( "string" ).getType() );
+        assertTrue( ValueFactory.newString( "string" ).isString() );
+        assertTrue( ValueFactory.newLocalDate( LocalDate.now() ).isDateType() );
+        assertTrue( ValueFactory.newLong( 1L ).isNumericType() );
+        assertTrue( ValueFactory.newGeoPoint( GeoPoint.from( "20,20" ) ).isGeoPoint() );
+        assertTrue( ValueFactory.newDouble( 2.0 ).isJavaType( Double.class ) );
+        assertSame( ValueTypes.STRING, ValueFactory.newString( "string" ).getType() );
 
     }
 
     @Test
     public void check_conversion_returns_null_when_supposed_to()
     {
-        Value value = Value.newString( null );
+        Value value = ValueFactory.newString( null );
         assertNull( value.asLong() );
         assertNull( value.asBinaryReference() );
         assertNull( value.asBoolean() );
@@ -82,7 +82,7 @@ public class ValueTest
     public void check_conversion_throws_exception_when_supposed_to()
     {
         thrown.expect( ValueTypeException.class );
-        Value value = Value.newString( "asda" );
+        Value value = ValueFactory.newString( "asda" );
         value.asLong();
 
     }
@@ -90,18 +90,18 @@ public class ValueTest
     @Test
     public void copy()
     {
-        Value stringValue = Value.newString( "string" );
-        Value binaryReferenceValue = Value.newBinary( BinaryReference.from( "binary" ) );
-        Value booleanValue = Value.newBoolean( true );
-        Value dataValue = Value.newData( new PropertySet() );
-        Value doubleValue = Value.newDouble( 2.0 );
-        Value geoPointValue = Value.newGeoPoint( GeoPoint.from( "20,20" ) );
-        Value instantValue = Value.newInstant( Instant.now() );
-        Value linkValue = Value.newLink( Link.from( "link" ) );
-        Value localDateValue = Value.newLocalDate( LocalDate.now() );
-        Value localDateTimeValue = Value.newLocalDateTime( LocalDateTime.now() );
-        Value localTImeValue = Value.newLocalTime( LocalTime.now() );
-        Value referenceValue = Value.newReference( Reference.from( "ref" ) );
+        Value stringValue = ValueFactory.newString( "string" );
+        Value binaryReferenceValue = ValueFactory.newBinaryReference( BinaryReference.from( "binary" ) );
+        Value booleanValue = ValueFactory.newBoolean( true );
+        Value dataValue = ValueFactory.newPropertySet( new PropertySet() );
+        Value doubleValue = ValueFactory.newDouble( 2.0 );
+        Value geoPointValue = ValueFactory.newGeoPoint( GeoPoint.from( "20,20" ) );
+        Value instantValue = ValueFactory.newDateTime( Instant.now() );
+        Value linkValue = ValueFactory.newLink( Link.from( "link" ) );
+        Value localDateValue = ValueFactory.newLocalDate( LocalDate.now() );
+        Value localDateTimeValue = ValueFactory.newLocalDateTime( LocalDateTime.now() );
+        Value localTImeValue = ValueFactory.newLocalTime( LocalTime.now() );
+        Value referenceValue = ValueFactory.newReference( Reference.from( "ref" ) );
 
         assertEquals( stringValue, stringValue.copy( null ) );
         assertEquals( binaryReferenceValue, binaryReferenceValue.copy( null ) );

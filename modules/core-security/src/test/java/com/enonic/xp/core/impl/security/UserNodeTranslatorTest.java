@@ -6,6 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -55,7 +56,7 @@ public class UserNodeTranslatorTest
     {
         final PrincipalKey userKey = PrincipalKey.ofUser( UserStoreKey.system(), "i-am-a-user" );
 
-        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setString( PrincipalPropertyNames.LOGIN_KEY, "loginkey" );
         rootDataSet.setString( PrincipalPropertyNames.EMAIL_KEY, "rmy@enonic.com" );
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "displayname" );

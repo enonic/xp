@@ -15,8 +15,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.Resources;
+import com.enonic.xp.resource.UrlResource;
 
 @Component(immediate = true)
 public class ResourceServiceImpl
@@ -28,20 +29,22 @@ public class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey resourceKey )
     {
-        Resource resource = null;
+        URL resourceUrl = null;
         final Application application = getActiveApplication( resourceKey.getApplicationKey() );
         if ( application != null )
         {
-            resource = getResource( application.getBundle(), resourceKey );
+            String resourcePath = resourceKey.getPath();
+            resourceUrl = application.getBundle().getResource( resourcePath );
         }
 
-        return resource;
+        return new UrlResource( resourceKey, resourceUrl );
     }
 
     @Override
-    public Resources findResources( final ApplicationKey applicationKey, final String path, final String filePattern, boolean recurse )
+    public ResourceKeys findResourceKeys( final ApplicationKey applicationKey, final String path, final String filePattern,
+                                          boolean recurse )
     {
-        Resources resources = null;
+        ResourceKeys resourceKeys = null;
         final Application application = getActiveApplication( applicationKey );
 
         if ( application != null )
@@ -52,22 +55,22 @@ public class ResourceServiceImpl
 
             if ( entries != null )
             {
-                final List<Resource> resourceList = Collections.list( entries ).
+                final List<ResourceKey> resourceKeyList = Collections.list( entries ).
                     stream().
-                    map( resourceUrl -> new Resource( ResourceKey.from( applicationKey, resourceUrl.getPath() ), resourceUrl ) ).
+                    map( resourceUrl -> ResourceKey.from( applicationKey, resourceUrl.getPath() ) ).
                     collect( Collectors.toList() );
 
-                resources = Resources.from( resourceList );
+                resourceKeys = ResourceKeys.from( resourceKeyList );
             }
 
         }
 
-        if ( resources == null )
+        if ( resourceKeys == null )
         {
-            resources = Resources.empty();
+            resourceKeys = ResourceKeys.empty();
         }
 
-        return resources;
+        return resourceKeys;
     }
 
     private Application getActiveApplication( final ApplicationKey applicationKey )
@@ -81,19 +84,6 @@ public class ResourceServiceImpl
         }
 
         return activeApplication;
-    }
-
-    private Resource getResource( final Bundle bundle, final ResourceKey resourceKey )
-    {
-        Resource resource = null;
-
-        final URL resourceUrl = bundle.getResource( resourceKey.getPath() );
-        if ( resourceUrl != null )
-        {
-            resource = new Resource( resourceKey, resourceUrl );
-        }
-
-        return resource;
     }
 
     @Reference

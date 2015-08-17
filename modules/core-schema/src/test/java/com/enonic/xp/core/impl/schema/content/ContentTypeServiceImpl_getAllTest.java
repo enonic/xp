@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -44,7 +44,7 @@ public class ContentTypeServiceImpl_getAllTest
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
-                inputType( InputTypes.TEXT_LINE ).
+                inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
 

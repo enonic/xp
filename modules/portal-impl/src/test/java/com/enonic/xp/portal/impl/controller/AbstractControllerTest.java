@@ -22,9 +22,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractControllerTest
@@ -73,7 +73,7 @@ public abstract class AbstractControllerTest
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 AbstractControllerTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
-            return resourceUrl == null ? null : new Resource( resourceKey, resourceUrl );
+            return new UrlResource( resourceKey, resourceUrl );
         } );
 
         final ScriptServiceImpl scriptService = new ScriptServiceImpl();
