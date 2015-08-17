@@ -1,9 +1,18 @@
 package com.enonic.xp.data;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
+import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Link;
+import com.enonic.xp.util.Reference;
 
 @Beta
 public abstract class Value
@@ -12,7 +21,7 @@ public abstract class Value
 
     private final Object object;
 
-    Value( final ValueType type, final Object value )
+    protected Value( final ValueType type, final Object value )
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         if ( value != null )
@@ -27,12 +36,11 @@ public abstract class Value
         this.object = value;
     }
 
-    Value( final Value value )
+    protected Value( final Value value )
     {
         this.type = value.type;
         this.object = value.getObject();
     }
-
 
     public boolean isSet()
     {
@@ -46,7 +54,8 @@ public abstract class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE ) || ( this.type == ValueTypes.LOCAL_DATE_TIME );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE ) ||
+            ( this.type == ValueTypes.LOCAL_DATE_TIME );
     }
 
     public boolean isNumericType()
@@ -85,8 +94,7 @@ public abstract class Value
         return object;
     }
 
-    public com.enonic.xp.data.PropertySet asData()
-        throws ClassCastException
+    public PropertySet asData()
     {
         if ( object == null )
         {
@@ -95,7 +103,7 @@ public abstract class Value
         return ValueTypes.PROPERTY_SET.convert( object );
     }
 
-    public java.lang.String asString()
+    public String asString()
     {
         if ( object == null )
         {
@@ -104,7 +112,7 @@ public abstract class Value
         return ValueTypes.STRING.convert( object );
     }
 
-    public java.lang.Long asLong()
+    public Long asLong()
     {
         if ( object == null || "".equals( object ) )
         {
@@ -113,7 +121,7 @@ public abstract class Value
         return ValueTypes.LONG.convert( object );
     }
 
-    public java.lang.Boolean asBoolean()
+    public Boolean asBoolean()
     {
         if ( object == null )
         {
@@ -122,7 +130,7 @@ public abstract class Value
         return ValueTypes.BOOLEAN.convert( object );
     }
 
-    public java.lang.Double asDouble()
+    public Double asDouble()
     {
         if ( object == null || "".equals( object ) )
         {
@@ -131,7 +139,7 @@ public abstract class Value
         return ValueTypes.DOUBLE.convert( object );
     }
 
-    public java.time.LocalDate asLocalDate()
+    public LocalDate asLocalDate()
     {
         if ( object == null )
         {
@@ -140,7 +148,7 @@ public abstract class Value
         return ValueTypes.LOCAL_DATE.convert( object );
     }
 
-    public java.time.LocalTime asLocalTime()
+    public LocalTime asLocalTime()
     {
         if ( object == null )
         {
@@ -149,7 +157,7 @@ public abstract class Value
         return ValueTypes.LOCAL_TIME.convert( object );
     }
 
-    public java.time.LocalDateTime asLocalDateTime()
+    public LocalDateTime asLocalDateTime()
     {
         if ( object == null )
         {
@@ -158,7 +166,7 @@ public abstract class Value
         return ValueTypes.LOCAL_DATE_TIME.convert( object );
     }
 
-    public java.time.Instant asInstant()
+    public Instant asInstant()
     {
         if ( object == null )
         {
@@ -167,7 +175,7 @@ public abstract class Value
         return ValueTypes.DATE_TIME.convert( object );
     }
 
-    public com.enonic.xp.util.GeoPoint asGeoPoint()
+    public GeoPoint asGeoPoint()
     {
         if ( object == null )
         {
@@ -176,7 +184,7 @@ public abstract class Value
         return ValueTypes.GEO_POINT.convert( object );
     }
 
-    public com.enonic.xp.util.Reference asReference()
+    public Reference asReference()
     {
         if ( object == null )
         {
@@ -186,7 +194,7 @@ public abstract class Value
     }
 
 
-    public com.enonic.xp.util.BinaryReference asBinaryReference()
+    public BinaryReference asBinaryReference()
     {
         if ( object == null )
         {
@@ -195,7 +203,7 @@ public abstract class Value
         return ValueTypes.BINARY_REFERENCE.convert( object );
     }
 
-    public com.enonic.xp.util.Link asLink()
+    public Link asLink()
     {
         if ( object == null )
         {
@@ -230,79 +238,9 @@ public abstract class Value
     }
 
     @Override
-    public java.lang.String toString()
+    public String toString()
     {
         return asString();
-    }
-
-    public static Value newInstant( final java.time.Instant value )
-    {
-        return new DateTime( value );
-    }
-
-    public static Value newLocalTime( final java.time.LocalTime value )
-    {
-        return new LocalTime( value );
-    }
-
-    public static Value newLocalDateTime( final java.time.LocalDateTime value )
-    {
-        return new LocalDateTime( value );
-    }
-
-    public static Value newLocalDate( final java.time.LocalDate value )
-    {
-        return new LocalDate( value );
-    }
-
-    public static Value newLong( final java.lang.Long value )
-    {
-        return new Long( value );
-    }
-
-    public static Value newBoolean( final java.lang.Boolean value )
-    {
-        return new Boolean( value );
-    }
-
-    public static Value newDouble( final java.lang.Double value )
-    {
-        return new Double( value );
-    }
-
-    public static Value newString( final java.lang.String value )
-    {
-        return new String( value );
-    }
-
-    public static Value newXml( final java.lang.String value )
-    {
-        return new Xml( value );
-    }
-
-    public static Value newGeoPoint( final com.enonic.xp.util.GeoPoint value )
-    {
-        return new GeoPoint( value );
-    }
-
-    public static Value newReference( final com.enonic.xp.util.Reference value )
-    {
-        return new Reference( value );
-    }
-
-    public static Value newBinary( final com.enonic.xp.util.BinaryReference value )
-    {
-        return new BinaryReference( value );
-    }
-
-    public static Value newLink( final com.enonic.xp.util.Link value )
-    {
-        return new Link( value );
-    }
-
-    public static Value newData( final com.enonic.xp.data.PropertySet value )
-    {
-        return new PropertySet( value );
     }
 
     public boolean isNull()
@@ -312,335 +250,6 @@ public abstract class Value
 
     public boolean isPropertySet()
     {
-        return type.equals( ValueTypes.PROPERTY_SET );
-    }
-
-
-    static class PropertySet
-        extends Value
-    {
-        PropertySet( final com.enonic.xp.data.PropertySet value )
-        {
-            super( ValueTypes.PROPERTY_SET, value );
-        }
-
-        PropertySet( final PropertySet source, final PropertyTree tree )
-        {
-            super( ValueTypes.PROPERTY_SET, !source.isNull() ? source.asData().copy( tree ) : null );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new PropertySet( this, tree );
-        }
-    }
-
-    static class String
-        extends Value
-    {
-        String( final java.lang.String value )
-        {
-            super( ValueTypes.STRING, value );
-        }
-
-        String( final String source )
-        {
-            super( ValueTypes.STRING, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new String( this );
-        }
-    }
-
-    static class Xml
-        extends Value
-    {
-        Xml( final java.lang.String value )
-        {
-            super( ValueTypes.XML, value );
-        }
-
-        Xml( final Xml source )
-        {
-            super( ValueTypes.XML, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Xml( this );
-        }
-    }
-
-    static class Long
-        extends Value
-    {
-        Long( final java.lang.Long value )
-        {
-            super( ValueTypes.LONG, value );
-        }
-
-        Long( final Long source )
-        {
-            super( ValueTypes.LONG, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Long( this );
-        }
-    }
-
-    static class Double
-        extends Value
-    {
-        Double( final java.lang.Double value )
-        {
-            super( ValueTypes.DOUBLE, value );
-        }
-
-        Double( final Double source )
-        {
-            super( ValueTypes.DOUBLE, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Double( this );
-        }
-    }
-
-    static class Boolean
-        extends Value
-    {
-        Boolean( final java.lang.Boolean value )
-        {
-            super( ValueTypes.BOOLEAN, value );
-        }
-
-        Boolean( final Boolean source )
-        {
-            super( ValueTypes.BOOLEAN, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Boolean( this );
-        }
-    }
-
-    static class GeoPoint
-        extends Value
-    {
-        GeoPoint( final com.enonic.xp.util.GeoPoint value )
-        {
-            super( ValueTypes.GEO_POINT, value );
-        }
-
-        GeoPoint( final GeoPoint source )
-        {
-            super( ValueTypes.GEO_POINT, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new GeoPoint( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class Reference
-        extends Value
-    {
-        Reference( final com.enonic.xp.util.Reference value )
-        {
-            super( ValueTypes.REFERENCE, value );
-        }
-
-        Reference( final Reference source )
-        {
-            super( ValueTypes.REFERENCE, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Reference( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class BinaryReference
-        extends Value
-    {
-        BinaryReference( final com.enonic.xp.util.BinaryReference value )
-        {
-            super( ValueTypes.BINARY_REFERENCE, value );
-        }
-
-        BinaryReference( final BinaryReference source )
-        {
-            super( ValueTypes.BINARY_REFERENCE, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new BinaryReference( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class Link
-        extends Value
-    {
-        Link( final com.enonic.xp.util.Link value )
-        {
-            super( ValueTypes.LINK, value );
-        }
-
-        Link( final Link source )
-        {
-            super( ValueTypes.LINK, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new Link( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class LocalDate
-        extends Value
-    {
-        LocalDate( final java.time.LocalDate value )
-        {
-            super( ValueTypes.LOCAL_DATE, value );
-        }
-
-        LocalDate( final LocalDate source )
-        {
-            super( ValueTypes.LOCAL_DATE, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new LocalDate( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class LocalDateTime
-        extends Value
-    {
-        LocalDateTime( final java.time.LocalDateTime value )
-        {
-            super( ValueTypes.LOCAL_DATE_TIME, value );
-        }
-
-        LocalDateTime( final LocalDateTime source )
-        {
-            super( ValueTypes.LOCAL_DATE_TIME, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new LocalDateTime( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class LocalTime
-        extends Value
-    {
-        LocalTime( final java.time.LocalTime value )
-        {
-            super( ValueTypes.LOCAL_TIME, value );
-        }
-
-        LocalTime( final LocalTime source )
-        {
-            super( ValueTypes.LOCAL_TIME, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new LocalTime( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
-    static class DateTime
-        extends Value
-    {
-        DateTime( final java.time.Instant value )
-        {
-            super( ValueTypes.DATE_TIME, value );
-        }
-
-        DateTime( final DateTime source )
-        {
-            super( ValueTypes.DATE_TIME, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new DateTime( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
+        return type == ValueTypes.PROPERTY_SET;
     }
 }

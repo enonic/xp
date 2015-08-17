@@ -9,6 +9,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
@@ -111,25 +112,25 @@ public class JsonToPropertyTreeTranslator
     {
         if ( value.isTextual() )
         {
-            return Value.newString( value.textValue() );
+            return ValueFactory.newString( value.textValue() );
         }
 
         if ( value.isDouble() )
         {
-            return Value.newDouble( value.doubleValue() );
+            return ValueFactory.newDouble( value.doubleValue() );
         }
 
         if ( value.isInt() )
         {
-            return Value.newLong( (long) value.intValue() );
+            return ValueFactory.newLong( (long) value.intValue() );
         }
 
         if ( value.isLong() )
         {
-            return Value.newLong( value.longValue() );
+            return ValueFactory.newLong( value.longValue() );
         }
 
-        return Value.newString( value.toString() );
+        return ValueFactory.newString( value.toString() );
     }
 
     private String resolveStringValue( final JsonNode value )

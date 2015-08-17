@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
@@ -184,7 +185,7 @@ public class ReorderChildNodeCommandTest
 
     private Node createNode( final String name, final NodePath parent )
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         data.setString( "displayName", name );
 
         return createNode( CreateNodeParams.create().

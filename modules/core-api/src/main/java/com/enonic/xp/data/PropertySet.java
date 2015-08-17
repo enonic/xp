@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -120,13 +122,7 @@ public final class PropertySet
         }
 
         final PropertySet that = (PropertySet) o;
-
-        if ( !propertyArrayByName.equals( that.propertyArrayByName ) )
-        {
-            return false;
-        }
-
-        return true;
+        return this.propertyArrayByName.equals( that.propertyArrayByName );
     }
 
     @Override
@@ -225,10 +221,7 @@ public final class PropertySet
     public PropertySet detach()
     {
         this.tree = null;
-        for ( final PropertyArray propertyArray : propertyArrayByName.values() )
-        {
-            propertyArray.detach();
-        }
+        this.propertyArrayByName.values().forEach( com.enonic.xp.data.PropertyArray::detach );
         return this;
     }
 
@@ -262,8 +255,7 @@ public final class PropertySet
         }
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
-        final Property property = array.addValue( value );
-        return property;
+        return array.addValue( value );
     }
 
     public final Property setProperty( final String path, final Value value )
@@ -303,7 +295,7 @@ public final class PropertySet
         if ( existingProperty == null )
         {
             final PropertySet set = tree != null ? new PropertySet( tree ) : new PropertySet();
-            setProperty( name, index, Value.newData( set ) );
+            setProperty( name, index, ValueFactory.newPropertySet( set ) );
             return set;
         }
         else
@@ -465,12 +457,7 @@ public final class PropertySet
     public boolean isNotNull( final PropertyPath path )
     {
         final Property property = getProperty( path );
-        if ( property == null )
-        {
-            return false;
-        }
-
-        return !property.hasNullValue();
+        return property != null && !property.hasNullValue();
     }
 
     public String[] getPropertyNames()
@@ -508,10 +495,7 @@ public final class PropertySet
         final ImmutableList.Builder<Property> builder = new ImmutableList.Builder<>();
         for ( final PropertyArray propertyArray : this.propertyArrayByName.values() )
         {
-            for ( Property property : propertyArray.getProperties() )
-            {
-                builder.add( property );
-            }
+            propertyArray.getProperties().forEach( builder::add );
         }
         return builder.build();
     }
@@ -578,17 +562,17 @@ public final class PropertySet
 
     public Property setSet( final PropertyPath path, final PropertySet value )
     {
-        return this.setProperty( path, Value.newData( value ) );
+        return this.setProperty( path, ValueFactory.newPropertySet( value ) );
     }
 
     public Property setSet( final String name, final int index, final PropertySet value )
     {
-        return this.setProperty( name, index, Value.newData( value ) );
+        return this.setProperty( name, index, ValueFactory.newPropertySet( value ) );
     }
 
     public Property addSet( final String name, final PropertySet value )
     {
-        return this.addProperty( name, Value.newData( value ) );
+        return this.addProperty( name, ValueFactory.newPropertySet( value ) );
     }
 
     public Property[] addSets( final String name, final PropertySet... values )
@@ -596,7 +580,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newData( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newPropertySet( values[i] ) );
         }
         return properties;
     }
@@ -616,17 +600,17 @@ public final class PropertySet
 
     public Property setString( final PropertyPath path, final String value )
     {
-        return this.setProperty( path, Value.newString( value ) );
+        return this.setProperty( path, ValueFactory.newString( value ) );
     }
 
     public Property setString( final String name, final int index, final String value )
     {
-        return this.setProperty( name, index, Value.newString( value ) );
+        return this.setProperty( name, index, ValueFactory.newString( value ) );
     }
 
     public Property addString( final String name, final String value )
     {
-        return this.addProperty( name, Value.newString( value ) );
+        return this.addProperty( name, ValueFactory.newString( value ) );
     }
 
     public Property[] addStrings( final String name, final String... values )
@@ -634,7 +618,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newString( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newString( values[i] ) );
         }
         return properties;
     }
@@ -642,7 +626,7 @@ public final class PropertySet
     public Property[] addStrings( final String name, final Collection<String> values )
     {
         return values.stream().
-            map( ( value ) -> addProperty( name, Value.newString( value ) ) ).
+            map( ( value ) -> addProperty( name, ValueFactory.newString( value ) ) ).
             toArray( Property[]::new );
     }
 
@@ -650,22 +634,22 @@ public final class PropertySet
 
     public Property setXml( final String path, final String value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newXml( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newXml( value ) );
     }
 
     public Property setXml( final PropertyPath path, final String value )
     {
-        return this.setProperty( path, Value.newXml( value ) );
+        return this.setProperty( path, ValueFactory.newXml( value ) );
     }
 
     public Property setXml( final String name, final int index, final String value )
     {
-        return this.setProperty( name, index, Value.newXml( value ) );
+        return this.setProperty( name, index, ValueFactory.newXml( value ) );
     }
 
     public Property addXml( final String name, final String value )
     {
-        return this.addProperty( name, Value.newXml( value ) );
+        return this.addProperty( name, ValueFactory.newXml( value ) );
     }
 
     public Property[] addXmls( final String name, final String... values )
@@ -673,7 +657,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newXml( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newXml( values[i] ) );
         }
         return properties;
     }
@@ -682,22 +666,22 @@ public final class PropertySet
 
     public Property setBoolean( final String path, final Boolean value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newBoolean( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newBoolean( value ) );
     }
 
     public Property setBoolean( final PropertyPath path, final Boolean value )
     {
-        return this.setProperty( path, Value.newBoolean( value ) );
+        return this.setProperty( path, ValueFactory.newBoolean( value ) );
     }
 
     public Property setBoolean( final String name, final int index, final Boolean value )
     {
-        return this.setProperty( name, index, Value.newBoolean( value ) );
+        return this.setProperty( name, index, ValueFactory.newBoolean( value ) );
     }
 
     public Property addBoolean( final String name, final Boolean value )
     {
-        return this.addProperty( name, Value.newBoolean( value ) );
+        return this.addProperty( name, ValueFactory.newBoolean( value ) );
     }
 
     public Property[] addBooleans( final String name, final Boolean... values )
@@ -705,7 +689,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newBoolean( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newBoolean( values[i] ) );
         }
         return properties;
     }
@@ -714,22 +698,22 @@ public final class PropertySet
 
     public Property setLong( final String path, final Long value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newLong( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newLong( value ) );
     }
 
     public Property setLong( final PropertyPath path, final Long value )
     {
-        return this.setProperty( path, Value.newLong( value ) );
+        return this.setProperty( path, ValueFactory.newLong( value ) );
     }
 
     public Property setLong( final String name, final int index, final Long value )
     {
-        return this.setProperty( name, index, Value.newLong( value ) );
+        return this.setProperty( name, index, ValueFactory.newLong( value ) );
     }
 
     public Property addLong( final String name, final Long value )
     {
-        return this.addProperty( name, Value.newLong( value ) );
+        return this.addProperty( name, ValueFactory.newLong( value ) );
     }
 
     public Property[] addLongs( final String name, final Long... values )
@@ -737,7 +721,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newLong( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newLong( values[i] ) );
         }
         return properties;
     }
@@ -746,22 +730,22 @@ public final class PropertySet
 
     public Property setLocalDate( final String path, final LocalDate value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newLocalDate( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newLocalDate( value ) );
     }
 
     public Property setLocalDate( final PropertyPath path, final LocalDate value )
     {
-        return this.setProperty( path, Value.newLocalDate( value ) );
+        return this.setProperty( path, ValueFactory.newLocalDate( value ) );
     }
 
     public Property setLocalDate( final String name, final int index, final LocalDate value )
     {
-        return this.setProperty( name, index, Value.newLocalDate( value ) );
+        return this.setProperty( name, index, ValueFactory.newLocalDate( value ) );
     }
 
     public Property addLocalDate( final String name, final LocalDate value )
     {
-        return this.addProperty( name, Value.newLocalDate( value ) );
+        return this.addProperty( name, ValueFactory.newLocalDate( value ) );
     }
 
     public Property[] addLocalDates( final String name, final LocalDate... values )
@@ -769,7 +753,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newLocalDate( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newLocalDate( values[i] ) );
         }
         return properties;
     }
@@ -778,22 +762,22 @@ public final class PropertySet
 
     public Property setLocalDateTime( final String path, final LocalDateTime value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newLocalDateTime( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newLocalDateTime( value ) );
     }
 
     public Property setLocalDateTime( final PropertyPath path, final LocalDateTime value )
     {
-        return this.setProperty( path, Value.newLocalDateTime( value ) );
+        return this.setProperty( path, ValueFactory.newLocalDateTime( value ) );
     }
 
     public Property setLocalDateTime( final String name, final int index, final LocalDateTime value )
     {
-        return this.setProperty( name, index, Value.newLocalDateTime( value ) );
+        return this.setProperty( name, index, ValueFactory.newLocalDateTime( value ) );
     }
 
     public Property addLocalDateTime( final String name, final LocalDateTime value )
     {
-        return this.addProperty( name, Value.newLocalDateTime( value ) );
+        return this.addProperty( name, ValueFactory.newLocalDateTime( value ) );
     }
 
     public Property[] addLocalDateTimes( final String name, final LocalDateTime... values )
@@ -801,7 +785,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newLocalDateTime( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newLocalDateTime( values[i] ) );
         }
         return properties;
     }
@@ -810,22 +794,22 @@ public final class PropertySet
 
     public Property setLocalTime( final String path, final LocalTime value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newLocalTime( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newLocalTime( value ) );
     }
 
     public Property setLocalTime( final PropertyPath path, final LocalTime value )
     {
-        return this.setProperty( path, Value.newLocalTime( value ) );
+        return this.setProperty( path, ValueFactory.newLocalTime( value ) );
     }
 
     public Property setLocalTime( final String name, final int index, final LocalTime value )
     {
-        return this.setProperty( name, index, Value.newLocalTime( value ) );
+        return this.setProperty( name, index, ValueFactory.newLocalTime( value ) );
     }
 
     public Property addLocalTime( final String name, final LocalTime value )
     {
-        return this.addProperty( name, Value.newLocalTime( value ) );
+        return this.addProperty( name, ValueFactory.newLocalTime( value ) );
     }
 
     public Property[] addLocalTimes( final String name, final LocalTime... values )
@@ -833,7 +817,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newLocalTime( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newLocalTime( values[i] ) );
         }
         return properties;
     }
@@ -842,22 +826,22 @@ public final class PropertySet
 
     public Property setInstant( final String path, final Instant value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newInstant( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newDateTime( value ) );
     }
 
     public Property setInstant( final PropertyPath path, final Instant value )
     {
-        return this.setProperty( path, Value.newInstant( value ) );
+        return this.setProperty( path, ValueFactory.newDateTime( value ) );
     }
 
     public Property setInstant( final String name, final int index, final Instant value )
     {
-        return this.setProperty( name, index, Value.newInstant( value ) );
+        return this.setProperty( name, index, ValueFactory.newDateTime( value ) );
     }
 
     public Property addInstant( final String name, final Instant value )
     {
-        return this.addProperty( name, Value.newInstant( value ) );
+        return this.addProperty( name, ValueFactory.newDateTime( value ) );
     }
 
     public Property[] addInstants( final String name, final Instant... values )
@@ -865,7 +849,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newInstant( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newDateTime( values[i] ) );
         }
         return properties;
     }
@@ -874,22 +858,22 @@ public final class PropertySet
 
     public Property setDouble( final String path, final Double value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newDouble( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newDouble( value ) );
     }
 
     public Property setDouble( final PropertyPath path, final Double value )
     {
-        return this.setProperty( path, Value.newDouble( value ) );
+        return this.setProperty( path, ValueFactory.newDouble( value ) );
     }
 
     public Property setDouble( final String name, final int index, final Double value )
     {
-        return this.setProperty( name, index, Value.newDouble( value ) );
+        return this.setProperty( name, index, ValueFactory.newDouble( value ) );
     }
 
     public Property addDouble( final String name, final Double value )
     {
-        return this.addProperty( name, Value.newDouble( value ) );
+        return this.addProperty( name, ValueFactory.newDouble( value ) );
     }
 
     public Property[] addDoubles( final String name, final Double... values )
@@ -897,7 +881,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newDouble( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newDouble( values[i] ) );
         }
         return properties;
     }
@@ -906,22 +890,22 @@ public final class PropertySet
 
     public Property setGeoPoint( final String path, final GeoPoint value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newGeoPoint( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newGeoPoint( value ) );
     }
 
     public Property setGeoPoint( final PropertyPath path, final GeoPoint value )
     {
-        return this.setProperty( path, Value.newGeoPoint( value ) );
+        return this.setProperty( path, ValueFactory.newGeoPoint( value ) );
     }
 
     public Property setGeoPoint( final String name, final int index, final GeoPoint value )
     {
-        return this.setProperty( name, index, Value.newGeoPoint( value ) );
+        return this.setProperty( name, index, ValueFactory.newGeoPoint( value ) );
     }
 
     public Property addGeoPoint( final String name, final GeoPoint value )
     {
-        return this.addProperty( name, Value.newGeoPoint( value ) );
+        return this.addProperty( name, ValueFactory.newGeoPoint( value ) );
     }
 
     public Property[] addGeoPoints( final String name, final GeoPoint... values )
@@ -929,7 +913,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newGeoPoint( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newGeoPoint( values[i] ) );
         }
         return properties;
     }
@@ -937,22 +921,22 @@ public final class PropertySet
     // setting reference
     public Property setReference( final String path, final Reference value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newReference( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newReference( value ) );
     }
 
     public Property setReference( final PropertyPath path, final Reference value )
     {
-        return this.setProperty( path, Value.newReference( value ) );
+        return this.setProperty( path, ValueFactory.newReference( value ) );
     }
 
     public Property setReference( final String name, final int index, final Reference value )
     {
-        return this.setProperty( name, index, Value.newReference( value ) );
+        return this.setProperty( name, index, ValueFactory.newReference( value ) );
     }
 
     public Property addReference( final String name, final Reference value )
     {
-        return this.addProperty( name, Value.newReference( value ) );
+        return this.addProperty( name, ValueFactory.newReference( value ) );
     }
 
     public Property[] addReferences( final String name, final Reference... values )
@@ -960,7 +944,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newReference( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newReference( values[i] ) );
         }
         return properties;
     }
@@ -968,22 +952,22 @@ public final class PropertySet
     // setting reference
     public Property setBinaryReference( final String path, final BinaryReference value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newBinary( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newBinaryReference( value ) );
     }
 
     public Property setBinaryReference( final PropertyPath path, final BinaryReference value )
     {
-        return this.setProperty( path, Value.newBinary( value ) );
+        return this.setProperty( path, ValueFactory.newBinaryReference( value ) );
     }
 
     public Property setBinaryReference( final String name, final int index, final BinaryReference value )
     {
-        return this.setProperty( name, index, Value.newBinary( value ) );
+        return this.setProperty( name, index, ValueFactory.newBinaryReference( value ) );
     }
 
     public Property addBinaryReference( final String name, final BinaryReference value )
     {
-        return this.addProperty( name, Value.newBinary( value ) );
+        return this.addProperty( name, ValueFactory.newBinaryReference( value ) );
     }
 
     public Property[] addBinaryReferences( final String name, final BinaryReference... values )
@@ -991,7 +975,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newBinary( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newBinaryReference( values[i] ) );
         }
         return properties;
     }
@@ -1000,22 +984,22 @@ public final class PropertySet
     // setting link
     public Property setLink( final String path, final Link value )
     {
-        return this.setProperty( PropertyPath.from( path ), Value.newLink( value ) );
+        return this.setProperty( PropertyPath.from( path ), ValueFactory.newLink( value ) );
     }
 
     public Property setLink( final PropertyPath path, final Link value )
     {
-        return this.setProperty( path, Value.newLink( value ) );
+        return this.setProperty( path, ValueFactory.newLink( value ) );
     }
 
     public Property setLink( final String name, final int index, final Link value )
     {
-        return this.setProperty( name, index, Value.newLink( value ) );
+        return this.setProperty( name, index, ValueFactory.newLink( value ) );
     }
 
     public Property addLink( final String name, final Link value )
     {
-        return this.addProperty( name, Value.newLink( value ) );
+        return this.addProperty( name, ValueFactory.newLink( value ) );
     }
 
     public Property[] addLinks( final String name, final Link... values )
@@ -1023,7 +1007,7 @@ public final class PropertySet
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
         {
-            properties[i] = this.addProperty( name, Value.newLink( values[i] ) );
+            properties[i] = this.addProperty( name, ValueFactory.newLink( values[i] ) );
         }
         return properties;
     }
@@ -1051,15 +1035,7 @@ public final class PropertySet
 
     public Iterable<PropertySet> getSets( final String name )
     {
-        final ImmutableList.Builder<PropertySet> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getSet() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getSet );
     }
 
     // getting string
@@ -1083,15 +1059,7 @@ public final class PropertySet
 
     public Iterable<String> getStrings( final String name )
     {
-        final ImmutableList.Builder<String> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getString() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getString );
     }
 
     // getting boolean
@@ -1115,16 +1083,7 @@ public final class PropertySet
 
     public Iterable<Boolean> getBooleans( final String name )
     {
-        final ImmutableList.Builder<Boolean> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getBoolean() );
-
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getBoolean );
     }
 
     // getting long
@@ -1148,15 +1107,7 @@ public final class PropertySet
 
     public Iterable<Long> getLongs( final String name )
     {
-        final ImmutableList.Builder<Long> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getLong() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getLong );
     }
 
     // getting double
@@ -1180,15 +1131,7 @@ public final class PropertySet
 
     public Iterable<Double> getDoubles( final String name )
     {
-        final ImmutableList.Builder<Double> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getDouble() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getDouble );
     }
 
     // getting geo point
@@ -1212,15 +1155,7 @@ public final class PropertySet
 
     public Iterable<GeoPoint> getGeoPoints( final String name )
     {
-        final ImmutableList.Builder<GeoPoint> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getGeoPoint() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getGeoPoint );
     }
 
     // getting reference
@@ -1244,15 +1179,12 @@ public final class PropertySet
 
     public Iterable<Reference> getReferences( final String name )
     {
-        final ImmutableList.Builder<Reference> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getReference() );
-            }
-        }
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getReference );
+    }
+
+    private <T> Iterable<T> getFilteredValues( final String name, final Function<Property, T> map )
+    {
+        return getProperties( name ).stream().filter( p -> !p.hasNullValue() ).map( map ).collect( Collectors.toList() );
     }
 
     // getting binary
@@ -1276,11 +1208,7 @@ public final class PropertySet
 
     public Iterable<BinaryReference> getBinaryReferences( final String name )
     {
-        final ImmutableList.Builder<BinaryReference> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getBinaryReference() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getBinaryReference );
     }
 
     // getting link
@@ -1304,11 +1232,7 @@ public final class PropertySet
 
     public Iterable<Link> getLinks( final String name )
     {
-        final ImmutableList.Builder<Link> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getLink() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getLink );
     }
 
     // getting local date
@@ -1332,11 +1256,7 @@ public final class PropertySet
 
     public Iterable<LocalDate> getLocalDates( final String name )
     {
-        final ImmutableList.Builder<LocalDate> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getLocalDate() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getLocalDate );
     }
 
     // getting local date time
@@ -1360,11 +1280,7 @@ public final class PropertySet
 
     public Iterable<LocalDateTime> getLocalDateTimes( final String name )
     {
-        final ImmutableList.Builder<LocalDateTime> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getLocalDateTime() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getLocalDateTime );
     }
 
     // getting local time
@@ -1388,11 +1304,7 @@ public final class PropertySet
 
     public Iterable<LocalTime> getLocalTimes( final String name )
     {
-        final ImmutableList.Builder<LocalTime> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getLocalTime() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getLocalTime );
     }
 
     // getting instant
@@ -1416,10 +1328,6 @@ public final class PropertySet
 
     public Iterable<Instant> getInstants( final String name )
     {
-        final ImmutableList.Builder<Instant> stringsBuilder = new ImmutableList.Builder<>();
-        getProperties( name ).stream().filter( property -> !property.hasNullValue() ).forEach( property -> {
-            stringsBuilder.add( property.getInstant() );
-        } );
-        return stringsBuilder.build();
+        return getFilteredValues( name, Property::getInstant );
     }
 }

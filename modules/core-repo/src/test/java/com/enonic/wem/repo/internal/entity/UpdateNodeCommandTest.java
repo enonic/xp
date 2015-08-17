@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -33,7 +34,7 @@ public class UpdateNodeCommandTest
     public void add_new_binary()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -64,7 +65,7 @@ public class UpdateNodeCommandTest
     public void update_existing_binary()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -111,7 +112,7 @@ public class UpdateNodeCommandTest
     public void keep_existing_binaries()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -170,7 +171,7 @@ public class UpdateNodeCommandTest
     public void try_add_new_without_source()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -198,7 +199,7 @@ public class UpdateNodeCommandTest
     public void try_setting_new_binary_into_existing_property()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -226,7 +227,7 @@ public class UpdateNodeCommandTest
     public void unreferred_binary_attachment_ignored()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 
@@ -257,7 +258,7 @@ public class UpdateNodeCommandTest
     public void new_binary_ref_to_already_attached_binary()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
         data.setBinaryReference( "my-image", binaryRef );
 

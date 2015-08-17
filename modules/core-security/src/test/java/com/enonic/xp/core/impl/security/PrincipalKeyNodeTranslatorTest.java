@@ -6,6 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -45,7 +46,7 @@ public class PrincipalKeyNodeTranslatorTest
     public void userKeyFromNode()
         throws Exception
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
 
@@ -64,7 +65,7 @@ public class PrincipalKeyNodeTranslatorTest
     public void unknown_type()
         throws Exception
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, "fisk" );
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
 

@@ -2,7 +2,7 @@ package com.enonic.xp.query.filter;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +18,8 @@ public class ValueFilterTest
         final ValueFilter myFilter = ValueFilter.create().
             fieldName( "myfield" ).
             addValues( strings ).
-            addValue( Value.newString( "four" ) ).
-            addValues( Value.newDouble( 2.0 ), Value.newBoolean( true ) ).
+            addValue( ValueFactory.newString( "four" ) ).
+            addValues( ValueFactory.newDouble( 2.0 ), ValueFactory.newBoolean( true ) ).
             build();
 
         assertEquals( 6, myFilter.getValues().size() );

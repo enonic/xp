@@ -54,6 +54,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -99,7 +100,7 @@ public class ContentResourceTest
     @Before
     public void before()
     {
-        PropertyIdProviderAccessor.instance().set( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyIdProviderAccessor.instance().set( new CounterPropertyIdProvider() );
     }
 
     @Override
@@ -553,7 +554,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        Content content =  Content.create().
+        Content content = Content.create().
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
@@ -604,7 +605,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent1 );
 
-        final Content aContent2 =  Content.create().
+        final Content aContent2 = Content.create().
             id( ContentId.from( "123" ) ).
             parentPath( ContentPath.ROOT ).
             name( "one" ).
@@ -723,13 +724,13 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            addPushedContent( Contents.from(  Content.create().
+            addPushedContent( Contents.from( Content.create().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addFailed(  Content.create().
+            addFailed( Content.create().
                 id( ContentId.from( "my-content2" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -749,13 +750,13 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            addPushedContent( Contents.from(  Content.create().
+            addPushedContent( Contents.from( Content.create().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
                 displayName( "My Content" ).
                 build() ) ).
-            addDeleted( Contents.from(  Content.create().
+            addDeleted( Contents.from( Content.create().
                 id( ContentId.from( "myContentId" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
@@ -1035,7 +1036,7 @@ public class ContentResourceTest
         final PropertyTree metadata = new PropertyTree();
         metadata.setLong( "myProperty", 1L );
 
-        return  Content.create().
+        return Content.create().
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).

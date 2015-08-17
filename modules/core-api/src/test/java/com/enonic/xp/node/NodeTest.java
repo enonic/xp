@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -16,10 +17,10 @@ public class NodeTest
         NodeName name2 = NodeName.from( "name2" );
         ChildOrder childOrder1 = ChildOrder.defaultOrder();
         ChildOrder childOrder2 = ChildOrder.manualOrder();
-        PropertyTree data1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data1 = new PropertyTree( new CounterPropertyIdProvider() );
         data1.addString( "some", "config" );
 
-        PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data2 = new PropertyTree( new CounterPropertyIdProvider() );
         data2.addString( "other", "config" );
 
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()

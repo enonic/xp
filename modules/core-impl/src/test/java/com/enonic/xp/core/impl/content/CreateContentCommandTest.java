@@ -1,9 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -12,6 +8,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
@@ -28,8 +25,6 @@ import static org.junit.Assert.*;
 
 public class CreateContentCommandTest
 {
-    private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
-
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
@@ -70,7 +65,7 @@ public class CreateContentCommandTest
     @Test(expected = ContentNotFoundException.class)
     public void bad_parent_content_path()
     {
-        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
         CreateContentParams params = CreateContentParams.create().
@@ -91,7 +86,7 @@ public class CreateContentCommandTest
     @Test
     public void content_params_not_present_test()
     {
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         data.addString( "myData", "aaa" );
 
         try
@@ -175,7 +170,7 @@ public class CreateContentCommandTest
     public void name_present_and_unchanged()
     {
 
-        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
         final CreateContentParams params =
@@ -202,7 +197,7 @@ public class CreateContentCommandTest
 
     private CreateContentParams createContentParams()
     {
-        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
         CreateContentParams params = CreateContentParams.create().type( ContentTypeName.site() ).parent( ContentPath.ROOT ).contentData(

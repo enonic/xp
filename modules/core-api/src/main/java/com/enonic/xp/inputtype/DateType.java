@@ -2,6 +2,7 @@ package com.enonic.xp.inputtype;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 final class DateType
@@ -17,7 +18,7 @@ final class DateType
     @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
-        return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
+        return ValueFactory.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
     }
 
     @Override

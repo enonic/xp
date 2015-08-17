@@ -2,11 +2,6 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.data.Value;
-import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.query.filter.Filter;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;
@@ -14,6 +9,11 @@ import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFact
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.ValueFilter;
 
 public class NodeQueryTranslator
 {
@@ -60,7 +60,7 @@ public class NodeQueryTranslator
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.PATH.getPath() ).
-                addValue( Value.newString( nodeQuery.getPath().toString() ) ).
+                addValue( ValueFactory.newString( nodeQuery.getPath().toString() ) ).
                 build() );
         }
     }
@@ -71,7 +71,7 @@ public class NodeQueryTranslator
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.PARENT_PATH.getPath() ).
-                addValue( Value.newString( nodeQuery.getParent().toString() ) ).
+                addValue( ValueFactory.newString( nodeQuery.getParent().toString() ) ).
                 build() );
         }
     }

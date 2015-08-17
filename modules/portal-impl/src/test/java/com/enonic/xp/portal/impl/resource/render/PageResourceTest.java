@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
@@ -163,7 +164,7 @@ public class PageResourceTest
     public void getContentShortcut()
         throws Exception
     {
-        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.addReference( "target", Reference.from( "ref" ) );
 
         final Content content = Content.create().

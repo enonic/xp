@@ -24,6 +24,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -236,7 +237,7 @@ public final class SecurityServiceImpl
             final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalPropertyNames.MEMBER_KEY ).
-                    addValue( Value.newString( member.toString() ) ).
+                    addValue( ValueFactory.newString( member.toString() ) ).
                     build() ).
                 build() ) );
 

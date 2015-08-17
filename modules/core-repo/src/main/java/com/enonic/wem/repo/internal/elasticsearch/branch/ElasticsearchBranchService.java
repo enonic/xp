@@ -22,7 +22,7 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -90,7 +90,7 @@ public class ElasticsearchBranchService
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( ValueFilter.create().
                 fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                addValue( Value.newString( context.getBranch().getName() ) ).
+                addValue( ValueFactory.newString( context.getBranch().getName() ) ).
                 build() ).
             build();
 

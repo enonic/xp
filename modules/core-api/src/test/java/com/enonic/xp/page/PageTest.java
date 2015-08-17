@@ -2,6 +2,7 @@ package com.enonic.xp.page;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -14,10 +15,10 @@ public class PageTest
     @Test
     public void equals()
     {
-        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
         config1.addString( "some", "config" );
 
-        final PropertyTree config2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config2 = new PropertyTree( new CounterPropertyIdProvider() );
         config2.addString( "other", "config" );
 
         final Region region1 = Region.create().
@@ -25,12 +26,12 @@ public class PageTest
             add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             add( PartComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             build();
 
@@ -39,12 +40,12 @@ public class PageTest
             add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             add( PartComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             build();
 
@@ -116,7 +117,7 @@ public class PageTest
     @Test
     public void copy()
     {
-        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
         config1.addString( "some", "config" );
 
         final Region region1 = Region.create().
@@ -124,12 +125,12 @@ public class PageTest
             add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             add( PartComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
-                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
                 build() ).
             build();
 

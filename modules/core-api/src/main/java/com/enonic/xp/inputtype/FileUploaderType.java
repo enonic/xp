@@ -3,6 +3,7 @@ package com.enonic.xp.inputtype;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.util.Reference;
 
 final class FileUploaderType
@@ -18,7 +19,7 @@ final class FileUploaderType
     @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
-        return Value.newReference( Reference.from( value ) );
+        return ValueFactory.newReference( Reference.from( value ) );
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 @Beta
@@ -20,7 +21,7 @@ final class PageControllerType
     @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
-        return Value.newString( value );
+        return ValueFactory.newString( value );
     }
 
     @Override

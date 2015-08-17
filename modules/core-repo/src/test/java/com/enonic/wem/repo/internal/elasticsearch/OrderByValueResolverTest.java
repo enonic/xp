@@ -18,7 +18,7 @@ import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repository.Repository;
 
@@ -51,11 +51,11 @@ public class OrderByValueResolverTest
         throws Exception
     {
 
-        final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000.0 ) ) );
-        final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000.0 ) ) );
-        final String minusThousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -1000.0 ) ) );
-        final String minusHundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -100.0 ) ) );
-        final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 0.0 ) ) );
+        final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( 10000.0 ) ) );
+        final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( 100000.0 ) ) );
+        final String minusThousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( -1000.0 ) ) );
+        final String minusHundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( -100.0 ) ) );
+        final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( 0.0 ) ) );
         refresh();
 
         final SearchResult result = elasticsearchDao.find( ElasticsearchQuery.create().

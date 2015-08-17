@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -129,7 +130,7 @@ public class ComponentInstructionTest
 
     private Site createSite( final String id, final String name, final String contentTypeName )
     {
-        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
         rootDataSet.addString( "property1", "value1" );
 
         Page page = Page.create().

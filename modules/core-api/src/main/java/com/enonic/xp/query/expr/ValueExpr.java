@@ -1,11 +1,12 @@
 package com.enonic.xp.query.expr;
 
-import java.time.format.DateTimeFormatter;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
@@ -22,42 +23,42 @@ public final class ValueExpr
 
     public static ValueExpr string( final String value )
     {
-        return new ValueExpr( Value.newString( value ) );
+        return new ValueExpr( ValueFactory.newString( value ) );
     }
 
     public static ValueExpr number( final Number value )
     {
-        return new ValueExpr( Value.newDouble( value.doubleValue() ) );
+        return new ValueExpr( ValueFactory.newDouble( value.doubleValue() ) );
     }
 
     public static ValueExpr instant( final String value )
     {
-        return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
+        return new ValueExpr( ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) ) );
     }
 
     public static ValueExpr dateTime( final String value )
     {
-        return new ValueExpr( Value.newInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
+        return new ValueExpr( ValueFactory.newDateTime( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
     }
 
     public static ValueExpr localDateTime( final String value )
     {
-        return new ValueExpr( Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
+        return new ValueExpr( ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
     }
 
     public static ValueExpr time( final String value )
     {
-        return new ValueExpr( Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) ) );
+        return new ValueExpr( ValueFactory.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) ) );
     }
 
     public static ValueExpr date( final String value )
     {
-        return new ValueExpr( Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) ) );
+        return new ValueExpr( ValueFactory.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) ) );
     }
 
     public static ValueExpr geoPoint( final String value )
     {
-        return new ValueExpr( Value.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
+        return new ValueExpr( ValueFactory.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
     }
 
     public Value getValue()
@@ -74,7 +75,7 @@ public final class ValueExpr
             return this.value.asString();
         }
 
-        if ( type == ValueTypes.DATE_TIME  )
+        if ( type == ValueTypes.DATE_TIME )
         {
             return typecastFunction( "instant", this.value.asString() );
         }

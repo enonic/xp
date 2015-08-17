@@ -2,6 +2,7 @@ package com.enonic.xp.inputtype;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 final class GeoPointType
@@ -17,7 +18,7 @@ final class GeoPointType
     @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
-        return Value.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
+        return ValueFactory.newGeoPoint( com.enonic.xp.util.GeoPoint.from( value ) );
     }
 
     @Override

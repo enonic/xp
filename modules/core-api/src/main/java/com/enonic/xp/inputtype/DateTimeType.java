@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
 @Beta
@@ -27,11 +28,11 @@ final class DateTimeType
     {
         if ( useTimeZone( config ) )
         {
-            return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
+            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
         }
         else
         {
-            return Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
         }
     }
 

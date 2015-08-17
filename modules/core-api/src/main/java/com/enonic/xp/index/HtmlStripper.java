@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
@@ -28,11 +29,11 @@ final class HtmlStripper
         final ValueType valueType = value.getType();
         if ( valueType == ValueTypes.XML )
         {
-            return Value.newXml( strippedHtml );
+            return ValueFactory.newXml( strippedHtml );
         }
         else
         {
-            return Value.newString( strippedHtml );
+            return ValueFactory.newString( strippedHtml );
         }
     }
 

@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.ImageComponent;
@@ -15,7 +16,7 @@ public class RegionDataSerializerTest
 {
     private RegionDataSerializer regionSerializer = new RegionDataSerializer();
 
-    private PropertyIdProvider propertyIdProvider = new PropertyTree.PredictivePropertyIdProvider();
+    private PropertyIdProvider propertyIdProvider = new CounterPropertyIdProvider();
 
     @Test
     public void region()

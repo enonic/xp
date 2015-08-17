@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentQuery;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -58,7 +58,7 @@ public class ContentQueryTest
         builder.from( 10 );
         builder.size( 10 );
         builder.queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "name" ), ValueExpr.string( "testerson" ) ) ) );
-        builder.queryFilter( RangeFilter.create().from( Value.newDouble( 2.0 ) ).to( Value.newDouble( 10.0 ) ).build() );
+        builder.queryFilter( RangeFilter.create().from( ValueFactory.newDouble( 2.0 ) ).to( ValueFactory.newDouble( 10.0 ) ).build() );
 
         return builder.build();
     }

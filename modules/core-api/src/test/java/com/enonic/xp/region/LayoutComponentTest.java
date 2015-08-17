@@ -3,6 +3,7 @@ package com.enonic.xp.region;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -30,10 +31,10 @@ public class LayoutComponentTest
                     image( ContentId.from( "image" ) ).
                     name( "imageComponent" ).
                     build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), LayoutComponent.create().
-                        name( "name" ).
-                        descriptor( DescriptorKey.from( "descriptor" ) ).
-                        regions( null ).
-                        build(), new Object()};
+                    name( "name" ).
+                    descriptor( DescriptorKey.from( "descriptor" ) ).
+                    regions( null ).
+                    build(), new Object()};
             }
 
             @Override
@@ -68,7 +69,7 @@ public class LayoutComponentTest
     private LayoutComponent createLayouComponent()
     {
 
-        final PropertyTree config1 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
         config1.addString( "some", "config" );
 
         return LayoutComponent.create().

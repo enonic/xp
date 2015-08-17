@@ -9,8 +9,10 @@ import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
@@ -45,10 +47,10 @@ public class NodeOrderTest
     public void geo_distance_sorting()
         throws Exception
     {
-        final Node node1 = createNode( "node1", Value.newGeoPoint( GeoPoint.from( "80,80" ) ) );
-        final Node node2 = createNode( "node2", Value.newGeoPoint( GeoPoint.from( "81,80" ) ) );
-        final Node node3 = createNode( "node3", Value.newGeoPoint( GeoPoint.from( "82,80" ) ) );
-        final Node node4 = createNode( "node4", Value.newGeoPoint( GeoPoint.from( "83,80" ) ) );
+        final Node node1 = createNode( "node1", ValueFactory.newGeoPoint( GeoPoint.from( "80,80" ) ) );
+        final Node node2 = createNode( "node2", ValueFactory.newGeoPoint( GeoPoint.from( "81,80" ) ) );
+        final Node node3 = createNode( "node3", ValueFactory.newGeoPoint( GeoPoint.from( "82,80" ) ) );
+        final Node node4 = createNode( "node4", ValueFactory.newGeoPoint( GeoPoint.from( "83,80" ) ) );
 
         final NodeQuery distanceQuery = NodeQuery.create().
             query( QueryExpr.from( null, new DynamicOrderExpr(
@@ -70,10 +72,11 @@ public class NodeOrderTest
     public void score_sorting()
         throws Exception
     {
-        final Node node1 = createNode( "node1", Value.newString( "denne har en fisk" ) );
-        final Node node2 = createNode( "node2", Value.newString( "denne har fisk og ost" ) );
-        final Node node3 = createNode( "node3", Value.newString( "mens denne har både fisk, ost og pølse" ) );
-        final Node node4 = createNode( "node4", Value.newString( "denne vinner, siden den har alle sammen: fisk, ost, pølse og pai" ) );
+        final Node node1 = createNode( "node1", ValueFactory.newString( "denne har en fisk" ) );
+        final Node node2 = createNode( "node2", ValueFactory.newString( "denne har fisk og ost" ) );
+        final Node node3 = createNode( "node3", ValueFactory.newString( "mens denne har både fisk, ost og pølse" ) );
+        final Node node4 =
+            createNode( "node4", ValueFactory.newString( "denne vinner, siden den har alle sammen: fisk, ost, pølse og pai" ) );
 
         final FunctionExpr fulltextExpression =
             FunctionExpr.from( "fulltext", ValueExpr.string( "my-value" ), ValueExpr.string( "pai fisk pølse ost" ),
@@ -99,7 +102,7 @@ public class NodeOrderTest
 
     private Node createNode( final String name, final Value value )
     {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
         data.setProperty( "my-value", value );
 
         return createNode( CreateNodeParams.create().

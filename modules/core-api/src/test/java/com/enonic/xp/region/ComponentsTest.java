@@ -2,6 +2,7 @@ package com.enonic.xp.region;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -16,7 +17,7 @@ public class ComponentsTest
     @Test
     public void page()
     {
-        PropertyTree pageConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree pageConfig = new PropertyTree( new CounterPropertyIdProvider() );
         pageConfig.addLong( "pause", 200L );
 
         Page page = Page.create().
@@ -31,7 +32,7 @@ public class ComponentsTest
     @Test
     public void part()
     {
-        PropertyTree partConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree partConfig = new PropertyTree( new CounterPropertyIdProvider() );
         partConfig.addLong( "width", 150L );
 
         PartComponent partComponent = PartComponent.create().
@@ -41,7 +42,7 @@ public class ComponentsTest
             build();
 
         assertEquals( "my-part", partComponent.getName().toString() );
-        assertEquals( "partTemplateName", partComponent.getDescriptor().getName().toString() );
+        assertEquals( "partTemplateName", partComponent.getDescriptor().getName());
         assertEquals( "mainmodule", partComponent.getDescriptor().getApplicationKey().toString() );
         assertEquals( PartComponentType.INSTANCE, partComponent.getType() );
     }
@@ -49,7 +50,7 @@ public class ComponentsTest
     @Test
     public void layout()
     {
-        PropertyTree layoutConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree layoutConfig = new PropertyTree( new CounterPropertyIdProvider() );
         layoutConfig.addLong( "columns", 2L );
 
         LayoutComponent layoutComponent = LayoutComponent.create().
@@ -59,7 +60,7 @@ public class ComponentsTest
             build();
 
         assertEquals( "my-template", layoutComponent.getName().toString() );
-        assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName().toString() );
+        assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName() );
         assertEquals( "mainmodule", layoutComponent.getDescriptor().getApplicationKey().toString() );
     }
 }

@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -294,7 +295,7 @@ public class DuplicateNodeCommandTest
 
     private PropertyTree createDataWithReferences( final Reference... references )
     {
-        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
 
         for ( final Reference reference : references )
         {

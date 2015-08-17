@@ -18,33 +18,33 @@ import com.enonic.xp.util.Reference;
 @Beta
 public final class ValueTypes
 {
-    public static final ValueType<PropertySet> PROPERTY_SET = new ValueType.PropertySet();
+    public static final ValueType<PropertySet> PROPERTY_SET = new PropertySetValueType();
 
-    public static final ValueType<String> STRING = new ValueType.String();
+    public static final ValueType<String> STRING = new StringValueType();
 
-    public static final ValueType<String> XML = new ValueType.Xml();
+    public static final ValueType<String> XML = new XmlValueType();
 
-    public static final ValueType<LocalDate> LOCAL_DATE = new ValueType.LocalDate();
+    public static final ValueType<LocalDate> LOCAL_DATE = new LocalDateValueType();
 
-    public static final ValueType<LocalDateTime> LOCAL_DATE_TIME = new ValueType.LocalDateTime();
+    public static final ValueType<LocalDateTime> LOCAL_DATE_TIME = new LocalDateTimeValueType();
 
-    public static final ValueType<LocalTime> LOCAL_TIME = new ValueType.LocalTime();
+    public static final ValueType<LocalTime> LOCAL_TIME = new LocalTimeValueType();
 
-    public static final ValueType<Instant> DATE_TIME = new ValueType.DateTime();
+    public static final ValueType<Instant> DATE_TIME = new DateTimeValueType();
 
-    public static final ValueType<Long> LONG = new ValueType.Long();
+    public static final ValueType<Long> LONG = new LongValueType();
 
-    public static final ValueType<Double> DOUBLE = new ValueType.Double();
+    public static final ValueType<Double> DOUBLE = new DoubleValueType();
 
-    public static final ValueType<GeoPoint> GEO_POINT = new ValueType.GeoPoint();
+    public static final ValueType<GeoPoint> GEO_POINT = new GeoPointValueType();
 
-    public static final ValueType<Reference> REFERENCE = new ValueType.Reference();
+    public static final ValueType<Reference> REFERENCE = new ReferenceValueType();
 
-    public static final ValueType<Link> LINK = new ValueType.Link();
+    public static final ValueType<Link> LINK = new LinkValueType();
 
-    public static final ValueType<Boolean> BOOLEAN = new ValueType.Boolean();
+    public static final ValueType<Boolean> BOOLEAN = new BooleanValueType();
 
-    public static final ValueType<BinaryReference> BINARY_REFERENCE = new ValueType.BinaryReference();
+    public static final ValueType<BinaryReference> BINARY_REFERENCE = new BinaryReferenceValueType();
 
     private static final Map<String, ValueType> TYPES_BY_NAME = new HashMap<>();
 
@@ -76,5 +76,4 @@ public final class ValueTypes
     {
         return TYPES_BY_NAME.get( name );
     }
-
 }

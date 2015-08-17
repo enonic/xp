@@ -31,14 +31,13 @@ public abstract class PropertyVisitor
         for ( final Property property : propertySet.getProperties() )
         {
             final boolean valueTypeRestrictionSatisfied = valueType == null || valueType.equals( property.getValue().getType() );
-            final boolean propertyWithSetRestrictionSatisfied =
-                visitPropertiesWithSet || !property.getType().equals( ValueTypes.PROPERTY_SET );
+            final boolean propertyWithSetRestrictionSatisfied = visitPropertiesWithSet || ( property.getType() != ValueTypes.PROPERTY_SET );
             if ( valueTypeRestrictionSatisfied && propertyWithSetRestrictionSatisfied )
             {
                 visit( property );
             }
 
-            if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
+            if ( property.getType() == ValueTypes.PROPERTY_SET )
             {
                 if ( property.hasNotNullValue() )
                 {
