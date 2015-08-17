@@ -57,6 +57,8 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.BuildPropertyTreeParams;
+import com.enonic.xp.data.JsonToPropertyTreeTranslator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfoService;
@@ -632,6 +634,26 @@ public class ContentServiceImpl
         {
             return false;
         }
+    }
+
+    @Override
+    public PropertyTree buildPropertyTree( final BuildPropertyTreeParams buildPropertyTreeParams )
+    {
+        final ContentType contentType =
+            this.contentTypeService.getByName( GetContentTypeParams.from( buildPropertyTreeParams.getContentTypeName() ) );
+
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + buildPropertyTreeParams.getContentTypeName() + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( contentType.form().getFormItems() ).
+            mode( contentType.getName().isUnstructured()
+                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
+                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( buildPropertyTreeParams.getJsonTree() );
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )

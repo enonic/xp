@@ -20,6 +20,9 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.data.BuildPropertyTreeParams;
+import com.enonic.xp.data.JsonToPropertyTreeTranslator;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -140,6 +143,23 @@ public final class MixinServiceImpl
             map( this::getByName ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() ) );
+    }
+
+    @Override
+    public PropertyTree buildPropertyTree( final BuildPropertyTreeParams buildPropertyTreeParams )
+    {
+        final Mixin mixin = this.getByName( buildPropertyTreeParams.getMixinName() );
+
+        if ( mixin == null )
+        {
+            throw new IllegalArgumentException( "Mixin  not found [" + buildPropertyTreeParams.getMixinName() + "]" );
+        }
+
+        return JsonToPropertyTreeTranslator.create().
+            formItems( mixin.getFormItems() ).
+            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( buildPropertyTreeParams.getJsonTree() );
     }
 
     @Reference
