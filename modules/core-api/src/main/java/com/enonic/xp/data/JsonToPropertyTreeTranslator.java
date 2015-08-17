@@ -1,15 +1,10 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.data;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
