@@ -2,7 +2,6 @@
     var exports = {};
     var module = {};
     module.id = __.script.toString();
-    module.name = __.module.toString();
 
     Object.defineProperty(module, 'exports', {
         get: function () {

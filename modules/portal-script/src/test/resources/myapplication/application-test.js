@@ -1,5 +1,4 @@
 assert.assertEquals('myapplication:/application-test.js', module.id);
-assert.assertEquals('myapplication', module.name);
 assert.assertEquals(true, exports == module.exports);
 
 exports.val = 1;
