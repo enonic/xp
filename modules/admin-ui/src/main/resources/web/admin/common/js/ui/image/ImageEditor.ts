@@ -1397,7 +1397,6 @@ module api.ui.image {
                 // zoom is disabled in this case
                 return;
             }
-
             var zoomKnobEl = this.zoomKnob.getEl(),
                 zoomLineEl = this.zoomLine.getEl();
 
@@ -1405,9 +1404,7 @@ module api.ui.image {
                 knobPct = (this.zoomData.w / this.frameW - 1 ) / (this.maxZoom - 1),
                 knobNewX = Math.max(0, Math.min(sliderLength, knobPct * sliderLength));
 
-            if (!!knobNewX) {
-                zoomKnobEl.setLeftPx(knobNewX);
-            }
+            zoomKnobEl.setLeftPx(knobNewX);
         }
 
         private updateFrameHeight() {  // making bottom border and everything underneath the image draggable
