@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.script.function;
 
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class RequireFunction
@@ -43,7 +42,7 @@ public final class RequireFunction
 
         if ( name.startsWith( "/" ) )
         {
-            return this.script.resolve( "/app" + name );
+            return this.script.resolve( "/site" + name );
         }
 
         if ( name.startsWith( "./" ) )
@@ -52,11 +51,11 @@ public final class RequireFunction
         }
 
         final ResourceKey resolved = this.script.resolve( "../" + name );
-        if ( Resource.from( resolved ).exists() )
+        if ( this.executor.getResourceService().getResource( resolved ).exists() )
         {
             return resolved;
         }
 
-        return this.script.resolve( "/app/lib/" + name );
+        return this.script.resolve( "/site/lib/" + name );
     }
 }

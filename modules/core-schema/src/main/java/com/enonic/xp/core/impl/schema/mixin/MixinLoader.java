@@ -25,13 +25,13 @@ final class MixinLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( MixinLoader.class );
 
-    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/app/mixins/([^/]+)/([^/]+)\\.xml" );
+    private final static Pattern MIXIN_PATTERN = Pattern.compile( ".*/site/mixins/([^/]+)/([^/]+)\\.xml" );
 
     private final static String MIXIN_FILES = "*.xml";
 
     private final static String EXTENSION = ".xml";
 
-    private final static String MIXIN_DIRECTORY = "app/mixins";
+    private final static String MIXIN_DIRECTORY = "site/mixins";
 
     private final Bundle bundle;
 

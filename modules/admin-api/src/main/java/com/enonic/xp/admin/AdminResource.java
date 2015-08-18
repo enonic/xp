@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl;
+package com.enonic.xp.admin;
 
 public interface AdminResource
 {

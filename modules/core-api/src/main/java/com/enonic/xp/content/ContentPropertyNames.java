@@ -35,7 +35,7 @@ public class ContentPropertyNames
 
     public static final String MEDIA_FOCAL_POINT_Y = "y";
 
-    public static final String MEDIA_CROPPING = "cropping";
+    public static final String MEDIA_CROPPING = "cropPosition";
 
     public static final String MEDIA_CROPPING_TOP = "top";
 
@@ -44,6 +44,8 @@ public class ContentPropertyNames
     public static final String MEDIA_CROPPING_BOTTOM = "bottom";
 
     public static final String MEDIA_CROPPING_RIGHT = "right";
+
+    public static final String MEDIA_CROPPING_ZOOM = "zoom";
 
     public static final String ATTACHMENT = "attachment";
 

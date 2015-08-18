@@ -15,6 +15,7 @@ import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.portal.url.RestServiceUrlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
 @Component(immediate = true)
@@ -66,6 +67,12 @@ public final class PortalUrlServiceImpl
     public String serviceUrl( final ServiceUrlParams params )
     {
         return build( new ServiceUrlBuilder(), params );
+    }
+
+    @Override
+    public String restServiceUrl( final RestServiceUrlParams params )
+    {
+        return build( new RestServiceUrlBuilder(), params );
     }
 
     @Override

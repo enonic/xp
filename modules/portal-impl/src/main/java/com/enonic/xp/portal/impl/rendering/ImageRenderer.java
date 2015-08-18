@@ -64,7 +64,7 @@ public final class ImageRenderer
     {
         final ImageUrlParams params = new ImageUrlParams().portalRequest( portalRequest );
         params.id( id.toString() );
-        params.filter( "scalewidth(768)" );
+        params.scale( "width(768)" );
         return this.urlService.imageUrl( params );
     }
 

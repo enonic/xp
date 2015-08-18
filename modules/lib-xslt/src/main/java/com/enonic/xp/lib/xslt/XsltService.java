@@ -11,11 +11,14 @@ import com.enonic.xp.lib.xslt.function.XsltFunctionLibrary;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceService;
 
 public final class XsltService
     implements ScriptBean
 {
     private final Configuration configuration;
+
+    private ResourceService resourceService;
 
     public XsltService()
     {
@@ -35,7 +38,9 @@ public final class XsltService
     public XsltProcessor newProcessor()
     {
         final TransformerFactory factory = createTransformerFactory();
-        return new XsltProcessor( factory );
+        XsltProcessor processor = new XsltProcessor( factory );
+        processor.setResourceService( resourceService );
+        return processor;
     }
 
     public void setViewFunctionService( final Supplier<ViewFunctionService> viewFunctionService )
@@ -46,6 +51,7 @@ public final class XsltService
     @Override
     public void initialize( final BeanContext context )
     {
+        this.resourceService = context.getService( ResourceService.class ).get();
         final Supplier<ViewFunctionService> service = context.getService( ViewFunctionService.class );
         setViewFunctionService( service );
     }

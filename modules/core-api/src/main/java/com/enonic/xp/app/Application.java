@@ -25,7 +25,7 @@ public class Application
 
     public final static String X_SYSTEM_VERSION = "X-System-Version";
 
-    private static final String SITE_XML = "app/site.xml";
+    private static final String SITE_XML = "site/site.xml";
 
     private ApplicationKey applicationKey;
 

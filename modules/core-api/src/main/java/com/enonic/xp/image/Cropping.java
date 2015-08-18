@@ -7,13 +7,15 @@ import com.google.common.base.Preconditions;
 public final class Cropping
 {
 
-    private final int top;
+    private final double top;
 
-    private final int left;
+    private final double left;
 
-    private final int bottom;
+    private final double bottom;
 
-    private final int right;
+    private final double right;
+
+    private final double zoom;
 
     private Cropping( final Cropping.Builder builder )
     {
@@ -21,38 +23,44 @@ public final class Cropping
         this.left = builder.left;
         this.bottom = builder.bottom;
         this.right = builder.right;
+        this.zoom = builder.zoom;
         Preconditions.checkArgument( top >= 0, "Cropping top offset value must be positive : %s", top );
         Preconditions.checkArgument( left >= 0, "Cropping left offset value must be positive : %s", left );
         Preconditions.checkArgument( bottom > top, "Cropping bottom value must be bigger than top : %s", bottom );
         Preconditions.checkArgument( right > left, "Cropping right value must be bigger than left : %s", right );
     }
 
-    public int top()
+    public double top()
     {
         return top;
     }
 
-    public int left()
+    public double left()
     {
         return left;
     }
 
-    public int bottom()
+    public double bottom()
     {
         return bottom;
     }
 
-    public int right()
+    public double right()
     {
         return right;
     }
 
-    public int width()
+    public double zoom()
+    {
+        return zoom;
+    }
+
+    public double width()
     {
         return right - left;
     }
 
-    public int height()
+    public double height()
     {
         return bottom - top;
     }
@@ -104,13 +112,15 @@ public final class Cropping
 
     public static class Builder
     {
-        private int top;
+        private double top;
 
-        private int left;
+        private double left;
 
-        private int bottom;
+        private double bottom;
 
-        private int right;
+        private double right;
+
+        private double zoom;
 
         private Builder()
         {
@@ -118,6 +128,7 @@ public final class Cropping
             this.left = 0;
             this.bottom = 0;
             this.right = 0;
+            this.zoom = 0;
         }
 
         private Builder( final Cropping source )
@@ -126,29 +137,36 @@ public final class Cropping
             this.left = source.left;
             this.bottom = source.bottom;
             this.right = source.right;
+            this.zoom = source.zoom;
         }
 
-        public Builder left( final int left )
+        public Builder left( final double left )
         {
             this.left = left;
             return this;
         }
 
-        public Builder top( final int top )
+        public Builder top( final double top )
         {
             this.top = top;
             return this;
         }
 
-        public Builder right( final int right )
+        public Builder right( final double right )
         {
             this.right = right;
             return this;
         }
 
-        public Builder bottom( final int bottom )
+        public Builder bottom( final double bottom )
         {
             this.bottom = bottom;
+            return this;
+        }
+
+        public Builder zoom( final double zoom )
+        {
+            this.zoom = zoom;
             return this;
         }
 

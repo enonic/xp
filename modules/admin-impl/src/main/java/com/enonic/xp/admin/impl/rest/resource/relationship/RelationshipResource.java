@@ -12,14 +12,14 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.CreateRelationshipJson;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipCreateParams;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipListJson;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipUpdateParams;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.UpdateRelationshipJson;
+import com.enonic.xp.admin.rest.resource.ResourceConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.relationship.CreateRelationshipParams;
 import com.enonic.xp.relationship.RelationshipKey;

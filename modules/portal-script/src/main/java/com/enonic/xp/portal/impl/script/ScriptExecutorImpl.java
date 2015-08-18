@@ -20,6 +20,7 @@ import com.enonic.xp.portal.impl.script.service.ServiceRegistry;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -35,6 +36,8 @@ final class ScriptExecutorImpl
     private ClassLoader classLoader;
 
     private ServiceRegistry serviceRegistry;
+
+    private ResourceService resourceService;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -54,6 +57,11 @@ final class ScriptExecutorImpl
     public void setServiceRegistry( final ServiceRegistry serviceRegistry )
     {
         this.serviceRegistry = serviceRegistry;
+    }
+
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 
     public void initialize()
@@ -111,7 +119,7 @@ final class ScriptExecutorImpl
     {
         try
         {
-            final Resource resource = Resource.from( script );
+            final Resource resource = this.resourceService.getResource( script );
             final String source = InitScriptReader.getScript( resource.readString() );
 
             return this.engine.eval( source, context );
@@ -144,5 +152,11 @@ final class ScriptExecutorImpl
     public ServiceRegistry getServiceRegistry()
     {
         return serviceRegistry;
+    }
+
+    @Override
+    public ResourceService getResourceService()
+    {
+        return resourceService;
     }
 }

@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content.page;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.resource.Resources;
 
@@ -43,7 +46,12 @@ public abstract class AbstractDescriptorServiceTest
         this.modulesDir = this.temporaryFolder.newFolder( "modules" );
         ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir );
         this.applicationService = Mockito.mock( ApplicationService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
+        resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
     }
 
     protected final void createFile( final ResourceKey key, final String content )
@@ -80,7 +88,7 @@ public abstract class AbstractDescriptorServiceTest
 
     protected abstract String toDescriptorXml( DescriptorKey key );
 
-    protected final Application createModule( final String key )
+    protected final Application createApplication( final String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
@@ -91,12 +99,12 @@ public abstract class AbstractDescriptorServiceTest
         return application;
     }
 
-    protected final Applications createModules( final String... keys )
+    protected final Applications createApplications( final String... keys )
     {
         final List<Application> list = Lists.newArrayList();
         for ( final String key : keys )
         {
-            list.add( createModule( key ) );
+            list.add( createApplication( key ) );
         }
 
         final Applications applications = Applications.from( list );
@@ -105,13 +113,15 @@ public abstract class AbstractDescriptorServiceTest
         return applications;
     }
 
-    protected final void mockResources( final Application application, final String rootPath, final String filePattern, final boolean recurse,
-                                        final String... paths )
+    protected final void mockResources( final Application application, final String rootPath, final String filePattern,
+                                        final boolean recurse, final String... paths )
+        throws MalformedURLException
     {
         List<Resource> resourceList = new ArrayList<Resource>();
         for ( final String path : paths )
         {
-            resourceList.add( Resource.from( ResourceKey.from( application.getKey(), path ) ) );
+            final ResourceKey resourceKey = ResourceKey.from( application.getKey(), path );
+            resourceList.add( new Resource( resourceKey, new URL( "module:" + resourceKey.toString() ) ) );
         }
         Resources resources = Resources.from( resourceList );
 

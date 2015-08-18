@@ -11,6 +11,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 import com.enonic.xp.xml.DomHelper;
 
@@ -21,8 +22,10 @@ public class RenderXsltTest
 {
     @Before
     public void setUp()
+        throws Exception
     {
         addService( ViewFunctionService.class, Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
+        addService( ResourceService.class, this.resourceService );
     }
 
     private Object execute( final String method )
@@ -37,7 +40,7 @@ public class RenderXsltTest
     {
         final String result = cleanupXml( execute( "render" ).toString() );
         final String expected =
-            cleanupXml( Resources.toString( getClass().getResource( "/app/test/view/test-result.xml" ), Charsets.UTF_8 ) );
+            cleanupXml( Resources.toString( getClass().getResource( "/site/test/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }
 

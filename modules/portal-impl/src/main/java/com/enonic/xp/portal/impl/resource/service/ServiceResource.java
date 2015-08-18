@@ -20,7 +20,7 @@ public final class ServiceResource
     public ServiceControllerResource controller( @PathParam("module") final String module, @PathParam("service") final String service )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( module );
-        final ResourceKey scriptDir = ResourceKey.from( applicationKey, "app/services/" + service );
+        final ResourceKey scriptDir = ResourceKey.from( applicationKey, "site/services/" + service );
 
         final ServiceControllerResource resource = initResource( new ServiceControllerResource() );
         resource.scriptDir = scriptDir;

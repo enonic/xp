@@ -17,12 +17,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.module.ModuleJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
+import com.enonic.xp.admin.rest.resource.ResourceConstants;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;

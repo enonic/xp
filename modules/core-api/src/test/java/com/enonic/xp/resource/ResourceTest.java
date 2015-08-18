@@ -2,6 +2,8 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,7 +49,7 @@ public class ResourceTest
     {
         final ResourceKey key = ResourceKey.from( "mymodule:/a/b.txt" );
 
-        final Resource resource = Resource.from( key );
+        final Resource resource = new Resource( key, new URL( "module:" + key.toString() ) );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
@@ -61,10 +63,11 @@ public class ResourceTest
 
     @Test
     public void testGetResource_notFound()
+        throws MalformedURLException
     {
         final ResourceKey key = ResourceKey.from( "mymodule:/not/exists.txt" );
 
-        final Resource resource = Resource.from( key );
+        final Resource resource = new Resource( key, new URL( "module:" + key.toString() ) );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( -1, resource.getSize() );

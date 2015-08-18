@@ -14,12 +14,14 @@ public abstract class AbstractPageDescriptorServiceTest
     public final void setupService()
     {
         this.service = new PageDescriptorServiceImpl();
+        this.service.setApplicationService( this.applicationService );
+        this.service.setResourceService( this.resourceService );
     }
 
     @Override
     protected final ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "app/pages/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "site/pages/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     @Override

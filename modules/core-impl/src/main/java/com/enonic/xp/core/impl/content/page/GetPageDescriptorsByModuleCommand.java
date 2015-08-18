@@ -10,19 +10,16 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.Resources;
 
 final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
 {
-    private final static String PATH = "/app/pages";
+    private final static String PATH = "/site/pages";
 
     private ApplicationKey applicationKey;
 
     private ApplicationService applicationService;
-
-    private ResourceService resourceService;
 
     public PageDescriptors execute()
     {
@@ -39,12 +36,6 @@ final class GetPageDescriptorsByModuleCommand
     public final GetPageDescriptorsByModuleCommand applicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
-        return this;
-    }
-
-    public final GetPageDescriptorsByModuleCommand resourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
         return this;
     }
 

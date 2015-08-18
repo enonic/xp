@@ -38,18 +38,4 @@ public class XmlTestHelper
             throw new RuntimeException( e );
         }
     }
-
-    public String loadTestXml2( final String fileName )
-    {
-        try
-        {
-            final URL resource = resourceTestHelper.getTestResource( fileName );
-            final Document document = DomHelper.parse( resource.openStream() );
-            return DomHelper.serialize( document );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
 }

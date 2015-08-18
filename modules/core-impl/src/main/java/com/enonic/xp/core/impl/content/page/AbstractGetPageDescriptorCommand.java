@@ -8,6 +8,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
@@ -16,10 +17,12 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
 {
     private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
 
+    protected ResourceService resourceService;
+
     protected PageDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PageDescriptor.toResourceKey( key );
-        final Resource resource = Resource.from( resourceKey );
+        final Resource resource = resourceService.getResource( resourceKey );
 
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
@@ -64,6 +67,12 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
     public final T mixinService( final MixinService mixinService )
     {
         this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        return (T) this;
+    }
+
+    public final T resourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
         return (T) this;
     }
 }

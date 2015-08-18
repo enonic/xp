@@ -112,7 +112,7 @@ public class ApplicationServiceImplTest
 
     private Bundle mockBundle( final String key )
     {
-        List<String> resourcePaths = Arrays.asList( "app/site.xml", "app/parts/mypart/part.xml", "app/pages/mypage/page.xml" );
+        List<String> resourcePaths = Arrays.asList( "site/site.xml", "site/parts/mypart/part.xml", "site/pages/mypage/page.xml" );
         final Bundle bundle = Mockito.mock( Bundle.class );
         final List<URL> urlList = Lists.newArrayList();
         for ( String resourcePath : resourcePaths )

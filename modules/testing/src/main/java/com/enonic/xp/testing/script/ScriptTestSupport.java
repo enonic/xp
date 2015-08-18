@@ -1,5 +1,7 @@
 package com.enonic.xp.testing.script;
 
+import java.net.URL;
+
 import org.junit.Assert;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -18,7 +20,10 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourceUrlResolver;
 import com.enonic.xp.testing.resource.ResourceUrlRegistry;
 import com.enonic.xp.testing.resource.ResourceUrlTestHelper;
 
@@ -31,6 +36,8 @@ public abstract class ScriptTestSupport
     private final BundleContext bundleContext;
 
     protected final PortalRequest portalRequest;
+
+    protected final ResourceService resourceService;
 
     public ScriptTestSupport()
     {
@@ -51,7 +58,15 @@ public abstract class ScriptTestSupport
         Mockito.when( applicationService.getModule( getApplicationKey() ) ).thenReturn( application );
         Mockito.when( applicationService.getClassLoader( Mockito.any() ) ).thenReturn( getClass().getClassLoader() );
 
+        resourceService = Mockito.mock( ResourceService.class );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final URL url = ResourceUrlResolver.resolve( resourceKey );
+            return new Resource( resourceKey, url );
+        } );
+
         this.scriptService.setApplicationService( applicationService );
+        this.scriptService.setResourceService( resourceService );
         this.portalRequest = new PortalRequest();
     }
 
