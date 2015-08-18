@@ -6,7 +6,7 @@ module api.form.inputtype {
 
         input: api.form.Input;
 
-        inputConfig: { [name: string]: string[]; };
+        inputConfig: { [element: string]: { [name: string]: string }[]; };
 
         parentDataPath: api.data.PropertyPath;
     }
