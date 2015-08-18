@@ -15,17 +15,6 @@
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.10.0</bundle>
   <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
 
-  <!-- Blueprint bundles -->
-  <bundle level="20">org.ow2.asm:asm-all:5.0.3</bundle>
-  <bundle level="20">org.apache.aries:org.apache.aries.util:1.1.0</bundle>
-  <bundle level="20">org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1</bundle>
-  <bundle level="20">org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0</bundle>
-  <bundle level="20">org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0</bundle>
-
   <!-- Jetty bundles -->
   <bundle level="25">org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0</bundle>
   <bundle level="25">org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1</bundle>
