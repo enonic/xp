@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
@@ -77,6 +78,28 @@ public class CreateContentHandlerTest
 
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
+
+        final PropertySet pSet1 = new PropertySet();
+        final PropertySet pSet2 = new PropertySet();
+        pSet2.addDouble( "f", 3.6 );
+        pSet2.addBoolean( "g", true );
+        final PropertyTree data = new PropertyTree();
+        data.addLong( "a", 1L );
+        data.addLong( "b", 2L );
+        data.addStrings( "c", "1", "2" );
+        pSet1.addSet( "e", pSet2 );
+        data.addSet( "d", pSet1 );
+
+        Mockito.when( this.contentService.buildPropertyTree( Mockito.any() ) ).thenReturn( data );
+        Mockito.when( this.mixinService.buildPropertyTree( Mockito.any() ) ).thenReturn( extraData );
+
+        /*Mockito.when( this.contentService.buildPropertyTree( Mockito.any() ) ).thenReturn( JsonToPropertyTreeTranslator.create().
+            formItems( contentType.form().getFormItems() ).
+            mode( contentType.getName().isUnstructured()
+                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
+                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
+            build().
+            translate( new ObjectMapper().valueToTree(  ) ) );*/
 
         final Mixin mixin = Mixin.create().
             name( "com.enonic.myapplication:myschema" ).
