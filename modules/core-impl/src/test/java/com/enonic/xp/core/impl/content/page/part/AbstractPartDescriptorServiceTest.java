@@ -18,6 +18,7 @@ public abstract class AbstractPartDescriptorServiceTest
         this.service = new PartDescriptorServiceImpl();
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
+        this.service.setMixinService( this.mixinService );
     }
 
     @Override

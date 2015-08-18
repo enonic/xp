@@ -9,7 +9,6 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentQueryResultJson
     extends AbstractContentQueryResultJson<ContentJson>
@@ -42,11 +41,9 @@ public class ContentQueryResultJson
         }
 
         @Override
-        public Builder addContent( final Content content,
-                                   final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
+        public Builder addContent( final Content content )
         {
-            this.contents.add(
-                new ContentJson( content, iconUrlResolver, inlineMixinsToFormItemsTransformer, contentPrincipalsResolver ) );
+            this.contents.add( new ContentJson( content, iconUrlResolver, contentPrincipalsResolver ) );
             return this;
         }
 

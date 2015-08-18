@@ -13,7 +13,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -35,7 +34,6 @@ public final class ContentJson
     private final boolean inheritPermissions;
 
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
-                        final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                         final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         super( content, iconUrlResolver );
@@ -60,8 +58,10 @@ public final class ContentJson
         final List<AccessControlEntryJson> jsonList = new ArrayList<>();
         for ( AccessControlEntry entry : acl )
         {
-            if(principals.getPrincipal( entry.getPrincipal() ) != null)
-               jsonList.add( new AccessControlEntryJson( entry, principals.getPrincipal( entry.getPrincipal() ) ) );
+            if ( principals.getPrincipal( entry.getPrincipal() ) != null )
+            {
+                jsonList.add( new AccessControlEntryJson( entry, principals.getPrincipal( entry.getPrincipal() ) ) );
+            }
         }
         return jsonList;
     }
