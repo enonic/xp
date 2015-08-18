@@ -17,7 +17,7 @@ import com.enonic.xp.widget.WidgetDescriptors;
 final class GetWidgetDescriptorsByInterfaceCommand
     extends AbstractGetWidgetDescriptorCommand<GetWidgetDescriptorsByInterfaceCommand>
 {
-    private final static String PATH = "ui/widgets";
+    private final static String PATH = "/ui/widgets";
 
     private String interfaceName;
 

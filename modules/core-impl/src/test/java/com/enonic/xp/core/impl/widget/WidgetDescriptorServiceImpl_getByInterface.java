@@ -14,13 +14,13 @@ public class WidgetDescriptorServiceImpl_getByInterface
     public void getByInterface()
         throws Exception
     {
-        final Applications applications = createModules( "foomodule", "barmodule" );
+        final Applications applications = createApplications( "foomodule", "barmodule" );
         createDescriptors( "foomodule:foomodule-widget-descr", "barmodule:barmodule-widget-descr" );
 
-        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/widgets", "*", false,
-                       "widgets/foomodule-widget-descr" );
-        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/widgets", "*", false,
-                       "widgets/barmodule-widget-descr" );
+        mockResources( applications.getModule( ApplicationKey.from( "foomodule" ) ), "/ui/widgets", "*", false,
+                       "/ui/widgets/foomodule-widget-descr" );
+        mockResources( applications.getModule( ApplicationKey.from( "barmodule" ) ), "/ui/widgets", "*", false,
+                       "/ui/widgets/barmodule-widget-descr" );
 
         WidgetDescriptors result = this.service.getByInterface( "com.enonic.xp.my-interface" );
         Assert.assertNotNull( result );
