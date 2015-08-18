@@ -9,6 +9,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
 import com.enonic.xp.script.ScriptValue;
@@ -68,6 +69,6 @@ public final class LocaleScriptBean
     public void initialize( final BeanContext context )
     {
         this.localeService = context.getService( LocaleService.class ).get();
-        this.request = context.getRequest().get();
+        this.request = PortalRequestAccessor.get();
     }
 }

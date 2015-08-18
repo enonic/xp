@@ -6,10 +6,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.script.ScriptValue;
 
 public abstract class AbstractUrlHandler
     implements ScriptBean
@@ -90,7 +91,7 @@ public abstract class AbstractUrlHandler
     @Override
     public final void initialize( final BeanContext context )
     {
-        this.request = context.getRequest().get();
+        this.request = PortalRequestAccessor.get();
         this.urlService = context.getService( PortalUrlService.class ).get();
     }
 }
