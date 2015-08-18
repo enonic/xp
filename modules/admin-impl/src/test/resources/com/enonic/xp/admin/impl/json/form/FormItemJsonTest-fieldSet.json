@@ -22,7 +22,11 @@
       {
         "Input": {
           "config": {
-            "timezone": ["true"]
+            "timezone": [
+              {
+                "value": "true"
+              }
+            ]
           },
           "customText": null,
           "helpText": null,
@@ -32,6 +36,35 @@
           "label": "myDate",
           "maximizeUIInputWidth": false,
           "name": "myDate",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      },
+      {
+        "Input": {
+          "config": {
+            "option": [
+              {
+                "value": "label1",
+                "@value": "value1"
+              },
+              {
+                "value": "label2",
+                "@value": "value2"
+              }
+            ]
+          },
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": "CheckBox",
+          "label": "myOptions",
+          "maximizeUIInputWidth": false,
+          "name": "myOptions",
           "occurrences": {
             "maximum": 1,
             "minimum": 0

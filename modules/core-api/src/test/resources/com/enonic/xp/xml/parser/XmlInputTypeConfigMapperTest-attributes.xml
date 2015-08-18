@@ -1,0 +1,4 @@
+<config>
+  <other a="1">world</other>
+  <other a="1" b="2">world</other>
+</config>

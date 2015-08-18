@@ -1,0 +1,19 @@
+<config>
+  <contentType>test</contentType>
+  <myContentType>test</myContentType>
+
+  <mixinType>test</mixinType>
+  <myMixinType>test</myMixinType>
+
+  <relationshipType>test</relationshipType>
+  <myRelationshipType>test</myRelationshipType>
+
+  <other1 mixinType="test"/>
+  <other2 contentType="test"/>
+  <other3 relationshipType="test"/>
+
+  <other4 myMixinType="test"/>
+  <other5 myContentType="test"/>
+  <other6 myRelationshipType="test"/>
+
+</config>

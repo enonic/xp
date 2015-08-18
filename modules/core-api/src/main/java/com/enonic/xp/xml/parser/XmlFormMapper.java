@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
@@ -25,12 +24,9 @@ public final class XmlFormMapper
 {
     private final ApplicationKey currentApplication;
 
-    private final ApplicationRelativeResolver relativeResolver;
-
     public XmlFormMapper( final ApplicationKey currentApplication )
     {
         this.currentApplication = currentApplication;
-        this.relativeResolver = new ApplicationRelativeResolver( this.currentApplication );
     }
 
     public Form buildForm( final DomElement root )
@@ -143,41 +139,6 @@ public final class XmlFormMapper
 
     private void buildConfig( final Input.Builder builder, final DomElement root )
     {
-        if ( root == null )
-        {
-            return;
-        }
-
-        for ( final DomElement child : root.getChildren( "property" ) )
-        {
-            final String name = child.getAttribute( "name" );
-            final String value = child.getValue();
-
-            if ( !Strings.isNullOrEmpty( name ) && !Strings.isNullOrEmpty( value ) )
-            {
-                builder.inputTypeConfig( name, resolveConfigValue( name, value ) );
-            }
-        }
-    }
-
-    private String resolveConfigValue( final String name, final String value )
-    {
-        final String lowerCasedName = name.toLowerCase();
-        if ( lowerCasedName.endsWith( "contenttype" ) )
-        {
-            return this.relativeResolver.toContentTypeName( value ).toString();
-        }
-        else if ( lowerCasedName.endsWith( "mixintype" ) )
-        {
-            return this.relativeResolver.toMixinName( value ).toString();
-        }
-        else if ( lowerCasedName.endsWith( "relationshiptype" ) )
-        {
-            return this.relativeResolver.toRelationshipTypeName( value ).toString();
-        }
-        else
-        {
-            return value;
-        }
+        builder.inputTypeConfig( new XmlInputTypeConfigMapper( this.currentApplication ).build( root ) );
     }
 }

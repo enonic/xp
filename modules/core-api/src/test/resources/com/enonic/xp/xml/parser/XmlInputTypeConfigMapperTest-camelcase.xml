@@ -1,0 +1,19 @@
+<config>
+  <content-type>test</content-type>
+  <my-content-type>test</my-content-type>
+
+  <mixin-type>test</mixin-type>
+  <my-mixin-type>test</my-mixin-type>
+
+  <my-relationship-type>test</my-relationship-type>
+  <my-relationship-type>test</my-relationship-type>
+
+  <other1 mixin-type="test"/>
+  <other2 content-type="test"/>
+  <other3 relationship-type="test"/>
+
+  <other4 my-mixin-type="test"/>
+  <other5 my-content-type="test"/>
+  <other6 my-relationship-type="test"/>
+
+</config>

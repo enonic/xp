@@ -11,6 +11,7 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.support.JsonTestHelper;
 
 public class FormItemJsonTest
@@ -91,7 +92,11 @@ public class FormItemJsonTest
             label( "My field set" ).
             addFormItem( Input.create().name( "myTextLine" ).label( "myTextLine" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypeName.DATE ).
-                inputTypeConfig( "timezone", "true" ).build() ).
+                inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).build() ).
+            addFormItem( Input.create().name( "myOptions" ).label( "myOptions" ).inputType( InputTypeName.CHECK_BOX ).
+                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
+                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
+                build() ).
             build() );
 
         JsonNode json = jsonTestHelper.objectToJson( fieldSetJson );

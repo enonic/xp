@@ -4,13 +4,14 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
 public class InputJson
@@ -89,21 +90,36 @@ public class InputJson
 
     public ObjectNode getConfig()
     {
+        final InputTypeConfig config = this.input.getInputTypeConfig();
+
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        for ( final Map.Entry<String, Collection<String>> entry : this.input.getInputTypeConfig().asMap().entrySet() )
+        for ( final String name : config.getNames() )
         {
-            json.set( entry.getKey(), toJson( entry.getValue() ) );
+            json.set( name, toJson( config.getProperties( name ) ) );
         }
 
         return json;
     }
 
-    private static JsonNode toJson( final Collection<String> values )
+    private static ArrayNode toJson( final Collection<InputTypeProperty> properties )
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        for ( final String value : values )
+        for ( final InputTypeProperty property : properties )
         {
-            json.add( value );
+            json.add( toJson( property ) );
+        }
+
+        return json;
+    }
+
+    private static ObjectNode toJson( final InputTypeProperty property )
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        json.put( "value", property.getValue() );
+
+        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
+        {
+            json.put( "@" + attribute.getKey(), attribute.getValue() );
         }
 
         return json;

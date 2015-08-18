@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Joiner;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
@@ -74,10 +72,5 @@ public class XmlContentTypeParserTest
 
         final InputTypeConfig config = input.getInputTypeConfig();
         assertNotNull( config );
-
-        assertEquals( "true", config.getValue( "timezone" ) );
-        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someContentType" ) ) );
-        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someMixinType" ) ) );
-        assertEquals( "myapp:test1,myapplication:test2", Joiner.on( "," ).join( config.getValues( "someRelationshipType" ) ) );
     }
 }

@@ -24,9 +24,8 @@ import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeLoader;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Thumbnail;
-import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -108,24 +107,6 @@ public class ContentServiceImplTest_update
 
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
-    }
-
-    private ContentType createTestContentType()
-    {
-        return ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( "myContentType" ).
-            addFormItem( Input.create().
-                inputType( InputTypeName.DATE_TIME ).
-                name( "myDateTime" ).
-                inputTypeConfig( "timezone", "true" ).
-                build() ).
-            addFormItem( Input.create().
-                inputType( InputTypeName.CONTENT_SELECTOR ).
-                name( "myReference" ).
-                inputTypeConfig( "allowedContentType", ContentTypeName.from( "myContentType" ).toString() ).
-                build() ).
-            build();
     }
 
     @Test

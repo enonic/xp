@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
 public final class Input
@@ -334,9 +335,15 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeConfig( final String name, final String... values )
+        public Builder inputTypeProperty( final InputTypeProperty property )
         {
-            this.inputTypeConfig.property( name, values );
+            this.inputTypeConfig.property( property );
+            return this;
+        }
+
+        public Builder inputTypeConfig( final InputTypeConfig config )
+        {
+            this.inputTypeConfig.config( config );
             return this;
         }
 

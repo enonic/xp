@@ -27,7 +27,7 @@ final class ComboBoxType
         validateType( property, ValueTypes.STRING );
 
         final String valueAsString = property.getString();
-        final boolean flag = ( valueAsString != null ) && config.hasValue( "option.value", valueAsString );
+        final boolean flag = ( valueAsString != null ) && config.hasAttributeValue( "option", "value", valueAsString );
         validateValue( property, flag, "Value is not a valid option" );
     }
 }
