@@ -2,10 +2,10 @@ package com.enonic.xp.xml.parser;
 
 import java.io.InputStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -99,9 +99,10 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    @Ignore("Make camel-case work")
     public void parseCamelCase()
     {
+        System.out.println( CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, "other-test" ));
+
         final InputTypeConfig config = build( "camelcase.xml" );
         assertNotNull( config );
         assertEquals( 12, config.getSize() );

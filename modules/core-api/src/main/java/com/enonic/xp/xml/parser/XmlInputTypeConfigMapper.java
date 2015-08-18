@@ -2,6 +2,8 @@ package com.enonic.xp.xml.parser;
 
 import org.w3c.dom.Attr;
 
+import com.google.common.base.CaseFormat;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -60,6 +62,11 @@ final class XmlInputTypeConfigMapper
 
     private String resolveName( final String name )
     {
+        if ( name.contains( "-" ) )
+        {
+            return CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, name );
+        }
+
         return name;
     }
 

@@ -5,7 +5,7 @@
   <mixin-type>test</mixin-type>
   <my-mixin-type>test</my-mixin-type>
 
-  <my-relationship-type>test</my-relationship-type>
+  <relationship-type>test</relationship-type>
   <my-relationship-type>test</my-relationship-type>
 
   <other1 mixin-type="test"/>
