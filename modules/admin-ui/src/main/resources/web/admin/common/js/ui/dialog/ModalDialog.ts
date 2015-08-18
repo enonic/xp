@@ -147,6 +147,10 @@ module api.ui.dialog {
             return new DialogButton(this.getCancelAction());
         }
 
+        protected getResponsiveItem(): api.ui.responsive.ResponsiveItem {
+            return this.responsiveItem;
+        }
+
         getButtonRow(): ModalDialogButtonRow {
             return this.buttonRow;
         }
