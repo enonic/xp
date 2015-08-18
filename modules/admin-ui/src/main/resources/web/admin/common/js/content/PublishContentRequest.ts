@@ -65,13 +65,13 @@ module api.content {
                 break;
             default: // > 1
                 if (succeeded > 0) {
-                    api.notify.showSuccess('\"' + succeeded + '\" items were published');
+                    api.notify.showSuccess(succeeded + ' items were published');
                 }
                 if (deleted > 0) {
-                    api.notify.showSuccess('\"' + deleted + '\" pending items were deleted');
+                    api.notify.showSuccess(deleted + ' pending items were deleted');
                 }
                 if (failed > 0) {
-                    api.notify.showError('\"' + failed + '\" items failed to publish');
+                    api.notify.showError(failed + ' items failed to publish');
                 }
             }
         }
