@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.page;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.page.PageTemplateSpec;
+import com.enonic.xp.page.PageTemplateFilter;
 import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -22,8 +22,7 @@ final class GetDefaultPageTemplateCommand
             site( site ).
             contentService( contentService ).
             execute();
-        final PageTemplateSpec spec = PageTemplateSpec.create().canRender( contentType ).build();
-        final PageTemplates supportedTemplates = pageTemplates.filter( spec );
+        final PageTemplates supportedTemplates = pageTemplates.filter( PageTemplateFilter.canRender( contentType ) );
         return supportedTemplates.first();
     }
 

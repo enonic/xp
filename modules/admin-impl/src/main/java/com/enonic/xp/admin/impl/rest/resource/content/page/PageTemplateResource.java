@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.page;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -26,9 +27,9 @@ import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateFilter;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
-import com.enonic.xp.page.PageTemplateSpec;
 import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -85,7 +86,7 @@ public final class PageTemplateResource
     {
         final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
-        final PageTemplateSpec spec = PageTemplateSpec.create().canRender( ContentTypeName.from( contentTypeName ) ).build();
+        final Predicate<PageTemplate> spec = PageTemplateFilter.canRender( ContentTypeName.from( contentTypeName ) );
         final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( filteredPageTemplates.getSize() ).
