@@ -205,14 +205,14 @@ module api.content.page {
             var newControllerKey = setController.descriptor ? setController.descriptor.getKey() : null;
             var controllerChanged = !api.ObjectHelper.equals(oldControllerKey, newControllerKey);
 
-            this.setControllerData(setController);
-
             if (setController.descriptor) {
                 this.setMode(PageMode.FORCED_CONTROLLER);
             }
             else {
                 this.setMode(PageMode.NO_CONTROLLER);
             }
+
+            this.setControllerData(setController);
 
             if (!this.isPageTemplate()) {
                 this.setCustomized(true);
@@ -275,14 +275,14 @@ module api.content.page {
             var newTemplateKey = setTemplate.template ? setTemplate.template.getKey() : null;
             var templateOrModeChanged = !api.ObjectHelper.equals(oldTemplateKey, newTemplateKey) || this.hasController();
 
-            this.setTemplateData(setTemplate, ignoreRegionChanges);
-
             if (setTemplate.template) {
                 this.setMode(PageMode.FORCED_TEMPLATE);
             }
             else {
                 this.setMode(PageMode.AUTOMATIC);
             }
+
+            this.setTemplateData(setTemplate, ignoreRegionChanges);
 
             if (templateOrModeChanged) {
                 this.setIgnorePropertyChanges(true);
