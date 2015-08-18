@@ -9,6 +9,8 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -119,12 +121,29 @@ public class ModifyContentHandlerTest
         final Mixin mixin2 = Mixin.create().
             name( "com.enonic.myapplication:other" ).
             addFormItem( Input.create().
-                label( "name" ).
-                name( "name" ).
-                inputType( InputTypeName.TEXT_LINE ).
+                label( "a" ).
+                name( "a" ).
+                inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
         Mockito.when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
+
+        final PropertySet pSet1 = new PropertySet();
+        final PropertySet pSet2 = new PropertySet();
+        pSet1.addBoolean( "d", true );
+        pSet2.addBoolean( "d", false );
+        pSet2.addStrings( "e", "3", "42", "5" );
+        pSet2.addLong( "f", 2L );
+        final PropertyTree data = new PropertyTree();
+        data.addDouble( "a", 2.0 );
+        data.addString( "b", "2" );
+        data.addSets( "c", pSet1, pSet2 );
+        data.addString( "z", "99" );
+        Mockito.when( this.contentService.buildPropertyTree( Mockito.any() ) ).thenReturn( data );
+
+        final PropertyTree extraData = new PropertyTree();
+        extraData.addDouble( "a", 1.0 );
+        Mockito.when( this.mixinService.buildPropertyTree( Mockito.any() ) ).thenReturn( extraData );
     }
 
     private Content invokeUpdate( final UpdateContentParams params )
