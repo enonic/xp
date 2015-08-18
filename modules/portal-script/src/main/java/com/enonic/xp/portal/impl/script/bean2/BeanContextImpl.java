@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.script.bean2;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.resource.ResourceKey;
 

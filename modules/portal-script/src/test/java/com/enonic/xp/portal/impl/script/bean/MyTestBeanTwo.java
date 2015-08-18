@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.script.bean;
 
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public class MyTestBeanTwo
     implements ScriptBean

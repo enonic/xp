@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.bean;
+package com.enonic.xp.script.bean;
 
 import java.util.function.Supplier;
 

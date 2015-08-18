@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script.function;
 
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.bean2.BeanContextImpl;

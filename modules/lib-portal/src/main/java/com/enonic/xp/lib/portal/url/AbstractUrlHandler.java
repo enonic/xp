@@ -7,8 +7,8 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 

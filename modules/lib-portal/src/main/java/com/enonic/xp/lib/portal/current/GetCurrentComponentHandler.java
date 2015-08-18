@@ -3,8 +3,8 @@ package com.enonic.xp.lib.portal.current;
 import com.enonic.xp.lib.content.mapper.ComponentMapper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.region.Component;
 
 public final class GetCurrentComponentHandler

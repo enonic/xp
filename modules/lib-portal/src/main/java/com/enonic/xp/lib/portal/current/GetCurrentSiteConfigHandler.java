@@ -5,8 +5,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.Site;
 
 public final class GetCurrentSiteConfigHandler
