@@ -74,7 +74,7 @@ var expectedJson = {
                 "a": 1.0
             },
             "other": {
-                "name": "test"
+                "a": 1.0
             }
         }
     }

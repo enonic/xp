@@ -5,6 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.data.BuildPropertyTreeParams;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
@@ -76,4 +78,5 @@ public interface ContentService
 
     boolean contentExists( ContentPath contentPath );
 
+    PropertyTree buildPropertyTree( final BuildPropertyTreeParams buildPropertyTreeParams );
 }

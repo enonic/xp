@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.data;
 
 import java.net.URL;
 
@@ -7,9 +7,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
