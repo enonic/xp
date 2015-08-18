@@ -353,6 +353,14 @@ module api.dom {
             return this.setBottom(value + "px");
         }
 
+        getLeft(): string {
+            return this.el.style.left;
+        }
+
+        getLeftPx(): number {
+            return parseFloat(this.getLeft());
+        }
+
         setLeftPx(value: number): ElementHelper {
             return this.setLeft(value + "px");
         }
