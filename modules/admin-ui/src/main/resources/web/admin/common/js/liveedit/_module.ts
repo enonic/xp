@@ -34,6 +34,7 @@
 ///<reference path='ComponentPlaceholder.ts' />
 ///<reference path='ComponentView.ts' />
 ///<reference path='PagePlaceholder.ts' />
+///<reference path='PagePlaceholderInfoBlock.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 

@@ -523,30 +523,19 @@ module app.wizard {
             this.contextWindowToggler.setVisible(false);
             this.cycleViewModeButton.setVisible(false);
 
-            var renderablePromises = [
-                new GetNearestSiteRequest(content.getContentId()).sendAndParse(),
-                new IsRenderableRequest(content.getContentId()).sendAndParse()
-            ];
 
-            wemQ.all(renderablePromises).
-                spread((parentSite: Site, renderable: boolean) => {
-                    // content is renderable in Live Edit if: supported by page-template, or is Site, or under site with applications containing page descriptors
-                    renderable = renderable || content.isSite();
+            new GetNearestSiteRequest(content.getContentId()).sendAndParse().
+                then((parentSite: Site) => {
 
-                    if (!renderable && (parentSite && (parentSite.getApplicationKeys().length > 0))) {
-                        // content not renderable, but inside a site => check if Site has controllers to select from (customized)
-                        new GetPageDescriptorsByApplicationsRequest(parentSite.getApplicationKeys()).sendAndParse().
-                            then((pageDescriptors: PageDescriptor[]): void => {
-                                this.setupWizardLiveEdit(pageDescriptors.length > 0);
-                            }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
-
-                    } else {
-                        this.setupWizardLiveEdit(renderable);
+                    if (parentSite || content.isSite()) {
+                        this.setupWizardLiveEdit(true);
+                    }
+                    else {
+                        this.setupWizardLiveEdit(false);
                     }
 
                 }).catch((reason: any) => {
+                    this.setupWizardLiveEdit(false);
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
 
