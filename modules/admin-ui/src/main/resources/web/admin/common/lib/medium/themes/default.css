@@ -48,6 +48,11 @@
     background: #242424;
     color: #ccc;
     box-sizing: border-box; }
+
+.medium-editor-toolbar-form-anchor input[type="text"].medium-editor-toolbar-anchor-input:focus {
+  color: #ccc;
+}
+
   .medium-editor-toolbar-form-anchor a {
     color: #fff; }
 
