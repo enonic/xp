@@ -103,6 +103,9 @@ module api.ui.image {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
                     this.updateImageDimensions();
+                    // select element for bordering
+                    var borderedEl = this.imgW < this.frameW ? this.canvas : this.frame;
+                    borderedEl.addClass("bordered");
                 }
             });
 

@@ -71,12 +71,13 @@
   }
 
   &.selected, &.edit-mode {
-    .image-frame {
+
+    div.bordered {
       border: 1px solid @admin-input-blue;
       .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
+
       .image-canvas {
         border: none;
-        box-shadow: none;
       }
     }
   }
@@ -113,6 +114,7 @@
     .image-canvas {
       position: absolute;
       border: 1px solid @admin-white;
+      .box-shadow(none);
 
       .image-bg {
         vertical-align: top; // to remove padding below the image
