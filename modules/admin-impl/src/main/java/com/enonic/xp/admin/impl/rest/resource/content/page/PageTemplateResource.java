@@ -136,9 +136,9 @@ public final class PageTemplateResource
 
                 for ( final PageTemplate pageTemplate : pageTemplates )
                 {
-                    if ( pageTemplate.canRender( content.getType() ) )
+                    if ( pageTemplate.canRender( content.getType() ) && pageTemplate.hasPage() )
                     {
-                        return pageTemplate.hasPage();
+                        return true;
                     }
                 }
 
