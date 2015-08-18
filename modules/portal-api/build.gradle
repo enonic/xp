@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web-api' )
+    compile project( ':script-api' )
     testCompile project( path: ':web-api', configuration: 'testOutput' )
 }
 

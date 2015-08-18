@@ -18,9 +18,9 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistryImpl;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
-import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 

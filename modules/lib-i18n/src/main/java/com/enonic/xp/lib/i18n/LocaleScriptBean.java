@@ -11,7 +11,7 @@ import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 
 public final class LocaleScriptBean
     implements ScriptBean

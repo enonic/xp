@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.script.serializer;
+package com.enonic.xp.script.serializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

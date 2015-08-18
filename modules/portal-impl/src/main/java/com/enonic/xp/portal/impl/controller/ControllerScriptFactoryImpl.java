@@ -4,7 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;
 import com.enonic.xp.resource.ResourceKey;
 

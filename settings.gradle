@@ -8,6 +8,8 @@ include 'core-export'
 include 'core-impl'
 include 'core-itest'
 
+include 'script-api'
+
 include 'web-api'
 include 'web-impl'
 include 'web-jaxrs'

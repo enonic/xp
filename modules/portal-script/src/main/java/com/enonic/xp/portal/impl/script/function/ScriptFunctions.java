@@ -6,7 +6,7 @@ import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.bean2.BeanContextImpl;
 import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptFunctions

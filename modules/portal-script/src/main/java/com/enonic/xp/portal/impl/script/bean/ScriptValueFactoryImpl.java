@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.script.bean;
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 
 public final class ScriptValueFactoryImpl
     implements ScriptValueFactory

@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script.bean;
 
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 
 public interface ScriptValueFactory
 {

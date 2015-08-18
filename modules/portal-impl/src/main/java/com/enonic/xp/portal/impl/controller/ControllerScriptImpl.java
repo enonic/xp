@@ -8,8 +8,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
 
 final class ControllerScriptImpl
     implements ControllerScript

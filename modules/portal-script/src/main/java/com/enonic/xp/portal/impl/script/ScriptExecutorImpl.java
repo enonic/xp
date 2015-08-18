@@ -17,7 +17,7 @@ import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
 import com.enonic.xp.portal.impl.script.function.ScriptFunctions;
 import com.enonic.xp.portal.impl.script.service.ServiceRegistry;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;

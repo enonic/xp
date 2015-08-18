@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.script.bean;
 import org.junit.Test;
 
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
-import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.Assert.*;

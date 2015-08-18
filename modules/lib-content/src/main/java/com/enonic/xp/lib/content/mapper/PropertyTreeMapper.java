@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.script.serializer.MapGenerator;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class PropertyTreeMapper
     implements MapSerializable

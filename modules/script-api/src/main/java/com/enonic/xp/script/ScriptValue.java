@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.script;
+package com.enonic.xp.script;
 
 import java.util.List;
 import java.util.Map;

@@ -8,7 +8,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.bean.BeanContext;
 import com.enonic.xp.portal.bean.ScriptBean;
-import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 public abstract class AbstractUrlHandler

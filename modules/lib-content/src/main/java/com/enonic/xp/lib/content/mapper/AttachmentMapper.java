@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.content.mapper;
 
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.portal.script.serializer.MapGenerator;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class AttachmentMapper
     implements MapSerializable

@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.portal.script.serializer.JsonMapGenerator;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public abstract class AbstractMapSerializableTest
 {

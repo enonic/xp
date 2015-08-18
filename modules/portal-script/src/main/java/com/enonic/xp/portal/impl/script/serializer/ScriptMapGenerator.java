@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.script.serializer;
 
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
-import com.enonic.xp.portal.script.serializer.MapGeneratorBase;
+import com.enonic.xp.script.serializer.MapGeneratorBase;
 
 public final class ScriptMapGenerator
     extends MapGeneratorBase

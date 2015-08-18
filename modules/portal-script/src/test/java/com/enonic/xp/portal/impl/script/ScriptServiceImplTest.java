@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.enonic.xp.app.ApplicationEventType;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationUpdatedEvent;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 

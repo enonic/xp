@@ -3,8 +3,8 @@ package com.enonic.xp.lib.content.mapper;
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.portal.script.serializer.MapGenerator;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class ContentsResultMapper
     implements MapSerializable

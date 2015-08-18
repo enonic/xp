@@ -11,7 +11,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import com.enonic.xp.portal.impl.script.serializer.ScriptMapGenerator;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class JsObjectConverter
 {
