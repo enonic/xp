@@ -564,7 +564,7 @@ module app.wizard {
                 schemas.forEach((schema: Mixin, index: number) => {
                     var extraData = content.getExtraData(schema.getMixinName());
                     if (!extraData) {
-                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
@@ -677,7 +677,7 @@ module app.wizard {
                             var wizardStep = new WizardStep(mixin.getDisplayName(), stepForm);
                             this.insertStepBefore(wizardStep, this.settingsWizardStep);
 
-                            var extraData = new ExtraData(mixin.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                            var extraData = new ExtraData(mixin.getMixinName(), new PropertyTree());
 
                             stepForm.layout(this.createFormContext(this.getPersistedItem()), extraData.getData(), mixin.toForm());
                         }
@@ -1014,7 +1014,7 @@ module app.wizard {
                     var mixinName = new MixinName(key);
                     var extraData = content.getExtraData(mixinName);
                     if (!extraData) { // ensure ExtraData object corresponds to each step form
-                        extraData = new ExtraData(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        extraData = new ExtraData(mixinName, new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
                     this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());

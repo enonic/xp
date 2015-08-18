@@ -1,7 +1,6 @@
 module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class Page implements api.Equitable, api.Cloneable {
 
@@ -104,13 +103,12 @@ module api.content.page {
             }
         }
 
-        public fromJson(json: api.content.page.PageJson, propertyIdProvider: PropertyIdProvider): PageBuilder {
+        public fromJson(json: api.content.page.PageJson): PageBuilder {
             this.setController(json.controller ? DescriptorKey.fromString(json.controller) : null);
             this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
-            this.setRegions(json.regions != null ? api.content.page.region.Regions.create().fromJson(json.regions, propertyIdProvider,
-                null).build() : null);
+            this.setRegions(json.regions != null ? api.content.page.region.Regions.create().fromJson(json.regions, null).build() : null);
             this.setConfig(json.config != null
-                ? PropertyTree.fromJson(json.config, propertyIdProvider)
+                ? PropertyTree.fromJson(json.config)
                 : null);
             return this;
         }

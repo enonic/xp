@@ -3,7 +3,6 @@ module api.content.page {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class PageTemplate extends api.content.Content implements api.Equitable {
 
@@ -108,8 +107,8 @@ module api.content.page {
             super(source);
         }
 
-        fromContentJson(contentJson: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): PageTemplateBuilder {
-            super.fromContentJson(contentJson, propertyIdProvider);
+        fromContentJson(contentJson: api.content.json.ContentJson): PageTemplateBuilder {
+            super.fromContentJson(contentJson);
             return this;
         }
 

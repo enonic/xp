@@ -6,7 +6,6 @@ module api.content.page.region {
     import TextLine = api.form.inputtype.text.TextLine;
     import TextArea = api.form.inputtype.text.TextArea;
     import PropertyTree = api.data.PropertyTree;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
     import PropertyEvent = api.data.PropertyEvent;
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
@@ -126,8 +125,8 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): ImageComponent {
-            return new ImageComponentBuilder(this, generateNewPropertyIds).build();
+        clone(): ImageComponent {
+            return new ImageComponentBuilder(this).build();
         }
     }
 
@@ -137,14 +136,14 @@ module api.content.page.region {
 
         config: PropertyTree;
 
-        constructor(source?: ImageComponent, generateNewPropertyIds: boolean = false) {
+        constructor(source?: ImageComponent) {
             super(source);
             if (source) {
                 this.image = source.getImage();
-                this.config = source.getConfig() ? source.getConfig().copy(generateNewPropertyIds) : null;
+                this.config = source.getConfig() ? source.getConfig().copy() : null;
             }
             else {
-                this.config = new PropertyTree(api.Client.get().getPropertyIdProvider());
+                this.config = new PropertyTree();
             }
         }
 
@@ -158,7 +157,7 @@ module api.content.page.region {
             return this;
         }
 
-        public fromJson(json: ImageComponentJson, region: Region, propertyIdProvider: PropertyIdProvider): ImageComponentBuilder {
+        public fromJson(json: ImageComponentJson, region: Region): ImageComponentBuilder {
 
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));
@@ -168,7 +167,7 @@ module api.content.page.region {
 
 
             if (json.config) {
-                this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+                this.setConfig(PropertyTree.fromJson(json.config));
             }
 
             this.setParent(region);

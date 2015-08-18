@@ -139,13 +139,11 @@ module api.data {
                 setName(this.name).
                 setIndex(this.array.length).
                 setValue(value).
-                setId(this.tree ? this.tree.getNextId() : null).
                 build();
 
             this.array.push(property);
 
             if (this.tree) {
-                this.tree.registerProperty(property);
                 // Attached any detached PropertySet...
                 if (this.type.equals(ValueTypes.DATA) && value.isNotNull()) {
                     var addedPropertySet = value.getPropertySet();
@@ -182,13 +180,8 @@ module api.data {
                     setName(this.name).
                     setIndex(this.array.length).
                     setValue(value).
-                    setId(this.tree ? this.tree.getNextId() : null).
                     build();
                 this.array[index] = property;
-
-                if (this.tree) {
-                    this.tree.registerProperty(property);
-                }
 
                 this.notifyPropertyAdded(property);
                 this.registerPropertyListeners(property);
@@ -219,10 +212,6 @@ module api.data {
             this.forEach((property: Property, index: number) => {
                 property.setIndex(index);
             });
-
-            if (this.tree) {
-                this.tree.unregisterProperty(propertyToRemove.getId());
-            }
 
             this.notifyPropertyRemoved(propertyToRemove);
             this.unregisterPropertyListeners(propertyToRemove);
@@ -289,7 +278,7 @@ module api.data {
             return true;
         }
 
-        copy(destinationPropertySet: PropertySet, generateNewPropertyIds: boolean = false): PropertyArray {
+        copy(destinationPropertySet: PropertySet): PropertyArray {
 
             var copy = PropertyArray.create().
                 setName(this.name).
@@ -298,7 +287,7 @@ module api.data {
                 build();
 
             this.array.forEach((sourceProperty: Property) => {
-                copy.addProperty(sourceProperty.copy(copy, generateNewPropertyIds));
+                copy.addProperty(sourceProperty.copy(copy));
             });
 
             return copy;
@@ -464,14 +453,12 @@ module api.data {
                 if (this.type.equals(ValueTypes.DATA)) {
                     var valueSetJson = property.hasNullValue() ? null : property.getPropertySet().toJson();
                     valuesJson.push(<ValueAndPropertyIdJson>{
-                        id: property.getId().toString(),
                         set: valueSetJson
                     });
                 }
                 else {
                     var valueJson = this.type.toJsonValue(property.getValue());
                     valuesJson.push(<ValueAndPropertyIdJson>{
-                        id: property.getId().toString(),
                         v: valueJson
                     });
                 }
@@ -517,7 +504,6 @@ module api.data {
                 }
 
                 var property = Property.create().
-                    setId(new PropertyId(valueAndPropertyIdJson.id)).
                     setArray(array).
                     setName(json.name).
                     setIndex(index).

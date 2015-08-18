@@ -1,7 +1,5 @@
 module api.content {
 
-    import PropertyIdProvider = api.data.PropertyIdProvider;
-
     export class ContentIdBaseItem implements api.Equitable {
 
         private contentId: ContentId;
@@ -29,14 +27,14 @@ module api.content {
             return true;
         }
 
-        static fromJson(json: json.ContentIdBaseItemJson, propertyIdProvider: PropertyIdProvider): ContentIdBaseItem {
+        static fromJson(json: json.ContentIdBaseItemJson): ContentIdBaseItem {
             return new ContentIdBaseItemBuilder().fromContentIdBaseItemJson(json).build();
         }
 
-        static fromJsonArray(jsonArray: json.ContentIdBaseItemJson[], propertyIdProvider: PropertyIdProvider): ContentIdBaseItem[] {
+        static fromJsonArray(jsonArray: json.ContentIdBaseItemJson[]): ContentIdBaseItem[] {
             var array: ContentIdBaseItem[] = [];
             jsonArray.forEach((json: json.ContentIdBaseItemJson) => {
-                array.push(ContentIdBaseItem.fromJson(json, propertyIdProvider));
+                array.push(ContentIdBaseItem.fromJson(json));
             });
             return array;
         }

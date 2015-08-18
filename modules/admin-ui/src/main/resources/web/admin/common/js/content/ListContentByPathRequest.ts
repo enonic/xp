@@ -48,7 +48,7 @@ module api.content {
 
             return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
                 return new ContentResponse(
-                    ContentSummary.fromJsonArray(response.getResult().contents, this.propertyIdProvider),
+                    ContentSummary.fromJsonArray(response.getResult().contents),
                     new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
                 );
             });

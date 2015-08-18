@@ -155,8 +155,8 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): Region {
-            return new RegionBuilder(this, generateNewPropertyIds).build();
+        clone(): Region {
+            return new RegionBuilder(this).build();
         }
 
         private checkIllegalLayoutComponentWithinLayoutComponent(component: Component, parent: LayoutComponent) {
@@ -307,8 +307,8 @@ module api.content.page.region {
             this.notifyChangedEvent(event);
         }
 
-        static create(source?: Region, generateNewPropertyIds: boolean = false): RegionBuilder {
-            return new RegionBuilder(source, generateNewPropertyIds);
+        static create(source?: Region): RegionBuilder {
+            return new RegionBuilder(source);
         }
     }
 
@@ -320,12 +320,12 @@ module api.content.page.region {
 
         parent: LayoutComponent;
 
-        constructor(source?: Region, generateNewPropertyIds: boolean = false) {
+        constructor(source?: Region) {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent(); //TODO; Should clone have same parent at all times?
                 source.getComponents().forEach((component: Component) => {
-                    this.components.push(component.clone(generateNewPropertyIds));
+                    this.components.push(component.clone());
                 });
             }
         }

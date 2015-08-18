@@ -6,6 +6,5 @@ module api.data {
 
         set? : PropertyArrayJson[];
 
-        id : string;
     }
 }

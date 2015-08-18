@@ -61,7 +61,7 @@ module api.content.page.region {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
             }
 
-            this.setConfig(new PropertyTree(this.config.getIdProvider()));
+            this.setConfig(new PropertyTree());
         }
 
         setConfig(config: PropertyTree) {
@@ -121,7 +121,7 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): DescriptorBasedComponent {
+        clone(): DescriptorBasedComponent {
             throw new Error("Must be implemented by inheritors");
         }
     }
@@ -132,14 +132,14 @@ module api.content.page.region {
 
         config: PropertyTree;
 
-        constructor(source?: DescriptorBasedComponent, generateNewPropertyIds: boolean = false) {
+        constructor(source?: DescriptorBasedComponent) {
             super(source);
             if (source) {
                 this.descriptor = source.getDescriptor();
-                this.config = source.getConfig() ? source.getConfig().copy(generateNewPropertyIds) : null;
+                this.config = source.getConfig() ? source.getConfig().copy() : null;
             }
             else {
-                this.config = new PropertyTree(api.Client.get().getPropertyIdProvider());
+                this.config = new PropertyTree();
             }
         }
 

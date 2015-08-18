@@ -30,7 +30,5 @@
 ///<reference path='PropertyArrayJson.ts' />
 ///<reference path='PropertyArray.ts' />
 ///<reference path='PropertySet.ts' />
-///<reference path='PropertyIdProvider.ts' />
-///<reference path='DefaultPropertyIdProvider.ts' />
 ///<reference path='PropertyTree.ts' />
 

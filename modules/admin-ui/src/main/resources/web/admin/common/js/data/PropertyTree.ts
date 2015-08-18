@@ -5,20 +5,6 @@ module api.data {
     import GeoPoint = api.util.GeoPoint;
     import LocalTime = api.util.LocalTime;
 
-    class PropertyRegistrar extends PropertyVisitor {
-
-        private tree: PropertyTree;
-
-        constructor(tree: PropertyTree) {
-            this.tree = tree;
-            super();
-        }
-
-        visit(property: Property) {
-            this.tree.registerProperty(property);
-        }
-    }
-
     /**
      * The PropertyTree is the root container of properties.
      * It has a root [[PropertySet]] and [[PropertyIdProvider]] and keeps a reference to all properties
@@ -64,49 +50,26 @@ module api.data {
      */
     export class PropertyTree implements api.Equitable {
 
-        private idProvider: PropertyIdProvider;
-
         private root: PropertySet;
-
-        private propertyById: {[s:string] : Property;} = {};
 
         /**
          * * To create new PropertyTree:
          * > give no arguments or optionally with a idProvider.
          *
          * * To create a copy of another tree:
-         * > give the root [[PropertySet]] of the tree to copy from and optionally a idProvider and generateNewPropertyIds
+         * > give the root [[PropertySet]] of the tree to copy from
          *
-         * @param idProvider optional. If not given, a [[DefaultPropertyIdProvider]] will be created.
          * @param sourceRoot optional. If given this tree will be a copy of the given [[PropertySet]].
-         * @param generateNewPropertyIds optional. Used only when sourceRoot is given. Default value is false.
          */
-        constructor(idProvider?: PropertyIdProvider, sourceRoot?: PropertySet, generateNewPropertyIds?: boolean) {
+        constructor(sourceRoot?: PropertySet) {
 
             if (sourceRoot) {
-                this.idProvider = idProvider;
-                this.root = sourceRoot.copy(this, generateNewPropertyIds);
+                this.root = sourceRoot.copy(this);
                 // Ensure to register all properties from sourceRoot
-                var propertyRegistrar = new PropertyRegistrar(this);
-                propertyRegistrar.traverse(this.root);
             }
             else {
-                if (!idProvider) {
-                    this.idProvider = new DefaultPropertyIdProvider();
-                }
-                else {
-                    this.idProvider = idProvider;
-                }
                 this.root = new PropertySet(this);
             }
-        }
-
-        getIdProvider(): PropertyIdProvider {
-            return this.idProvider;
-        }
-
-        getNextId(): PropertyId {
-            return this.idProvider.getNextId();
         }
 
         /**
@@ -114,39 +77,6 @@ module api.data {
          */
         public getRoot(): PropertySet {
             return this.root;
-        }
-
-        /**
-         * Application protected. Not to be used outside module.
-         *
-         * An Error is thrown if a Property with same id as the given is already registered.
-         * @param property the property to register
-         */
-        registerProperty(property: Property) {
-            api.util.assertNotNull(property.getId(), "Cannot register a Property without id");
-            var existing = this.propertyById[property.getId().toString()];
-            if (existing) {
-                throw new Error("Property with id [" + property.getId().toString() + "] already registered: " +
-                                property.getPath().toString());
-            }
-            this.propertyById[property.getId().toString()] = property;
-        }
-
-        /**
-         * Application protected. Not to be used outside module.
-         */
-        unregisterProperty(id: PropertyId) {
-            delete this.propertyById[id.toString()];
-        }
-
-        public getTotalSize(): number {
-            var size = 0, key;
-            for (key in this.propertyById) {
-                if (this.propertyById.hasOwnProperty(key)) {
-                    size++;
-                }
-            }
-            return size;
         }
 
         addProperty(name: string, value: Value): Property {
@@ -167,10 +97,6 @@ module api.data {
 
         removeProperty(name: string, index: number) {
             this.root.removeProperty(name, index);
-        }
-
-        getPropertyById(id: PropertyId): Property {
-            return this.propertyById[id.toString()];
         }
 
         /**
@@ -219,11 +145,10 @@ module api.data {
         /**
          * Copies this tree (deep copy).
          * @see [[PropertySet.copy]]
-         * @param generateNewPropertyIds Whether to generate new property ids for the copied properties or not. Default is false.
          * @returns {api.data.PropertyTree}
          */
-        copy(generateNewPropertyIds: boolean = false): PropertyTree {
-            return new PropertyTree(this.getIdProvider(), this.getRoot(), generateNewPropertyIds);
+        copy(): PropertyTree {
+            return new PropertyTree(this.getRoot());
         }
 
         toJson(): PropertyArrayJson[] {
@@ -321,10 +246,10 @@ module api.data {
             this.root.unPropertyValueChanged(listener);
         }
 
-        public static fromJson(json: PropertyArrayJson[], idProvider: PropertyIdProvider): PropertyTree {
+        public static fromJson(json: PropertyArrayJson[]): PropertyTree {
 
             api.util.assertNotNull(json, "a json is required");
-            var tree = new PropertyTree(idProvider);
+            var tree = new PropertyTree();
 
             json.forEach((propertyArrayJson: PropertyArrayJson) => {
                 tree.root.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, tree.root, tree))
