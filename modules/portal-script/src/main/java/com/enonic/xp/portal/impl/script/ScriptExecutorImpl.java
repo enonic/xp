@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;
+import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.portal.impl.script.error.ErrorHelper;
 import com.enonic.xp.portal.impl.script.function.CallFunction;
 import com.enonic.xp.portal.impl.script.function.ScriptFunctions;

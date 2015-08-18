@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.script.function;
 
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
-import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
+import com.enonic.xp.script.impl.value.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.bean2.BeanContextImpl;
 import com.enonic.xp.portal.impl.script.logger.ScriptLogger;
 import com.enonic.xp.portal.impl.script.util.NashornHelper;

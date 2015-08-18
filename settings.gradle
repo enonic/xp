@@ -9,7 +9,7 @@ include 'core-impl'
 include 'core-itest'
 
 include 'script-api'
-include 'script-impl'
+// include 'script-impl'
 
 include 'web-api'
 include 'web-impl'

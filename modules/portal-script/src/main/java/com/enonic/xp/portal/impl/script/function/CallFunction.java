@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.script.function;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
+import com.enonic.xp.script.impl.value.JsObjectConverter;
 
 public final class CallFunction
     extends AbstractFunction

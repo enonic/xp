@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.script.bean;
+package com.enonic.xp.script.impl.value;
 
 import com.enonic.xp.convert.Converters;
 

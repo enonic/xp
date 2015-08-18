@@ -13,11 +13,6 @@ public final class NashornHelper
 {
     private final static NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
 
-    public static ScriptEngine getScriptEngine( final String... args )
-    {
-        return FACTORY.getScriptEngine( args );
-    }
-
     public static ScriptEngine getScriptEngine( final ClassLoader loader, final String... args )
     {
         return FACTORY.getScriptEngine( args, loader );
@@ -31,11 +26,6 @@ public final class NashornHelper
     public static Object newNativeArray()
     {
         return Global.allocate( new Object[0] );
-    }
-
-    public static Object getUndefined()
-    {
-        return Undefined.getUndefined();
     }
 
     public static boolean isUndefined( final Object value )
