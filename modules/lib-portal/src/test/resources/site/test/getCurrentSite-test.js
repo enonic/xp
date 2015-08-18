@@ -15,11 +15,6 @@ var expectedJson = {
         }
     },
     "hasChildren": false,
-    "siteConfigs": {
-        "myapplication": {
-            "Field": 42
-        }
-    },
     "page": {},
     "type": "base:unstructured",
     "valid": false,
