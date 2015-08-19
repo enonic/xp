@@ -2,10 +2,11 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web-jaxrs' )
-    compile project( ':portal-script' )
+    compile project( ':portal-api' )
     compile 'com.enonic.osgi.bundles:jmustache:1.9.0_1'
     compile 'com.enonic.osgi.bundles:attoparser:1.3.0_1'
-    testCompile project( path: ':portal-script', configuration: 'testOutput' )
+    testCompile project( ':script-impl' )
+    testCompile project( path: ':script-impl', configuration: 'testOutput' )
 }
 
 bundle {

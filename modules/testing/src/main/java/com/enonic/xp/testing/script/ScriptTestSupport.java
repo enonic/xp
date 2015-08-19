@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -47,6 +48,8 @@ public abstract class ScriptTestSupport
 
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
+        Mockito.when( application.getKey() ).thenReturn( DEFAULT_APPLICATION_KEY );
+        Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getApplication( getApplicationKey() ) ).thenReturn( application );

@@ -9,7 +9,7 @@ include 'core-impl'
 include 'core-itest'
 
 include 'script-api'
-// include 'script-impl'
+include 'script-impl'
 
 include 'web-api'
 include 'web-impl'
@@ -18,7 +18,6 @@ include 'web-vhost'
 
 include 'portal-api'
 include 'portal-impl'
-include 'portal-script'
 
 include 'admin-api'
 include 'admin-impl'

@@ -20,12 +20,12 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
+import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
-import com.enonic.xp.script.impl.ScriptServiceImpl;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractControllerTest
@@ -81,7 +81,7 @@ public abstract class AbstractControllerTest
         runtimeFactory.setApplicationService( applicationService );
         runtimeFactory.setResourceService( this.resourceService );
 
-        final ScriptServiceImpl scriptService = new ScriptServiceImpl();
+        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl();
         scriptService.setScriptRuntimeFactory( runtimeFactory );
         scriptService.initialize();
 
