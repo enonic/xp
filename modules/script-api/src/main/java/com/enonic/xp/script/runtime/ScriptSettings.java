@@ -22,7 +22,7 @@ public final class ScriptSettings
 
     public String getBasePath()
     {
-        return this.basePath;
+        return this.basePath != null ? this.basePath : "";
     }
 
     public Map<String, Object> getGlobalVariables()

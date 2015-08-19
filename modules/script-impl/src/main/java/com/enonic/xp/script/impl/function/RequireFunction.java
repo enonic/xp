@@ -1,7 +1,7 @@
 package com.enonic.xp.script.impl.function;
 
-import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
 public final class RequireFunction
     extends AbstractFunction
@@ -12,11 +12,14 @@ public final class RequireFunction
 
     private final ScriptExecutor executor;
 
+    private final String basePath;
+
     public RequireFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "require" );
         this.script = script;
         this.executor = executor;
+        this.basePath = this.executor.getScriptSettings().getBasePath();
     }
 
     @Override
@@ -42,7 +45,7 @@ public final class RequireFunction
 
         if ( name.startsWith( "/" ) )
         {
-            return this.script.resolve( "/site" + name );
+            return this.script.resolve( this.basePath + name );
         }
 
         if ( name.startsWith( "./" ) )
@@ -56,6 +59,6 @@ public final class RequireFunction
             return resolved;
         }
 
-        return this.script.resolve( "/site/lib/" + name );
+        return this.script.resolve( this.basePath + "/lib/" + name );
     }
 }

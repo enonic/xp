@@ -50,7 +50,9 @@ public abstract class AbstractScriptTest
         scriptRuntimeFactory.setApplicationService( applicationService );
         scriptRuntimeFactory.setResourceService( resourceService );
 
-        this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().build() );
+        this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().
+            basePath( "/site" ).
+            build() );
     }
 
     protected final ScriptExports runTestScript( final String name )

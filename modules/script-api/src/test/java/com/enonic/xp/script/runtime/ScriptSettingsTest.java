@@ -13,7 +13,7 @@ public class ScriptSettingsTest
     {
         final ScriptSettings settings = ScriptSettings.create().build();
 
-        assertNull( settings.getBasePath() );
+        assertEquals( "", settings.getBasePath() );
         assertNotNull( settings.getGlobalVariables() );
         assertEquals( 0, settings.getGlobalVariables().size() );
         assertNull( settings.getAttribute( String.class ) );
