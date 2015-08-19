@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.i18n;
+package com.enonic.xp.portal.impl.view;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 
-public class LocalizeParams
+class LocalizeParams
 {
     private String key;
 
