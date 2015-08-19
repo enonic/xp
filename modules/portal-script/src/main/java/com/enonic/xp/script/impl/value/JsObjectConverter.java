@@ -9,8 +9,8 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.portal.impl.script.serializer.ScriptMapGenerator;
-import com.enonic.xp.portal.impl.script.util.NashornHelper;
+import com.enonic.xp.script.impl.util.ScriptMapGenerator;
+import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class JsObjectConverter

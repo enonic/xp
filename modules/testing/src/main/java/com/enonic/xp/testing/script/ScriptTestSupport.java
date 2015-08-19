@@ -17,18 +17,20 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.script.ScriptServiceImpl;
-import com.enonic.xp.script.ScriptExports;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.script.runtime.ScriptRuntime;
+import com.enonic.xp.script.runtime.ScriptSettings;
 
 public abstract class ScriptTestSupport
 {
     private final static ApplicationKey DEFAULT_APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
-    protected final ScriptServiceImpl scriptService;
+    protected final ScriptRuntime scriptRuntime;
 
     private final BundleContext bundleContext;
 
@@ -38,8 +40,6 @@ public abstract class ScriptTestSupport
 
     public ScriptTestSupport()
     {
-        this.scriptService = new ScriptServiceImpl();
-
         this.bundleContext = Mockito.mock( BundleContext.class );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
@@ -63,9 +63,13 @@ public abstract class ScriptTestSupport
         Mockito.when( this.bundleContext.getServiceReference( ResourceService.class ) ).thenReturn( resourceServiceReference );
         Mockito.when( this.bundleContext.getService( resourceServiceReference ) ).thenReturn( resourceService );
 
-        this.scriptService.setApplicationService( applicationService );
-        this.scriptService.setResourceService( resourceService );
         this.portalRequest = new PortalRequest();
+
+        final ScriptRuntimeFactoryImpl scriptRuntimeFactory = new ScriptRuntimeFactoryImpl();
+        scriptRuntimeFactory.setApplicationService( applicationService );
+        scriptRuntimeFactory.setResourceService( resourceService );
+
+        this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().build() );
     }
 
     protected final void setupRequest()
@@ -96,7 +100,7 @@ public abstract class ScriptTestSupport
 
     private ScriptExports runTestScript( final ResourceKey key )
     {
-        return this.scriptService.execute( key );
+        return this.scriptRuntime.execute( key );
     }
 
     protected final ScriptValue runTestFunction( final String path, final String funcName )

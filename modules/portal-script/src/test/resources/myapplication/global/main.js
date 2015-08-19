@@ -1,3 +1,5 @@
+var assert = Java.type('org.junit.Assert');
+
 var array = [1, 2, 3];
 assert.assertEquals(true, array instanceof Array);
 

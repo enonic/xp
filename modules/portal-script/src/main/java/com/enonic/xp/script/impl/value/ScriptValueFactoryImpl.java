@@ -2,7 +2,7 @@ package com.enonic.xp.script.impl.value;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.xp.portal.impl.script.util.NashornHelper;
+import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.ScriptValue;
 
 public final class ScriptValueFactoryImpl

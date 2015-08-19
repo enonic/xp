@@ -1,3 +1,5 @@
+var assert = Java.type('org.junit.Assert');
+
 var s1 = log.format('simple message');
 assert.assertEquals('(/logging/format-test.js) simple message', s1);
 
