@@ -57,11 +57,12 @@ public class MixinJson
 
     public List<FormItemJson> getItems()
     {
-        ImmutableList.Builder<FormItemJson> builder = ImmutableList.builder();
-        for ( FormItem formItem : mixin.getFormItems() )
+        final ImmutableList.Builder<FormItemJson> builder = ImmutableList.builder();
+        for ( final FormItem formItem : mixin.getForm() )
         {
             builder.add( FormItemJsonFactory.create( formItem ) );
         }
+        
         return builder.build();
     }
 

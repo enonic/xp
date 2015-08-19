@@ -28,7 +28,7 @@ abstract class AbstractCommand
         final ContentTypes.Builder transformedContentTypes = ContentTypes.create();
         for ( final ContentType contentType : contentTypes )
         {
-            final Form transformedForm = mixinService.inlineFormItems( contentType.form() );
+            final Form transformedForm = mixinService.inlineFormItems( contentType.getForm() );
             final ContentType transformedCty = ContentType.create( contentType ).form( transformedForm ).build();
             transformedContentTypes.add( transformedCty );
         }

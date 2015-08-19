@@ -9,8 +9,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.JsonToPropertyTreeTranslator;
-import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -18,6 +16,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public abstract class BaseContextHandler
     implements ScriptBean
@@ -52,15 +52,6 @@ public abstract class BaseContextHandler
 
     protected abstract Object doExecute();
 
-    protected <T> T checkRequired( final String paramName, final T value )
-    {
-        if ( value == null )
-        {
-            throw new IllegalArgumentException( String.format( "Parameter [%s] is required", paramName ) );
-        }
-        return value;
-    }
-
     protected <T> T valueOrDefault( final T value, final T defValue )
     {
         return value == null ? defValue : value;
@@ -75,13 +66,8 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
         }
 
-        return JsonToPropertyTreeTranslator.create().
-            formItems( contentType.form().getFormItems() ).
-            mode( contentType.getName().isUnstructured()
-                      ? JsonToPropertyTreeTranslator.Mode.LENIENT
-                      : JsonToPropertyTreeTranslator.Mode.STRICT ).
-            build().
-            translate( json );
+        final boolean strict = !contentType.getName().isUnstructured();
+        return new JsonToPropertyTreeTranslator( contentType.getForm(), strict ).translate( json );
     }
 
     protected PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
@@ -93,11 +79,7 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Mixin  not found [" + mixinName + "]" );
         }
 
-        return JsonToPropertyTreeTranslator.create().
-            formItems( mixin.getFormItems() ).
-            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
-            build().
-            translate( json );
+        return new JsonToPropertyTreeTranslator( mixin.getForm(), true ).translate( json );
     }
 
     @Override

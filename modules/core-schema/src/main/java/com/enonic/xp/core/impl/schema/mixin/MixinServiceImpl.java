@@ -173,7 +173,7 @@ public final class MixinServiceImpl
                 final Mixin mixin = getByName( inline.getMixinName() );
                 if ( mixin != null )
                 {
-                    for ( FormItem mixinFormItem : mixin.getFormItems() )
+                    for ( final FormItem mixinFormItem : mixin.getForm() )
                     {
                         formItems.add( mixinFormItem.copy() );
                     }

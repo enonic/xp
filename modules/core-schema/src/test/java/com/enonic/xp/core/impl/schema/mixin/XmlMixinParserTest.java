@@ -52,6 +52,6 @@ public class XmlMixinParserTest
         assertEquals( "display name", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
 
-        assertEquals( 1, result.getFormItems().size() );
+        assertEquals( 1, result.getForm().size() );
     }
 }

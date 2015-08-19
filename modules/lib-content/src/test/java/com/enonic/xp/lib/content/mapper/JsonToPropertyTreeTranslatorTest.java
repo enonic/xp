@@ -29,12 +29,7 @@ public class JsonToPropertyTreeTranslatorTest
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-
-        JsonToPropertyTreeTranslator.create().
-            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
-            formItems( createFormForAllInputTypes().getFormItems() ).
-            build().
-            translate( node );
+        new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
     }
 
     @Test
@@ -43,10 +38,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.create().
-            mode( JsonToPropertyTreeTranslator.Mode.LENIENT ).
-            build().
-            translate( node );
+        final PropertyTree data = new JsonToPropertyTreeTranslator( null, false ).translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );
@@ -68,11 +60,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.create().
-            formItems( createFormForAllInputTypes().getFormItems() ).
-            mode( JsonToPropertyTreeTranslator.Mode.LENIENT ).
-            build().
-            translate( node );
+        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), false ).translate( node );
 
         final Property noTimezone = data.getProperty( "localDateTime" );
         assertNotNull( noTimezone );

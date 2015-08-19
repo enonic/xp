@@ -72,7 +72,7 @@ public class ContentTypeServiceImpl_getAllTest
 
         Mockito.verify( this.mixinService, Mockito.times( 1 ) ).inlineFormItems( Mockito.isA( Form.class ) );
         assertEquals( 1, result.getSize() );
-        assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );
-        assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );
+        assertNotNull( result.get( 0 ).getForm().getInput( "inputToBeMixedIn" ) );
+        assertNull( result.get( 0 ).getForm().getFormItem( "myMixin" ) );
     }
 }

@@ -13,7 +13,7 @@ public class ContentTypeJson
     public ContentTypeJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver )
     {
         super( contentType, iconUrlResolver );
-        this.form = new FormJson( contentType.form() );
+        this.form = new FormJson( contentType.getForm() );
     }
 
     public FormJson getForm()

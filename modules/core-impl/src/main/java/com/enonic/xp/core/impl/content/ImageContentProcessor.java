@@ -29,8 +29,8 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -240,7 +240,7 @@ final class ImageContentProcessor
             for ( Mixin mixin : mixins )
             {
                 final String formItemName = getConformityName( entry.getKey() );
-                final FormItem formItem = mixin.getFormItems().getItemByName( formItemName );
+                final FormItem formItem = mixin.getForm().getFormItems().getItemByName( formItemName );
                 if ( formItem == null )
                 {
                     continue;

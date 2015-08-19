@@ -15,7 +15,7 @@ public final class InputValidator
 
     private InputValidator( final Builder builder )
     {
-        this.form = builder.contentType.form();
+        this.form = builder.contentType.getForm();
         this.inputTypeResolver = builder.inputTypeResolver;
     }
 
