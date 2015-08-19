@@ -2,28 +2,28 @@ package com.enonic.xp.script.impl.bean;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.script.impl.executor.ScriptExecutor;
+import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
 public final class BeanContextImpl
     implements BeanContext
 {
-    private ResourceKey resource;
+    private ResourceKey resourceKey;
 
     private ScriptExecutor executor;
 
     @Override
-    public ApplicationKey getApplication()
+    public Application getApplication()
     {
-        return this.resource.getApplicationKey();
+        return this.executor.getApplication();
     }
 
     @Override
-    public ResourceKey getResource()
+    public ResourceKey getResourceKey()
     {
-        return this.resource;
+        return this.resourceKey;
     }
 
     @Override
@@ -32,9 +32,16 @@ public final class BeanContextImpl
         return this.executor.getServiceRegistry().getService( type );
     }
 
-    public void setResource( final ResourceKey resource )
+    @Override
+    public <T> Supplier<T> getAttribute( final Class<T> type )
     {
-        this.resource = resource;
+        final Supplier<T> supplier = this.executor.getScriptSettings().getAttribute( type );
+        return supplier != null ? supplier : () -> null;
+    }
+
+    public void setResourceKey( final ResourceKey resourceKey )
+    {
+        this.resourceKey = resourceKey;
     }
 
     public void setExecutor( final ScriptExecutor executor )

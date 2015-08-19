@@ -16,6 +16,6 @@ public class MyTestBeanTwo
 
     public String getStatus()
     {
-        return getClass().getSimpleName() + ", " + this.context.getResource();
+        return getClass().getSimpleName() + ", " + this.context.getResourceKey();
     }
 }

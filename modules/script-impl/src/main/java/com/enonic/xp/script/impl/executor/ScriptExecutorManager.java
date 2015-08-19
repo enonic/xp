@@ -42,7 +42,7 @@ public final class ScriptExecutorManager
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setEngine( engine );
-        executor.setGlobalMap( this.scriptSettings.getGlobalVariables() );
+        executor.setScriptSettings( this.scriptSettings );
         executor.setClassLoader( classLoader );
         executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
         executor.setResourceService( this.resourceService );

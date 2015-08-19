@@ -27,7 +27,7 @@ public final class ScriptFunctions
 
         final BeanContextImpl beanContext = new BeanContextImpl();
         beanContext.setExecutor( this.executor );
-        beanContext.setResource( this.script );
+        beanContext.setResourceKey( this.script );
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( this.executor.getClassLoader(), beanContext );
         this.applicationInfo = new ApplicationInfo( this.executor.getApplication() );

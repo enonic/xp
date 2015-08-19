@@ -22,13 +22,14 @@ import com.enonic.xp.script.impl.function.ScriptFunctions;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
+import com.enonic.xp.script.runtime.ScriptSettings;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private ScriptEngine engine;
 
-    private Map<String, Object> globalMap;
+    private ScriptSettings scriptSettings;
 
     private Bindings global;
 
@@ -47,9 +48,9 @@ final class ScriptExecutorImpl
         this.engine = engine;
     }
 
-    public void setGlobalMap( final Map<String, Object> globalMap )
+    public void setScriptSettings( final ScriptSettings scriptSettings )
     {
-        this.globalMap = globalMap;
+        this.scriptSettings = scriptSettings;
     }
 
     public void setClassLoader( final ClassLoader classLoader )
@@ -77,11 +78,7 @@ final class ScriptExecutorImpl
         this.exportsCache = Maps.newHashMap();
         this.global = this.engine.createBindings();
         new CallFunction().register( this.global );
-
-        if ( this.globalMap != null )
-        {
-            this.global.putAll( this.globalMap );
-        }
+        this.global.putAll( this.scriptSettings.getGlobalVariables() );
     }
 
     @Override
@@ -172,5 +169,11 @@ final class ScriptExecutorImpl
     public Application getApplication()
     {
         return this.application;
+    }
+
+    @Override
+    public ScriptSettings getScriptSettings()
+    {
+        return this.scriptSettings;
     }
 }
