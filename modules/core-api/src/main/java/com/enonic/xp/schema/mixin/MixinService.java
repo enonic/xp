@@ -3,6 +3,8 @@ package com.enonic.xp.schema.mixin;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.BuildPropertyTreeParams;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
 
@@ -18,6 +20,8 @@ public interface MixinService
     Mixins getByApplication( ApplicationKey applicationKey );
 
     Mixins getByContentType( ContentType contentType );
+
+    PropertyTree buildPropertyTree( BuildPropertyTreeParams buildPropertyTreeParams );
 
     Form inlineFormItems( Form form );
 }
