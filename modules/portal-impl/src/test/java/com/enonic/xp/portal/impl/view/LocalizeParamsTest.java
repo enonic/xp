@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.i18n;
+package com.enonic.xp.portal.impl.view;
 
 import java.util.Locale;
 
