@@ -33,7 +33,10 @@ module app.browse {
 
         private contentBrowseItemPanel: ContentBrowseItemPanel;
 
+        private mobileContentItemStatisticsPanel: app.view.MobileContentItemStatisticsPanel;
+
         constructor() {
+
             this.contentTreeGrid = new app.browse.ContentTreeGrid();
 
             this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
@@ -85,6 +88,29 @@ module app.browse {
             });
 
             this.handleGlobalEvents();
+
+            this.onRendered((event) => {
+                this.initItemStatisticsPanelForMobile();
+            });
+        }
+
+        private initItemStatisticsPanelForMobile() {
+            this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel();
+
+            this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[],
+                                                   fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.treeNodesToBrowseItems(fullSelection);
+                if (browseItems.length == 1) {
+                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
+                        then((renderable: boolean) => {
+                            var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.setItem(item);
+                        });
+                }
+            });
+
+            this.appendChild(this.mobileContentItemStatisticsPanel);
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
