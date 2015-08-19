@@ -1,7 +1,8 @@
-package com.enonic.xp.lib.content.mapper;
+package com.enonic.xp.core.impl.content;
 
 import java.net.URL;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,8 +18,6 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
-
-import static org.junit.Assert.*;
 
 public class JsonToPropertyTreeTranslatorTest
 {
@@ -49,17 +48,17 @@ public class JsonToPropertyTreeTranslatorTest
             translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
-        assertNotNull( myArray );
-        assertEquals( ValueTypes.STRING.getName(), myArray.getType().getName() );
+        Assert.assertNotNull( myArray );
+        Assert.assertEquals( ValueTypes.STRING.getName(), myArray.getType().getName() );
 
         final Property myArray0 = data.getProperty( "stringArray[0]" );
-        assertNotNull( myArray0 );
+        Assert.assertNotNull( myArray0 );
 
         final Property myArray1 = data.getProperty( "stringArray[1]" );
-        assertNotNull( myArray1 );
+        Assert.assertNotNull( myArray1 );
 
         final Property myArray2 = data.getProperty( "stringArray[2]" );
-        assertNotNull( myArray2 );
+        Assert.assertNotNull( myArray2 );
     }
 
     @Test
@@ -75,12 +74,12 @@ public class JsonToPropertyTreeTranslatorTest
             translate( node );
 
         final Property noTimezone = data.getProperty( "localDateTime" );
-        assertNotNull( noTimezone );
-        assertEquals( ValueTypes.LOCAL_DATE_TIME.getName(), noTimezone.getType().getName() );
+        Assert.assertNotNull( noTimezone );
+        Assert.assertEquals( ValueTypes.LOCAL_DATE_TIME.getName(), noTimezone.getType().getName() );
 
         final Property timezoned = data.getProperty( "dateTime" );
-        assertNotNull( timezoned );
-        assertEquals( ValueTypes.DATE_TIME.getName(), timezoned.getType().getName() );
+        Assert.assertNotNull( timezoned );
+        Assert.assertEquals( ValueTypes.DATE_TIME.getName(), timezoned.getType().getName() );
     }
 
     protected final JsonNode loadJson( final String name )
@@ -89,7 +88,7 @@ public class JsonToPropertyTreeTranslatorTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        Assert.assertNotNull( "File [" + resource + "] not found", url );
         return this.mapper.readTree( url );
     }
 
