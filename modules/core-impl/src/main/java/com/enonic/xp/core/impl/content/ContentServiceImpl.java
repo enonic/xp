@@ -655,6 +655,12 @@ public class ContentServiceImpl
         return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
     }
 
+    @Override
+    public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
+    {
+        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+    }
+
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {

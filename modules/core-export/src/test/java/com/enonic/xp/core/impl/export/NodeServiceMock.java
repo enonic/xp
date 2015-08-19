@@ -308,6 +308,12 @@ class NodeServiceMock
     }
 
     @Override
+    public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
         return 0;

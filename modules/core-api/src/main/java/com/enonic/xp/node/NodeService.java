@@ -78,6 +78,8 @@ public interface NodeService
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
+    String getBinaryKey( final NodeId nodeId, final BinaryReference reference );
+
     RootNode createRootNode( CreateRootNodeParams params );
 
     SetNodeStateResult setNodeState( final SetNodeStateParams params );
