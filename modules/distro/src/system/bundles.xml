@@ -7,7 +7,6 @@
   <bundle level="5">org.apache.felix:org.apache.felix.configadmin:1.8.0</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.scr:1.8.2</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
-  <bundle level="5">org.ops4j.pax.url:pax-url-mvn:1.3.7</bundle>
 
   <!-- Shell bundles -->
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.runtime:0.16.2</bundle>
