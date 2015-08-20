@@ -59,6 +59,16 @@ public class PortalRequestTest
     }
 
     @Test
+    public void setUrl()
+    {
+        final PortalRequest request = new PortalRequest();
+        assertEquals( null, request.getUrl() );
+
+        request.setUrl( "http.//localhost:8080/root?param=value" );
+        assertEquals( "http.//localhost:8080/root?param=value", request.getUrl() );
+    }
+
+    @Test
     public void setMode()
     {
         final PortalRequest request = new PortalRequest();
