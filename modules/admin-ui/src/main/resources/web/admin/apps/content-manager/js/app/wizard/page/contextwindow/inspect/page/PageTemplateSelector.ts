@@ -71,6 +71,9 @@ module app.wizard.page.contextwindow.inspect.page {
                                 this.selectOption(pageTemplateOptions.getDefault(), true);
                             }
                         }
+                        else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                            this.selectCustomized();
+                        }
                     });
 
                 }).catch((reason: any) => {
@@ -83,6 +86,10 @@ module app.wizard.page.contextwindow.inspect.page {
             if (optionToSelect) {
                 this.selectOption(optionToSelect, true);
             }
+        }
+
+        private selectCustomized() {  //customized is used to be last option
+            this.selectRow(this.getOptions().length - 1);
         }
 
         onSelection(listener: (event: PageTemplate)=>void) {
