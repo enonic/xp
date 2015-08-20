@@ -21,6 +21,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private customizedSelectedListeners: {():void}[] = [];
 
+        private customizedOption: Option<PageTemplateOption>;
+
         constructor() {
             super("pageTemplate", <DropdownConfig<PageTemplateOption>>{
                 optionDisplayValueViewer: new PageTemplateOptionViewer()
@@ -40,7 +42,9 @@ module app.wizard.page.contextwindow.inspect.page {
                     options.forEach((option: Option<PageTemplateOption>) => {
                         this.addOption(option);
                     });
-                    this.addOption(this.createCustomizedOption());
+
+                    this.customizedOption = this.createCustomizedOption();
+                    this.addOption(this.customizedOption);
 
                     if (this.pageModel.isCustomized()) {
                         this.selectRow(options.length);
@@ -71,6 +75,9 @@ module app.wizard.page.contextwindow.inspect.page {
                                 this.selectOption(pageTemplateOptions.getDefault(), true);
                             }
                         }
+                        else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                            this.selectCustomized();
+                        }
                     });
 
                 }).catch((reason: any) => {
@@ -83,6 +90,10 @@ module app.wizard.page.contextwindow.inspect.page {
             if (optionToSelect) {
                 this.selectOption(optionToSelect, true);
             }
+        }
+
+        private selectCustomized() {
+            this.selectOption(this.customizedOption, true);
         }
 
         onSelection(listener: (event: PageTemplate)=>void) {

@@ -9,7 +9,7 @@ module app.wizard.page.contextwindow.inspect.page {
             this.templateSelector = templateSelector;
 
             var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel("Page template").build());
+            fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel("Renderer").build());
             this.add(fieldSet);
         }
 
