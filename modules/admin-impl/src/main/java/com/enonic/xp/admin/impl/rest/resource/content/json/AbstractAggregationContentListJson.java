@@ -14,7 +14,6 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>
@@ -24,19 +23,17 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
     public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
                                                final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver,
-              inlineMixinsToFormItemsTransformer, contentPrincipalsResolver );
+              contentPrincipalsResolver );
     }
 
     public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                                final ImmutableSet<Aggregation> aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                final ContentPrincipalsResolver contentPrincipalsResolver )
     {
-        super( contents, contentListMetaData, iconUrlResolver, inlineMixinsToFormItemsTransformer, contentPrincipalsResolver );
+        super( contents, contentListMetaData, iconUrlResolver, contentPrincipalsResolver );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 

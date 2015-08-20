@@ -5,7 +5,7 @@ import java.io.InputStream;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
-import com.enonic.xp.portal.bean.BeanContext;
+import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;

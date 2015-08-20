@@ -1,0 +1,26 @@
+{
+  "index": {
+    "number_of_shards": 5,
+    "number_of_replicas": 0
+  },
+  "analysis": {
+    "filter": {
+      "front_ngram": {
+        "side": "front",
+        "max_gram": 3,
+        "min_gram": 2,
+        "type": "edgeNGram",
+        "side": "front"
+      }
+    }
+  },
+  "analyzer": {
+    "default_search": {
+      "tokenizer": "fisk",
+      "filter": [
+        "lowercase",
+        "ost"
+      ]
+    }
+  }
+}

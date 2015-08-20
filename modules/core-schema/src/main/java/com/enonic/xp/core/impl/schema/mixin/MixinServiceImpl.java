@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -20,6 +22,11 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -109,7 +116,7 @@ public final class MixinServiceImpl
         else
         {
             final Application application = this.applicationService.getApplication( applicationKey );
-            if ( application != null )
+            if ( application != null && application.isStarted() )
             {
                 final MixinLoader mixinLoader = new MixinLoader( application.getBundle() );
                 mixins = mixinLoader.loadMixins();
@@ -127,7 +134,7 @@ public final class MixinServiceImpl
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        if ( BundleEvent.UPDATED == event.getType() || BundleEvent.UNINSTALLED == event.getType() )
+        if ( BundleEvent.STARTED == event.getType() || BundleEvent.STOPPED == event.getType() )
         {
             this.map.remove( ApplicationKey.from( event.getBundle() ) );
         }
@@ -140,6 +147,62 @@ public final class MixinServiceImpl
             map( this::getByName ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() ) );
+    }
+
+    @Override
+    public Form inlineFormItems( final Form form )
+    {
+        final Form.Builder transformedForm = Form.create();
+        final List<FormItem> transformedFormItems = transformFormItems( form );
+
+        for ( final FormItem formItem : transformedFormItems )
+        {
+            transformedForm.addFormItem( formItem );
+        }
+        return transformedForm.build();
+    }
+
+    private List<FormItem> transformFormItems( final Iterable<FormItem> iterable )
+    {
+        final List<FormItem> formItems = new ArrayList<>();
+        for ( final FormItem formItem : iterable )
+        {
+            if ( formItem instanceof InlineMixin )
+            {
+                final InlineMixin inline = (InlineMixin) formItem;
+                final Mixin mixin = getByName( inline.getMixinName() );
+                if ( mixin != null )
+                {
+                    for ( final FormItem mixinFormItem : mixin.getForm() )
+                    {
+                        formItems.add( mixinFormItem.copy() );
+                    }
+                }
+                else
+                {
+                    throw new RuntimeException( "Mixin [" + inline.getMixinName() + "] not found" );
+                }
+            }
+            else if ( formItem instanceof FormItemSet )
+            {
+                final FormItemSet.Builder formItemSetBuilder = FormItemSet.create( (FormItemSet) formItem );
+                formItemSetBuilder.clearFormItems();
+                formItemSetBuilder.addFormItems( transformFormItems( (FormItemSet) formItem ) );
+                formItems.add( formItemSetBuilder.build() );
+            }
+            else if ( formItem instanceof FieldSet )
+            {
+                final FieldSet.Builder formItemSetBuilder = FieldSet.create( (FieldSet) formItem );
+                formItemSetBuilder.clearFormItems();
+                formItemSetBuilder.addFormItems( transformFormItems( (FieldSet) formItem ) );
+                formItems.add( formItemSetBuilder.build() );
+            }
+            else
+            {
+                formItems.add( formItem.copy() );
+            }
+        }
+        return formItems;
     }
 
     @Reference

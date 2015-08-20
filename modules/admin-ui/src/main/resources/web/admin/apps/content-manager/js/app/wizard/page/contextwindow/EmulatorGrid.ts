@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow {
             return new api.ui.grid.GridOptionsBuilder().
                 setHideColumnHeaders(true).
                 setRowHeight(50).
-                setHeight(400).
+                setHeight(450).
                 setWidth(320)
                 .build();
         }

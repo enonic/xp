@@ -125,8 +125,10 @@ public class ImageServiceImpl
 
         //Serialization string value
         final String quality = "quality-" + Integer.toString( readImageParams.getQuality() );
+        //Source binary key
+        final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 
-        return Paths.get( homeDir, "work", "cache", "img", readImageParams.getContentId().toString(), cropping, scale, filter, format,
+        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format,
                           background, orientation, quality, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
     }
 

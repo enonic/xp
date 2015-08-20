@@ -393,6 +393,10 @@ module api.ui.grid {
             this.slickGrid.onClick.subscribe(callback);
         }
 
+        unsubscribeOnClick(callback: (e, args) => void) {
+            this.slickGrid.onClick.unsubscribe(callback);
+        }
+
         subscribeOnDblClick(callback: (e, args) => void) {
             this.slickGrid.onDblClick.subscribe(callback);
         }

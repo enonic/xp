@@ -76,7 +76,7 @@ public class DateTimeTypeTest
     private InputTypeConfig newFullConfig()
     {
         return InputTypeConfig.create().
-            property( "timezone", "true" ).
+            property( InputTypeProperty.create( "timezone", "true" ).build() ).
             build();
     }
 }

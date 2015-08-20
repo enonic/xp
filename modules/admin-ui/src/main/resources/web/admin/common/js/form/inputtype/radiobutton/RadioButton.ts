@@ -21,14 +21,14 @@ module api.form.inputtype.radiobutton {
             this.readConfig(config.inputConfig);
         }
 
-        private readConfig(inputConfig: { [name: string]: string[]; }): void {
+        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             var options: {label: string; value: string;}[] = [];
 
-            var labels = inputConfig['option.label'] || [];
-            var values = inputConfig['option.value'] || [];
-            var l = Math.min(labels.length, values.length);
+            var optionValues = inputConfig['option'] || [];
+            var l = optionValues.length, optionValue;
             for (var i = 0; i < l; i++) {
-                options.push({label: labels[i], value: values[i]});
+                optionValue = optionValues[i];
+                options.push({label: optionValue['value'], value: optionValue['@value']});
             }
             this.radioButtonOptions = options;
         }

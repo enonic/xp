@@ -514,6 +514,21 @@ public class NodeServiceImpl
     }
 
     @Override
+    public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
+    {
+        return GetBinaryKeyCommand.create().
+            binaryReference( reference ).
+            nodeId( nodeId ).
+            indexServiceInternal( this.indexServiceInternal ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            branchService( this.branchService ).
+            build().
+            execute();
+    }
+
+    @Override
     public RootNode createRootNode( final CreateRootNodeParams params )
     {
         return CreateRootNodeCommand.create().

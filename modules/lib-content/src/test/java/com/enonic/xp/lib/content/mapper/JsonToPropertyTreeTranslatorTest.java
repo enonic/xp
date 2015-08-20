@@ -14,6 +14,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
@@ -28,12 +29,7 @@ public class JsonToPropertyTreeTranslatorTest
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-
-        JsonToPropertyTreeTranslator.create().
-            mode( JsonToPropertyTreeTranslator.Mode.STRICT ).
-            formItems( createFormForAllInputTypes().getFormItems() ).
-            build().
-            translate( node );
+        new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
     }
 
     @Test
@@ -42,10 +38,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.create().
-            mode( JsonToPropertyTreeTranslator.Mode.LENIENT ).
-            build().
-            translate( node );
+        final PropertyTree data = new JsonToPropertyTreeTranslator( null, false ).translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );
@@ -67,11 +60,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.create().
-            formItems( createFormForAllInputTypes().getFormItems() ).
-            mode( JsonToPropertyTreeTranslator.Mode.LENIENT ).
-            build().
-            translate( node );
+        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), false ).translate( node );
 
         final Property noTimezone = data.getProperty( "localDateTime" );
         assertNotNull( noTimezone );
@@ -133,8 +122,8 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypeName.COMBO_BOX ).
-                inputTypeConfig( "option.value", "value1", "value2", "value3" ).
-                inputTypeConfig( "option.label", "label1", "label2", "label3" ).
+                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
+                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).
@@ -150,8 +139,8 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeConfig( "allowedContentType", ContentTypeName.folder().toString() ).
-                inputTypeConfig( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).
+                inputTypeProperty( InputTypeProperty.create( "allowedContentType", ContentTypeName.folder().toString() ).build() ).
+                inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
@@ -187,13 +176,13 @@ public class JsonToPropertyTreeTranslatorTest
                 name( "localDateTime" ).
                 label( "Local datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "timezone", "false" ).
+                inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "dateTime" ).
                 label( "Datetime" ).
                 inputType( InputTypeName.DATE_TIME ).
-                inputTypeConfig( "timezone", "true" ).
+                inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).
                 build() ).
             addFormItem( set ).
             build();

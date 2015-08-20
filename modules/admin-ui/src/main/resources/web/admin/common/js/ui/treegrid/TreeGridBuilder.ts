@@ -8,6 +8,8 @@ module api.ui.treegrid {
 
     export class TreeGridBuilder<NODE> {
 
+        private expandAll: boolean = false;
+
         private showToolbar: boolean = true;
 
         private contextMenu: TreeGridContextMenu;
@@ -66,6 +68,7 @@ module api.ui.treegrid {
             return new GridOptionsBuilder<NODE>().
                 setDataItemColumnValueExtractor(this.nodeExtractor).
                 setEditable(false).
+                setAutoHeight(false).
                 setEnableAsyncPostRender(true).
                 setAutoRenderGridOnDataChanges(true).
                 setEnableCellNavigation(false).
@@ -74,7 +77,6 @@ module api.ui.treegrid {
                 setHideColumnHeaders(true).
                 setCheckableRows(true).
                 setRowHeight(45).
-                setAutoHeight(true).
                 build();
         }
 
@@ -113,6 +115,15 @@ module api.ui.treegrid {
 
         getClasses(): string {
             return this.classes;
+        }
+
+        isExpandAll(): boolean {
+            return this.expandAll;
+        }
+
+        setExpandAll(value: boolean): TreeGridBuilder<NODE> {
+            this.expandAll = value;
+            return this;
         }
 
         setShowToolbar(showToolbar: boolean): TreeGridBuilder<NODE> {

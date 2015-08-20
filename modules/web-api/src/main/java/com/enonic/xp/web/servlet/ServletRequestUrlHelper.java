@@ -117,13 +117,13 @@ public final class ServletRequestUrlHelper
         String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
         {
-            final String port = xForwardedHost.split( ":" )[1];
-            return port == null ? "" : port;
+            final String[] xForwardedHostValues = xForwardedHost.split( ":" );
+            if ( xForwardedHostValues.length > 1 )
+            {
+                return xForwardedHostValues[1];
+            }
         }
-        else
-        {
-            return Integer.toString( httpServletRequest.getServerPort() );
-        }
+        return Integer.toString( httpServletRequest.getServerPort() );
     }
 
     private static boolean needPortNumber( final String scheme, final String port )
@@ -163,10 +163,11 @@ public final class ServletRequestUrlHelper
                 newUriPrefix( normalizePath( vhost.getSource() ) ).
                 build();
         }
-        else
-        {
-            throw new OutOfScopeException( "URI out of scope" );
-        }
+
+        return resultBuilder.
+            rewrittenUri( normalizePath( uri ) ).
+            outOfScope( true ).
+            build();
     }
 
     private static String normalizePath( final String value )

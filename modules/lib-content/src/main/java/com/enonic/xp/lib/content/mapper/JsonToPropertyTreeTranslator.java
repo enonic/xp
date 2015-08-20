@@ -12,35 +12,33 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.inputtype.InputTypes;
 
-public class JsonToPropertyTreeTranslator
+public final class JsonToPropertyTreeTranslator
 {
-    private final FormItems formItems;
+    private final Form form;
 
     private final PropertyTree propertyTree;
 
     private final InputTypeResolver inputTypeResolver;
 
-    private final Mode mode;
+    private final boolean strictMode;
 
-    private JsonToPropertyTreeTranslator( final Builder builder )
+    public JsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
-        this.formItems = builder.formItems != null ? builder.formItems : Form.create().build().getFormItems();
-        this.mode = builder.mode;
+        this.form = form != null ? form : Form.create().build();
+        this.strictMode = strict;
         this.propertyTree = new PropertyTree();
         this.inputTypeResolver = InputTypes.BUILTIN;
     }
 
     public PropertyTree translate( final JsonNode json )
     {
-        traverse( json, propertyTree.getRoot() );
-
-        return propertyTree;
+        traverse( json, this.propertyTree.getRoot() );
+        return this.propertyTree;
     }
 
     private void traverse( final JsonNode json, final PropertySet parent )
@@ -87,11 +85,11 @@ public class JsonToPropertyTreeTranslator
     {
         final Property parentProperty = parent.getProperty();
 
-        final Input input = this.formItems.getInput( resolveInputPath( key, parentProperty ) );
+        final Input input = this.form.getInput( resolveInputPath( key, parentProperty ) );
 
         if ( input == null )
         {
-            if ( this.mode.equals( Mode.STRICT ) )
+            if ( this.strictMode )
             {
                 throw new IllegalArgumentException(
                     "No mapping defined for property " + key + " with value " + resolveStringValue( value ) );
@@ -152,40 +150,5 @@ public class JsonToPropertyTreeTranslator
 
         final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().resetAllIndexesTo( 0 ).toString() );
         return FormItemPath.from( FormItemPath.from( parentPath, key ) );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static class Builder
-    {
-        private FormItems formItems;
-
-        private Mode mode = Mode.STRICT;
-
-        public Builder formItems( final FormItems formItems )
-        {
-            this.formItems = formItems;
-            return this;
-        }
-
-        public Builder mode( final Mode mode )
-        {
-            this.mode = mode;
-            return this;
-        }
-
-        public JsonToPropertyTreeTranslator build()
-        {
-            return new JsonToPropertyTreeTranslator( this );
-        }
-    }
-
-    public enum Mode
-    {
-        STRICT,
-        LENIENT
     }
 }

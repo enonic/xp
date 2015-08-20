@@ -90,7 +90,7 @@ public final class ContentType
         return isBuiltIn;
     }
 
-    public Form form()
+    public Form getForm()
     {
         return this.form;
     }
@@ -163,9 +163,9 @@ public final class ContentType
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
             this.superType = source.getSuperType();
-            if ( source.form() != null )
+            if ( source.getForm() != null )
             {
-                this.formBuilder = Form.create( source.form() );
+                this.formBuilder = Form.create( source.getForm() );
             }
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
             this.metadata = source.metadata;
@@ -222,8 +222,7 @@ public final class ContentType
 
         public Builder setBuiltIn()
         {
-            isBuiltIn = true;
-            return this;
+            return setBuiltIn( true );
         }
 
         public Builder superType( final ContentTypeName superType )

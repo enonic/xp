@@ -14,7 +14,7 @@ import org.jboss.resteasy.annotations.GZIP;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 
 @Path("/")
 @Component(immediate = true)

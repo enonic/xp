@@ -47,6 +47,7 @@ public class ImageServiceImplTest
         contentService = Mockito.mock( ContentService.class );
         imageDataOriginal = ByteStreams.toByteArray( getClass().getResourceAsStream( "effect/transparent.png" ) );
         Mockito.when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        Mockito.when( contentService.getBinaryKey( contentId, binaryReference ) ).thenReturn( "binaryKey" );
 
         ImageFilterBuilder imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
         imageFilter = Mockito.mock( ImageFilter.class );

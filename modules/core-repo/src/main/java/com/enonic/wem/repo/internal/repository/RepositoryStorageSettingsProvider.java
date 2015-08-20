@@ -1,24 +1,35 @@
 package com.enonic.wem.repo.internal.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import com.enonic.wem.repo.internal.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 public class RepositoryStorageSettingsProvider
     extends AbstractRepositorySettingsProvider
 {
-
     public static final String STORAGE_SETTINGS_FILE_PATTERN = "-storage-settings.json";
 
     private final static String PREFIX = "/META-INF/index/settings/";
 
-    public static String getSettings( final RepositoryId repositoryId )
-    {
-        return doGet( repositoryId, resolveFileName( repositoryId ) );
-    }
+    private static final String DEFAULT_STORAGE_SETTINGS_FILE_NAME = "default-storage-settings.json";
 
+    public static IndexSettings getSettings( final RepositoryId repositoryId )
+    {
+        final JsonNode defaultSettings = doGet( repositoryId, resolveDefaultSettingsFileName() );
+
+        final JsonNode specificSettings = doGet( repositoryId, resolveFileName( repositoryId ) );
+
+        return IndexSettings.from( JsonMergeHelper.merge( defaultSettings, specificSettings ) );
+    }
 
     private static String resolveFileName( final RepositoryId repositoryId )
     {
         return ( PREFIX + repositoryId.toString() + STORAGE_SETTINGS_FILE_PATTERN );
     }
 
+    private static String resolveDefaultSettingsFileName()
+    {
+        return ( PREFIX + DEFAULT_STORAGE_SETTINGS_FILE_NAME );
+    }
 }

@@ -12,7 +12,6 @@ import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetChildContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.GetContentTypesParams;
-import com.enonic.xp.schema.content.validator.ContentTypeSuperTypeValidator;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.xp.schema.mixin.MixinService;
 

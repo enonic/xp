@@ -1,5 +1,8 @@
 package com.enonic.wem.repo.internal.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import com.enonic.wem.repo.internal.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 public class RepositorySearchIndexSettingsProvider
@@ -9,10 +12,15 @@ public class RepositorySearchIndexSettingsProvider
 
     private static final String SEARCH_SETTINGS_FILE_PATTERN = "-search-settings.json";
 
+    private static final String DEFAULT_SEARCH_SETTINGS_FILE_NAME = "default-search-settings.json";
 
-    public static String getSettings( final RepositoryId repositoryId )
+    public static IndexSettings getSettings( final RepositoryId repositoryId )
     {
-        return doGet( repositoryId, resolveFileName( repositoryId ) );
+        final JsonNode defaultSettings = doGet( repositoryId, resolveDefaultSettingsFileName() );
+
+        final JsonNode specificSettings = doGet( repositoryId, resolveFileName( repositoryId ) );
+
+        return IndexSettings.from( JsonMergeHelper.merge( defaultSettings, specificSettings ) );
     }
 
     private static String resolveFileName( final RepositoryId repositoryId )
@@ -20,5 +28,9 @@ public class RepositorySearchIndexSettingsProvider
         return ( PREFIX + repositoryId.toString() + SEARCH_SETTINGS_FILE_PATTERN );
     }
 
+    private static String resolveDefaultSettingsFileName()
+    {
+        return ( PREFIX + DEFAULT_SEARCH_SETTINGS_FILE_NAME );
+    }
 
 }

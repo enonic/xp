@@ -349,6 +349,24 @@ module app.publish {
                 this.dependenciesItemsView.appendDependency(dependencyView);
             });
 
+            if (this.extendsWindowHeightSize()) {
+                this.centerMyself();
+            }
+        }
+
+        private extendsWindowHeightSize(): boolean {
+            if (this.getResponsiveItem().isInRangeOrBigger(api.ui.responsive.ResponsiveRanges._540_720)) {
+                var el = this.getEl(),
+                    bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
+                                             el.getMarginTop() +
+                                             el.getHeightWithBorder() +
+                                             el.getMarginBottom();
+
+                if (window.innerHeight < bottomPosition) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**

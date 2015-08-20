@@ -19,3 +19,6 @@
 ///<reference path='ContentPermissionsAppliedEvent.ts' />
 ///<reference path='EditPermissionsDialog.ts' />
 ///<reference path='ContentWizardToolbarPublishControls.ts' />
+///<reference path='PageComponentsItemViewer.ts' />
+///<reference path='PageComponentsTreeGrid.ts' />
+///<reference path='PageComponentsView.ts' />

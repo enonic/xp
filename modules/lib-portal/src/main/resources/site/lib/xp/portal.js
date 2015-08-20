@@ -38,6 +38,11 @@ exports.getSite = function () {
     return __.toNativeObject(bean.execute());
 };
 
+exports.getSiteConfig = function () {
+    var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
+    return __.toNativeObject(bean.execute());
+};
+
 exports.getContent = function () {
     var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
     return __.toNativeObject(bean.execute());

@@ -4,15 +4,15 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.ScriptService;
+import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
 
 @Component
 public final class ControllerScriptFactoryImpl
     implements ControllerScriptFactory
 {
-    private ScriptService scriptService;
+    private PortalScriptService scriptService;
 
     private PostProcessor postProcessor;
 
@@ -30,7 +30,7 @@ public final class ControllerScriptFactoryImpl
     }
 
     @Reference
-    public void setScriptService( final ScriptService scriptService )
+    public void setScriptService( final PortalScriptService scriptService )
     {
         this.scriptService = scriptService;
     }

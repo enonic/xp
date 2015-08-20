@@ -2,38 +2,22 @@
 <bundles>
 
   <!-- Core bundles -->
-  <bundle level="5">org.apache.felix:org.apache.felix.metatype:1.0.10</bundle>
-  <bundle level="5">org.apache.felix:org.apache.felix.eventadmin:1.4.2</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.metatype:1.1.2</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.eventadmin:1.4.4</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.configadmin:1.8.0</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.scr:1.8.2</bundle>
-  <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.4.2</bundle>
-  <bundle level="5">org.ops4j.pax.url:pax-url-mvn:1.3.7</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
 
   <!-- Shell bundles -->
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.runtime:0.12.1</bundle>
-  <bundle level="10">org.apache.felix:org.apache.felix.gogo.command:0.12.0</bundle>
+  <bundle level="10">org.apache.felix:org.apache.felix.gogo.runtime:0.16.2</bundle>
+  <bundle level="10">org.apache.felix:org.apache.felix.gogo.command:0.14.0</bundle>
   <bundle level="10">org.apache.felix:org.apache.felix.gogo.shell:0.10.0</bundle>
   <bundle level="11">org.apache.felix:org.apache.felix.shell.remote:1.1.2</bundle>
-
-  <!-- Blueprint bundles -->
-  <bundle level="20">org.ow2.asm:asm-all:5.0.3</bundle>
-  <bundle level="20">org.apache.aries:org.apache.aries.util:1.1.0</bundle>
-  <bundle level="20">org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1</bundle>
-  <bundle level="20">org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5</bundle>
-  <bundle level="20">org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0</bundle>
-  <bundle level="20">org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0</bundle>
 
   <!-- Jetty bundles -->
   <bundle level="25">org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0</bundle>
   <bundle level="25">org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1</bundle>
   <bundle level="25">org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0</bundle>
-
-  <!-- Felix web console bundles -->
-  <bundle level="25">org.apache.felix:org.apache.felix.webconsole:4.2.4:all</bundle>
-  <bundle level="25">org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0</bundle>
 
   <!-- Core app dependencies -->
   <bundle level="30">com.google.guava:guava:18.0</bundle>
@@ -59,6 +43,10 @@
   <bundle level="30">${group}:core-export:${version}</bundle>
   <bundle level="30">${group}:core-impl:${version}</bundle>
 
+  <!-- Script app -->
+  <bundle level="30">${group}:script-api:${version}</bundle>
+  <bundle level="30">${group}:script-impl:${version}</bundle>
+
   <!-- Web app dependencies -->
   <bundle level="30">com.enonic.osgi.bundles:resteasy:3.0.8_1</bundle>
 
@@ -74,7 +62,6 @@
 
   <!-- Portal app -->
   <bundle level="30">${group}:portal-api:${version}</bundle>
-  <bundle level="30">${group}:portal-script:${version}</bundle>
   <bundle level="30">${group}:portal-impl:${version}</bundle>
 
   <!-- Admin app dependencies -->
@@ -83,6 +70,7 @@
   <bundle level="30">commons-fileupload:commons-fileupload:1.3.1</bundle>
 
   <!-- Admin app -->
+  <bundle level="30">${group}:admin-api:${version}</bundle>
   <bundle level="30">${group}:admin-event:${version}</bundle>
   <bundle level="30">${group}:admin-ui:${version}</bundle>
   <bundle level="30">${group}:admin-impl:${version}</bundle>

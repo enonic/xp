@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -23,7 +23,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
@@ -33,7 +32,6 @@ import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 
@@ -50,8 +48,6 @@ public final class PageTemplateResource
 
     private ContentTypeService contentTypeService;
 
-    private InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer;
-
     private ContentPrincipalsResolver principalsResolver;
 
     @GET
@@ -60,7 +56,7 @@ public final class PageTemplateResource
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -75,8 +71,7 @@ public final class PageTemplateResource
             totalHits( pageTemplates.getSize() ).
             hits( pageTemplates.getSize() ).
             build();
-        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer,
-                                    principalsResolver );
+        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -92,8 +87,7 @@ public final class PageTemplateResource
             totalHits( filteredPageTemplates.getSize() ).
             hits( filteredPageTemplates.getSize() ).
             build();
-        return new ContentListJson( filteredPageTemplates.toContents(), metaData, newContentIconUrlResolver(),
-                                    inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentListJson( filteredPageTemplates.toContents(), metaData, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -111,7 +105,7 @@ public final class PageTemplateResource
         {
             return null;
         }
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -177,12 +171,6 @@ public final class PageTemplateResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.inlineMixinsToFormItemsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
     }
 
     @Reference

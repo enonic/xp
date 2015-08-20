@@ -2,8 +2,6 @@ package com.enonic.xp.launcher;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
-
 import com.enonic.xp.launcher.config.ConfigLoader;
 import com.enonic.xp.launcher.config.ConfigProperties;
 import com.enonic.xp.launcher.env.Environment;
@@ -112,7 +110,6 @@ public final class Launcher
     {
         checkRequirements();
         resolveEnv();
-        cleanIfNeeded();
         printBanner();
         setupLogging();
         loadConfiguration();
@@ -124,31 +121,6 @@ public final class Launcher
     public void stop()
     {
         this.framework.stop();
-    }
-
-    private void cleanIfNeeded()
-        throws Exception
-    {
-        if ( !hasArg( "clean" ) )
-        {
-            return;
-        }
-
-        final File workDir = new File( this.env.getInstallDir(), "work" );
-        FileUtils.deleteDirectory( workDir );
-    }
-
-    private boolean hasArg( final String value )
-    {
-        for ( final String arg : this.args )
-        {
-            if ( value.equalsIgnoreCase( arg ) )
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void applySystemPropertyArgs()

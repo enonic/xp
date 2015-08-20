@@ -8,14 +8,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.content.validator.DataValidationErrors;
-import com.enonic.xp.schema.content.validator.OccurrenceValidator;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -114,7 +114,7 @@ final class ValidateContentDataCommand
     {
         if ( contentType != null )
         {
-            this.resultBuilder.addAll( new OccurrenceValidator( contentType.form() ).validate( contentData.getRoot() ) );
+            this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( contentData.getRoot() ) );
         }
     }
 
@@ -133,8 +133,7 @@ final class ValidateContentDataCommand
                     continue;
                 }
 
-                final Form mixinForm = Form.create().addFormItems( mixin.getFormItems() ).build();
-
+                final Form mixinForm = mixin.getForm();
                 this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
             }
         }

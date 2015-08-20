@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentIdQueryResultJson
     extends AbstractContentQueryResultJson<ContentIdJson>
@@ -29,8 +28,7 @@ public class ContentIdQueryResultJson
         private Set<ContentIdJson> contents = Sets.newLinkedHashSet();
 
         @Override
-        public Builder addContent( final Content content,
-                                   final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
+        public Builder addContent( final Content content )
         {
             this.contents.add( new ContentIdJson( content.getId() ) );
             return this;

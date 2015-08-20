@@ -30,6 +30,6 @@ public final class XmlMixinParser
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         final Form form = mapper.buildForm( root.getChild( "items" ) );
-        this.builder.formItems( form.getFormItems() );
+        this.builder.form( form );
     }
 }

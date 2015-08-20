@@ -70,6 +70,8 @@ public interface ContentService
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
+    String getBinaryKey( ContentId contentId, BinaryReference binaryReference );
+
     AccessControlList getRootPermissions();
 
     boolean contentExists( ContentId contentId );

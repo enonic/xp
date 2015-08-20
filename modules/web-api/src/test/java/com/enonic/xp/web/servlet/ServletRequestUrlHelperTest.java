@@ -109,23 +109,18 @@ public class ServletRequestUrlHelperTest
         Mockito.when( vhost.getTarget() ).thenReturn( "/" );
         Mockito.when( vhost.getSource() ).thenReturn( "/admin" );
 
-        final String uri1 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        assertEquals( "/admin/path/to/page", uri1 );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/admin/path/to/page", rewritingResult.getRewrittenUri() );
+        assertFalse( rewritingResult.isOutOfScope() );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
-        boolean outOfScopeException = false;
-        try
-        {
-            final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        }
-        catch ( OutOfScopeException e )
-        {
-            outOfScopeException = true;
-        }
-        assertTrue( outOfScopeException );
+        final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/path/to/page", rewritingResult2.getRewrittenUri() );
+        assertTrue( rewritingResult2.isOutOfScope() );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
-        final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        assertEquals( "/admin/page", uri3 );
+        final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/admin/page", rewritingResult3.getRewrittenUri() );
+        assertFalse( rewritingResult3.isOutOfScope() );
     }
 }

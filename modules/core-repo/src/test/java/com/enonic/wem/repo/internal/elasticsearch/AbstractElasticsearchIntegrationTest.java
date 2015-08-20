@@ -73,17 +73,6 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n" );
     }
 
-    String getContentRepoSearchDefaultSettings()
-    {
-        return RepositoryTestSearchIndexSettingsProvider.getSettings( TEST_REPO );
-    }
-
-    protected Client client()
-    {
-        return this.client;
-    }
-
-
     public void waitForClusterHealth()
     {
         elasticsearchIndexService.getClusterHealth( TimeValue.timeValueSeconds( 10 ) );

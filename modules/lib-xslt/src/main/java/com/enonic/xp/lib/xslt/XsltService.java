@@ -8,8 +8,8 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
 import com.enonic.xp.lib.xslt.function.XsltFunctionLibrary;
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.resource.ResourceService;
 

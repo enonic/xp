@@ -12,19 +12,17 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.AdminResource;
+import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.UpdatePageParams;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 
@@ -39,8 +37,6 @@ public final class PageResource
 
     private ContentTypeService contentTypeService;
 
-    private InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer;
-
     private ContentPrincipalsResolver principalsResolver;
 
     @POST
@@ -51,7 +47,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -62,7 +58,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -73,18 +69,12 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
         return new ContentIconUrlResolver( this.contentTypeService );
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.inlineMixinsToFormItemsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
     }
 
     @Reference
