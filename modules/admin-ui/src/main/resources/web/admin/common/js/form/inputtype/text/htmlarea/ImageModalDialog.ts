@@ -1,4 +1,4 @@
-module api.form.inputtype.text.tiny {
+module api.form.inputtype.text.htmlarea {
 
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
