@@ -409,16 +409,12 @@ module api.liveedit {
         }
 
         getName(): string {
-            if(!this.liveEditModel.getContent() || api.util.StringHelper.isEmpty(this.liveEditModel.getContent().getDisplayName())) {
+            var content = this.liveEditModel.getContent();
+            if (!content || api.util.StringHelper.isEmpty(content.getDisplayName())) {
                 return "[No name]";
+            } else {
+                return content.getDisplayName();
             }
-            else {
-                return this.liveEditModel.getContent().getDisplayName();
-            }
-        }
-
-        getLocalType(): string {
-            return this.liveEditModel.getContent() ? this.liveEditModel.getContent().getType().getLocalName() : "";
         }
 
         getParentItemView(): ItemView {

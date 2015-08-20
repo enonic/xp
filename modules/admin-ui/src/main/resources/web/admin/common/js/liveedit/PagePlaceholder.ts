@@ -3,6 +3,8 @@ module api.liveedit {
     import PageDescriptor = api.content.page.PageDescriptor;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import ContentType = api.schema.content.ContentType;
 
     export class PagePlaceholder extends ItemViewPlaceholder {
 
@@ -26,10 +28,16 @@ module api.liveedit {
 
 
             this.controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
-                if(event.getData().length > 0) {
+                if (event.getData().length > 0) {
                     this.controllerDropdown.show();
-                    if(!this.pageView.liveEditModel.getContent().isPageTemplate()) {
-                        this.infoBlock.setTextForContent(this.pageView.getLocalType(), this.pageView.getName());
+                    var content = this.pageView.liveEditModel.getContent();
+                    if (!content.isPageTemplate()) {
+                        new GetContentTypeByNameRequest(content.getType()).sendAndParse().then((contentType: ContentType) => {
+                            this.infoBlock.setTextForContent(contentType.getDisplayName());
+                        }).catch((reason)=> {
+                            this.infoBlock.setTextForContent(content.getType().toString());
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                     }
                 }
                 else {
@@ -37,7 +45,6 @@ module api.liveedit {
                     this.infoBlock.setNoControllersAvailableText();
                 }
             });
-
 
 
             this.controllerDropdown.onClicked((event: MouseEvent) => {

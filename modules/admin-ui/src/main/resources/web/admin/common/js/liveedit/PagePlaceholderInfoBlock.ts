@@ -15,8 +15,8 @@ module api.liveedit {
             this.appendChildren(this.line1, this.line2);
         }
 
-        setTextForContent(type: string, name: string) {
-            this.line1.setHtml('No page template supporting content type "' + type + ' '+ name + '"');
+        setTextForContent(contentTypeDisplayName: string) {
+            this.line1.setHtml('No page template supporting content type "' + contentTypeDisplayName + '" found');
             this.line2.setHtml("Select a controller below to setup a customized page");
         }
 
