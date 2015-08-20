@@ -432,6 +432,10 @@ module api.content.page {
             return !!this.template;
         }
 
+        hasDefaultTemplate(): boolean {
+            return !!this.defaultTemplate;
+        }
+
         getTemplateKey(): PageTemplateKey {
             return this.template ? this.template.getKey() : null;
         }
