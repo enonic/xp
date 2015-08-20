@@ -85,6 +85,10 @@ module app.wizard.page.contextwindow.inspect.page {
             }
         }
 
+        selectCustomized() {  //customized is used to be last option
+            this.selectRow(this.getOptions().length - 1);
+        }
+
         onSelection(listener: (event: PageTemplate)=>void) {
             this.selectionListeners.push(listener);
         }
