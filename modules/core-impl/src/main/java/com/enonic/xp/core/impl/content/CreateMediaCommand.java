@@ -47,10 +47,10 @@ final class CreateMediaCommand
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
         final ContentTypeName type = resolvedTypeFromMimeType != null ? resolvedTypeFromMimeType : ContentTypeName.unknownMedia();
 
-        // TODO: Resolve form based on type?
         final PropertyTree data = new PropertyTree();
-        new ImageFormDataBuilder().
-            image( params.getName() ).
+        new MediaFormDataBuilder().
+            type( type ).
+            attachment( params.getName() ).
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
             build( data );
