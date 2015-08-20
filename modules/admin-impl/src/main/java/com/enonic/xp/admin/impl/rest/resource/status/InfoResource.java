@@ -19,7 +19,6 @@ import com.enonic.xp.admin.impl.status.GCStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.JVMStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.MemoryStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.OSStatusInfoBuilder;
-import com.enonic.xp.admin.impl.status.PropertiesStatusInfoBuilder;
 import com.enonic.xp.admin.impl.status.StatusInfoBuilder;
 
 @Path("status")
@@ -36,7 +35,6 @@ public final class InfoResource
         this.infoBuilders.add( new JVMStatusInfoBuilder() );
         this.infoBuilders.add( new MemoryStatusInfoBuilder() );
         this.infoBuilders.add( new GCStatusInfoBuilder() );
-        this.infoBuilders.add( new PropertiesStatusInfoBuilder() );
         Collections.sort( this.infoBuilders );
     }
 
