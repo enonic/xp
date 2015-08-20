@@ -39,14 +39,10 @@ public class ApplicationTest
         assertEquals( "myapplication", application.getKey().toString() );
         assertEquals( "1.2.0", application.getVersion().toString() );
         assertEquals( "myapplication", application.getDisplayName() );
-        assertEquals( "[1.2,2)", application.getSystemVersion() );
-        assertEquals( "5.1", application.getMaxSystemVersion() );
-        assertEquals( "5.0", application.getMinSystemVersion() );
         assertEquals( "http://enonic.com/path/to/application", application.getUrl() );
         assertEquals( "Enonic AS", application.getVendorName() );
         assertEquals( "http://enonic.com", application.getVendorUrl() );
         assertEquals( bundle, application.getBundle() );
-        assertEquals( 3, application.getResourcePaths().size() );
         assertEquals( 3l, application.getModifiedTime().toEpochMilli() );
         assertTrue( application.isStarted() );
         application.checkIfStarted();
@@ -56,6 +52,21 @@ public class ApplicationTest
 
         assertEquals( "Application{applicationKey=myapplication, displayName=myapplication, url=http://enonic.com/path/to/application, " +
                           "vendorName=Enonic AS, vendorUrl=http://enonic.com}", application.toString() );
+    }
+
+    @Test
+    public void testSystemVersion()
+    {
+        Application application = Application.from( bundle );
+        assertEquals( "[1.2,2)", application.getSystemVersion() );
+        assertEquals( "2.0.0", application.getMaxSystemVersion() );
+        assertEquals( "1.2.0", application.getMinSystemVersion() );
+
+        bundle.getHeaders().remove( Application.X_SYSTEM_VERSION );
+        application = Application.from( bundle );
+        assertEquals( null, application.getSystemVersion() );
+        assertEquals( null, application.getMaxSystemVersion() );
+        assertEquals( null, application.getMinSystemVersion() );
     }
 
     private Bundle mockBundle( final String... resourcePaths )
