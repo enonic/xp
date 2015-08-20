@@ -1,15 +1,20 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.GeoPoint;
 
-public class FindNodesByQueryCommandTest_geoPoint
+import static org.junit.Assert.*;
+
+public class FindNodesByQueryCommandTest_order_geoDistance
     extends AbstractNodeTest
 {
     private static final GeoPoint OSLO = GeoPoint.from( "59.9127300,10.7460900" );
@@ -26,6 +31,9 @@ public class FindNodesByQueryCommandTest_geoPoint
 
     private static final GeoPoint TRONDHEIM = GeoPoint.from( "63.4304900,10.3950600" );
 
+    private static final GeoPoint ODD_GEOPOINT = GeoPoint.from( "0,0" );
+
+
     @Before
     public void setUp()
         throws Exception
@@ -35,15 +43,47 @@ public class FindNodesByQueryCommandTest_geoPoint
     }
 
     @Test
-    public void string_value_equals()
+    public void order_by_geoDistance()
         throws Exception
     {
-        createGeoLocationNodes();
+        createGeoLocations();
 
-        queryAndAssert( "myLocation = '" + FREDRIKSTAD.toString() + "'", 1 );
+        final FindNodesByQueryResult result =
+            doQuery( "_parentPath = '/' ORDER BY geoDistance('myLocation', '" + OSLO.getLatitude() + "," + OSLO.getLongitude() + "')" );
+
+        assertOrder( result );
     }
 
-    private void createGeoLocationNodes()
+    @Test
+    public void order_by_odd_geopoint()
+        throws Exception
+    {
+        createGeoLocations();
+
+        final FindNodesByQueryResult result = doQuery(
+            "_parentPath = '/' ORDER BY geoDistance('myLocation', '" + ODD_GEOPOINT.getLatitude() + "," + ODD_GEOPOINT.getLongitude() +
+                "')" );
+
+        assertEquals( result.getNodes().getSize(), 8 );
+    }
+
+
+    private void assertOrder( final FindNodesByQueryResult result )
+    {
+        assertEquals( result.getNodes().getSize(), 8 );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+        assertEquals( "oslo", iterator.next().name().toString() );
+        assertEquals( "fredrikstad", iterator.next().name().toString() );
+        assertEquals( "trondheim", iterator.next().name().toString() );
+        assertEquals( "berlin", iterator.next().name().toString() );
+        assertEquals( "london", iterator.next().name().toString() );
+        assertEquals( "moscow", iterator.next().name().toString() );
+        assertEquals( "new-york", iterator.next().name().toString() );
+        assertEquals( "odd-geopoint", iterator.next().name().toString() );
+    }
+
+    private void createGeoLocations()
     {
         createNodeWithLocation( OSLO, "oslo", NodePath.ROOT );
         createNodeWithLocation( BERLIN, "berlin", NodePath.ROOT );
@@ -52,15 +92,9 @@ public class FindNodesByQueryCommandTest_geoPoint
         createNodeWithLocation( MOSCOW, "moscow", NodePath.ROOT );
         createNodeWithLocation( FREDRIKSTAD, "fredrikstad", NodePath.ROOT );
         createNodeWithLocation( LONDON, "london", NodePath.ROOT );
+        createNodeWithLocation( ODD_GEOPOINT, "odd-geopoint", NodePath.ROOT );
     }
 
-    @Test
-    public void string_value_in()
-        throws Exception
-    {
-        createGeoLocationNodes();
-        queryAndAssert( "myLocation IN ('" + FREDRIKSTAD.toString() + "','" + OSLO.toString() + "')", 2 );
-    }
 
     private Node createNodeWithLocation( final GeoPoint geoPoint, final String name, final NodePath parent )
     {
@@ -73,5 +107,4 @@ public class FindNodesByQueryCommandTest_geoPoint
             data( data ).
             build() );
     }
-
 }
