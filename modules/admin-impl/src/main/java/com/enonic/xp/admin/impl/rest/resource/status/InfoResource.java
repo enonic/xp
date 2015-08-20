@@ -1,6 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.status;
 
-import java.util.Collections;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -9,34 +14,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.AdminResource;
-import com.enonic.xp.admin.impl.status.GCStatusInfoBuilder;
-import com.enonic.xp.admin.impl.status.JVMStatusInfoBuilder;
-import com.enonic.xp.admin.impl.status.MemoryStatusInfoBuilder;
-import com.enonic.xp.admin.impl.status.OSStatusInfoBuilder;
-import com.enonic.xp.admin.impl.status.StatusInfoBuilder;
+import com.enonic.xp.server.ServerInfo;
 
 @Path("status")
 @Component(immediate = true)
 public final class InfoResource
     implements AdminResource
 {
-    private final List<StatusInfoBuilder> infoBuilders;
-
-    public InfoResource()
-    {
-        this.infoBuilders = Lists.newArrayList();
-        this.infoBuilders.add( new OSStatusInfoBuilder() );
-        this.infoBuilders.add( new JVMStatusInfoBuilder() );
-        this.infoBuilders.add( new MemoryStatusInfoBuilder() );
-        this.infoBuilders.add( new GCStatusInfoBuilder() );
-        Collections.sort( this.infoBuilders );
-    }
+    private ServerInfo serverInfo;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -47,11 +38,94 @@ public final class InfoResource
 
     private ObjectNode createStatus()
     {
-        final ObjectNode node = JsonNodeFactory.instance.objectNode();
-        for ( final StatusInfoBuilder builder : this.infoBuilders )
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        json.set( "xp", buildProductInfo() );
+        json.set( "os", buildOSInfo() );
+        json.set( "jvm", buildJVMInfo() );
+        json.set( "memory", buildMemoryInfo() );
+        json.set( "gc", buildGCInfo() );
+
+        return json;
+    }
+
+    @Reference
+    public void setServerInfo( final ServerInfo serverInfo )
+    {
+        this.serverInfo = serverInfo;
+    }
+
+    private ObjectNode buildProductInfo()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        new ProductInfoBuilder( this.serverInfo ).build( json );
+        return json;
+    }
+
+    private ObjectNode buildOSInfo()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        final OperatingSystemMXBean bean = ManagementFactory.getOperatingSystemMXBean();
+        json.put( "name", bean.getName() );
+        json.put( "version", bean.getVersion() );
+        json.put( "arch", bean.getArch() );
+        json.put( "cores", bean.getAvailableProcessors() );
+        json.put( "loadAverage", bean.getSystemLoadAverage() );
+
+        return json;
+    }
+
+    private ObjectNode buildJVMInfo()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        final RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        json.put( "name", bean.getVmName() );
+        json.put( "vendor", bean.getVmVendor() );
+        json.put( "version", bean.getVmVersion() );
+        json.put( "startTime", bean.getStartTime() );
+        json.put( "upTime", bean.getUptime() );
+
+        return json;
+    }
+
+    private ObjectNode buildGCInfo()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        long collectionTime = 0;
+        long collectionCount = 0;
+        final List<GarbageCollectorMXBean> beans = ManagementFactory.getGarbageCollectorMXBeans();
+        for ( final GarbageCollectorMXBean bean : beans )
         {
-            builder.addInfo( node );
+            collectionTime += bean.getCollectionTime();
+            collectionCount += bean.getCollectionCount();
         }
-        return node;
+        json.put( "collectionTime", collectionTime );
+        json.put( "collectionCount", collectionCount );
+
+        return json;
+    }
+
+    private ObjectNode buildMemoryInfo()
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        final MemoryMXBean bean = ManagementFactory.getMemoryMXBean();
+        json.set( "heap", buildMemoryUsageInfo( bean.getHeapMemoryUsage() ) );
+        json.set( "nonHeap", buildMemoryUsageInfo( bean.getNonHeapMemoryUsage() ) );
+
+        return json;
+    }
+
+    private ObjectNode buildMemoryUsageInfo( final MemoryUsage mem )
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        json.put( "init", mem.getInit() );
+        json.put( "max", mem.getMax() );
+        json.put( "committed", mem.getCommitted() );
+        json.put( "used", mem.getUsed() );
+        return json;
     }
 }
