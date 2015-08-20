@@ -45,8 +45,7 @@ module api.ui.image {
         private image: ImgEl;
         private clip: Element;
         private dragHandle: Element;
-        private zoomSlider: Element;
-        private zoomSliderHeight: number = 200;
+        private zoomContainer: Element;
         private zoomLine: Element;
         private zoomKnob: Element;
         private focusClipPath: Element;
@@ -90,7 +89,7 @@ module api.ui.image {
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
 
-        public static debug = false;
+        public static debug = true;
 
         constructor(src?: string) {
             super('image-editor');
@@ -133,22 +132,14 @@ module api.ui.image {
                            '            <use xlink:href="#' + myId + '-dragTriangle" x="8" y="6"/>' +
                            '            <use xlink:href="#' + myId + '-dragTriangle" x="8" y="18" transform="rotate(180, 16, 22)"/>' +
                            '        </svg>' +
-                           '        <svg id="' + myId + '-zoomSlider" class="zoom-slider">' +
-                           '            <rect x="0" y="0" width="40" height="' + this.zoomSliderHeight + '" rx="20" ry="20"/>' +
-                           '            <line id="' + myId + '-zoomLine" x1="20" y1="20" x2="20" y2="180"/>' +
-                           '            <circle id="' + myId + '-zoomKnob" cx="20" cy="-1" r="8"/>' +
-                           '        </svg>' +
                            '    </g>' +
                            '</svg>';
 
             this.clip = Element.fromString(clipHtml);
 
             this.dragHandle = this.clip.findChildById(myId + '-dragHandle', true);
-            this.zoomSlider = this.clip.findChildById(myId + '-zoomSlider', true);
             this.focusClipPath = this.clip.findChildById(myId + '-focusClipPath', true);
             this.cropClipPath = this.clip.findChildById(myId + '-cropClipPath', true);
-            this.zoomLine = this.zoomSlider.findChildById(myId + '-zoomLine');
-            this.zoomKnob = this.zoomSlider.findChildById(myId + '-zoomKnob');
 
             // prevent FF image dragging
             this.clip.getHTMLElement().querySelector('image')['ondragstart'] = function () {
@@ -167,7 +158,7 @@ module api.ui.image {
             // sticky toolbar needs to have access to parent elements
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll",
-                    (event) => this.updateStickyToolbar(this.stickyToolbar));
+                    (event) => this.updateStickyToolbar());
             });
 
             if (src) {
@@ -477,20 +468,37 @@ module api.ui.image {
             var rightContainer = new DivEl('right-container');
             rightContainer.appendChildren(standbyContainer, editContainer);
 
-            toolbar.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
+            var zoomContainer = this.createZoomContainer();
+
+            toolbar.appendChildren(this.editCropButton, this.editFocusButton, rightContainer, zoomContainer);
 
             return toolbar;
         }
 
-        private updateStickyToolbar(toolbar: DivEl) {
+        private updateStickyToolbar() {
             var relativeScrollTop = this.getRelativeScrollTop();
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
                 this.addClass("sticky-mode");
-                toolbar.getEl().setTopPx(-relativeScrollTop);
+                this.stickyToolbar.getEl().setTopPx(-relativeScrollTop);
             } else {
-                toolbar.getEl().setTopPx(0);
+                this.stickyToolbar.getEl().setTopPx(0);
                 this.removeClass("sticky-mode");
             }
+        }
+
+        private createZoomContainer(): DivEl {
+            this.zoomContainer = new DivEl('zoom-container');
+
+            this.zoomLine = new DivEl('zoom-line');
+            this.zoomKnob = new api.dom.SpanEl('zoom-knob');
+            this.zoomLine.appendChild(this.zoomKnob);
+
+            var zoomTitle = new api.dom.SpanEl('zoom-title');
+            zoomTitle.setHtml('Zoom');
+
+            this.zoomContainer.appendChildren(zoomTitle, this.zoomLine);
+
+            return this.zoomContainer;
         }
 
         private isTopEdgeVisible(relativeScrollTop: number): boolean {
@@ -499,12 +507,19 @@ module api.ui.image {
 
         private isBottomEdgeVisible(relativeScrollTop: number): boolean {
             // use crop area bottom edge
-            return (this.getCropPositionPx().h + relativeScrollTop) > 0;
+            var stickyToolbarHeight = this.stickyToolbar.getEl().getHeight(),
+                frameHeight = this.frame.getEl().getHeight(),
+                totalHeight = this.getEl().getHeight();
+
+            // in crop edit mode toolbar grows bigger because of zoom control, so calc difference
+            var toolbarDelta = stickyToolbarHeight - (totalHeight - frameHeight);
+
+            return (this.getCropPositionPx().h + relativeScrollTop - toolbarDelta ) > 0;
         }
 
         private getRelativeScrollTop(): number {
             var scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
-                wizardToolbarHeight = scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).outerHeight(true);
+                wizardToolbarHeight = this.isEditMode() ? 0 : scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).outerHeight(true);
 
             return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
         }
@@ -517,6 +532,7 @@ module api.ui.image {
             }
 
             this.toggleClass('edit-mode', edit);
+            this.updateStickyToolbar();
 
             var crop, zoom, focus;
 
@@ -577,13 +593,14 @@ module api.ui.image {
             }
             this.editResetButton.setLabel('Reset Autofocus').setVisible(!this.focusData.auto);
 
-            this.bindFocusMouseListeners();
-            this.updateFocusMaskPosition();
             this.setFocusEditMode(true);
 
             if (enterEditMode) {
                 this.setEditMode(true, applyChanges);
             }
+
+            this.bindFocusMouseListeners();
+            this.updateFocusMaskPosition();
         }
 
         private disableFocusEditMode(applyChanges: boolean = true, exitEditMode: boolean = true) {
@@ -592,6 +609,7 @@ module api.ui.image {
                 console.log('disableFocusEditMode, applyChanges=' + applyChanges + ', exitEditMode=' + exitEditMode);
             }
             this.unbindFocusMouseListeners();
+
             this.setFocusEditMode(false);
 
             if (exitEditMode) {
@@ -873,14 +891,15 @@ module api.ui.image {
             }
             this.editResetButton.setLabel('Reset Mask').setVisible(!this.cropData.auto);
 
-            this.bindCropMouseListeners();
-            this.updateCropMaskPosition();
-            this.updateZoomPosition();
+            this.setCropEditMode(true);
 
             if (enterEditMode) {
                 this.setEditMode(true, applyChanges);
             }
-            this.setCropEditMode(true);
+
+            this.bindCropMouseListeners();
+            this.updateCropMaskPosition();
+            this.updateZoomPosition();
         }
 
         private disableCropEditMode(applyChanges: boolean = true, exitEditMode: boolean = true) {
@@ -889,6 +908,7 @@ module api.ui.image {
                 console.log('disableCropEditMode, applyChanges=' + applyChanges + ', exitEditMode=' + exitEditMode);
             }
             this.unbindCropMouseListeners();
+
             this.setCropEditMode(false);
 
             if (exitEditMode) {
@@ -934,10 +954,6 @@ module api.ui.image {
         }
 
         private setCropPositionPx(crop: SVGRect, updateAuto: boolean = true) {
-
-            if (this.isCropAreaSmallerThanZoomSlider(crop.h)) {
-                return;
-            }
 
             var oldX = this.cropData.x,
                 oldY = this.cropData.y,
@@ -1016,8 +1032,7 @@ module api.ui.image {
         }
 
         private updateCropMaskPosition() {
-            var zoom = this.zoomSlider.getHTMLElement(),
-                rect = this.cropClipPath.getHTMLElement().querySelector('rect'),
+            var rect = this.cropClipPath.getHTMLElement().querySelector('rect'),
                 drag = this.dragHandle.getHTMLElement();
 
             if (ImageEditor.debug) {
@@ -1032,11 +1047,6 @@ module api.ui.image {
             // 16 is the half-size of drag
             drag.setAttribute('x', (this.cropData.x + this.cropData.w / 2 - 16).toString());
             drag.setAttribute('y', (this.cropData.y + this.cropData.h - 16).toString());
-
-            // 40px is the width of zoom control + 20px to the edge of the canvas
-            zoom.setAttribute('x', (this.cropData.x + this.cropData.w - 20 - 40).toString());
-            // 200px is the height of the zoom control
-            zoom.setAttribute('y', (this.cropData.y + (this.cropData.h - 200) / 2 ).toString());
         }
 
         private isInsideCrop(x: number, y: number) {
@@ -1087,7 +1097,7 @@ module api.ui.image {
                     x: this.getOffsetX(event),
                     y: this.getOffsetY(event)
                 };
-                this.zoomSlider.addClass('active');
+                this.zoomContainer.addClass('active');
             };
             this.zoomKnob.onMouseDown(this.knobMouseDownListener);
 
@@ -1130,7 +1140,7 @@ module api.ui.image {
 
                 if (zoomMouseDown) {
 
-                    this.moveZoomKnobByPx(currPos.y - lastPos.y);
+                    this.moveZoomKnobByPx(currPos.x - lastPos.x);
 
                 } else if (dragMouseDown) {
 
@@ -1173,7 +1183,7 @@ module api.ui.image {
                     this.dragHandle.removeClass('active');
                 } else if (zoomMouseDown) {
                     zoomMouseDown = false;
-                    this.zoomSlider.removeClass('active');
+                    this.zoomContainer.removeClass('active');
                 } else if (panMouseDown) {
                     panMouseDown = false;
                 }
@@ -1345,19 +1355,17 @@ module api.ui.image {
 
         private moveZoomKnobByPx(delta: number) {
 
-            var zoomLineEl = this.zoomLine.getHTMLElement(),
-                zoomKnobEl = this.zoomKnob.getHTMLElement();
+            var zoomLineEl = this.zoomLine.getEl(),
+                zoomKnobEl = this.zoomKnob.getEl();
 
-            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
-                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
-                sliderLength = sliderEnd - sliderStart,
-                knobY = parseInt(zoomKnobEl.getAttribute('cy')),
-                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, knobY + delta));
+            var sliderLength = zoomLineEl.getWidth(),
+                knobX = zoomKnobEl.getLeftPx() || 0,
+                knobNewX = Math.max(0, Math.min(sliderLength, knobX + delta));
 
-            if (knobNewY != knobY) {
-                zoomKnobEl.setAttribute('cy', knobNewY.toString());
+            if (knobNewX != knobX) {
+                zoomKnobEl.setLeftPx(knobNewX);
 
-                var knobPct = 1 - (knobNewY - sliderStart) / sliderLength,
+                var knobPct = knobNewX / sliderLength,
                     zoomCoeff = 1 + knobPct * ( this.maxZoom - 1),
                     newW = this.restrainZoomW(this.frameW * zoomCoeff),
                     newH = this.restrainZoomH(this.frameH * zoomCoeff),
@@ -1385,29 +1393,18 @@ module api.ui.image {
                 setLeftPx(this.zoomData.x).
                 setTopPx(this.zoomData.y);
 
-            this.zoomSlider.setVisible(!this.imageSmallerThanFrame);
-
             if (this.imageSmallerThanFrame) {
                 // zoom is disabled in this case
                 return;
             }
+            var zoomKnobEl = this.zoomKnob.getEl(),
+                zoomLineEl = this.zoomLine.getEl();
 
-            var zoomKnobEl = this.zoomKnob.getHTMLElement(),
-                zoomLineEl = this.zoomLine.getHTMLElement();
+            var sliderLength = zoomLineEl.getWidth(),
+                knobPct = (this.zoomData.w / this.frameW - 1 ) / (this.maxZoom - 1),
+                knobNewX = Math.max(0, Math.min(sliderLength, knobPct * sliderLength));
 
-            var sliderStart = parseInt(zoomLineEl.getAttribute('y1')),
-                sliderEnd = parseInt(zoomLineEl.getAttribute('y2')),
-                sliderLength = sliderEnd - sliderStart,
-                knobPct = 1 - (this.zoomData.w / this.frameW - 1 ) / (this.maxZoom - 1),
-                knobNewY = Math.max(sliderStart, Math.min(sliderEnd, sliderStart + knobPct * sliderLength));
-
-            if (!!knobNewY) {
-                zoomKnobEl.setAttribute('cy', knobNewY.toString());
-            }
-        }
-
-        private isCropAreaSmallerThanZoomSlider(height: number): boolean {
-            return height < this.zoomSliderHeight;
+            zoomKnobEl.setLeftPx(knobNewX);
         }
 
         private updateFrameHeight() {  // making bottom border and everything underneath the image draggable
