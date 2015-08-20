@@ -66,6 +66,7 @@ module app.wizard.page.contextwindow.inspect.page {
                 if (this.pageModeImpliesPageControllerShown()) {
                     this.pageControllerForm.show();
                 }
+
             }
 
             this.inspectionHandler.
@@ -76,11 +77,11 @@ module app.wizard.page.contextwindow.inspect.page {
                 setModel(liveEditModel);
 
             this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
-                    this.pageControllerForm.hide();
                     this.removeClass("customized");
                     this.pageModel.setCustomized(false);
 
                     if (pageTemplate) {
+                        this.pageControllerForm.hide();
                         new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
                             then((pageDescriptor: PageDescriptor) => {
                                 var setTemplate = new SetTemplate(this).
@@ -90,8 +91,12 @@ module app.wizard.page.contextwindow.inspect.page {
                                 api.DefaultErrorHandler.handle(reason);
                             }).done();
                     }
-                    else {
+                    else if (this.pageModel.hasDefaultTemplate()) {
+                        this.pageControllerForm.hide();
                         this.pageModel.setAutomaticTemplate(this, true);
+                    }
+                    else {
+                        this.pageModel.reset(this);
                     }
                 }
             );
@@ -108,7 +113,7 @@ module app.wizard.page.contextwindow.inspect.page {
                 if (!this.pageModel.isPageTemplate() && this.pageModel.getDefaultPageTemplate()) {
                     this.pageControllerForm.hide()
                 }
-            })
+            });
         }
 
         refreshInspectionHandler(liveEditModel: LiveEditModel) {
@@ -237,10 +242,6 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var pageModel = liveEditModel.getPageModel();
 
-            if(!this.contentModelCanBeInitialized(pageModel)) {
-                return;
-            }
-
             if (this.propertyChangedListener) {
                 pageModel.unPropertyChanged(this.propertyChangedListener);
             }
@@ -252,17 +253,11 @@ module app.wizard.page.contextwindow.inspect.page {
             this.pageTemplateForm.getSelector().setModel(liveEditModel);
             this.pageTemplateForm.show();
 
-            if (pageMode == PageMode.FORCED_TEMPLATE) {
-                this.showPageConfig(pageModel, liveEditModel.getFormContext());
-            }
-            else if (pageMode == PageMode.AUTOMATIC) {
+            if (pageMode == PageMode.AUTOMATIC) {
                 this.showDefaultPageTemplateConfig(pageModel, liveEditModel.getFormContext());
             }
-            else if (pageMode == PageMode.FORCED_CONTROLLER) {
-                this.showPageConfig(pageModel, liveEditModel.getFormContext());
-            }
             else {
-                throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
+                this.showPageConfig(pageModel, liveEditModel.getFormContext());
             }
 
             pageModel.onPropertyChanged(this.propertyChangedListener);
@@ -303,13 +298,6 @@ module app.wizard.page.contextwindow.inspect.page {
             var controller = pageModel.getDefaultPageTemplateController();
             var config = pageModel.getConfig();
             this.refreshConfigForm(controller, config, formContext);
-        }
-
-        private contentModelCanBeInitialized(pageModel: PageModel): boolean {
-            var pageModeIsCustomizedAndTemplateCanBeSet = pageModel.isCustomized() && !!pageModel.getDefaultPageTemplate();
-            var templateIsSetOrCanBeSet = pageModel.getMode() == PageMode.FORCED_TEMPLATE || pageModel.getMode() == PageMode.AUTOMATIC;
-
-            return pageModeIsCustomizedAndTemplateCanBeSet || templateIsSetOrCanBeSet;
         }
     }
 }
