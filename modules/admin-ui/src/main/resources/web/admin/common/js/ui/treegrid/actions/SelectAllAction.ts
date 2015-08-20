@@ -6,7 +6,8 @@ module api.ui.treegrid.actions {
 
         constructor(treeGrid: TreeGrid<DATA>) {
             var allCount = treeGrid.getGrid().getDataView().getLength();
-            super("Select All (" + allCount + ")");
+            var availableCount = allCount - treeGrid.getEmptyNodesCount();
+            super("Select All (" + availableCount + ")");
             this.setEnabled(true);
             this.onExecuted(() => {
                 treeGrid.selectAll();
