@@ -409,7 +409,12 @@ module api.liveedit {
         }
 
         getName(): string {
-            return this.liveEditModel.getContent() ? this.liveEditModel.getContent().getDisplayName() : "[No name]";
+            if(!this.liveEditModel.getContent() || api.util.StringHelper.isEmpty(this.liveEditModel.getContent().getDisplayName())) {
+                return "[No name]";
+            }
+            else {
+                return this.liveEditModel.getContent().getDisplayName();
+            }
         }
 
         getLocalType(): string {

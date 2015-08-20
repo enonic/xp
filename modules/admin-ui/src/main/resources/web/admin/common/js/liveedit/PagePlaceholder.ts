@@ -1,18 +1,14 @@
 module api.liveedit {
 
-    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import SetController = api.content.page.SetController;
-    import SiteModel = api.content.site.SiteModel;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
-    import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class PagePlaceholder extends ItemViewPlaceholder {
 
         private pageView: PageView;
 
-        private infoBlock: api.dom.DivEl;
+        private infoBlock: PagePlaceholderInfoBlock;
 
         private controllerDropdown: api.content.page.PageDescriptorDropdown;
 
@@ -23,13 +19,26 @@ module api.liveedit {
 
             this.controllerDropdown = new PageDescriptorDropdown(pageView.liveEditModel);
             this.controllerDropdown.load();
-
             this.appendChild(this.controllerDropdown);
 
-            if (!this.pageView.liveEditModel.getPageModel().isPageTemplate()) {
-                this.infoBlock = this.initInfoBlock();
-                this.appendChild(this.infoBlock);
-            }
+            this.infoBlock = new PagePlaceholderInfoBlock();
+            this.appendChild(this.infoBlock);
+
+
+            this.controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
+                if(event.getData().length > 0) {
+                    this.controllerDropdown.show();
+                    if(!this.pageView.liveEditModel.getContent().isPageTemplate()) {
+                        this.infoBlock.setTextForContent(this.pageView.getLocalType(), this.pageView.getName());
+                    }
+                }
+                else {
+                    this.controllerDropdown.hide();
+                    this.infoBlock.setNoControllersAvailableText();
+                }
+            });
+
+
 
             this.controllerDropdown.onClicked((event: MouseEvent) => {
                 this.select();
@@ -44,19 +53,6 @@ module api.liveedit {
 
         deselect() {
 
-        }
-
-        private initInfoBlock(): api.dom.DivEl {
-            var wrapperDiv = new api.dom.DivEl("page-placeholder-info");
-
-            var line1 = new api.dom.DivEl("page-placeholder-info-line1");
-            line1.setHtml('No template found for "' + this.pageView.getLocalType() + '"');
-            var line2 = new api.dom.DivEl("page-placeholder-info-line2");
-            line2.setHtml("Select a controller below to setup a page for this item");
-
-            wrapperDiv.appendChildren(line1, line2);
-
-            return wrapperDiv;
         }
     }
 }
