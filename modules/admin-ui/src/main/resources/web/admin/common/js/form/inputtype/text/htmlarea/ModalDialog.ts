@@ -1,4 +1,4 @@
-module api.form.inputtype.text.tiny {
+module api.form.inputtype.text.htmlarea {
 
     import FormView = api.form.FormView;
     import Form = api.ui.form.Form;
@@ -10,20 +10,20 @@ module api.form.inputtype.text.tiny {
     export class ModalDialog extends BaseDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated = false;
-        private editor: TinyMceEditor;
+        private editor: HtmlAreaEditor;
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
         private keyDownListener: {(KeyboardEvent): void};
         private submitAction: api.ui.Action;
 
-        constructor(editor: TinyMceEditor, title: api.ui.dialog.ModalDialogHeader) {
+        constructor(editor: HtmlAreaEditor, title: api.ui.dialog.ModalDialogHeader) {
             super({
                 title: title
             });
 
             this.editor = editor;
 
-            this.getEl().addClass("modal-dialog");
+            this.getEl().addClass("html-area-modal-dialog");
 
             this.layout();
             this.initializeActions();
@@ -46,7 +46,7 @@ module api.form.inputtype.text.tiny {
             }
         }
 
-        protected getEditor(): TinyMceEditor {
+        protected getEditor(): HtmlAreaEditor {
             return this.editor;
         }
 

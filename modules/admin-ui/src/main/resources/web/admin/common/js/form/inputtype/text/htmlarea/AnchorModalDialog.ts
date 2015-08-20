@@ -1,11 +1,11 @@
-module api.form.inputtype.text.tiny {
+module api.form.inputtype.text.htmlarea {
 
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
 
     export class AnchorModalDialog extends ModalDialog {
 
-        constructor(editor: TinyMceEditor) {
+        constructor(editor: HtmlAreaEditor) {
 
             super(editor, new api.ui.dialog.ModalDialogHeader("Insert Anchor"));
         }
