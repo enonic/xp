@@ -60,6 +60,7 @@ public class PageResourceTest
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
+        ServletRequestHolder.setRequest( request );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
@@ -96,6 +97,7 @@ public class PageResourceTest
         assertEquals( "localhost", jsRequest.getValue().getHost() );
         assertEquals( "80", jsRequest.getValue().getPort() );
         assertEquals( "/portal/master/site/somepath/content", jsRequest.getValue().getPath() );
+        assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUrl() );
     }
 
     @Test

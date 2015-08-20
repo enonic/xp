@@ -132,7 +132,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( UrlTypeConstants.ABSOLUTE.equals( this.params.getType() ) )
         {
-            return ServletRequestUrlHelper.createServerUrl() + uri;
+            return ServletRequestUrlHelper.getServerUrl() + uri;
         }
         else
         {

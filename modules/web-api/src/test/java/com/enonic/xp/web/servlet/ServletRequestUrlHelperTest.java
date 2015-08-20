@@ -47,7 +47,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "80", ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "443", ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://localhost", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "8080", ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
         assertEquals( "123", ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test

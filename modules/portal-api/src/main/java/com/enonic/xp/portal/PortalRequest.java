@@ -41,6 +41,8 @@ public final class PortalRequest
 
     private String path;
 
+    private String url;
+
     private RenderMode mode;
 
     private Branch branch;
@@ -113,6 +115,11 @@ public final class PortalRequest
         return path;
     }
 
+    public String getUrl()
+    {
+        return url;
+    }
+
     public RenderMode getMode()
     {
         return this.mode;
@@ -141,6 +148,11 @@ public final class PortalRequest
     public void setPath( final String path )
     {
         this.path = path;
+    }
+
+    public void setUrl( final String url )
+    {
+        this.url = url;
     }
 
     public void setMode( final RenderMode mode )

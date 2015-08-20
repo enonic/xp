@@ -31,6 +31,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setHost( "enonic.com" );
         this.portalRequest.setPort( "80" );
         this.portalRequest.setPath( "/my/page" );
+        this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
         this.portalRequest.setBranch( Branch.from( "master" ) );
         this.portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.getParams().put( "debug", "true" );

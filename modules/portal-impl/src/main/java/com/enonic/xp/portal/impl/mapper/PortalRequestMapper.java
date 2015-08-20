@@ -28,6 +28,7 @@ public final class PortalRequestMapper
         gen.value( "host", this.request.getHost() );
         gen.value( "port", this.request.getPort() );
         gen.value( "path", this.request.getPath() );
+        gen.value( "url", this.request.getUrl() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         if ( this.request.getBranch() != null )
         {
