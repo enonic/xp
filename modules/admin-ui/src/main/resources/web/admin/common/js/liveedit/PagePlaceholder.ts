@@ -1,17 +1,16 @@
 module api.liveedit {
 
-    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import SetController = api.content.page.SetController;
-    import SiteModel = api.content.site.SiteModel;
-    import PageController = api.content.page.inputtype.pagecontroller.PageController;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
-    import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import ContentType = api.schema.content.ContentType;
 
     export class PagePlaceholder extends ItemViewPlaceholder {
 
         private pageView: PageView;
+
+        private infoBlock: PagePlaceholderInfoBlock;
 
         private controllerDropdown: api.content.page.PageDescriptorDropdown;
 
@@ -20,35 +19,39 @@ module api.liveedit {
             this.addClass("page-placeholder");
             this.pageView = pageView;
 
-            var applicationKeys = pageView.liveEditModel.getSiteModel().getApplicationKeys(),
-                request = new GetPageDescriptorsByApplicationsRequest(applicationKeys),
-                loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
-
-            this.controllerDropdown = new PageDescriptorDropdown('page-controller', {
-                loader: loader
-            });
+            this.controllerDropdown = new PageDescriptorDropdown(pageView.liveEditModel);
             this.controllerDropdown.load();
+            this.appendChild(this.controllerDropdown);
 
-            this.controllerDropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
+            this.infoBlock = new PagePlaceholderInfoBlock();
+            this.appendChild(this.infoBlock);
 
-                var setController = new SetController(this).
-                    setDescriptor(event.getOption().displayValue);
-                this.pageView.liveEditModel.getPageModel().setController(setController);
+
+            this.controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
+                if (event.getData().length > 0) {
+                    this.controllerDropdown.show();
+                    var content = this.pageView.liveEditModel.getContent();
+                    if (!content.isPageTemplate()) {
+                        new GetContentTypeByNameRequest(content.getType()).sendAndParse().then((contentType: ContentType) => {
+                            this.infoBlock.setTextForContent(contentType.getDisplayName());
+                        }).catch((reason)=> {
+                            this.infoBlock.setTextForContent(content.getType().toString());
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                    }
+                }
+                else {
+                    this.controllerDropdown.hide();
+                    this.infoBlock.setNoControllersAvailableText();
+                }
             });
 
-            this.appendChild(this.controllerDropdown);
 
             this.controllerDropdown.onClicked((event: MouseEvent) => {
                 this.select();
                 event.stopPropagation();
             });
 
-            pageView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_SITE_CONFIGS) {
-                    request.setApplicationKeys(pageView.liveEditModel.getSiteModel().getApplicationKeys());
-                    loader.load();
-                }
-            });
         }
 
         select() {

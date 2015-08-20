@@ -4,6 +4,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.ComponentPath;
@@ -21,23 +22,32 @@ public final class ComponentResource
         resource.site = getSite( resource.content );
 
         final PageTemplate pageTemplate;
+        final DescriptorKey pageController;
 
         if ( resource.content.isPageTemplate() )
         {
+            // content is a page-template
             pageTemplate = (PageTemplate) resource.content;
+            pageController = pageTemplate.getController();
         }
         else if ( !resource.content.hasPage() )
         {
+            // content without page -> use default page-template
             pageTemplate = getDefaultPageTemplate( resource.content.getType(), resource.site );
-            if ( pageTemplate == null )
-            {
-                throw notFound( "No template found for content" );
-            }
+            pageController = pageTemplate.getController();
+        }
+        else if ( resource.content.getPage().hasController() )
+        {
+            // content with controller set but no page-template (customized)
+            pageTemplate = null;
+            pageController = resource.content.getPage().getController();
         }
         else
         {
+            // content with page-template assigned
             final Page page = getPage( resource.content );
             pageTemplate = getPageTemplate( page );
+            pageController = pageTemplate.getController();
         }
 
         final Page effectivePage = new EffectivePageResolver( resource.content, pageTemplate ).resolve();
@@ -53,7 +63,7 @@ public final class ComponentResource
         }
 
         resource.renderer = this.services.getRendererFactory().getRenderer( resource.component );
-        resource.applicationKey = pageTemplate.getController().getApplicationKey();
+        resource.applicationKey = pageController.getApplicationKey();
 
         return resource;
     }

@@ -62,6 +62,7 @@
             }
         ],
         "controller": null,
+        "customized" : false,
         "regions": [
             {
                 "components": [

@@ -128,7 +128,6 @@
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
-///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/_module.ts' />

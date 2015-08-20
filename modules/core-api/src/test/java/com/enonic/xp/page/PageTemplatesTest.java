@@ -1,6 +1,7 @@
 package com.enonic.xp.page;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
@@ -44,11 +45,8 @@ public class PageTemplatesTest
             addAll( Arrays.asList( generatePageTemplate2(), generatePageTemplate3() ) ).
             build();
 
-        final PageTemplateSpec pageTemplateSpec = PageTemplateSpec.create().
-            canRender( ContentTypeName.imageMedia() ).
-            build();
-
-        final PageTemplates filteredPageTemplates = pageTemplates.filter( pageTemplateSpec );
+        final Predicate<PageTemplate> pageTemplateFilter = PageTemplateFilter.canRender( ContentTypeName.imageMedia() );
+        final PageTemplates filteredPageTemplates = pageTemplates.filter( pageTemplateFilter );
 
         assertNotNull( filteredPageTemplates );
         assertEquals( 2, filteredPageTemplates.getSize() );
@@ -63,6 +61,10 @@ public class PageTemplatesTest
             name( "testContentName" ).
             id( ContentId.from( "id" ) ).
             parentPath( ContentPath.from( "path" ) ).
+            page( Page.create().
+                controller( DescriptorKey.from( "app:page1" ) ).
+                regions( PageRegions.create().build() ).
+                build() ).
             build();
     }
 
@@ -74,6 +76,10 @@ public class PageTemplatesTest
             controller( DescriptorKey.from( "descriptor2" ) ).
             name( "testContentName2" ).
             parentPath( ContentPath.from( "path2" ) ).
+            page( Page.create().
+                controller( DescriptorKey.from( "app:page2" ) ).
+                regions( PageRegions.create().build() ).
+                build() ).
             build();
     }
 
@@ -85,6 +91,10 @@ public class PageTemplatesTest
             config( new PropertyTree() ).
             name( "testContentName3" ).
             parentPath( ContentPath.from( "path3" ) ).
+            page( Page.create().
+                controller( DescriptorKey.from( "app:page3" ) ).
+                regions( PageRegions.create().build() ).
+                build() ).
             build();
     }
 }

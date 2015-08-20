@@ -87,8 +87,18 @@ public abstract class RenderResource
 
     protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
     {
-        return this.services.getPageTemplateService().getDefault(
-            GetDefaultPageTemplateParams.create().site( site.getId() ).contentType( contentType ).build() );
+        final GetDefaultPageTemplateParams getDefPageTemplate = GetDefaultPageTemplateParams.create().
+            site( site.getId() ).
+            contentType( contentType ).
+            build();
+        final PageTemplate pageTemplate = this.services.getPageTemplateService().getDefault( getDefPageTemplate );
+        if ( pageTemplate == null && this.mode != RenderMode.EDIT )
+        {
+            // we can render default empty page in Live-Edit, for selecting controller when page customized
+            throw notFound( "No template found for content" );
+        }
+
+        return pageTemplate;
     }
 
     private Content getContentByPath( final ContentPath contentPath )

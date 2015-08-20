@@ -74,6 +74,24 @@ public abstract class RenderBaseResourceTest
             thenReturn( content );
     }
 
+    protected final void setupCustomizedTemplateContentAndSite()
+        throws Exception
+    {
+        Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
+        final PageDescriptor controllerDescriptor = createDescriptor();
+        Page page = Page.create( content.getPage() ).template( null ).controller( controllerDescriptor.getKey() ).build();
+        content = Content.create( content ).page( page ).build();
+
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+            thenReturn( content );
+
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
+
+        Mockito.when( this.contentService.getById( content.getId() ) ).
+            thenReturn( content );
+    }
+
     protected final void setupNonPageContent()
         throws Exception
     {
@@ -92,6 +110,12 @@ public abstract class RenderBaseResourceTest
 
         Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
+    }
+
+    protected final void setupController()
+        throws Exception
+    {
+        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )

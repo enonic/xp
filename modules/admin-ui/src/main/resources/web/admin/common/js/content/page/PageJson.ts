@@ -10,5 +10,7 @@ module api.content.page {
 
         config: api.data.PropertyArrayJson[];
 
+        customized: boolean;
+
     }
 }

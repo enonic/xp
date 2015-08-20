@@ -16,12 +16,15 @@ public class EditablePage
 
     public PropertyTree config;
 
+    public boolean customized;
+
     public EditablePage( final Page source )
     {
         this.controller = source.getController();
         this.template = source.getTemplate();
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;
         this.config = source.hasConfig() ? source.getConfig().copy() : null;
+        this.customized = source.isCustomized();
     }
 
     public Page build()
@@ -31,6 +34,7 @@ public class EditablePage
         builder.template( template );
         builder.regions( regions );
         builder.config( config );
+        builder.customized( customized );
         return builder.build();
     }
 }
