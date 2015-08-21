@@ -355,13 +355,38 @@ module api.ui.treegrid {
                         oldChildren.pop();
                     }
                     var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
+                    var needToCheckFetchedChildren = this.areAllOldChildrenSelected(oldChildren);
                     var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
                     node.getParent().setChildren(newChildren);
                     this.initData(this.root.getCurrentRoot().treeToList());
+                    if (needToCheckFetchedChildren) {
+                        this.select(fetchedChildren);
+                    }
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
                 }).done(() => this.notifyLoaded());
+            }
+        }
+
+        private select(fetchedChildren: TreeNode<DATA>[]) {
+            var rowsToSelect: number[] = [];
+            fetchedChildren.forEach((node: TreeNode<DATA>) => {
+                var row = this.gridData.getRowById(node.getId());
+                if (row) {
+                    rowsToSelect.push(row);
+                }
+            });
+            this.grid.addSelectedRows(rowsToSelect);
+        }
+
+        private areAllOldChildrenSelected(oldChildren: TreeNode<DATA>[]): boolean {
+            if (oldChildren && oldChildren.length > 0) {
+                return oldChildren.every(node =>
+                        this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
+                );
+            } else {
+                return false
             }
         }
 
