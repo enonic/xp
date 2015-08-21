@@ -134,7 +134,7 @@ module api.liveedit {
 
                         var config = page.hasConfig() ?
                                      page.getConfig().copy() :
-                                     new PropertyTree(api.Client.get().getPropertyIdProvider());
+                                     new PropertyTree();
 
                         var regions = page.hasRegions() ?
                                       page.getRegions().clone() :
@@ -151,7 +151,7 @@ module api.liveedit {
                     pageModel.setAutomaticTemplate(this);
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
-                    var config = new PropertyTree(api.Client.get().getPropertyIdProvider());
+                    var config = new PropertyTree();
 
                     var regions = Regions.create().build();
 
