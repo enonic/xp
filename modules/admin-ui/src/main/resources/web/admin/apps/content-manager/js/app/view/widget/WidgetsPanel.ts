@@ -54,10 +54,10 @@ module app.view.widget {
         }
 
         private getWidgetsInterfaceName(): string {
-            return "some-widget-interface-name";
+            return "com.enonic.xp.content-manager.context-widget";
         }
 
-        initWidgetsForItem() {
+        private initWidgetsForItem() {
             this.removeWidgets();
 
             this.setName(this.item.getDisplayName());
@@ -82,7 +82,7 @@ module app.view.widget {
 
             return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
                 widgets.forEach((widget) => {
-                    this.addWidget(WidgetView.fromWidget(widget));
+                    this.addWidget(WidgetView.fromWidget(widget, this.item));
                 })
             }).catch((reason: any) => {
                 if (reason && reason.message) {
@@ -145,19 +145,18 @@ module app.view.widget {
             this.removeChild(this.ghostDragger);
         }
 
-        removeWidgets() {
+        private removeWidgets() {
             this.widgetsContainer.removeChildren();
         }
 
-        addWidget(widget: WidgetView) {
+        private addWidget(widget: WidgetView) {
             this.widgetViews.push(widget);
             this.widgetsContainer.appendChild(widget);
         }
 
-        addWidgets(widgetViews: WidgetView[]) {
+        private addWidgets(widgetViews: WidgetView[]) {
             widgetViews.forEach((widget) => {
-                this.widgetViews.push(widget);
-                this.widgetsContainer.appendChild(widget);
+                this.addWidget(widget);
             })
         }
 

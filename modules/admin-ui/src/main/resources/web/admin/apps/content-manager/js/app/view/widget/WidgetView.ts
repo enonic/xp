@@ -1,6 +1,9 @@
 module app.view.widget {
 
     import Widget = api.content.Widget;
+    import ViewItem = api.app.view.ViewItem;
+    import ContentSummary = api.content.ContentSummary;
+    import RenderingMode = api.rendering.RenderingMode;
 
     export class WidgetView extends api.dom.DivEl {
 
@@ -18,15 +21,26 @@ module app.view.widget {
             this.appendChild(this.widgetContents);
         }
 
-        static fromWidget(widget: Widget): WidgetView {
+        static fromWidget(widget: Widget, item?: ViewItem<ContentSummary>): WidgetView {
             var widgetView = new WidgetView(widget.getDisplayName()),
-                widgetViewContent = new api.dom.DivEl();
+                widgetViewContent : api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
 
-            widgetViewContent.setHtml("Some test contents");
+            if (item) {
+                (<api.dom.IFrameEl>widgetViewContent).setSrc(widgetView.getWidgetSrc(item));
+            }
+            else {
+                widgetViewContent.setHtml("Some test contents");
+            }
 
             widgetView.setWidgetContents(widgetViewContent);
 
             return widgetView;
+        }
+
+        private getWidgetSrc(item: ViewItem<ContentSummary>): string {
+            var path = item.getModel().isSite() ? item.getPath() : item.getPath().substring(0, item.getPath().indexOf("/", 1));
+
+            return api.rendering.UriHelper.getPortalUri(path, RenderingMode.PREVIEW, api.content.Branch.DRAFT);
         }
 
         private initWidgetToggleButton() {

@@ -6,12 +6,12 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 
-    interface FileUploaderConfigAllowType {
+    export interface FileUploaderConfigAllowType {
         name: string;
         extensions: string;
     }
 
-    interface FileUploaderConfig {
+    export interface FileUploaderConfig {
         hideDropZone: boolean;
         allowTypes: FileUploaderConfigAllowType[];
     }
