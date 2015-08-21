@@ -80,6 +80,10 @@ module app.wizard.page.contextwindow.inspect.page {
                         }
                     });
 
+                    this.pageModel.onReset(() => {
+                        this.selectOption(pageTemplateOptions.getDefault(), true);
+                    });
+
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
