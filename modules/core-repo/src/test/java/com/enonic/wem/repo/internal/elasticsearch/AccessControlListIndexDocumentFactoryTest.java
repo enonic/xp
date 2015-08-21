@@ -4,15 +4,15 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 
 import static org.junit.Assert.*;
 
-public class AccessControlListStoreDocumentFactoryTest
+public class AccessControlListIndexDocumentFactoryTest
 {
     @Test
     public void single_user()

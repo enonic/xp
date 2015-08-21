@@ -14,7 +14,7 @@ import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInter
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
-import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
@@ -87,7 +87,7 @@ public abstract class AbstractNodeTest
 
     protected NodeDaoImpl nodeDao;
 
-    protected ElasticsearchVersionService versionService;
+    protected VersionServiceImpl versionService;
 
     protected ElasticsearchBranchService branchService;
 
@@ -115,8 +115,9 @@ public abstract class AbstractNodeTest
         this.branchService = new ElasticsearchBranchService();
         this.branchService.setElasticsearchDao( elasticsearchDao );
 
-        this.versionService = new ElasticsearchVersionService();
+        this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
+        this.versionService.setStorageDao( storageDao );
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );

@@ -9,7 +9,7 @@ import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 public class VersionXContentBuilderFactory
-    extends AbstractXContentBuilderFactor
+    extends AbstractXContentBuilderFactory
 {
     public static XContentBuilder create( final NodeVersionDocument nodeVersionDocument )
     {

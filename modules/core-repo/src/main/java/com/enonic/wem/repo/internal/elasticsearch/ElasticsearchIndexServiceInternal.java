@@ -30,7 +30,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
@@ -210,7 +210,7 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
     {
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( nodeVersionId ).
             branch( context.getBranch() ).
@@ -218,7 +218,7 @@ public class ElasticsearchIndexServiceInternal
             build().
             create();
 
-        elasticsearchDao.store( storeDocuments );
+        elasticsearchDao.store( indexDocuments );
     }
 
     @Override

@@ -6,22 +6,22 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.xp.snapshot.RestoreParams;
 import com.enonic.xp.snapshot.RestoreResult;
 import com.enonic.xp.snapshot.SnapshotParams;
 import com.enonic.xp.snapshot.SnapshotResult;
 import com.enonic.xp.snapshot.SnapshotResults;
-import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
 
 public interface ElasticsearchDao
 {
     public String store( IndexRequest indexRequest );
 
-    public void store( Collection<StoreDocument> storeDocuments );
+    public void store( Collection<IndexDocument> indexDocuments );
 
     public boolean delete( DeleteRequest deleteRequest );
 

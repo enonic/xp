@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
@@ -101,20 +101,20 @@ public class ElasticsearchDaoImpl
     }
 
     @Override
-    public void store( final Collection<StoreDocument> storeDocuments )
+    public void store( final Collection<IndexDocument> indexDocuments )
     {
-        for ( StoreDocument storeDocument : storeDocuments )
+        for ( IndexDocument indexDocument : indexDocuments )
         {
-            final String id = storeDocument.getId();
+            final String id = indexDocument.getId();
 
-            final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
+            final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
-                index( storeDocument.getIndexName() ).
-                type( storeDocument.getIndexTypeName() ).
+                index( indexDocument.getIndexName() ).
+                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( storeDocument.isRefreshAfterOperation() );
+                refresh( indexDocument.isRefreshAfterOperation() );
 
             this.client.index( req ).actionGet( storeTimeout );
         }

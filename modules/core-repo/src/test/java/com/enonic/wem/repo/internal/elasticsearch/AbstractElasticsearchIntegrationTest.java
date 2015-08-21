@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -23,6 +24,8 @@ public abstract class AbstractElasticsearchIntegrationTest
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     protected ElasticsearchDaoImpl elasticsearchDao;
+
+    protected ElasticsearchStorageDao storageDao;
 
     protected ElasticsearchIndexServiceInternal elasticsearchIndexService;
 
@@ -39,6 +42,8 @@ public abstract class AbstractElasticsearchIntegrationTest
         this.client = server.getClient();
         this.elasticsearchDao = new ElasticsearchDaoImpl();
         this.elasticsearchDao.setClient( client );
+        this.storageDao = new ElasticsearchStorageDao();
+        this.storageDao.setClient( client );
 
         this.elasticsearchIndexService = new ElasticsearchIndexServiceInternal();
         elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );

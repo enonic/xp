@@ -6,7 +6,7 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
@@ -47,22 +47,22 @@ class NodeStoreDocumentFactory
         this.state = builder.state;
     }
 
-    public Collection<StoreDocument> create()
+    public Collection<IndexDocument> create()
     {
         this.node.validateForIndexing();
 
-        Set<StoreDocument> storeDocuments = Sets.newHashSet();
+        Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
-        storeDocuments.add( createDataDocument() );
+        indexDocuments.add( createDataDocument() );
 
-        return storeDocuments;
+        return indexDocuments;
     }
 
-    private StoreDocument createDataDocument()
+    private IndexDocument createDataDocument()
     {
         final IndexConfigDocument indexConfigDocument = this.node.getIndexConfigDocument();
 
-        final StoreDocument.Builder builder = StoreDocument.create().
+        final IndexDocument.Builder builder = IndexDocument.create().
             id( this.node.id() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
             indexTypeName( this.branch.getName() ).
@@ -75,14 +75,14 @@ class NodeStoreDocumentFactory
         return builder.build();
     }
 
-    private void addNodeMetaData( final StoreDocument.Builder builder )
+    private void addNodeMetaData( final IndexDocument.Builder builder )
     {
         addNodeBaseProperties( builder );
 
         builder.addEntries( AccessControlListStoreDocumentFactory.create( this.node.getPermissions() ) );
     }
 
-    private void addNodeBaseProperties( final StoreDocument.Builder builder )
+    private void addNodeBaseProperties( final IndexDocument.Builder builder )
     {
         if ( this.nodeVersionId != null )
         {
@@ -128,7 +128,7 @@ class NodeStoreDocumentFactory
                                              IndexConfig.MINIMAL ) );
     }
 
-    private void addNodeDataProperties( final StoreDocument.Builder builder )
+    private void addNodeDataProperties( final IndexDocument.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {

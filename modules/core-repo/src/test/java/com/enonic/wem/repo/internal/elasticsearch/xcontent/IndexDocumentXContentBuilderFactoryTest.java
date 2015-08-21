@@ -12,7 +12,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentDateItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentGeoPointItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentNumberItem;
@@ -24,20 +24,20 @@ import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
-public class StoreDocumentXContentBuilderFactoryTest
+public class IndexDocumentXContentBuilderFactoryTest
 {
 
     @Test
     public void create_given_indexdocument_analyzer()
         throws Exception
     {
-        StoreDocument storeDocument = StoreDocument.create().
+        IndexDocument indexDocument = IndexDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
             analyzer( "myanalyzer" ).
             build();
 
-        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
+        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
@@ -51,7 +51,7 @@ public class StoreDocumentXContentBuilderFactoryTest
     @Test
     public void multiple_orderby_entries_gives_one()
     {
-        StoreDocument storeDocument = StoreDocument.create().
+        IndexDocument indexDocument = IndexDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
             addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue1" ) ).
@@ -60,7 +60,7 @@ public class StoreDocumentXContentBuilderFactoryTest
             addEntry( new StoreDocumentOrderbyItem( IndexPath.from( "myField" ), "myOrderByValue2" ) ).
             build();
 
-        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
+        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
@@ -76,7 +76,7 @@ public class StoreDocumentXContentBuilderFactoryTest
         throws Exception
     {
 
-        StoreDocument storeDocument = StoreDocument.create().
+        IndexDocument indexDocument = IndexDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
             addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue1" ) ).
@@ -91,7 +91,7 @@ public class StoreDocumentXContentBuilderFactoryTest
                                                      ValueFactory.newGeoPoint( GeoPoint.from( "81,81" ) ).toString() ) ).
             build();
 
-        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
+        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 

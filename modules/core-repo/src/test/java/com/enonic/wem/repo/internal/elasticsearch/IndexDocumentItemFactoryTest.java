@@ -16,7 +16,7 @@ import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
-public class StoreDocumentItemFactoryTest
+public class IndexDocumentItemFactoryTest
 {
     private PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
 

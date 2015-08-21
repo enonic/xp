@@ -10,7 +10,7 @@ import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.xp.branch.Branch;
 
 public class BranchXContentBuilderFactory
-    extends AbstractXContentBuilderFactor
+    extends AbstractXContentBuilderFactory
 {
     public static XContentBuilder create( final StoreBranchDocument doc, final Branch branch )
     {

@@ -8,7 +8,7 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
@@ -79,7 +79,7 @@ public class OrderByValueResolverTest
 
     private String storeOrderbyDocument( final String value )
     {
-        final StoreDocument storeDocument = StoreDocument.create().
+        final IndexDocument indexDocument = IndexDocument.create().
             indexTypeName( this.indexType ).
             indexName( this.indexName ).
             analyzer( "default" ).
@@ -88,7 +88,7 @@ public class OrderByValueResolverTest
 
         IndexRequestBuilder indexRequestBuilder = new IndexRequestBuilder( this.client, this.indexName ).
             setType( this.indexType ).
-            setSource( StoreDocumentXContentBuilderFactory.create( storeDocument ) );
+            setSource( StoreDocumentXContentBuilderFactory.create( indexDocument ) );
 
         return elasticsearchDao.store( indexRequestBuilder.request() );
     }

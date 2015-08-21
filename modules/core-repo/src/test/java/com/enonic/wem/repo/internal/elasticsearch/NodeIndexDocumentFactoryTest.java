@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.data.CounterPropertyIdProvider;
@@ -27,7 +27,7 @@ import static com.enonic.wem.repo.internal.TestContext.TEST_BRANCH;
 import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
 import static org.junit.Assert.*;
 
-public class NodeStoreDocumentFactoryTest
+public class NodeIndexDocumentFactoryTest
 {
 
     @Test
@@ -63,7 +63,7 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -71,7 +71,7 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        assertNotNull( storeDocuments );
+        assertNotNull( indexDocuments );
     }
 
     @Test
@@ -82,7 +82,7 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -90,8 +90,8 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        assertNotNull( storeDocuments );
-        assertNotNull( getIndexDocumentOfType( storeDocuments, "test" ) );
+        assertNotNull( indexDocuments );
+        assertNotNull( getIndexDocumentOfType( indexDocuments, "test" ) );
     }
 
     @Test
@@ -108,7 +108,7 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -116,9 +116,9 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
-        assertEquals( myAnalyzerName, storeDocument.getAnalyzer() );
+        assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
     }
 
     @Test
@@ -137,7 +137,7 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -145,11 +145,11 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
-        assertEquals( myAnalyzerName, storeDocument.getAnalyzer() );
-        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), storeDocument.getIndexName() );
-        assertEquals( "test", storeDocument.getIndexTypeName() );
+        assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
+        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), indexDocument.getIndexName() );
+        assertEquals( "test", indexDocument.getIndexTypeName() );
     }
 
     @Test
@@ -165,7 +165,7 @@ public class NodeStoreDocumentFactoryTest
             data( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -173,10 +173,10 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
-        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a.b.c" ), IndexValueType.NUMBER ) );
-        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a.b.d" ), IndexValueType.DATETIME ) );
+        assertNotNull( getItemWithName( indexDocument, IndexPath.from( "a.b.c" ), IndexValueType.NUMBER ) );
+        assertNotNull( getItemWithName( indexDocument, IndexPath.from( "a.b.d" ), IndexValueType.DATETIME ) );
     }
 
     @Test
@@ -192,7 +192,7 @@ public class NodeStoreDocumentFactoryTest
             data( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
             branch( TEST_BRANCH ).
@@ -200,8 +200,8 @@ public class NodeStoreDocumentFactoryTest
             build().
             create();
 
-        assertTrue( storeDocuments.iterator().hasNext() );
-        final StoreDocument next = storeDocuments.iterator().next();
+        assertTrue( indexDocuments.iterator().hasNext() );
+        final IndexDocument next = indexDocuments.iterator().next();
 
         final Set<AbstractStoreDocumentItem> numberItems = getItemsWithName( next, IndexPath.from( "a.b.c" ), IndexValueType.NUMBER );
 
@@ -209,21 +209,21 @@ public class NodeStoreDocumentFactoryTest
 
     }
 
-    private StoreDocument getIndexDocumentOfType( final Collection<StoreDocument> storeDocuments, final String indexType )
+    private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final String indexType )
     {
-        for ( StoreDocument storeDocument : storeDocuments )
+        for ( IndexDocument indexDocument : indexDocuments )
         {
-            if ( indexType.equals( storeDocument.getIndexTypeName() ) )
+            if ( indexType.equals( indexDocument.getIndexTypeName() ) )
             {
-                return storeDocument;
+                return indexDocument;
             }
         }
         return null;
     }
 
-    AbstractStoreDocumentItem getItemWithName( final StoreDocument storeDocument, final IndexPath indexPath, final IndexValueType baseType )
+    AbstractStoreDocumentItem getItemWithName( final IndexDocument indexDocument, final IndexPath indexPath, final IndexValueType baseType )
     {
-        for ( AbstractStoreDocumentItem item : storeDocument.getStoreDocumentItems() )
+        for ( AbstractStoreDocumentItem item : indexDocument.getStoreDocumentItems() )
         {
             if ( item.getPath().equals( indexPath.getPath() ) && item.getIndexBaseType().equals( baseType ) )
             {
@@ -234,12 +234,12 @@ public class NodeStoreDocumentFactoryTest
         return null;
     }
 
-    Set<AbstractStoreDocumentItem> getItemsWithName( final StoreDocument storeDocument, final IndexPath indexPath,
+    Set<AbstractStoreDocumentItem> getItemsWithName( final IndexDocument indexDocument, final IndexPath indexPath,
                                                      final IndexValueType baseType )
     {
         Set<AbstractStoreDocumentItem> items = Sets.newHashSet();
 
-        for ( AbstractStoreDocumentItem item : storeDocument.getStoreDocumentItems() )
+        for ( AbstractStoreDocumentItem item : indexDocument.getStoreDocumentItems() )
         {
             if ( item.getPath().equals( indexPath.getPath() ) && item.getIndexBaseType().equals( baseType ) )
             {

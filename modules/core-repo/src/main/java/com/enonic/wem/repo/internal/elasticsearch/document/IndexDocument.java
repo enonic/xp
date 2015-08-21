@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.NodeId;
 
-public class StoreDocument
+public class IndexDocument
     extends AbstractIndexDocument
 {
     private final NodeId id;
@@ -17,7 +17,7 @@ public class StoreDocument
 
     private final String analyzer;
 
-    private StoreDocument( final Builder builder )
+    private IndexDocument( final Builder builder )
     {
         super( builder );
         this.id = builder.id;
@@ -84,9 +84,9 @@ public class StoreDocument
             return this;
         }
 
-        public StoreDocument build()
+        public IndexDocument build()
         {
-            return new StoreDocument( this );
+            return new IndexDocument( this );
         }
     }
 
