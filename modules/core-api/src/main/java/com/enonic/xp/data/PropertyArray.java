@@ -183,8 +183,6 @@ public final class PropertyArray
 
         if ( tree != null )
         {
-            tree.registerProperty( property );
-
             if ( property.getValue().isPropertySet() )
             {
                 final PropertySet set = property.getSet();
@@ -199,11 +197,10 @@ public final class PropertyArray
     Property addValue( final Value value )
     {
         checkType( value.getType() );
-        final Property property = new Property( name, this.array.size(), value, tree != null ? tree.nextId() : null, parent );
+        final Property property = new Property( name, this.array.size(), value, parent );
         this.array.addLast( property );
         if ( tree != null )
         {
-            tree.registerProperty( property );
             if ( value.getObject() instanceof PropertySet )
             {
                 final PropertySet set = (PropertySet) value.getObject();
@@ -225,12 +222,8 @@ public final class PropertyArray
         }
         else
         {
-            final Property newProperty = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
+            final Property newProperty = new Property( name, index, value, parent );
             this.array.add( index, newProperty );
-            if ( tree != null )
-            {
-                tree.registerProperty( newProperty );
-            }
             return newProperty;
         }
     }
@@ -253,10 +246,6 @@ public final class PropertyArray
     void remove( final int index )
     {
         final Property property = array.get( index );
-        if ( tree != null )
-        {
-            tree.unregisterProperty( property.getId() );
-        }
         array.remove( index );
     }
 
@@ -265,10 +254,6 @@ public final class PropertyArray
         for ( int index = array.size() - 1; index >= 0; index-- )
         {
             final Property property = array.get( index );
-            if ( tree != null )
-            {
-                tree.unregisterProperty( property.getId() );
-            }
             array.remove( index );
         }
     }

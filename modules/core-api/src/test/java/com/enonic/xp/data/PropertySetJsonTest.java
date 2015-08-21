@@ -23,7 +23,7 @@ public class PropertySetJsonTest
     public void deserialize_serialization_of_Property()
         throws IOException
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
         tree.addString( "myProp", "c" );
@@ -47,7 +47,7 @@ public class PropertySetJsonTest
     public void deserialize_serialization_of_DataSet()
         throws IOException
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet dataSet = tree.addSet( "mySet" );
         dataSet.setLong( "Long", 1L );
         dataSet.setDouble( "Double", 1.1 );

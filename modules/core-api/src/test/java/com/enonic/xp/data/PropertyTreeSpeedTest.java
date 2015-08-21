@@ -13,7 +13,7 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         Value myValue = ValueFactory.newString( "myValue" );
 
         stopwatch.start();
@@ -31,7 +31,7 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         stopwatch.start();
         for ( int i = 0; i < ONE_MILLION; i++ )
@@ -48,7 +48,7 @@ public class PropertyTreeSpeedTest
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         stopwatch.start();
         for ( int i = 0; i < 10; i++ )

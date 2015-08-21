@@ -29,7 +29,7 @@ public class PropertyTreeJsonTest
 
     private PropertyTree createPropertyTree_with_all_types()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addString( "singleString", "a" );
         tree.addString( "nullString", null );
         tree.addXml( "singleXML", "<xml>Hello</xml>" );
@@ -101,7 +101,7 @@ public class PropertyTreeJsonTest
     public void serialization_equals_serialization_of_deserialization_nullSet()
         throws IOException
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addSet( "nullSet", null );
 
         List<PropertyArrayJson> propertyArrayJson = PropertyTreeJson.toJson( tree );
@@ -125,7 +125,7 @@ public class PropertyTreeJsonTest
     public void deserialized_from_serialized_with_null_set()
         throws IOException
     {
-        PropertyTree sourceTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree sourceTree = new PropertyTree();
         sourceTree.addSet( "nullSet", null );
         List<PropertyArrayJson> serializedTree = PropertyTreeJson.toJson( sourceTree );
 

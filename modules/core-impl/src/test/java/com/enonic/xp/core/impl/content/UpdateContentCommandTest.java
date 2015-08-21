@@ -12,7 +12,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
@@ -49,7 +48,7 @@ public class UpdateContentCommandTest
         throws Exception
     {
         // setup
-        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
 
         ContentId contentId = ContentId.from( "mycontent" );
@@ -81,7 +80,7 @@ public class UpdateContentCommandTest
         throws Exception
     {
         // setup
-        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
 
         Content existingContent = createContent( existingContentData );

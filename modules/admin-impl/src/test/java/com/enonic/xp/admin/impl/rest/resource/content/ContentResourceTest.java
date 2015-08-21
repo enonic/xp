@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -54,8 +53,6 @@ import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.data.CounterPropertyIdProvider;
-import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
@@ -96,12 +93,6 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
-
-    @Before
-    public void before()
-    {
-        PropertyIdProviderAccessor.instance().set( new CounterPropertyIdProvider() );
-    }
 
     @Override
     protected Object getResourceInstance()

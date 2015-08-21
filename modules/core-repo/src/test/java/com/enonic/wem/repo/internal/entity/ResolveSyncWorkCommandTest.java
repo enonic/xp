@@ -6,7 +6,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -1261,7 +1260,7 @@ public class ResolveSyncWorkCommandTest
 
     private PropertyTree createDataWithReferences( final Reference... references )
     {
-        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree data = new PropertyTree();
 
         for ( final Reference reference : references )
         {

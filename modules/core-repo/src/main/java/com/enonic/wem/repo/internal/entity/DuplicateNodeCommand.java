@@ -110,7 +110,7 @@ public final class DuplicateNodeCommand
 
         boolean changes = false;
 
-        for ( final Property property : node.data().getByValueType( ValueTypes.REFERENCE ) )
+        for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
         {
             final Reference reference = property.getReference();
             if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )

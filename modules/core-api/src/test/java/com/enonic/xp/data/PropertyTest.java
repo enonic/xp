@@ -19,14 +19,14 @@ public class PropertyTest
             @Override
             public Object getObjectX()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 return tree.addString( "myString", "myValue" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 return new Object[]{tree.addString( "myString", "otherValue" ), tree.addString( "otherString", "myValue" ),
                     tree.addXml( "otherType", "myValue" )};
             }
@@ -34,14 +34,14 @@ public class PropertyTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 return tree.addString( "myString", "myValue" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 return tree.addString( "myString", "myValue" );
             }
         };
@@ -51,7 +51,7 @@ public class PropertyTest
     @Test
     public void countAncestors()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         PropertySet aSet = tree.newSet();
         Property aProperty = tree.addSet( "a", aSet );
@@ -72,20 +72,19 @@ public class PropertyTest
     @Test
     public void property_copy()
     {
-        PropertyTree sourceTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree sourceTree = new PropertyTree();
         sourceTree.setString( "outerSet.innerSet.myString", "myValue" );
         System.out.println( sourceTree );
 
-        PropertyTree destinationTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree destinationTree = new PropertyTree();
         PropertySet destiSet = destinationTree.addSet( "destiSet" );
         sourceTree.getProperty( "outerSet.innerSet" ).copyTo( destiSet );
 
         System.out.println( destinationTree.toString() );
 
-        // Verify the property ids from the source and destination tree are the same
-        assertSame( sourceTree.getProperty( "outerSet.innerSet" ).getId(), destinationTree.getProperty( "destiSet.innerSet" ).getId() );
-        assertSame( sourceTree.getProperty( "outerSet.innerSet.myString" ).getId(),
-                    destinationTree.getProperty( "destiSet.innerSet.myString" ).getId() );
+        // Verify the property from the source and destination tree are equals
+        assertEquals( sourceTree.getProperty( "outerSet.innerSet" ), destinationTree.getProperty( "destiSet.innerSet" ) );
+        assertEquals( sourceTree.getProperty( "outerSet.innerSet.myString" ), destinationTree.getProperty( "destiSet.innerSet.myString" ) );
     }
 
     @Rule

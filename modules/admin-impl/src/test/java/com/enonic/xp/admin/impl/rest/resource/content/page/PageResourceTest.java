@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,8 +14,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.data.CounterPropertyIdProvider;
-import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.CreatePageParams;
@@ -36,12 +33,6 @@ public class PageResourceTest
     extends AbstractResourceTest
 {
     private PageService pageService;
-
-    @Before
-    public void before()
-    {
-        PropertyIdProviderAccessor.instance().set( new CounterPropertyIdProvider() );
-    }
 
     @Override
     protected Object getResourceInstance()
@@ -110,7 +101,7 @@ public class PageResourceTest
 
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
-        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree();
 
         rootDataSet.addString( "property1", "value1" );
 

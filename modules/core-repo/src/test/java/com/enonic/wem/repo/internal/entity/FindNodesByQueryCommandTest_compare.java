@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
@@ -34,7 +33,7 @@ public class FindNodesByQueryCommandTest_compare
     public void compare_gt()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree data = new PropertyTree();
         data.setDouble( "my-value", 5.5 );
 
         createNode( CreateNodeParams.create().
@@ -43,7 +42,7 @@ public class FindNodesByQueryCommandTest_compare
             data( data ).
             build() );
 
-        final PropertyTree data2 = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree data2 = new PropertyTree();
         data2.setDouble( "my-value", 10.0 );
 
         final Node node2 = createNode( CreateNodeParams.create().

@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
@@ -103,15 +103,14 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-
-            return this.doStoreNode( newNode );
+        return this.doStoreNode( newNode );
     }
 
     private AttachedBinaries storeAndAttachBinaries()
     {
         final PropertyTree data = params.getData();
 
-        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
+        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
 

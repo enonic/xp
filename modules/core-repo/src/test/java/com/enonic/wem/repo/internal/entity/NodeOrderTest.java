@@ -9,7 +9,6 @@ import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -102,7 +101,7 @@ public class NodeOrderTest
 
     private Node createNode( final String name, final Value value )
     {
-        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree data = new PropertyTree();
         data.setProperty( "my-value", value );
 
         return createNode( CreateNodeParams.create().

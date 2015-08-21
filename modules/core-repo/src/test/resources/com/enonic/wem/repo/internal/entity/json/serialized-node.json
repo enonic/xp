@@ -16,21 +16,18 @@
       "type": "PropertySet",
       "values": [
         {
-          "id": "1",
           "set": [
             {
               "name": "b",
               "type": "PropertySet",
               "values": [
                 {
-                  "id": "2",
                   "set": [
                     {
                       "name": "c",
                       "type": "Double",
                       "values": [
                         {
-                          "id": "3",
                           "v": 2.0
                         }
                       ]
@@ -48,7 +45,6 @@
       "type": "LocalDate",
       "values": [
         {
-          "id": "4",
           "v": "2013-01-02"
         }
       ]
@@ -58,7 +54,6 @@
       "type": "String",
       "values": [
         {
-          "id": "5",
           "v": "runar"
         }
       ]
@@ -68,7 +63,6 @@
       "type": "LocalDateTime",
       "values": [
         {
-          "id": "6",
           "v": "2013-01-02T03:04:05"
         }
       ]
@@ -78,7 +72,6 @@
       "type": "BinaryReference",
       "values": [
         {
-          "id": "7",
           "v": "myImage1"
         }
       ]
@@ -88,7 +81,6 @@
       "type": "BinaryReference",
       "values": [
         {
-          "id": "8",
           "v": "myImage2"
         }
       ]
