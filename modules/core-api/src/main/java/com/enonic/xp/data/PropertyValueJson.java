@@ -8,18 +8,18 @@ import com.google.common.annotations.Beta;
 
 @Beta
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class ValueAndPropertyIdJson
+public final class PropertyValueJson
 {
     public Object v;
 
     public List<PropertyArrayJson> set;
 
-    public ValueAndPropertyIdJson()
+    public PropertyValueJson()
     {
         // Needed for Jackson
     }
 
-    ValueAndPropertyIdJson( final Property property )
+    PropertyValueJson( final Property property )
     {
         if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
         {

@@ -448,17 +448,17 @@ module api.data {
 
         public toJson(): PropertyArrayJson {
 
-            var valuesJson: ValueAndPropertyIdJson[] = [];
+            var valuesJson: PropertyValueJson[] = [];
             this.array.forEach((property: Property) => {
                 if (this.type.equals(ValueTypes.DATA)) {
                     var valueSetJson = property.hasNullValue() ? null : property.getPropertySet().toJson();
-                    valuesJson.push(<ValueAndPropertyIdJson>{
+                    valuesJson.push(<PropertyValueJson>{
                         set: valueSetJson
                     });
                 }
                 else {
                     var valueJson = this.type.toJsonValue(property.getValue());
-                    valuesJson.push(<ValueAndPropertyIdJson>{
+                    valuesJson.push(<PropertyValueJson>{
                         v: valueJson
                     });
                 }
@@ -485,13 +485,13 @@ module api.data {
                 setParent(parentPropertySet).
                 build();
 
-            json.values.forEach((valueAndPropertyIdJson: ValueAndPropertyIdJson, index: number) => {
+            json.values.forEach((propertyValueJson: PropertyValueJson, index: number) => {
 
                 var value;
 
                 if (type.equals(ValueTypes.DATA)) {
                     var valueAsPropertySet = tree.newPropertySet();
-                    var propertyArrayJsonArray = valueAndPropertyIdJson.set;
+                    var propertyArrayJsonArray = propertyValueJson.set;
                     propertyArrayJsonArray.forEach((propertyArrayJson: PropertyArrayJson) => {
 
                         valueAsPropertySet.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, valueAsPropertySet, tree))
@@ -500,7 +500,7 @@ module api.data {
                     value = new Value(valueAsPropertySet, ValueTypes.DATA);
                 }
                 else {
-                    value = type.fromJsonValue(valueAndPropertyIdJson.v);
+                    value = type.fromJsonValue(propertyValueJson.v);
                 }
 
                 var property = Property.create().

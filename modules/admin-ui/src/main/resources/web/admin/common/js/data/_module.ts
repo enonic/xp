@@ -26,7 +26,7 @@
 ///<reference path='Property.ts' />
 ///<reference path='PropertyVisitor.ts' />
 ///<reference path='PropertyTreeComparator.ts' />
-///<reference path='ValueAndPropertyIdJson.ts' />
+///<reference path='PropertyValueJson.ts' />
 ///<reference path='PropertyArrayJson.ts' />
 ///<reference path='PropertyArray.ts' />
 ///<reference path='PropertySet.ts' />
