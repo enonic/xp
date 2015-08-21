@@ -82,7 +82,7 @@ public final class CreateNodeCommand
 
         final AccessControlList permissions = getAccessControlEntries( user );
 
-        final Long manualOrderValue = NodeHelper.runAsAdmin( this::resolvePotentialManualOrderValue );
+        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
@@ -103,8 +103,7 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-
-            return this.doStoreNode( newNode );
+        return this.doStoreNode( newNode );
     }
 
     private AttachedBinaries storeAndAttachBinaries()
@@ -168,16 +167,9 @@ public final class CreateNodeCommand
         return parentNode;
     }
 
-    private Long resolvePotentialManualOrderValue()
+    private Long resolvePotentialManualOrderValue( final Node parentNode )
     {
-        if ( NodePath.ROOT.equals( params.getParent() ) )
-        {
-            return null;
-        }
-
-        final Node parentNode = doGetByPath( params.getParent(), false );
-
-        if ( parentNode == null )
+        if ( parentNode.isRoot() )
         {
             return null;
         }
