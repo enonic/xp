@@ -14,6 +14,8 @@ module api.ui {
 
         private visible: boolean = true;
 
+        protected forceExecute: boolean = false;
+
         private executionListeners: Function[] = [];
 
         private propertyChangedListeners: Function[] = [];
@@ -111,12 +113,13 @@ module api.ui {
             return this.mnemonic;
         }
 
-        execute(): void {
-
+        execute(forceExecute: boolean = false): void {
             if (this.enabled) {
+                this.forceExecute = forceExecute;
                 for (var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
+                this.forceExecute = false;
             }
         }
 
