@@ -6,10 +6,13 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.UUIDPropertyIdProvider;
+import com.enonic.xp.schema.content.ContentTypeName;
 
-final class ImageFormDataBuilder
+final class MediaFormDataBuilder
 {
-    private String image;
+    private ContentTypeName type;
+
+    private String attachment;
 
     private String caption = "";
 
@@ -23,43 +26,49 @@ final class ImageFormDataBuilder
 
     private double focalY = 0.5;
 
-    ImageFormDataBuilder image( final String name )
+    public MediaFormDataBuilder type( final ContentTypeName type )
     {
-        this.image = name;
+        this.type = type;
         return this;
     }
 
-    ImageFormDataBuilder caption( final String caption )
+    MediaFormDataBuilder attachment( final String name )
+    {
+        this.attachment = name;
+        return this;
+    }
+
+    MediaFormDataBuilder caption( final String caption )
     {
         this.caption = caption;
         return this;
     }
 
-    ImageFormDataBuilder artist( final String artist )
+    MediaFormDataBuilder artist( final String artist )
     {
         this.artist = artist;
         return this;
     }
 
-    ImageFormDataBuilder copyright( final String copyright )
+    MediaFormDataBuilder copyright( final String copyright )
     {
         this.copyright = copyright;
         return this;
     }
 
-    ImageFormDataBuilder tags( final String tags )
+    MediaFormDataBuilder tags( final String tags )
     {
         this.tags = tags;
         return this;
     }
 
-    ImageFormDataBuilder focalX( final double focalX )
+    MediaFormDataBuilder focalX( final double focalX )
     {
         this.focalX = focalX;
         return this;
     }
 
-    ImageFormDataBuilder focalY( final double focalY )
+    MediaFormDataBuilder focalY( final double focalY )
     {
         this.focalY = focalY;
         return this;
@@ -67,13 +76,18 @@ final class ImageFormDataBuilder
 
     void build( PropertyTree data )
     {
+        Preconditions.checkNotNull( type, "Type cannot be null." );
         Preconditions.checkArgument( focalX >= 0.0 && focalX <= 1.0, "Image focal point x value must be between 0 and 1 : %s", focalX );
         Preconditions.checkArgument( focalY >= 0.0 && focalY <= 1.0, "Image focal point y value must be between 0 and 1 : %s", focalY );
 
         PropertyTree tree = new PropertyTree( new UUIDPropertyIdProvider() );
-        tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, image );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
-        tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+        tree.setString( ContentPropertyNames.MEDIA_ATTACHMENT, attachment );
+
+        if ( type.isImageMedia() )
+        {
+            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
+            tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+        }
 
         data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
         data.setString( "caption", caption );
