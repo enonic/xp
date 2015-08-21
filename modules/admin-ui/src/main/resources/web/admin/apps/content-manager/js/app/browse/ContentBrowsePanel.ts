@@ -437,13 +437,16 @@ module app.browse {
             var previewItemPath = previewItem.getPath();
 
             if (!!content && content.getPath().toString() === previewItemPath) {
-                var item = new BrowseItem<ContentSummary>(content).
-                    setId(content.getId()).
-                    setDisplayName(content.getDisplayName()).
-                    setPath(content.getPath().toString()).
-                    setIconUrl(new ContentIconUrlResolver().setContent(content).resolve()).
-                    setRenderable(previewItem.isRenderable());
-                this.getBrowseItemPanel().setStatisticsItem(item);
+                new api.content.page.IsRenderableRequest(el.getContentId()).sendAndParse().
+                    then((renderable: boolean) => {
+                        var item = new BrowseItem<ContentSummary>(content).
+                            setId(content.getId()).
+                            setDisplayName(content.getDisplayName()).
+                            setPath(content.getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(content).resolve()).
+                            setRenderable(renderable);
+                        this.getBrowseItemPanel().setStatisticsItem(item);
+                    });
             }
         }
     }

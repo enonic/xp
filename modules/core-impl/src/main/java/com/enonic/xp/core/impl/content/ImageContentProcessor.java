@@ -24,6 +24,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -187,13 +188,23 @@ final class ImageContentProcessor
         if ( extraData != null )
         {
             final PropertyTree xData = extraData.getData();
-            xData.setLong( IMAGE_INFO_PIXEL_SIZE, imageSize );
-            xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
-            xData.setLong( IMAGE_INFO_IMAGE_WIDTH, imageWidth );
-            xData.setLong( MEDIA_INFO_BYTE_SIZE, byteSize );
+            setLongProperty( xData, IMAGE_INFO_PIXEL_SIZE, imageSize );
+            setLongProperty( xData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
+            setLongProperty( xData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
+            setLongProperty( xData, MEDIA_INFO_BYTE_SIZE, byteSize );
         }
 
         return editable.extraDatas;
+    }
+
+    private void setLongProperty( final PropertyTree propertyTree, final String path, final Long value )
+    {
+        final Property existingProperty = propertyTree.getProperty( path );
+        if ( existingProperty != null && !existingProperty.getType().equals( ValueTypes.LONG ) )
+        {
+            propertyTree.removeProperty( path );
+        }
+        propertyTree.setLong( path, value );
     }
 
     private BufferedImage toBufferedImage( final ByteSource source )
