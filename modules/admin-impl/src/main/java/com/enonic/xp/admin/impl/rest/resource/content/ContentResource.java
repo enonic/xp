@@ -117,7 +117,6 @@ import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -126,7 +125,6 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -160,8 +158,6 @@ public final class ContentResource
 
     private ContentTypeService contentTypeService;
 
-    private InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer;
-
     private ContentPrincipalsResolver principalsResolver;
 
     @POST
@@ -169,7 +165,7 @@ public final class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -195,8 +191,8 @@ public final class ContentResource
             mimeType( mediaFile.getContentType() ).
             byteSource( getFileItemByteSource( mediaFile ) );
 
-        String focalX = form.getAsString( "focalX" ),
-            focalY = form.getAsString( "focalY" );
+        final String focalX = form.getAsString( "focalX" );
+        final String focalY = form.getAsString( "focalY" );
 
         if ( StringUtils.isNotBlank( focalX ) )
         {
@@ -209,7 +205,7 @@ public final class ContentResource
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -222,8 +218,8 @@ public final class ContentResource
             content( ContentId.from( form.getAsString( "content" ) ) ).
             name( form.getAsString( "name" ) );
 
-        String focalX = form.getAsString( "focalX" ),
-            focalY = form.getAsString( "focalY" );
+        final String focalX = form.getAsString( "focalX" );
+        final String focalY = form.getAsString( "focalY" );
 
         if ( StringUtils.isNotBlank( focalX ) )
         {
@@ -239,7 +235,7 @@ public final class ContentResource
         params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -261,7 +257,7 @@ public final class ContentResource
 
         final Content persistedContent = contentService.update( params );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -270,7 +266,7 @@ public final class ContentResource
     {
         final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
 
-        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -312,12 +308,12 @@ public final class ContentResource
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+            return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
         }
 
         final RenameContentParams renameParams = json.getRenameContentParams();
         final Content renamedContent = contentService.rename( renameParams );
-        return new ContentJson( renamedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
 
@@ -465,7 +461,7 @@ public final class ContentResource
             modifier( modifier ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @GET
@@ -486,7 +482,7 @@ public final class ContentResource
             silent( params.isSilent() ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
     @POST
@@ -565,7 +561,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+            return new ContentJson( content, newContentIconUrlResolver(), principalsResolver );
         }
     }
 
@@ -590,7 +586,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+            return new ContentJson( content, newContentIconUrlResolver(), principalsResolver );
         }
     }
 
@@ -611,7 +607,7 @@ public final class ContentResource
         final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
-            return new ContentJson( nearestSite, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+            return new ContentJson( nearestSite, newContentIconUrlResolver(), principalsResolver );
         }
         else
         {
@@ -711,8 +707,7 @@ public final class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer,
-                                        principalsResolver );
+            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(), principalsResolver );
         }
         else
         {
@@ -742,8 +737,7 @@ public final class ContentResource
             contentQuery( contentQueryJson.getContentQuery() ).
             build() );
 
-        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver,
-                                                           inlineMixinsToFormItemsTransformer, principalsResolver );
+        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -901,12 +895,6 @@ public final class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.inlineMixinsToFormItemsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
     }
 
     @Reference

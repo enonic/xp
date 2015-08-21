@@ -10,13 +10,13 @@ module api.form.inputtype.text {
     import ContentSummary = api.content.ContentSummary;
     import Element = api.dom.Element;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import LinkModalDialog = api.form.inputtype.text.tiny.LinkModalDialog;
-    import ImageModalDialog = api.form.inputtype.text.tiny.ImageModalDialog;
-    import AnchorModalDialog = api.form.inputtype.text.tiny.AnchorModalDialog;
+    import LinkModalDialog = api.form.inputtype.text.htmlarea.LinkModalDialog;
+    import ImageModalDialog = api.form.inputtype.text.htmlarea.ImageModalDialog;
+    import AnchorModalDialog = api.form.inputtype.text.htmlarea.AnchorModalDialog;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
-        private editors: TinyEditorOccurrenceInfo[];
+        private editors: HtmlAreaOccurrenceInfo[];
         private contentId: api.content.ContentId;
 
         static imagePrefix = "image://";
@@ -68,7 +68,7 @@ module api.form.inputtype.text {
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             this.previousScrollPos = wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(); // XP-736
 
-            var focusedEditorCls = "tinymce-editor-focused";
+            var focusedEditorCls = "html-area-focused";
             var baseUrl = CONFIG.assetsUri;
 
             tinymce.init({
@@ -234,7 +234,7 @@ module api.form.inputtype.text {
             wemjq(this.getHTMLElement()).height(wemjq(this.getHTMLElement()).height());
         }
 
-        private getEditor(editorId: string): TinyMceEditor {
+        private getEditor(editorId: string): HtmlAreaEditor {
             return tinymce.get(editorId);
         }
 
@@ -276,7 +276,7 @@ module api.form.inputtype.text {
             imageModalDialog.open();
         }
 
-        private openAnchorDialog(editor: TinyMceEditor) {
+        private openAnchorDialog(editor: HtmlAreaEditor) {
             var anchorModalDialog = new AnchorModalDialog(editor);
             anchorModalDialog.open();
         }
@@ -306,7 +306,7 @@ module api.form.inputtype.text {
         }
 
         private reInitEditor(id: string) {
-            var savedEditor: TinyEditorOccurrenceInfo = this.findElementByFieldValue(this.editors, "id", id);
+            var savedEditor: HtmlAreaOccurrenceInfo = this.findElementByFieldValue(this.editors, "id", id);
 
             this.initEditor(id, savedEditor.property, savedEditor.textAreaWrapper);
         }
@@ -374,21 +374,21 @@ module api.form.inputtype.text {
         }
     }
 
-    export interface TinyEditorOccurrenceInfo {
+    export interface HtmlAreaOccurrenceInfo {
         id: string;
         textAreaWrapper: Element;
         property: Property;
     }
 
     export interface HtmlAreaAnchor {
-        editor: TinyMceEditor
+        editor: HtmlAreaEditor
         element: HTMLElement
         text: string
         anchorList: string[]
     }
 
     export interface HtmlAreaImage {
-        editor: TinyMceEditor
+        editor: HtmlAreaEditor
         element: HTMLElement
         container: HTMLElement
         callback: Function

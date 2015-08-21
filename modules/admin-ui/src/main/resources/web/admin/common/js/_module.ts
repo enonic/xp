@@ -93,7 +93,7 @@
 ///<reference path='form/inputtype/support/_module.ts' />
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/radiobutton/_module.ts' />
-///<reference path='form/inputtype/text/tiny/_module.ts' />
+///<reference path='form/inputtype/text/htmlarea/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/inputtype/checkbox/_module.ts' />
 ///<reference path='form/inputtype/long/_module.ts' />
@@ -127,7 +127,6 @@
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
-///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/_module.ts' />

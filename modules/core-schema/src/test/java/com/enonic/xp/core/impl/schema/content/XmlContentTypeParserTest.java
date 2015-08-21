@@ -61,10 +61,10 @@ public class XmlContentTypeParserTest
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
-        assertEquals( 2, result.form().size() );
+        assertEquals( 2, result.getForm().size() );
         assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
 
-        final FormItem item = result.form().getFormItem( "myDate" );
+        final FormItem item = result.getForm().getFormItem( "myDate" );
         assertNotNull( item );
 
         final Input input = (Input) item;

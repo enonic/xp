@@ -5,7 +5,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
@@ -25,7 +24,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     protected ResourceService resourceService;
 
-    private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
+    private MixinService mixinService;
 
     protected final PartDescriptor getDescriptor( final DescriptorKey key )
     {
@@ -57,7 +56,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final PartDescriptor partDescriptor = builder.build();
 
         return PartDescriptor.copyOf( partDescriptor ).
-            config( inlineMixinsTransformer.transformForm( partDescriptor.getConfig() ) ).
+            config( mixinService.inlineFormItems( partDescriptor.getConfig() ) ).
             build();
     }
 
@@ -114,7 +113,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     @SuppressWarnings("unchecked")
     public final T mixinService( final MixinService mixinService )
     {
-        this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        this.mixinService = mixinService;
         return (T) this;
     }
 

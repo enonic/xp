@@ -8,6 +8,8 @@ public class UriRewritingResult
 
     private final String newUriPrefix;
 
+    private final boolean outOfScope;
+
     public String getRewrittenUri()
     {
         return rewrittenUri;
@@ -23,11 +25,17 @@ public class UriRewritingResult
         return newUriPrefix;
     }
 
+    public boolean isOutOfScope()
+    {
+        return outOfScope;
+    }
+
     private UriRewritingResult( final Builder builder )
     {
         this.rewrittenUri = builder.rewrittenUri;
         this.deletedUriPrefix = builder.deletedUriPrefix;
         this.newUriPrefix = builder.newUriPrefix;
+        this.outOfScope = builder.outOfScope;
     }
 
     public static Builder create()
@@ -42,6 +50,8 @@ public class UriRewritingResult
         private String deletedUriPrefix;
 
         private String newUriPrefix;
+
+        private boolean outOfScope;
 
         private Builder()
         {
@@ -65,10 +75,15 @@ public class UriRewritingResult
             return this;
         }
 
+        public Builder outOfScope( final boolean outOfScope )
+        {
+            this.outOfScope = outOfScope;
+            return this;
+        }
+
         public UriRewritingResult build()
         {
             return new UriRewritingResult( this );
         }
-
     }
 }

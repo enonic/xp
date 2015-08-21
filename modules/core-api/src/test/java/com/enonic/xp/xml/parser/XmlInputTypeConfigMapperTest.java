@@ -46,9 +46,9 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseEmpty()
+    public void parseNone()
     {
-        final InputTypeConfig config = build( "empty.xml" );
+        final InputTypeConfig config = build( "none.xml" );
         assertNotNull( config );
         assertEquals( 0, config.getSize() );
     }
@@ -101,7 +101,7 @@ public class XmlInputTypeConfigMapperTest
     @Test
     public void parseCamelCase()
     {
-        System.out.println( CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, "other-test" ));
+        System.out.println( CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, "other-test" ) );
 
         final InputTypeConfig config = build( "camelcase.xml" );
         assertNotNull( config );
@@ -122,6 +122,17 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
         assertEquals( "other5=[myContentType=myapp:test]", toString( config.getProperties( "other5" ) ) );
         assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
+    }
+
+    @Test
+    public void parseEmpty()
+    {
+        final InputTypeConfig config = build( "empty.xml" );
+        assertNotNull( config );
+        assertEquals( 2, config.getSize() );
+
+        assertEquals( "contentType=[]", toString( config.getProperties( "contentType" ) ) );
+        assertEquals( "other=[contentType=]", toString( config.getProperties( "other" ) ) );
     }
 
     private String toString( final Iterable<InputTypeProperty> properties )

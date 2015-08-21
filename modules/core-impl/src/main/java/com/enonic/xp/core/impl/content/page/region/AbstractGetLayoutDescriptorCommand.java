@@ -7,7 +7,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
@@ -29,7 +28,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected ResourceService resourceService;
 
-    private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
+    private MixinService mixinService;
 
     protected final LayoutDescriptor getDescriptor( final DescriptorKey key )
     {
@@ -52,7 +51,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final LayoutDescriptor layoutDescriptor = builder.build();
 
         return LayoutDescriptor.copyOf( layoutDescriptor ).
-            config( inlineMixinsTransformer.transformForm( layoutDescriptor.getConfig() ) ).
+            config( mixinService.inlineFormItems( layoutDescriptor.getConfig() ) ).
             build();
     }
 
@@ -111,7 +110,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     @SuppressWarnings("unchecked")
     public final T mixinService( final MixinService mixinService )
     {
-        this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        this.mixinService = mixinService;
         return (T) this;
     }
 

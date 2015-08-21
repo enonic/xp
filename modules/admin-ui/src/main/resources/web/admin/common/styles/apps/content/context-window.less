@@ -163,12 +163,25 @@
         label {
           display: inline-block;
         }
+
+        &:first-child {
+          margin-bottom: 0px;
+        }
       }
 
       form {
         margin: 0;
       }
     }
+
+    &.customized {
+      .form-view {
+        &.page-template-form {
+          margin-bottom: 0px;
+        }
+      }
+    }
+
 
     //    .icon {
     //      font-size: 48px;

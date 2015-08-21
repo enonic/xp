@@ -1,18 +1,15 @@
 package com.enonic.xp.app;
 
-import java.net.URL;
 import java.time.Instant;
-import java.util.Enumeration;
-import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 @Beta
 public class Application
@@ -83,14 +80,36 @@ public class Application
 
     public String getMaxSystemVersion()
     {
-        // TODO: Use X-System-Version header. VersionRange.
-        return "5.1";
+        String maxSystemVersion = null;
+        if ( this.systemVersion != null )
+        {
+            try
+            {
+                maxSystemVersion = new VersionRange( this.systemVersion ).getRight().toString();
+            }
+            catch ( Exception e )
+            {
+                //Nothing to do
+            }
+        }
+        return maxSystemVersion;
     }
 
     public String getMinSystemVersion()
     {
-        // TODO: Use X-System-Version header. VersionRange.
-        return "5.0";
+        String maxSystemVersion = null;
+        if ( this.systemVersion != null )
+        {
+            try
+            {
+                maxSystemVersion = new VersionRange( this.systemVersion ).getLeft().toString();
+            }
+            catch ( Exception e )
+            {
+                //Nothing to do
+            }
+        }
+        return maxSystemVersion;
     }
 
     public String getUrl()
@@ -113,17 +132,6 @@ public class Application
         return this.bundle;
     }
 
-    public Set<String> getResourcePaths()
-    {
-        if ( this.bundle.getState() != Bundle.ACTIVE )
-        {
-            return Sets.newHashSet();
-        }
-        final Set<String> set = Sets.newHashSet();
-        findResourcePaths( set, this.bundle, "/" );
-        return set;
-    }
-
     public Instant getModifiedTime()
     {
         return Instant.ofEpochMilli( this.bundle.getLastModified() );
@@ -132,20 +140,6 @@ public class Application
     public boolean isStarted()
     {
         return this.bundle.getState() == Bundle.ACTIVE;
-    }
-
-    private void findResourcePaths( final Set<String> set, final Bundle bundle, final String parentPath )
-    {
-        final Enumeration<URL> paths = bundle.findEntries( parentPath, "*", true );
-        if ( paths == null )
-        {
-            return;
-        }
-        while ( paths.hasMoreElements() )
-        {
-            final URL path = paths.nextElement();
-            set.add( path.getPath().replaceFirst( "^/", "" ) );
-        }
     }
 
     public void checkIfStarted()

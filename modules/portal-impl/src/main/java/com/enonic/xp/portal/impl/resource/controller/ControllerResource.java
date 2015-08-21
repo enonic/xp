@@ -68,7 +68,8 @@ public abstract class ControllerResource
         portalRequest.setScheme( ServletRequestUrlHelper.getScheme() );
         portalRequest.setHost( ServletRequestUrlHelper.getHost() );
         portalRequest.setPort( ServletRequestUrlHelper.getPort() );
-        portalRequest.setPath( ServletRequestUrlHelper.createUri( this.baseUri + this.uriInfo.getPath() ) );
+        portalRequest.setPath( ServletRequestUrlHelper.getPath() );
+        portalRequest.setUrl( ServletRequestUrlHelper.getFullUrl() );
         portalRequest.setMethod( this.request.getMethod() );
         portalRequest.setBaseUri( this.baseUri );
         portalRequest.setBranch( this.branch );

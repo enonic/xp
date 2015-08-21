@@ -48,32 +48,6 @@ public final class ServletRequestUrlHelper
         return rewriteUri( req, str.toString() ).getRewrittenUri();
     }
 
-    public static String createServerUrl()
-    {
-        return createServerUrl( ServletRequestHolder.getRequest() );
-    }
-
-    private static String createServerUrl( final HttpServletRequest httpServletRequest )
-    {
-        final StringBuilder str = new StringBuilder();
-
-        //Appends the scheme part
-        String scheme = getScheme( httpServletRequest );
-        str.append( scheme );
-
-        //Appends the host
-        str.append( "://" ).append( getHost( httpServletRequest ) );
-
-        //Appends the port if necessary
-        final String port = getPort( httpServletRequest );
-        if ( needPortNumber( scheme, port ) )
-        {
-            str.append( ":" ).append( port );
-        }
-
-        return str.toString();
-    }
-
     public static String getScheme()
     {
         return getScheme( ServletRequestHolder.getRequest() );
@@ -126,6 +100,71 @@ public final class ServletRequestUrlHelper
         return Integer.toString( httpServletRequest.getServerPort() );
     }
 
+    public static String getPath()
+    {
+        return getPath( ServletRequestHolder.getRequest() );
+    }
+
+    private static String getPath( final HttpServletRequest httpServletRequest )
+    {
+        return createUri( httpServletRequest.getRequestURI() );
+    }
+
+    private static String getQueryString( final HttpServletRequest httpServletRequest )
+    {
+        return httpServletRequest.getQueryString();
+    }
+
+    public static String getServerUrl()
+    {
+        return getServerUrl( ServletRequestHolder.getRequest() );
+    }
+
+    private static String getServerUrl( final HttpServletRequest httpServletRequest )
+    {
+        final StringBuilder str = new StringBuilder();
+
+        //Appends the scheme part
+        String scheme = getScheme( httpServletRequest );
+        str.append( scheme );
+
+        //Appends the host
+        str.append( "://" ).append( getHost( httpServletRequest ) );
+
+        //Appends the port if necessary
+        final String port = getPort( httpServletRequest );
+        if ( needPortNumber( scheme, port ) )
+        {
+            str.append( ":" ).append( port );
+        }
+
+        return str.toString();
+    }
+
+    public static String getFullUrl()
+    {
+        return getFullUrl( ServletRequestHolder.getRequest() );
+    }
+
+    private static String getFullUrl( final HttpServletRequest httpServletRequest )
+    {
+        //Appends the server part
+        StringBuffer fullUrl = new StringBuffer( getServerUrl( httpServletRequest ) );
+
+        //Appends the path part
+        fullUrl.append( getPath( httpServletRequest ) );
+
+        //Appends the query string part
+        final String queryString = getQueryString( httpServletRequest );
+        if ( queryString != null )
+        {
+            fullUrl.append( "?" ).append( queryString );
+        }
+
+        return fullUrl.toString();
+    }
+
+
     private static boolean needPortNumber( final String scheme, final String port )
     {
         final boolean isHttp = "http".equals( scheme ) && ( "80".equals( port ) );
@@ -163,10 +202,11 @@ public final class ServletRequestUrlHelper
                 newUriPrefix( normalizePath( vhost.getSource() ) ).
                 build();
         }
-        else
-        {
-            throw new OutOfScopeException( "URI out of scope" );
-        }
+
+        return resultBuilder.
+            rewrittenUri( normalizePath( uri ) ).
+            outOfScope( true ).
+            build();
     }
 
     private static String normalizePath( final String value )

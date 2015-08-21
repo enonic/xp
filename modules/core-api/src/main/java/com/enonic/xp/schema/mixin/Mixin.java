@@ -2,25 +2,25 @@ package com.enonic.xp.schema.mixin;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItems;
 import com.enonic.xp.schema.BaseSchema;
 
 @Beta
 public final class Mixin
     extends BaseSchema<MixinName>
 {
-    private final FormItems formItems;
+    private final Form form;
 
     private Mixin( final Builder builder )
     {
         super( builder );
-        this.formItems = builder.formItems;
+        this.form = builder.formBuilder.build();
     }
 
-    public FormItems getFormItems()
+    public Form getForm()
     {
-        return formItems;
+        return this.form;
     }
 
     public static Builder create()
@@ -36,7 +36,7 @@ public final class Mixin
     public static class Builder
         extends BaseSchema.Builder<Builder, MixinName>
     {
-        private FormItems formItems = new FormItems();
+        private Form.Builder formBuilder = Form.create();
 
         public Builder()
         {
@@ -46,7 +46,7 @@ public final class Mixin
         public Builder( final Mixin mixin )
         {
             super( mixin );
-            this.formItems = mixin.formItems;
+            this.formBuilder = Form.create( mixin.getForm() );
         }
 
         @Override
@@ -62,15 +62,15 @@ public final class Mixin
             return this;
         }
 
-        public Builder formItems( FormItems value )
+        public Builder form( final Form value )
         {
-            this.formItems = value;
+            this.formBuilder = Form.create( value );
             return this;
         }
 
-        public Builder addFormItem( FormItem value )
+        public Builder addFormItem( final FormItem value )
         {
-            this.formItems.add( value );
+            this.formBuilder.addFormItem( value );
             return this;
         }
 

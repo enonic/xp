@@ -9,7 +9,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -19,28 +18,22 @@ public abstract class AbstractContentListJson<T extends ContentIdJson>
 
     private final ContentListMetaDataJson metadata;
 
-    protected final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer;
-
     protected final ContentPrincipalsResolver contentPrincipalsResolver;
 
     private ImmutableList<T> contents;
 
     public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData,
                                     final ContentIconUrlResolver iconUrlResolver,
-                                    final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                     final ContentPrincipalsResolver contentPrincipalsResolver )
     {
-        this( Contents.from( content ), contentListMetaData, iconUrlResolver, inlineMixinsToFormItemsTransformer,
-              contentPrincipalsResolver );
+        this( Contents.from( content ), contentListMetaData, iconUrlResolver, contentPrincipalsResolver );
     }
 
     public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                     final ContentIconUrlResolver iconUrlResolver,
-                                    final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                     final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         this.iconUrlResolver = iconUrlResolver;
-        this.inlineMixinsToFormItemsTransformer = inlineMixinsToFormItemsTransformer;
         this.contentPrincipalsResolver = contentPrincipalsResolver;
         this.metadata = new ContentListMetaDataJson( contentListMetaData );
 

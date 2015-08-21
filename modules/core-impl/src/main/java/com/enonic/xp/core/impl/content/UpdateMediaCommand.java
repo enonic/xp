@@ -61,8 +61,9 @@ final class UpdateMediaCommand
             build();
 
         final PropertyTree data = new PropertyTree();
-        new ImageFormDataBuilder().
-            image( params.getName() ).
+        new MediaFormDataBuilder().
+            type( type ).
+            attachment( params.getName() ).
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
             build( data );

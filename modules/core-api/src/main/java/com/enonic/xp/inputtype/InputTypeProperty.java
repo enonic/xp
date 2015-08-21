@@ -73,13 +73,13 @@ public final class InputTypeProperty
         private Builder( final String name, final String value )
         {
             this.name = name;
-            this.value = value;
+            this.value = value != null ? value : "";
             this.attributes = ImmutableMap.builder();
         }
 
         public Builder attribute( final String name, final String value )
         {
-            this.attributes.put( name, value );
+            this.attributes.put( name, value != null ? value : "" );
             return this;
         }
 

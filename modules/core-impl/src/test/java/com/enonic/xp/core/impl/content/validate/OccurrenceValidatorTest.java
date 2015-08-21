@@ -34,13 +34,13 @@ public class OccurrenceValidatorTest
 
     private OccurrenceValidator newValidator( final ContentType type )
     {
-        return new OccurrenceValidator( type.form() );
+        return new OccurrenceValidator( type.getForm() );
     }
 
     @Test
     public void given_input_with_maxOccur1_with_two_data_when_validate_then_MaximumOccurrencesValidationError()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "1" );
@@ -56,7 +56,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_maxOccur2_with_three_data_when_validate_then_MaximumOccurrencesValidationError()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 2 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "1" );
@@ -73,7 +73,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_data_when_validate_then_hasErrors_returns_false()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput", "value" );
@@ -86,7 +86,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_no_data_when_validate_then_hasErrors_returns_true()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
@@ -98,7 +98,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_minOccur2_with_one_data_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 2 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput", "value" );
@@ -113,7 +113,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_input_with_minOccur3_with_two_data_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 3 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myInput[0]", "value 1" );
@@ -130,7 +130,7 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
 
-        contentType.form().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
             Input.create().name( "myField" ).label( "Field" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
 
@@ -143,7 +143,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( FieldSet.create().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
+        contentType.getForm().addFormItem( FieldSet.create().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
             FieldSet.create().label( "My Layout" ).name( "myLayout" ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required(
                     true ).build() ).build() ).build() );
@@ -158,7 +158,7 @@ public class OccurrenceValidatorTest
     @Test()
     public void given_required_set_with_data_when_validate_then_hasErrors_returns_false()
     {
-        contentType.form().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
+        contentType.getForm().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "mySet.myInput", "value" );
@@ -171,7 +171,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
+        contentType.getForm().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
@@ -185,7 +185,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -202,8 +202,8 @@ public class OccurrenceValidatorTest
         Input myInput =
             Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
         FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myInput ).build();
-        contentType.form().addFormItem( mySet );
-        contentType.form().addFormItem(
+        contentType.getForm().addFormItem( mySet );
+        contentType.getForm().addFormItem(
             Input.create().name( "myOtherRequiredInput" ).label( "Other input" ).inputType( InputTypeName.TEXT_LINE ).required(
                 true ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -234,7 +234,7 @@ public class OccurrenceValidatorTest
         Input myInput =
             Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
         FormItemSet mySet = FormItemSet.create().name( "mySet" ).required( false ).addFormItem( myInput ).build();
-        contentType.form().addFormItem( mySet );
+        contentType.getForm().addFormItem( mySet );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myData", "1" );
 
@@ -248,15 +248,15 @@ public class OccurrenceValidatorTest
     public void given_required_set_with_no_data_and_other_set_with_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         // setup
-        contentType.form().addFormItem( Input.create().name( "name" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        contentType.getForm().addFormItem( Input.create().name( "name" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         FormItemSet personalia = FormItemSet.create().name( "personalia" ).multiple( false ).required( true ).build();
         personalia.add( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() );
         personalia.add( Input.create().name( "hairColour" ).label( "Hair color" ).inputType( InputTypeName.TEXT_LINE ).build() );
-        contentType.form().addFormItem( personalia );
+        contentType.getForm().addFormItem( personalia );
 
         FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
-        contentType.form().addFormItem( crimes );
+        contentType.getForm().addFormItem( crimes );
         crimes.add( Input.create().name( "description" ).label( "Description" ).inputType( InputTypeName.TEXT_LINE ).build() );
         crimes.add( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() );
 

@@ -9,7 +9,6 @@ import com.enonic.xp.admin.impl.json.aggregation.AggregationJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 {
@@ -37,8 +36,7 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
             return (T) this;
         }
 
-        public abstract T addContent( final Content content,
-                                      final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer );
+        public abstract T addContent( final Content content );
 
         public T setMetadata( final ContentListMetaData metadata )
         {

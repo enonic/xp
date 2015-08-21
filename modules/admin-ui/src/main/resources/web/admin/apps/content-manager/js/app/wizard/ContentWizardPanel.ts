@@ -28,6 +28,8 @@ module app.wizard {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
+    import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
+    import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -183,10 +185,8 @@ module app.wizard {
             ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
 
             var isSiteOrWithinSite = this.site || this.createSite;
-            var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
-            var hasSiteAndPageTemplate = isSiteOrWithinSite && hasPageTemplate;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
-            if (hasSiteAndPageTemplate || isPageTemplate) {
+            if (isSiteOrWithinSite || isPageTemplate) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
@@ -523,20 +523,19 @@ module app.wizard {
             this.contextWindowToggler.setVisible(false);
             this.cycleViewModeButton.setVisible(false);
 
-            new IsRenderableRequest(content.getContentId()).sendAndParse().
-                then((renderable: boolean): void => {
-                    this.showLiveEditAction.setVisible(renderable);
-                    this.showLiveEditAction.setEnabled(renderable);
-                    this.showSplitEditAction.setEnabled(renderable);
-                    this.previewAction.setVisible(renderable);
-                    this.contextWindowToggler.setVisible(renderable);
-                    this.cycleViewModeButton.setVisible(renderable);
 
-                    if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
-                        this.wizardActions.getShowSplitEditAction().execute();
+            new GetNearestSiteRequest(content.getContentId()).sendAndParse().
+                then((parentSite: Site) => {
+
+                    if (parentSite || content.isSite()) {
+                        this.setupWizardLiveEdit(true);
+                    }
+                    else {
+                        this.setupWizardLiveEdit(false);
                     }
 
                 }).catch((reason: any) => {
+                    this.setupWizardLiveEdit(false);
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
 
@@ -600,6 +599,19 @@ module app.wizard {
                     return wemQ(null);
                 });
             });
+        }
+
+        private setupWizardLiveEdit(renderable) {
+            this.showLiveEditAction.setVisible(renderable);
+            this.showLiveEditAction.setEnabled(renderable);
+            this.showSplitEditAction.setEnabled(renderable);
+            this.previewAction.setVisible(renderable);
+            this.contextWindowToggler.setVisible(renderable);
+            this.cycleViewModeButton.setVisible(renderable);
+
+            if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
+                this.wizardActions.getShowSplitEditAction().execute();
+            }
         }
 
         private initSiteModelListeners() {

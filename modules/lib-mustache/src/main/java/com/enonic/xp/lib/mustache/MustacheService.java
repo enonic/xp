@@ -2,8 +2,8 @@ package com.enonic.xp.lib.mustache;
 
 import com.samskivert.mustache.Mustache;
 
-import com.enonic.xp.portal.bean.BeanContext;
-import com.enonic.xp.portal.bean.ScriptBean;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.resource.ResourceService;
 
 public final class MustacheService

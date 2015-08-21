@@ -5,7 +5,7 @@ import org.junit.Assert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
+import com.enonic.xp.script.impl.value.JsObjectConverter;
 
 public final class ScriptAssert
 {

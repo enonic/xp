@@ -60,6 +60,7 @@ public class PageResourceTest
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
+        ServletRequestHolder.setRequest( request );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalRequest> jsRequest = ArgumentCaptor.forClass( PortalRequest.class );
@@ -96,6 +97,7 @@ public class PageResourceTest
         assertEquals( "localhost", jsRequest.getValue().getHost() );
         assertEquals( "80", jsRequest.getValue().getPort() );
         assertEquals( "/portal/master/site/somepath/content", jsRequest.getValue().getPath() );
+        assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUrl() );
     }
 
     @Test
@@ -186,5 +188,30 @@ public class PageResourceTest
 
         assertEquals( 307, response.getStatus() );
         assertEquals( "/master/site/otherpath", response.getHeader( "location" ) );
+    }
+
+    @Test
+    public void renderCustomizedTemplate()
+        throws Exception
+    {
+        setupCustomizedTemplateContentAndSite();
+        setupController();
+
+        final PortalResponse portalResponse = PortalResponse.create().
+            body( "content rendered" ).
+            header( "some-header", "some-value" ).
+            status( 200 ).
+            build();
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
+        final PortalRequest newPortalRequest = new PortalRequest();
+        newPortalRequest.setMode( RenderMode.EDIT );
+
+        final MockHttpServletRequest request = newGetRequest( "/master/id" );
+        PortalRequestAccessor.set( request, newPortalRequest );
+
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 200, response.getStatus() );
     }
 }

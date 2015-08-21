@@ -17,13 +17,11 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 
 @Beta
-@SuppressWarnings("UnusedDeclaration")
 public class Content
 {
     private final boolean valid;
@@ -235,27 +233,6 @@ public class Content
     public Attachments getAttachments()
     {
         return attachments;
-    }
-
-    public boolean hasExtraData( final String name )
-    {
-        return getExtraData( name ) != null;
-    }
-
-    public boolean hasExtraData( final MixinName name )
-    {
-        return getExtraData( name ) != null;
-    }
-
-    public PropertyTree getExtraData( final String name )
-    {
-        return getExtraData( MixinName.from( name ) );
-    }
-
-    public PropertyTree getExtraData( final MixinName name )
-    {
-        ExtraData item = this.extraDatas.getMetadata( name );
-        return item != null ? item.getData() : null;
     }
 
     public boolean hasExtraData()

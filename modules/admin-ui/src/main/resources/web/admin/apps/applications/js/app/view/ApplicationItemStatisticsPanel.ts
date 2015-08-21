@@ -19,8 +19,8 @@ module app.view {
             super("application-item-statistics-panel");
 
             this.actionMenu =
-            new api.ui.menu.ActionMenu("Application actions", ApplicationBrowseActions.get().START_APPLICATION,
-                ApplicationBrowseActions.get().STOP_APPLICATION);
+                new api.ui.menu.ActionMenu("Application actions", ApplicationBrowseActions.get().START_APPLICATION,
+                    ApplicationBrowseActions.get().STOP_APPLICATION);
 
             this.appendChild(this.actionMenu);
 
@@ -55,7 +55,7 @@ module app.view {
             infoGroup.addDataList("Version", currentApplication.getVersion());
             infoGroup.addDataList("Key", currentApplication.getApplicationKey().toString());
             infoGroup.addDataList("System Required",
-                ">= " + currentApplication.getMinSystemVersion() + " and <=" + currentApplication.getMaxSystemVersion());
+                ">= " + currentApplication.getMinSystemVersion() + " and < " + currentApplication.getMaxSystemVersion());
 
             var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 

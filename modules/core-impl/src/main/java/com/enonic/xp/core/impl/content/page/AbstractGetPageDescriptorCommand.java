@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -15,7 +14,7 @@ import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescriptorCommand>
 {
-    private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
+    private MixinService mixinService;
 
     protected ResourceService resourceService;
 
@@ -50,7 +49,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
         final PageDescriptor pageDescriptor = builder.build();
 
         return PageDescriptor.copyOf( pageDescriptor ).
-            config( inlineMixinsTransformer.transformForm( pageDescriptor.getConfig() ) ).
+            config( mixinService.inlineFormItems( pageDescriptor.getConfig() ) ).
             build();
     }
 
@@ -66,7 +65,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
     @SuppressWarnings("unchecked")
     public final T mixinService( final MixinService mixinService )
     {
-        this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
+        this.mixinService = mixinService;
         return (T) this;
     }
 

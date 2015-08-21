@@ -4,18 +4,24 @@ module app.wizard.page.contextwindow.inspect.page {
     import ContentId = api.content.ContentId;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
+    import PageTemplateBuilder = api.content.page.PageTemplateBuilder;
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import PageModel = api.content.page.PageModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
+    import PageMode = api.content.page.PageMode;
 
     export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
         private pageModel: PageModel;
 
         private selectionListeners: {(template: PageTemplate):void}[] = [];
+
+        private customizedSelectedListeners: {():void}[] = [];
+
+        private customizedOption: Option<PageTemplateOption>;
 
         constructor() {
             super("pageTemplate", <DropdownConfig<PageTemplateOption>>{
@@ -37,7 +43,13 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.addOption(option);
                     });
 
-                    if (this.pageModel.hasTemplate()) {
+                    this.customizedOption = this.createCustomizedOption();
+                    this.addOption(this.customizedOption);
+
+                    if (this.pageModel.isCustomized()) {
+                        this.selectRow(options.length);
+                    }
+                    else if(this.pageModel.hasTemplate()) {
                         this.selectTemplate(this.pageModel.getTemplateKey());
                     }
                     else {
@@ -46,7 +58,12 @@ module app.wizard.page.contextwindow.inspect.page {
 
                     this.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
                         var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                        this.notifySelection(pageTemplate);
+                        if(pageTemplate && pageTemplate.getDisplayName() == "Customized") {
+                            this.notifyCustomizedSelected();
+                        }
+                        else {
+                            this.notifySelection(pageTemplate);
+                        }
                     });
 
                     this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
@@ -55,8 +72,11 @@ module app.wizard.page.contextwindow.inspect.page {
                             if (pageTemplateKey) {
                                 this.selectTemplate(pageTemplateKey);
                             } else {
-                                this.selectOption(pageTemplateOptions.getDefault());
+                                this.selectOption(pageTemplateOptions.getDefault(), true);
                             }
+                        }
+                        else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                            this.selectCustomized();
                         }
                     });
 
@@ -70,6 +90,10 @@ module app.wizard.page.contextwindow.inspect.page {
             if (optionToSelect) {
                 this.selectOption(optionToSelect, true);
             }
+        }
+
+        private selectCustomized() {
+            this.selectOption(this.customizedOption, true);
         }
 
         onSelection(listener: (event: PageTemplate)=>void) {
@@ -86,6 +110,26 @@ module app.wizard.page.contextwindow.inspect.page {
             this.selectionListeners.forEach((listener: (event: PageTemplate)=>void) => {
                 listener(item);
             });
+        }
+
+        onCustomizedSelected(listener: ()=>void) {
+            this.customizedSelectedListeners.push(listener);
+        }
+
+        private notifyCustomizedSelected() {
+            this.customizedSelectedListeners.forEach((listener: ()=>void) => {
+                listener();
+            });
+        }
+
+        private createCustomizedOption(): Option<PageTemplateOption> {
+            var pageTemplate:PageTemplate = (<PageTemplateBuilder> new PageTemplateBuilder().setData(new api.data.PropertyTree()).setDisplayName("Customized")).build();
+            var option = {
+                value: "Customized",
+                displayValue: new PageTemplateOption(pageTemplate, this.pageModel)
+            };
+
+            return option;
         }
     }
 }

@@ -4,6 +4,7 @@
   "host": "localhost",
   "port": "80",
   "path": "/portal/live/master/a/b",
+  "url": "http://localhost/portal/live/master/a/b?param1=value1",
   "mode": "live",
   "branch": "draft",
   "params": {

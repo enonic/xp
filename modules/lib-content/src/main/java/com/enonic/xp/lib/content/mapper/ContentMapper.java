@@ -10,8 +10,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.portal.script.serializer.MapGenerator;
-import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class ContentMapper
     implements MapSerializable

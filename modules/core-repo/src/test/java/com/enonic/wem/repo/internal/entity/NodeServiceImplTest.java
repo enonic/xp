@@ -1,12 +1,16 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.io.IOException;
 import java.time.Instant;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -31,6 +35,7 @@ import com.enonic.xp.snapshot.RestoreParams;
 import com.enonic.xp.snapshot.RestoreResult;
 import com.enonic.xp.snapshot.SnapshotParams;
 import com.enonic.xp.snapshot.SnapshotResult;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
@@ -209,6 +214,51 @@ public class NodeServiceImplTest
         assertTrue( result.isFailed() );
 
         assertNotNull( getNodeById( node.id() ) );
+    }
+
+    @Test
+    public void test_get_binary_key()
+    {
+
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef1 = BinaryReference.from( "binary" );
+        data.addBinaryReference( "my-binary-1", binaryRef1 );
+
+        final String binarySource = "binary_source";
+
+        final Node node = this.nodeService.create( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
+            build() );
+
+        final String key = this.nodeService.getBinaryKey( node.id(), binaryRef1 );
+
+        assertNotNull( key );
+    }
+
+    @Test
+    public void test_get_binary()
+        throws IOException
+    {
+
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef1 = BinaryReference.from( "binary" );
+        data.addBinaryReference( "my-binary-1", binaryRef1 );
+
+        final String binarySource = "binary_source";
+
+        final Node node = this.nodeService.create( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
+            build() );
+
+        final ByteSource source = this.nodeService.getBinary( node.id(), binaryRef1 );
+
+        assertArrayEquals( source.read(), binarySource.getBytes() );
     }
 
 }

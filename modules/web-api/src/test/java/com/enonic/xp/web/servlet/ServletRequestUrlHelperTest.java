@@ -47,7 +47,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "80", ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "443", ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://localhost", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( "8080", ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ServletRequestUrlHelperTest
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
         assertEquals( "123", ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.createServerUrl() );
+        assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
@@ -109,23 +109,18 @@ public class ServletRequestUrlHelperTest
         Mockito.when( vhost.getTarget() ).thenReturn( "/" );
         Mockito.when( vhost.getSource() ).thenReturn( "/admin" );
 
-        final String uri1 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        assertEquals( "/admin/path/to/page", uri1 );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/admin/path/to/page", rewritingResult.getRewrittenUri() );
+        assertFalse( rewritingResult.isOutOfScope() );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
-        boolean outOfScopeException = false;
-        try
-        {
-            final String uri2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        }
-        catch ( OutOfScopeException e )
-        {
-            outOfScopeException = true;
-        }
-        assertTrue( outOfScopeException );
+        final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/path/to/page", rewritingResult2.getRewrittenUri() );
+        assertTrue( rewritingResult2.isOutOfScope() );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
-        final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
-        assertEquals( "/admin/page", uri3 );
+        final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        assertEquals( "/admin/page", rewritingResult3.getRewrittenUri() );
+        assertFalse( rewritingResult3.isOutOfScope() );
     }
 }

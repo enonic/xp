@@ -194,7 +194,7 @@ module api.liveedit {
 
         private isPageModified(pageModel: PageModel): boolean {
             // default template regions differing from page regions means it has been modified
-            return pageModel.getDefaultPageTemplate().isPage() &&
+            return !!pageModel.getDefaultPageTemplate() && pageModel.getDefaultPageTemplate().isPage() &&
                    !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
         }
 
@@ -409,7 +409,12 @@ module api.liveedit {
         }
 
         getName(): string {
-            return this.liveEditModel.getContent() ? this.liveEditModel.getContent().getDisplayName() : "[No name]";
+            var content = this.liveEditModel.getContent();
+            if (!content || api.util.StringHelper.isEmpty(content.getDisplayName())) {
+                return "[No name]";
+            } else {
+                return content.getDisplayName();
+            }
         }
 
         getParentItemView(): ItemView {

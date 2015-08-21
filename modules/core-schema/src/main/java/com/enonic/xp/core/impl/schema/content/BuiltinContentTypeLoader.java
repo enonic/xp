@@ -49,7 +49,7 @@ public final class BuiltinContentTypeLoader
             build() ).
         addFormItem( Input.create().
             name( "siteConfig" ).
-            label( "Site config" ).
+            label( "Applications" ).
             helpText( "Configure applications needed for the Site" ).
             inputType( InputTypeName.SITE_CONFIGURATOR ).
             required( false ).

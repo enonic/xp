@@ -12,13 +12,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryResult;
-import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public class FindContentByQuertResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
                                                          final ContentIconUrlResolver iconUrlResolver,
-                                                         final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                          final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         final AbstractContentQueryResultJson.Builder builder;
@@ -42,18 +40,17 @@ public class FindContentByQuertResultJsonFactory
         }
 
         addAggregations( contentQueryResult.getAggregations(), builder );
-        addContents( contentQueryResult.getContents(), builder, inlineMixinsToFormItemsTransformer );
+        addContents( contentQueryResult.getContents(), builder );
         setMetadata( metadata, builder );
 
         return builder.build();
     }
 
-    private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder,
-                                     final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
+    private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder )
     {
         for ( final Content content : contents )
         {
-            builder.addContent( content, inlineMixinsToFormItemsTransformer );
+            builder.addContent( content );
         }
     }
 

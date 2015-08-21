@@ -77,7 +77,6 @@ module api.ui.treegrid {
                 setHideColumnHeaders(true).
                 setCheckableRows(true).
                 setRowHeight(45).
-                setAutoHeight(true).
                 build();
         }
 

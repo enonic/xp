@@ -1,11 +1,9 @@
 package com.enonic.xp.page;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -23,7 +21,7 @@ public final class PageTemplates
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
         super( list );
-        this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.templatesByName = Maps.uniqueIndex( list, PageTemplate::getName );
     }
 
     public PageTemplate getTemplate( final ContentName name )
@@ -43,16 +41,9 @@ public final class PageTemplates
         return null;
     }
 
-    public PageTemplates filter( final PageTemplateSpec spec )
+    public PageTemplates filter( final Predicate<PageTemplate> predicate )
     {
-        return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
-        {
-            @Override
-            public boolean apply( final PageTemplate pageTemplate )
-            {
-                return spec.isSatisfiedBy( pageTemplate );
-            }
-        } ) );
+        return PageTemplates.from( this.stream().filter( predicate ).toArray( PageTemplate[]::new ) );
     }
 
     public Contents toContents()
@@ -84,16 +75,6 @@ public final class PageTemplates
     public static PageTemplates from( final Collection<? extends PageTemplate> templates )
     {
         return new PageTemplates( ImmutableList.copyOf( templates ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<PageTemplate, ContentName>
-    {
-        @Override
-        public ContentName apply( final PageTemplate value )
-        {
-            return value.getName();
-        }
     }
 
     public static Builder create()

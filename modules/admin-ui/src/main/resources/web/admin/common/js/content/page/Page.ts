@@ -12,11 +12,14 @@ module api.content.page {
 
         private config: PropertyTree;
 
+        private customized: boolean;
+
         constructor(builder: PageBuilder) {
             this.controller = builder.controller;
             this.template = builder.template;
             this.regions = builder.regions;
             this.config = builder.config;
+            this.customized = builder.customized;
         }
 
         hasController(): boolean {
@@ -49,6 +52,10 @@ module api.content.page {
 
         getConfig(): PropertyTree {
             return this.config;
+        }
+
+        isCustomized(): boolean {
+            return this.customized;
         }
 
         equals(o: api.Equitable): boolean {
@@ -94,12 +101,15 @@ module api.content.page {
 
         config: PropertyTree;
 
+        customized: boolean;
+
         constructor(source?: Page) {
             if (source) {
                 this.controller = source.getController();
                 this.template = source.getTemplate();
                 this.regions = source.getRegions() ? source.getRegions().clone() : null;
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
+                this.customized = source.isCustomized();
             }
         }
 
@@ -110,6 +120,7 @@ module api.content.page {
             this.setConfig(json.config != null
                 ? PropertyTree.fromJson(json.config)
                 : null);
+            this.setCustomized(json.customized);
             return this;
         }
 
@@ -130,6 +141,11 @@ module api.content.page {
 
         public setConfig(value: PropertyTree): PageBuilder {
             this.config = value;
+            return this;
+        }
+
+        public setCustomized(value: boolean): PageBuilder {
+            this.customized = value;
             return this;
         }
 

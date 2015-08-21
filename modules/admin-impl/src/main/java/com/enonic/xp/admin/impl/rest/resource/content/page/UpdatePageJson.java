@@ -24,7 +24,8 @@ public class UpdatePageJson
     public UpdatePageJson( @JsonProperty("contentId") final String contentId, @JsonProperty("controller") final String pageDescriptorKey,
                            @JsonProperty("template") final String pageTemplateKey,
                            @JsonProperty("config") final List<PropertyArrayJson> config,
-                           final @JsonProperty("regions") List<RegionJson> regions )
+                           final @JsonProperty("regions") List<RegionJson> regions,
+                           @JsonProperty("customized") final boolean customized)
     {
         this.updatePage = new UpdatePageParams().
             content( ContentId.from( contentId ) ).
@@ -33,6 +34,7 @@ public class UpdatePageJson
                 toBeEdited.template = pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null;
                 toBeEdited.regions = regions != null ? new PageRegionsJson( regions ).getPageRegions() : null;
                 toBeEdited.config = config != null ? PropertyTreeJson.fromJson( config ) : null;
+                toBeEdited.customized = customized;
             } );
     }
 

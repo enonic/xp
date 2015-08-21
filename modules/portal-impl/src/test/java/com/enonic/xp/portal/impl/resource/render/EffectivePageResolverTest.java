@@ -147,4 +147,5 @@ public class EffectivePageResolverTest
         assertEquals( null, effectivePage.getController() );
     }
 
+    //
 }

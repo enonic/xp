@@ -22,6 +22,10 @@ final class EffectivePageResolver
         {
             return content.getPage();
         }
+        else if ( template == null )
+        {
+            return content.getPage();
+        }
         else if ( !content.hasPage() )
         {
             // The Content has no Page, but it has a supporting PageTemplate, so then we use the Page from the PageTemplate instead

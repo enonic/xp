@@ -48,7 +48,7 @@ module api.liveedit {
 
             var deferred = wemQ.defer<PageModel>();
 
-            var pageMode = this.content.getPageMode();
+            var pageMode = this.getPageMode(this.content, !!defaultPageTemplate);
             var pageModel = new PageModel(this, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
             var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
@@ -74,7 +74,7 @@ module api.liveedit {
                             setDescriptor(pageDescriptor).
                             setConfig(config).
                             setRegions(regions);
-                        pageModel.setController(setController);
+                        pageModel.initController(setController);
                     });
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
@@ -91,16 +91,17 @@ module api.liveedit {
                         setDescriptor(null).
                         setConfig(config).
                         setRegions(regions);
-                    pageModel.setController(setController);
+                    pageModel.initController(setController);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a PageTemplate: " + pageMode);
                 }
             }
             else {
+                var page = this.content.getPage();
                 if (pageMode == PageMode.FORCED_TEMPLATE) {
 
-                    var pageTemplateKey = this.content.getPage().getTemplate();
+                    var pageTemplateKey = page.getTemplate();
                     pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
                     pageTemplatePromise.then((pageTemplate: PageTemplate) => {
 
@@ -121,15 +122,47 @@ module api.liveedit {
                                 setTemplate(pageTemplate, pageDescriptor).
                                 setRegions(regions).
                                 setConfig(config);
-                            pageModel.setTemplate(setTemplate);
+                            pageModel.initTemplate(setTemplate);
                         });
+                    });
+                }
+                else if (pageMode == PageMode.FORCED_CONTROLLER) {
+
+                    var pageDescriptorKey = page.getController();
+                    pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                    pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+
+                        var config = page.hasConfig() ?
+                                     page.getConfig().copy() :
+                                     new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                        var regions = page.hasRegions() ?
+                                      page.getRegions().clone() :
+                                      Regions.create().build();
+
+                        var setController = new SetController(this).
+                            setDescriptor(pageDescriptor).
+                            setConfig(config).
+                            setRegions(regions);
+                        pageModel.initController(setController);
                     });
                 }
                 else if (pageMode == PageMode.AUTOMATIC) {
                     pageModel.setAutomaticTemplate(this);
                 }
+                else if (pageMode == PageMode.NO_CONTROLLER) {
+                    var config = new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                    var regions = Regions.create().build();
+
+                    var setController = new SetController(this).
+                        setDescriptor(null).
+                        setConfig(config).
+                        setRegions(regions);
+                    pageModel.initController(setController);
+                }
                 else {
-                    throw new Error("Unsupported PageMode for a Content: " + pageMode);
+                    throw new Error("Unsupported PageMode for a Content: " + PageMode[pageMode]);
                 }
             }
 
@@ -154,6 +187,29 @@ module api.liveedit {
             }
 
             return deferred.promise;
+        }
+
+        private getPageMode(content: Content, defaultTemplatePresents: boolean): api.content.page.PageMode {
+            if (content.isPage()) {
+                if (content.getPage().hasTemplate()) {
+                    //in case content's template was deleted or updated to not support content's type
+                    if (defaultTemplatePresents) {
+                        return api.content.page.PageMode.FORCED_TEMPLATE;
+                    }
+                    else {
+                        return api.content.page.PageMode.NO_CONTROLLER;
+                    }
+                }
+                else {
+                    return api.content.page.PageMode.FORCED_CONTROLLER;
+                }
+            }
+            else if (defaultTemplatePresents) {
+                return api.content.page.PageMode.AUTOMATIC;
+            }
+            else {
+                return api.content.page.PageMode.NO_CONTROLLER;
+            }
         }
 
         private loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {

@@ -29,7 +29,6 @@ public final class InputTypes
         add( TextAreaType.INSTANCE ).
         add( TextLineType.INSTANCE ).
         add( LongType.INSTANCE ).
-        add( PageControllerType.INSTANCE ).
         add( ContentTypeFilterType.INSTANCE ).
         add( SiteConfiguratorType.INSTANCE ).
         build();

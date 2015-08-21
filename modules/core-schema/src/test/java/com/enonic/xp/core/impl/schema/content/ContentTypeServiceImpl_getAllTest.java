@@ -12,7 +12,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +49,13 @@ public class ContentTypeServiceImpl_getAllTest
 
         final Form form = Form.create().addFormItem( InlineMixin.create( mixin ).build() ).build();
 
-        Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+        final Form transformedForm = Form.create().addFormItem( Input.create().
+            name( "inputToBeMixedIn" ).
+            label( "Mixed in" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).build();
+
+        Mockito.when( this.mixinService.inlineFormItems( form ) ).thenReturn( transformedForm );
 
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
@@ -65,9 +70,9 @@ public class ContentTypeServiceImpl_getAllTest
         final GetAllContentTypesParams params = new GetAllContentTypesParams().inlineMixinsToFormItems( true );
         final ContentTypes result = this.service.getAll( params );
 
-        Mockito.verify( this.mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( MixinName.class ) );
+        Mockito.verify( this.mixinService, Mockito.times( 1 ) ).inlineFormItems( Mockito.isA( Form.class ) );
         assertEquals( 1, result.getSize() );
-        assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );
-        assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );
+        assertNotNull( result.get( 0 ).getForm().getInput( "inputToBeMixedIn" ) );
+        assertNull( result.get( 0 ).getForm().getFormItem( "myMixin" ) );
     }
 }

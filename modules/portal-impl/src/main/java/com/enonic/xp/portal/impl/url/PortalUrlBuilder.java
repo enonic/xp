@@ -12,9 +12,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.web.servlet.OutOfScopeException;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -122,11 +122,17 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendParams( str, params.entries() );
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( str.toString() );
+
+        if ( rewritingResult.isOutOfScope() )
+        {
+            throw new OutOfScopeException( "URI out of scope" );
+        }
+
         final String uri = postUriRewriting( rewritingResult );
 
         if ( UrlTypeConstants.ABSOLUTE.equals( this.params.getType() ) )
         {
-            return ServletRequestUrlHelper.createServerUrl() + uri;
+            return ServletRequestUrlHelper.getServerUrl() + uri;
         }
         else
         {
