@@ -42,18 +42,44 @@ module api.content.form.inputtype.upload {
             if (this.getContext().contentId) {
                 this.fileUploader.setValue(this.getContext().contentId.toString());
                 if (property.getValue() != null) {
-                    this.fileUploader.setFileName(property.getValue().getString());
+                    switch (property.getType()) {
+                    case ValueTypes.DATA:
+                        var attachmentName = property.getPropertySet().getString('attachment');
+                        this.fileUploader.setFileName(attachmentName);
+                        break;
+                    case ValueTypes.STRING:
+                        this.fileUploader.setFileName(property.getValue().getString());
+                        break;
+                    }
                 }
             }
 
             this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                property.setValue(ValueTypes.STRING.newValue(event.getUploadItem().getName()));
-                this.fileUploader.setFileName(event.getUploadItem().getName());
+                var fileName = event.getUploadItem().getName();
+                this.fileUploader.setFileName(fileName);
+
+                var fileNameValue = ValueTypes.STRING.newValue(fileName);
+                switch (property.getType()) {
+                case ValueTypes.DATA:
+                    property.getPropertySet().setProperty('attachment', 0, fileNameValue);
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(fileNameValue);
+                    break;
+                }
             });
 
             this.fileUploader.onUploadReset(() => {
-                property.setValue(ValueTypes.STRING.newNullValue());
                 this.fileUploader.setFileName('');
+
+                switch (property.getType()) {
+                case ValueTypes.DATA:
+                    property.getPropertySet().setProperty('attachment', 0, ValueTypes.STRING.newNullValue());
+                    break;
+                case ValueTypes.STRING:
+                    property.setValue(ValueTypes.STRING.newNullValue());
+                    break;
+                }
             });
 
             return wemQ<void>(null);

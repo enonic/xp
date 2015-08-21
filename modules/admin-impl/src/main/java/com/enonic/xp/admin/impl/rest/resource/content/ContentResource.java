@@ -191,8 +191,8 @@ public final class ContentResource
             mimeType( mediaFile.getContentType() ).
             byteSource( getFileItemByteSource( mediaFile ) );
 
-        String focalX = form.getAsString( "focalX" ),
-            focalY = form.getAsString( "focalY" );
+        final String focalX = form.getAsString( "focalX" );
+        final String focalY = form.getAsString( "focalY" );
 
         if ( StringUtils.isNotBlank( focalX ) )
         {
@@ -218,8 +218,8 @@ public final class ContentResource
             content( ContentId.from( form.getAsString( "content" ) ) ).
             name( form.getAsString( "name" ) );
 
-        String focalX = form.getAsString( "focalX" ),
-            focalY = form.getAsString( "focalY" );
+        final String focalX = form.getAsString( "focalX" );
+        final String focalY = form.getAsString( "focalY" );
 
         if ( StringUtils.isNotBlank( focalX ) )
         {
