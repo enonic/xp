@@ -23,7 +23,7 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.BranchServiceImpl;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
@@ -117,7 +117,7 @@ public class AbstractContentServiceTest
 
     private VersionServiceImpl versionService;
 
-    private ElasticsearchBranchService branchService;
+    private BranchServiceImpl branchService;
 
     private ElasticsearchIndexServiceInternal indexService;
 
@@ -138,7 +138,7 @@ public class AbstractContentServiceTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
-        this.branchService = new ElasticsearchBranchService();
+        this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
 
         this.versionService = new VersionServiceImpl();

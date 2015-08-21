@@ -22,6 +22,7 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
@@ -31,10 +32,12 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
-public class ElasticsearchBranchService
+public class BranchServiceImpl
     implements BranchService
 {
     private ElasticsearchDao elasticsearchDao;
+
+    private StorageDao storageDao;
 
     @Override
     public void store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
@@ -203,6 +206,12 @@ public class ElasticsearchBranchService
         {
             return timestamp;
         }
+    }
+
+    @Reference
+    public void setStorageDao( final StorageDao storageDao )
+    {
+        this.storageDao = storageDao;
     }
 }
 

@@ -10,7 +10,7 @@ import org.junit.rules.TemporaryFolder;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.BranchServiceImpl;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
@@ -74,7 +74,7 @@ public class SecurityServiceImplTest
 
     private VersionServiceImpl versionService;
 
-    private ElasticsearchBranchService branchService;
+    private BranchServiceImpl branchService;
 
     private ElasticsearchIndexServiceInternal indexService;
 
@@ -89,7 +89,7 @@ public class SecurityServiceImplTest
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
-        this.branchService = new ElasticsearchBranchService();
+        this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
