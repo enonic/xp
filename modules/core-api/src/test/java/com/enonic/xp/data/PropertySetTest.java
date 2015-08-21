@@ -197,4 +197,23 @@ public class PropertySetTest
         assertEquals( "b", ( (List<String>) map.get( "myString" ) ).get( 1 ) );
     }
 
+    @Test
+    public void replace_value_with_different_type()
+    {
+        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+
+        // exercise
+        Property property1 = set.setString( "myProp", 0, "myValue" );
+        set.removeProperty( property1.getPath() );
+        Property property2 = set.setLong( "myProp", 0, 42l );
+
+        Property addedProperty = set.getProperty( "myProp", 0 );
+
+        // verify
+        assertNotNull( addedProperty );
+        assertEquals( "myProp", addedProperty.getName() );
+        assertEquals( 0, addedProperty.getIndex() );
+        assertEquals( ValueTypes.LONG, addedProperty.getValue().getType() );
+        assertEquals( 42l, addedProperty.getValue().asLong().longValue() );
+    }
 }
