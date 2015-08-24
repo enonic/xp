@@ -6,12 +6,24 @@ module api.dom {
 
         private static instance: WindowDOM = new WindowDOM();
 
+        private onBeforeUnloadListeners: {(event): void;}[] = [];
+
+        private onUnloadListeners: {(event): void;}[] = [];
+
         static get(): WindowDOM {
             return WindowDOM.instance;
         }
 
         constructor() {
             this.el = window;
+
+            this.el.onbeforeunload = (event) => {
+                this.onBeforeUnloadListeners.forEach((listener) => listener(event));
+            }
+
+            this.el.onunload = (event) => {
+                this.onUnloadListeners.forEach((listener) => listener(event));
+            }
         }
 
         asWindow(): Window {
@@ -84,6 +96,14 @@ module api.dom {
 
         unScroll(listener: (event: UIEvent) => void) {
             this.el.removeEventListener('scroll', listener);
+        }
+
+        onBeforeUnload(listener: (event) => void) {
+            this.onBeforeUnloadListeners.push(listener);
+        }
+
+        onUnload(listener: (event) => void) {
+            this.onUnloadListeners.push(listener);
         }
     }
 
