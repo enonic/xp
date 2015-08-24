@@ -12,6 +12,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -68,7 +69,7 @@ public final class DuplicateNodeCommand
         for ( final Node node : findNodesByParentResult.getNodes() )
         {
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
-                parent( newParent.path() );
+                parent( newParent.path() ).insertManualStrategy( InsertManualStrategy.LAST );
 
             attachBinaries( node, paramsBuilder );
 
