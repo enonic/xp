@@ -4,7 +4,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
@@ -20,8 +19,6 @@ import com.enonic.xp.repository.RepositoryId;
 public class VersionServiceImpl
     implements VersionService
 {
-    private static final boolean DEFAULT_REFRESH = true;
-
     private ElasticsearchDao elasticsearchDao;
 
     private StorageDao storageDao;
@@ -72,7 +69,7 @@ public class VersionServiceImpl
     }
 
     @Reference
-    public void setStorageDao( final ElasticsearchStorageDao storageDao )
+    public void setStorageDao( final StorageDao storageDao )
     {
         this.storageDao = storageDao;
     }

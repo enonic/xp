@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.storage.StorageDocument;
+import com.enonic.wem.repo.internal.storage.StorageSettings;
 
 @Component
 public class ElasticsearchStorageDao
@@ -25,12 +26,24 @@ public class ElasticsearchStorageDao
     @Override
     public String store( final StorageDocument doc )
     {
+        final StorageSettings settings = doc.getSettings();
+
         final IndexRequest request = Requests.indexRequest().
-            index( doc.getSettings().getStorageName().getName() ).
-            type( doc.getSettings().getStorageType().getName() ).
+            index( settings.getStorageName().getName() ).
+            type( settings.getStorageType().getName() ).
             source( XContentBuilderFactory.create( doc ) ).
             id( doc.getId() ).
-            refresh( doc.getSettings().forceRefresh() );
+            refresh( settings.forceRefresh() );
+
+        if ( settings.getRouting() != null )
+        {
+            request.routing( settings.getRouting() );
+        }
+
+        if ( settings.getParent() != null )
+        {
+            request.parent( settings.getParent() );
+        }
 
         return doStore( request );
     }

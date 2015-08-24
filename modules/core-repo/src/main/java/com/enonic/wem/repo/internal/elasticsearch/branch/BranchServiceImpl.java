@@ -40,15 +40,9 @@ public class BranchServiceImpl
     private StorageDao storageDao;
 
     @Override
-    public void store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
+    public String store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
     {
-        StoreBranchDocumentCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            branch( context.getBranch() ).
-            repository( context.getRepositoryId() ).
-            document( storeBranchDocument ).
-            build().
-            execute();
+        return storageDao.store( BranchStorageDocFactory.create( storeBranchDocument, context ) );
     }
 
     @Override

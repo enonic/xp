@@ -130,6 +130,12 @@ public class NodeDaoImpl
 
         final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), BranchContext.from( ContextAccessor.current() ) );
 
+        if ( nodeBranchVersion == null )
+        {
+            throw new NodeNotFoundException(
+                "Cannot find node with id '" + node.id() + "' in branch: '" + ContextAccessor.current().getBranch().getName() + "'" );
+        }
+
         final NodePath nodePath = nodeBranchVersion.getNodePath();
         final NodePath parentPath = nodePath.getParentPath();
         final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
