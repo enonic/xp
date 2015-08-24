@@ -25,7 +25,9 @@ module app.view.widget {
         private versionsPanel: ContentItemVersionsPanel;
         private item: ViewItem<ContentSummary>;
 
-        constructor(name?: string) {
+        private useNameLabel: boolean;
+
+        constructor(useNameLabel: boolean = true, name?: string) {
             super("widgets-panel");
             this.setDoOffset(false);
 
@@ -36,12 +38,21 @@ module app.view.widget {
 
             this.onRendered(() => this.onRenderedHandler());
 
-            this.labelEl = new api.dom.SpanEl("widgets-panel-label");
-            if (name) {
-                this.labelEl.setHtml(name);
-            }
-            this.appendChild(this.labelEl);
+            this.initNameLabel(useNameLabel, name);
+
             this.appendChild(this.widgetsContainer)
+        }
+
+        private initNameLabel(useNameLabel: boolean, name: string) {
+            this.useNameLabel = useNameLabel;
+
+            if (useNameLabel) {
+                this.labelEl = new api.dom.SpanEl("widgets-panel-label");
+                if (name) {
+                    this.labelEl.setHtml(name);
+                }
+                this.appendChild(this.labelEl);
+            }
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
@@ -165,7 +176,9 @@ module app.view.widget {
         }
 
         setName(name: string) {
-            this.labelEl.setHtml(name);
+            if (this.useNameLabel) {
+                this.labelEl.setHtml(name);
+            }
         }
 
         slideOut() {
@@ -206,8 +219,8 @@ module app.view.widget {
 
         private widgetsPanel: WidgetsPanel;
 
-        constructor(widgetsPanel: WidgetsPanel) {
-            super("widget-panel-toggle-button");
+        constructor(widgetsPanel: WidgetsPanel, className?: string) {
+            super("widget-panel-toggle-button" + (className ? " " + className : ""));
 
             this.widgetsPanel = widgetsPanel;
 
@@ -219,6 +232,14 @@ module app.view.widget {
                     this.widgetsPanel.slideOut();
                 }
             });
+        }
+
+    }
+
+    export class MobileWidgetsPanelToggleButton extends WidgetsPanelToggleButton {
+
+        constructor(widgetsPanel: WidgetsPanel) {
+            super(widgetsPanel, "mobile-widget-panel-toggle-button");
         }
 
     }

@@ -33,7 +33,12 @@ module app.browse {
 
         private contentBrowseItemPanel: ContentBrowseItemPanel;
 
+        private mobileContentItemStatisticsPanel: app.view.MobileContentItemStatisticsPanel;
+
+        private mobileBrowseActions: app.browse.action.MobileContentTreeGridActions;
+
         constructor() {
+
             this.contentTreeGrid = new app.browse.ContentTreeGrid();
 
             this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
@@ -85,6 +90,30 @@ module app.browse {
             });
 
             this.handleGlobalEvents();
+
+            this.onRendered((event) => {
+                this.initItemStatisticsPanelForMobile();
+            });
+        }
+
+        private initItemStatisticsPanelForMobile() {
+            this.mobileBrowseActions = new app.browse.action.MobileContentTreeGridActions(this.contentTreeGrid);
+            this.mobileContentItemStatisticsPanel = new app.view.MobileContentItemStatisticsPanel(this.mobileBrowseActions);
+
+            api.content.TreeGridItemClickedEvent.on((event) => {
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                if (browseItems.length == 1) {
+                    new api.content.page.IsRenderableRequest(new api.content.ContentId(browseItems[0].getId())).sendAndParse().
+                        then((renderable: boolean) => {
+                            var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                            item.setRenderable(renderable);
+                            this.mobileContentItemStatisticsPanel.setItem(item);
+                            this.mobileBrowseActions.updateActionsEnabledState(browseItems);
+                        });
+                }
+            });
+
+            this.appendChild(this.mobileContentItemStatisticsPanel);
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
@@ -295,6 +324,7 @@ module app.browse {
                                 }
                             });
                             this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+                            this.mobileBrowseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems());
 
                             return this.contentTreeGrid.xPlaceContentNodes(results);
                         });
