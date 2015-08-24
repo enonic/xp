@@ -4,12 +4,15 @@ module api.form {
 
         private recording: ValidationRecording;
 
-        constructor(recording?: ValidationRecording) {
+        private atLeastOneInputValueBroken: boolean;
+
+        constructor(recording?: ValidationRecording, atLeastOneInputValueBroken: boolean = false) {
             this.recording = recording;
+            this.atLeastOneInputValueBroken = atLeastOneInputValueBroken;
         }
 
         isValid(): boolean {
-            return this.recording.isValid();
+            return this.recording.isValid() && !this.atLeastOneInputValueBroken;
         }
 
         getRecording(): ValidationRecording {

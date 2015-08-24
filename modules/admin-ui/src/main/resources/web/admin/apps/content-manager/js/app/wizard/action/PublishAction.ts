@@ -13,7 +13,7 @@ module app.wizard.action {
 
             this.onExecuted(() => {
 
-                if (wizard.checkContentCanBePublished()) {
+                if (wizard.checkContentCanBePublished(true)) {
                     wizard.setRequireValid(true);
 
                     this.setEnabled(false);
