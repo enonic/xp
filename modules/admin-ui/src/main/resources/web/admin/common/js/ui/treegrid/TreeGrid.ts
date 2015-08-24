@@ -296,6 +296,26 @@ module api.ui.treegrid {
             return columns;
         }
 
+        getEmptyNodesCount(): number {
+
+            var viewportRange = this.grid.getViewport(),
+                lastIndex = this.gridData.getItems().length - 1,
+            // first and last rows, that are visible in grid
+                firstVisible = viewportRange.top,
+            // interval borders to search for the empty node
+                from = firstVisible;
+            var emptyNodesCount = 0;
+
+            for (var i = from; i <= lastIndex; i++) {
+                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                    emptyNodesCount++;
+                }
+            }
+
+            return emptyNodesCount;
+
+        }
+
         getGrid(): Grid<TreeNode<DATA>> {
             return this.grid;
         }
