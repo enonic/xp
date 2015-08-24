@@ -48,7 +48,7 @@ module api.liveedit {
 
         private createContentContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Parent').onExecuted(() => {
+            actions.push(new api.ui.Action('Select parent').onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();

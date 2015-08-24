@@ -162,7 +162,7 @@ module api.liveedit {
 
         private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
             var actions = actions || [];
-            actions.push(new api.ui.Action("Parent").onExecuted(() => {
+            actions.push(new api.ui.Action("Select parent").onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
@@ -170,7 +170,7 @@ module api.liveedit {
                     parentView.scrollComponentIntoView();
                 }
             }));
-            actions.push(new api.ui.Action("Empty").onExecuted(() => {
+            actions.push(new api.ui.Action("Clear contents").onExecuted(() => {
                 this.component.reset();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
