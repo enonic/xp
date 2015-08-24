@@ -1,18 +1,25 @@
 module api.liveedit {
 
     import Event = api.event.Event;
+    import Component = api.content.page.region.Component;
 
     export class ComponentLoadedEvent extends Event {
 
-        private itemView: ItemView;
+        private newComponentView: ComponentView<Component>;
+        private oldComponentView: ComponentView<Component>;
 
-        constructor(itemView: ItemView) {
+        constructor(newComponentView: ComponentView<Component>, oldComponentView: ComponentView<Component>) {
             super();
-            this.itemView = itemView;
+            this.newComponentView = newComponentView;
+            this.oldComponentView = oldComponentView;
         }
 
-        getItemView(): ItemView {
-            return this.itemView;
+        getNewComponentView(): ComponentView<Component> {
+            return this.newComponentView;
+        }
+
+        getOldComponentView(): ComponentView<Component> {
+            return this.oldComponentView;
         }
 
         static on(handler: (event: ComponentLoadedEvent) => void, contextWindow: Window = window) {

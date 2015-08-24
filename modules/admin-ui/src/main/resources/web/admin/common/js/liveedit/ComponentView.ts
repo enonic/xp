@@ -345,8 +345,8 @@ module api.liveedit {
             })
         }
 
-        notifyItemViewAdded(view: ItemView) {
-            var event = new ItemViewAddedEvent(view);
+        notifyItemViewAdded(view: ItemView, isNew: boolean = false) {
+            var event = new ItemViewAddedEvent(view, isNew);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });

@@ -3,10 +3,13 @@ module app.wizard.page.contextwindow.insert {
     import DragHelper = api.ui.DragHelper;
     import PageView = api.liveedit.PageView;
     import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
+    import Content = api.content.Content;
 
     export interface ComponentTypesPanelConfig {
 
         liveEditPage: app.wizard.page.LiveEditPageProxy;
+
+        contentWizardPanel: ContentWizardPanel;
     }
 
     export class InsertablesPanel extends api.ui.panel.Panel {
@@ -20,6 +23,10 @@ module app.wizard.page.contextwindow.insert {
         private hideContextWindowRequestListeners: {(): void;}[] = [];
 
         private pageView: PageView;
+
+        private buttonBar: api.dom.DivEl;
+
+        private componentsView: app.wizard.PageComponentsView;
 
         private overIFrame: boolean = false;
 
@@ -35,13 +42,31 @@ module app.wizard.page.contextwindow.insert {
 
             var topDescription = new api.dom.PEl();
             topDescription.getEl().setInnerHtml('Drag and drop components into the page');
-            this.appendChild(topDescription);
 
             this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
             this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
 
-            this.appendChild(this.insertablesGrid);
             this.insertablesDataView.setItems(Insertables.ALL, "name");
+
+            this.componentsView = new app.wizard.PageComponentsView(config.liveEditPage);
+            this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
+            this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
+
+            var button = new api.ui.button.Button('Show Components View');
+            button.addClass('transparent').onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+
+                if (!this.componentsView.getParentElement()) {
+                    // append it on click only to be sure that content wizard panel is ready
+                    config.contentWizardPanel.appendChild(this.componentsView);
+                }
+
+                this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
+            });
+
+            this.buttonBar = new api.dom.DivEl('button-bar');
+            this.buttonBar.appendChild(button);
+            this.appendChildren(topDescription, this.insertablesGrid, this.buttonBar);
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
@@ -61,6 +86,13 @@ module app.wizard.page.contextwindow.insert {
             this.onRemoved(this.destroyDraggables.bind(this));
         }
 
+        setPageView(pageView: api.liveedit.PageView) {
+            this.componentsView.setPageView(pageView);
+        }
+
+        setContent(content: Content) {
+            this.componentsView.setContent(content);
+        }
 
         private initializeDraggables() {
             var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');

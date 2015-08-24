@@ -1,11 +1,13 @@
 .page-components-view {
   position: absolute;
   width: 400px;
-  background-color: rgba(235, 235, 235, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   z-index: @z-index-modal-dialog;
   display: none;
   left: 50%;
   margin-left: -200px;
+  .notSelectable();
+  .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
 
   &.modal {
     left: 0 !important;
@@ -18,6 +20,16 @@
   &.draggable {
     .header {
       cursor: move;
+    }
+  }
+
+  .tree-grid {
+    .grid {
+      .slick-row:not(:hover) {
+        &, &.odd {
+          background-color: transparent;
+        }
+      }
     }
   }
 

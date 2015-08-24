@@ -19,7 +19,7 @@ module LiveEdit {
     import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
     import ComponentViewDragStoppedEvent = api.liveedit.ComponentViewDragStoppedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemovedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
@@ -97,8 +97,8 @@ module LiveEdit {
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 
-                if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
-                    DragAndDrop.get().createSortableLayout(event.getItemView());
+                if (api.liveedit.layout.LayoutItemType.get().equals(event.getNewComponentView().getType())) {
+                    DragAndDrop.get().createSortableLayout(event.getNewComponentView());
                 } else {
                     DragAndDrop.get().refreshSortable();
                 }

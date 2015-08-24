@@ -89,7 +89,7 @@ module api.ui.image {
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');

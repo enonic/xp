@@ -120,18 +120,18 @@ module api.ui.treegrid {
                         elem.removeClass("expand").addClass("collapse");
                         var node = this.gridData.getItem(data.row);
                         this.expandNode(node);
-                        event.stopPropagation();
+
                     } else if (elem.hasClass("collapse")) {
                         this.active = false;
                         elem.removeClass("collapse").addClass("expand");
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
-                        event.stopPropagation();
+
                     } else if (data.cell === 0) {
                         this.active = true;
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
-                            event.stopPropagation();
+
                         }
                     } else {
                         this.active = true;
@@ -436,7 +436,7 @@ module api.ui.treegrid {
          * retrieving a a full data, or for the purpose of the
          * infinite scroll.
          */
-        fetch(node: TreeNode<DATA>): wemQ.Promise<DATA> {
+        fetch(node: TreeNode<DATA>, dataId?: string): wemQ.Promise<DATA> {
             var deferred = wemQ.defer<DATA>();
             // Empty logic
             deferred.resolve(null);
@@ -508,6 +508,16 @@ module api.ui.treegrid {
             }
         }
 
+        selectNode(dataId: string) {
+            var root = this.root.getCurrentRoot(),
+                node = root.findNode(dataId);
+
+            if (node) {
+                var row = this.gridData.getRowById(node.getId());
+                this.grid.selectRow(row);
+            }
+        }
+
         selectAll() {
             this.grid.selectAll();
         }
@@ -573,7 +583,7 @@ module api.ui.treegrid {
                     var child = this.dataToTreeNode(data, parentNode);
                     parentNode.addChild(child);
 
-                    if (this.expandAll && this.hasChildren(data)) {
+                    if (parentNode.isExpanded() && this.hasChildren(data)) {
                         hasNotEmptyChildren = true;
                         promises.push(this.reloadNode(child));
                     }
@@ -638,7 +648,7 @@ module api.ui.treegrid {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            return this.fetchAndUpdateNodes([nodeToUpdate]);
+            return this.fetchAndUpdateNodes([nodeToUpdate], oldDataId ? this.getDataId(data) : undefined);
         }
 
         updateNodes(data: DATA, oldDataId?: string): wemQ.Promise<void> {
@@ -650,16 +660,21 @@ module api.ui.treegrid {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            return this.fetchAndUpdateNodes(nodesToUpdate);
+            return this.fetchAndUpdateNodes(nodesToUpdate, oldDataId ? this.getDataId(data) : undefined);
         }
 
-        private fetchAndUpdateNodes(nodesToUpdate: TreeNode<DATA>[]): wemQ.Promise<void> {
-            return this.fetch(nodesToUpdate[0])
+        private fetchAndUpdateNodes(nodesToUpdate: TreeNode<DATA>[], dataId?: string): wemQ.Promise<void> {
+            return this.fetch(nodesToUpdate[0], dataId)
                 .then((data: DATA) => {
                     nodesToUpdate.forEach((node) => {
+                        if (dataId) {
+                            node.setDataId(dataId);
+                        }
                         node.setData(data);
+                        node.setExpanded(this.expandAll);
                         node.setDataId(this.getDataId(data));
                         node.clearViewers();
+
                         if (node.isVisible()) {
                             var selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
                             this.gridData.updateItem(node.getId(), node);
@@ -669,10 +684,6 @@ module api.ui.treegrid {
                         }
                     });
 
-                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
-                    this.initData(this.root.getCurrentRoot().treeToList());
-                    this.root.updateSelection(nodesToUpdate[0].getDataId(), data);
-                    this.triggerSelectionChangedListeners();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });

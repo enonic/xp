@@ -596,10 +596,13 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
 
             var selectedView = this.getPageView().getSelectedView();
-            if (selectedView) {
+            if (selectedView == this) {
+                // view is already selected
+                return;
+            } else if (selectedView) {
                 // deselect selected item view if any
                 selectedView.deselect();
             }
@@ -619,7 +622,7 @@ module api.liveedit {
                 this.selectPlaceholder();
             }
 
-            new ItemViewSelectedEvent(this, clickPosition).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
         }
 
         deselect(silent?: boolean) {
@@ -634,7 +637,7 @@ module api.liveedit {
             }
 
             if (!silent) {
-                new ItemViewDeselectEvent(this).fire();
+                new ItemViewDeselectedEvent(this).fire();
             }
         }
 

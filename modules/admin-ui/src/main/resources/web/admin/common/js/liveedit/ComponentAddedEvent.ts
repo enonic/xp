@@ -5,14 +5,20 @@ module api.liveedit {
     export class ComponentAddedEvent extends api.event.Event {
 
         private componentView: ComponentView<Component>;
+        private parentRegionView: RegionView;
 
-        constructor(componentView: ComponentView<Component>) {
+        constructor(componentView: ComponentView<Component>, regionView: RegionView) {
             super();
             this.componentView = componentView;
+            this.parentRegionView = regionView;
         }
 
         getComponentView(): ComponentView<Component> {
             return this.componentView;
+        }
+
+        getParentRegionView(): RegionView {
+            return this.parentRegionView;
         }
 
         static on(handler: (event: ComponentAddedEvent) => void, contextWindow: Window = window) {

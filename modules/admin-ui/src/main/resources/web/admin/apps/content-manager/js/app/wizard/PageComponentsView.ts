@@ -1,8 +1,19 @@
 module app.wizard {
 
+    import LiveEditPageProxy = app.wizard.page.LiveEditPageProxy;
+
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
+    import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
+    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
+    import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
+    import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
+    import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
+
     import Content = api.content.Content;
     import TreeGrid = api.ui.treegrid.TreeGrid;
+    import TreeNode = api.ui.treegrid.TreeNode;
     import PageView = api.liveedit.PageView;
+    import ItemView = api.liveedit.ItemView;
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
@@ -12,6 +23,7 @@ module app.wizard {
 
         private content: Content;
         private pageView: PageView;
+        private liveEditPage: LiveEditPageProxy;
 
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
@@ -25,8 +37,10 @@ module app.wizard {
         private clickListener: (event, data) => void;
         private mouseDown: boolean = false;
 
-        constructor() {
+        constructor(liveEditPage: LiveEditPageProxy) {
             super('page-components-view');
+
+            this.liveEditPage = liveEditPage;
 
             var closeButton = new api.ui.button.CloseButton();
             closeButton.onClicked((event: MouseEvent) => this.hide());
@@ -40,10 +54,12 @@ module app.wizard {
 
             ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
-                if (!smallSize) {
-                    this.constrainToParent();
+                if (!smallSize && this.isVisible()) {
+                    this.getEl().setOffset(this.constrainToParent());
                 }
-                this.setModal(smallSize).setDraggable(!smallSize);
+                if (item.isRangeSizeChanged()) {
+                    this.setModal(smallSize).setDraggable(!smallSize);
+                }
             });
         }
 
@@ -65,7 +81,53 @@ module app.wizard {
 
         private createTree(content: Content, pageView: PageView) {
             this.tree = new PageComponentsTreeGrid(content, pageView);
+
+            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
+                if (!event.isNew()) {
+                    this.tree.selectNode(this.tree.getDataId(event.getItemView()));
+                }
+            });
+
+            this.liveEditPage.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
+                this.tree.deselectNode(this.tree.getDataId(event.getItemView()));
+            });
+
+            this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
+                var parentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getParentRegionView()));
+                if (parentNode) {
+                    // deselect all otherwise node is going to be added as child to selection (that is weird btw)
+                    this.tree.deselectAll();
+                    this.tree.appendNode(event.getComponentView(), false, false, parentNode).then(() => {
+                        // expand parent node to show added one
+                        this.tree.expandNode(parentNode);
+
+                        if (event.getComponentView().isSelected()) {
+                            this.tree.selectNode(this.tree.getDataId(event.getComponentView()));
+                        }
+                    });
+                }
+            });
+
+            this.liveEditPage.onComponentRemoved((event: ComponentRemovedEvent) => {
+                this.tree.deleteNode(event.getComponentView());
+                // update parent node in case it was the only child
+                this.tree.updateNode(event.getParentRegionView());
+            });
+
+            this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
+                var oldDataId = this.tree.getDataId(event.getOldComponentView());
+                this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
+                    if (event.getNewComponentView().isSelected()) {
+                        var newDataId = this.tree.getDataId(event.getNewComponentView());
+                        this.tree.selectNode(newDataId);
+                    }
+                });
+            });
+
             this.clickListener = (event, data) => {
+                var treeNode: TreeNode<ItemView> = this.tree.getGrid().getDataView().getItem(data.row);
+                treeNode.getData().select();
+
                 if (this.isModal()) {
                     this.hide();
                 }
@@ -126,8 +188,8 @@ module app.wizard {
                 body.unMouseUp(this.mouseUpListener);
                 body.unMouseMove(this.mouseMoveListener);
             }
-            this.draggable = draggable;
             this.toggleClass('draggable', draggable);
+            this.draggable = draggable;
             return this;
         }
 

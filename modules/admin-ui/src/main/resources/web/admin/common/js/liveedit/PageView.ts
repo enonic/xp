@@ -146,7 +146,7 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select();
+                    itemView.select(null, null, event.isNew());
                 }
 
             };
@@ -284,7 +284,7 @@ module api.liveedit {
             this.setLockVisible(false);
             this.lockedContextMenu.hide();
 
-            new ItemViewDeselectEvent(this).fire();
+            new ItemViewDeselectedEvent(this).fire();
         }
 
         handleShaderClick(event: MouseEvent) {
