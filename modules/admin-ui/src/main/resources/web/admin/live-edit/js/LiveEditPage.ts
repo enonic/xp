@@ -77,15 +77,16 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
 
-            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+            api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 if (!this.skipNextReloadConfirmation) {
                     var message = "This will close this wizard!";
                     (event || window.event)['returnValue'] = message;
                     return message;
                 }
-            };
+            });
 
-            api.dom.WindowDOM.get().asWindow().onunload = (event) => {
+            api.dom.WindowDOM.get().onUnload((event) => {
+
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();
                     // do remove to trigger model unbinding
@@ -93,7 +94,7 @@ module LiveEdit {
                     this.skipNextReloadConfirmation = false;
                 }
                 this.pageView.remove();
-            };
+            });
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 
