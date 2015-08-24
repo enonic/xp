@@ -305,16 +305,18 @@ final class ImageContentProcessor
                     xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
                 }
 
-                long mediaInfoByteSize;
-                try
+                if ( sourceAttachment != null )
                 {
-                    mediaInfoByteSize = sourceAttachment.getByteSource().size();
+                    try
+                    {
+                        long mediaInfoByteSize = sourceAttachment.getByteSource().size();
+                        xData.setLong( MEDIA_INFO_BYTE_SIZE, mediaInfoByteSize );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+                    }
                 }
-                catch ( Exception e )
-                {
-                    mediaInfoByteSize = 0;
-                }
-                xData.setLong( MEDIA_INFO_BYTE_SIZE, mediaInfoByteSize );
             }
             if ( GPS_INFO.equals( extraData.getName().getLocalName() ) )
             {
