@@ -434,6 +434,12 @@ module api.ui.panel {
             var unit = (panelNumber == 1) ? this.firstPanelUnit : this.secondPanelUnit;
             var otherPanelUnit = (panelNumber == 1) ? this.secondPanelUnit : this.firstPanelUnit;
 
+            if ((panelNumber == 1 && this.isSecondPanelHidden()) || (panelNumber == 2 && this.isFirstPanelHidden())) {
+                return "100%";
+            } else if ((panelNumber == 1 && this.isFirstPanelHidden()) || (panelNumber == 2 && this.isSecondPanelHidden())) {
+                return "0"
+            }
+
             var result;
             if (size != -1) { // This panel is the deciding panel
                 if (unit == SplitPanelUnit.PIXEL) {
