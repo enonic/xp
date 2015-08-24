@@ -1,8 +1,8 @@
-package com.enonic.wem.repo.internal.elasticsearch;
+package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.xp.index.IndexPath;
 
-class ReturnField
+public class ReturnField
 {
     private final IndexPath indexPath;
 

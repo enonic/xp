@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch;
+package com.enonic.wem.repo.internal.storage;
 
 import java.util.Arrays;
 import java.util.Collection;

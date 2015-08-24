@@ -8,12 +8,12 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 import com.enonic.wem.repo.internal.storage.StorageDataEntry;
-import com.enonic.wem.repo.internal.storage.StorageDocument;
+import com.enonic.wem.repo.internal.storage.StoreRequest;
 
 public class XContentBuilderFactory
 
 {
-    public static XContentBuilder create( final StorageDocument doc )
+    public static XContentBuilder create( final StoreRequest doc )
     {
         try
         {

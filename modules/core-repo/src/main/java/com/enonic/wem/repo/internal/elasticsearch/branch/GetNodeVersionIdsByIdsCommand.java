@@ -11,19 +11,19 @@ import org.elasticsearch.search.sort.SortOrder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
-import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeVersionIds;
 
 public class GetNodeVersionIdsByIdsCommand
     extends AbstractBranchCommand

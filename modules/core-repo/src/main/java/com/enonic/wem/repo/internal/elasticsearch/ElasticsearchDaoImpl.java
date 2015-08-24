@@ -54,6 +54,7 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.GetQuery;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.RestoreParams;

@@ -13,8 +13,6 @@ import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.GetQuery;
-import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.index.result.GetResult;
@@ -22,7 +20,12 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.GetByIdRequest;
+import com.enonic.wem.repo.internal.storage.ReturnFields;
+import com.enonic.wem.repo.internal.storage.StaticStorageType;
 import com.enonic.wem.repo.internal.storage.StorageDao;
+import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
@@ -60,12 +63,13 @@ public class BranchServiceImpl
     @Override
     public NodeBranchVersion get( final NodeId nodeId, final BranchContext context )
     {
-        final BranchDocumentId branchDocumentId = new BranchDocumentId( nodeId, context.getBranch() );
 
-        final GetResult getResult = this.elasticsearchDao.get( GetQuery.create().
-            id( branchDocumentId.toString() ).
-            indexName( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) ).
-            indexTypeName( IndexType.BRANCH.getName() ).
+        final GetResult getResult = this.storageDao.getById( GetByIdRequest.create().
+            id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+            storageSettings( StorageSettings.create().
+                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+                storageType( StaticStorageType.BRANCH ).
+                build() ).
             returnFields(
                 ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
             routing( nodeId.toString() ).

@@ -2,19 +2,22 @@ package com.enonic.wem.repo.internal.storage;
 
 import java.util.Set;
 
-public class StorageDocument
+public class StoreRequest
 {
     private final StorageData data;
 
     private final StorageSettings settings;
 
-    private final String id;
+    private final boolean forceRefresh;
 
-    private StorageDocument( Builder builder )
+    private final int timeout;
+
+    private StoreRequest( Builder builder )
     {
-        data = builder.data;
-        settings = builder.settings;
-        id = builder.id;
+        this.data = builder.data;
+        this.settings = builder.settings;
+        this.forceRefresh = builder.forceRefresh;
+        this.timeout = builder.timeout;
     }
 
     public static Builder create()
@@ -32,11 +35,20 @@ public class StorageDocument
         return settings;
     }
 
-    public String getId()
+    public StorageData getData()
     {
-        return id;
+        return data;
     }
 
+    public String getTimeout()
+    {
+        return timeout + "s";
+    }
+
+    public boolean isForceRefresh()
+    {
+        return forceRefresh;
+    }
 
     public static final class Builder
     {
@@ -44,7 +56,9 @@ public class StorageDocument
 
         private StorageSettings settings;
 
-        private String id;
+        private boolean forceRefresh = false;
+
+        private int timeout = 5;
 
         private Builder()
         {
@@ -62,15 +76,21 @@ public class StorageDocument
             return this;
         }
 
-        public Builder id( String id )
+        public Builder forceRefresh( boolean forceRefresh )
         {
-            this.id = id;
+            this.forceRefresh = forceRefresh;
             return this;
         }
 
-        public StorageDocument build()
+        public Builder timeout( final int timeout )
         {
-            return new StorageDocument( this );
+            this.timeout = timeout;
+            return this;
+        }
+
+        public StoreRequest build()
+        {
+            return new StoreRequest( this );
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.storage;
 
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -9,9 +11,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
+import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.storage.GetByIdRequest;
+import com.enonic.wem.repo.internal.storage.GetByParentRequest;
+import com.enonic.wem.repo.internal.storage.GetByPathRequest;
 import com.enonic.wem.repo.internal.storage.StorageDao;
-import com.enonic.wem.repo.internal.storage.StorageDocument;
+import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.storage.StoreRequest;
 
 @Component
 public class ElasticsearchStorageDao
@@ -19,44 +27,79 @@ public class ElasticsearchStorageDao
 {
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchStorageDao.class );
 
-    private final String storeTimeout = "5s";
-
     private Client client;
 
     @Override
-    public String store( final StorageDocument doc )
+    public String store( final StoreRequest request )
     {
-        final StorageSettings settings = doc.getSettings();
+        final StorageSettings settings = request.getSettings();
+        final StorageData data = request.getData();
 
-        final IndexRequest request = Requests.indexRequest().
+        final IndexRequest indexRequest = Requests.indexRequest().
             index( settings.getStorageName().getName() ).
             type( settings.getStorageType().getName() ).
-            source( XContentBuilderFactory.create( doc ) ).
-            id( doc.getId() ).
-            refresh( settings.forceRefresh() );
+            source( XContentBuilderFactory.create( request ) ).
+            id( data.getId() ).
+            refresh( request.isForceRefresh() );
 
-        if ( settings.getRouting() != null )
+        if ( data.getRouting() != null )
         {
-            request.routing( settings.getRouting() );
+            indexRequest.routing( data.getRouting() );
         }
 
-        if ( settings.getParent() != null )
+        if ( data.getParent() != null )
         {
-            request.parent( settings.getParent() );
+            indexRequest.parent( data.getParent() );
         }
 
-        return doStore( request );
+        return doStore( indexRequest, request.getTimeout() );
     }
 
-    private String doStore( final IndexRequest request )
+    private String doStore( final IndexRequest request, final String timeout )
     {
 
         final IndexResponse indexResponse = this.client.index( request ).
-            actionGet( storeTimeout );
+            actionGet( timeout );
 
         return indexResponse.getId();
     }
 
+    @Override
+    public GetResult getByParent( final GetByParentRequest query )
+    {
+        return null;
+    }
+
+    @Override
+    public GetResult getByPath( final GetByPathRequest query )
+    {
+        return null;
+    }
+
+    @Override
+    public GetResult getById( final GetByIdRequest request )
+    {
+        final StorageSettings storageSettings = request.getStorageSettings();
+        final GetRequest getRequest = new GetRequest( storageSettings.getStorageName().getName() ).
+            type( storageSettings.getStorageType().getName() ).
+            preference( request.getSearchPreference().getName() ).
+            id( request.getId() );
+
+        if ( request.getReturnFields().isNotEmpty() )
+        {
+            getRequest.fields( request.getReturnFields().getReturnFieldNames() );
+        }
+
+        if ( request.getRouting() != null )
+        {
+            getRequest.routing( request.getRouting() );
+        }
+
+        final GetResponse getResponse = client.get( getRequest ).
+            actionGet( request.getTimeout() );
+
+        return GetResultFactory.create( getResponse );
+    }
 
     @Reference
     public void setClient( final Client client )

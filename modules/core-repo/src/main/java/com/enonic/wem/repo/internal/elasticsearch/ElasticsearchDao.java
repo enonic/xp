@@ -11,6 +11,7 @@ import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.storage.GetQuery;
 import com.enonic.xp.snapshot.RestoreParams;
 import com.enonic.xp.snapshot.RestoreResult;
 import com.enonic.xp.snapshot.SnapshotParams;
@@ -19,30 +20,30 @@ import com.enonic.xp.snapshot.SnapshotResults;
 
 public interface ElasticsearchDao
 {
-    public String store( IndexRequest indexRequest );
+    String store( IndexRequest indexRequest );
 
-    public void store( Collection<IndexDocument> indexDocuments );
+    void store( Collection<IndexDocument> indexDocuments );
 
-    public boolean delete( DeleteRequest deleteRequest );
+    boolean delete( DeleteRequest deleteRequest );
 
-    public boolean delete( DeleteDocument deleteDocument );
+    boolean delete( DeleteDocument deleteDocument );
 
-    public SearchResult find( ElasticsearchQuery query );
+    SearchResult find( ElasticsearchQuery query );
 
-    public GetResult get( GetQuery getQuery );
+    GetResult get( GetQuery getQuery );
 
-    public long count( ElasticsearchQuery query );
+    long count( ElasticsearchQuery query );
 
-    public SnapshotResult snapshot( final SnapshotParams params );
+    SnapshotResult snapshot( final SnapshotParams params );
 
-    public RestoreResult restoreSnapshot( final RestoreParams params );
+    RestoreResult restoreSnapshot( final RestoreParams params );
 
-    public SnapshotInfo getSnapshot( final String snapshotName );
+    SnapshotInfo getSnapshot( final String snapshotName );
 
-    public void deleteSnapshot( final String snapshotName );
+    void deleteSnapshot( final String snapshotName );
 
-    public void deleteSnapshotRepository();
+    void deleteSnapshotRepository();
 
-    public SnapshotResults listSnapshots();
+    SnapshotResults listSnapshots();
 
 }
