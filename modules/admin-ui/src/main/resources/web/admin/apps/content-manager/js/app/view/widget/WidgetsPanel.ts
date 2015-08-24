@@ -111,13 +111,17 @@ module app.view.widget {
                 e.preventDefault();
                 initialPos = e.clientX;
                 splitterPosition = e.clientX;
+                this.ghostDragger.insertBeforeEl(this.splitter);
                 this.startDrag(dragListener);
             });
 
             this.mask.onMouseUp((e: MouseEvent) => {
-                this.actualWidth = this.getEl().getWidth() + initialPos - splitterPosition;
-                this.stopDrag(dragListener);
-                ResponsiveManager.fireResizeEvent();
+                if (this.ghostDragger.getHTMLElement().parentNode) {
+                    this.actualWidth = this.getEl().getWidth() + initialPos - splitterPosition;
+                    this.stopDrag(dragListener);
+                    this.removeChild(this.ghostDragger);
+                    ResponsiveManager.fireResizeEvent();
+                }
             });
         }
 
@@ -128,21 +132,21 @@ module app.view.widget {
 
         private startDrag(dragListener: {(e: MouseEvent):void}) {
             this.mask.show();
+            this.addClass("dragging");
             this.mask.onMouseMove(dragListener);
-            this.ghostDragger.insertBeforeEl(this.splitter);
             this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
         }
 
         private stopDrag(dragListener: {(e: MouseEvent):void}) {
             this.getEl().setWidthPx(this.actualWidth);
+            this.removeClass("dragging");
 
             this.callWithTimeout(() => {
                 this.notifyPanelSizeChanged();
             }, 800); //delay is required due to animation time
 
-            this.mask.unMouseMove(dragListener);
             this.mask.hide();
-            this.removeChild(this.ghostDragger);
+            this.mask.unMouseMove(dragListener);
         }
 
         private removeWidgets() {
