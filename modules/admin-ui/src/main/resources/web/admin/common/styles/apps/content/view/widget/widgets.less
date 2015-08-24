@@ -148,7 +148,21 @@
           width: 100%;
         }
       }
+    }
 
+    &.dragging {
+      overflow: visible;
+    }
+
+    .ghost-dragger {
+      height: 100%;
+      background-color: @admin-dark-gray;
+      opacity: 0.5;
+      position: absolute;
+      z-index: @z-index-draggable;
+      cursor: ew-resize;
+      width: 5px;
+      .notSelectable();
     }
   }
 }
