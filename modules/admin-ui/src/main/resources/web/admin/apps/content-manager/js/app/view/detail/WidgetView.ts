@@ -1,4 +1,4 @@
-module app.view.widget {
+module app.view.detail {
 
     import Widget = api.content.Widget;
     import ViewItem = api.app.view.ViewItem;
@@ -23,7 +23,7 @@ module app.view.widget {
 
         static fromWidget(widget: Widget, item?: ViewItem<ContentSummary>): WidgetView {
             var widgetView = new WidgetView(widget.getDisplayName()),
-                widgetViewContent : api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
+                widgetViewContent: api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
 
             if (item) {
                 (<api.dom.IFrameEl>widgetViewContent).setSrc(widgetView.getWidgetSrc(item));

@@ -1,15 +1,15 @@
-module app.view.widget {
+module app.view.detail {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import Widget = api.content.Widget;
 
-    export class WidgetsPanel extends api.ui.panel.Panel {
+    export class DetailPanel extends api.ui.panel.Panel {
 
         private widgetViews: WidgetView[] = [];
         private labelEl: api.dom.SpanEl;
-        private widgetsContainer: api.dom.DivEl = new api.dom.DivEl("widgets-container");
+        private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
         private animationTimer;
 
         private splitter: api.dom.DivEl;
@@ -26,7 +26,7 @@ module app.view.widget {
         private item: ViewItem<ContentSummary>;
 
         constructor(name?: string) {
-            super("widgets-panel");
+            super("details-panel");
             this.setDoOffset(false);
 
             this.versionsPanel = new ContentItemVersionsPanel();
@@ -36,12 +36,12 @@ module app.view.widget {
 
             this.onRendered(() => this.onRenderedHandler());
 
-            this.labelEl = new api.dom.SpanEl("widgets-panel-label");
+            this.labelEl = new api.dom.SpanEl("details-panel-label");
             if (name) {
                 this.labelEl.setHtml(name);
             }
             this.appendChild(this.labelEl);
-            this.appendChild(this.widgetsContainer)
+            this.appendChild(this.detailsContainer)
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
@@ -58,7 +58,7 @@ module app.view.widget {
         }
 
         private initWidgetsForItem() {
-            this.removeWidgets();
+            this.removeDetails();
 
             this.setName(this.item.getDisplayName());
 
@@ -149,13 +149,13 @@ module app.view.widget {
             this.mask.unMouseMove(dragListener);
         }
 
-        private removeWidgets() {
-            this.widgetsContainer.removeChildren();
+        private removeDetails() {
+            this.detailsContainer.removeChildren();
         }
 
         private addWidget(widget: WidgetView) {
             this.widgetViews.push(widget);
-            this.widgetsContainer.appendChild(widget);
+            this.detailsContainer.appendChild(widget);
         }
 
         private addWidgets(widgetViews: WidgetView[]) {
@@ -202,21 +202,21 @@ module app.view.widget {
         }
     }
 
-    export class WidgetsPanelToggleButton extends api.dom.DivEl {
+    export class DetailPanelToggleButton extends api.dom.DivEl {
 
-        private widgetsPanel: WidgetsPanel;
+        private detailPanel: DetailPanel;
 
-        constructor(widgetsPanel: WidgetsPanel) {
-            super("widget-panel-toggle-button");
+        constructor(detailPanel: DetailPanel) {
+            super("detail-panel-toggle-button");
 
-            this.widgetsPanel = widgetsPanel;
+            this.detailPanel = detailPanel;
 
             this.onClicked((event) => {
                 this.toggleClass("expanded");
                 if (this.hasClass("expanded")) {
-                    this.widgetsPanel.slideIn();
+                    this.detailPanel.slideIn();
                 } else {
-                    this.widgetsPanel.slideOut();
+                    this.detailPanel.slideOut();
                 }
             });
         }
