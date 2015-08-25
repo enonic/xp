@@ -28,7 +28,6 @@ public final class ContentMapper
         gen.value( "_id", value.getId() );
         gen.value( "_name", value.getName() );
         gen.value( "_path", value.getPath() );
-        gen.value( "_parentPath", value.getParentPath() );
         gen.value( "creator", value.getCreator() );
         gen.value( "modifier", value.getModifier() );
         gen.value( "createdTime", value.getCreatedTime() );

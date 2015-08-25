@@ -65,7 +65,6 @@ var expectedJson = {
     "hits": [{
         "_id": "111111",
         "_name": "mycontent",
-        "_parentPath": "/a/b",
         "_path": "/a/b/mycontent",
         "createdTime": "1970-01-01T00:00:00Z",
         "creator": "user:system:admin",
@@ -81,7 +80,6 @@ var expectedJson = {
     }, {
         "_id": "222222",
         "_name": "othercontent",
-        "_parentPath": "/a/b",
         "_path": "/a/b/othercontent",
         "createdTime": "1970-01-01T00:00:00Z",
         "creator": "user:system:admin",
@@ -97,7 +95,6 @@ var expectedJson = {
     }, {
         "_id": "333333",
         "_name": "another",
-        "_parentPath": "/a/b",
         "_path": "/a/b/another",
         "createdTime": "1970-01-01T00:00:00Z",
         "creator": "user:system:admin",
