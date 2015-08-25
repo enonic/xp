@@ -24,6 +24,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -93,7 +94,7 @@ final class ImageContentProcessor
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
-            extraDatas = extractMetadata( mediaInfo, contentMixins );
+            extraDatas = extractMetadata( mediaInfo, contentMixins, sourceAttachment );
         }
 
         final CreateAttachments.Builder builder = CreateAttachments.create();
@@ -106,19 +107,7 @@ final class ImageContentProcessor
 
     public ProcessUpdateResult processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
     {
-        final CreateAttachments processedCreateAttachments;
-        if ( createAttachments != null && createAttachments.getSize() == 1 )
-        {
-            final CreateAttachment sourceAttachment = createAttachments.first();
-            final CreateAttachments.Builder builder = CreateAttachments.create();
-            builder.add( sourceAttachment );
-
-            processedCreateAttachments = builder.build();
-        }
-        else
-        {
-            processedCreateAttachments = createAttachments;
-        }
+        final CreateAttachment sourceAttachment = createAttachments == null ? null : createAttachments.first();
 
         final ContentEditor editor;
         if ( mediaInfo != null )
@@ -126,7 +115,7 @@ final class ImageContentProcessor
             editor = editable -> {
 
                 Mixins contentMixins = mixinService.getByContentType( contentType );
-                editable.extraDatas = extractMetadata( mediaInfo, contentMixins );
+                editable.extraDatas = extractMetadata( mediaInfo, contentMixins, sourceAttachment );
 
             };
         }
@@ -142,7 +131,7 @@ final class ImageContentProcessor
 
             };
         }
-        return new ProcessUpdateResult( processedCreateAttachments, editor );
+        return new ProcessUpdateResult( createAttachments, editor );
     }
 
     private ExtraDatas updateImageMetadata( final EditableContent editable )
@@ -187,13 +176,23 @@ final class ImageContentProcessor
         if ( extraData != null )
         {
             final PropertyTree xData = extraData.getData();
-            xData.setLong( IMAGE_INFO_PIXEL_SIZE, imageSize );
-            xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
-            xData.setLong( IMAGE_INFO_IMAGE_WIDTH, imageWidth );
-            xData.setLong( MEDIA_INFO_BYTE_SIZE, byteSize );
+            setLongProperty( xData, IMAGE_INFO_PIXEL_SIZE, imageSize );
+            setLongProperty( xData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
+            setLongProperty( xData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
+            setLongProperty( xData, MEDIA_INFO_BYTE_SIZE, byteSize );
         }
 
         return editable.extraDatas;
+    }
+
+    private void setLongProperty( final PropertyTree propertyTree, final String path, final Long value )
+    {
+        final Property existingProperty = propertyTree.getProperty( path );
+        if ( existingProperty != null && !existingProperty.getType().equals( ValueTypes.LONG ) )
+        {
+            propertyTree.removeProperty( path );
+        }
+        propertyTree.setLong( path, value );
     }
 
     private BufferedImage toBufferedImage( final ByteSource source )
@@ -230,7 +229,7 @@ final class ImageContentProcessor
         return output.size();
     }
 
-    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
+    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins, CreateAttachment sourceAttachment )
     {
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         final Map<MixinName, ExtraData> metadataMap = new HashMap<>();
@@ -274,7 +273,7 @@ final class ImageContentProcessor
 
             }
         }
-        fillComputedFormItems( metadataMap.values(), mediaInfo );
+        fillComputedFormItems( metadataMap.values(), mediaInfo, sourceAttachment );
 
         return extradatasBuilder.build();
     }
@@ -288,7 +287,7 @@ final class ImageContentProcessor
         return FIELD_CONFORMITY_MAP.containsKey( tikaFieldValue ) ? FIELD_CONFORMITY_MAP.get( tikaFieldValue ) : tikaFieldValue;
     }
 
-    public void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo )
+    public void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
     {
         for ( ExtraData extraData : extraDataList )
         {
@@ -304,6 +303,19 @@ final class ImageContentProcessor
                     xData.setLong( IMAGE_INFO_PIXEL_SIZE, tiffImageLength * tiffImageWidth );
                     xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
                     xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
+                }
+
+                if ( sourceAttachment != null )
+                {
+                    try
+                    {
+                        long mediaInfoByteSize = sourceAttachment.getByteSource().size();
+                        xData.setLong( MEDIA_INFO_BYTE_SIZE, mediaInfoByteSize );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+                    }
                 }
             }
             if ( GPS_INFO.equals( extraData.getName().getLocalName() ) )

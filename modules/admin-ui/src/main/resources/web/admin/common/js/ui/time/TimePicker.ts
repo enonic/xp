@@ -52,8 +52,8 @@ module api.ui.time {
             this.input.onKeyUp((event: KeyboardEvent) => {
                 var typedTime = this.input.getValue();
                 if (api.util.StringHelper.isEmpty(typedTime)) {
-                    this.popup.setSelectedTime(null, null);
                     this.validUserInput = true;
+                    this.popup.setSelectedTime(null, null);
                     if (this.popup.isVisible()) {
                         this.popup.hide();
                     }
@@ -61,8 +61,8 @@ module api.ui.time {
                     var parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
                     if (parsedTime && parsedTime.length == 1) {
                         var splitTime = parsedTime[0].split(':');
-                        this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
                         this.validUserInput = true;
+                        this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
                         }

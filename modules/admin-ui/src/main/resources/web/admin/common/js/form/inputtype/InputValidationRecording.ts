@@ -51,7 +51,7 @@ module api.form.inputtype {
                 return false;
             }
 
-            if (this.additionalValidationRecord != that.additionalValidationRecord) {
+            if (!api.ObjectHelper.equals(this.additionalValidationRecord, that.additionalValidationRecord)) {
                 return false;
             }
 

@@ -83,7 +83,8 @@ module api.form {
 
                         if (!this.previousValidationRecording) {
                             this.previousValidationRecording = event.getRecording();
-                            this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
+                            this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
+                                event.isInputValueBroken()));
                         }
                         else {
                             var previousValidState = this.previousValidationRecording.isValid();
@@ -95,10 +96,11 @@ module api.form {
                                 this.previousValidationRecording.flatten(event.getRecording());
                             }
 
-                            if (previousValidState != this.previousValidationRecording.isValid()) {
-                                this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
-                            }
+                            this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
+                                event.isInputValueBroken()));
+
                         }
+                        this.previousValidationRecording = event.getRecording();
                     });
                 });
 

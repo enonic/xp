@@ -96,7 +96,6 @@ module app.browse {
                     this.contentMoveMask.hide();
 
                     if (response.getMoved().length > 0) {
-                        new api.content.ContentMovedEvent(response.getMoved()).fire();
                         if (response.getMoved().length > 1) {
                             api.notify.showFeedback(response.getMoved().length + ' items moved');
                         } else {

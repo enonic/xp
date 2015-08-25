@@ -3,8 +3,12 @@ package com.enonic.xp.portal.impl.url;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
@@ -20,7 +24,6 @@ import com.enonic.xp.web.servlet.UriRewritingResult;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang.StringUtils.removeStart;
 
 abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 {
@@ -52,20 +55,16 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         {
             return;
         }
+
         final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
-        final boolean startsWithSlash = urlPart.charAt( 0 ) == '/';
-        if ( endsWithSlash && startsWithSlash )
+        final String normalized = normalizePath( urlPart );
+
+        if ( !endsWithSlash )
         {
-            str.append( removeStart( urlPart, "/" ) );
+            str.append( "/" );
         }
-        else if ( !endsWithSlash && !startsWithSlash )
-        {
-            str.append( "/" ).append( urlPart );
-        }
-        else
-        {
-            str.append( urlPart );
-        }
+
+        str.append( normalized );
     }
 
     private void appendParams( final StringBuilder str, final Collection<Map.Entry<String, String>> params )
@@ -98,6 +97,23 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     private String urlEncode( final String value )
     {
         return UrlEscapers.urlFormParameterEscaper().escape( value );
+    }
+
+    private String normalizePath( final String value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+
+        if ( !value.contains( "/" ) )
+        {
+            return value;
+        }
+
+        final Iterable<String> splitted = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
+        final Stream<String> transformed = Lists.newArrayList( splitted ).stream().map( this::urlEncode );
+        return Joiner.on( '/' ).join( transformed.iterator() );
     }
 
     public final String build()

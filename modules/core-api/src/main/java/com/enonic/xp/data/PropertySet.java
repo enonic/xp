@@ -291,7 +291,7 @@ public final class PropertySet
     private PropertyArray getOrCreatePropertyArray( final String name, final ValueType type )
     {
         PropertyArray array = this.propertyArrayByName.get( name );
-        if ( array == null )
+        if ( array == null || ( array.size() == 0 && !array.getValueType().equals( type ) ) )
         {
             array = new PropertyArray( tree, this, name, type );
             this.propertyArrayByName.put( name, array );

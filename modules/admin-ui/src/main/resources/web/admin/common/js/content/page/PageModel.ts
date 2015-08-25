@@ -396,7 +396,14 @@ module api.content.page {
                     build();
             }
             else if (this.mode == PageMode.NO_CONTROLLER) {
-                return null;
+                if(this.contentHasNonRenderableTemplateSet()) {
+                    return new PageBuilder().
+                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).
+                        build();
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 throw new Error("Page mode not supported: " + this.mode);
@@ -458,6 +465,12 @@ module api.content.page {
 
         isCustomized(): boolean {
             return this.customized;
+        }
+
+        private contentHasNonRenderableTemplateSet() {
+           return !this.isPageTemplate() && (this.mode == PageMode.NO_CONTROLLER) &&
+                                 this.liveEditModel.getContent().getPage() &&
+                                 this.liveEditModel.getContent().getPage().getTemplate();
         }
 
         private registerRegionsListeners(regions: api.content.page.region.Regions) {
