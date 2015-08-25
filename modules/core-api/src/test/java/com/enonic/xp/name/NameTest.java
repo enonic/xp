@@ -17,25 +17,25 @@ public class NameTest
             @Override
             public Object getObjectX()
             {
-                return new Name( "name" );
+                return create( "name" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new Name( "other" )};
+                return new Object[]{create( "other" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new Name( "name" );
+                return create( "name" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new Name( "name" );
+                return create( "name" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -45,28 +45,28 @@ public class NameTest
     public void valid()
         throws Exception
     {
-        Name.from( "test" );
+        create( "test" );
     }
 
     @Test
     public void valid_norwegian_chars()
         throws Exception
     {
-        Name.from( "test åæø" );
+        create( "test åæø" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void linebreak()
         throws Exception
     {
-        Name.from( "Hepp\nHapp" );
+        create( "Hepp\nHapp" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void tab()
         throws Exception
     {
-        Name.from( "Hepp\tHapp" );
+        create( "Hepp\tHapp" );
     }
 
     @Test
@@ -75,13 +75,13 @@ public class NameTest
     {
         final String chineseName = "\u306d\u304e\u30de\u30e8\u713c\u304d";
 
-        Name.from( chineseName );
+        create( chineseName );
     }
 
     @Test
     public void testCyrillic()
     {
-        Name.from( "Норвегия" );
+        create( "Норвегия" );
     }
 
     @Test
@@ -100,7 +100,7 @@ public class NameTest
         {
             try
             {
-                Name.from( c + "" );
+                create( c + "" );
                 fail( "expected to throw illegal argument for unicode character: " + NameCharacterHelper.getUnicodeString( c ) );
             }
             catch ( Exception e )
@@ -114,21 +114,21 @@ public class NameTest
     public void valid_special_characters()
         throws Exception
     {
-        Name.from( "test åæø" );
+        create( "test åæø" );
     }
 
     @Test
     public void colon_is_valid()
         throws Exception
     {
-        Name.from( "test:tast" );
+        create( "test:tast" );
     }
 
     @Test
     public void additional_allowed_is_valid()
         throws Exception
     {
-        Name.from( "^:;#$%&()" );
+        create( "^:;#$%&()," );
     }
 
 
@@ -136,13 +136,18 @@ public class NameTest
     public void slash_not_valid()
         throws Exception
     {
-        Name.from( "test/me" );
+        create( "test/me" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void backslash_not_valid()
         throws Exception
     {
-        Name.from( "test\\me" );
+        create( "test\\me" );
+    }
+
+    private Name create( final String name )
+    {
+        return new Name( name );
     }
 }
