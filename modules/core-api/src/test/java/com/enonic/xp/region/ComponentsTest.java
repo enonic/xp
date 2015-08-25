@@ -2,7 +2,6 @@ package com.enonic.xp.region;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -17,7 +16,7 @@ public class ComponentsTest
     @Test
     public void page()
     {
-        PropertyTree pageConfig = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree pageConfig = new PropertyTree();
         pageConfig.addLong( "pause", 200L );
 
         Page page = Page.create().
@@ -32,7 +31,7 @@ public class ComponentsTest
     @Test
     public void part()
     {
-        PropertyTree partConfig = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree partConfig = new PropertyTree();
         partConfig.addLong( "width", 150L );
 
         PartComponent partComponent = PartComponent.create().
@@ -42,7 +41,7 @@ public class ComponentsTest
             build();
 
         assertEquals( "my-part", partComponent.getName().toString() );
-        assertEquals( "partTemplateName", partComponent.getDescriptor().getName());
+        assertEquals( "partTemplateName", partComponent.getDescriptor().getName() );
         assertEquals( "mainmodule", partComponent.getDescriptor().getApplicationKey().toString() );
         assertEquals( PartComponentType.INSTANCE, partComponent.getType() );
     }
@@ -50,7 +49,7 @@ public class ComponentsTest
     @Test
     public void layout()
     {
-        PropertyTree layoutConfig = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree layoutConfig = new PropertyTree();
         layoutConfig.addLong( "columns", 2L );
 
         LayoutComponent layoutComponent = LayoutComponent.create().

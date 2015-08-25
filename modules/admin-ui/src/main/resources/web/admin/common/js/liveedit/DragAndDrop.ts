@@ -595,7 +595,7 @@ module api.liveedit {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
                 var descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;
-                descriptorBuilder.setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                descriptorBuilder.setConfig(new PropertyTree());
             }
 
             return builder.build();

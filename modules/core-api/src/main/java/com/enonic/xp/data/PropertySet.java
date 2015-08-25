@@ -199,23 +199,7 @@ public final class PropertySet
                 "PropertySet already belongs to a ValueTree. Detach it from existing PropertyTree before adding it to another: " +
                     this.tree );
         }
-        final boolean treeWasNotSet = this.tree == null;
         this.tree = propertyTree;
-
-        if ( treeWasNotSet )
-        {
-            final PropertyVisitor propertyVisitor = new PropertyVisitor()
-            {
-                @Override
-                public void visit( final Property property )
-                {
-                    property.setId( propertyTree.nextId() );
-                    propertyTree.registerProperty( property );
-                }
-            };
-            propertyVisitor.visitPropertiesWithSet( true );
-            propertyVisitor.traverse( this );
-        }
     }
 
     public PropertySet detach()
@@ -498,6 +482,45 @@ public final class PropertySet
             propertyArray.getProperties().forEach( builder::add );
         }
         return builder.build();
+    }
+
+    public ImmutableList<Property> getProperties( ValueType valueType )
+    {
+        final ImmutableList.Builder<Property> builder = new ImmutableList.Builder<>();
+        for ( final PropertyArray propertyArray : this.propertyArrayByName.values() )
+        {
+            for ( final Property property : propertyArray.getProperties() )
+            {
+                if ( property.getType().equals( valueType ) )
+                {
+                    builder.add( property );
+                }
+
+                if ( property.getValue() instanceof PropertySetValue )
+                {
+                    builder.addAll( ( (PropertySet) property.getValue().getObject() ).getProperties( valueType ) );
+                }
+            }
+        }
+        return builder.build();
+    }
+
+    public int getPropertySize()
+    {
+        int propertySize = 0;
+        for ( final PropertyArray propertyArray : this.propertyArrayByName.values() )
+        {
+            propertySize += propertyArray.size();
+            for ( final Property property : propertyArray.getProperties() )
+            {
+                if ( property.getValue() instanceof PropertySetValue )
+                {
+                    propertySize += ( ( (PropertySet) property.getValue().getObject() ).getPropertySize() );
+                }
+            }
+        }
+        return propertySize;
+
     }
 
     public Iterable<PropertyArray> getPropertyArrays()

@@ -120,21 +120,10 @@ module api.data {
             this.tree = tree;
 
             this.forEach((property: Property) => {
-                property.setId(this.tree.getNextId());
-                this.tree.registerProperty(property);
                 if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
                     property.getPropertySet().attachToTree(tree);
                 }
             });
-        }
-
-        /**
-         * If invoked, then the next added or set property with a Value with null will be ignored.
-         * The second add or set after this method is called will not be affected.
-         */
-        public ifNotNull(): PropertySet {
-            this._ifNotNull = true;
-            return this;
         }
 
         addPropertyArray(array: PropertyArray) {
@@ -432,30 +421,17 @@ module api.data {
             return true;
         }
 
-        toTree(idProvider?: PropertyIdProvider): PropertyTree {
-            if (!this.tree && !idProvider) {
-                throw new Error("The PropertySet must be attached to a PropertyTree or a idProvider must be given before when this method is invoked");
-            }
-            if (idProvider) {
-                return new PropertyTree(idProvider, this);
-            }
-            else {
-                return new PropertyTree(this.tree.getIdProvider(), this);
-            }
-        }
-
         /**
          * Copies this PropertySet (deep copy).
          * @param destinationTree The [[PropertyTree]] that the copied PropertySet will be attached to.
-         * @param generateNewPropertyIds Whether to generate new property ids for the copied properties or not. Default is false.
          * @returns {api.data.PropertySet}
          */
-        copy(destinationTree: PropertyTree, generateNewPropertyIds: boolean = false): PropertySet {
+        copy(destinationTree: PropertyTree): PropertySet {
 
             var copy = new PropertySet(destinationTree);
 
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, sourcePropertyArray: PropertyArray) => {
-                var propertyArrayCopy = sourcePropertyArray.copy(copy, generateNewPropertyIds);
+                var propertyArrayCopy = sourcePropertyArray.copy(copy);
                 copy.addPropertyArray(propertyArrayCopy);
             });
 

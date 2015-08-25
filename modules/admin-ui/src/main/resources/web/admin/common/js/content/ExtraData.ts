@@ -2,7 +2,6 @@ module api.content {
 
     import MixinName = api.schema.mixin.MixinName;
     import PropertyTree = api.data.PropertyTree;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class ExtraData implements api.Cloneable, api.Equitable {
 
@@ -52,8 +51,8 @@ module api.content {
             };
         }
 
-        static fromJson(metadataJson: api.content.json.ExtraDataJson, propertyIdProvider: PropertyIdProvider): ExtraData {
-            return new ExtraData(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
+        static fromJson(metadataJson: api.content.json.ExtraDataJson): ExtraData {
+            return new ExtraData(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data));
         }
 
         

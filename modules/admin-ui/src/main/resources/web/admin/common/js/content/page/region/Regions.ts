@@ -1,7 +1,5 @@
 module api.content.page.region {
 
-    import PropertyIdProvider = api.data.PropertyIdProvider;
-
     export class Regions implements api.Equitable {
 
         public static debug: boolean = false;
@@ -158,8 +156,8 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): Regions {
-            return new RegionsBuilder(this, generateNewPropertyIds).build();
+        clone(): Regions {
+            return new RegionsBuilder(this).build();
         }
 
         onChanged(listener: (event: BaseRegionChangedEvent)=>void) {
@@ -275,15 +273,15 @@ module api.content.page.region {
 
         regions: Region[] = [];
 
-        constructor(source?: Regions, generateNewPropertyIds: boolean = false) {
+        constructor(source?: Regions) {
             if (source) {
                 source.getRegions().forEach((region: Region) => {
-                    this.regions.push(region.clone(generateNewPropertyIds));
+                    this.regions.push(region.clone());
                 });
             }
         }
 
-        fromJson(regionsJson: RegionJson[], propertyIdProvider: PropertyIdProvider, parent: LayoutComponent): RegionsBuilder {
+        fromJson(regionsJson: RegionJson[], parent: LayoutComponent): RegionsBuilder {
 
             regionsJson.forEach((regionJson: RegionJson) => {
 
@@ -293,8 +291,7 @@ module api.content.page.region {
                     build();
 
                 regionJson.components.forEach((componentJson: ComponentTypeWrapperJson, componentIndex: number) => {
-                    var component: Component = ComponentFactory.createFromJson(componentJson,
-                        componentIndex, region, propertyIdProvider);
+                    var component: Component = ComponentFactory.createFromJson(componentJson, componentIndex, region);
                     region.addComponent(component);
                 });
 

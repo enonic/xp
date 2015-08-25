@@ -14,7 +14,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
@@ -66,7 +65,7 @@ public abstract class ImageBaseResourceTest
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
-        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree data = new PropertyTree();
         data.addString( "media", attachments[0].getName() );
 
         return Media.create().

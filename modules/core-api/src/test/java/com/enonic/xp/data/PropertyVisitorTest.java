@@ -28,7 +28,7 @@ public class PropertyVisitorTest
         };
         propertyVisitor.visitPropertiesWithSet( true );
 
-        PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree propertyTree = new PropertyTree();
         PropertySet setA = propertyTree.addSet( "a" );
         PropertySet setB = setA.addSet( "b" );
         setB.addSet( "c" );
@@ -57,7 +57,7 @@ public class PropertyVisitorTest
             }
         };
 
-        PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "myText", "abc" );
         propertyTree.addLocalDate( "myDate", LocalDate.now() );
 
@@ -91,7 +91,7 @@ public class PropertyVisitorTest
         };
         propertyVisitor.restrictType( ValueTypes.LOCAL_DATE );
 
-        PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "myText", "abc" );
         propertyTree.addLocalDate( "myDate", LocalDate.now() );
 
@@ -123,7 +123,7 @@ public class PropertyVisitorTest
         };
         propertyVisitor.restrictType( ValueTypes.REFERENCE );
 
-        PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "myText", "abc" );
         propertyTree.addLocalDate( "myDate", LocalDate.now() );
         propertyTree.addReference( "myRef", Reference.from( "nodeId-1" ) );
@@ -158,7 +158,7 @@ public class PropertyVisitorTest
         };
         propertyVisitor.restrictType( ValueTypes.LINK );
 
-        PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "myText", "abc" );
         propertyTree.addLocalDate( "myDate", LocalDate.now() );
         propertyTree.addLink( "myLink", Link.from( "/nodeId-1" ) );

@@ -12,7 +12,7 @@ public class PropertySetTest
     @Test(expected = IndexOutOfBoundsException.class)
     public void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise & verify
         set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) );
@@ -21,7 +21,7 @@ public class PropertySetTest
     @Test
     public void setString_creates_Property()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise
         Property property = set.setString( "myProp", 0, "myValue" );
@@ -35,7 +35,7 @@ public class PropertySetTest
     @Test
     public void getString()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
         set.setString( "myProp", 0, "myValue" );
 
         // exercise & verify
@@ -45,7 +45,7 @@ public class PropertySetTest
     @Test
     public void countAncestors()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet a = tree.addSet( "a" );
         PropertySet b = a.addSet( "b" );
         PropertySet c = b.addSet( "c" );
@@ -58,7 +58,7 @@ public class PropertySetTest
     @Test
     public void addLongs()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
         Property[] properties = set.addLongs( "longs", 1L, 2L, 3L );
 
         assertEquals( Long.valueOf( 1L ), properties[0].getLong() );
@@ -69,7 +69,7 @@ public class PropertySetTest
     @Test
     public void removeProperties()
     {
-        final PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree tree = new PropertyTree();
         PropertySet set = new PropertySet( tree );
         set.addLongs( "longs", 1L, 2L, 3L );
         set.removeProperties( "longs" );
@@ -81,7 +81,7 @@ public class PropertySetTest
     @Test
     public void setting_with_same_index_twice_overwrites()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
         set.setString( "a", "1" );
         set.setString( "a", "2" );
 
@@ -112,34 +112,16 @@ public class PropertySetTest
     @Test
     public void when_copy_then_values_within_copied_set_equals()
     {
-        PropertyTree sourceTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree sourceTree = new PropertyTree();
         PropertySet setSource = sourceTree.addSet( "setSource" );
         setSource.addStrings( "a", "1", "2" );
 
-        PropertyTree destinationTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree destinationTree = new PropertyTree();
         PropertySet copy = setSource.copy( destinationTree );
         destinationTree.addSet( "setCopy", copy );
 
         assertEquals( sourceTree.getProperty( "setSource.a[0]" ).getValue(), destinationTree.getProperty( "setCopy.a[0]" ).getValue() );
         assertEquals( sourceTree.getProperty( "setSource.a[1]" ).getValue(), destinationTree.getProperty( "setCopy.a[1]" ).getValue() );
-    }
-
-    @Test
-    public void when_copy_then_PropertyIds_within_copied_set_are_the_same()
-    {
-        PropertyTree sourceTree = new PropertyTree( new CounterPropertyIdProvider() );
-        PropertySet setSource = sourceTree.addSet( "setSource" );
-        setSource.addStrings( "a", "1", "2" );
-
-        PropertyTree destinationTree = new PropertyTree( new CounterPropertyIdProvider() );
-        PropertySet copy = setSource.copy( destinationTree );
-        destinationTree.addSet( "setCopy", copy );
-
-        assertSame( sourceTree.getProperty( "setSource.a[0]" ).getId(), destinationTree.getProperty( "setCopy.a[0]" ).getId() );
-        assertSame( sourceTree.getProperty( "setSource.a[1]" ).getId(), destinationTree.getProperty( "setCopy.a[1]" ).getId() );
-
-        assertEquals( "1", destinationTree.getProperty( sourceTree.getProperty( "setSource.a[0]" ).getId() ).getString() );
-        assertEquals( "2", destinationTree.getProperty( sourceTree.getProperty( "setSource.a[1]" ).getId() ).getString() );
     }
 
     @Test
@@ -149,9 +131,6 @@ public class PropertySetTest
 
         Property aProperty = set.addString( "myString", "a" );
         Property bProperty = set.addString( "myString", "b" );
-
-        assertNull( aProperty.getId() );
-        assertNull( bProperty.getId() );
 
         assertEquals( "a", aProperty.getString() );
         assertEquals( "b", bProperty.getString() );
@@ -171,18 +150,18 @@ public class PropertySetTest
         Property innerStringProperty = innerSet.addString( "myInnerString", "a" );
         Property innerSetProperty = set.addSet( "innerSet", innerSet );
 
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addSet( "mySet", set );
 
-        assertNotNull( aProperty.getId() );
-        assertNotNull( bProperty.getId() );
-        assertNotNull( innerSetProperty.getId() );
-        assertNotNull( innerStringProperty.getId() );
+        assertNotNull( tree.getProperty( aProperty.getPath() ) );
+        assertNotNull( tree.getProperty( bProperty.getPath() ) );
+        assertNotNull( tree.getProperty( innerSetProperty.getPath() ) );
+        assertNotNull( tree.getProperty( innerStringProperty.getPath() ) );
 
-        assertSame( aProperty, tree.getProperty( aProperty.getId() ) );
-        assertSame( bProperty, tree.getProperty( bProperty.getId() ) );
-        assertSame( innerSetProperty, tree.getProperty( innerSetProperty.getId() ) );
-        assertSame( innerStringProperty, tree.getProperty( innerStringProperty.getId() ) );
+        assertSame( aProperty, tree.getProperty( aProperty.getPath() ) );
+        assertSame( bProperty, tree.getProperty( bProperty.getPath() ) );
+        assertSame( innerSetProperty, tree.getProperty( innerSetProperty.getPath() ) );
+        assertSame( innerStringProperty, tree.getProperty( innerStringProperty.getPath() ) );
     }
 
     @Test
@@ -200,7 +179,7 @@ public class PropertySetTest
     @Test
     public void replace_value_with_different_type()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise
         Property property1 = set.setString( "myProp", 0, "myValue" );

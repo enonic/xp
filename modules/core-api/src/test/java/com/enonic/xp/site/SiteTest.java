@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.Assert.*;
@@ -48,7 +47,7 @@ public class SiteTest
     {
         SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+            config( new PropertyTree() ).
             build();
         Site site = Site.create().
             addSiteConfig( siteConfig ).
@@ -66,7 +65,7 @@ public class SiteTest
     {
         SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+            config( new PropertyTree() ).
             build();
         Site site = Site.create().
             siteConfigs( SiteConfigs.from( siteConfig ) ).
@@ -88,11 +87,11 @@ public class SiteTest
     {
         SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+            config( new PropertyTree() ).
             build();
         SiteConfig siteConfig1 = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+            config( new PropertyTree() ).
             build();
 
         assertEquals( siteConfig, siteConfig );

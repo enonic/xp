@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -242,7 +243,7 @@ public class NodeImporter
     {
         final PropertyTree data = newNode.data();
 
-        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
+        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         if ( binaryReferences.isEmpty() )
         {

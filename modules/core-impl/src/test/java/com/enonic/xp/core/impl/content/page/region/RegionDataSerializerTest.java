@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
-import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -16,12 +14,10 @@ public class RegionDataSerializerTest
 {
     private RegionDataSerializer regionSerializer = new RegionDataSerializer();
 
-    private PropertyIdProvider propertyIdProvider = new CounterPropertyIdProvider();
-
     @Test
     public void region()
     {
-        PropertyTree myPartConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree myPartConfig = new PropertyTree();
         myPartConfig.addString( "some", "config" );
 
         Region region = Region.create().
@@ -33,12 +29,12 @@ public class RegionDataSerializerTest
                 build() ).
             add( ImageComponent.create().
                 name( "MyImage" ).
-                config( new PropertyTree( propertyIdProvider ) ).
+                config( new PropertyTree() ).
                 build() ).
             add( LayoutComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-layout" ).
-                config( new PropertyTree( propertyIdProvider ) ).
+                config( new PropertyTree() ).
 
                 build() ).
             build();
@@ -54,10 +50,10 @@ public class RegionDataSerializerTest
                     build() ).build()
          */
 
-        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
 
-        PropertyTree regionAsData = new PropertyTree( propertyIdProvider );
+        PropertyTree regionAsData = new PropertyTree();
 
         // exercise
         regionSerializer.toData( region, regionAsData.getRoot() );

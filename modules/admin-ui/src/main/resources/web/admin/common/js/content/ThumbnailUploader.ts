@@ -9,8 +9,6 @@ module api.content {
 
     export class ThumbnailUploader extends api.ui.uploader.Uploader<Content> {
 
-        private propertyIdProvider: api.data.PropertyIdProvider;
-
         private iconUrlResolver: ContentIconUrlResolver;
 
         constructor(config?: ThumbnailUploaderConfig) {
@@ -42,7 +40,6 @@ module api.content {
             super(config);
 
             this.addClass('thumbnail-uploader');
-            this.propertyIdProvider = api.Client.get().getPropertyIdProvider();
             this.iconUrlResolver = new ContentIconUrlResolver();
         }
 
@@ -50,7 +47,7 @@ module api.content {
         createModel(serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
                 return new api.content.ContentBuilder().
-                    fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).
+                    fromContentJson(<api.content.json.ContentJson> serverResponse).
                     build();
             }
             else {

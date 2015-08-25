@@ -35,7 +35,7 @@ public class ValueTest
     @Test
     public void tostring_PropertySet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addSet( "myEmptySet" );
         PropertySet mySet = tree.addSet( "mySet" );
         mySet.addStrings( "strings", "a", "b", "c" );

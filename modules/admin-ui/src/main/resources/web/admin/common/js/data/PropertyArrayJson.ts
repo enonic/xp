@@ -6,6 +6,6 @@ module api.data {
 
         type: string;
 
-        values: ValueAndPropertyIdJson[];
+        values: PropertyValueJson[];
     }
 }

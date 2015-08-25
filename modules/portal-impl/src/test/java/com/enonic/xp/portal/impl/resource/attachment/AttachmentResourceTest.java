@@ -15,7 +15,6 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -59,7 +58,7 @@ public class AttachmentResourceTest
 
     private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
     {
-        final PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree data = new PropertyTree();
         data.addString( "media", attachments[0].getName() );
 
         return Media.create().

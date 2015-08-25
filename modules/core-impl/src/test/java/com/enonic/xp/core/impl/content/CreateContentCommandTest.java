@@ -8,7 +8,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
@@ -65,7 +64,7 @@ public class CreateContentCommandTest
     @Test(expected = ContentNotFoundException.class)
     public void bad_parent_content_path()
     {
-        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
 
         CreateContentParams params = CreateContentParams.create().
@@ -86,7 +85,7 @@ public class CreateContentCommandTest
     @Test
     public void content_params_not_present_test()
     {
-        PropertyTree data = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree data = new PropertyTree();
         data.addString( "myData", "aaa" );
 
         try
@@ -170,7 +169,7 @@ public class CreateContentCommandTest
     public void name_present_and_unchanged()
     {
 
-        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
 
         final CreateContentParams params =
@@ -197,7 +196,7 @@ public class CreateContentCommandTest
 
     private CreateContentParams createContentParams()
     {
-        PropertyTree existingContentData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
 
         CreateContentParams params = CreateContentParams.create().type( ContentTypeName.site() ).parent( ContentPath.ROOT ).contentData(

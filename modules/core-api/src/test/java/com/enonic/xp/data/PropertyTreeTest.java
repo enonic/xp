@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 import com.enonic.xp.util.BinaryReference;
@@ -30,7 +31,7 @@ public class PropertyTreeTest
             @Override
             public Object getObjectX()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 tree.addString( "myString", "myValue" );
                 PropertySet set = tree.addSet( "mySet" );
                 set.addString( "myString", "myValue" );
@@ -40,17 +41,17 @@ public class PropertyTreeTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                PropertyTree tree1 = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree1 = new PropertyTree();
                 tree1.addString( "myString", "myValue" );
                 PropertySet set1 = tree1.addSet( "mySet" );
                 set1.addString( "myString", "otherValue" );
 
-                PropertyTree tree2 = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree2 = new PropertyTree();
                 tree2.addString( "myString", "otherValue" );
                 PropertySet set2 = tree2.addSet( "mySet" );
                 set2.addString( "myString", "myValue" );
 
-                PropertyTree tree3 = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree3 = new PropertyTree();
                 tree3.addString( "myString", "myValue" );
                 PropertySet set3 = tree3.addSet( "myOtherSet" );
                 set3.addString( "myString", "myValue" );
@@ -61,7 +62,7 @@ public class PropertyTreeTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 tree.addString( "myString", "myValue" );
                 PropertySet set = tree.addSet( "mySet" );
                 set.addString( "myString", "myValue" );
@@ -72,7 +73,7 @@ public class PropertyTreeTest
             public Object getObjectThatEqualsXButNotTheSame2()
             {
 
-                PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+                PropertyTree tree = new PropertyTree();
                 tree.addString( "myString", "myValue" );
                 PropertySet set = tree.addSet( "mySet" );
                 set.addString( "myString", "myValue" );
@@ -85,7 +86,7 @@ public class PropertyTreeTest
     @Test
     public void copy()
     {
-        PropertyTree original = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree original = new PropertyTree();
         original.setString( "myString", "a" );
         original.setString( "mySet.myString", "1" );
 
@@ -106,7 +107,7 @@ public class PropertyTreeTest
     @Test
     public void given_set_with_no_properties_when_addProperty_then_Property_is_returned()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         Value myValue = ValueFactory.newString( "myValue" );
         Property property = tree.addProperty( "myProp", myValue );
 
@@ -118,7 +119,7 @@ public class PropertyTreeTest
     @Test
     public void given_set_with_existing_property_when_addProperty_then_Property_is_returned()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addProperty( "existing", ValueFactory.newString( "existing" ) );
         Value myValue = ValueFactory.newString( "myValue" );
         Property myProp = tree.addProperty( "myProp", myValue );
@@ -131,7 +132,7 @@ public class PropertyTreeTest
     @Test
     public void given_set_with_existing_property_when_addProperty_with_same_name_then_Property_is_returned()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addProperty( "myProp", ValueFactory.newString( "existing" ) );
         Value myValue = ValueFactory.newString( "myValue" );
         Property myProp = tree.addProperty( "myProp", myValue );
@@ -144,7 +145,7 @@ public class PropertyTreeTest
     @Test(expected = IllegalArgumentException.class)
     public void given_set_with_existing_property_when_addProperty_with_same_name_but_different_ValueType_then_exception_is_thrown()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addProperty( "myProp", ValueFactory.newString( "otherType" ) );
         tree.addProperty( "myProp", ValueFactory.newBoolean( true ) );
     }
@@ -152,21 +153,21 @@ public class PropertyTreeTest
     @Test
     public void given_added_Property_when_getProperty_with_id_of_added_Property_then_same_Property_is_returned()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         Value myValue = ValueFactory.newString( "myValue" );
         Property my1Prop = tree.addProperty( "my1Prop", myValue );
         Property my2Prop = tree.addProperty( "my2Prop", myValue );
         Property my2PropSecond = tree.addProperty( "my2Prop", myValue );
 
-        assertSame( my1Prop, tree.getProperty( my1Prop.getId() ) );
-        assertSame( my2Prop, tree.getProperty( my2Prop.getId() ) );
-        assertSame( my2PropSecond, tree.getProperty( my2PropSecond.getId() ) );
+        assertSame( my1Prop, tree.getProperty( my1Prop.getPath() ) );
+        assertSame( my2Prop, tree.getProperty( my2Prop.getPath() ) );
+        assertSame( my2PropSecond, tree.getProperty( my2PropSecond.getPath() ) );
     }
 
     @Test
     public void given_Property_with_PropertySet_when_getPropertySet_then_same_PropertySet_is_returned()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set = tree.newSet();
         tree.addProperty( "myProp", ValueFactory.newPropertySet( set ) );
 
@@ -176,7 +177,7 @@ public class PropertyTreeTest
     @Test
     public void given_ifNotNull_is_true_adding_property_with_null_then_tree_is_still_empty()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         assertNull( tree.ifNotNull().addString( "myNull", null ) );
         assertEquals( 0, tree.getTotalSize() );
     }
@@ -184,7 +185,7 @@ public class PropertyTreeTest
     @Test
     public void given_ifNotNull_is_false_adding_property_with_null_then_tree_is_not_empty()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         assertNotNull( tree.addString( "myNull", null ) );
         assertEquals( 1, tree.getTotalSize() );
     }
@@ -192,10 +193,10 @@ public class PropertyTreeTest
     @Test
     public void newSet()
     {
-        PropertyTree sourceTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree sourceTree = new PropertyTree();
         sourceTree.addString( "myProp", "myString" );
 
-        PropertyTree newTree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree newTree = new PropertyTree();
         PropertySet set = newTree.newSet( sourceTree );
         newTree.addSet( "mySet", set );
 
@@ -205,14 +206,14 @@ public class PropertyTreeTest
     @Test(expected = IllegalArgumentException.class)
     public void adding_root_PropertySet_must_throw_IllegalArgumentException()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addSet( "myProp", tree.getRoot() );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setting_root_PropertySet_must_throw_IllegalArgumentException()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.setSet( "myProp", tree.getRoot() );
     }
 
@@ -230,7 +231,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_propertyArray_of_type__String()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
         tree.addString( "myProp", "c" );
@@ -245,7 +246,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_propertyArray_of_type__Long()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addLong( "myProp", 1L );
         tree.addLong( "myProp", 2L );
         tree.addLong( "myProp", 3L );
@@ -260,7 +261,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_propertyArray_of_type__Reference()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addReference( "myProp", Reference.from( "test-1" ) );
         tree.addReference( "myProp", Reference.from( "test-2" ) );
         tree.addReference( "myProp", Reference.from( "test-3" ) );
@@ -275,7 +276,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_propertyArray_of_type_Link()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         tree.addLink( "myLink", Link.from( "/root/me" ) );
         tree.addLink( "myLink", Link.from( "./child" ) );
         tree.addLink( "myLink", Link.from( "child/image" ) );
@@ -290,7 +291,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_single_property_of_type_PropertySet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addLongs( "longs", 1L, 2L );
         set1.addStrings( "strings", "a", "b" );
@@ -310,7 +311,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_propertyArray_of_type_PropertySet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addLongs( "longs", 1L, 2L );
         set1.addStrings( "strings", "a", "b" );
@@ -338,7 +339,7 @@ public class PropertyTreeTest
     @Test
     public void tostring_PropertySet_within_PropertySet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addLongs( "a", 1L, 1L, 1L );
         set1.addLongs( "b", 2L, 2L, 2L );
@@ -367,20 +368,20 @@ public class PropertyTreeTest
     @Test
     public void getByValueType()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
         Property aProperty = set.addString( "myString", "a" );
         Property bProperty = set.addString( "myString", "b" );
 
         PropertyTree tree = new PropertyTree( set );
 
-        Set<Property> extractedSet = tree.getByValueType( ValueTypes.STRING );
-        assertEquals( 2, extractedSet.size() );
+        final ImmutableList<Property> stringProperties = tree.getProperties( ValueTypes.STRING );
+        assertEquals( 2, stringProperties.size() );
     }
 
     @Test
     public void toMap()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addLongs( "longs", 1L, 2L );
         set1.addStrings( "strings", "a", "b" );
@@ -398,7 +399,7 @@ public class PropertyTreeTest
     @Test
     public void countNames()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addStrings( "strings", "a", "b", "c" );
 
@@ -411,7 +412,7 @@ public class PropertyTreeTest
     @Test
     public void setValues()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addStrings( "strings", "a", "b", "c" );
 
@@ -432,7 +433,7 @@ public class PropertyTreeTest
     @Test
     public void removeProperties()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addStrings( "strings", "a", "b", "c" );
 
@@ -444,7 +445,7 @@ public class PropertyTreeTest
     @Test
     public void removeProperty()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addStrings( "strings", "a", "b", "c" );
 
@@ -459,7 +460,7 @@ public class PropertyTreeTest
     @Test
     public void hasProperty()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.addSet( "mySet" );
         set1.addStrings( "strings", "a", "b", "c" );
 
@@ -472,7 +473,7 @@ public class PropertyTreeTest
     @Test
     public void getPropertySet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         PropertySet set1 = tree.addSet( "mySet1" );
         set1.addStrings( "strings", "a", "b", "c" );
@@ -487,7 +488,7 @@ public class PropertyTreeTest
     @Test
     public void setSet()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         PropertySet set1 = tree.addSet( "mySet1" );
         set1.addStrings( "strings", "a", "b", "c" );
@@ -508,7 +509,7 @@ public class PropertyTreeTest
     @Test
     public void setXml()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         String xmlData = "<xml>my test xml</xml>";
         tree.setXml( "myXML", xmlData );
@@ -529,7 +530,7 @@ public class PropertyTreeTest
     @Test
     public void setBinaryReference()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         BinaryReference binaryReference1 = BinaryReference.from( "ref1" );
         tree.setBinaryReference( "binaryRef1", binaryReference1 );
@@ -552,7 +553,7 @@ public class PropertyTreeTest
     @Test
     public void setReference()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         Reference reference1 = Reference.from( "myRef1" );
         tree.setReference( "ref1", reference1 );
@@ -575,7 +576,7 @@ public class PropertyTreeTest
     @Test
     public void setLink()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         Link link1 = Link.from( "enonic.com" );
         tree.setLink( "enonic", link1 );
@@ -598,7 +599,7 @@ public class PropertyTreeTest
     @Test
     public void setBoolean()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         tree.setBoolean( "boolean1", true );
         assertEquals( 1, tree.getTotalSize() );
@@ -619,7 +620,7 @@ public class PropertyTreeTest
     @Test
     public void setLong()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         tree.setLong( "Long1", 1L );
         assertEquals( 1, tree.getTotalSize() );
@@ -639,7 +640,7 @@ public class PropertyTreeTest
     @Test
     public void setDouble()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         tree.setDouble( "Double1", 1.0 );
         assertEquals( 1, tree.getTotalSize() );
@@ -659,7 +660,7 @@ public class PropertyTreeTest
     @Test
     public void setGeoPoint()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         GeoPoint geoPoint1 = GeoPoint.from( "60,60" );
         tree.setGeoPoint( "geo1", geoPoint1 );
@@ -682,7 +683,7 @@ public class PropertyTreeTest
     @Test
     public void setLocalDate()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         LocalDate localDate1 = LocalDate.now();
         tree.setLocalDate( "localDate1", localDate1 );
@@ -705,7 +706,7 @@ public class PropertyTreeTest
     @Test
     public void setLocalDateTime()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         LocalDateTime localDateTime1 = LocalDateTime.now();
         tree.setLocalDateTime( "localDateTime1", localDateTime1 );
@@ -728,7 +729,7 @@ public class PropertyTreeTest
     @Test
     public void setLocalTime()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         LocalTime localTime1 = LocalTime.now();
         tree.setLocalTime( "localTime1", localTime1 );
@@ -751,7 +752,7 @@ public class PropertyTreeTest
     @Test
     public void setInstant()
     {
-        PropertyTree tree = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree tree = new PropertyTree();
 
         Instant instant1 = Instant.now();
         tree.setInstant( "instant1", instant1 );

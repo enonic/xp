@@ -3,7 +3,6 @@ package com.enonic.xp.region;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -69,7 +68,7 @@ public class LayoutComponentTest
     private LayoutComponent createLayouComponent()
     {
 
-        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );
 
         return LayoutComponent.create().

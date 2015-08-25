@@ -5,7 +5,6 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -66,7 +65,7 @@ public class ContentTest
             page( Page.create().
                 controller( DescriptorKey.from( "abc:abc" ) ).
                 template( PageTemplateKey.from( "123" ) ).
-                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+                config( new PropertyTree() ).
                 regions( PageRegions.create().build() ).
                 build() ).build();
     }

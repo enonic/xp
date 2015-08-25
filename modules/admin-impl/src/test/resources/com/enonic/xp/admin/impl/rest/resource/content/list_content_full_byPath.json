@@ -26,7 +26,6 @@
                             "type": "Long",
                             "values": [
                                 {
-                                    "id": "1",
                                     "v": 1
                                 }
                             ]
@@ -71,7 +70,6 @@
                             "type": "Long",
                             "values": [
                                 {
-                                    "id": "2",
                                     "v": 1
                                 }
                             ]
