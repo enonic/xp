@@ -22,10 +22,11 @@ public class VersionStorageDocFactory
             addInstant( VersionIndexPath.TIMESTAMP.getPath(),
                         nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             addStringValue( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
-            id( createId( nodeVersion ) ).
             build();
 
         return StoreRequest.create().
+            nodePath( nodeVersion.getNodePath() ).
+            id( createId( nodeVersion ) ).
             forceRefresh( true ).
             settings( StorageSettings.create().
                 storageName( StoreStorageName.from( repositoryId ) ).

@@ -1,6 +1,8 @@
 package com.enonic.wem.repo.internal.storage;
 
-import java.util.Set;
+import java.util.Collection;
+
+import com.enonic.xp.node.NodePath;
 
 public class StoreRequest
 {
@@ -12,12 +14,29 @@ public class StoreRequest
 
     private final int timeout;
 
+    private final String id;
+
+    private final NodePath path;
+
     private StoreRequest( Builder builder )
     {
         this.data = builder.data;
         this.settings = builder.settings;
         this.forceRefresh = builder.forceRefresh;
         this.timeout = builder.timeout;
+        this.id = builder.id;
+        this.path = builder.path;
+
+    }
+
+    public static StoreRequest.Builder from( final StoreRequest source )
+    {
+        return create().
+            settings( source.getSettings() ).
+            nodePath( source.getPath() ).
+            id( source.getId() ).
+            data( source.getData() ).
+            forceRefresh( source.forceRefresh );
     }
 
     public static Builder create()
@@ -25,7 +44,7 @@ public class StoreRequest
         return new Builder();
     }
 
-    public Set<StorageDataEntry> getEntries()
+    public Collection<StorageDataEntry> getEntries()
     {
         return this.data.getDataEntries();
     }
@@ -50,6 +69,16 @@ public class StoreRequest
         return forceRefresh;
     }
 
+    public String getId()
+    {
+        return id;
+    }
+
+    public NodePath getPath()
+    {
+        return path;
+    }
+
     public static final class Builder
     {
         private StorageData data;
@@ -59,6 +88,11 @@ public class StoreRequest
         private boolean forceRefresh = false;
 
         private int timeout = 5;
+
+        private String id;
+
+        private NodePath path;
+
 
         private Builder()
         {
@@ -87,6 +121,19 @@ public class StoreRequest
             this.timeout = timeout;
             return this;
         }
+
+        public Builder id( String id )
+        {
+            this.id = id;
+            return this;
+        }
+
+        public Builder nodePath( final NodePath nodePath )
+        {
+            this.path = nodePath;
+            return this;
+        }
+
 
         public StoreRequest build()
         {

@@ -8,7 +8,6 @@ public class GetResultFactory
 {
     public static GetResult create( final GetResponse getResponse )
     {
-
         if ( !getResponse.isExists() )
         {
             return GetResult.empty();

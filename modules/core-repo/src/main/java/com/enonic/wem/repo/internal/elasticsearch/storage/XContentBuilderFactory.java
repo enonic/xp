@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.storage;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -19,7 +19,7 @@ public class XContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            final Set<StorageDataEntry> entries = doc.getEntries();
+            final Collection<StorageDataEntry> entries = doc.getEntries();
 
             for ( final StorageDataEntry entry : entries )
             {

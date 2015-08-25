@@ -17,7 +17,6 @@ public class BranchStorageDocFactory
     public static StoreRequest create( final StoreBranchDocument doc, final BranchContext context )
     {
         final StorageData data = StorageData.create().
-            id( new BranchDocumentId( doc.getNode().id(), context.getBranch() ).toString() ).
             addStringValue( BranchIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() ).
             addStringValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
             addStringValue( BranchIndexPath.NODE_ID.getPath(), doc.getNode().getNodeState().value() ).
@@ -30,7 +29,9 @@ public class BranchStorageDocFactory
             build();
 
         return StoreRequest.create().
-            forceRefresh( true ).
+            id( new BranchDocumentId( doc.getNode().id(), context.getBranch() ).toString() ).
+            nodePath( doc.getNode().path() ).
+            forceRefresh( false ).
             settings( StorageSettings.create().
                 storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                 storageType( StaticStorageType.BRANCH ).

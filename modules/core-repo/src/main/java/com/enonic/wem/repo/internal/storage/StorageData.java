@@ -1,9 +1,10 @@
 package com.enonic.wem.repo.internal.storage;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 public class StorageData
 {
@@ -11,16 +12,13 @@ public class StorageData
 
     private final String routing;
 
-    private final String id;
-
-    private final Set<StorageDataEntry> dataEntries;
+    private final Map<String, StorageDataEntry> dataEntries;
 
     private StorageData( Builder builder )
     {
-        parent = builder.parent;
-        routing = builder.routing;
-        id = builder.id;
-        dataEntries = builder.dataEntries;
+        this.parent = builder.parent;
+        this.routing = builder.routing;
+        this.dataEntries = builder.dataEntries;
     }
 
     public static Builder create()
@@ -28,16 +26,15 @@ public class StorageData
         return new Builder();
     }
 
-    public static Builder newBuilder()
+    public Collection<StorageDataEntry> getDataEntries()
     {
-        return new Builder();
+        return dataEntries.values();
     }
 
-    public Set<StorageDataEntry> getDataEntries()
+    public StorageDataEntry get( final String path )
     {
-        return dataEntries;
+        return this.dataEntries.get( path );
     }
-
 
     public String getParent()
     {
@@ -49,20 +46,13 @@ public class StorageData
         return routing;
     }
 
-    public String getId()
-    {
-        return id;
-    }
-
     public static final class Builder
     {
         private String parent;
 
         private String routing;
 
-        private String id;
-
-        private Set<StorageDataEntry> dataEntries = Sets.newHashSet();
+        private Map<String, StorageDataEntry> dataEntries = Maps.newHashMap();
 
         private Builder()
         {
@@ -80,28 +70,15 @@ public class StorageData
             return this;
         }
 
-        public Builder id( String id )
-        {
-            this.id = id;
-            return this;
-        }
-
-
         public Builder addStringValue( final String key, final String value )
         {
-            this.dataEntries.add( new StringStorageDataEntry( key, value ) );
+            this.dataEntries.put( key, new StringStorageDataEntry( key, value ) );
             return this;
         }
 
         public Builder addInstant( final String key, final Instant instant )
         {
-            this.dataEntries.add( new InstantStorageDataEntry( key, instant ) );
-            return this;
-        }
-
-        public Builder dataEntries( Set<StorageDataEntry> dataEntries )
-        {
-            this.dataEntries = dataEntries;
+            this.dataEntries.put( key, new InstantStorageDataEntry( key, instant ) );
             return this;
         }
 

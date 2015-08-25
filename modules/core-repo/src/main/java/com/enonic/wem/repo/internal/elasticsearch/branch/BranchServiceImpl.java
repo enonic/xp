@@ -63,8 +63,7 @@ public class BranchServiceImpl
     @Override
     public NodeBranchVersion get( final NodeId nodeId, final BranchContext context )
     {
-
-        final GetResult getResult = this.storageDao.getById( GetByIdRequest.create().
+        final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
             storageSettings( StorageSettings.create().
                 storageName( StoreStorageName.from( context.getRepositoryId() ) ).
@@ -73,7 +72,9 @@ public class BranchServiceImpl
             returnFields(
                 ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
             routing( nodeId.toString() ).
-            build() );
+            build();
+
+        final GetResult getResult = this.storageDao.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {

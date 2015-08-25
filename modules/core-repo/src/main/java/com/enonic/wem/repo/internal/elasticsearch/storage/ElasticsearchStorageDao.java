@@ -16,14 +16,14 @@ import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByParentRequest;
 import com.enonic.wem.repo.internal.storage.GetByPathRequest;
-import com.enonic.wem.repo.internal.storage.StorageDao;
+import com.enonic.wem.repo.internal.storage.StorageDaoInternal;
 import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 
 @Component
 public class ElasticsearchStorageDao
-    implements StorageDao
+    implements StorageDaoInternal
 {
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchStorageDao.class );
 
@@ -39,7 +39,7 @@ public class ElasticsearchStorageDao
             index( settings.getStorageName().getName() ).
             type( settings.getStorageType().getName() ).
             source( XContentBuilderFactory.create( request ) ).
-            id( data.getId() ).
+            id( request.getId() ).
             refresh( request.isForceRefresh() );
 
         if ( data.getRouting() != null )

@@ -55,4 +55,34 @@ public class StorageSettings
             return new StorageSettings( this );
         }
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final StorageSettings that = (StorageSettings) o;
+
+        if ( storageName != null ? !storageName.equals( that.storageName ) : that.storageName != null )
+        {
+            return false;
+        }
+        return !( storageType != null ? !storageType.equals( that.storageType ) : that.storageType != null );
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = storageName != null ? storageName.hashCode() : 0;
+        result = 31 * result + ( storageType != null ? storageType.hashCode() : 0 );
+        return result;
+    }
 }
