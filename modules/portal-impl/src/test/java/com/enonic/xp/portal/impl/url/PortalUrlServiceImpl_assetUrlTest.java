@@ -106,4 +106,15 @@ public class PortalUrlServiceImpl_assetUrlTest
         final String url = this.service.assetUrl( params );
         assertEquals( "http://localhost/portal/draft/_/asset/myapplication/css/my.css", url );
     }
+
+    @Test
+    public void createUrl_encodeChars()
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( this.portalRequest ).
+            path( "css/my other & strange.css" );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "/portal/draft/_/asset/myapplication/css/my+other+%26+strange.css", url );
+    }
 }
