@@ -5,6 +5,7 @@ var portal = require('/lib/xp/portal.js');
 var expectedJson = {
     "_id": "123456",
     "_name": "mycontent",
+    "_parentPath": "/a/b",
     "_path": "/a/b/mycontent",
     "createdTime": "1970-01-01T00:00:00Z",
     "creator": "user:system:admin",
