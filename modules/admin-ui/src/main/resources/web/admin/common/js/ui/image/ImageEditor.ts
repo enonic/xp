@@ -470,7 +470,10 @@ module api.ui.image {
 
             var zoomContainer = this.createZoomContainer();
 
-            toolbar.appendChildren(this.editCropButton, this.editFocusButton, rightContainer, zoomContainer);
+            var topContainer = new DivEl('top-container');
+            topContainer.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
+
+            toolbar.appendChildren(topContainer, zoomContainer);
 
             return toolbar;
         }
