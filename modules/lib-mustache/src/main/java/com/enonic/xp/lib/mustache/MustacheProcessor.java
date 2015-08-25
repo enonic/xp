@@ -1,5 +1,8 @@
 package com.enonic.xp.lib.mustache;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.MustacheException;
 import com.samskivert.mustache.Template;
@@ -56,7 +59,9 @@ public final class MustacheProcessor
     {
         final Resource resource = resourceService.getResource( this.view );
         final Template template = this.compiler.compile( resource.readString() );
-        return template.execute( this.model.getMap() );
+
+        final Map<String, Object> map = this.model != null ? this.model.getMap() : Maps.newHashMap();
+        return template.execute( map );
     }
 
     private RuntimeException handleError( final RuntimeException e )
