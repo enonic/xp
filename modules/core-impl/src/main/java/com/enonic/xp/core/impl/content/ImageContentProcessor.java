@@ -151,14 +151,13 @@ final class ImageContentProcessor
 
         final BufferedImage image = toBufferedImage( binary );
         final Cropping cropping = media.getCropping();
+        final long byteSize = mediaAttachment.getSize();
 
-        final long byteSize;
         final long imageWidth;
         final long imageHeight;
         final long imageSize;
         if ( cropping == null || cropping.isUnmodified() )
         {
-            byteSize = mediaAttachment.getSize();
             imageWidth = image.getWidth();
             imageHeight = image.getHeight();
             imageSize = imageWidth * imageHeight;
@@ -166,7 +165,6 @@ final class ImageContentProcessor
         else
         {
             final BufferedImage croppedImage = cropImage( image, cropping );
-            byteSize = getImageByteSize( croppedImage, mediaAttachment.getExtension() );
             imageWidth = croppedImage.getWidth();
             imageHeight = croppedImage.getHeight();
             imageSize = imageWidth * imageHeight;
@@ -213,20 +211,6 @@ final class ImageContentProcessor
         final double height = image.getHeight();
         return image.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ), (int) ( width * cropping.width() ),
                                   (int) ( height * cropping.height() ) );
-    }
-
-    private long getImageByteSize( final BufferedImage image, final String format )
-    {
-        final SizeCounterOutputStream output = new SizeCounterOutputStream();
-        try
-        {
-            ImageIO.write( image, format, output );
-        }
-        catch ( final IOException e )
-        {
-            throw Exceptions.newRutime( "Failed to write BufferedImage to InputStream" ).withCause( e );
-        }
-        return output.size();
     }
 
     private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins, CreateAttachment sourceAttachment )
