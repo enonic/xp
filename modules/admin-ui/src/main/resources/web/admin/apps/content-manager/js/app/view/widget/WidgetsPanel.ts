@@ -25,9 +25,13 @@ module app.view.widget {
         private versionsPanel: ContentItemVersionsPanel;
         private item: ViewItem<ContentSummary>;
 
-        constructor(name?: string) {
+        private useNameLabel: boolean;
+        private slideRight: boolean;
+
+        constructor(useNameLabel: boolean = true, slideRight: boolean = true, name?: string) {
             super("widgets-panel");
             this.setDoOffset(false);
+            this.slideRight = slideRight;
 
             this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
@@ -36,12 +40,21 @@ module app.view.widget {
 
             this.onRendered(() => this.onRenderedHandler());
 
-            this.labelEl = new api.dom.SpanEl("widgets-panel-label");
-            if (name) {
-                this.labelEl.setHtml(name);
-            }
-            this.appendChild(this.labelEl);
+            this.initNameLabel(useNameLabel, name);
+
             this.appendChild(this.widgetsContainer)
+        }
+
+        private initNameLabel(useNameLabel: boolean, name: string) {
+            this.useNameLabel = useNameLabel;
+
+            if (useNameLabel) {
+                this.labelEl = new api.dom.SpanEl("widgets-panel-label");
+                if (name) {
+                    this.labelEl.setHtml(name);
+                }
+                this.appendChild(this.labelEl);
+            }
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
@@ -165,15 +178,25 @@ module app.view.widget {
         }
 
         setName(name: string) {
-            this.labelEl.setHtml(name);
+            if (this.useNameLabel) {
+                this.labelEl.setHtml(name);
+            }
         }
 
         slideOut() {
-            this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
+            if (this.slideRight) {
+                this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
+            } else {
+                this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
+            }
         }
 
         slideIn() {
-            this.getEl().setRightPx(0);
+            if (this.slideRight) {
+                this.getEl().setRightPx(0);
+            } else {
+                this.getEl().setLeftPx(0);
+            }
         }
 
         notifyPanelSizeChanged() {
@@ -206,8 +229,8 @@ module app.view.widget {
 
         private widgetsPanel: WidgetsPanel;
 
-        constructor(widgetsPanel: WidgetsPanel) {
-            super("widget-panel-toggle-button");
+        constructor(widgetsPanel: WidgetsPanel, className?: string) {
+            super("widget-panel-toggle-button" + (className ? " " + className : ""));
 
             this.widgetsPanel = widgetsPanel;
 
@@ -219,6 +242,14 @@ module app.view.widget {
                     this.widgetsPanel.slideOut();
                 }
             });
+        }
+
+    }
+
+    export class MobileWidgetsPanelToggleButton extends WidgetsPanelToggleButton {
+
+        constructor(widgetsPanel: WidgetsPanel) {
+            super(widgetsPanel, "mobile-widget-panel-toggle-button");
         }
 
     }
