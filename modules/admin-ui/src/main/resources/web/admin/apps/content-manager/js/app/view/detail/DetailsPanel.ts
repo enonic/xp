@@ -1,15 +1,15 @@
-module app.view.widget {
+module app.view.detail {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import Widget = api.content.Widget;
 
-    export class WidgetsPanel extends api.ui.panel.Panel {
+    export class DetailsPanel extends api.ui.panel.Panel {
 
         private widgetViews: WidgetView[] = [];
         private labelEl: api.dom.SpanEl;
-        private widgetsContainer: api.dom.DivEl = new api.dom.DivEl("widgets-container");
+        private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
         private animationTimer;
 
         private splitter: api.dom.DivEl;
@@ -30,7 +30,7 @@ module app.view.widget {
         private slideOutFunction: () => void;
 
         constructor(useNameLabel: boolean = true, slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT, name?: string) {
-            super("widgets-panel");
+            super("details-panel");
             this.setDoOffset(false);
             this.initSlideFunctions(slideFrom);
 
@@ -43,7 +43,7 @@ module app.view.widget {
 
             this.initNameLabel(useNameLabel, name);
 
-            this.appendChild(this.widgetsContainer)
+            this.appendChild(this.detailsContainer)
         }
 
         private initSlideFunctions(slideFrom: SLIDE_FROM) {
@@ -74,7 +74,7 @@ module app.view.widget {
             this.useNameLabel = useNameLabel;
 
             if (useNameLabel) {
-                this.labelEl = new api.dom.SpanEl("widgets-panel-label");
+                this.labelEl = new api.dom.SpanEl("details-panel-label");
                 if (name) {
                     this.labelEl.setHtml(name);
                 }
@@ -96,7 +96,7 @@ module app.view.widget {
         }
 
         private initWidgetsForItem() {
-            this.removeWidgets();
+            this.removeDetails();
 
             this.setName(this.item.getDisplayName());
 
@@ -187,13 +187,13 @@ module app.view.widget {
             this.mask.unMouseMove(dragListener);
         }
 
-        private removeWidgets() {
-            this.widgetsContainer.removeChildren();
+        private removeDetails() {
+            this.detailsContainer.removeChildren();
         }
 
         private addWidget(widget: WidgetView) {
             this.widgetViews.push(widget);
-            this.widgetsContainer.appendChild(widget);
+            this.detailsContainer.appendChild(widget);
         }
 
         private addWidgets(widgetViews: WidgetView[]) {
@@ -274,31 +274,31 @@ module app.view.widget {
         }
     }
 
-    export class WidgetsPanelToggleButton extends api.dom.DivEl {
+    export class DetailsPanelToggleButton extends api.dom.DivEl {
 
-        private widgetsPanel: WidgetsPanel;
+        private detailsPanel: DetailsPanel;
 
-        constructor(widgetsPanel: WidgetsPanel, className?: string) {
-            super("widget-panel-toggle-button" + (className ? " " + className : ""));
+        constructor(detailsPanel: DetailsPanel, className?: string) {
+            super("details-panel-toggle-button" + (className ? " " + className : ""));
 
-            this.widgetsPanel = widgetsPanel;
+            this.detailsPanel = detailsPanel;
 
             this.onClicked((event) => {
                 this.toggleClass("expanded");
                 if (this.hasClass("expanded")) {
-                    this.widgetsPanel.slideIn();
+                    this.detailsPanel.slideIn();
                 } else {
-                    this.widgetsPanel.slideOut();
+                    this.detailsPanel.slideOut();
                 }
             });
         }
 
     }
 
-    export class MobileWidgetsPanelToggleButton extends WidgetsPanelToggleButton {
+    export class MobileDetailsPanelToggleButton extends DetailsPanelToggleButton {
 
-        constructor(widgetsPanel: WidgetsPanel) {
-            super(widgetsPanel, "mobile-widget-panel-toggle-button");
+        constructor(detailsPanel: DetailsPanel) {
+            super(detailsPanel, "mobile-details-panel-toggle-button");
         }
 
     }

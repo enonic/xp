@@ -2,15 +2,15 @@ module app.view {
 
     import Panel = api.ui.panel.Panel;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-    import WidgetsPanelToggleButton = app.view.widget.WidgetsPanelToggleButton;
-    import WidgetsPanel = app.view.widget.WidgetsPanel;
-    import WidgetView = app.view.widget.WidgetView;
+    import WidgetsPanelToggleButton = app.view.detail.DetailsPanelToggleButton;
+    import DetailsPanel = app.view.detail.DetailsPanel;
+    import WidgetView = app.view.detail.WidgetView;
 
     export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
 
         private previewPanel: ContentItemPreviewPanel;
 
-        private widgetsPanel: WidgetsPanel;
+        private detailsPanel: DetailsPanel;
 
         constructor() {
             super("content-item-statistics-panel");
@@ -19,20 +19,20 @@ module app.view {
             this.previewPanel.setDoOffset(false);
             this.appendChild(this.previewPanel);
 
-            this.initWidgetsPanel();
+            this.initDetailsPanel();
         }
 
-        private initWidgetsPanel() {
-            this.widgetsPanel = new WidgetsPanel();
-            this.appendChild(new WidgetsPanelToggleButton(this.widgetsPanel));
-            this.appendChild(this.widgetsPanel);
+        private initDetailsPanel() {
+            this.detailsPanel = new DetailsPanel();
+            this.appendChild(new WidgetsPanelToggleButton(this.detailsPanel));
+            this.appendChild(this.detailsPanel);
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
             if (this.getItem() != item) {
                 super.setItem(item);
                 this.previewPanel.setItem(item);
-                this.widgetsPanel.setItem(item);
+                this.detailsPanel.setItem(item);
             }
         }
 

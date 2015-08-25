@@ -1,10 +1,7 @@
 module app.view {
 
-    import Panel = api.ui.panel.Panel;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-    import WidgetsPanelToggleButton = app.view.widget.WidgetsPanelToggleButton;
-    import WidgetsPanel = app.view.widget.WidgetsPanel;
-    import WidgetView = app.view.widget.WidgetView;
+    import DetailsPanel = app.view.detail.DetailsPanel;
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
     import StringHelper = api.util.StringHelper;
@@ -19,8 +16,8 @@ module app.view {
         private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
         private previewPanel: ContentItemPreviewPanel;
-        private widgetsPanel: WidgetsPanel = new WidgetsPanel(false, app.view.widget.SLIDE_FROM.BOTTOM);
-        private widgetsToggleButton: app.view.widget.MobileWidgetsPanelToggleButton;
+        private detailsPanel: DetailsPanel = new DetailsPanel(false, app.view.detail.SLIDE_FROM.BOTTOM);
+        private detailsToggleButton: app.view.detail.MobileDetailsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
         private toolbar: MobileContentBrowseToolbar;
@@ -36,7 +33,7 @@ module app.view {
 
             this.initPreviewPanel();
 
-            this.initWidgetsPanel();
+            this.initDetailsPanel();
 
             this.initToolbar();
 
@@ -56,20 +53,20 @@ module app.view {
 
         private initHeader() {
             this.itemHeader.appendChild(this.headerLabel);
-            this.widgetsToggleButton = new app.view.widget.MobileWidgetsPanelToggleButton(this.widgetsPanel);
+            this.detailsToggleButton = new app.view.detail.MobileDetailsPanelToggleButton(this.detailsPanel);
             var backButton = new api.dom.DivEl("back-button");
             backButton.onClicked((event) => {
                 this.slideAllOut();
             });
             this.itemHeader.appendChild(backButton);
-            this.itemHeader.appendChild(this.widgetsToggleButton);
+            this.itemHeader.appendChild(this.detailsToggleButton);
 
             this.appendChild(this.itemHeader);
 
         }
 
-        private initWidgetsPanel() {
-            this.appendChild(this.widgetsPanel);
+        private initDetailsPanel() {
+            this.appendChild(this.detailsPanel);
         }
 
         private initPreviewPanel() {
@@ -82,7 +79,7 @@ module app.view {
             if (!item.equals(this.getItem())) {
                 super.setItem(item);
                 this.previewPanel.setItem(item);
-                this.widgetsPanel.setItem(item);
+                this.detailsPanel.setItem(item);
                 this.setName(this.makeDisplayName(item));
             }
             this.slideIn();
@@ -104,8 +101,8 @@ module app.view {
 
         slideAllOut() {
             this.slideOut();
-            this.widgetsPanel.slideOut();
-            this.widgetsToggleButton.removeClass("expanded");
+            this.detailsPanel.slideOut();
+            this.detailsToggleButton.removeClass("expanded");
         }
 
 
