@@ -12,6 +12,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -70,6 +71,8 @@ public final class DuplicateNodeCommand
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
                 parent( newParent.path() );
 
+            decideInsertStrategy( originalParent, node, paramsBuilder );
+
             attachBinaries( node, paramsBuilder );
 
             final Node newChildNode = this.doCreateNode( paramsBuilder.build(), this.binaryBlobStore );
@@ -77,6 +80,15 @@ public final class DuplicateNodeCommand
             builder.add( node.id(), newChildNode.id() );
 
             storeChildNodes( node, newChildNode, builder );
+        }
+    }
+
+    private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )
+    {
+        if ( originalParent.getChildOrder().isManualOrder() )
+        {
+            paramsBuilder.manualOrderValue( node.getManualOrderValue() ).
+                insertManualStrategy( InsertManualStrategy.MANUAL );
         }
     }
 
