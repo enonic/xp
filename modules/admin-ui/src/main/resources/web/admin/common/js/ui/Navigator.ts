@@ -16,9 +16,6 @@ module api.ui {
 
         getSelectedIndex():number;
 
-        /**
-         * Deselects any selected tab.
-         */
         deselectNavigationItem();
 
         getSize():number;

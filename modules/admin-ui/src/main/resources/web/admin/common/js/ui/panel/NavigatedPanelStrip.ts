@@ -6,26 +6,32 @@ module api.ui.panel {
         private scrollIndex: number = -1;
         private focusIndex: number = -1;
         private focusVisible: boolean = false;
+        private listenToScroll: boolean = true;
 
         constructor(navigator: Navigator, scrollable?: api.dom.Element, className?: string) {
             super(scrollable, className);
             this.navigator = navigator;
-            var listenToScroll = true;
 
             navigator.onNavigationItemSelected((event: NavigatorEvent) => {
-                listenToScroll = false;
+                this.listenToScroll = false;
                 this.showPanelByIndex(event.getItem().getIndex());
             });
 
             this.onPanelShown((event: PanelShownEvent) => {
-                listenToScroll = true;
+                this.listenToScroll = true;
             });
 
+            //
             this.getScrollable().onScroll((event: MouseEvent) => {
-                if (listenToScroll) {
+                if (this.listenToScroll) {
                     this.updateScrolledNavigationItem();
                 }
             });
+
+        }
+
+        setListenToScroll(listen: boolean = true) {
+            this.listenToScroll = listen;
         }
 
         private updateScrolledNavigationItem() {

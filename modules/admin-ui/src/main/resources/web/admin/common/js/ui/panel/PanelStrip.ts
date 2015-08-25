@@ -180,7 +180,7 @@ module api.ui.panel {
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop - this.offset +
+                scrollTop: index == 0 ? 0 : this.getScroll() - this.offset +
                                             panelToShow.getEl().getOffsetToParent().top -
                                             this.headers[index].getEl().getHeightWithBorder()
             }, {
@@ -190,6 +190,14 @@ module api.ui.panel {
                     this.panelShown = panelToShow;
                 }
             });
+        }
+
+        getScroll(): number {
+            return this.scrollable.getHTMLElement().scrollTop;
+        }
+
+        setScroll(scrollTop: number) {
+            this.scrollable.getHTMLElement().scrollTop = scrollTop;
         }
 
         onPanelShown(listener: (event: PanelShownEvent)=>void) {
