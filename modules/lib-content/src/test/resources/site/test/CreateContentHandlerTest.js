@@ -4,6 +4,7 @@ var content = require('/lib/xp/content.js');
 var expectedJson = {
     "_id": "123456",
     "_name": "mycontent",
+    "_parentPath": "/a/b",
     "_path": "/a/b/mycontent",
     "createdTime": "1975-01-08T00:00:00Z",
     "creator": "user:system:anonymous",
