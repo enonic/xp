@@ -6,6 +6,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Open Sans Bold';
+    src: url("../../../../font/opensans-bold.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     background-color: #FFF;
     color: #000;
