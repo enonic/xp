@@ -179,7 +179,7 @@ public class PropertySetTest
     @Test
     public void replace_value_with_different_type()
     {
-        PropertySet set = new PropertySet( new PropertyTree( new CounterPropertyIdProvider() ) );
+        PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise
         Property property1 = set.setString( "myProp", 0, "myValue" );
