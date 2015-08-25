@@ -308,8 +308,6 @@ module api.data {
 
         value: Value;
 
-        id: PropertyId;
-
         setArray(value: PropertyArray): PropertyBuilder {
             this.array = value;
             return this;

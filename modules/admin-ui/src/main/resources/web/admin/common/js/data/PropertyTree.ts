@@ -7,8 +7,6 @@ module api.data {
 
     /**
      * The PropertyTree is the root container of properties.
-     * It has a root [[PropertySet]] and [[PropertyIdProvider]] and keeps a reference to all properties
-     * in the tree in a map using the [[PropertyId]] as key. All properties in a tree must have unique ids within the tree.
      *
      * The PropertyTree is mutable and most mutations can be observed by listening to the following events:
      * * [[PropertyAddedEvent]]
@@ -53,9 +51,6 @@ module api.data {
         private root: PropertySet;
 
         /**
-         * * To create new PropertyTree:
-         * > give no arguments or optionally with a idProvider.
-         *
          * * To create a copy of another tree:
          * > give the root [[PropertySet]] of the tree to copy from
          *

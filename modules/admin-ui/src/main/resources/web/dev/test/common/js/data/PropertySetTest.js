@@ -3,8 +3,6 @@ describe("api.data.PropertySetTest", function () {
     var Property = api.data.Property;
     var PropertySet = api.data.PropertySet;
     var PropertyTree = api.data.PropertyTree;
-    var PropertyChangedEvent = api.data.PropertyChangedEvent;
-    var PropertyChangedEventType = api.data.PropertyChangedEventType;
     var ValueTypes = api.data.ValueTypes;
     var Value = api.data.Value;
     var PropertyPath = api.data.PropertyPath;
@@ -139,23 +137,4 @@ describe("api.data.PropertySetTest", function () {
         });
     });
 
-    describe("when toTree", function () {
-
-        it("given a PropertySet containing 5 properties then all 5 are available in the new PropertyTree", function () {
-
-            var tree = new PropertyTree();
-            var subSet = tree.addPropertySet("subTree");
-            var mySet = subSet.addPropertySet("mySet");
-            mySet.addStrings("a", ["1", "2"]);
-            mySet.addStrings("b", ["1", "2"]);
-
-            var subTree = subSet.toTree();
-
-            expect(subTree.getString("mySet.a")).toBe("1");
-            expect(subTree.getString("mySet.a[1]")).toBe("2");
-            expect(subTree.getString("mySet.b[0]")).toBe("1");
-            expect(subTree.getString("mySet.b[1]")).toBe("2");
-            expect(subTree.getTotalSize()).toBe(5);
-        });
-    });
 });
