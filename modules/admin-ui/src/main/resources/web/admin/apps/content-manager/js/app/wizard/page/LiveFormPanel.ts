@@ -223,7 +223,7 @@ module app.wizard.page {
                 // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
                 if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-                    this.saveAndReloadPage(true);
+                    this.saveAndReloadPage(false);
                 }
                 else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
