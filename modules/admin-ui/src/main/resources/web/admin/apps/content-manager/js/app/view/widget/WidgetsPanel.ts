@@ -26,12 +26,13 @@ module app.view.widget {
         private item: ViewItem<ContentSummary>;
 
         private useNameLabel: boolean;
-        private slideRight: boolean;
+        private slideInFunction: () => void;
+        private slideOutFunction: () => void;
 
-        constructor(useNameLabel: boolean = true, slideRight: boolean = true, name?: string) {
+        constructor(useNameLabel: boolean = true, slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT, name?: string) {
             super("widgets-panel");
             this.setDoOffset(false);
-            this.slideRight = slideRight;
+            this.initSlideFunctions(slideFrom);
 
             this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
@@ -43,6 +44,30 @@ module app.view.widget {
             this.initNameLabel(useNameLabel, name);
 
             this.appendChild(this.widgetsContainer)
+        }
+
+        private initSlideFunctions(slideFrom: SLIDE_FROM) {
+            switch (slideFrom) {
+            case SLIDE_FROM.RIGHT:
+                this.slideInFunction = this.slideInRight;
+                this.slideOutFunction = this.slideOutRight;
+                break;
+            case SLIDE_FROM.LEFT:
+                this.slideInFunction = this.slideInLeft;
+                this.slideOutFunction = this.slideOutLeft;
+                break;
+            case SLIDE_FROM.TOP:
+                this.slideInFunction = this.slideInTop;
+                this.slideOutFunction = this.slideOutTop;
+                break;
+            case SLIDE_FROM.BOTTOM:
+                this.slideInFunction = this.slideInBottom;
+                this.slideOutFunction = this.slideOutBottom;
+                break;
+            default:
+                this.slideInFunction = this.slideInRight;
+                this.slideOutFunction = this.slideOutRight;
+            }
         }
 
         private initNameLabel(useNameLabel: boolean, name: string) {
@@ -183,20 +208,44 @@ module app.view.widget {
             }
         }
 
-        slideOut() {
-            if (this.slideRight) {
-                this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
-            } else {
-                this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
-            }
+        slideIn() {
+            this.slideInFunction();
         }
 
-        slideIn() {
-            if (this.slideRight) {
-                this.getEl().setRightPx(0);
-            } else {
-                this.getEl().setLeftPx(0);
-            }
+        slideOut() {
+            this.slideOutFunction();
+        }
+
+        private slideInRight() {
+            this.getEl().setRightPx(0);
+        }
+
+        private slideOutRight() {
+            this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
+        }
+
+        private slideInLeft() {
+            this.getEl().setLeftPx(0);
+        }
+
+        private slideOutLeft() {
+            this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
+        }
+
+        private slideInTop() {
+            this.getEl().setTopPx(36);
+        }
+
+        private slideOutTop() {
+            this.getEl().setTopPx(-window.outerHeight);
+        }
+
+        private slideInBottom() {
+            this.getEl().setTopPx(36);
+        }
+
+        private slideOutBottom() {
+            this.getEl().setTopPx(window.outerHeight);
         }
 
         notifyPanelSizeChanged() {
@@ -251,6 +300,15 @@ module app.view.widget {
         constructor(widgetsPanel: WidgetsPanel) {
             super(widgetsPanel, "mobile-widget-panel-toggle-button");
         }
+
+    }
+
+    export enum SLIDE_FROM {
+
+        LEFT,
+        RIGHT,
+        BOTTOM,
+        TOP,
 
     }
 }

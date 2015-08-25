@@ -19,7 +19,7 @@ module app.view {
         private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
         private previewPanel: ContentItemPreviewPanel;
-        private widgetsPanel: WidgetsPanel = new WidgetsPanel(false, false);
+        private widgetsPanel: WidgetsPanel = new WidgetsPanel(false, app.view.widget.SLIDE_FROM.BOTTOM);
         private widgetsToggleButton: app.view.widget.MobileWidgetsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
@@ -110,11 +110,11 @@ module app.view {
 
 
         slideOut() {
-            this.getEl().setLeftPx(-this.getEl().getWidthWithBorder());
+            this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         }
 
         slideIn() {
-            this.getEl().setLeftPx(0);
+            this.getEl().setRightPx(0);
         }
     }
 
