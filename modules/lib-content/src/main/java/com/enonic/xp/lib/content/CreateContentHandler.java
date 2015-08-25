@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content;
 
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,9 +14,9 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.script.ScriptValue;
 
 public final class CreateContentHandler
     extends BaseContextHandler
@@ -33,6 +34,8 @@ public final class CreateContentHandler
     private Map<String, Object> x;
 
     private String contentType;
+
+    private String language;
 
     @Override
     protected Object doExecute()
@@ -54,6 +57,7 @@ public final class CreateContentHandler
             type( contentTypeName ).
             contentData( createPropertyTree( data, contentTypeName ) ).
             extraDatas( createExtraDatas( x ) ).
+            language( language != null ? Locale.forLanguageTag( language ) : null ).
             build();
     }
 
@@ -169,5 +173,10 @@ public final class CreateContentHandler
     public void setContentType( final String contentType )
     {
         this.contentType = contentType;
+    }
+
+    public void setLanguage( final String language )
+    {
+        this.language = language;
     }
 }
