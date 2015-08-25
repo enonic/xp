@@ -206,6 +206,17 @@ module api.ui.grid {
             }
         }
 
+        addSelectedRows(rowsToAdd: number[]) {
+            var rows = this.getSelectedRows();
+            rowsToAdd.forEach((row) => {
+                if (rows.indexOf(row) < 0) {
+                    rows.push(row);
+                }
+            });
+
+            this.setSelectedRows(rows);
+        }
+
         toggleRow(row: number): number {
             // Prevent unnecessary render on the same row
             var rows = this.getSelectedRows(),

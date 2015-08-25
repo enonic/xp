@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content;
 
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,9 +19,9 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.script.ScriptValue;
 
 public final class ModifyContentHandler
     extends BaseContextHandler
@@ -82,6 +83,12 @@ public final class ModifyContentHandler
         if ( displayName != null )
         {
             target.displayName = displayName;
+        }
+
+        final String languageCode = Converters.convert( map.get( "language" ), String.class );
+        if ( languageCode != null )
+        {
+            target.language = Locale.forLanguageTag( languageCode );
         }
 
         final Object data = map.get( "data" );

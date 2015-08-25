@@ -22,6 +22,7 @@ var expectedJson = {
     },
     "displayName": "Modified",
     "hasChildren": false,
+    "language": "es",
     "modifiedTime": "1970-01-01T00:00:00Z",
     "modifier": "user:system:admin",
     "page": {
@@ -94,6 +95,8 @@ function editor(c) {
     c.x['com-enonic-myapplication'].other = {
         name: 'test'
     };
+
+    c.language = 'es';
 
     return c;
 }

@@ -15,7 +15,6 @@
 ///<reference path='ValueTypeLink.ts' />
 ///<reference path='ValueTypes.ts' />
 ///<reference path='Value.ts' />
-///<reference path='PropertyId.ts' />
 ///<reference path='PropertyPath.ts' />
 ///<reference path='PropertyEvent.ts' />
 ///<reference path='PropertyIndexChangedEvent.ts' />

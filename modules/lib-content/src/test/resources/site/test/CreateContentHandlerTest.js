@@ -20,6 +20,7 @@ var expectedJson = {
     },
     "displayName": "My Content",
     "hasChildren": false,
+    "language": "es",
     "page": {},
     "type": "test:myContentType",
     "valid": false,
@@ -39,6 +40,7 @@ exports.createContent = function () {
         displayName: 'My Content',
         draft: true,
         contentType: 'test:myContentType',
+        language: 'es',
         data: {
             a: 1,
             b: 2,
