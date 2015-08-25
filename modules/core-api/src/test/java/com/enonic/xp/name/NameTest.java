@@ -148,6 +148,8 @@ public class NameTest
 
     private Name create( final String name )
     {
-        return new Name( name );
+        return new Name( name )
+        {
+        };
     }
 }

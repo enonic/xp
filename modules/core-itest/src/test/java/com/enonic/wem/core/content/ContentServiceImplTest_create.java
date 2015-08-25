@@ -9,7 +9,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.data.PropertyTree;
@@ -82,7 +81,7 @@ public class ContentServiceImplTest_create
 
         assertNotNull( storedContent.getName() );
         assertTrue( storedContent.getName().isUnnamed() );
-        assertTrue( ( (ContentName.Unnamed) storedContent.getName() ).hasUniqueness() );
+        assertTrue( storedContent.getName().hasUniqueness() );
         assertNotNull( storedContent.getCreatedTime() );
         assertNotNull( storedContent.getCreator() );
         assertNotNull( storedContent.getModifiedTime() );

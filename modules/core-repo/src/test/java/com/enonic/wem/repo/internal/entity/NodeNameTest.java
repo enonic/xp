@@ -90,5 +90,19 @@ public class NodeNameTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
-}
+    @Test
+    public void testRoot()
+    {
+        final NodeName name = NodeName.ROOT;
+        assertEquals( true, name.isRoot() );
+        assertEquals( "", name.toString() );
+    }
 
+    @Test
+    public void testNonRoot()
+    {
+        final NodeName name = NodeName.from( "test" );
+        assertEquals( false, name.isRoot() );
+        assertEquals( "test", name.toString() );
+    }
+}
