@@ -69,7 +69,7 @@ public final class DuplicateNodeCommand
         for ( final Node node : findNodesByParentResult.getNodes() )
         {
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
-                parent( newParent.path() );
+                parent( newParent.path() ).insertManualStrategy( InsertManualStrategy.LAST );
 
             decideInsertStrategy( originalParent, node, paramsBuilder );
 
