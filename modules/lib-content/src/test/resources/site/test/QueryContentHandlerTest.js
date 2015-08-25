@@ -150,7 +150,7 @@ exports.query = function () {
                     }
                 },
                 "by_month": {
-                    "date_histogram": {
+                    "dateHistogram": {
                         "field": "init_date",
                         "interval": "1M",
                         "minDocCount": 0,
@@ -168,7 +168,7 @@ exports.query = function () {
                     }
                 },
                 "my_date_range": {
-                    "date_range": {
+                    "dateRange": {
                         "field": "date",
                         "format": "MM-yyy",
                         "ranges": [

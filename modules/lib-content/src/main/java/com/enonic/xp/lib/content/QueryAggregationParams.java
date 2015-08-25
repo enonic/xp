@@ -77,9 +77,9 @@ final class QueryAggregationParams
             addSubAggregations( termsAggregationQuery, aggregationQueryMap );
             return termsAggregationQuery.build();
         }
-        else if ( aggregationQueryMap.containsKey( "date_histogram" ) )
+        else if ( aggregationQueryMap.containsKey( "dateHistogram" ) )
         {
-            final Map<String, Object> dateHistogramParamsMap = (Map<String, Object>) aggregationQueryMap.get( "date_histogram" );
+            final Map<String, Object> dateHistogramParamsMap = (Map<String, Object>) aggregationQueryMap.get( "dateHistogram" );
             final DateHistogramAggregationQuery.Builder dateAggregationQuery =
                 dateHistogramAggregationFromParams( name, dateHistogramParamsMap );
             addSubAggregations( dateAggregationQuery, aggregationQueryMap );
@@ -93,9 +93,9 @@ final class QueryAggregationParams
             addSubAggregations( rangeAggregationQuery, aggregationQueryMap );
             return rangeAggregationQuery.build();
         }
-        else if ( aggregationQueryMap.containsKey( "date_range" ) )
+        else if ( aggregationQueryMap.containsKey( "dateRange" ) )
         {
-            final Map<String, Object> dateRangeParamsMap = (Map<String, Object>) aggregationQueryMap.get( "date_range" );
+            final Map<String, Object> dateRangeParamsMap = (Map<String, Object>) aggregationQueryMap.get( "dateRange" );
             final DateRangeAggregationQuery.Builder dateRangeAggregationQuery = dateRangeAggregationFromParams( name, dateRangeParamsMap );
             addSubAggregations( dateRangeAggregationQuery, aggregationQueryMap );
             return dateRangeAggregationQuery.build();
@@ -106,9 +106,9 @@ final class QueryAggregationParams
             final StatsAggregationQuery.Builder statsRangeAggregationQuery = statsAggregationFromParams( name, dateRangeParamsMap );
             return statsRangeAggregationQuery.build();
         }
-        else if ( aggregationQueryMap.containsKey( "geo_distance" ) )
+        else if ( aggregationQueryMap.containsKey( "geoDistance" ) )
         {
-            final Map<String, Object> geoDistanceParamsMap = (Map<String, Object>) aggregationQueryMap.get( "geo_distance" );
+            final Map<String, Object> geoDistanceParamsMap = (Map<String, Object>) aggregationQueryMap.get( "geoDistance" );
             final GeoDistanceAggregationQuery.Builder geoDistanceAggregationQuery =
                 geoDistanceAggregationFromParams( name, geoDistanceParamsMap );
             return geoDistanceAggregationQuery.build();

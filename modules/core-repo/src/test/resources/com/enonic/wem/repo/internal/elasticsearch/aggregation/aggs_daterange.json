@@ -1,6 +1,6 @@
 {
     "myRangeQuery": {
-        "date_range": {
+        "dateRange": {
             "field": "myfield._datetime",
             "ranges": [
                 {
