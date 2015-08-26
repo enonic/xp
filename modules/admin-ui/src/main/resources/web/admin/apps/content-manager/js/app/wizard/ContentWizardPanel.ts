@@ -502,6 +502,7 @@ module app.wizard {
                         deferred.reject(reason);
                     }).done();
             }
+            this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             return deferred.promise;
         }
 
