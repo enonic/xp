@@ -6,6 +6,7 @@
   display: none;
   left: 50%;
   margin-left: -200px;
+  padding: 30px;
   .notSelectable();
   .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
 
@@ -34,16 +35,17 @@
   }
 
   .close-button {
+    .button(@admin-dark-gray, transparent);
+    .box-sizing(content-box);
+
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 5px;
+    right: 5px;
+    padding: 0;
   }
 
   .header {
-    padding: 5px 41px 5px 15px;
-  }
-
-  .tree-grid {
-    padding: 0 15px 15px;
+    line-height: 0.8em;
+    margin-bottom: 20px;
   }
 }

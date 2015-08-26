@@ -32,10 +32,11 @@ module app.wizard {
         private draggable: boolean;
 
         private mouseDownListener: (event: MouseEvent) => void;
-        private mouseUpListener: (event: MouseEvent) => void;
+        private mouseUpListener: (event?: MouseEvent) => void;
         private mouseMoveListener: (event: MouseEvent) => void;
         private clickListener: (event, data) => void;
         private mouseDown: boolean = false;
+        public static debug: boolean = false;
 
         constructor(liveEditPage: LiveEditPageProxy) {
             super('page-components-view');
@@ -45,7 +46,7 @@ module app.wizard {
             var closeButton = new api.ui.button.CloseButton();
             closeButton.onClicked((event: MouseEvent) => this.hide());
 
-            this.header = new api.dom.H3El('header');
+            this.header = new api.dom.H2El('header');
             this.header.setHtml('Page Components');
 
             this.appendChildren(closeButton, this.header);
@@ -97,14 +98,17 @@ module app.wizard {
                 if (parentNode) {
                     // deselect all otherwise node is going to be added as child to selection (that is weird btw)
                     this.tree.deselectAll();
-                    this.tree.appendNode(event.getComponentView(), false, false, parentNode).then(() => {
-                        // expand parent node to show added one
-                        this.tree.expandNode(parentNode);
+                    var index = event.getParentRegionView().getComponentViews().indexOf(event.getComponentView());
+                    if (index >= 0) {
+                        this.tree.insertNode(event.getComponentView(), false, index, parentNode).then(() => {
+                            // expand parent node to show added one
+                            this.tree.expandNode(parentNode);
 
-                        if (event.getComponentView().isSelected()) {
-                            this.tree.selectNode(this.tree.getDataId(event.getComponentView()));
-                        }
-                    });
+                            if (event.getComponentView().isSelected()) {
+                                this.tree.selectNode(this.tree.getDataId(event.getComponentView()));
+                            }
+                        });
+                    }
                 }
             });
 
@@ -125,6 +129,11 @@ module app.wizard {
             });
 
             this.clickListener = (event, data) => {
+                var elem = new api.dom.ElementHelper(event.target);
+                if (elem.hasClass('toggle')) {
+                    // do nothing if expand toggle is clicked
+                    return;
+                }
                 var treeNode: TreeNode<ItemView> = this.tree.getGrid().getDataView().getItem(data.row);
                 treeNode.getData().select();
 
@@ -148,21 +157,48 @@ module app.wizard {
                 var lastPos;
                 if (!this.mouseDownListener) {
                     this.mouseDownListener = (event: MouseEvent) => {
-                        this.mouseDown = true;
-                        lastPos = {
-                            x: event.clientX,
-                            y: event.clientY
-                        };
+                        if (PageComponentsView.debug) {
+                            console.log('mouse down', this.mouseDown, event);
+                        }
+                        if (!this.mouseDown && event.buttons == 1) {
+                            // left button was clicked
+                            event.preventDefault();
+                            event.stopPropagation();
+                            this.mouseDown = true;
+                            lastPos = {
+                                x: event.clientX,
+                                y: event.clientY
+                            };
+                        }
                     }
                 }
                 if (!this.mouseUpListener) {
-                    this.mouseUpListener = (event: MouseEvent) => {
-                        this.mouseDown = false;
+                    this.mouseUpListener = (event?: MouseEvent) => {
+                        if (PageComponentsView.debug) {
+                            console.log('mouse up', this.mouseDown, event);
+                        }
+                        if (this.mouseDown) {
+                            // left button was released
+                            if (event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+
+                            this.mouseDown = false;
+                        }
                     }
                 }
                 if (!this.mouseMoveListener) {
                     this.mouseMoveListener = (event: MouseEvent) => {
                         if (this.mouseDown) {
+                            if (event.buttons != 1) {
+                                // button was probably released outside browser window
+                                this.mouseUpListener();
+                                return;
+                            }
+                            event.preventDefault();
+                            event.stopPropagation();
+
                             var el = this.getEl(),
                                 newPos = {
                                     x: event.clientX,
