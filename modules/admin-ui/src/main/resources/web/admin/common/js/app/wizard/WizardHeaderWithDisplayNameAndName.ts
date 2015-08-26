@@ -186,9 +186,13 @@ module api.app.wizard {
             if (!possibleInvalidName) {
                 return "";
             }
-            var generated = this.simplifiedNameGeneration ? possibleInvalidName.replace(Name.SIMPLIFIED_FORBIDDEN_CHARS, '')
-                : possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').replace(Name.FORBIDDEN_CHARS,
-                '').toLowerCase();
+            var generated;
+            if (this.simplifiedNameGeneration) {
+                generated = possibleInvalidName.replace(Name.SIMPLIFIED_FORBIDDEN_CHARS, '').toLowerCase();
+            } else {
+                generated = possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').
+                    replace(Name.FORBIDDEN_CHARS, '').toLowerCase();
+            }
             return (generated || '');
         }
 
