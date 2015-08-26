@@ -18,6 +18,8 @@ module app.browse {
     import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
     import ContentChangeResult = api.content.ContentChangeResult;
     import ContentId = api.content.ContentId;
+    import DetailsPanel = app.view.detail.DetailsPanel;
+    import DetailsPanelToggleButton = app.view.detail.DetailsPanelToggleButton;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
@@ -36,6 +38,8 @@ module app.browse {
         private mobileContentItemStatisticsPanel: app.view.MobileContentItemStatisticsPanel;
 
         private mobileBrowseActions: app.browse.action.MobileContentTreeGridActions;
+
+        private detailsPanel: DetailsPanel;
 
         constructor() {
 
@@ -92,8 +96,32 @@ module app.browse {
             this.handleGlobalEvents();
 
             this.onRendered((event) => {
+                this.initDetailsPanel();
                 this.initItemStatisticsPanelForMobile();
             });
+        }
+
+        private initDetailsPanel() {
+            this.detailsPanel = new DetailsPanel();
+
+            var action = new app.view.detail.DetailsPanelToggleAction(this.detailsPanel);
+            var actionButton = new DetailsPanelToggleButton(action);
+
+            this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                if (browseItems.length == 1) {
+                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                    this.detailsPanel.setItem(item);
+                    action.setEnabled(true);
+                } else {
+                    action.setEnabled(false);
+                    this.detailsPanel.slideOut();
+                    actionButton.removeClass("expanded");
+                }
+            });
+
+            this.toolbar.appendChild(actionButton);
+            this.appendChild(this.detailsPanel);
         }
 
         private initItemStatisticsPanelForMobile() {
