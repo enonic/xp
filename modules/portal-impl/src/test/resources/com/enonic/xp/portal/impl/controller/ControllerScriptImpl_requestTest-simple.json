@@ -1,9 +1,9 @@
 {
-  "mode": "live",
-  "headers": {},
   "method": "GET",
-  "formParams": {},
-  "params": {},
+  "mode": "live",
   "branch": "draft",
+  "params": {},
+  "formParams": {},
+  "headers": {},
   "cookies": {}
 }

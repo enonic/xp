@@ -1,34 +1,39 @@
 var assert = Java.type('org.junit.Assert');
-var scriptAssert = Java.type('com.enonic.xp.testing.script.ScriptAssert');
 var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
+    "name": "mylayout",
+    "path": "main/-1",
+    "type": "layout",
+    "descriptor": "myapplication:mylayout",
     "config": {
         "a": "1"
     },
-    "descriptor": "myapplication:mylayout",
-    "name": "mylayout",
-    "path": "main/-1",
     "regions": {
         "bottom": {
-            "components": [{
-                "config": {
-                    "a": "1"
-                },
-                "descriptor": "myapplication:mypart",
-                "name": "mypart",
-                "path": "main/-1/bottom/0",
-                "type": "part"
-            }],
+            "components": [
+                {
+                    "name": "mypart",
+                    "path": "main/-1/bottom/0",
+                    "type": "part",
+                    "descriptor": "myapplication:mypart",
+                    "config": {
+                        "a": "1"
+                    }
+                }
+            ],
             "name": "bottom"
         }
-    },
-    "type": "layout"
+    }
 };
+
+function assertJson(expected, result) {
+    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
+}
 
 exports.currentComponent = function () {
     var result = portal.getComponent();
-    scriptAssert.assertJson(expectedJson, result);
+    assertJson(expectedJson, result);
 };
 
 exports.noCurrentComponent = function () {

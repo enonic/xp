@@ -1,85 +1,100 @@
 var assert = Java.type('org.junit.Assert');
-var scriptAssert = Java.type('com.enonic.xp.testing.script.ScriptAssert');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
     "_id": "123456",
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
-    "createdTime": "1970-01-01T00:00:00Z",
     "creator": "user:system:admin",
-    "data": {
-        "a": 2.0,
-        "b": "2",
-        "c": [{
-            "d": true
-        }, {
-            "d": false,
-            "e": ["3", "42", "5"],
-            "f": 2
-        }],
-        "z": "99"
-    },
+    "modifier": "user:system:admin",
+    "createdTime": "1970-01-01T00:00:00Z",
+    "modifiedTime": "1970-01-01T00:00:00Z",
+    "type": "test:myContentType",
     "displayName": "Modified",
     "hasChildren": false,
     "language": "es",
-    "modifiedTime": "1970-01-01T00:00:00Z",
-    "modifier": "user:system:admin",
-    "page": {
-        "config": {
-            "a": "1"
-        },
-        "controller": "myapplication:mycontroller",
-        "regions": {
-            "top": {
-                "components": [{
-                    "config": {
-                        "a": "1"
-                    },
-                    "descriptor": "myapplication:mypart",
-                    "name": "mypart",
-                    "path": "top/0",
-                    "type": "part"
-                }, {
-                    "config": {
-                        "a": "1"
-                    },
-                    "descriptor": "myapplication:mylayout",
-                    "name": "mylayout",
-                    "path": "top/1",
-                    "regions": {
-                        "bottom": {
-                            "components": [{
-                                "config": {
-                                    "a": "1"
-                                },
-                                "descriptor": "myapplication:mypart",
-                                "name": "mypart",
-                                "path": "top/1/bottom/0",
-                                "type": "part"
-                            }],
-                            "name": "bottom"
-                        }
-                    },
-                    "type": "layout"
-                }],
-                "name": "top"
-            }
-        }
-    },
-    "type": "test:myContentType",
     "valid": false,
+    "data": {
+        "a": 2,
+        "b": "2",
+        "c": [
+            {
+                "d": true
+            },
+            {
+                "d": false,
+                "e": [
+                    "3",
+                    "42",
+                    "5"
+                ],
+                "f": 2
+            }
+        ],
+        "z": "99"
+    },
     "x": {
         "com-enonic-myapplication": {
             "myschema": {
-                "a": 1.0
+                "a": 1
             },
             "other": {
                 "name": "test"
             }
         }
+    },
+    "page": {
+        "controller": "myapplication:mycontroller",
+        "config": {
+            "a": "1"
+        },
+        "regions": {
+            "top": {
+                "components": [
+                    {
+                        "name": "mypart",
+                        "path": "top/0",
+                        "type": "part",
+                        "descriptor": "myapplication:mypart",
+                        "config": {
+                            "a": "1"
+                        }
+                    },
+                    {
+                        "name": "mylayout",
+                        "path": "top/1",
+                        "type": "layout",
+                        "descriptor": "myapplication:mylayout",
+                        "config": {
+                            "a": "1"
+                        },
+                        "regions": {
+                            "bottom": {
+                                "components": [
+                                    {
+                                        "name": "mypart",
+                                        "path": "top/1/bottom/0",
+                                        "type": "part",
+                                        "descriptor": "myapplication:mypart",
+                                        "config": {
+                                            "a": "1"
+                                        }
+                                    }
+                                ],
+                                "name": "bottom"
+                            }
+                        }
+                    }
+                ],
+                "name": "top"
+            }
+        }
     }
 };
+
+function assertJson(expected, result) {
+    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
+}
 
 function editor(c) {
     c.displayName = 'Modified';
@@ -116,7 +131,7 @@ exports.modifyById = function () {
         editor: editor
     });
 
-    scriptAssert.assertJson(expectedJson, result);
+    assertJson(expectedJson, result);
 };
 
 exports.modifyByPath = function () {
@@ -125,5 +140,5 @@ exports.modifyByPath = function () {
         editor: editor
     });
 
-    scriptAssert.assertJson(expectedJson, result);
+    assertJson(expectedJson, result);
 };
