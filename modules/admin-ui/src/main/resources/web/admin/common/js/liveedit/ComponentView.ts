@@ -170,7 +170,7 @@ module api.liveedit {
                     parentView.scrollComponentIntoView();
                 }
             }));
-            actions.push(new api.ui.Action("Clear contents").onExecuted(() => {
+            actions.push(new api.ui.Action("Reset").onExecuted(() => {
                 this.component.reset();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
