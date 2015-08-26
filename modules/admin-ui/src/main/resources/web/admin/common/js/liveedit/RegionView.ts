@@ -148,7 +148,7 @@ module api.liveedit {
                     parentView.scrollComponentIntoView();
                 }
             }));
-            actions.push(new api.ui.Action('Clear contents').onExecuted(() => {
+            actions.push(new api.ui.Action('Reset').onExecuted(() => {
                 this.deselect();
                 this.empty();
             }));
