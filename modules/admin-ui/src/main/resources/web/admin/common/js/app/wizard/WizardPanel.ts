@@ -473,6 +473,14 @@ module api.app.wizard {
             return this.splitPanel;
         }
 
+        showMinimizeEditButton() {
+            this.minimizeEditButton.show();
+        }
+
+        hideMinimizeEditButton() {
+            this.minimizeEditButton.hide();
+        }
+
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
                 .setFirstPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)

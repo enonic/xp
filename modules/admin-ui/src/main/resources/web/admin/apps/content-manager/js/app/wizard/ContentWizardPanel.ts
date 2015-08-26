@@ -248,6 +248,11 @@ module app.wizard {
                         app.Router.setHash("new/" + this.contentType.getName());
                     }
                     //Set split panel default
+
+                    this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+                        this.updateContextWindowTogglerBehaviour();
+                    });
+
                     this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
@@ -1089,6 +1094,35 @@ module app.wizard {
                 api.content.ContentPublishedEvent.un(publishHandlerOfServerEvent);
                 api.content.ContentsPublishedEvent.un(publishHandler);
             });
+        }
+
+        private updateContextWindowTogglerBehaviour() {
+            if(this.contentIsNotSiteAndNotTemplate()) {
+                    this.getSplitPanel().hideSecondPanel();
+                    this.hideMinimizeEditButton();
+
+                    this.getContextWindowToggler().onActiveChanged((isActive: boolean) => {
+                        if(this.contentTemplateSetOrNoDefaultTemplate()) {
+                            if(isActive) {
+                                this.getSplitPanel().showSecondPanel();
+                                this.liveFormPanel.clearPageViewSelectionAndOpenInspectPage();
+                                this.showMinimizeEditButton();
+                            }
+                            else {
+                                this.getSplitPanel().hideSecondPanel();
+                                this.hideMinimizeEditButton();
+                            }
+                        }
+                    });
+            }
+        }
+
+        private contentIsNotSiteAndNotTemplate(): boolean {
+            return !(this.liveEditModel.getContent().isSite() || this.liveEditModel.getContent().isPageTemplate());
+        }
+
+        private contentTemplateSetOrNoDefaultTemplate(): boolean {
+            return this.liveEditModel.getPageModel().hasTemplate() || !this.liveEditModel.getPageModel().hasDefaultTemplate();
         }
     }
 
