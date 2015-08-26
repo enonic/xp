@@ -278,6 +278,7 @@ module api.ui.selector.combobox {
             if (this.applySelectionsButton && this.applySelectionsButton.isVisible()) {
                 this.clearSelection(true);
                 this.comboBoxDropdown.applyMultipleSelection();
+                this.input.setValue("");
                 this.hideDropdown();
             } else {
                 this.handleRowSelected(index);
@@ -359,7 +360,6 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown.markSelections([], ignoreEmpty);
 
-            this.input.setValue("");
             if (giveInputFocus) {
                 this.input.openForTypingAndFocus();
             }
@@ -496,6 +496,7 @@ module api.ui.selector.combobox {
                 this.applySelectionsButton.onClicked((event: any) => {
                     this.clearSelection(true);
                     this.comboBoxDropdown.applyMultipleSelection();
+                    this.input.setValue("");
                     this.hideDropdown();
                 });
                 this.comboBoxDropdown.onMultipleSelection(this.handleMultipleSelectionChanged.bind(this));
