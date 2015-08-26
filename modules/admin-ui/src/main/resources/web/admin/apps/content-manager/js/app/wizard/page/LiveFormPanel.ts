@@ -429,6 +429,13 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
+        clearPageViewSelectionAndOpenInspectPage() {
+            if(this.pageView && this.pageView.hasSelectedView()) {
+                this.pageView.getSelectedView().deselect();
+            }
+            this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+        }
+
         private inspectRegion(regionView: RegionView) {
 
             var region = regionView.getRegion();
