@@ -274,12 +274,50 @@ module app.view.detail {
         }
     }
 
-    export class DetailsPanelToggleButton extends api.dom.DivEl {
+    export class DetailsPanelToggleButton extends api.ui.button.ActionButton {
+
+        constructor(action: DetailsPanelToggleAction) {
+            super(action);
+            this.addClass("details-panel-toggle-button");
+
+            action.onExecuted(() => {
+                this.toggleClass("expanded", action.isExpanded());
+            });
+        }
+    }
+
+    export class DetailsPanelToggleAction extends api.ui.Action {
+
+        private detailsPanel: DetailsPanel;
+        private expanded: boolean = false;
+
+        constructor(detailsPanel: DetailsPanel) {
+            super("");
+
+            this.detailsPanel = detailsPanel;
+
+            this.setEnabled(false);
+            this.onExecuted(() => {
+                this.expanded = !this.expanded;
+                if (this.expanded) {
+                    this.detailsPanel.slideIn();
+                } else {
+                    this.detailsPanel.slideOut();
+                }
+            });
+        }
+
+        isExpanded(): boolean {
+            return this.expanded;
+        }
+    }
+
+    export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
         private detailsPanel: DetailsPanel;
 
-        constructor(detailsPanel: DetailsPanel, className?: string) {
-            super("details-panel-toggle-button" + (className ? " " + className : ""));
+        constructor(detailsPanel: DetailsPanel) {
+            super("mobile-details-panel-toggle-button");
 
             this.detailsPanel = detailsPanel;
 
@@ -292,15 +330,6 @@ module app.view.detail {
                 }
             });
         }
-
-    }
-
-    export class MobileDetailsPanelToggleButton extends DetailsPanelToggleButton {
-
-        constructor(detailsPanel: DetailsPanel) {
-            super(detailsPanel, "mobile-details-panel-toggle-button");
-        }
-
     }
 
     export enum SLIDE_FROM {
@@ -309,6 +338,5 @@ module app.view.detail {
         RIGHT,
         BOTTOM,
         TOP,
-
     }
 }
