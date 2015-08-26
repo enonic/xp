@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.storage;
 
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -9,7 +11,8 @@ import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
-public class MemoryStorageDaoImpl
+@Component
+public class SimpleCache
     implements StorageCache
 {
     private Map<StorageSettings, MemoryStore> memoryStoreMap = Maps.newConcurrentMap();

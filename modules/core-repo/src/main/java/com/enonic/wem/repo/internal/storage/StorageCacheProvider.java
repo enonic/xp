@@ -4,7 +4,7 @@ public class StorageCacheProvider
 {
     public static StorageCache provide()
     {
-        return new MemoryStorageDaoImpl();
+        return new SimpleCache();
     }
 
 }

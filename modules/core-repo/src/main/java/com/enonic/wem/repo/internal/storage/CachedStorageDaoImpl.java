@@ -14,7 +14,7 @@ public class CachedStorageDaoImpl
 {
     private StorageDaoInternal storageDaoInternal;
 
-    private StorageCache storageCache = StorageCacheProvider.provide();
+    private StorageCache storageCache;
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
@@ -60,5 +60,11 @@ public class CachedStorageDaoImpl
     public void setStorageDaoInternal( final StorageDaoInternal storageDaoInternal )
     {
         this.storageDaoInternal = storageDaoInternal;
+    }
+
+    @Reference
+    public void setStorageCache( final StorageCache storageCache )
+    {
+        this.storageCache = storageCache;
     }
 }
