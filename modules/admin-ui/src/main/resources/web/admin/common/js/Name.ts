@@ -4,6 +4,8 @@ module api {
 
         public static FORBIDDEN_CHARS: RegExp = /[^a-z0-9\-]+/ig;
 
+        public static SIMPLIFIED_FORBIDDEN_CHARS: RegExp = /[\/!?\\]/g;
+
         private value: string;
 
         constructor(name: string) {
@@ -36,16 +38,6 @@ module api {
             }
 
             return true;
-        }
-
-        public static ensureValidName(possibleInvalidName: string): string {
-            if (!possibleInvalidName) {
-                return "";
-            }
-
-            var generated = possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase();
-            return (generated || '').replace(Name.FORBIDDEN_CHARS, '');
-
         }
     }
 }
