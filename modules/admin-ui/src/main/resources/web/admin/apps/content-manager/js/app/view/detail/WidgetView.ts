@@ -1,4 +1,4 @@
-module app.view.widget {
+module app.view.detail {
 
     import Widget = api.content.Widget;
     import ViewItem = api.app.view.ViewItem;
