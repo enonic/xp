@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
@@ -36,10 +36,6 @@ var expectedJson = {
     "page": {}
 };
 
-function assertJson(expected, result) {
-    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
-}
-
 exports.createContent = function () {
     var result = content.create({
         name: 'mycontent',
@@ -68,5 +64,5 @@ exports.createContent = function () {
         }
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };

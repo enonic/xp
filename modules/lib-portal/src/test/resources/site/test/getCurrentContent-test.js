@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
@@ -119,16 +119,12 @@ var expectedJson = {
     }
 };
 
-function assertJson(expected, result) {
-    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
-}
-
 exports.currentContent = function () {
     var result = portal.getContent();
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals('Content JSON not equals', expectedJson, result);
 };
 
 exports.noCurrentContent = function () {
     var result = portal.getContent();
-    assert.assertNull(result);
+    assert.assertNull('Content JSON not null', result);
 };

@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
@@ -137,10 +137,6 @@ var expectedEmptyJson = {
     "aggregations": {}
 };
 
-function assertJson(expected, result) {
-    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
-}
-
 exports.query = function () {
 
     var result = content.query({
@@ -209,12 +205,11 @@ exports.query = function () {
         }
     );
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.queryEmpty = function () {
     var result = content.query({});
-    assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
-
 

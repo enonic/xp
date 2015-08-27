@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 exports.deleteById = function () {

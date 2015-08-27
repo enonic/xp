@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var i18n = require('/lib/xp/i18n.js');
 
 exports.localize = function () {

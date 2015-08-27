@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
@@ -92,10 +92,6 @@ var expectedJson = {
     }
 };
 
-function assertJson(expected, result) {
-    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
-}
-
 function editor(c) {
     c.displayName = 'Modified';
     c.data.a++;
@@ -131,7 +127,7 @@ exports.modifyById = function () {
         editor: editor
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.modifyByPath = function () {
@@ -140,5 +136,5 @@ exports.modifyByPath = function () {
         editor: editor
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };

@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
@@ -62,16 +62,12 @@ var expectedEmptyJson = {
     "hits": []
 };
 
-function assertJson(expected, result) {
-    assert.assertEquals(JSON.stringify(expected, null, 2), JSON.stringify(result, null, 2));
-}
-
 exports.getChildrenById = function () {
     var result = content.getChildren({
         key: '123456'
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.getChildrenByPath = function () {
@@ -79,7 +75,7 @@ exports.getChildrenByPath = function () {
         key: '/a/b'
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.getChildrenById_notFound = function () {
@@ -87,7 +83,7 @@ exports.getChildrenById_notFound = function () {
         key: '123456'
     });
 
-    assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
 
 exports.getChildrenByPath_notFound = function () {
@@ -95,7 +91,7 @@ exports.getChildrenByPath_notFound = function () {
         key: '/a/b/mycontent'
     });
 
-    assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
 
 exports.getChildrenByPath_allParameters = function () {
@@ -106,5 +102,5 @@ exports.getChildrenByPath_allParameters = function () {
         sort: '_modifiedTime ASC'
     });
 
-    assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };

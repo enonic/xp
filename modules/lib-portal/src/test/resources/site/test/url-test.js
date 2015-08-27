@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = require('/lib/xp/assert.js');
 var portal = require('/lib/xp/portal.js');
 
 exports.assetUrlTest = function () {
@@ -11,7 +11,7 @@ exports.assetUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
+    assert.assertEquals('assetUrl wrong', 'AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
     return true;
 };
 
@@ -25,7 +25,7 @@ exports.attachmentUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
+    assert.assertEquals('attachmentUrl wrong', 'AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
     return true;
 };
 
