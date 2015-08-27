@@ -120,18 +120,18 @@ module api.ui.treegrid {
                         elem.removeClass("expand").addClass("collapse");
                         var node = this.gridData.getItem(data.row);
                         this.expandNode(node);
-                        event.stopPropagation();
+
                     } else if (elem.hasClass("collapse")) {
                         this.active = false;
                         elem.removeClass("collapse").addClass("expand");
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
-                        event.stopPropagation();
+
                     } else if (data.cell === 0) {
                         this.active = true;
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
-                            event.stopPropagation();
+
                         }
                     } else {
                         this.active = true;
@@ -461,7 +461,7 @@ module api.ui.treegrid {
          * retrieving a a full data, or for the purpose of the
          * infinite scroll.
          */
-        fetch(node: TreeNode<DATA>): wemQ.Promise<DATA> {
+        fetch(node: TreeNode<DATA>, dataId?: string): wemQ.Promise<DATA> {
             var deferred = wemQ.defer<DATA>();
             // Empty logic
             deferred.resolve(null);
@@ -533,6 +533,16 @@ module api.ui.treegrid {
             }
         }
 
+        selectNode(dataId: string) {
+            var root = this.root.getCurrentRoot(),
+                node = root.findNode(dataId);
+
+            if (node) {
+                var row = this.gridData.getRowById(node.getId());
+                this.grid.selectRow(row);
+            }
+        }
+
         selectAll() {
             this.grid.selectAll();
         }
@@ -598,7 +608,7 @@ module api.ui.treegrid {
                     var child = this.dataToTreeNode(data, parentNode);
                     parentNode.addChild(child);
 
-                    if (this.expandAll && this.hasChildren(data)) {
+                    if (parentNode.isExpanded() && this.hasChildren(data)) {
                         hasNotEmptyChildren = true;
                         promises.push(this.reloadNode(child));
                     }
@@ -663,7 +673,7 @@ module api.ui.treegrid {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            return this.fetchAndUpdateNodes([nodeToUpdate]);
+            return this.fetchAndUpdateNodes([nodeToUpdate], oldDataId ? this.getDataId(data) : undefined);
         }
 
         updateNodes(data: DATA, oldDataId?: string): wemQ.Promise<void> {
@@ -675,16 +685,23 @@ module api.ui.treegrid {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            return this.fetchAndUpdateNodes(nodesToUpdate);
+            return this.fetchAndUpdateNodes(nodesToUpdate, oldDataId ? this.getDataId(data) : undefined);
         }
 
-        private fetchAndUpdateNodes(nodesToUpdate: TreeNode<DATA>[]): wemQ.Promise<void> {
-            return this.fetch(nodesToUpdate[0])
+        private fetchAndUpdateNodes(nodesToUpdate: TreeNode<DATA>[], dataId?: string): wemQ.Promise<void> {
+            return this.fetch(nodesToUpdate[0], dataId)
                 .then((data: DATA) => {
                     nodesToUpdate.forEach((node) => {
+                        if (dataId) {
+                            node.setDataId(dataId);
+                        }
                         node.setData(data);
+                        if (this.expandAll) {
+                            node.setExpanded(this.expandAll);
+                        }
                         node.setDataId(this.getDataId(data));
                         node.clearViewers();
+
                         if (node.isVisible()) {
                             var selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
                             this.gridData.updateItem(node.getId(), node);
@@ -694,10 +711,6 @@ module api.ui.treegrid {
                         }
                     });
 
-                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
-                    this.initData(this.root.getCurrentRoot().treeToList());
-                    this.root.updateSelection(nodesToUpdate[0].getDataId(), data);
-                    this.triggerSelectionChangedListeners();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -740,11 +753,15 @@ module api.ui.treegrid {
          * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
          * @param stashedParentNode
          */
-        appendNode(data: DATA, nextToSelection?: boolean, prepend: boolean = true, stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>();
+        appendNode(data: DATA, nextToSelection: boolean = false, prepend: boolean = true,
+                   stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
+            var parentNode = this.getParentNode(nextToSelection, stashedParentNode);
+            var index = prepend ? 0 : parentNode.getChildren().length - 1;
+            return this.insertNode(data, nextToSelection, index, stashedParentNode);
+        }
 
+        private getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
             var root = stashedParentNode || this.root.getCurrentRoot();
-
             var parentNode: TreeNode<DATA>;
             if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
                 parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
@@ -754,20 +771,29 @@ module api.ui.treegrid {
             } else {
                 parentNode = root;
             }
+            return parentNode;
+        }
+
+        insertNode(data: DATA, nextToSelection: boolean = false, index: number = 0,
+                   stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
+            var root = stashedParentNode || this.root.getCurrentRoot();
+            var parentNode = this.getParentNode(nextToSelection, stashedParentNode);
+
             var isRootParentNode: boolean = (parentNode == root);
 
             if (!parentNode.hasChildren() && !isRootParentNode) {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
                         if (parentNode.hasChildren()) {
-                            this.doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode);
+                            this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
 
                         } else {
                             parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
                             this.initData(root.treeToList());
                             var node = root.findNode(this.getDataId(data));
                             if (!node) {
-                                parentNode.addChild(this.dataToTreeNode(data, root), prepend);
+                                parentNode.insertChild(this.dataToTreeNode(data, root), index);
                                 node = root.findNode(this.getDataId(data));
                             }
 
@@ -792,15 +818,15 @@ module api.ui.treegrid {
                         deferred.reject(reason);
                     });
             } else {
-                this.doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode);
+                this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
                 deferred.resolve(null);
             }
 
             return deferred.promise;
         }
 
-        private doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode) {
-            parentNode.addChild(this.dataToTreeNode(data, root), prepend);
+        private doInsertNodeToParentWithChildren(parentNode, data, root, index: number, stashedParentNode, isRootParentNode) {
+            parentNode.insertChild(this.dataToTreeNode(data, root), index);
 
             var node = root.findNode(this.getDataId(data));
             if (node) {

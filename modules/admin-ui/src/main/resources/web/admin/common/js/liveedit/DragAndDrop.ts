@@ -278,7 +278,7 @@ module api.liveedit {
                         setData(newComponent).
                         setPositionIndex(componentIndex));
 
-                    regionView.addComponentView(this._draggedComponentView, componentIndex);
+                    regionView.addComponentView(this._draggedComponentView, componentIndex, true);
 
                 } else {
                     // Move component to other region

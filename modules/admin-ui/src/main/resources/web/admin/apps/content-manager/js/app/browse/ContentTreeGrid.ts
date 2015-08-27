@@ -248,7 +248,7 @@ module app.browse {
         }
 
 
-        fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {
+        fetch(node: TreeNode<ContentSummaryAndCompareStatus>, dataId?: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
             return this.fetchById(node.getData().getContentId());
         }
 

@@ -18,7 +18,7 @@
 ///<reference path='ItemViewAddedEvent.ts' />
 ///<reference path='ItemViewRemovedEvent.ts' />
 ///<reference path='ItemViewSelectedEvent.ts' />
-///<reference path='ItemViewDeselectEvent.ts' />
+///<reference path='ItemViewDeselectedEvent.ts' />
 ///<reference path='ItemViewContextMenuTitle.ts' />
 ///<reference path='ComponentViewContextMenuTitle.ts' />
 ///<reference path='ContentViewContextMenuTitle.ts' />

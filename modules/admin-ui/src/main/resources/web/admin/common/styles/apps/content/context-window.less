@@ -43,16 +43,6 @@
     right: 0;
     top: 43px;
     width: auto;
-    bottom: 40px;
-  }
-
-  & > .button-bar {
-    left: 5px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 6px;
-    text-align: center;
   }
 
   .slick-viewport {
@@ -132,9 +122,21 @@
   }
 
   .insertables-panel {
+    padding-bottom: 43px; // height of the button bar
+
     p {
       font-size: 12px;
       padding: 10px 15px;
+    }
+
+    & > .button-bar {
+      left: 5px;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      padding: 6px;
+      text-align: center;
+      background-color: white;
     }
   }
 

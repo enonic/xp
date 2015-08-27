@@ -45,16 +45,12 @@ module app.wizard {
                     setFullWidthRows(true).
                     setRowHeight(45).
                     setCheckableRows(false).
+                    setMultiSelect(false).
                     build()).
                 setShowToolbar(false).
                 setAutoLoad(true).
                 setExpandAll(true).
                 prependClasses("components-grid"));
-
-            this.getGrid().subscribeOnClick((event, data) => {
-                var treeNode: TreeNode<ItemView> = this.getGrid().getDataView().getItem(data.row);
-                treeNode.getData().select();
-            });
         }
 
         setPageView(pageView: PageView) {
@@ -78,6 +74,13 @@ module app.wizard {
 
         hasChildren(data: ItemView): boolean {
             return this.getDataChildren(data).length > 0
+        }
+
+        fetch(node: TreeNode<ItemView>, dataId?: string): Q.Promise<ItemView> {
+            var deferred = wemQ.defer<ItemView>();
+            var itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId)) : node.getData().getItemId();
+            deferred.resolve(this.pageView.getItemViewById(itemViewId));
+            return deferred.promise;
         }
 
         fetchRoot(): wemQ.Promise<ItemView[]> {

@@ -55,7 +55,7 @@ module app.wizard.page {
     import PageSelectedEvent = api.liveedit.PageSelectedEvent;
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
@@ -161,7 +161,8 @@ module app.wizard.page {
             });
 
             this.insertablesPanel = new InsertablesPanel({
-                liveEditPage: this.liveEditPageProxy
+                liveEditPage: this.liveEditPageProxy,
+                contentWizardPanel: config.contentWizardPanel,
             });
 
             this.frameContainer = new Panel("frame-container");
@@ -172,8 +173,8 @@ module app.wizard.page {
             this.appendChild(this.liveEditPageProxy.getLoadMask());
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
+                liveEditPage: this.liveEditPageProxy,
                 liveFormPanel: this,
-                contentWizardPanel: config.contentWizardPanel,
                 inspectionPanel: this.inspectionsPanel,
                 emulatorPanel: this.emulatorPanel,
                 insertablesPanel: this.insertablesPanel
@@ -205,7 +206,7 @@ module app.wizard.page {
             this.liveEditModel = liveEditModel;
 
             this.content = liveEditModel.getContent();
-            this.contextWindow.setContent(this.content);
+            this.insertablesPanel.setContent(this.content);
 
             this.pageModel = liveEditModel.getPageModel();
             this.pageModel.setIgnorePropertyChanges(true);
@@ -358,7 +359,7 @@ module app.wizard.page {
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                this.contextWindow.setPageView(this.pageView);
+                this.insertablesPanel.setPageView(this.pageView);
             });
 
             this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {
@@ -372,12 +373,12 @@ module app.wizard.page {
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView) && !event.isNew()) {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
 
-            this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectEvent) => {
+            this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideOut();

@@ -80,7 +80,7 @@ module app.browse {
             return new api.application.ListApplicationsRequest().sendAndParse();
         }
 
-        fetch(node: TreeNode<Application>): wemQ.Promise<api.application.Application> {
+        fetch(node: TreeNode<Application>, dataId?: string): wemQ.Promise<api.application.Application> {
             return this.fetchByKey(node.getData().getApplicationKey());
         }
 
