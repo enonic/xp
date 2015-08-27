@@ -179,7 +179,8 @@ module api.liveedit {
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel)) {
+            var isCustomized = this.liveEditModel.getPageModel().isCustomized();
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel) && !isCustomized) {
                 this.setLocked(true);
             }
 
@@ -234,7 +235,7 @@ module api.liveedit {
                 if (this.isLocked()) {
                     this.setLocked(false);
                 }
-            })
+            });
 
             this.onMouseOverView(() => {
                 var isDragging = DragAndDrop.get().isDragging();
