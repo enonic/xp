@@ -496,9 +496,14 @@ public final class PropertySet
                     builder.add( property );
                 }
 
-                if ( property.getValue() instanceof PropertySetValue )
+                final Value propertyValue = property.getValue();
+                if ( propertyValue instanceof PropertySetValue )
                 {
-                    builder.addAll( ( (PropertySet) property.getValue().getObject() ).getProperties( valueType ) );
+                    final Object valueObject = propertyValue.getObject();
+                    if ( valueObject instanceof PropertySet )
+                    {
+                        builder.addAll( ( (PropertySet) valueObject ).getProperties( valueType ) );
+                    }
                 }
             }
         }

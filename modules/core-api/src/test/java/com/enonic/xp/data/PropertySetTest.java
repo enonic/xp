@@ -192,7 +192,7 @@ public class PropertySetTest
         assertNotNull( addedProperty );
         assertEquals( "myProp", addedProperty.getName() );
         assertEquals( 0, addedProperty.getIndex() );
-        assertEquals( ValueTypes.LONG, addedProperty.getValue().getType() );
+        assertSame( ValueTypes.LONG, addedProperty.getValue().getType() );
         assertEquals( 42l, addedProperty.getValue().asLong().longValue() );
     }
 }
