@@ -1,7 +1,6 @@
 .item-view-context-menu {
   .reset(); // both context menu and names and icon view have their own resets
   .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
-  .arrow(#fff, 7px);
 
   z-index: @z-index-context-menu;
   position: absolute;
@@ -9,6 +8,22 @@
   display: none;
   width: 160px;
   padding: 4px;
+
+  .item-view-context-menu-arrow {
+    .arrow(#fff, 7px);
+
+    position: absolute;
+
+    left: 50%;
+
+    &.bottom {
+      top: -7px;
+    }
+
+    &.top {
+      bottom: -7px;
+    }
+  }
 
   .names-and-icon-view {
     padding: 8px 5px;
