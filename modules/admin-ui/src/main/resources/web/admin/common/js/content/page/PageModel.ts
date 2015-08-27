@@ -439,7 +439,7 @@ module api.content.page {
             return !!this.template;
         }
 
-        hasDefaultTemplate(): boolean {
+        hasDefaultPageTemplate(): boolean {
             return !!this.defaultTemplate;
         }
 

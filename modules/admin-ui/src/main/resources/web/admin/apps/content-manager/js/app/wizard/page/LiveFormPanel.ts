@@ -428,7 +428,7 @@ module app.wizard.page {
         private clearSelection(): void {
             var pageModel = this.liveEditModel.getPageModel();
             var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
-            if (pageModel.hasDefaultTemplate() || customizedWithController) {
+            if (pageModel.hasDefaultPageTemplate() || customizedWithController) {
                 this.contextWindow.clearSelection();
             } else {
                 this.inspectPage();
