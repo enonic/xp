@@ -47,7 +47,6 @@ module api.app.browse {
             this.filterPanel = params.filterPanel;
 
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
-            this.gridAndToolbarContainer.appendChild(this.browseToolbar);
 
             var gridPanel = new api.ui.panel.Panel();
             gridPanel.appendChild(this.treeGrid);
@@ -56,6 +55,10 @@ module api.app.browse {
 
             this.gridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
+            this.gridAndDetailSplitPanel.prependChild(this.browseToolbar);
+
+            this.browseToolbar.addClass("browse-toolbar");
+            this.gridAndDetailSplitPanel.addClass("grid-and-detail-split-panel");
 
             if (this.filterPanel) {
                 this.filterAndGridAndDetailSplitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
