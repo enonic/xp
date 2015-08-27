@@ -14,6 +14,7 @@ module api.form.inputtype.text.htmlarea {
         private link: HTMLElement;
         private linkText: string;
         private anchorList: string[];
+        private onlyTextSelected: boolean;
 
         private static tabNames: any = {
             content: "Content",
@@ -32,6 +33,7 @@ module api.form.inputtype.text.htmlarea {
             this.link = config.element;
             this.linkText = config.text;
             this.anchorList = config.anchorList;
+            this.onlyTextSelected = config.onlyTextSelected;
 
             super(config.editor, new api.ui.dialog.ModalDialogHeader("Insert Link"));
         }
@@ -168,13 +170,17 @@ module api.form.inputtype.text.htmlarea {
         }
 
         protected getMainFormItems(): FormItem [] {
-            var linkTextFormItem = this.createFormItem("linkText", "Text", Validators.required, this.getLinkText());
-            this.setFirstFocusField(linkTextFormItem.getInput());
+            var items = [];
+            if (this.onlyTextSelected) {
+                var linkTextFormItem = this.createFormItem("linkText", "Text", Validators.required, this.getLinkText());
+                this.setFirstFocusField(linkTextFormItem.getInput());
 
-            return [
-                linkTextFormItem,
-                this.createFormItem("toolTip", "Tooltip", null, this.getToolTip())
-            ];
+                items.push(linkTextFormItem);
+            }
+
+            items.push(this.createFormItem("toolTip", "Tooltip", null, this.getToolTip()));
+
+            return items;
         }
 
         private createDockedPanel(): DockedPanel {
@@ -321,7 +327,7 @@ module api.form.inputtype.text.htmlarea {
             var linkEl: api.dom.AEl,
                 deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck(),
                 selectedTab = <api.ui.tab.TabBarItem>deck.getSelectedNavigationItem(),
-                linkText: string = (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue(),
+                linkText: string = this.onlyTextSelected ? (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue() : "",
                 toolTip: string = (<api.ui.text.TextInput>this.getFieldById("toolTip")).getValue();
 
             switch (selectedTab.getLabel()) {
@@ -351,7 +357,20 @@ module api.form.inputtype.text.htmlarea {
                 this.link.parentElement.replaceChild(linkEl.getHTMLElement(), this.link);
             }
             else {
-                this.getEditor().insertContent(linkEl.toString());
+                if (this.onlyTextSelected) {
+                    this.getEditor().insertContent(linkEl.toString());
+                }
+                else {
+                    var linkAttrs =  {
+                        href: linkEl.getHref(),
+                        target: linkEl.getTarget() ? linkEl.getTarget() : null,
+                        rel: null,
+                        "class": null,
+                        title: linkEl.getTitle()
+                    };
+
+                    this.getEditor().execCommand('mceInsertLink', false, linkAttrs);
+                }
             }
         }
 

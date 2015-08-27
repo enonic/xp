@@ -18,6 +18,7 @@ interface HtmlAreaEditor extends HtmlAreaObservable {
     settings: Object
     insertContent: (content: string, args?: Object) => string
     nodeChanged: (args?: Object) => void
+    execCommand: (c: string, u: Boolean, v: Object) => void;
 }
 
 interface HtmlAreaUndoManager {
