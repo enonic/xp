@@ -28,7 +28,6 @@ module api.content.site.inputtype.siteconfigurator {
 
         constructor(application: Application, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             super("site-view");
-            debugger;
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
