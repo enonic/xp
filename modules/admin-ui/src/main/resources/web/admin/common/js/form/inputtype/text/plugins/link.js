@@ -42,13 +42,14 @@ tinymce.PluginManager.add('link', function (editor) {
 
         var selectedElm = editor.selection.getNode();
         var anchorElm = editor.dom.getParent(selectedElm, 'a[href]');
-        var linkText = isOnlyTextSelected(anchorElm) ? editor.selection.getContent() : "";
+        var onlyTextSelected = isOnlyTextSelected(anchorElm);
 
         editor.execCommand("openLinkDialog", {
             editor: editor,
             element: anchorElm,
-            text: linkText,
-            anchorList: getAnchorList()
+            text: editor.selection.getContent(),
+            anchorList: getAnchorList(),
+            onlyTextSelected: onlyTextSelected
         });
     }
 

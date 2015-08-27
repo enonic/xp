@@ -385,6 +385,7 @@ module api.form.inputtype.text {
         element: HTMLElement
         text: string
         anchorList: string[]
+        onlyTextSelected: boolean
     }
 
     export interface HtmlAreaImage {
