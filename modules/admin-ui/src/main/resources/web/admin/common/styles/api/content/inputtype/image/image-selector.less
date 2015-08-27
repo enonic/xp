@@ -47,7 +47,6 @@
     position: absolute;
     top: 0;
     right: 0;
-    max-width: initial !important;
 
     .dropzone-container {
       display: block !important;
@@ -80,11 +79,14 @@
     }
 
     &:not(.minimized) {
+      width: 100%;
+      max-width: initial !important;
       .dropzone {
         overflow: visible;
+        z-index: @z-index-mask !important;
         &:before {
-          .dropcircle(40px);
-          padding: 20px 5px 0;
+          .dropcircle(60px);
+          padding: 40px 5px 0;
           line-height: 20px;
         }
       }

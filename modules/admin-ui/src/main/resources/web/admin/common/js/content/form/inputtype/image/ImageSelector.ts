@@ -342,12 +342,10 @@ module api.content.form.inputtype.image {
             // drag leave occurs on the parent element that we came from
             // meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
-            body.onDragEnter((event: DragEvent) => {
+            this.onDragEnter((event: DragEvent) => {
                 if (iFrame.isVisible()) {
                     var target = <HTMLElement> event.target;
-                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                        this.uploader.toggleClass("minimized", false);
-                    }
+                    this.uploader.toggleClass("minimized", false);
                     dragOverEl = target;
                 }
             });
