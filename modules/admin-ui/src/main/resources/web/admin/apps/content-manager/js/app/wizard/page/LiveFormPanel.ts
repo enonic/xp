@@ -285,7 +285,7 @@ module app.wizard.page {
         loadPage() {
             if (this.pageSkipReload == false && !this.pageLoading) {
 
-                this.contextWindow.clearSelection();
+                this.clearSelection();
 
                 this.pageLoading = true;
                 this.liveEditPageProxy.load();
@@ -385,7 +385,7 @@ module app.wizard.page {
                 } else if (toggler.isActive() && !this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideIn();
                 }
-                this.contextWindow.clearSelection();
+                this.clearSelection();
             });
 
             this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
@@ -398,7 +398,7 @@ module app.wizard.page {
                     this.pageModel.initializePageFromDefault(this);
                 }
 
-                this.contextWindow.clearSelection();
+                this.clearSelection();
             });
 
             this.liveEditPageProxy.onComponentViewDragDropped((event: ComponentViewDragDroppedEvent) => {
@@ -421,17 +421,22 @@ module app.wizard.page {
             });
         }
 
-        private inspectContent(contentId: api.content.ContentId) {
-            this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
-        }
-
         private inspectPage() {
-
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
+        private clearSelection(): void {
+            var pageModel = this.liveEditModel.getPageModel();
+            var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
+            if (pageModel.hasDefaultTemplate() || customizedWithController) {
+                this.contextWindow.clearSelection();
+            } else {
+                this.inspectPage();
+            }
+        }
+
         clearPageViewSelectionAndOpenInspectPage() {
-            if(this.pageView && this.pageView.hasSelectedView()) {
+            if (this.pageView && this.pageView.hasSelectedView()) {
                 this.pageView.getSelectedView().deselect();
             }
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
