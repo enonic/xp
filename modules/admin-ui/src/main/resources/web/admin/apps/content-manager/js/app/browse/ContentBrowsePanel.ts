@@ -41,6 +41,8 @@ module app.browse {
 
         private detailsPanel: DetailsPanel;
 
+        private detailsPanelForLargeScreens: DetailsPanel;
+
         constructor() {
 
             this.contentTreeGrid = new app.browse.ContentTreeGrid();
@@ -55,11 +57,14 @@ module app.browse {
 
             this.contentTreeGridMask = new api.ui.mask.LoadMask(this.contentTreeGrid);
 
+            this.detailsPanelForLargeScreens = DetailsPanel.create().setUseSplitter(false).build();
+
             super({
                 browseToolbar: this.toolbar,
                 treeGrid: this.contentTreeGrid,
                 browseItemPanel: this.contentBrowseItemPanel,
-                filterPanel: this.contentFilterPanel
+                filterPanel: this.contentFilterPanel,
+                hasDetailsPanel: true
             });
 
             var showMask = () => {
@@ -101,8 +106,46 @@ module app.browse {
             });
         }
 
+
+        protected initSplitPanelWithDetailsForLargeScreen() {
+
+            var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridAndDetailSplitPanel(),
+                this.detailsPanelForLargeScreens).
+                setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).
+                setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
+                build();
+
+            contentPanelsAndDetailPanel.addClass("split-panel-with-details");
+            contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
+            contentPanelsAndDetailPanel.hidePanel(2);
+
+            this.appendChild(contentPanelsAndDetailPanel);
+
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                if (item.isInRangeOrBigger(ResponsiveRanges._1920_UP)) {
+                    if (contentPanelsAndDetailPanel.isPanelHidden(2)) {
+                        contentPanelsAndDetailPanel.showPanel(2);
+                    }
+                } else {
+                    if (!contentPanelsAndDetailPanel.isPanelHidden(2)) {
+                        contentPanelsAndDetailPanel.hidePanel(2);
+                    }
+                }
+            });
+
+            this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                if (browseItems.length == 1) {
+                    var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                    this.detailsPanelForLargeScreens.setItem(item);
+                } else {
+                    this.detailsPanelForLargeScreens.reset();
+                }
+            });
+        }
+
         private initDetailsPanel() {
-            this.detailsPanel = new DetailsPanel();
+            this.detailsPanel = DetailsPanel.create().build();
 
             var action = new app.view.detail.DetailsPanelToggleAction(this.detailsPanel);
             var actionButton = new DetailsPanelToggleButton(action);
@@ -114,11 +157,14 @@ module app.browse {
                     this.detailsPanel.setItem(item);
                     action.setEnabled(true);
                 } else {
-                    action.setEnabled(false);
-                    action.setExpanded(false);
                     this.detailsPanel.slideOut();
-                    actionButton.removeClass("expanded");
+                    actionButton.disable();
                 }
+            });
+
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                this.detailsPanel.slideOut();
+                actionButton.unExpand();
             });
 
             this.toolbar.appendChild(actionButton);
