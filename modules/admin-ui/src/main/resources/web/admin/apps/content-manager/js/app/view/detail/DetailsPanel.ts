@@ -30,6 +30,8 @@ module app.view.detail {
         private slideInFunction: () => void;
         private slideOutFunction: () => void;
 
+        private activeWidget: WidgetView;
+
         constructor(builder: Builder) {
             super("details-panel");
             this.setDoOffset(false);
@@ -45,9 +47,26 @@ module app.view.detail {
                 this.onRendered(() => this.onRenderedHandler());
             }
 
+            this.onShown((event) => {
+                if (this.item) {
+                    this.resetItem();
+                } // this helps to re-init widget view sizes when window size change triggers detail panel to show
+            });
+
             this.initNameLabel(builder.geUseNameLabel(), builder.getName());
 
             this.appendChild(this.detailsContainer)
+        }
+
+        setActiveWidget(widgetView: WidgetView) {
+            if (this.activeWidget) {
+                this.activeWidget.deactivate();
+            }
+            this.activeWidget = widgetView;
+        }
+
+        deactivateActiveWidget() {
+            this.activeWidget = null;
         }
 
         private initSlideFunctions(slideFrom: SLIDE_FROM) {
@@ -115,7 +134,7 @@ module app.view.detail {
         }
 
         private initCommonWidgetsViews() {
-            var versionsWidget = new WidgetView("Version history");
+            var versionsWidget = new WidgetView("Version history", this);
             versionsWidget.setWidgetContents(this.versionsPanel);
             this.addWidgets([versionsWidget]);
         }
@@ -125,7 +144,7 @@ module app.view.detail {
 
             return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: api.content.Widget[]) => {
                 widgets.forEach((widget) => {
-                    this.addWidget(WidgetView.fromWidget(widget, this.item));
+                    this.addWidget(WidgetView.fromWidget(widget, this));
                 })
             }).catch((reason: any) => {
                 if (reason && reason.message) {
@@ -207,11 +226,23 @@ module app.view.detail {
             })
         }
 
+        getItem(): ViewItem<ContentSummary> {
+            return this.item;
+        }
+
         reset() {
             this.removeDetails();
             if (this.useNameLabel) {
                 this.labelEl.setHtml("");
                 this.labelEl.setVisible(false);
+            }
+        }
+
+        resetItem() {
+            if (this.item) {
+                var temp = this.item;
+                this.item = null;
+                this.setItem(temp);
             }
         }
 

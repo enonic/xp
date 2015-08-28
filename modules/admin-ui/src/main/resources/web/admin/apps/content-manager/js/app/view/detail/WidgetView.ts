@@ -11,18 +11,27 @@ module app.view.detail {
         private widgetName: string;
         private widgetContents: api.dom.DivEl = new api.dom.DivEl("widget-content");
         private animationTimer;
+        private detailsPanel: DetailsPanel;
+        private normalHeightOfContent: number;
 
-        constructor(name: string) {
+        constructor(name: string, detailsPanel: DetailsPanel) {
             super("widget");
+            this.detailsPanel = detailsPanel;
 
             this.widgetName = name;
             this.initWidgetToggleButton();
-            this.widgetContents.setVisible(false);
+            this.onRendered((event) => {
+                this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
+                this.slideOut();
+            });
             this.appendChild(this.widgetContents);
         }
 
-        static fromWidget(widget: Widget, item?: ViewItem<ContentSummary>): WidgetView {
-            var widgetView = new WidgetView(widget.getDisplayName()),
+        static fromWidget(widget: Widget, detailsPanel: DetailsPanel): WidgetView {
+
+            var item: ViewItem<ContentSummary> = detailsPanel.getItem();
+
+            var widgetView = new WidgetView(widget.getDisplayName(), detailsPanel),
                 widgetViewContent : api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
 
             if (item) {
@@ -55,31 +64,27 @@ module app.view.detail {
         }
 
         slideOut() {
-            this.widgetContents.setVisible(false);
-            /*this.widgetContents.getEl().getHTMLElement().style.maxHeight = "0px";
-             // there is a 100ms animation so wait until it's finished
-             if (this.animationTimer) {
-             clearTimeout(this.animationTimer);
-             }
-             this.animationTimer = setTimeout(() => {
-             // this.updateFrameSize();
-             this.animationTimer = null;
-             }, 100);*/
+            this.widgetContents.getEl().setHeightPx(0);
         }
 
         slideIn() {
-            this.widgetContents.setVisible(true);
-            /*this.widgetContents.getEl().getHTMLElement().style.maxHeight = "600px";
-             // there is a 100ms animation so wait until it's finished
-             if (this.animationTimer) {
-             clearTimeout(this.animationTimer);
-             }
-             this.animationTimer = setTimeout(() => {
-             // this.updateFrameSize();
-             this.animationTimer = null
-             }, 100);*/
+            this.widgetContents.getEl().setHeightPx(this.normalHeightOfContent);
         }
 
+        setActive() {
+            this.detailsPanel.setActiveWidget(this);
+            this.slideIn();
+        }
+
+        setInactive() {
+            this.detailsPanel.deactivateActiveWidget();
+            this.deactivate();
+        }
+
+        deactivate() {
+            this.slideOut();
+            this.removeClass("expanded");
+        }
     }
 
     export class WidgetViewToggleButton extends api.dom.DivEl {
@@ -99,9 +104,9 @@ module app.view.detail {
                 this.widget.toggleClass("expanded");
 
                 if (this.widget.hasClass("expanded")) {
-                    this.widget.slideIn();
+                    this.widget.setActive();
                 } else {
-                    this.widget.slideOut();
+                    this.widget.setInactive();
                 }
             });
         }
