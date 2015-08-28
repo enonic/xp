@@ -7,11 +7,11 @@ import com.enonic.xp.node.NodeId;
 
 public interface BranchService
 {
-    public String store( final StoreBranchDocument storeBranchDocument, final BranchContext context );
+    String store( final StoreBranchDocument storeBranchDocument, final BranchContext context );
 
-    public void delete( final NodeId nodeId, final BranchContext context );
+    void delete( final NodeId nodeId, final BranchContext context );
 
-    public NodeBranchVersion get( final NodeId nodeId, final BranchContext context );
+    NodeBranchVersion get( final NodeId nodeId, final BranchContext context );
 
-    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext branchContext );
+    NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext branchContext );
 }

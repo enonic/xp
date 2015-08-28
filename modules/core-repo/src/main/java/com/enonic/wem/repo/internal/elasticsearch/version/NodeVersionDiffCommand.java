@@ -67,8 +67,6 @@ class NodeVersionDiffCommand
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.NODE_PATH.getPath() ).order( SortOrder.ASC ) ).
             build();
 
-        //System.out.println( esQuery );
-
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
         final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();

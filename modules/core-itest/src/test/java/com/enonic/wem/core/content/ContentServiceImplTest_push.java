@@ -44,6 +44,8 @@ public class ContentServiceImplTest_push
             allowPublishOutsideSelection( false ).
             build();
 
+        refresh();
+
         final PushContentsResult push = this.contentService.push( pushParams );
 
         assertEquals( 1, push.getPushedContent().getSize() );
@@ -65,6 +67,8 @@ public class ContentServiceImplTest_push
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( false ).
             build();
+
+        refresh();
 
         this.contentService.push( pushParams );
 
@@ -135,6 +139,8 @@ public class ContentServiceImplTest_push
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( allowPublishOutsideSelection ).
             build();
+
+        refresh();
 
         return this.contentService.push( pushParams );
     }

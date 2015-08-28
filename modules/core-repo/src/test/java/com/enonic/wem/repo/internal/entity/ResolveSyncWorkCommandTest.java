@@ -402,6 +402,8 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( node1_1_1, node2.path() );
 
+        refresh();
+
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
@@ -983,6 +985,8 @@ public class ResolveSyncWorkCommandTest
         final Node a1d = getNodeByPath( NodePath.create( "/s1-copy/a1" ).build() );
         final Node a2d = getNodeByPath( NodePath.create( "/s1-copy/a2" ).build() );
         final Node a2_1d = getNodeByPath( NodePath.create( "/s1-copy/a2/a2_1" ).build() );
+
+        refresh();
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( s1d.id(), true );
 

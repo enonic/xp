@@ -332,6 +332,8 @@ public class FindNodesWithVersionDifferenceCommandTest
 
     private NodeVersionDiffResult getDiff( final Branch source, final Branch target, final NodePath nodePath )
     {
+        refresh();
+
         final NodeVersionDiffQuery.Builder queryBuilder = NodeVersionDiffQuery.create().
             target( target ).
             source( source );

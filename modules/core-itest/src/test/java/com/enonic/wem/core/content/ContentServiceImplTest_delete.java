@@ -134,6 +134,8 @@ public class ContentServiceImplTest_delete
             allowPublishOutsideSelection( false ).
             build();
 
+        refresh();
+
         this.contentService.push( pushParams );
 
         //Deletes the content
@@ -201,6 +203,8 @@ public class ContentServiceImplTest_delete
             allowPublishOutsideSelection( true ).
             build();
 
+        refresh();
+
         final PushContentsResult push = this.contentService.push( pushParams );
 
         //Deletes the content
@@ -258,6 +262,8 @@ public class ContentServiceImplTest_delete
             allowPublishOutsideSelection( false ).
             build();
 
+        refresh();
+
         final PushContentsResult push = this.contentService.push( pushParams );
 
         //Creates an unpublished child
@@ -276,6 +282,7 @@ public class ContentServiceImplTest_delete
         final Contents deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 3, deletedContents.getSize() );
+
         for ( Content deletedContent : deletedContents )
         {
             if ( unpublishedChildContent.getId().equals( deletedContent.getId() ) )
