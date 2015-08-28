@@ -18,7 +18,7 @@ public class SimpleCache
     private Map<StorageSettings, MemoryStore> memoryStoreMap = Maps.newConcurrentMap();
 
     @Override
-    public String store( final StoreRequest request )
+    public String put( final StoreRequest request )
     {
         Preconditions.checkNotNull( request.getId(), "id must be provided for memoryDao" );
 
@@ -35,6 +35,14 @@ public class SimpleCache
         store.put( request.getId(), request.getPath(), request.getData() );
 
         return request.getId();
+    }
+
+    @Override
+    public void remove( final DeleteRequest request )
+    {
+        MemoryStore store = memoryStoreMap.get( request.getSettings() );
+
+        store.remove( request.getId() );
     }
 
     @Override

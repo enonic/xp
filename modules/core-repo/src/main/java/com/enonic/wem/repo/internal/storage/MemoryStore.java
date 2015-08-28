@@ -20,6 +20,12 @@ public class MemoryStore
         this.pathEntryMap.put( path, data );
     }
 
+    public void remove( final String id )
+    {
+        idEntryMap.remove( id );
+
+    }
+
     public StorageData getById( final String id )
     {
         return idEntryMap.get( id );

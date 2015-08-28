@@ -12,7 +12,7 @@ import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 
-public class BranchStorageDocFactory
+public class BranchStorageRequestFactory
 {
     public static StoreRequest create( final StoreBranchDocument doc, final BranchContext context )
     {

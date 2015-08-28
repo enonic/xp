@@ -7,6 +7,8 @@ public interface StorageDao
 {
     String store( final StoreRequest request );
 
+    boolean delete( final DeleteRequest request );
+
     GetResult getById( final GetByIdRequest request );
 
     GetResult getByPath( final GetByPathRequest request );

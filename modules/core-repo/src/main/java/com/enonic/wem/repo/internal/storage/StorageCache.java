@@ -4,7 +4,9 @@ import com.enonic.wem.repo.internal.index.result.GetResult;
 
 public interface StorageCache
 {
-    String store( final StoreRequest request );
+    String put( final StoreRequest request );
+
+    void remove( final DeleteRequest request );
 
     GetResult getById( final GetByIdRequest request );
 

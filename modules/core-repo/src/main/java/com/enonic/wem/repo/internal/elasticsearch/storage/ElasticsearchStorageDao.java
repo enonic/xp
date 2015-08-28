@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.storage;
 
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByParentRequest;
 import com.enonic.wem.repo.internal.storage.GetByPathRequest;
@@ -55,9 +58,27 @@ public class ElasticsearchStorageDao
         return doStore( indexRequest, request.getTimeout() );
     }
 
+
+    @Override
+    public boolean delete( final DeleteRequest request )
+    {
+        final StorageSettings settings = request.getSettings();
+        final String id = request.getId();
+
+        final DeleteRequestBuilder builder = new DeleteRequestBuilder( this.client ).
+            setId( id ).
+            setIndex( settings.getStorageName().getName() ).
+            setType( settings.getStorageType().getName() ).
+            setRefresh( request.isForceRefresh() );
+
+        final DeleteResponse deleteResponse = this.client.delete( builder.request() ).
+            actionGet( request.getTimeoutAsString() );
+
+        return deleteResponse.isFound();
+    }
+
     private String doStore( final IndexRequest request, final String timeout )
     {
-
         final IndexResponse indexResponse = this.client.index( request ).
             actionGet( timeout );
 

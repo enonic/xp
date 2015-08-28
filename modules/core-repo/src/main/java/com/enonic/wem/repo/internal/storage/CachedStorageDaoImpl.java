@@ -23,11 +23,21 @@ public class CachedStorageDaoImpl
     {
         final String id = this.storageDaoInternal.store( request );
 
-        storageCache.store( StoreRequest.from( request ).
+        storageCache.put( StoreRequest.from( request ).
             id( id ).
             build() );
 
         return id;
+    }
+
+    @Override
+    public boolean delete( final DeleteRequest request )
+    {
+        storageCache.remove( request );
+
+        LOG.info( "Removed from cache" );
+
+        return this.storageDaoInternal.delete( request );
     }
 
     @Override

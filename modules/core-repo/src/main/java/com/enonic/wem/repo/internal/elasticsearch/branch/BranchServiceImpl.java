@@ -45,19 +45,13 @@ public class BranchServiceImpl
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
     {
-        return storageDao.store( BranchStorageDocFactory.create( storeBranchDocument, context ) );
+        return storageDao.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
     }
 
     @Override
     public void delete( final NodeId nodeId, final BranchContext context )
     {
-        DeleteNodeVersionCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepositoryId() ).
-            branch( context.getBranch() ).
-            nodeId( nodeId ).
-            build().
-            execute();
+        storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
     }
 
     @Override
