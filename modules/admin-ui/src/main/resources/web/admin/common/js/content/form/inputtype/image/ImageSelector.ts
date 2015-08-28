@@ -345,6 +345,7 @@ module api.content.form.inputtype.image {
             this.onDragEnter((event: DragEvent) => {
                 if (iFrame.isVisible()) {
                     var target = <HTMLElement> event.target;
+                    this.uploader.giveFocus();
                     this.uploader.toggleClass("minimized", false);
                     dragOverEl = target;
                 }
@@ -354,6 +355,7 @@ module api.content.form.inputtype.image {
                 if (iFrame.isVisible()) {
                     var targetEl = <HTMLElement> event.target;
                     if (dragOverEl == targetEl) {
+                        this.uploader.giveBlur();
                         this.uploader.toggleClass("minimized", true);
                     }
                 }

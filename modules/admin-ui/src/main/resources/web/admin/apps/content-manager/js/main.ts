@@ -86,6 +86,8 @@ function startApplication() {
 
     initToolTip();
 
+    api.util.AppHelper.preventDragRedirect();
+
     var sortDialog = new app.browse.SortContentDialog();
     var moveDialog = new app.browse.MoveContentDialog();
     var editPermissionsDialog = new app.wizard.EditPermissionsDialog();
@@ -98,5 +100,5 @@ function startApplication() {
                 appPanel.activateCurrentKeyBindings();
             }
         }
-    }
+    };
 }
