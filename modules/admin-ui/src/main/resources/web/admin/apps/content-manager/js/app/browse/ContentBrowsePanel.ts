@@ -162,11 +162,6 @@ module app.browse {
                 }
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                this.detailsPanel.slideOut();
-                actionButton.unExpand();
-            });
-
             this.toolbar.appendChild(actionButton);
             this.appendChild(this.detailsPanel);
         }
