@@ -192,6 +192,8 @@ module api.liveedit {
         }
 
         private bindMouseListeners() {
+            var pageView = this.getPageView();
+
             this.mouseEnterListener = this.handleMouseEnter.bind(this);
             this.onMouseEnter(this.mouseEnterListener);
 
@@ -226,7 +228,7 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = this.getPageView().hasSelectedView();
+                var hasSelectedView = pageView.hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!hasSelectedView && !isDragging) {
@@ -246,7 +248,7 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = this.getPageView().hasSelectedView();
+                var hasSelectedView = pageView.hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!hasSelectedView && !isDragging) {
@@ -257,7 +259,10 @@ module api.liveedit {
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
 
-            this.getPageView().onItemViewAdded(this.shaderClickedListener);
+            pageView.onItemViewAdded(this.shaderClickedListener);
+            this.onRemoved(() => {
+                pageView.unItemViewAdded(this.shaderClickedListener);
+            });
         }
 
         private unbindMouseListeners() {
@@ -271,7 +276,6 @@ module api.liveedit {
             Shader.get().unClicked(this.shaderClickedListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
-            this.getPageView().unItemViewAdded(this.shaderClickedListener);
         }
 
         highlight() {
