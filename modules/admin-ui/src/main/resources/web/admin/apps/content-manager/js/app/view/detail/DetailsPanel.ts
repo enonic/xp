@@ -26,22 +26,26 @@ module app.view.detail {
         private item: ViewItem<ContentSummary>;
 
         private useNameLabel: boolean;
+        private useSplitter: boolean;
         private slideInFunction: () => void;
         private slideOutFunction: () => void;
 
-        constructor(useNameLabel: boolean = true, slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT, name?: string) {
+        constructor(builder: Builder) {
             super("details-panel");
             this.setDoOffset(false);
-            this.initSlideFunctions(slideFrom);
+            this.initSlideFunctions(builder.getSlideFrom());
+            this.useSplitter = builder.getUseSplitter();
 
             this.versionsPanel = new ContentItemVersionsPanel();
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
-            this.splitter = new api.dom.DivEl("splitter");
-            this.appendChild(this.splitter);
 
-            this.onRendered(() => this.onRenderedHandler());
+            if (this.useSplitter) {
+                this.splitter = new api.dom.DivEl("splitter");
+                this.appendChild(this.splitter);
+                this.onRendered(() => this.onRenderedHandler());
+            }
 
-            this.initNameLabel(useNameLabel, name);
+            this.initNameLabel(builder.geUseNameLabel(), builder.getName());
 
             this.appendChild(this.detailsContainer)
         }
@@ -75,6 +79,7 @@ module app.view.detail {
 
             if (useNameLabel) {
                 this.labelEl = new api.dom.SpanEl("details-panel-label");
+                this.labelEl.setVisible(false);
                 if (name) {
                     this.labelEl.setHtml(name);
                 }
@@ -202,9 +207,20 @@ module app.view.detail {
             })
         }
 
+        reset() {
+            this.removeDetails();
+            if (this.useNameLabel) {
+                this.labelEl.setHtml("");
+                this.labelEl.setVisible(false);
+            }
+        }
+
         setName(name: string) {
             if (this.useNameLabel) {
                 this.labelEl.setHtml(name);
+                if (!this.labelEl.isVisible()) {
+                    this.labelEl.setVisible(true);
+                }
             }
         }
 
@@ -272,17 +288,82 @@ module app.view.detail {
                 this.animationTimer = null
             }, timer);
         }
+
+        static create(): Builder {
+            return new Builder();
+        }
+    }
+
+    export class Builder {
+
+        private useNameLabel: boolean = true;
+        private slideFrom: SLIDE_FROM = SLIDE_FROM.RIGHT;
+        private name: string;
+        private useSplitter: boolean = true;
+
+        public setUseNameLabel(value: boolean): Builder {
+            this.useNameLabel = value;
+            return this;
+        }
+
+        public setSlideFrom(value: app.view.detail.SLIDE_FROM): Builder {
+            this.slideFrom = value;
+            return this;
+        }
+
+        public setName(value: string): Builder {
+            this.name = value;
+            return this;
+        }
+
+        public setUseSplitter(value: boolean): Builder {
+            this.useSplitter = value;
+            return this;
+        }
+
+        public geUseNameLabel(): boolean {
+            return this.useNameLabel;
+        }
+
+        public getSlideFrom(): app.view.detail.SLIDE_FROM {
+            return this.slideFrom;
+        }
+
+        public getName(): string {
+            return this.name;
+        }
+
+        public getUseSplitter(): boolean {
+            return this.useSplitter;
+        }
+
+        public build(): DetailsPanel {
+            return new DetailsPanel(this);
+        }
     }
 
     export class DetailsPanelToggleButton extends api.ui.button.ActionButton {
 
+        private toggleAction: DetailsPanelToggleAction;
+
         constructor(action: DetailsPanelToggleAction) {
             super(action);
+            this.toggleAction = action;
             this.addClass("details-panel-toggle-button");
 
             action.onExecuted(() => {
                 this.toggleClass("expanded", action.isExpanded());
             });
+        }
+
+        disable() {
+            this.toggleAction.setEnabled(false);
+            this.unExpand();
+        }
+
+        unExpand() {
+            this.toggleAction.setExpanded(false);
+            this.removeClass("expanded");
         }
     }
 

@@ -287,6 +287,7 @@ module api.ui.panel {
 
             if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
                 this.firstPanelSize = (dragOffset / splitPanelSize) * 100;
+                this.setSecondPanelSize(100 - this.firstPanelSize, SplitPanelUnit.PERCENT);
             } else {
                 this.firstPanelSize = dragOffset;
             }
@@ -353,7 +354,7 @@ module api.ui.panel {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
                 ResponsiveManager.fireResizeEvent();
-                if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
+                if (this.firstPanelUnit == SplitPanelUnit.PERCENT && this.secondPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness / 2) + "px)");
                 } else {
@@ -397,6 +398,11 @@ module api.ui.panel {
                 return;
             }
             this.splitterThickness = this.previousSplitterThickness;
+            if (this.isHorizontal()) {
+                this.splitter.getEl().setHeightPx(this.splitterThickness).setWidth(null).setLeft(null);
+            } else {
+                this.splitter.getEl().setWidthPx(this.splitterThickness).setHeight(null);
+            }
             this.splitter.show();
 
             if (panelNumber == 1) {

@@ -20,6 +20,10 @@
         display: none !important;
       }
 
+      @media screen and (min-width: 1920px) {
+        display: none !important;
+      }
+
       .transition(all 0.5s ease-in-out);
 
       &:focus {
@@ -63,11 +67,15 @@
     display: none;
   }
 
+  @media screen and (min-width: 1920px) {
+    display: none;
+  }
+
   .details-container {
     position: absolute;
     overflow-y: scroll;
     right: -15px;
-    top: 38px;
+    top: 40px;
     left: 5px;
     bottom: 0px;
 
@@ -178,5 +186,36 @@
   cursor: ew-resize;
   width: 5px;
   .notSelectable();
+}
+
+.split-panel {
+
+  &.grid-and-detail-split-panel {
+    &.vertical {
+      > .panel, .splitter {
+        top: 41px;
+      }
+    }
+  }
+
+  &.split-panel-with-details {
+    > .split-panel {
+      right: initial;
+    }
+
+    > .details-panel {
+      box-shadow: none;
+      z-index: auto;
+      display: inherit;
+
+      > .details-container {
+        left: 0px;
+      }
+
+      .widget-toggle-button {
+        border-left: 1px #d3d3d3 solid;
+      }
+    }
+  }
 }
 

@@ -16,7 +16,7 @@ module app.view {
         private headerLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
         private previewPanel: ContentItemPreviewPanel;
-        private detailsPanel: DetailsPanel = new DetailsPanel(false, app.view.detail.SLIDE_FROM.BOTTOM);
+        private detailsPanel: DetailsPanel = DetailsPanel.create().setUseNameLabel(false).setSlideFrom(app.view.detail.SLIDE_FROM.BOTTOM).build();
         private detailsToggleButton: app.view.detail.MobileDetailsPanelToggleButton;
 
         private mobileBrowseActions: MobileContentTreeGridActions;
