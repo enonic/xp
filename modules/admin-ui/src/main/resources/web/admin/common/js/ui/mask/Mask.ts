@@ -16,14 +16,16 @@ module api.ui.mask {
                     var evt = this.cloneWheelEvent(event);
                     this.masked.getHTMLElement().dispatchEvent(evt);
 
-                    if(this.isBrowserFirefox()) { //scrolling manually ff as dispatch event not working
+                    if (this.isBrowserFirefox()) { //scrolling manually ff as dispatch event not working
                         this.triggerScroll(event);
                     }
 
                 });
 
-                this.masked.onHidden((event) => {
-                    this.hide();
+                this.masked.onHidden((event: api.dom.ElementHiddenEvent) => {
+                    if (event.getTarget() == this.masked) {
+                        this.hide();
+                    }
                 });
                 this.masked.onRemoved((event) => {
                     this.remove();
@@ -131,7 +133,7 @@ module api.ui.mask {
         private triggerScroll(event: WheelEvent) {
             wemjq(this.masked.getHTMLElement()).stop().animate({
                 scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
-            }, 600/Math.abs(event.deltaY), 'linear');
+            }, 600 / Math.abs(event.deltaY), 'linear');
         }
 
     }
