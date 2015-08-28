@@ -21,7 +21,29 @@
   </xsl:template>
 
   <xsl:template
-      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/long/@name[.='bytesize']">
+      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/string[@name='imageWidth']">
+    <long>
+      <xsl:apply-templates select="@*|node()"/>
+    </long>
+  </xsl:template>
+
+  <xsl:template
+      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/string[@name='imageHeight']">
+    <long>
+      <xsl:apply-templates select="@*|node()"/>
+    </long>
+  </xsl:template>
+
+  <xsl:template
+      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/string[@name='bytesize']">
+    <long>
+      <xsl:apply-templates select="@*|node()"/>
+    </long>
+  </xsl:template>
+
+
+  <xsl:template
+      match="/node/data/property-set[@name='x']/property-set[@name='media']/property-set[@name='image-info']/string/@name[.='bytesize']">
     <xsl:attribute name="name">
       <xsl:value-of select="'byteSize'"/>
     </xsl:attribute>
