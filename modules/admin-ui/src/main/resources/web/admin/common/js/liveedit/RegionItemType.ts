@@ -4,8 +4,6 @@ module api.liveedit {
 
     export class RegionItemType extends ItemType {
 
-        static ATTRIBUTE_NAME = "portal-region";
-
         private static INSTANCE = new RegionItemType();
 
         static get(): RegionItemType {
@@ -14,7 +12,7 @@ module api.liveedit {
 
         constructor() {
             super("region", <ItemTypeConfigJson>{
-                cssSelector: '[data-portal-component-type=region]',
+                cssSelector: '[data-portal-region]',
                 draggable: false,
                 cursor: 'pointer',
                 iconCls: 'live-edit-font-icon-region',
@@ -29,7 +27,7 @@ module api.liveedit {
         }
 
         static getRegionName(element: api.dom.Element): string {
-            return element.getEl().getAttribute('data-' + RegionItemType.ATTRIBUTE_NAME);
+            return element.getEl().getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
         }
 
         createView(config: CreateItemViewConfig<ItemView,Region>): RegionView {

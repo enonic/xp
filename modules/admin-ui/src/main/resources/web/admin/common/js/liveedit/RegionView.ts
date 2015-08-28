@@ -436,11 +436,8 @@ module api.liveedit {
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
 
-            var type = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
-            if (api.util.StringHelper.isBlank(type)) {
-                return false;
-            }
-            return type == "region";
+            var name = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+            return !api.util.StringHelper.isBlank(name);
         }
 
         private parseComponentViews() {
