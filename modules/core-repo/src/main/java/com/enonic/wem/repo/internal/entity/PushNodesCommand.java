@@ -79,7 +79,7 @@ public class PushNodesCommand
                 continue;
             }
 
-            final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
+            final NodeVersionId nodeVersionId = this.branchService.get( node.id(), BranchContext.from( context ) ).getVersionId();
 
             if ( nodeVersionId == null )
             {

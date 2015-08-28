@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -9,8 +11,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
@@ -47,11 +47,8 @@ public class GetActiveNodeVersionsCommand
         {
             final Context context = ContextAccessor.current();
 
-            final NodeVersionId nodeVersionId = this.queryService.get( this.nodeId, IndexContext.create().
-                branch( branch ).
-                repositoryId( context.getRepositoryId() ).
-                authInfo( context.getAuthInfo() ).
-                build() );
+            final NodeVersionId nodeVersionId =
+                this.branchService.get( this.nodeId, BranchContext.from( branch, context.getRepositoryId() ) ).getVersionId();
 
             if ( nodeVersionId != null )
             {

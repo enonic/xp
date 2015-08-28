@@ -2,6 +2,9 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
@@ -14,8 +17,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class FindNodesByParentCommand
     extends AbstractNodeCommand
@@ -85,7 +86,7 @@ public class FindNodesByParentCommand
     private NodePath getPathFromId( final NodeId nodeId )
     {
         final Context context = ContextAccessor.current();
-        final NodeVersionId currentVersion = this.queryService.get( nodeId, IndexContext.from( context ) );
+        final NodeVersionId currentVersion = this.branchService.get( nodeId, BranchContext.from( context ) ).getVersionId();
         if ( currentVersion == null )
         {
             return null;

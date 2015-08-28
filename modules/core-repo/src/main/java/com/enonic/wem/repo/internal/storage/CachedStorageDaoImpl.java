@@ -27,6 +27,8 @@ public class CachedStorageDaoImpl
             id( id ).
             build() );
 
+        // LOG.info( "Stored in cache: " + id );
+
         return id;
     }
 
@@ -35,7 +37,7 @@ public class CachedStorageDaoImpl
     {
         storageCache.remove( request );
 
-        LOG.info( "Removed from cache" );
+        //LOG.info( "Removed from cache" );
 
         return this.storageDaoInternal.delete( request );
     }
@@ -43,11 +45,13 @@ public class CachedStorageDaoImpl
     @Override
     public GetResult getById( final GetByIdRequest request )
     {
+        //LOG.info( "Fetching: " + request.getId() );
+
         final GetResult result = storageCache.getById( request );
 
         if ( result != null )
         {
-            LOG.info( "Fetched in cache" );
+            //LOG.info( "Fetched in cache" );
             return result;
         }
 

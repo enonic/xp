@@ -2,12 +2,13 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
@@ -27,12 +28,14 @@ public class GetNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId currentVersion = this.queryService.get( this.id, IndexContext.from( context ) );
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( id, BranchContext.from( context ) );
 
-        if ( currentVersion == null )
+        if ( nodeBranchVersion == null )
         {
             return null;
         }
+
+        final NodeVersionId currentVersion = nodeBranchVersion.getVersionId();
 
         final Node node = nodeDao.getByVersionId( currentVersion );
 

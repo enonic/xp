@@ -73,7 +73,6 @@ public class ElasticsearchQueryService
         return translateResult( searchResult );
     }
 
-    @Override
     public NodeVersionId get( final NodeId nodeId, final IndexContext indexContext )
     {
         final GetResult result = elasticsearchDao.get( GetQuery.create().

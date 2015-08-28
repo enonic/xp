@@ -54,7 +54,7 @@ public class StoreNodeCommand
         }
         else
         {
-            nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
+            nodeVersionId = this.branchService.get( node.id(), BranchContext.from( context ) ).getVersionId();
         }
 
         this.branchService.store( StoreBranchDocument.create().
