@@ -4,9 +4,13 @@ module api.liveedit {
 
         private title: ItemViewContextMenuTitle;
         private menu: api.ui.menu.ContextMenu;
+        private arrow: api.dom.DivEl;
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
             super('item-view-context-menu bottom');
+
+            this.arrow = new api.dom.DivEl("item-view-context-menu-arrow bottom");
+            this.appendChild(this.arrow);
 
             this.title = menuTitle;
             if (this.title) {
@@ -69,7 +73,7 @@ module api.liveedit {
         }
 
         showAt(x: number, y: number) {
-            this.menu.showAt.call(this, x - this.getEl().getWidth() / 2, y);
+            this.menu.showAt.call(this, this.updateXToStayWithinFrame(x), this.updateYToStayWithinFrame(y));
         }
 
         moveBy(dx: number, dy: number) {
@@ -88,6 +92,65 @@ module api.liveedit {
         private stopDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
             api.dom.Body.get().unMouseMove(dragListener);
             api.dom.Body.get().unMouseUp(upListener);
+        }
+
+        private updateXToStayWithinFrame(x: number): number {
+            var minimalDistFromFrameBorder = 1;
+
+            if (this.oveflowsLeftFrameBorder(x)) {
+                this.updateArrowXPosition(x - minimalDistFromFrameBorder);
+                return minimalDistFromFrameBorder;
+            }
+            else if (this.oveflowsRightFrameBorder(x)) {
+                this.updateArrowXPosition(this.getEl().getWidth() - (window.innerWidth - x) + minimalDistFromFrameBorder);
+                return window.innerWidth - this.getEl().getWidth() - minimalDistFromFrameBorder;
+            }
+            else {
+                this.resetArrowXPosition();
+                return x - this.getEl().getWidth() / 2;
+            }
+        }
+
+        private updateYToStayWithinFrame(y:number): number {
+            var arrowHeight = 7;
+            if(this.oveflowsBottom(y, arrowHeight)) {
+                this.putArrowToBottomOfMenu();
+                return y - this.getEl().getHeight() - arrowHeight;
+            } else {
+                this.putArrowToTopOfMenu();
+                return y + arrowHeight;
+            }
+
+        }
+
+        private oveflowsLeftFrameBorder(x:number): boolean {
+            return (x - this.getEl().getWidth() / 2) < 0;
+        }
+
+        private oveflowsRightFrameBorder(x:number): boolean {
+            return (x + this.getEl().getWidth()) > window.innerWidth;
+        }
+
+        private oveflowsBottom(y:number, arrowHeight: number): boolean {
+            return (y + this.getEl().getHeight() + arrowHeight + 1) > (wemjq(window).scrollTop() + window.innerHeight);
+        }
+
+        private updateArrowXPosition(x:number) {
+            wemjq(this.arrow.getHTMLElement()).css("left", x);
+        }
+
+        private resetArrowXPosition() {
+            wemjq(this.arrow.getHTMLElement()).css("left", "");
+        }
+
+        private putArrowToBottomOfMenu() {
+            this.arrow.removeClass("bottom");
+            this.arrow.addClass("top");
+        }
+
+        private putArrowToTopOfMenu() {
+            this.arrow.removeClass("top");
+            this.arrow.addClass("bottom");
         }
     }
 
