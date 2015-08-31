@@ -1,22 +1,18 @@
-package com.enonic.wem.repo.internal.elasticsearch;
+package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
-import com.enonic.wem.repo.internal.storage.result.ReturnValues;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-class GetResultCanReadResolver
+public class GetResultCanReadResolver
 {
-    public static boolean canRead( final PrincipalKeys principalsKeys, final ReturnValues returnValues )
+    public static boolean canRead( final PrincipalKeys principalsKeys, final ReturnValue returnValue )
     {
         if ( principalsKeys.contains( RoleKeys.ADMIN ) )
         {
             return true;
         }
-
-        final ReturnValue returnValue = returnValues.get( NodeIndexPath.PERMISSIONS_READ.getPath() );
 
         if ( returnValue == null )
         {

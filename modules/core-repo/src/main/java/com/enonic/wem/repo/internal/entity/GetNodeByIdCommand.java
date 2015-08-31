@@ -37,6 +37,11 @@ public class GetNodeByIdCommand
 
         final NodeVersionId currentVersion = nodeBranchVersion.getVersionId();
 
+        if ( currentVersion == null )
+        {
+            return null;
+        }
+
         final Node node = nodeDao.getByVersionId( currentVersion );
 
         return !resolveHasChild ? node : NodeHasChildResolver.create().
