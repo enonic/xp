@@ -15,8 +15,8 @@ import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFact
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.result.SearchHit;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
@@ -68,7 +68,7 @@ public class OrderByValueResolverTest
 
         assertEquals( 5, result.getResults().getSize() );
 
-        final Iterator<SearchResultEntry> iterator = result.getResults().iterator();
+        final Iterator<SearchHit> iterator = result.getResults().iterator();
 
         assertEquals( "thousand", thousand, iterator.next().getId() );
         assertEquals( "hundred", hundred, iterator.next().getId() );

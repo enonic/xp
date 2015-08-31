@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal.elasticsearch.version;
 
+import com.enonic.wem.repo.internal.index.result.SearchHit;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.NodeVersions;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 
 class FindVersionsCommand
     extends AbstractVersionsCommand
@@ -39,7 +39,7 @@ class FindVersionsCommand
     {
         final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getNodeId() );
 
-        for ( final SearchResultEntry searchResult : searchResults.getResults() )
+        for ( final SearchHit searchResult : searchResults.getResults() )
         {
             entityVersionsBuilder.add( createVersionEntry( searchResult ) );
         }

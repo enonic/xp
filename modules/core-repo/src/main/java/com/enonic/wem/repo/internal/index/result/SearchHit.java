@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 
-public class SearchResultEntry
+public class SearchHit
 {
     private final float score;
 
@@ -18,7 +18,7 @@ public class SearchResultEntry
     private final Map<String, SearchResultFieldValue> fields;
 
 
-    private SearchResultEntry( final Builder builder )
+    private SearchHit( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
@@ -44,11 +44,6 @@ public class SearchResultEntry
     public long getVersion()
     {
         return version;
-    }
-
-    public Map<String, SearchResultFieldValue> getFields()
-    {
-        return fields;
     }
 
     public SearchResultFieldValue getField( final String fieldName )
@@ -96,12 +91,12 @@ public class SearchResultEntry
         {
             return true;
         }
-        if ( !( o instanceof SearchResultEntry ) )
+        if ( !( o instanceof SearchHit ) )
         {
             return false;
         }
 
-        final SearchResultEntry that = (SearchResultEntry) o;
+        final SearchHit that = (SearchHit) o;
 
         if ( id != null ? !id.equals( that.id ) : that.id != null )
         {
@@ -157,9 +152,9 @@ public class SearchResultEntry
             return this;
         }
 
-        public SearchResultEntry build()
+        public SearchHit build()
         {
-            return new SearchResultEntry( this );
+            return new SearchHit( this );
         }
     }
 }

@@ -8,8 +8,8 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.index.result.SearchHit;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
@@ -57,7 +57,7 @@ class AbstractVersionsCommand
         return searchResults;
     }
 
-    NodeVersion createVersionEntry( final SearchResultEntry hit )
+    NodeVersion createVersionEntry( final SearchHit hit )
     {
         final String timestamp = getStringValue( hit, VersionIndexPath.TIMESTAMP, true );
         final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
@@ -65,7 +65,7 @@ class AbstractVersionsCommand
         return new NodeVersion( NodeVersionId.from( versionId ), Instant.parse( timestamp ) );
     }
 
-    private String getStringValue( final SearchResultEntry hit, final IndexPath indexPath, final boolean required )
+    private String getStringValue( final SearchHit hit, final IndexPath indexPath, final boolean required )
     {
         final SearchResultFieldValue field = hit.getField( indexPath.getPath(), required );
 

@@ -1,23 +1,21 @@
 package com.enonic.wem.repo.internal.elasticsearch.result;
 
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 
-import com.enonic.wem.repo.internal.index.result.SearchResultEntries;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
+import com.enonic.wem.repo.internal.index.result.SearchHit;
+import com.enonic.wem.repo.internal.index.result.SearchHits;
 
 class SearchResultEntriesFactory
 {
-    public static SearchResultEntries create( final SearchHits searchHits )
+    public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {
-        final SearchResultEntries.Builder builder = SearchResultEntries.create().
+        final SearchHits.Builder builder = SearchHits.create().
             totalHits( searchHits.getTotalHits() ).
             maxScore( searchHits.maxScore() );
 
-        for ( final SearchHit hit : searchHits )
+        for ( final org.elasticsearch.search.SearchHit hit : searchHits )
         {
-            final SearchResultEntry resultEntry = SearchResultEntry.create().
+            final SearchHit resultEntry = SearchHit.create().
                 id( hit.id() ).
                 score( hit.score() ).
                 version( hit.version() ).
@@ -30,9 +28,9 @@ class SearchResultEntriesFactory
         return builder.build();
     }
 
-    public static SearchResultEntry create( final GetResponse getResponse )
+    public static SearchHit create( final GetResponse getResponse )
     {
-        return SearchResultEntry.create().
+        return SearchHit.create().
             id( getResponse.getId() ).
             setFields( SearchResultFieldsFactory.create( getResponse ) ).
             build();

@@ -4,7 +4,7 @@ import com.enonic.xp.aggregation.Aggregations;
 
 public class SearchResult
 {
-    private final SearchResultEntries results;
+    private final SearchHits results;
 
     private final Aggregations aggregations;
 
@@ -19,7 +19,7 @@ public class SearchResult
         return results.getSize() == 0;
     }
 
-    public SearchResultEntries getResults()
+    public SearchHits getResults()
     {
         return results;
     }
@@ -29,7 +29,7 @@ public class SearchResult
         return aggregations;
     }
 
-    public SearchResultEntry getEntry( final String id )
+    public SearchHit getEntry( final String id )
     {
         return this.results.get( id );
     }
@@ -41,11 +41,11 @@ public class SearchResult
 
     public static class Builder
     {
-        private SearchResultEntries results = SearchResultEntries.create().build();
+        private SearchHits results = SearchHits.create().build();
 
         private Aggregations aggregations;
 
-        public Builder results( final SearchResultEntries results )
+        public Builder results( final SearchHits results )
         {
             this.results = results;
             return this;

@@ -9,16 +9,16 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class SearchResultEntries
-    implements Iterable<SearchResultEntry>
+public class SearchHits
+    implements Iterable<SearchHit>
 {
-    private final ImmutableMap<String, SearchResultEntry> hits;
+    private final ImmutableMap<String, SearchHit> hits;
 
     private final long totalHits;
 
     private final float maxScore;
 
-    private SearchResultEntries( final Builder builder )
+    private SearchHits( final Builder builder )
     {
         this.hits = ImmutableMap.copyOf( builder.hits );
         this.totalHits = builder.totalHits;
@@ -45,12 +45,12 @@ public class SearchResultEntries
         return totalHits;
     }
 
-    public SearchResultEntry get( final String id )
+    public SearchHit get( final String id )
     {
         return this.hits.get( id );
     }
 
-    public SearchResultEntry getFirstHit()
+    public SearchHit getFirstHit()
     {
         return this.hits.values().iterator().next();
     }
@@ -65,20 +65,20 @@ public class SearchResultEntries
     }
 
     @Override
-    public Iterator<SearchResultEntry> iterator()
+    public Iterator<SearchHit> iterator()
     {
         return this.hits.values().iterator();
     }
 
     public static class Builder
     {
-        private final Map<String, SearchResultEntry> hits = Maps.newLinkedHashMap();
+        private final Map<String, SearchHit> hits = Maps.newLinkedHashMap();
 
         private long totalHits = 0;
 
         private float maxScore = 0;
 
-        public Builder add( final SearchResultEntry entry )
+        public Builder add( final SearchHit entry )
         {
             hits.put( entry.getId(), entry );
             return this;
@@ -96,9 +96,9 @@ public class SearchResultEntries
             return this;
         }
 
-        public SearchResultEntries build()
+        public SearchHits build()
         {
-            return new SearchResultEntries( this );
+            return new SearchHits( this );
         }
 
     }

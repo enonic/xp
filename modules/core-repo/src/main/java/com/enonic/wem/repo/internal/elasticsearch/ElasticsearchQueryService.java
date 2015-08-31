@@ -16,8 +16,8 @@ import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.result.SearchHit;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
@@ -103,7 +103,7 @@ public class ElasticsearchQueryService
             throw new QueryException( "Expected at most 1 hit, found " + searchResult.getResults().getTotalHits() );
         }
 
-        final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
+        final SearchHit firstHit = searchResult.getResults().getFirstHit();
 
         final SearchResultFieldValue versionKeyField = firstHit.getField( NodeIndexPath.VERSION.getPath() );
 

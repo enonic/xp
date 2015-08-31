@@ -26,7 +26,6 @@ public class SearchResultFieldValue
     public static SearchResultFieldValue value( final Object value )
     {
         return new SearchResultFieldValue( Lists.newArrayList( value ) );
-
     }
 
     public static SearchResultFieldValue values( final List<Object> values )
