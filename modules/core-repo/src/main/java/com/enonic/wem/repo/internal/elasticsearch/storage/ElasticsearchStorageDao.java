@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByParentRequest;
@@ -23,6 +22,7 @@ import com.enonic.wem.repo.internal.storage.StorageDaoInternal;
 import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
+import com.enonic.wem.repo.internal.storage.result.GetResult;
 
 @Component
 public class ElasticsearchStorageDao

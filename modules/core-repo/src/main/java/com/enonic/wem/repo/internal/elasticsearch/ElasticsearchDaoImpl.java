@@ -23,7 +23,6 @@ import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -48,8 +47,8 @@ import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.RestoreParams;
@@ -85,15 +84,6 @@ public class ElasticsearchDaoImpl
             throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
         }
         return (int) l;
-    }
-
-    @Override
-    public String store( final IndexRequest indexRequest )
-    {
-        final IndexResponse indexResponse = this.client.index( indexRequest ).
-            actionGet( storeTimeout );
-
-        return indexResponse.getId();
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.elasticsearch.search.SearchHitField;
 
-import com.enonic.wem.repo.internal.index.result.ReturnValues;
+import com.enonic.wem.repo.internal.storage.result.ReturnValues;
 
 class ReturnValuesFactory
 {

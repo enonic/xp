@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.index.result;
+package com.enonic.wem.repo.internal.storage.result;
 
 import java.util.List;
 

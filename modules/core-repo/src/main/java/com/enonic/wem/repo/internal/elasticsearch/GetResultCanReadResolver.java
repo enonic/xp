@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import com.enonic.wem.repo.internal.index.result.ReturnValue;
-import com.enonic.wem.repo.internal.index.result.ReturnValues;
+import com.enonic.wem.repo.internal.storage.result.ReturnValue;
+import com.enonic.wem.repo.internal.storage.result.ReturnValues;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;

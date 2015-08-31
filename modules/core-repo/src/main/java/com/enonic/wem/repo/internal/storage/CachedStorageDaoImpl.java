@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.storage.result.GetResult;
 
 @Component
 public class CachedStorageDaoImpl

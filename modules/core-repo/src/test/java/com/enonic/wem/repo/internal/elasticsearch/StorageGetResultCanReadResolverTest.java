@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
-import com.enonic.wem.repo.internal.index.result.ReturnValues;
+import com.enonic.wem.repo.internal.storage.result.ReturnValues;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;

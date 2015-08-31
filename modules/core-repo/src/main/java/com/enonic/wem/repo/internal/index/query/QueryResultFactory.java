@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.index.query;
 
-import com.enonic.wem.repo.internal.index.result.SearchHit;
-import com.enonic.wem.repo.internal.index.result.SearchHits;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.storage.result.SearchHit;
+import com.enonic.wem.repo.internal.storage.result.SearchHits;
+import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
 public class QueryResultFactory
 {

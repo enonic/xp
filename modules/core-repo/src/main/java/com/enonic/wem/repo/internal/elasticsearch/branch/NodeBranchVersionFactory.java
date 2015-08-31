@@ -2,13 +2,13 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.time.Instant;
 
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.ReturnValues;
+import com.enonic.wem.repo.internal.storage.result.GetResult;
+import com.enonic.wem.repo.internal.storage.result.ReturnValues;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 
-public class NodeBranchVersionFactory
+class NodeBranchVersionFactory
 {
     public static NodeBranchVersion create( final GetResult getResult )
     {

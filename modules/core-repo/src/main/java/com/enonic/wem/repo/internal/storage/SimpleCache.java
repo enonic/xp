@@ -8,14 +8,14 @@ import org.osgi.service.component.annotations.Component;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.ReturnValues;
+import com.enonic.wem.repo.internal.storage.result.GetResult;
+import com.enonic.wem.repo.internal.storage.result.ReturnValues;
 
 @Component
 public class SimpleCache
     implements StorageCache
 {
-    private Map<StorageSettings, MemoryStore> memoryStoreMap = Maps.newConcurrentMap();
+    private final Map<StorageSettings, MemoryStore> memoryStoreMap = Maps.newConcurrentMap();
 
     @Override
     public String put( final StoreRequest request )
@@ -71,7 +71,7 @@ public class SimpleCache
         {
             final Collection<Object> values = data.get( field.getPath() );
 
-            if ( values == null != values.isEmpty() )
+            if ( values == null || values.isEmpty() )
             {
                 throw new RuntimeException( "Expected data with path '" + field.getPath() + " in storage" );
             }

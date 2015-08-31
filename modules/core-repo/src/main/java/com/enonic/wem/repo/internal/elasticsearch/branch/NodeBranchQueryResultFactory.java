@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.branch;
 
-import com.enonic.wem.repo.internal.index.result.SearchHit;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.storage.result.SearchHit;
+import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
 class NodeBranchQueryResultFactory
 {
