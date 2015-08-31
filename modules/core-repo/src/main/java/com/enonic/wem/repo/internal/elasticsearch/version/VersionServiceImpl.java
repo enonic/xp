@@ -26,7 +26,7 @@ public class VersionServiceImpl
     @Override
     public void store( final NodeVersionDocument nodeVersionDocument, final InternalContext context )
     {
-        storageService.store( VersionStorageDocFactory.create( nodeVersionDocument, context.getRepositoryId() ), context );
+        storageService.store( VersionStorageDocFactory.create( nodeVersionDocument, context.getRepositoryId() ) );
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 
@@ -20,7 +19,7 @@ public class CachedStorageServiceImpl
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
     @Override
-    public String store( final StoreRequest request, final InternalContext context )
+    public String store( final StoreRequest request )
     {
         final String id = this.storageDao.store( request );
 
@@ -34,7 +33,7 @@ public class CachedStorageServiceImpl
     }
 
     @Override
-    public boolean delete( final DeleteRequest request, final InternalContext context )
+    public boolean delete( final DeleteRequest request )
     {
         storageCache.remove( request );
 
@@ -44,7 +43,7 @@ public class CachedStorageServiceImpl
     }
 
     @Override
-    public GetResult getById( final GetByIdRequest request, final InternalContext context )
+    public GetResult getById( final GetByIdRequest request )
     {
         //LOG.info( "Fetching: " + request.getId() );
 
@@ -60,13 +59,13 @@ public class CachedStorageServiceImpl
     }
 
     @Override
-    public GetResult getByPath( final GetByPathRequest request, final InternalContext context )
+    public GetResult getByPath( final GetByPathRequest request )
     {
         return null;
     }
 
     @Override
-    public GetResult getByParent( final GetByParentRequest request, final InternalContext context )
+    public GetResult getByParent( final GetByParentRequest request )
     {
         return null;
     }

@@ -36,13 +36,13 @@ public class BranchServiceImpl
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )
     {
-        return storageService.store( BranchStorageRequestFactory.create( storeBranchDocument, context ), context );
+        return storageService.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
     }
 
     @Override
     public void delete( final NodeId nodeId, final InternalContext context )
     {
-        storageService.delete( BranchDeleteRequestFactory.create( nodeId, context ), context );
+        storageService.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BranchServiceImpl
             routing( nodeId.toString() ).
             build();
 
-        final GetResult getResult = this.storageService.getById( getByIdRequest, context );
+        final GetResult getResult = this.storageService.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {
