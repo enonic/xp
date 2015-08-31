@@ -315,6 +315,16 @@ module api.dom {
             return wemjq(this.el).innerHeight();
         }
 
+        setMaxHeight(value: string): ElementHelper {
+            this.el.style.maxHeight = value;
+            return this;
+        }
+
+        setMaxHeightPx(value: number): ElementHelper {
+            this.setMaxHeight(value + "px");
+            return this;
+        }
+
         getHeightWithoutPadding(): number {
             return wemjq(this.el).height();
         }

@@ -59,9 +59,9 @@ module app.wizard.page.contextwindow.insert {
                 if (!this.componentsView.getParentElement()) {
                     // append it on click only to be sure that content wizard panel is ready
                     config.contentWizardPanel.appendChild(this.componentsView);
+                } else {
+                    this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
                 }
-
-                this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
             });
 
             this.buttonBar = new api.dom.DivEl('button-bar');

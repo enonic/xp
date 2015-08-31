@@ -131,7 +131,7 @@ module api.liveedit {
                 this.replaceWith(clone);
                 clone.select();
 
-                new api.liveedit.ComponentResetEvent(clone).fire();
+                new api.liveedit.ComponentResetEvent(clone, this).fire();
             };
 
             this.setComponent(builder.component);
