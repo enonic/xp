@@ -16,9 +16,9 @@ import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.result.ReturnValue;
 import com.enonic.wem.repo.internal.index.result.SearchHit;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.xp.branch.Branch;
@@ -105,7 +105,7 @@ public class ElasticsearchQueryService
 
         final SearchHit firstHit = searchResult.getResults().getFirstHit();
 
-        final SearchResultFieldValue versionKeyField = firstHit.getField( NodeIndexPath.VERSION.getPath() );
+        final ReturnValue versionKeyField = firstHit.getField( NodeIndexPath.VERSION.getPath() );
 
         if ( versionKeyField == null )
         {
@@ -150,7 +150,7 @@ public class ElasticsearchQueryService
             return NodeVersionIds.empty();
         }
 
-        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
+        final Set<ReturnValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -194,7 +194,7 @@ public class ElasticsearchQueryService
             NodeVersionIds.empty();
         }
 
-        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
+        final Set<ReturnValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -223,18 +223,18 @@ public class ElasticsearchQueryService
         return count > 0;
     }
 
-    private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultFieldValue> fieldValues )
+    private NodeVersionIds fieldValuesToVersionIds( final Collection<ReturnValue> fieldValues )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
-        for ( final SearchResultFieldValue searchResultFieldValue : fieldValues )
+        for ( final ReturnValue returnValue : fieldValues )
         {
-            if ( searchResultFieldValue == null )
+            if ( returnValue == null )
             {
                 continue;
             }
 
-            builder.add( NodeVersionId.from( searchResultFieldValue.getValue().toString() ) );
+            builder.add( NodeVersionId.from( returnValue.getValue().toString() ) );
         }
         return builder.build();
     }

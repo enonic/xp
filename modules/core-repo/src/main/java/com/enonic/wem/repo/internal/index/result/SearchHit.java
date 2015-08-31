@@ -15,7 +15,7 @@ public class SearchHit
 
     private final long version;//  = -1;
 
-    private final Map<String, SearchResultFieldValue> fields;
+    private final Map<String, ReturnValue> fields;
 
 
     private SearchHit( final Builder builder )
@@ -46,42 +46,42 @@ public class SearchHit
         return version;
     }
 
-    public SearchResultFieldValue getField( final String fieldName )
+    public ReturnValue getField( final String fieldName )
     {
         return doGetField( fieldName, false );
     }
 
-    public SearchResultFieldValue getField( final String fieldName, final boolean failOnMissing )
+    public ReturnValue getField( final String fieldName, final boolean failOnMissing )
     {
         return doGetField( fieldName, failOnMissing );
     }
 
     public String getStringValue( final String fieldName )
     {
-        final SearchResultFieldValue searchResultFieldValue = doGetField( fieldName, true );
+        final ReturnValue returnValue = doGetField( fieldName, true );
 
-        if ( searchResultFieldValue.getValue() == null )
+        if ( returnValue.getValue() == null )
         {
             return null;
         }
         else
         {
-            return searchResultFieldValue.getValue().toString();
+            return returnValue.getValue().toString();
         }
     }
 
-    private SearchResultFieldValue doGetField( final String fieldName, final boolean failOnMissing )
+    private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
 
-        final SearchResultFieldValue searchResultFieldValue = fields.get( normalizedFieldName );
+        final ReturnValue returnValue = fields.get( normalizedFieldName );
 
-        if ( failOnMissing && searchResultFieldValue == null )
+        if ( failOnMissing && returnValue == null )
         {
             throw new RuntimeException( "Expected field " + normalizedFieldName + " in result not found" );
         }
 
-        return searchResultFieldValue;
+        return returnValue;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class SearchHit
 
         private long version = -1;
 
-        private Map<String, SearchResultFieldValue> fields = Maps.newHashMap();
+        private Map<String, ReturnValue> fields = Maps.newHashMap();
 
         public Builder score( final float score )
         {
@@ -140,15 +140,15 @@ public class SearchHit
             return this;
         }
 
-        public Builder setFields( final Map<String, SearchResultFieldValue> fields )
+        public Builder setFields( final Map<String, ReturnValue> fields )
         {
             this.fields = fields;
             return this;
         }
 
-        public Builder addField( final String fieldName, final SearchResultFieldValue searchResultFieldValue )
+        public Builder addField( final String fieldName, final ReturnValue returnValue )
         {
-            this.fields.put( fieldName, searchResultFieldValue );
+            this.fields.put( fieldName, returnValue );
             return this;
         }
 

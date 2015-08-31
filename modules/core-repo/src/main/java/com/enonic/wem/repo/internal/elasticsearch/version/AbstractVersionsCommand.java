@@ -8,9 +8,9 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.index.result.ReturnValue;
 import com.enonic.wem.repo.internal.index.result.SearchHit;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
@@ -67,7 +67,7 @@ class AbstractVersionsCommand
 
     private String getStringValue( final SearchHit hit, final IndexPath indexPath, final boolean required )
     {
-        final SearchResultFieldValue field = hit.getField( indexPath.getPath(), required );
+        final ReturnValue field = hit.getField( indexPath.getPath(), required );
 
         if ( field == null )
         {

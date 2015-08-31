@@ -6,7 +6,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.index.get.GetField;
 
 import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
+import com.enonic.wem.repo.internal.index.result.ReturnValues;
 
 public class GetResultFactory
 {
@@ -19,7 +19,7 @@ public class GetResultFactory
 
         final Map<String, GetField> hitFieldMap = getResponse.getFields();
 
-        final ResultFieldValues.Builder builder = ResultFieldValues.create();
+        final ReturnValues.Builder builder = ReturnValues.create();
 
         for ( final String fieldName : hitFieldMap.keySet() )
         {

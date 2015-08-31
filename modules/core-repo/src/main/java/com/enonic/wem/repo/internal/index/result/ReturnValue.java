@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class SearchResultFieldValue
+public class ReturnValue
 {
     private final List<Object> values;
 
@@ -18,19 +18,19 @@ public class SearchResultFieldValue
         return values;
     }
 
-    private SearchResultFieldValue( final List<Object> values )
+    private ReturnValue( final List<Object> values )
     {
         this.values = values;
     }
 
-    public static SearchResultFieldValue value( final Object value )
+    public static ReturnValue value( final Object value )
     {
-        return new SearchResultFieldValue( Lists.newArrayList( value ) );
+        return new ReturnValue( Lists.newArrayList( value ) );
     }
 
-    public static SearchResultFieldValue values( final List<Object> values )
+    public static ReturnValue values( final List<Object> values )
     {
-        return new SearchResultFieldValue( values );
+        return new ReturnValue( values );
 
     }
 

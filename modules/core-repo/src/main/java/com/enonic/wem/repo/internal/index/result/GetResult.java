@@ -4,17 +4,17 @@ public class GetResult
 {
     private final String id;
 
-    private final ResultFieldValues resultFieldValues;
+    private final ReturnValues returnValues;
 
     private GetResult( Builder builder )
     {
         id = builder.id;
-        resultFieldValues = builder.resultFieldValues;
+        returnValues = builder.returnValues;
     }
 
-    public ResultFieldValues getResultFieldValues()
+    public ReturnValues getReturnValues()
     {
-        return resultFieldValues;
+        return returnValues;
     }
 
     public static Builder create()
@@ -25,7 +25,7 @@ public class GetResult
     private GetResult()
     {
         this.id = null;
-        this.resultFieldValues = null;
+        this.returnValues = null;
     }
 
     public static GetResult empty()
@@ -42,7 +42,7 @@ public class GetResult
     {
         private String id;
 
-        private ResultFieldValues resultFieldValues;
+        private ReturnValues returnValues;
 
         private Builder()
         {
@@ -54,9 +54,9 @@ public class GetResult
             return this;
         }
 
-        public Builder resultFieldValues( final ResultFieldValues resultFieldValues )
+        public Builder resultFieldValues( final ReturnValues returnValues )
         {
-            this.resultFieldValues = resultFieldValues;
+            this.returnValues = returnValues;
             return this;
         }
 

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
-import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
+import com.enonic.wem.repo.internal.index.result.ReturnValues;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -19,18 +19,18 @@ public class StorageGetResultCanReadResolverTest
     public void anonymous_no_access()
         throws Exception
     {
-        final ResultFieldValues resultFieldValues = ResultFieldValues.create().
+        final ReturnValues returnValues = ReturnValues.create().
             add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ), "user:system:rmy" ).
             build();
 
-        assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), resultFieldValues ) );
+        assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), returnValues ) );
     }
 
     @Test
     public void anonymous_access()
         throws Exception
     {
-        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), ResultFieldValues.create().
+        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), ReturnValues.create().
             add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ), PrincipalKey.ofAnonymous().toString() ).
             build() ) );
     }
@@ -39,8 +39,7 @@ public class StorageGetResultCanReadResolverTest
     public void user_access()
         throws Exception
     {
-        assertTrue(
-            GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ), ResultFieldValues.create().
+        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ), ReturnValues.create().
                 add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
                      PrincipalKey.from( "user:system:rmy" ).toString() ).
                 build() ) );
@@ -52,7 +51,7 @@ public class StorageGetResultCanReadResolverTest
     {
         assertTrue( GetResultCanReadResolver.canRead(
             PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:my-group" ) ),
-            ResultFieldValues.create().
+            ReturnValues.create().
                 add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
                      Arrays.asList( "user:system:rmy", "group:system:my-group" ) ).
                 build() ) );

@@ -55,13 +55,13 @@ public class SearchHits
         return this.hits.values().iterator().next();
     }
 
-    public Set<SearchResultFieldValue> getFields( final String fieldName )
+    public Set<ReturnValue> getFields( final String fieldName )
     {
-        final Set<SearchResultFieldValue> searchResultFieldValues = Sets.newLinkedHashSet();
+        final Set<ReturnValue> returnValues = Sets.newLinkedHashSet();
 
-        searchResultFieldValues.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
+        returnValues.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
 
-        return searchResultFieldValues;
+        return returnValues;
     }
 
     @Override

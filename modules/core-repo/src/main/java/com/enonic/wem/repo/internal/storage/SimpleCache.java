@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
+import com.enonic.wem.repo.internal.index.result.ReturnValues;
 
 @Component
 public class SimpleCache
@@ -65,7 +65,7 @@ public class SimpleCache
 
         final ReturnFields returnFields = request.getReturnFields();
 
-        final ResultFieldValues.Builder builder = ResultFieldValues.create();
+        final ReturnValues.Builder builder = ReturnValues.create();
 
         for ( final ReturnField field : returnFields )
         {

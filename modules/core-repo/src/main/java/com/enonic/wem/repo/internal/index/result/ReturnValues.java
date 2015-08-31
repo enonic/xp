@@ -6,11 +6,11 @@ import java.util.Collection;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class ResultFieldValues
+public class ReturnValues
 {
     private Multimap<String, Object> values;
 
-    private ResultFieldValues( final Builder builder )
+    private ReturnValues( final Builder builder )
     {
         this.values = builder.values;
     }
@@ -68,9 +68,9 @@ public class ResultFieldValues
             return this;
         }
 
-        public ResultFieldValues build()
+        public ReturnValues build()
         {
-            return new ResultFieldValues( this );
+            return new ReturnValues( this );
         }
     }
 
