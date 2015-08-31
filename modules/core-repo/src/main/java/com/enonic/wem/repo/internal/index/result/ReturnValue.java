@@ -1,38 +1,45 @@
 package com.enonic.wem.repo.internal.index.result;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 import com.google.common.collect.Lists;
 
 public class ReturnValue
 {
-    private final List<Object> values;
+    private Collection<Object> values = Lists.newArrayList();
 
-    public Object getValue()
+    public Object getSingleValue()
     {
-        return values.get( 0 );
+        return values.iterator().next();
     }
 
-    public List<Object> getValues()
+    public Collection<Object> getValues()
     {
         return values;
     }
 
-    private ReturnValue( final List<Object> values )
+    public static ReturnValue create( final Object values )
     {
-        this.values = values;
+        final ReturnValue returnValue = new ReturnValue();
+        returnValue.add( values );
+
+        return returnValue;
     }
 
-    public static ReturnValue value( final Object value )
+    public void add( final Object value )
     {
-        return new ReturnValue( Lists.newArrayList( value ) );
+        if ( value instanceof Collection )
+        {
+            values.addAll( (Collection) value );
+        }
+        else if ( value instanceof Object[] )
+        {
+            values.addAll( Arrays.asList( (Object[]) value ) );
+        }
+        else
+        {
+            values.add( value );
+        }
     }
-
-    public static ReturnValue values( final List<Object> values )
-    {
-        return new ReturnValue( values );
-
-    }
-
-
 }

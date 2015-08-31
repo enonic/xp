@@ -73,7 +73,7 @@ class NodeVersionDiffCommand
 
         for ( final SearchHit entry : searchResult.getResults() )
         {
-            builder.add( NodeId.from( entry.getField( VersionIndexPath.NODE_ID.toString() ).getValue().toString() ) );
+            builder.add( NodeId.from( entry.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue().toString() ) );
         }
 
         return builder.build();

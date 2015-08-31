@@ -16,17 +16,17 @@ class SearchResultFieldsFactory
 
     public static Map<String, ReturnValue> create( final SearchHit hit )
     {
-        final Map<String, ReturnValue> resultFieldMap = Maps.newHashMap();
+        final Map<String, ReturnValue> returnValueMap = Maps.newHashMap();
 
         final Map<String, SearchHitField> hitFieldMap = hit.getFields();
 
         for ( final String fieldName : hitFieldMap.keySet() )
         {
             final SearchHitField hitField = hitFieldMap.get( fieldName );
-            resultFieldMap.put( fieldName, ReturnValue.values( hitField.values() ) );
+            returnValueMap.put( fieldName, ReturnValue.create( hitField.values() ) );
         }
 
-        return resultFieldMap;
+        return returnValueMap;
     }
 
     public static Map<String, ReturnValue> create( final GetResponse getResponse )
@@ -39,7 +39,7 @@ class SearchResultFieldsFactory
         {
             final GetField getField = hitFieldMap.get( fieldName );
 
-            resultFieldMap.put( fieldName, ReturnValue.values( getField.getValues() ) );
+            resultFieldMap.put( fieldName, ReturnValue.create( getField.getValues() ) );
         }
 
         return resultFieldMap;

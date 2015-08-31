@@ -74,7 +74,7 @@ class AbstractVersionsCommand
             return null;
         }
 
-        return field.getValue().toString();
+        return field.getSingleValue().toString();
     }
 
     static class Builder<B extends Builder>

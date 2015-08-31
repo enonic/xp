@@ -113,7 +113,7 @@ public class ElasticsearchQueryService
                                                       nodePath + " in branch " + branch );
         }
 
-        return NodeVersionId.from( versionKeyField.getValue().toString() );
+        return NodeVersionId.from( versionKeyField.getSingleValue().toString() );
     }
 
     @Override
@@ -234,7 +234,7 @@ public class ElasticsearchQueryService
                 continue;
             }
 
-            builder.add( NodeVersionId.from( returnValue.getValue().toString() ) );
+            builder.add( NodeVersionId.from( returnValue.getSingleValue().toString() ) );
         }
         return builder.build();
     }

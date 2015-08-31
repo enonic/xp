@@ -1,40 +1,33 @@
 package com.enonic.wem.repo.internal.index.result;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Map;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 public class ReturnValues
 {
-    private Multimap<String, Object> values;
+    private Map<String, ReturnValue> returnValues;
 
     private ReturnValues( final Builder builder )
     {
-        this.values = builder.values;
+        this.returnValues = builder.returnValues;
     }
 
     public Object getSingleValue( final String key )
     {
-        final Collection<Object> values = this.values.get( key );
+        final ReturnValue returnValue = returnValues.get( key );
 
-        if ( values == null || values.isEmpty() )
+        if ( returnValue == null )
         {
             return null;
         }
 
-        return values.iterator().next();
+        return returnValue.getSingleValue();
     }
 
-    public Collection<Object> get( final String key )
+    public ReturnValue get( final String key )
     {
-        return this.values.get( key );
-    }
-
-    public Multimap<String, Object> getValues()
-    {
-        return values;
+        return this.returnValues.get( key );
     }
 
     public static Builder create()
@@ -44,7 +37,7 @@ public class ReturnValues
 
     public static final class Builder
     {
-        final Multimap<String, Object> values = ArrayListMultimap.create();
+        final Map<String, ReturnValue> returnValues = Maps.newHashMap();
 
         private Builder()
         {
@@ -52,17 +45,15 @@ public class ReturnValues
 
         public Builder add( final String key, final Object value )
         {
-            if ( value instanceof Collection )
+            final ReturnValue entry = returnValues.get( key );
+
+            if ( entry == null )
             {
-                values.putAll( key, ( (Collection) value ) );
-            }
-            else if ( value instanceof Object[] )
-            {
-                values.putAll( key, Arrays.asList( (Object[]) value ) );
+                this.returnValues.put( key, ReturnValue.create( value ) );
             }
             else
             {
-                values.put( key, value );
+                entry.add( value );
             }
 
             return this;

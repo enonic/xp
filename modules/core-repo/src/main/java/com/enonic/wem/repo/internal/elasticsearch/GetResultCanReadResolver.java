@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import java.util.Collection;
-
+import com.enonic.wem.repo.internal.index.result.ReturnValue;
 import com.enonic.wem.repo.internal.index.result.ReturnValues;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
@@ -17,16 +16,16 @@ class GetResultCanReadResolver
             return true;
         }
 
-        final Collection<Object> readPermissions = returnValues.get( NodeIndexPath.PERMISSIONS_READ.getPath() );
+        final ReturnValue returnValue = returnValues.get( NodeIndexPath.PERMISSIONS_READ.getPath() );
 
-        if ( readPermissions == null || readPermissions.isEmpty() )
+        if ( returnValue == null )
         {
             return false;
         }
 
         final PrincipalKeys keys = principalsKeys.isEmpty() ? PrincipalKeys.from( PrincipalKey.ofAnonymous() ) : principalsKeys;
 
-        for ( final Object readPermission : readPermissions )
+        for ( final Object readPermission : returnValue.getValues() )
         {
             if ( keys.contains( PrincipalKey.from( readPermission.toString() ) ) )
             {

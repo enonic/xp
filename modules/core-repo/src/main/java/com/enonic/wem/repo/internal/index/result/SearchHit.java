@@ -17,7 +17,6 @@ public class SearchHit
 
     private final Map<String, ReturnValue> fields;
 
-
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
@@ -60,13 +59,13 @@ public class SearchHit
     {
         final ReturnValue returnValue = doGetField( fieldName, true );
 
-        if ( returnValue.getValue() == null )
+        if ( returnValue.getSingleValue() == null )
         {
             return null;
         }
         else
         {
-            return returnValue.getValue().toString();
+            return returnValue.getSingleValue().toString();
         }
     }
 
