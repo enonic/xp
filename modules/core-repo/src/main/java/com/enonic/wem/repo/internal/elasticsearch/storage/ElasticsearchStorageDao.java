@@ -18,7 +18,7 @@ import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByParentRequest;
 import com.enonic.wem.repo.internal.storage.GetByPathRequest;
-import com.enonic.wem.repo.internal.storage.StorageDaoInternal;
+import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
@@ -26,7 +26,7 @@ import com.enonic.wem.repo.internal.storage.result.GetResult;
 
 @Component
 public class ElasticsearchStorageDao
-    implements StorageDaoInternal
+    implements StorageDao
 {
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchStorageDao.class );
 

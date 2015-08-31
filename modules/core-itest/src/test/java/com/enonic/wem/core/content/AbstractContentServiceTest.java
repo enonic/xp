@@ -140,11 +140,11 @@ public class AbstractContentServiceTest
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageDao( storageDao );
+        this.branchService.setStorageService( storageDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
-        this.versionService.setStorageDao( storageDao );
+        this.versionService.setStorageService( storageDao );
 
 
         this.indexService = new ElasticsearchIndexServiceInternal();

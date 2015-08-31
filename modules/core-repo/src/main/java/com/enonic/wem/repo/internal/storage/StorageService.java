@@ -1,8 +1,9 @@
 package com.enonic.wem.repo.internal.storage;
 
+
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 
-public interface StorageDaoInternal
+public interface StorageService
 {
     String store( final StoreRequest request );
 

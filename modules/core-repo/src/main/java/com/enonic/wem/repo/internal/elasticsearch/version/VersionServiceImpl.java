@@ -4,7 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.storage.StorageDao;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.VersionService;
@@ -21,12 +21,12 @@ public class VersionServiceImpl
 {
     private ElasticsearchDao elasticsearchDao;
 
-    private StorageDao storageDao;
+    private StorageService storageService;
 
     @Override
     public void store( final NodeVersionDocument nodeVersionDocument, final RepositoryId repositoryId )
     {
-        storageDao.store( VersionStorageDocFactory.create( nodeVersionDocument, repositoryId ) );
+        storageService.store( VersionStorageDocFactory.create( nodeVersionDocument, repositoryId ) );
     }
 
     @Override
@@ -69,8 +69,8 @@ public class VersionServiceImpl
     }
 
     @Reference
-    public void setStorageDao( final StorageDao storageDao )
+    public void setStorageService( final StorageService storageService )
     {
-        this.storageDao = storageDao;
+        this.storageService = storageService;
     }
 }

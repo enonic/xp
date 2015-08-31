@@ -9,10 +9,10 @@ import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInter
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 
 @Component
-public class CachedStorageDaoImpl
-    implements StorageDao
+public class CachedStorageServiceImpl
+    implements StorageService
 {
-    private StorageDaoInternal storageDaoInternal;
+    private StorageDao storageDao;
 
     private StorageCache storageCache;
 
@@ -21,7 +21,7 @@ public class CachedStorageDaoImpl
     @Override
     public String store( final StoreRequest request )
     {
-        final String id = this.storageDaoInternal.store( request );
+        final String id = this.storageDao.store( request );
 
         storageCache.put( StoreRequest.from( request ).
             id( id ).
@@ -39,7 +39,7 @@ public class CachedStorageDaoImpl
 
         //LOG.info( "Removed from cache" );
 
-        return this.storageDaoInternal.delete( request );
+        return this.storageDao.delete( request );
     }
 
     @Override
@@ -55,7 +55,7 @@ public class CachedStorageDaoImpl
             return result;
         }
 
-        return storageDaoInternal.getById( request );
+        return storageDao.getById( request );
     }
 
     @Override
@@ -71,9 +71,9 @@ public class CachedStorageDaoImpl
     }
 
     @Reference
-    public void setStorageDaoInternal( final StorageDaoInternal storageDaoInternal )
+    public void setStorageDao( final StorageDao storageDao )
     {
-        this.storageDaoInternal = storageDaoInternal;
+        this.storageDao = storageDao;
     }
 
     @Reference

@@ -15,7 +15,7 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
-import com.enonic.wem.repo.internal.storage.StorageDao;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
@@ -31,18 +31,18 @@ public class BranchServiceImpl
 {
     private ElasticsearchDao elasticsearchDao;
 
-    private StorageDao storageDao;
+    private StorageService storageService;
 
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
     {
-        return storageDao.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
+        return storageService.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
     }
 
     @Override
     public void delete( final NodeId nodeId, final BranchContext context )
     {
-        storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
+        storageService.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BranchServiceImpl
             routing( nodeId.toString() ).
             build();
 
-        final GetResult getResult = this.storageDao.getById( getByIdRequest );
+        final GetResult getResult = this.storageService.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {
@@ -106,9 +106,9 @@ public class BranchServiceImpl
 
 
     @Reference
-    public void setStorageDao( final StorageDao storageDao )
+    public void setStorageService( final StorageService storageService )
     {
-        this.storageDao = storageDao;
+        this.storageService = storageService;
     }
 }
 
