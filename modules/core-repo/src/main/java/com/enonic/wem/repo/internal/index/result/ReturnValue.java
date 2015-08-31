@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 public class ReturnValue
 {
-    private Collection<Object> values = Lists.newArrayList();
+    private final Collection<Object> values = Lists.newArrayList();
 
     public Object getSingleValue()
     {
@@ -27,19 +27,19 @@ public class ReturnValue
         return returnValue;
     }
 
-    public void add( final Object value )
+    public void add( final Object values )
     {
-        if ( value instanceof Collection )
+        if ( values instanceof Collection )
         {
-            values.addAll( (Collection) value );
+            this.values.addAll( (Collection) values );
         }
-        else if ( value instanceof Object[] )
+        else if ( values instanceof Object[] )
         {
-            values.addAll( Arrays.asList( (Object[]) value ) );
+            this.values.addAll( Arrays.asList( (Object[]) values ) );
         }
         else
         {
-            values.add( value );
+            this.values.add( values );
         }
     }
 }

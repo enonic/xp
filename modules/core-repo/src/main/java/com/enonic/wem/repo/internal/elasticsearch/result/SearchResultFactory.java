@@ -10,7 +10,7 @@ public class SearchResultFactory
     public static SearchResult create( final SearchResponse searchResponse )
     {
         return SearchResult.create().
-            results( SearchResultEntriesFactory.create( searchResponse.getHits() ) ).
+            hits( SearchHitsFactory.create( searchResponse.getHits() ) ).
             aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
             build();
     }

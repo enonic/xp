@@ -1,12 +1,14 @@
 package com.enonic.wem.repo.internal.index.result;
 
+import java.time.Instant;
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
 public class ReturnValues
 {
-    private Map<String, ReturnValue> returnValues;
+    private final Map<String, ReturnValue> returnValues;
 
     private ReturnValues( final Builder builder )
     {
@@ -43,7 +45,22 @@ public class ReturnValues
         {
         }
 
-        public Builder add( final String key, final Object value )
+        public Builder add( final String key, final String value )
+        {
+            return doAdd( key, value );
+        }
+
+        public Builder add( final String key, final Instant value )
+        {
+            return doAdd( key, value );
+        }
+
+        public Builder add( final String key, final Collection<Object> value )
+        {
+            return doAdd( key, value );
+        }
+
+        private Builder doAdd( final String key, final Object value )
         {
             final ReturnValue entry = returnValues.get( key );
 

@@ -29,11 +29,6 @@ public class SearchResult
         return aggregations;
     }
 
-    public SearchHit getEntry( final String id )
-    {
-        return this.results.get( id );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -45,7 +40,7 @@ public class SearchResult
 
         private Aggregations aggregations;
 
-        public Builder results( final SearchHits results )
+        public Builder hits( final SearchHits results )
         {
             this.results = results;
             return this;

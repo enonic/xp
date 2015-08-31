@@ -1,10 +1,5 @@
 package com.enonic.wem.repo.internal.index.result;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 
 public class SearchHit
@@ -15,14 +10,14 @@ public class SearchHit
 
     private final long version;//  = -1;
 
-    private final Map<String, ReturnValue> fields;
+    private final ReturnValues returnValues;
 
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
         this.version = builder.version;
-        this.fields = ImmutableMap.copyOf( builder.fields );
+        this.returnValues = builder.returnValues;
     }
 
     public static Builder create()
@@ -73,7 +68,7 @@ public class SearchHit
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
 
-        final ReturnValue returnValue = fields.get( normalizedFieldName );
+        final ReturnValue returnValue = returnValues.get( normalizedFieldName );
 
         if ( failOnMissing && returnValue == null )
         {
@@ -119,7 +114,7 @@ public class SearchHit
 
         private long version = -1;
 
-        private Map<String, ReturnValue> fields = Maps.newHashMap();
+        private ReturnValues returnValues;
 
         public Builder score( final float score )
         {
@@ -139,15 +134,9 @@ public class SearchHit
             return this;
         }
 
-        public Builder setFields( final Map<String, ReturnValue> fields )
+        public Builder returnValues( final ReturnValues returnValues )
         {
-            this.fields = fields;
-            return this;
-        }
-
-        public Builder addField( final String fieldName, final ReturnValue returnValue )
-        {
-            this.fields.put( fieldName, returnValue );
+            this.returnValues = returnValues;
             return this;
         }
 
