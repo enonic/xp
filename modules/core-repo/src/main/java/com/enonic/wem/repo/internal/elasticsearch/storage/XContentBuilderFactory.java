@@ -1,13 +1,12 @@
 package com.enonic.wem.repo.internal.elasticsearch.storage;
 
-import java.util.Collection;
-
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.google.common.collect.Multimap;
+
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
-import com.enonic.wem.repo.internal.storage.StorageDataEntry;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 
 public class XContentBuilderFactory
@@ -19,11 +18,11 @@ public class XContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            final Collection<StorageDataEntry> entries = doc.getEntries();
+            final Multimap<String, Object> values = doc.getEntries();
 
-            for ( final StorageDataEntry entry : entries )
+            for ( final String key : values.keySet() )
             {
-                addField( builder, entry.getKey(), entry.getValue() );
+                addField( builder, key, values.get( key ) );
             }
 
             endBuilder( builder );

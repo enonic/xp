@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.storage;
+package com.enonic.wem.repo.internal.index.result;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -6,24 +6,32 @@ import java.util.Collection;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class StorageData
+public class GetResultNew
 {
-    private final String parent;
+    private final String id;
 
-    private final String routing;
+    private Multimap<String, Object> values;
 
-    private final Multimap<String, Object> values;
 
-    private StorageData( Builder builder )
+    private GetResultNew( final Builder builder )
     {
-        this.parent = builder.parent;
-        this.routing = builder.routing;
+        this.id = builder.id;
         this.values = builder.values;
     }
 
-    public static Builder create()
+    private GetResultNew()
     {
-        return new Builder();
+        id = null;
+    }
+
+    public static GetResultNew empty()
+    {
+        return new GetResultNew();
+    }
+
+    public boolean isEmpty()
+    {
+        return this.id == null;
     }
 
     public Collection<Object> get( final String key )
@@ -36,21 +44,27 @@ public class StorageData
         return values;
     }
 
-    public String getParent()
+    public Object getSingleValue( final String key )
     {
-        return parent;
+        final Collection<Object> values = this.values.get( key );
+
+        if ( values == null || values.isEmpty() )
+        {
+            return null;
+        }
+
+        return values.iterator().next();
     }
 
-    public String getRouting()
+
+    public static Builder create()
     {
-        return routing;
+        return new Builder();
     }
 
     public static final class Builder
     {
-        private String parent;
-
-        private String routing;
+        private String id;
 
         final Multimap<String, Object> values = ArrayListMultimap.create();
 
@@ -58,17 +72,12 @@ public class StorageData
         {
         }
 
-        public Builder parent( String parent )
+        public Builder id( String id )
         {
-            this.parent = parent;
+            this.id = id;
             return this;
         }
 
-        public Builder routing( String routing )
-        {
-            this.routing = routing;
-            return this;
-        }
 
         public Builder add( final String key, final Object value )
         {
@@ -88,9 +97,9 @@ public class StorageData
             return this;
         }
 
-        public StorageData build()
+        public GetResultNew build()
         {
-            return new StorageData( this );
+            return new GetResultNew( this );
         }
     }
 }

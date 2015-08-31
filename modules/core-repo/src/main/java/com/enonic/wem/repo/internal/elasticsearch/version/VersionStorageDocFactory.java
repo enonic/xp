@@ -17,11 +17,10 @@ public class VersionStorageDocFactory
     public static StoreRequest create( final NodeVersionDocument nodeVersion, final RepositoryId repositoryId )
     {
         final StorageData data = StorageData.create().
-            addStringValue( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
-            addStringValue( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
-            addInstant( VersionIndexPath.TIMESTAMP.getPath(),
-                        nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
-            addStringValue( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
+            add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
+            add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
+            add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
+            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
             build();
 
         return StoreRequest.create().

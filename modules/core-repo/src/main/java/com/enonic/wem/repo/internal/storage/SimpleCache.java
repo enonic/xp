@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -8,8 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
+import com.enonic.wem.repo.internal.index.result.GetResultNew;
 
 @Component
 public class SimpleCache
@@ -46,7 +46,7 @@ public class SimpleCache
     }
 
     @Override
-    public GetResult getById( final GetByIdRequest request )
+    public GetResultNew getById( final GetByIdRequest request )
     {
         MemoryStore store = this.memoryStoreMap.get( request.getStorageSettings() );
 
@@ -65,21 +65,22 @@ public class SimpleCache
 
         final ReturnFields returnFields = request.getReturnFields();
 
-        final SearchResultEntry.Builder builder = SearchResultEntry.create();
+        final GetResultNew.Builder builder = GetResultNew.create().
+            id( request.getId() );
 
         for ( final ReturnField field : returnFields )
         {
-            final StorageDataEntry storageDataEntry = data.get( field.getPath() );
+            final Collection<Object> values = data.get( field.getPath() );
 
-            if ( storageDataEntry == null )
+            if ( values == null != values.isEmpty() )
             {
                 throw new RuntimeException( "Expected data with path '" + field.getPath() + " in storage" );
             }
 
-            builder.addField( field.getPath(), SearchResultFieldValue.value( storageDataEntry.getValue() ) ).build();
+            builder.add( field.getPath(), values ).build();
         }
 
-        return new GetResult( builder.build() );
+        return builder.build();
     }
 
     @Override

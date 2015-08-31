@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.GetResultNew;
 
 public interface StorageCache
 {
@@ -8,7 +9,7 @@ public interface StorageCache
 
     void remove( final DeleteRequest request );
 
-    GetResult getById( final GetByIdRequest request );
+    GetResultNew getById( final GetByIdRequest request );
 
     GetResult getByPath( final GetByPathRequest request );
 

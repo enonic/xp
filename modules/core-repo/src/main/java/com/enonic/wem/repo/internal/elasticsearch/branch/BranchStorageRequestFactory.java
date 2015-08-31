@@ -17,13 +17,12 @@ public class BranchStorageRequestFactory
     public static StoreRequest create( final StoreBranchDocument doc, final BranchContext context )
     {
         final StorageData data = StorageData.create().
-            addStringValue( BranchIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() ).
-            addStringValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
-            addStringValue( BranchIndexPath.NODE_ID.getPath(), doc.getNode().getNodeState().value() ).
-            addStringValue( BranchIndexPath.STATE.getPath(), doc.getNode().getNodeState().value() ).
-            addStringValue( BranchIndexPath.PATH.getPath(), doc.getNode().path().toString() ).
-            addInstant( BranchIndexPath.TIMESTAMP.getPath(),
-                        doc.getNode().getTimestamp() != null ? doc.getNode().getTimestamp() : Instant.now() ).
+            add( BranchIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() ).
+            add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
+            add( BranchIndexPath.NODE_ID.getPath(), doc.getNode().getNodeState().value() ).
+            add( BranchIndexPath.STATE.getPath(), doc.getNode().getNodeState().value() ).
+            add( BranchIndexPath.PATH.getPath(), doc.getNode().path().toString() ).
+            add( BranchIndexPath.TIMESTAMP.getPath(), doc.getNode().getTimestamp() != null ? doc.getNode().getTimestamp() : Instant.now() ).
             parent( new NodeVersionDocumentId( doc.getNode().id(), doc.getNodeVersionId() ).toString() ).
             routing( doc.getNode().id().toString() ).
             build();

@@ -13,8 +13,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
+import com.enonic.wem.repo.internal.elasticsearch.result.GetResultNewFactory;
 import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.GetResultNew;
 import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByParentRequest;
@@ -98,7 +99,7 @@ public class ElasticsearchStorageDao
     }
 
     @Override
-    public GetResult getById( final GetByIdRequest request )
+    public GetResultNew getById( final GetByIdRequest request )
     {
         final StorageSettings storageSettings = request.getStorageSettings();
         final GetRequest getRequest = new GetRequest( storageSettings.getStorageName().getName() ).
@@ -119,7 +120,7 @@ public class ElasticsearchStorageDao
         final GetResponse getResponse = client.get( getRequest ).
             actionGet( request.getTimeout() );
 
-        return GetResultFactory.create( getResponse );
+        return GetResultNewFactory.create( getResponse );
     }
 
     @Reference

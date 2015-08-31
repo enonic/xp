@@ -1,12 +1,8 @@
 package com.enonic.wem.repo.internal.elasticsearch.branch;
 
-import java.time.Instant;
-
 import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
@@ -15,10 +11,8 @@ import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
-import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.GetResultNew;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
@@ -29,9 +23,6 @@ import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
@@ -68,16 +59,14 @@ public class BranchServiceImpl
             routing( nodeId.toString() ).
             build();
 
-        final GetResult getResult = this.storageDao.getById( getByIdRequest );
+        final GetResultNew getResult = this.storageDao.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {
             return null;
         }
 
-        final NodeReturnValue nodeReturnValue = NodeReturnValue.from( getResult );
-
-        return createFromReturnValue( nodeReturnValue );
+        return NodeBranchVersionFactory.create( getResult );
     }
 
     @Override
@@ -109,97 +98,12 @@ public class BranchServiceImpl
         return NodeBranchQueryResultFactory.create( searchResult );
     }
 
-
-    private NodeBranchVersion createFromReturnValue( final NodeReturnValue nodeReturnValue )
-    {
-        return NodeBranchVersion.create().
-            timestamp( nodeReturnValue.timestamp ).
-            nodePath( nodeReturnValue.nodePath ).
-            nodeVersionId( nodeReturnValue.getNodeVersionId() ).
-            nodeState( nodeReturnValue.getState() ).
-            build();
-    }
-
     @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;
     }
 
-    private static class NodeReturnValue
-    {
-        private final NodePath nodePath;
-
-        private final NodeVersionId nodeVersionId;
-
-        private final NodeState state;
-
-        private final Instant timestamp;
-
-        public NodeReturnValue( final Instant timestamp, final NodePath nodePath, final NodeVersionId nodeVersionId, final NodeState state )
-        {
-            this.timestamp = timestamp;
-            this.nodePath = nodePath;
-            this.nodeVersionId = nodeVersionId;
-            this.state = state;
-        }
-
-        public static NodeReturnValue from( final SearchResultEntry searchResultEntry )
-        {
-            final SearchResultFieldValue timestamp = searchResultEntry.getField( BranchIndexPath.TIMESTAMP.getPath() );
-            final SearchResultFieldValue nodeVersionIdValue = searchResultEntry.getField( BranchIndexPath.VERSION_ID.getPath() );
-            final SearchResultFieldValue nodePathValue = searchResultEntry.getField( BranchIndexPath.PATH.getPath() );
-            final SearchResultFieldValue stateValue = searchResultEntry.getField( BranchIndexPath.STATE.getPath() );
-
-            return createNodeReturnValue( timestamp, nodeVersionIdValue, nodePathValue, stateValue );
-        }
-
-        public static NodeReturnValue from( final GetResult getResult )
-        {
-            final SearchResultFieldValue timestamp = getResult.getSearchResult().getField( BranchIndexPath.TIMESTAMP.getPath() );
-            final SearchResultFieldValue nodeVersionIdValue = getResult.getSearchResult().getField( BranchIndexPath.VERSION_ID.getPath() );
-            final SearchResultFieldValue nodePathValue = getResult.getSearchResult().getField( BranchIndexPath.PATH.getPath() );
-            final SearchResultFieldValue stateValue = getResult.getSearchResult().getField( BranchIndexPath.STATE.getPath() );
-
-            return createNodeReturnValue( timestamp, nodeVersionIdValue, nodePathValue, stateValue );
-        }
-
-        private static NodeReturnValue createNodeReturnValue( final SearchResultFieldValue timestamp,
-                                                              final SearchResultFieldValue nodeVersionIdValue,
-                                                              final SearchResultFieldValue nodePathValue,
-                                                              final SearchResultFieldValue stateValue )
-        {
-            Preconditions.checkNotNull( timestamp, "Expected value '" + BranchIndexPath.TIMESTAMP.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( nodeVersionIdValue, "Expected value '" + BranchIndexPath.VERSION_ID.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( nodePathValue, "Expected value '" + BranchIndexPath.PATH.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( stateValue, "Expected value '" + BranchIndexPath.STATE.getPath() + "' in getResult " );
-
-            return new NodeReturnValue( Instant.parse( timestamp.getValue().toString() ),
-                                        NodePath.create( nodePathValue.getValue().toString() ).build(),
-                                        NodeVersionId.from( nodeVersionIdValue.getValue().toString() ),
-                                        NodeState.from( stateValue.getValue().toString() ) );
-        }
-
-        public NodePath getNodePath()
-        {
-            return nodePath;
-        }
-
-        public NodeVersionId getNodeVersionId()
-        {
-            return nodeVersionId;
-        }
-
-        public NodeState getState()
-        {
-            return state;
-        }
-
-        public Instant getTimestamp()
-        {
-            return timestamp;
-        }
-    }
 
     @Reference
     public void setStorageDao( final StorageDao storageDao )

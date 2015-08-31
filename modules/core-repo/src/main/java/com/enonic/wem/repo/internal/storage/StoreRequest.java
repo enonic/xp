@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
-import java.util.Collection;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.node.NodePath;
 
@@ -44,9 +44,9 @@ public class StoreRequest
         return new Builder();
     }
 
-    public Collection<StorageDataEntry> getEntries()
+    public Multimap<String, Object> getEntries()
     {
-        return this.data.getDataEntries();
+        return this.data.getValues();
     }
 
     public StorageSettings getSettings()
