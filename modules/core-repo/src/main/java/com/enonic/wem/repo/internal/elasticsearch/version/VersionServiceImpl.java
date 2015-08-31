@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.version;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
@@ -13,7 +14,6 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class VersionServiceImpl
@@ -24,39 +24,39 @@ public class VersionServiceImpl
     private StorageService storageService;
 
     @Override
-    public void store( final NodeVersionDocument nodeVersionDocument, final RepositoryId repositoryId )
+    public void store( final NodeVersionDocument nodeVersionDocument, final InternalContext context )
     {
-        storageService.store( VersionStorageDocFactory.create( nodeVersionDocument, repositoryId ) );
+        storageService.store( VersionStorageDocFactory.create( nodeVersionDocument, context.getRepositoryId() ), context );
     }
 
     @Override
-    public NodeVersion getVersion( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
+    public NodeVersion getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         return GetVersionCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repositoryId( repositoryId ).
+            repositoryId( context.getRepositoryId() ).
             nodeVersionId( nodeVersionId ).
             build().
             execute();
     }
 
     @Override
-    public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final RepositoryId repositoryId )
+    public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final InternalContext context )
     {
         return FindVersionsCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repositoryId( repositoryId ).
+            repositoryId( context.getRepositoryId() ).
             query( query ).
             build().
             execute();
     }
 
     @Override
-    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query, final RepositoryId repositoryId )
+    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query, final InternalContext context )
     {
         return NodeVersionDiffCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repositoryId( repositoryId ).
+            repositoryId( context.getRepositoryId() ).
             query( query ).
             build().
             execute();

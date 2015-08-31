@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.xp.branch.Branch;
@@ -79,7 +79,7 @@ public class PushNodesCommand
                 continue;
             }
 
-            final NodeVersionId nodeVersionId = this.branchService.get( node.id(), BranchContext.from( context ) ).getVersionId();
+            final NodeVersionId nodeVersionId = this.branchService.get( node.id(), InternalContext.from( context ) ).getVersionId();
 
             if ( nodeVersionId == null )
             {
@@ -132,7 +132,9 @@ public class PushNodesCommand
         this.branchService.store( StoreBranchDocument.create().
             nodeVersionId( nodeVersionId ).
             node( node ).
-            build(), BranchContext.from( this.target, context.getRepositoryId() ) );
+            build(), InternalContext.create( context ).
+            branch( this.target ).
+            build() );
 
         this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
             branch( this.target ).

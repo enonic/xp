@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeId;
 
 public class BranchDeleteRequestFactory
 {
-    public static DeleteRequest create( final NodeId nodeId, final BranchContext context )
+    public static DeleteRequest create( final NodeId nodeId, final InternalContext context )
     {
         return DeleteRequest.create().
             forceRefresh( true ).

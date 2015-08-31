@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
@@ -29,9 +29,10 @@ public class AbstractCompareNodeCommand
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final NodeBranchVersion sourceWsVersion = this.branchService.get( nodeId, BranchContext.from( context ) );
-        final NodeBranchVersion targetWsVersion =
-            this.branchService.get( nodeId, BranchContext.from( this.target, context.getRepositoryId() ) );
+        final NodeBranchVersion sourceWsVersion = this.branchService.get( nodeId, InternalContext.from( context ) );
+        final NodeBranchVersion targetWsVersion = this.branchService.get( nodeId, InternalContext.create( context ).
+            branch( this.target ).
+            build() );
 
         final CompareStatus compareStatus = CompareStatusResolver.create().
             repositoryId( context.getRepositoryId() ).

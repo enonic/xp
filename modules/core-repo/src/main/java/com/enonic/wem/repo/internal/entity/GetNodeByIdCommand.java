@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -28,7 +28,7 @@ public class GetNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeBranchVersion nodeBranchVersion = this.branchService.get( id, BranchContext.from( context ) );
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( id, InternalContext.from( context ) );
 
         if ( nodeBranchVersion == null )
         {

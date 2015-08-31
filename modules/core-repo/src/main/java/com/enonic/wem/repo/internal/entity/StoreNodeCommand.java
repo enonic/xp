@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
@@ -50,17 +50,17 @@ public class StoreNodeCommand
                 nodeVersionId( nodeVersionId ).
                 nodePath( node.path() ).
                 timestamp( node.getTimestamp() ).
-                build(), context.getRepositoryId() );
+                build(), InternalContext.from( context ) );
         }
         else
         {
-            nodeVersionId = this.branchService.get( node.id(), BranchContext.from( context ) ).getVersionId();
+            nodeVersionId = this.branchService.get( node.id(), InternalContext.from( context ) ).getVersionId();
         }
 
         this.branchService.store( StoreBranchDocument.create().
             node( node ).
             nodeVersionId( nodeVersionId ).
-            build(), BranchContext.from( context ) );
+            build(), InternalContext.from( context ) );
 
         this.indexServiceInternal.store( node, nodeVersionId, IndexContext.from( context ) );
 

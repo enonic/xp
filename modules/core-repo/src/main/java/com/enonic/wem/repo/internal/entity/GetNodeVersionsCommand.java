@@ -1,10 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.version.GetVersionsQuery;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 public class GetNodeVersionsCommand
 {
@@ -34,7 +35,7 @@ public class GetNodeVersionsCommand
             size( this.size ).
             build();
 
-        return this.versionService.findVersions( query, ContextAccessor.current().getRepositoryId() );
+        return this.versionService.findVersions( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

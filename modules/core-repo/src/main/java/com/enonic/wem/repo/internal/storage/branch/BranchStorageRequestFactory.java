@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.storage.branch;
 
 import java.time.Instant;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
@@ -14,7 +14,7 @@ import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 
 public class BranchStorageRequestFactory
 {
-    public static StoreRequest create( final StoreBranchDocument doc, final BranchContext context )
+    public static StoreRequest create( final StoreBranchDocument doc, final InternalContext context )
     {
         final StorageData data = StorageData.create().
             add( BranchIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() ).

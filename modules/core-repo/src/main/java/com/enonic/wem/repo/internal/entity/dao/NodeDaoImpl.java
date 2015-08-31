@@ -10,11 +10,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
@@ -128,7 +128,7 @@ public class NodeDaoImpl
             return node;
         }
 
-        final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), BranchContext.from( ContextAccessor.current() ) );
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), InternalContext.from( ContextAccessor.current() ) );
 
         if ( nodeBranchVersion == null )
         {

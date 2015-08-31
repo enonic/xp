@@ -1,8 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -101,7 +103,7 @@ class CompareStatusResolver
             return null;
         }
 
-        return versionService.getVersion( nodeVersionId, this.repositoryId );
+        return versionService.getVersion( nodeVersionId, InternalContext.from( ContextAccessor.current() ) );
     }
 
 

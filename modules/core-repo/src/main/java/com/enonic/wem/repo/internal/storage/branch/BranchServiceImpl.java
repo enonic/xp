@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
@@ -34,19 +34,19 @@ public class BranchServiceImpl
     private StorageService storageService;
 
     @Override
-    public String store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
+    public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )
     {
-        return storageService.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
+        return storageService.store( BranchStorageRequestFactory.create( storeBranchDocument, context ), context );
     }
 
     @Override
-    public void delete( final NodeId nodeId, final BranchContext context )
+    public void delete( final NodeId nodeId, final InternalContext context )
     {
-        storageService.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
+        storageService.delete( BranchDeleteRequestFactory.create( nodeId, context ), context );
     }
 
     @Override
-    public NodeBranchVersion get( final NodeId nodeId, final BranchContext context )
+    public NodeBranchVersion get( final NodeId nodeId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
@@ -59,7 +59,7 @@ public class BranchServiceImpl
             routing( nodeId.toString() ).
             build();
 
-        final GetResult getResult = this.storageService.getById( getByIdRequest );
+        final GetResult getResult = this.storageService.getById( getByIdRequest, context );
 
         if ( getResult.isEmpty() )
         {
@@ -70,7 +70,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext context )
+    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( ValueFilter.create().

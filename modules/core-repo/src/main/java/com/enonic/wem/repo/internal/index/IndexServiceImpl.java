@@ -7,7 +7,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.query.QueryService;
@@ -18,6 +18,7 @@ import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultEntry;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
@@ -58,7 +59,9 @@ public class IndexServiceImpl
             final NodeBranchQueryResult results = this.branchService.findAll( NodeBranchQuery.create().
                 from( 0 ).
                 size( QueryService.GET_ALL_SIZE_FLAG ).
-                build(), BranchContext.from( branch, params.getRepositoryId() ) );
+                build(), InternalContext.create( ContextAccessor.current() ).
+                branch( branch ).
+                build() );
 
             for ( final NodeBranchQueryResultEntry result : results )
             {

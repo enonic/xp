@@ -3,14 +3,14 @@ package com.enonic.wem.repo.internal.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
@@ -56,7 +56,7 @@ abstract class AbstractDeleteNodeCommand
 
     private void doDelete( final Context context, final Node node )
     {
-        branchService.delete( node.id(), BranchContext.from( context ) );
+        branchService.delete( node.id(), InternalContext.from( context ) );
 
         indexServiceInternal.delete( node.id(), IndexContext.from( context ) );
     }
