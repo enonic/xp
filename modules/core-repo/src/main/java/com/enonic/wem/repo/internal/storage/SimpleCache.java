@@ -8,8 +8,8 @@ import org.osgi.service.component.annotations.Component;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
 
 @Component
 public class SimpleCache
@@ -65,8 +65,7 @@ public class SimpleCache
 
         final ReturnFields returnFields = request.getReturnFields();
 
-        final GetResultNew.Builder builder = GetResultNew.create().
-            id( request.getId() );
+        final ResultFieldValues.Builder builder = ResultFieldValues.create();
 
         for ( final ReturnField field : returnFields )
         {
@@ -80,17 +79,20 @@ public class SimpleCache
             builder.add( field.getPath(), values ).build();
         }
 
-        return builder.build();
+        return GetResultNew.create().
+            id( request.getId() ).
+            resultFieldValues( builder.build() ).
+            build();
     }
 
     @Override
-    public GetResult getByPath( final GetByPathRequest query )
+    public GetResultNew getByPath( final GetByPathRequest query )
     {
         return null;
     }
 
     @Override
-    public GetResult getByParent( final GetByParentRequest query )
+    public GetResultNew getByParent( final GetByParentRequest query )
     {
         return null;
     }

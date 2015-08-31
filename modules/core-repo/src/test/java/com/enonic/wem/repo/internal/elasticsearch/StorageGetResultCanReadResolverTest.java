@@ -5,9 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
+import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -21,36 +19,31 @@ public class StorageGetResultCanReadResolverTest
     public void anonymous_no_access()
         throws Exception
     {
-        assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
-            id( "myId" ).
-            addField( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
-                      SearchResultFieldValue.value( "user:system:rmy" ) ).
-            build() ) ) );
+        final ResultFieldValues resultFieldValues = ResultFieldValues.create().
+            add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ), "user:system:rmy" ).
+            build();
+
+        assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), resultFieldValues ) );
     }
 
     @Test
     public void anonymous_access()
         throws Exception
     {
-        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
-            id( "myId" ).
-            addField( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
-                      SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
-            build() ) ) );
+        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), ResultFieldValues.create().
+            add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ), PrincipalKey.ofAnonymous().toString() ).
+            build() ) );
     }
 
     @Test
     public void user_access()
         throws Exception
     {
-        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ),
-                                                      new GetResult( SearchResultEntry.create().
-                                                          id( "myId" ).
-                                                          addField( IndexFieldNameNormalizer.normalize(
-                                                                        NodeIndexPath.PERMISSIONS_READ.toString() ),
-                                                                    SearchResultFieldValue.value(
-                                                                        PrincipalKey.from( "user:system:rmy" ) ) ).
-                                                          build() ) ) );
+        assertTrue(
+            GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ), ResultFieldValues.create().
+                add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
+                     PrincipalKey.from( "user:system:rmy" ).toString() ).
+                build() ) );
     }
 
     @Test
@@ -59,11 +52,10 @@ public class StorageGetResultCanReadResolverTest
     {
         assertTrue( GetResultCanReadResolver.canRead(
             PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:my-group" ) ),
-            new GetResult( SearchResultEntry.create().
-                id( "myId" ).
-                addField( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
-                          SearchResultFieldValue.values( Arrays.asList( "user:system:rmy", "group:system:my-group" ) ) ).
-                build() ) ) );
+            ResultFieldValues.create().
+                add( IndexFieldNameNormalizer.normalize( NodeIndexPath.PERMISSIONS_READ.toString() ),
+                     Arrays.asList( "user:system:rmy", "group:system:my-group" ) ).
+                build() ) );
     }
 
 }

@@ -1,27 +1,31 @@
 package com.enonic.wem.repo.internal.index.result;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 public class GetResultNew
 {
     private final String id;
 
-    private Multimap<String, Object> values;
+    private final ResultFieldValues resultFieldValues;
 
-
-    private GetResultNew( final Builder builder )
+    private GetResultNew( Builder builder )
     {
-        this.id = builder.id;
-        this.values = builder.values;
+        id = builder.id;
+        resultFieldValues = builder.resultFieldValues;
+    }
+
+    public ResultFieldValues getResultFieldValues()
+    {
+        return resultFieldValues;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     private GetResultNew()
     {
-        id = null;
+        this.id = null;
+        this.resultFieldValues = null;
     }
 
     public static GetResultNew empty()
@@ -34,39 +38,11 @@ public class GetResultNew
         return this.id == null;
     }
 
-    public Collection<Object> get( final String key )
-    {
-        return this.values.get( key );
-    }
-
-    public Multimap<String, Object> getValues()
-    {
-        return values;
-    }
-
-    public Object getSingleValue( final String key )
-    {
-        final Collection<Object> values = this.values.get( key );
-
-        if ( values == null || values.isEmpty() )
-        {
-            return null;
-        }
-
-        return values.iterator().next();
-    }
-
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static final class Builder
     {
         private String id;
 
-        final Multimap<String, Object> values = ArrayListMultimap.create();
+        private ResultFieldValues resultFieldValues;
 
         private Builder()
         {
@@ -78,22 +54,9 @@ public class GetResultNew
             return this;
         }
 
-
-        public Builder add( final String key, final Object value )
+        public Builder resultFieldValues( final ResultFieldValues resultFieldValues )
         {
-            if ( value instanceof Collection )
-            {
-                values.putAll( key, ( (Collection) value ) );
-            }
-            else if ( value instanceof Object[] )
-            {
-                values.putAll( key, Arrays.asList( (Object[]) value ) );
-            }
-            else
-            {
-                values.put( key, value );
-            }
-
+            this.resultFieldValues = resultFieldValues;
             return this;
         }
 

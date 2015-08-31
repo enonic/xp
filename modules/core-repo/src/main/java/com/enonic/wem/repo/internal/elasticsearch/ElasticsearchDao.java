@@ -9,9 +9,7 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.storage.GetQuery;
 import com.enonic.xp.snapshot.RestoreParams;
 import com.enonic.xp.snapshot.RestoreResult;
 import com.enonic.xp.snapshot.SnapshotParams;
@@ -29,8 +27,6 @@ public interface ElasticsearchDao
     boolean delete( DeleteDocument deleteDocument );
 
     SearchResult find( ElasticsearchQuery query );
-
-    GetResult get( GetQuery getQuery );
 
     long count( ElasticsearchQuery query );
 

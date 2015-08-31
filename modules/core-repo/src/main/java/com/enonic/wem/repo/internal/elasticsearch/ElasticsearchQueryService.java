@@ -16,18 +16,15 @@ import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
 import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.storage.GetQuery;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -72,38 +69,6 @@ public class ElasticsearchQueryService
 
         return translateResult( searchResult );
     }
-
-    public NodeVersionId get( final NodeId nodeId, final IndexContext indexContext )
-    {
-        final GetResult result = elasticsearchDao.get( GetQuery.create().
-            indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexTypeName( indexContext.getBranch().getName() ).
-            returnFields( ReturnFields.from( NodeIndexPath.VERSION, NodeIndexPath.PERMISSIONS_READ ) ).
-            id( nodeId.toString() ).
-            build() );
-
-        if ( result.isEmpty() )
-        {
-            return null;
-        }
-
-        // TODO: Fix so uses NodePermissionsResolver
-        if ( !GetResultCanReadResolver.canRead( indexContext.getPrincipalKeys(), result ) )
-        {
-            return null;
-        }
-
-        final SearchResultFieldValue nodeVersionId = result.getSearchResult().getField( NodeIndexPath.VERSION.getPath() );
-
-        if ( nodeVersionId == null )
-        {
-            throw new QueryException(
-                "Expected field " + NodeIndexPath.VERSION.getPath() + " not found in search result for nodeId " + nodeId );
-        }
-
-        return NodeVersionId.from( nodeVersionId.getValue().toString() );
-    }
-
 
     @Override
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )

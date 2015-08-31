@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.GetResultNew;
 
 @Component
@@ -60,13 +59,13 @@ public class CachedStorageDaoImpl
     }
 
     @Override
-    public GetResult getByPath( final GetByPathRequest request )
+    public GetResultNew getByPath( final GetByPathRequest request )
     {
         return null;
     }
 
     @Override
-    public GetResult getByParent( final GetByParentRequest request )
+    public GetResultNew getByParent( final GetByParentRequest request )
     {
         return null;
     }

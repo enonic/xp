@@ -22,8 +22,6 @@ import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -46,15 +44,12 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.storage.GetQuery;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.RestoreParams;
@@ -159,30 +154,6 @@ public class ElasticsearchDaoImpl
         //System.out.println( searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
-    }
-
-    @Override
-    public GetResult get( final GetQuery getQuery )
-    {
-        final GetRequest getRequest = new GetRequest( getQuery.getIndexName() ).
-            type( getQuery.getIndexTypeName() ).
-            preference( searchPreference ).
-            id( getQuery.getId() );
-
-        if ( getQuery.getReturnFields().isNotEmpty() )
-        {
-            getRequest.fields( getQuery.getReturnFields().getReturnFieldNames() );
-        }
-
-        if ( getQuery.getRouting() != null )
-        {
-            getRequest.routing( getQuery.getRouting() );
-        }
-
-        final GetResponse getResponse = client.get( getRequest ).
-            actionGet( searchTimeout );
-
-        return GetResultFactory.create( getResponse );
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )

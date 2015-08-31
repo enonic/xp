@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultNewFactory;
-import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.GetResultNew;
 import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
@@ -87,13 +86,13 @@ public class ElasticsearchStorageDao
     }
 
     @Override
-    public GetResult getByParent( final GetByParentRequest query )
+    public GetResultNew getByParent( final GetByParentRequest query )
     {
         return null;
     }
 
     @Override
-    public GetResult getByPath( final GetByPathRequest query )
+    public GetResultNew getByPath( final GetByPathRequest query )
     {
         return null;
     }
