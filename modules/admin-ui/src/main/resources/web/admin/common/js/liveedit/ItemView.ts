@@ -339,10 +339,8 @@ module api.liveedit {
         }
 
         scrollComponentIntoView(): void {
-            var dimensions = this.getElementDimensions();
-            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
-            if (dimensions.top != undefined && dimensions.top - 10 < screenTopPosition) {
-                wemjq("html,body").animate({scrollTop: dimensions.top - 10}, 200);
+            if (!this.visibleInViewport()) {
+                wemjq("html,body").animate({scrollTop: this.getElementDimensions().top - 10}, 200);
             }
         }
 
@@ -754,6 +752,14 @@ module api.liveedit {
 
         protected getContextMenuTitle(): ItemViewContextMenuTitle {
             return this.contextMenuTitle;
+        }
+
+        private  visibleInViewport(): boolean {
+            var dimensions = this.getElementDimensions();
+            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+
+            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+
         }
     }
 }
