@@ -59,7 +59,7 @@ module app.browse.action {
 
             switch (contentBrowseItems.length) {
             case 0:
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                 this.EDIT_CONTENT.setEnabled(false);
                 this.DELETE_CONTENT.setEnabled(false);
                 this.DUPLICATE_CONTENT.setEnabled(false);
@@ -67,22 +67,38 @@ module app.browse.action {
                 this.SORT_CONTENT.setEnabled(false);
                 this.PREVIEW_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(false);
-                deferred.resolve(contentBrowseItems);
+
+                var promise = new api.security.auth.IsAuthenticatedRequest().
+                    sendAndParse().
+                    then((loginResult: api.security.auth.LoginResult) => {
+                        new api.content.GetContentRootPermissionsRequest().
+                            sendAndParse().
+                            then((accessControlList: AccessControlList) => {
+                                var hasCreatePermission =
+                                    this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(hasCreatePermission);
+                            })
+                    });
+
+                promise.then<void>(() => {
+                    deferred.resolve(contentBrowseItems);
+                    return wemQ(null);
+                }).done();
                 break;
             case 1:
                 var contentSummary = contentSummaries[0];
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                 this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
                 this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                 this.PREVIEW_CONTENT.setEnabled(false);
                 var parallelPromises: wemQ.Promise<any>[] = [
                     new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
                         then((renderable: boolean) => {
                             this.PREVIEW_CONTENT.setEnabled(renderable);
-                            if(contentBrowseItems.length > 0) {
+                            if (contentBrowseItems.length > 0) {
                                 contentBrowseItems[0].setRenderable(renderable);
                             }
                         }),
@@ -90,8 +106,8 @@ module app.browse.action {
                     new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
                         sendAndParse().
                         then((contentType: api.schema.content.ContentType) => {
-                            var allowsChildren = (contentType && contentType.isAllowChildContent());
-                            this.SORT_CONTENT.setEnabled(allowsChildren);
+                            var contentTypeAllowsChildren = (contentType && contentType.isAllowChildContent());
+                            this.SORT_CONTENT.setEnabled(contentTypeAllowsChildren);
                             var hasCreatePermission = false;
                             new api.security.auth.IsAuthenticatedRequest().
                                 sendAndParse().
@@ -99,8 +115,10 @@ module app.browse.action {
                                     new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
                                         sendAndParse().
                                         then((accessControlList: AccessControlList) => {
-                                            hasCreatePermission = this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
-                                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(allowsChildren && hasCreatePermission);
+                                            hasCreatePermission =
+                                                this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentTypeAllowsChildren &&
+                                                                                           hasCreatePermission);
                                         })
                                 })
                         })
