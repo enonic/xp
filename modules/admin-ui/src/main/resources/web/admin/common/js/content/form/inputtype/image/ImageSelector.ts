@@ -357,6 +357,7 @@ module api.content.form.inputtype.image {
                     if (dragOverEl == targetEl) {
                         this.uploader.giveBlur();
                         this.uploader.toggleClass("minimized", true);
+                        dragOverEl = null;
                     }
                 }
             });
