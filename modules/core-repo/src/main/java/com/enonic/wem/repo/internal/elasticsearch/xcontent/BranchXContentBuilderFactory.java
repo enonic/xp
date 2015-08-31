@@ -5,8 +5,8 @@ import java.time.Instant;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.xp.branch.Branch;
 
 public class BranchXContentBuilderFactory

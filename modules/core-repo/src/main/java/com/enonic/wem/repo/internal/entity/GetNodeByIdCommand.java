@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;

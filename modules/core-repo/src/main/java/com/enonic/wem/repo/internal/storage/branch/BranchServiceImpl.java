@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.branch;
+package com.enonic.wem.repo.internal.storage.branch;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;

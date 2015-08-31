@@ -2,15 +2,15 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 public class AbstractCompareNodeCommand
 {

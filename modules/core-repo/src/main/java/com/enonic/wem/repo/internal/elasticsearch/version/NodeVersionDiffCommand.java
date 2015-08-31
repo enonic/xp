@@ -7,10 +7,10 @@ import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
+import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;

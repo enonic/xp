@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.node.NodeState;

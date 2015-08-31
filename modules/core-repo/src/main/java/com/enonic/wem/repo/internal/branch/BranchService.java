@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.branch;
 
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.node.NodeId;
 
 public interface BranchService

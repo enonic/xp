@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.branch;
+package com.enonic.wem.repo.internal.storage.branch;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;

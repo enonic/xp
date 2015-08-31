@@ -9,14 +9,14 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResultEntry;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 import com.enonic.wem.repo.internal.repository.RepositorySearchIndexSettingsProvider;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultEntry;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
