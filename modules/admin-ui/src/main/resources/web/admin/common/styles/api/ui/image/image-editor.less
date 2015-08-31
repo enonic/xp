@@ -87,10 +87,6 @@
     div.bordered {
       border: 1px solid @admin-input-blue;
       .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
-
-      .image-canvas {
-        border: none;
-      }
     }
   }
 
@@ -98,6 +94,7 @@
 
     &.focused:not(.edit-mode) {
       .image-frame .image-canvas {
+        border: 1px solid @admin-white;
         > svg {
           display: block;
           .focus-group {
@@ -116,7 +113,6 @@
 
     .image-canvas {
       position: absolute;
-      border: 1px solid @admin-white;
       .box-shadow(none);
 
       .image-bg {
