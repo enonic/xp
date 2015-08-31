@@ -164,13 +164,18 @@ module api.content {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
 
-            var imgUrl = new ContentImageUrlResolver().
-                setContentId(new api.content.ContentId(value)).
+            var contentId = new api.content.ContentId(value),
+                imgUrl = new ContentImageUrlResolver().
+                    setContentId(contentId).
                 setTimestamp(new Date()).
                 setSource(true).
                 resolve();
 
             var imageEditor = this.createImageEditor(imgUrl);
+
+            imageEditor.onShaderVisibilityChanged((visible: boolean) => {
+                new api.app.wizard.MaskContentWizardPanelEvent(contentId, visible).fire();
+            });
 
             this.imageEditors.push(imageEditor);
 

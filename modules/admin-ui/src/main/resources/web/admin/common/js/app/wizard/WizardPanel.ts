@@ -34,7 +34,7 @@ module api.app.wizard {
 
         private stepToolbar: api.ui.toolbar.Toolbar;
 
-        private actions: WizardActions<EQUITABLE>;
+        protected actions: WizardActions<EQUITABLE>;
 
         private header: WizardHeader;
 
@@ -53,7 +53,7 @@ module api.app.wizard {
 
         private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
-        private formPanel: api.ui.panel.Panel;
+        protected formPanel: api.ui.panel.Panel;
 
         private lastFocusedElement: JQuery;
 
@@ -108,13 +108,6 @@ module api.app.wizard {
                 this.appendChild(this.formPanel);
             }
 
-            var mask = new api.ui.mask.Mask(this.formPanel);
-            this.appendChild(mask);
-
-            api.app.wizard.MaskWizardPanelEvent.on(event => {
-                mask.setVisible(event.isMask());
-                this.actions.suspendActions(event.isMask());
-            });
 
             var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
             headerAndNavigatorContainer.appendChild(params.formIcon);

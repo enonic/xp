@@ -274,6 +274,7 @@ module app.wizard {
                 onSuccess(this);
             }, onError);
 
+            this.initPanelMask();
             this.initPublishButtonForMobile();
         }
 
@@ -1040,6 +1041,23 @@ module app.wizard {
             }
         }
 
+        private initPanelMask() {
+            var mask = new api.ui.mask.Mask(this.formPanel);
+            this.appendChild(mask);
+
+            api.app.wizard.MaskContentWizardPanelEvent.on(event => {
+                if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
+                    if (event.isMask()) {
+                        mask.show();
+                    } else {
+                        mask.hide();
+                    }
+                    //mask.setVisible(event.isMask());
+                    this.actions.suspendActions(event.isMask());
+                }
+            });
+        }
+
         private initPublishButtonForMobile() {
 
             var action: api.ui.Action = new api.ui.Action("Publish", "enter");
@@ -1097,16 +1115,16 @@ module app.wizard {
         }
 
         private updateContextWindowTogglerBehaviour() {
-            if(this.contentIsNotSiteAndNotTemplate()) {
+            if (this.contentIsNotSiteAndNotTemplate()) {
 
-                if(this.contentNotRenderable()) {
+                if (this.contentNotRenderable()) {
                     this.getSplitPanel().hideSecondPanel();
                     this.hideMinimizeEditButton();
                 }
 
                 this.getContextWindowToggler().onActiveChanged((isActive: boolean) => {
-                    if(this.contentNotRenderable()) {
-                        if(isActive) {
+                    if (this.contentNotRenderable()) {
+                        if (isActive) {
                             this.getSplitPanel().showSecondPanel();
                             this.liveFormPanel.clearPageViewSelectionAndOpenInspectPage();
                             this.showMinimizeEditButton();
