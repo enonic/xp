@@ -11,7 +11,7 @@ import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
-import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
@@ -59,7 +59,7 @@ public class BranchServiceImpl
             routing( nodeId.toString() ).
             build();
 
-        final GetResultNew getResult = this.storageDao.getById( getByIdRequest );
+        final GetResult getResult = this.storageDao.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {

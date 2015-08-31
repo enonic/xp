@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.time.Instant;
 
-import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeVersionId;
 
 public class NodeBranchVersionFactory
 {
-    public static NodeBranchVersion create( final GetResultNew getResult )
+    public static NodeBranchVersion create( final GetResult getResult )
     {
         final ResultFieldValues resultFields = getResult.getResultFieldValues();
 

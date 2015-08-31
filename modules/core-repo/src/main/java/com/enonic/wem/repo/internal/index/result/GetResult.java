@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.index.result;
 
-public class GetResultNew
+public class GetResult
 {
     private final String id;
 
     private final ResultFieldValues resultFieldValues;
 
-    private GetResultNew( Builder builder )
+    private GetResult( Builder builder )
     {
         id = builder.id;
         resultFieldValues = builder.resultFieldValues;
@@ -22,15 +22,15 @@ public class GetResultNew
         return new Builder();
     }
 
-    private GetResultNew()
+    private GetResult()
     {
         this.id = null;
         this.resultFieldValues = null;
     }
 
-    public static GetResultNew empty()
+    public static GetResult empty()
     {
-        return new GetResultNew();
+        return new GetResult();
     }
 
     public boolean isEmpty()
@@ -60,9 +60,9 @@ public class GetResultNew
             return this;
         }
 
-        public GetResultNew build()
+        public GetResult build()
         {
-            return new GetResultNew( this );
+            return new GetResult( this );
         }
     }
 }

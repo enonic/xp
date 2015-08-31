@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.GetResult;
 
 @Component
 public class CachedStorageDaoImpl
@@ -43,11 +43,11 @@ public class CachedStorageDaoImpl
     }
 
     @Override
-    public GetResultNew getById( final GetByIdRequest request )
+    public GetResult getById( final GetByIdRequest request )
     {
         //LOG.info( "Fetching: " + request.getId() );
 
-        final GetResultNew result = storageCache.getById( request );
+        final GetResult result = storageCache.getById( request );
 
         if ( result != null )
         {
@@ -59,13 +59,13 @@ public class CachedStorageDaoImpl
     }
 
     @Override
-    public GetResultNew getByPath( final GetByPathRequest request )
+    public GetResult getByPath( final GetByPathRequest request )
     {
         return null;
     }
 
     @Override
-    public GetResultNew getByParent( final GetByParentRequest request )
+    public GetResult getByParent( final GetByParentRequest request )
     {
         return null;
     }

@@ -5,16 +5,16 @@ import java.util.Map;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.index.get.GetField;
 
-import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
 
-public class GetResultNewFactory
+public class GetResultFactory
 {
-    public static GetResultNew create( final GetResponse getResponse )
+    public static GetResult create( final GetResponse getResponse )
     {
         if ( !getResponse.isExists() )
         {
-            return GetResultNew.empty();
+            return GetResult.empty();
         }
 
         final Map<String, GetField> hitFieldMap = getResponse.getFields();
@@ -28,7 +28,7 @@ public class GetResultNewFactory
             builder.add( fieldName, getField.getValues() );
         }
 
-        return GetResultNew.create().
+        return GetResult.create().
             id( getResponse.getId() ).
             resultFieldValues( builder.build() ).
             build();

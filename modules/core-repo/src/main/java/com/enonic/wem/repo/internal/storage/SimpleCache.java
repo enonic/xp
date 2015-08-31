@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.repo.internal.index.result.GetResultNew;
+import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.ResultFieldValues;
 
 @Component
@@ -46,7 +46,7 @@ public class SimpleCache
     }
 
     @Override
-    public GetResultNew getById( final GetByIdRequest request )
+    public GetResult getById( final GetByIdRequest request )
     {
         MemoryStore store = this.memoryStoreMap.get( request.getStorageSettings() );
 
@@ -79,20 +79,20 @@ public class SimpleCache
             builder.add( field.getPath(), values ).build();
         }
 
-        return GetResultNew.create().
+        return GetResult.create().
             id( request.getId() ).
             resultFieldValues( builder.build() ).
             build();
     }
 
     @Override
-    public GetResultNew getByPath( final GetByPathRequest query )
+    public GetResult getByPath( final GetByPathRequest query )
     {
         return null;
     }
 
     @Override
-    public GetResultNew getByParent( final GetByParentRequest query )
+    public GetResult getByParent( final GetByParentRequest query )
     {
         return null;
     }
