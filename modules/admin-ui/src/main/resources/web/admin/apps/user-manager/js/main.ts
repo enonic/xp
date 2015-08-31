@@ -10,6 +10,8 @@ function startApplication() {
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
+    api.util.AppHelper.preventDragRedirect();
+
     var changePasswordDialog = new app.wizard.ChangeUserPasswordDialog();
     application.setLoaded(true);
 

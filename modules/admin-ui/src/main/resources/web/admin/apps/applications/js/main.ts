@@ -12,6 +12,8 @@ function startApplication() {
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
+    api.util.AppHelper.preventDragRedirect();
+
     application.setLoaded(true);
 
     window.onmessage = (e: MessageEvent) => {

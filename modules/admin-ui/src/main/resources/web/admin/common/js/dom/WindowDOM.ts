@@ -23,7 +23,7 @@ module api.dom {
 
             this.el.onunload = (event) => {
                 this.onUnloadListeners.forEach((listener) => listener(event));
-            }
+            };
         }
 
         asWindow(): Window {
@@ -100,6 +100,13 @@ module api.dom {
 
         onBeforeUnload(listener: (event) => void) {
             this.onBeforeUnloadListeners.push(listener);
+        }
+
+        unBeforeUnload(listener: (event) => void) {
+            this.onBeforeUnloadListeners = this.onBeforeUnloadListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
         }
 
         onUnload(listener: (event) => void) {
