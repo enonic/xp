@@ -30,6 +30,7 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
+    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -83,6 +84,8 @@ module app.wizard.page {
         private componentDuplicatedListeners: {(event: ComponentDuplicatedEvent): void;}[] = [];
 
         private componentLoadedListeners: {(event: ComponentLoadedEvent): void;}[] = [];
+
+        private componentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
 
         private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
 
@@ -283,6 +286,8 @@ module app.wizard.page {
 
             ComponentLoadedEvent.un(null, contextWindow);
 
+            ComponentResetEvent.un(null, contextWindow);
+
             LiveEditPageViewReadyEvent.un(null, contextWindow);
 
             LiveEditPageInitializationErrorEvent.un(null, contextWindow);
@@ -334,6 +339,8 @@ module app.wizard.page {
             ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), contextWindow);
 
             ComponentLoadedEvent.on(this.notifyComponentLoaded.bind(this), contextWindow);
+
+            ComponentResetEvent.on(this.notifyComponentReset.bind(this), contextWindow);
 
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), contextWindow);
 
@@ -546,6 +553,18 @@ module app.wizard.page {
 
         private notifyComponentLoaded(event: ComponentLoadedEvent) {
             this.componentLoadedListeners.forEach((listener) => listener(event));
+        }
+
+        onComponentReset(listener: {(event: ComponentResetEvent): void;}) {
+            this.componentResetListeners.push(listener);
+        }
+
+        unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
+            this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyComponentReset(event: ComponentResetEvent) {
+            this.componentResetListeners.forEach((listener) => listener(event));
         }
 
         onLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {

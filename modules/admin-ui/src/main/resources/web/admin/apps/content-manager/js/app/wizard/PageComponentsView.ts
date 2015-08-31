@@ -8,6 +8,7 @@ module app.wizard {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
+    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
 
     import Content = api.content.Content;
     import TreeGrid = api.ui.treegrid.TreeGrid;
@@ -53,10 +54,14 @@ module app.wizard {
 
             this.setModal(false).setFloating(true).setDraggable(true);
 
+            this.onShown((event) => {
+                this.constrainToParent();
+            })
+
             ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
                 if (!smallSize && this.isVisible()) {
-                    this.getEl().setOffset(this.constrainToParent());
+                    this.constrainToParent();
                 }
                 if (item.isRangeSizeChanged()) {
                     this.setModal(smallSize).setDraggable(!smallSize);
@@ -107,6 +112,8 @@ module app.wizard {
                             if (event.getComponentView().isSelected()) {
                                 this.tree.selectNode(this.tree.getDataId(event.getComponentView()));
                             }
+
+                            this.constrainToParent();
                         });
                     }
                 }
@@ -120,7 +127,33 @@ module app.wizard {
 
             this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
                 var oldDataId = this.tree.getDataId(event.getOldComponentView());
+
                 this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
+                    var newDataId = this.tree.getDataId(event.getNewComponentView());
+
+                    if (this.tree.hasChildren(event.getNewComponentView())) {
+                        // expand new node as it has children
+                        var newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
+                        this.tree.expandNode(newNode);
+                    }
+
+                    if (event.getNewComponentView().isSelected()) {
+                        this.tree.selectNode(newDataId);
+                    }
+                });
+            });
+
+            this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
+                var oldDataId = this.tree.getDataId(event.getOldComponentView());
+
+                if (this.tree.hasChildren(event.getOldComponentView())) {
+                    var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+                    oldNode.removeChildren();
+                    this.tree.refreshNode(oldNode);
+                }
+
+                this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
+
                     if (event.getNewComponentView().isSelected()) {
                         var newDataId = this.tree.getDataId(event.getNewComponentView());
                         this.tree.selectNode(newDataId);
@@ -210,7 +243,7 @@ module app.wizard {
                                     left: offset.left + newPos.x - lastPos.x
                                 };
 
-                            el.setOffset(this.constrainToParent(newOffset));
+                            this.constrainToParent(newOffset);
 
                             lastPos = newPos;
                         }
@@ -247,12 +280,14 @@ module app.wizard {
                 }
             }
 
-            return {
+            el.setMaxHeightPx(parentEl.getHeight());
+
+            el.setOffset({
                 top: Math.max(parentOffset.top,
                     Math.min(offset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
                 left: Math.max(parentOffset.left,
                     Math.min(offset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
-            }
+            });
         }
 
         isFloating(): boolean {
