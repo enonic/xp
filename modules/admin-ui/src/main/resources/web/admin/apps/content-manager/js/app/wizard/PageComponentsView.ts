@@ -169,6 +169,7 @@ module app.wizard {
                 }
                 var treeNode: TreeNode<ItemView> = this.tree.getGrid().getDataView().getItem(data.row);
                 treeNode.getData().select();
+                treeNode.getData().scrollComponentIntoView();
 
                 if (this.isModal()) {
                     this.hide();
