@@ -13,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.security.acl.Permission;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
@@ -37,6 +38,8 @@ public class SetNodeChildOrderCommand
     {
         final Node parentNode = doGetById( nodeId, false );
 
+        checkContextUserPermissionOrAdmin( parentNode );
+
         final boolean newOrderingIsManual = childOrder.isManualOrder();
         final boolean childrenAreUnordered = !parentNode.getChildOrder().isManualOrder();
         final boolean childrenMustBeOrdered = newOrderingIsManual && childrenAreUnordered;
@@ -51,6 +54,11 @@ public class SetNodeChildOrderCommand
         doStoreNode( editedNode );
 
         return doGetById( editedNode.id(), false );
+    }
+
+    private void checkContextUserPermissionOrAdmin( final Node parentNode )
+    {
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
     }
 
     private void orderChildNodes( final Node parentNode )
