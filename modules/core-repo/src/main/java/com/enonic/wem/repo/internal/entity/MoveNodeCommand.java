@@ -5,10 +5,12 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -92,6 +94,10 @@ public class MoveNodeCommand
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
 
         final Node newParentNode = doGetByPath( newParentPath, false );
+        if ( newParentNode == null )
+        {
+            throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), newParentPath, Permission.READ );
+        }
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
 
     }
