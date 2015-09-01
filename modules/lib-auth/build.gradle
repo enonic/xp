@@ -1,0 +1,4 @@
+dependencies {
+    provided project( ':core-api' )
+    testCompile project( ':testing' )
+}
