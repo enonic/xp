@@ -1,8 +1,11 @@
 module api.liveedit {
 
+    import StringHelper = api.util.StringHelper;
+
     export class ItemType implements api.Equitable {
 
         static ATTRIBUTE_TYPE = "portal-component-type";
+        static ATTRIBUTE_REGION_NAME = "portal-region";
 
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
 
@@ -70,6 +73,12 @@ module api.liveedit {
 
         static fromHTMLElement(element: HTMLElement): ItemType {
             var typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+            if (StringHelper.isBlank(typeAsString)) {
+                var regionName = element.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                if (!StringHelper.isBlank(regionName)) {
+                    typeAsString = "region";
+                }
+            }
             return ItemType.byShortName(typeAsString);
         }
 
