@@ -194,6 +194,11 @@ module api.ui.treegrid {
             }
         }
 
+        removeChildren() {
+            this.children.length = 0;
+            this.expanded = false;
+        }
+
         remove() {
             if (this.parent) {
                 this.parent.removeChild(this);

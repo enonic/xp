@@ -1,7 +1,6 @@
 module api.content {
 
     import Thumbnail = api.thumb.Thumbnail;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
     import ContentState = api.schema.content.ContentState;
 
     export class ContentSummary extends ContentIdBaseItem {
@@ -253,14 +252,14 @@ module api.content {
             return true;
         }
 
-        static fromJson(json: api.content.json.ContentSummaryJson, propertyIdProvider: PropertyIdProvider): ContentSummary {
+        static fromJson(json: api.content.json.ContentSummaryJson): ContentSummary {
             return new ContentSummaryBuilder().fromContentSummaryJson(json).build();
         }
 
-        static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[], propertyIdProvider: PropertyIdProvider): ContentSummary[] {
+        static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[]): ContentSummary[] {
             var array: ContentSummary[] = [];
             jsonArray.forEach((json: api.content.json.ContentSummaryJson) => {
-                array.push(ContentSummary.fromJson(json, propertyIdProvider));
+                array.push(ContentSummary.fromJson(json));
             });
             return array;
         }

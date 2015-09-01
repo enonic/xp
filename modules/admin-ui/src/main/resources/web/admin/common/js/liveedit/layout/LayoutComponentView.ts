@@ -36,7 +36,7 @@ module api.liveedit.layout {
             this.layoutComponent = builder.component;
             LayoutComponentView.debug = false;
 
-            this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView());
+            this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.notifyItemViewRemoved(event.getView());
 
             super(builder.

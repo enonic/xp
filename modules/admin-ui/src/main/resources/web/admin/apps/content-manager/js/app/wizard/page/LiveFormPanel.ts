@@ -55,7 +55,7 @@ module app.wizard.page {
     import PageSelectedEvent = api.liveedit.PageSelectedEvent;
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
@@ -129,11 +129,12 @@ module app.wizard.page {
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
 
-            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+            api.dom.WindowDOM.get().onBeforeUnload((event) => {
+                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName())
                 // the reload is triggered by the main frame,
                 // so let the live edit know it to skip the popup
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
-            };
+            });
 
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
@@ -160,7 +161,8 @@ module app.wizard.page {
             });
 
             this.insertablesPanel = new InsertablesPanel({
-                liveEditPage: this.liveEditPageProxy
+                liveEditPage: this.liveEditPageProxy,
+                contentWizardPanel: config.contentWizardPanel,
             });
 
             this.frameContainer = new Panel("frame-container");
@@ -171,8 +173,8 @@ module app.wizard.page {
             this.appendChild(this.liveEditPageProxy.getLoadMask());
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
+                liveEditPage: this.liveEditPageProxy,
                 liveFormPanel: this,
-                contentWizardPanel: config.contentWizardPanel,
                 inspectionPanel: this.inspectionsPanel,
                 emulatorPanel: this.emulatorPanel,
                 insertablesPanel: this.insertablesPanel
@@ -204,7 +206,7 @@ module app.wizard.page {
             this.liveEditModel = liveEditModel;
 
             this.content = liveEditModel.getContent();
-            this.contextWindow.setContent(this.content);
+            this.insertablesPanel.setContent(this.content);
 
             this.pageModel = liveEditModel.getPageModel();
             this.pageModel.setIgnorePropertyChanges(true);
@@ -223,13 +225,14 @@ module app.wizard.page {
                 // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
 
                 if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
-                    this.saveAndReloadPage(true);
+                    this.saveAndReloadPage(false);
                 }
                 else if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
 
                     // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
                     // only reload when switching from customized with controller set back to template or automatic template
-                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() && !this.pageModel.hasController())) {
+                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() &&
+                          !this.pageModel.hasController())) {
                         this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
                         this.lockPageAfterProxyLoad = true;
                         this.saveAndReloadPage(false);
@@ -282,7 +285,7 @@ module app.wizard.page {
         loadPage() {
             if (this.pageSkipReload == false && !this.pageLoading) {
 
-                this.contextWindow.clearSelection();
+                this.clearSelection();
 
                 this.pageLoading = true;
                 this.liveEditPageProxy.load();
@@ -354,13 +357,9 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
-                this.contentWizardPanel.close();
-            });
-
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
-                this.contextWindow.setPageView(this.pageView);
+                this.insertablesPanel.setPageView(this.pageView);
             });
 
             this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {
@@ -374,19 +373,19 @@ module app.wizard.page {
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 var itemView = event.getItemView();
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView) && !event.isNew()) {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
 
-            this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectEvent) => {
+            this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideOut();
                 } else if (toggler.isActive() && !this.contextWindow.isShownOrAboutToBeShown()) {
                     this.contextWindow.slideIn();
                 }
-                this.contextWindow.clearSelection();
+                this.clearSelection();
             });
 
             this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
@@ -399,7 +398,7 @@ module app.wizard.page {
                     this.pageModel.initializePageFromDefault(this);
                 }
 
-                this.contextWindow.clearSelection();
+                this.clearSelection();
             });
 
             this.liveEditPageProxy.onComponentViewDragDropped((event: ComponentViewDragDroppedEvent) => {
@@ -422,12 +421,24 @@ module app.wizard.page {
             });
         }
 
-        private inspectContent(contentId: api.content.ContentId) {
-            this.contextWindow.showInspectionPanel(this.contentInspectionPanel);
+        private inspectPage() {
+            this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
-        private inspectPage() {
+        private clearSelection(): void {
+            var pageModel = this.liveEditModel.getPageModel();
+            var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
+            if (pageModel.hasDefaultPageTemplate() || customizedWithController) {
+                this.contextWindow.clearSelection();
+            } else {
+                this.inspectPage();
+            }
+        }
 
+        clearPageViewSelectionAndOpenInspectPage() {
+            if (this.pageView && this.pageView.hasSelectedView()) {
+                this.pageView.getSelectedView().deselect();
+            }
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 

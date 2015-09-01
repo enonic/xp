@@ -6,9 +6,12 @@ module api.form {
 
         private recording: api.form.ValidationRecording;
 
-        constructor(recording: api.form.ValidationRecording, origin: api.form.ValidationRecordingPath) {
+        private inputValueBroken: boolean;
+
+        constructor(recording: api.form.ValidationRecording, origin: api.form.ValidationRecordingPath, inputValueBroken: boolean = false) {
             this.recording = recording;
             this.origin = origin;
+            this.inputValueBroken = inputValueBroken;
         }
 
         getOrigin(): api.form.ValidationRecordingPath {
@@ -16,11 +19,15 @@ module api.form {
         }
 
         isValid(): boolean {
-            return this.recording.isValid();
+            return this.recording.isValid() && !this.inputValueBroken;
         }
 
         getRecording(): api.form.ValidationRecording {
             return this.recording;
+        }
+
+        isInputValueBroken(): boolean {
+            return this.inputValueBroken;
         }
     }
 }

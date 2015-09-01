@@ -320,10 +320,9 @@ module api.ui.selector {
         }
 
         applyMultipleSelection() {
-            var rows: number[] = this.grid.getSelectedRows();
-            for (var key in rows) {
-                this.notifyRowSelection(rows[key]);
-            }
+            this.grid.getSelectedRows().forEach((row) => {
+                this.notifyRowSelection(row);
+            });
         }
 
         private notifyRowSelection(rowSelected: number) {

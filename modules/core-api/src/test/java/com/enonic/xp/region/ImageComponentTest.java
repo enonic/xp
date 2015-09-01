@@ -3,7 +3,6 @@ package com.enonic.xp.region;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.support.AbstractEqualsTest;
 
@@ -19,7 +18,7 @@ public class ImageComponentTest
             @Override
             public Object getObjectX()
             {
-                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree();
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -44,7 +43,7 @@ public class ImageComponentTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree();
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -57,7 +56,7 @@ public class ImageComponentTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+                final PropertyTree config1 = new PropertyTree();
                 config1.addString( "some", "config" );
 
                 return ImageComponent.create().
@@ -73,7 +72,7 @@ public class ImageComponentTest
     @Test
     public void copy()
     {
-        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );
 
         final ImageComponent source = ImageComponent.create().

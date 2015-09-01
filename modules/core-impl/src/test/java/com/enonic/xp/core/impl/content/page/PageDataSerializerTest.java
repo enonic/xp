@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content.page;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
-import com.enonic.xp.data.PropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -15,14 +13,13 @@ import static org.junit.Assert.*;
 
 public class PageDataSerializerTest
 {
-    private PropertyIdProvider propertyIdProvider = new CounterPropertyIdProvider();
 
     private PageDataSerializer pageDataSerializer = new PageDataSerializer( "page" );
 
     @Test
     public void page()
     {
-        PropertyTree myPartConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree myPartConfig = new PropertyTree();
         myPartConfig.addString( "some", "config" );
 
         Region mainRegion = Region.create().
@@ -38,7 +35,7 @@ public class PageDataSerializerTest
             add( mainRegion ).
             build();
 
-        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
 
         Page page = Page.create().
@@ -47,7 +44,7 @@ public class PageDataSerializerTest
             regions( regions ).
             build();
 
-        PropertyTree pageAsData = new PropertyTree( propertyIdProvider );
+        PropertyTree pageAsData = new PropertyTree();
         pageDataSerializer.toData( page, pageAsData.getRoot() );
         Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
 
@@ -61,7 +58,7 @@ public class PageDataSerializerTest
         PageRegions regions = PageRegions.create().
             build();
 
-        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
 
         Page page = Page.create().
@@ -70,7 +67,7 @@ public class PageDataSerializerTest
             regions( regions ).
             build();
 
-        PropertyTree pageAsData = new PropertyTree( propertyIdProvider );
+        PropertyTree pageAsData = new PropertyTree();
         pageDataSerializer.toData( page, pageAsData.getRoot() );
         Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
 
@@ -81,7 +78,7 @@ public class PageDataSerializerTest
     @Test
     public void page_with_regions_as_null()
     {
-        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
 
         Page page = Page.create().
@@ -90,7 +87,7 @@ public class PageDataSerializerTest
             regions( null ).
             build();
 
-        PropertyTree pageAsData = new PropertyTree( propertyIdProvider );
+        PropertyTree pageAsData = new PropertyTree();
         pageDataSerializer.toData( page, pageAsData.getRoot() );
         Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
 

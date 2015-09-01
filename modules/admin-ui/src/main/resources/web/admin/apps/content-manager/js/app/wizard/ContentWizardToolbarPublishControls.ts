@@ -10,7 +10,7 @@ module app.wizard {
         private publishButton: DialogButton;
         private contentStateSpan: SpanEl;
         private publishAction: Action;
-        private contentFormValid: boolean = false;
+        private contentCanBePublished: boolean = false;
         private contentCompareStatus: CompareStatus;
 
         constructor(action: Action) {
@@ -34,15 +34,15 @@ module app.wizard {
             }
         }
 
-        public setContentFormValidity(value: boolean, refresh: boolean = true) {
-            this.contentFormValid = value;
+        public setContentCanBePublished(value: boolean, refresh: boolean = true) {
+            this.contentCanBePublished = value;
             if (refresh) {
                 this.refreshState();
             }
         }
 
         public refreshState() {
-            var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentFormValid;
+            var canBeEnabled = this.contentCompareStatus !== CompareStatus.EQUAL && this.contentCanBePublished;
             this.publishAction.setEnabled(canBeEnabled);
             this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus));
         }

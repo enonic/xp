@@ -1,20 +1,20 @@
 {
-  "mode": "edit",
+  "method": "GET",
+  "scheme": "http",
+  "host": "enonic.com",
+  "port": "80",
   "path": "/my/page",
+  "url": "http://enonic.com/my/page?debug=true",
+  "mode": "edit",
+  "branch": "master",
+  "params": {
+    "debug": "true"
+  },
+  "formParams": {},
   "headers": {
     "Language": "en",
     "Cookies": "mycookie=123; other=abc;"
   },
-  "method": "GET",
-  "scheme": "http",
-  "port": "80",
-  "formParams": {},
-  "host": "enonic.com",
-  "params": {
-    "debug": "true"
-  },
-  "branch": "master",
-  "url": "http://enonic.com/my/page?debug=true",
   "cookies": {
     "mycookie": "123",
     "other": "abc"

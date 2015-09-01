@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
@@ -47,7 +46,7 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        PropertyTree nodeData = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree nodeData = new PropertyTree();
         nodeData.setDouble( "a.b.c", 2.0 );
         nodeData.setLocalDate( "b", LocalDate.of( 2013, 1, 2 ) );
         nodeData.setString( "c", "runar" );

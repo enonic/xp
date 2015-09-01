@@ -6,22 +6,24 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.name.Name;
 
 @Beta
-public class NodeName
+public final class NodeName
     extends Name
 {
-    protected NodeName( final String name )
+    public final static NodeName ROOT = new NodeName( "", false );
+
+    private NodeName( final String name, final boolean validate )
     {
-        super( checkNodeNameRestrictions( name ) );
+        super( name, validate );
+        Preconditions.checkArgument( !"_".equals( name ), "name cannot be _" );
     }
 
-    private static String checkNodeNameRestrictions( final String name )
+    public boolean isRoot()
     {
-        Preconditions.checkArgument( !"_".equals( name ), "name cannot be _" );
-        return name;
+        return this == ROOT;
     }
 
     public static NodeName from( final String name )
     {
-        return new NodeName( name );
+        return new NodeName( name, true );
     }
 }

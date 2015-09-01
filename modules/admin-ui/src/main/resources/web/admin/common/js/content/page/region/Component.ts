@@ -76,7 +76,7 @@ module api.content.page.region {
 
         duplicate(): Component {
             var duplicateName = this.getName();
-            var duplicatedComponent = this.clone(true);
+            var duplicatedComponent = this.clone();
             duplicatedComponent.setName(duplicateName);
 
             return duplicatedComponent;
@@ -116,7 +116,7 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): Component {
+        clone(): Component {
             throw new Error("Must be implemented by inheritors");
         }
 

@@ -30,6 +30,8 @@ module api.ui.text {
 
             // Update input width according to current page size.
             api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateSize(), this);
+            // Update input width according to current panel size.
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => this.updateSize());
         }
 
         static large(className?: string): AutosizeTextInput {
@@ -53,7 +55,12 @@ module api.ui.text {
             cloneEl.setInnerHtml(this.getValue(), true);
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
-            inputEl.setWidthPx(Math.min(cloneEl.getWidthWithBorder(), this.attendant.getEl().getWidth()));
+            if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {
+                inputEl.setWidth("100%");
+            } else {
+                inputEl.setWidthPx(cloneEl.getWidthWithBorder());
+            }
+
 
             this.attendant.remove();
         }

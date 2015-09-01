@@ -40,10 +40,10 @@
           <string name="fileSource">Digital Still Camera (DSC)</string>
           <string name="colorSpace">RGB</string>
           <string name="colorSpace">sRGB</string>
-          <long name="imageWidth">7244</long>
-          <long name="imageHeight">4765</long>
+          <string name="imageWidth">7244</string>
+          <string name="imageHeight">4765</string>
           <string name="contentType">image/jpeg</string>
-          <long name="bytesize">4541342</long>
+          <string name="bytesize">4541342</string>
           <long name="pixelSize">34517660</long>
         </property-set>
       </property-set>

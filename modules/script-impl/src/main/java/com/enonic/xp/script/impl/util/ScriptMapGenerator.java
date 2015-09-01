@@ -1,6 +1,5 @@
 package com.enonic.xp.script.impl.util;
 
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.serializer.MapGeneratorBase;
 
 public final class ScriptMapGenerator
@@ -33,7 +32,10 @@ public final class ScriptMapGenerator
     @Override
     protected void putInMap( final Object map, final String key, final Object value )
     {
-        NashornHelper.addToNativeObject( map, key, value );
+        if ( value != null )
+        {
+            NashornHelper.addToNativeObject( map, key, value );
+        }
     }
 
     @Override

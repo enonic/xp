@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl.util;
 import javax.script.ScriptEngine;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
@@ -58,6 +59,16 @@ public final class NashornHelper
         if ( source instanceof ScriptObject )
         {
             return ScriptUtils.wrap( (ScriptObject) source );
+        }
+
+        return source;
+    }
+
+    public static Object unwrap( final Object source )
+    {
+        if ( source instanceof ScriptObjectMirror )
+        {
+            return ScriptUtils.unwrap( source );
         }
 
         return source;

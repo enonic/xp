@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -27,15 +26,12 @@ public final class Property
 
     private Value value;
 
-    private PropertyId id;
-
-    Property( final String name, final int index, final Value value, final PropertyId id, final PropertySet parent )
+    Property( final String name, final int index, final Value value, final PropertySet parent )
     {
         checkName( name );
         this.name = name;
         this.index = index;
         this.value = value;
-        this.id = id;
         this.parent = parent;
         setPropertyOnPropertySetValue( value, parent );
     }
@@ -61,12 +57,6 @@ public final class Property
         }
     }
 
-    void setId( final PropertyId id )
-    {
-        Preconditions.checkState( this.id == null, "id already set" );
-        this.id = id;
-    }
-
     void detach()
     {
         if ( value.getType().equals( ValueTypes.PROPERTY_SET ) && !value.isNull() )
@@ -84,11 +74,6 @@ public final class Property
     public PropertySet getParent()
     {
         return parent;
-    }
-
-    PropertyId getId()
-    {
-        return id;
     }
 
     public String getName()
@@ -247,11 +232,7 @@ public final class Property
 
         final Property property = (Property) o;
 
-        if ( !id.equals( property.id ) )
-        {
-            return false;
-        }
-        if ( !name.equals( property.name ) )
+        if ( !Objects.equals( name, property.name ) )
         {
             return false;
         }
@@ -259,12 +240,12 @@ public final class Property
         {
             return false;
         }
-        if ( !value.equals( property.value ) )
+        if ( !Objects.equals( value, property.value ) )
         {
             return false;
         }
 
-        return Objects.equals( index, property.index ) && Objects.equals( name, property.name ) && Objects.equals( value, property.value );
+        return true;
     }
 
     @Override
@@ -289,7 +270,7 @@ public final class Property
     public Property copyTo( final PropertySet destination )
     {
         final Value copiedValue = value.copy( destination.getTree() );
-        final Property property = new Property( name, index, copiedValue, id, destination );
+        final Property property = new Property( name, index, copiedValue, destination );
         destination.add( property );
         return property;
     }

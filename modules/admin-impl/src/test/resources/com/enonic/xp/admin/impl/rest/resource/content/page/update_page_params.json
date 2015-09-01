@@ -7,7 +7,6 @@
             "type": "String",
             "values": [
                 {
-                    "id": "1",
                     "v": "value3"
                 }
             ]

@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
@@ -173,7 +174,7 @@ public class ResolveSyncWorkCommand
 
     private void includeReferences( final Node node )
     {
-        final Set<Property> references = node.data().getByValueType( ValueTypes.REFERENCE );
+        final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
 
         for ( final Property reference : references )
         {

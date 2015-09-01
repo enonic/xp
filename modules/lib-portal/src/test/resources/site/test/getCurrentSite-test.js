@@ -1,32 +1,31 @@
-var assert = Java.type('org.junit.Assert');
-var scriptAssert = Java.type('com.enonic.xp.testing.script.ScriptAssert');
+var assert = require('/lib/xp/assert.js');
 var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
     "_id": "100123",
     "_name": "my-content",
     "_path": "/my-content",
+    "type": "base:unstructured",
+    "hasChildren": false,
+    "valid": false,
     "data": {
         "siteConfig": {
+            "applicationKey": "myapplication",
             "config": {
                 "Field": 42
-            },
-            "applicationKey": "myapplication"
+            }
         }
     },
-    "hasChildren": false,
-    "page": {},
-    "type": "base:unstructured",
-    "valid": false,
-    "x": {}
+    "x": {},
+    "page": {}
 };
 
 exports.currentSite = function () {
     var result = portal.getSite();
-    scriptAssert.assertJson(expectedJson, result);
+    assert.assertJsonEquals('Site JSON not equals', expectedJson, result);
 };
 
 exports.noCurrentSite = function () {
     var result = portal.getSite();
-    assert.assertNull(result);
+    assert.assertNull('Site JSON not null', result);
 };

@@ -118,7 +118,7 @@ module api.content.page {
             this.defaultTemplate = defaultTemplate;
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
             this.mode = pageMode;
-            this.customized = liveEditModel.getContent().isPage() ? liveEditModel.getContent().getPage().isCustomized() : false;
+            this.customized = liveEditModel.getContent().isPage() && liveEditModel.getContent().getPage().isCustomized();
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
                     //console.log("PageModel.config.onChanged: ", event.getPath().toString());
@@ -179,7 +179,7 @@ module api.content.page {
             if (this.isPageTemplate() || !this.defaultTemplate) {
                 var setController = new SetController(eventSource).
                     setDescriptor(null).
-                    setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
+                    setConfig(new PropertyTree()).
                     setRegions(api.content.page.region.Regions.create().build());
                 this.setController(setController);
             }
@@ -255,7 +255,7 @@ module api.content.page {
 
             var config = this.defaultTemplate.hasConfig() ?
                          this.defaultTemplate.getConfig().copy() :
-                         new PropertyTree(api.Client.get().getPropertyIdProvider());
+                         new PropertyTree();
 
             var regions = this.defaultTemplate.hasRegions() ?
                           this.defaultTemplate.getRegions().clone() :
@@ -396,7 +396,14 @@ module api.content.page {
                     build();
             }
             else if (this.mode == PageMode.NO_CONTROLLER) {
-                return null;
+                if (this.contentHasNonRenderableTemplateSet()) {
+                    return new PageBuilder().
+                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).
+                        build();
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 throw new Error("Page mode not supported: " + this.mode);
@@ -432,7 +439,7 @@ module api.content.page {
             return !!this.template;
         }
 
-        hasDefaultTemplate(): boolean {
+        hasDefaultPageTemplate(): boolean {
             return !!this.defaultTemplate;
         }
 
@@ -460,6 +467,12 @@ module api.content.page {
             return this.customized;
         }
 
+        private contentHasNonRenderableTemplateSet() {
+            return !this.isPageTemplate() && (this.mode == PageMode.NO_CONTROLLER) &&
+                   this.liveEditModel.getContent().getPage() &&
+                   this.liveEditModel.getContent().getPage().getTemplate();
+        }
+
         private registerRegionsListeners(regions: api.content.page.region.Regions) {
             regions.onComponentPropertyChanged(this.componentPropertyChangedEventHandler);
             regions.onChanged(this.regionsChangedEventHandler);
@@ -476,9 +489,9 @@ module api.content.page {
 
         unPageModeChanged(listener: (event: PageModeChangedEvent)=>void) {
             this.pageModeChangedListeners =
-            this.pageModeChangedListeners.filter((curr: (event: PageModeChangedEvent)=>void) => {
-                return listener != curr;
-            });
+                this.pageModeChangedListeners.filter((curr: (event: PageModeChangedEvent)=>void) => {
+                    return listener != curr;
+                });
         }
 
         private notifyPageModeChanged(oldValue: PageMode, newValue: PageMode) {
@@ -511,9 +524,9 @@ module api.content.page {
 
         unComponentPropertyChangedEvent(listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners =
-            this.componentPropertyChangedListeners.filter((curr: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
-            });
+                this.componentPropertyChangedListeners.filter((curr: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
+                    return listener != curr;
+                });
         }
 
         onReset(listener: ()=>void) {

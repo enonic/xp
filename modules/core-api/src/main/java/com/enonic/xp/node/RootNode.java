@@ -17,7 +17,7 @@ public class RootNode
         super( new Node.Builder().
             id( UUID ).
             parentPath( null ).
-            name( RootNodeName.create() ).
+            name( NodeName.ROOT ).
             permissions( builder.permissions ).
             childOrder( builder.childOrder ) );
     }

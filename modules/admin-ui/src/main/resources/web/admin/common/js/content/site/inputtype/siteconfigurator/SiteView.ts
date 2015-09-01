@@ -51,35 +51,49 @@ module api.content.site.inputtype.siteconfigurator {
             });
             header.appendChild(removeButton);
 
-            var collapseButton = new api.dom.AEl('collapse-button');
-            collapseButton.setHtml('Collapse');
-            collapseButton.onClicked((event: MouseEvent) => {
-                if (this.formView.isVisible()) {
-                    this.formView.hide();
-                    collapseButton.setHtml('Expand');
-                    this.addClass('collapsed');
-                } else {
-                    this.formView.show();
-                    collapseButton.setHtml('Collapse');
-                    this.removeClass('collapsed');
-                }
-                this.notifyCollapseClicked(event);
-            });
-            header.appendChild(collapseButton);
-
             this.appendChild(header);
 
-            this.formView = new FormView(formContext, this.application.getForm(), this.siteConfig.getConfig());
-            this.formView.addClass("site-form");
-            this.appendChild(this.formView);
-            this.formView.layout().then(() => {
+            this.formView = this.createFormView(formContext);
+
+            if (!this.siteConfig.getConfig().isEmpty()) {
+
+                header.appendChild(this.createCollapseButton());
+
+                this.appendChild(this.formView);
+            }
+
+        }
+
+        private createCollapseButton(): api.dom.AEl {
+            var collapseButton = new api.dom.AEl('collapse-button');
+            collapseButton.setHtml('Collapse');
+
+            collapseButton.onClicked((event: MouseEvent) => {
+                var isFormVisible = this.formView.isVisible();
+
+                collapseButton.setHtml(isFormVisible ? 'Expand' : 'Collapse');
+                this.toggleClass('collapsed', isFormVisible);
+                this.formView.setVisible(!isFormVisible);
+
+                this.notifyCollapseClicked(event);
+            });
+
+            return collapseButton;
+        }
+
+        private createFormView(formContext: api.content.form.ContentFormContext): FormView {
+            var formView = new FormView(formContext, this.application.getForm(), this.siteConfig.getConfig());
+            formView.addClass("site-form");
+            formView.layout().then(() => {
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
-                this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
+                formView.onEditContentRequest((content: api.content.ContentSummary) => {
                     new api.content.EditContentEvent([content]).fire();
                 });
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
+
+            return formView;
         }
 
         getApplication(): Application {

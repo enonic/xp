@@ -18,3 +18,7 @@
     content: "Image caption goes here";
     color: lightgray;
 }
+
+.mce-content-body strong {
+    font-family: "Open Sans Bold", "Open Sans", sans-serif;
+}

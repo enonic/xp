@@ -1,71 +1,44 @@
 package com.enonic.xp.content;
 
-
 import java.util.UUID;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.name.Name;
 
 @Beta
-public class ContentName
+public final class ContentName
     extends Name
 {
-    protected ContentName( final String name )
+    private final static String UNNAMED_PREFIX = "__unnamed__";
+
+    private ContentName( final String name )
     {
         super( name );
     }
 
     public boolean isUnnamed()
     {
-        return false;
+        return this.value.startsWith( UNNAMED_PREFIX );
     }
 
-    public final static String UNNAMED_PREFIX = "__unnamed__";
+    public boolean hasUniqueness()
+    {
+        return isUnnamed() && this.value.length() > UNNAMED_PREFIX.length();
+    }
 
     public static ContentName unnamed()
     {
-        return Unnamed.from( UNNAMED_PREFIX );
-    }
-
-    public static class Unnamed
-        extends ContentName
-    {
-        public Unnamed( final String name )
-        {
-            super( name );
-            Preconditions.checkArgument( name.startsWith( UNNAMED_PREFIX ),
-                                         "An UnnamedContent must start with [" + UNNAMED_PREFIX + ": ]" + name );
-        }
-
-        @Override
-        public boolean isUnnamed()
-        {
-            return true;
-        }
-
-        public static ContentName withUniqueness()
-        {
-            return new Unnamed( UNNAMED_PREFIX + UUID.randomUUID().toString() );
-        }
-
-        public boolean hasUniqueness()
-        {
-            return toString().length() > UNNAMED_PREFIX.length();
-        }
+        return from( UNNAMED_PREFIX );
     }
 
     public static ContentName from( final String name )
     {
-        Preconditions.checkNotNull( name, "Cannot resolve ContentName from null" );
-        if ( name.startsWith( UNNAMED_PREFIX ) )
-        {
-            return new Unnamed( name );
-        }
-        else
-        {
-            return new ContentName( name );
-        }
+        return new ContentName( name );
+    }
+
+    public static ContentName uniqueUnnamed()
+    {
+        return from( UNNAMED_PREFIX + UUID.randomUUID().toString() );
     }
 }

@@ -1,59 +1,65 @@
-var scriptAssert = Java.type('com.enonic.xp.testing.script.ScriptAssert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
-    "contents": [{
-        "_id": "111111",
-        "_name": "mycontent",
-        "_path": "/a/b/mycontent",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "My Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }, {
-        "_id": "222222",
-        "_name": "othercontent",
-        "_path": "/a/b/othercontent",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "Other Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }, {
-        "_id": "333333",
-        "_name": "another",
-        "_path": "/a/b/another",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "Another Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }],
-    "total": 20
+    "total": 20,
+    "count": 3,
+    "hits": [
+        {
+            "_id": "111111",
+            "_name": "mycontent",
+            "_path": "/a/b/mycontent",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "My Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        },
+        {
+            "_id": "222222",
+            "_name": "othercontent",
+            "_path": "/a/b/othercontent",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "Other Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        },
+        {
+            "_id": "333333",
+            "_name": "another",
+            "_path": "/a/b/another",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "Another Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        }
+    ]
 };
 
 var expectedEmptyJson = {
-    "contents": [],
-    "total": 0
+    "total": 0,
+    "count": 0,
+    "hits": []
 };
 
 exports.getChildrenById = function () {
@@ -61,7 +67,7 @@ exports.getChildrenById = function () {
         key: '123456'
     });
 
-    scriptAssert.assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.getChildrenByPath = function () {
@@ -69,7 +75,7 @@ exports.getChildrenByPath = function () {
         key: '/a/b'
     });
 
-    scriptAssert.assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.getChildrenById_notFound = function () {
@@ -77,7 +83,7 @@ exports.getChildrenById_notFound = function () {
         key: '123456'
     });
 
-    scriptAssert.assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
 
 exports.getChildrenByPath_notFound = function () {
@@ -85,7 +91,7 @@ exports.getChildrenByPath_notFound = function () {
         key: '/a/b/mycontent'
     });
 
-    scriptAssert.assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
 
 exports.getChildrenByPath_allParameters = function () {
@@ -96,5 +102,5 @@ exports.getChildrenByPath_allParameters = function () {
         sort: '_modifiedTime ASC'
     });
 
-    scriptAssert.assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };

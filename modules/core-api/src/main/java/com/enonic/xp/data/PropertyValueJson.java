@@ -8,20 +8,18 @@ import com.google.common.annotations.Beta;
 
 @Beta
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class ValueAndPropertyIdJson
+public final class PropertyValueJson
 {
     public Object v;
 
     public List<PropertyArrayJson> set;
 
-    public String id;
-
-    public ValueAndPropertyIdJson()
+    public PropertyValueJson()
     {
         // Needed for Jackson
     }
 
-    ValueAndPropertyIdJson( final Property property )
+    PropertyValueJson( final Property property )
     {
         if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
         {
@@ -36,19 +34,15 @@ public final class ValueAndPropertyIdJson
                 }
                 this.set = propertyArrayJsonList;
             }
-            
-            this.id = property.getId().toString();
         }
         else
         {
             this.v = property.getValue().toJsonValue();
-            this.id = property.getId().toString();
         }
     }
 
     void fromJson( final PropertyArray array, final ValueType type )
     {
-        final PropertyId propertyId = new PropertyId( this.id );
         final Value value;
         if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
@@ -71,7 +65,7 @@ public final class ValueAndPropertyIdJson
             value = type.fromJsonValue( v );
         }
 
-        final Property newProperty = new Property( array.getName(), array.size(), value, propertyId, array.getParent() );
+        final Property newProperty = new Property( array.getName(), array.size(), value, array.getParent() );
         array.addProperty( newProperty );
     }
 }

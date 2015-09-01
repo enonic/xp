@@ -70,7 +70,7 @@ module api.content.site {
             if (source) {
                 this.applicationKey = source.getApplicationKey();
                 if (source.getConfig()) {
-                    var newTree = new PropertyTree(source.getConfig().getTree().getIdProvider(), source.getConfig());
+                    var newTree = new PropertyTree(source.getConfig());
                     this.config = newTree.getRoot();
                 }
             }

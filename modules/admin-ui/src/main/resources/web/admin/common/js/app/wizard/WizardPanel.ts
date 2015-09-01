@@ -34,7 +34,7 @@ module api.app.wizard {
 
         private stepToolbar: api.ui.toolbar.Toolbar;
 
-        private actions: WizardActions<EQUITABLE>;
+        protected actions: WizardActions<EQUITABLE>;
 
         private header: WizardHeader;
 
@@ -53,7 +53,7 @@ module api.app.wizard {
 
         private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
-        private formPanel: api.ui.panel.Panel;
+        protected formPanel: api.ui.panel.Panel;
 
         private lastFocusedElement: JQuery;
 
@@ -71,7 +71,9 @@ module api.app.wizard {
 
         private minimized: boolean = false;
 
-        private toggleMinimizeListener: (event: api.ui.NavigatorEvent) => void;
+        private toggleMinimizeListener: (event: api.ui.ActivatedEvent) => void;
+
+        private scrollPosition: number = 0;
 
         constructor(params: WizardPanelParams, onSuccess: () => void, onError?: (reason: any) => void) {
             super("wizard-panel");
@@ -91,8 +93,8 @@ module api.app.wizard {
 
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
-                this.toggleMinimizeListener = (event: api.ui.NavigatorEvent) => {
-                    this.toggleMinimize();
+                this.toggleMinimizeListener = (event: api.ui.ActivatedEvent) => {
+                    this.toggleMinimize(event.getIndex());
                 };
                 this.minimizeEditButton = new api.dom.DivEl("minimize-edit icon icon-arrow-right");
                 this.formPanel.prependChild(this.minimizeEditButton);
@@ -101,18 +103,11 @@ module api.app.wizard {
                 api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this.minimizeEditButton, () => {
                     this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
                 });
-                this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this));
+                this.minimizeEditButton.onClicked(this.toggleMinimize.bind(this, -1));
             } else {
                 this.appendChild(this.formPanel);
             }
 
-            var mask = new api.ui.mask.Mask(this.formPanel);
-            this.appendChild(mask);
-
-            api.app.wizard.MaskWizardPanelEvent.on(event => {
-                mask.setVisible(event.isMask());
-                this.actions.suspendActions(event.isMask());
-            });
 
             var headerAndNavigatorContainer = new api.dom.DivEl("header-and-navigator-container");
             headerAndNavigatorContainer.appendChild(params.formIcon);
@@ -227,22 +222,34 @@ module api.app.wizard {
             this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(navigationWidth);
         }
 
-        toggleMinimize() {
-            this.stepNavigator.unNavigationItemSelected(this.toggleMinimizeListener);
-            var navIndex = this.stepNavigator.getSelectedIndex();
+        toggleMinimize(navigationIndex: number = -1) {
+
+            this.stepsPanel.setListenToScroll(false);
+
+            var scroll = this.stepsPanel.getScroll();
             this.minimized = !this.minimized;
+
+            this.stepNavigator.unNavigationItemActivated(this.toggleMinimizeListener);
             this.formPanel.toggleClass("minimized");
 
             if (this.minimized) {
-                this.stepNavigator.selectNavigationItem(navIndex, false, true);
+                this.stepNavigator.setScrollEnabled(false);
+
+                this.scrollPosition = scroll;
                 this.splitPanel.saveFirstPanelSizeAndDistribute(40, 0, api.ui.panel.SplitPanelUnit.PIXEL);
                 this.splitPanel.hideSplitter();
                 this.minimizeEditButton.getEl().setLeftPx(this.stepsPanel.getEl().getWidth());
-                this.stepNavigator.onNavigationItemSelected(this.toggleMinimizeListener);
+
+                this.stepNavigator.onNavigationItemActivated(this.toggleMinimizeListener);
             } else {
                 this.splitPanel.loadFirstPanelSizeAndDistribute();
                 this.splitPanel.showSplitter();
-                this.stepNavigator.selectNavigationItem(navIndex, false, true);
+                this.stepsPanel.setScroll(this.scrollPosition);
+
+                this.stepsPanel.setListenToScroll(true);
+                this.stepNavigator.setScrollEnabled(true);
+
+                this.stepNavigator.selectNavigationItem(navigationIndex, false, true);
             }
         }
 
@@ -457,6 +464,14 @@ module api.app.wizard {
 
         getSplitPanel(): api.ui.panel.SplitPanel {
             return this.splitPanel;
+        }
+
+        showMinimizeEditButton() {
+            this.minimizeEditButton.show();
+        }
+
+        hideMinimizeEditButton() {
+            this.minimizeEditButton.hide();
         }
 
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {

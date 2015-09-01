@@ -4,7 +4,6 @@ module api.content {
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertyPath = api.data.PropertyPath;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class Content extends ContentSummary implements api.Equitable, api.Cloneable {
 
@@ -143,17 +142,17 @@ module api.content {
             return new ContentBuilder(this);
         }
 
-        static fromJson(json: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): Content {
+        static fromJson(json: api.content.json.ContentJson): Content {
 
             var type = new api.schema.content.ContentTypeName(json.type);
 
             if (type.isSite()) {
-                return new site.SiteBuilder().fromContentJson(json, propertyIdProvider).build();
+                return new site.SiteBuilder().fromContentJson(json).build();
             }
             else if (type.isPageTemplate()) {
-                return new page.PageTemplateBuilder().fromContentJson(json, propertyIdProvider).build();
+                return new page.PageTemplateBuilder().fromContentJson(json).build();
             }
-            return new ContentBuilder().fromContentJson(json, propertyIdProvider).build();
+            return new ContentBuilder().fromContentJson(json).build();
         }
     }
 
@@ -184,19 +183,19 @@ module api.content {
             }
         }
 
-        fromContentJson(json: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): ContentBuilder {
+        fromContentJson(json: api.content.json.ContentJson): ContentBuilder {
 
             super.fromContentSummaryJson(json);
 
-            this.data = PropertyTree.fromJson(json.data, propertyIdProvider);
+            this.data = PropertyTree.fromJson(json.data);
             this.attachments = new api.content.attachment.AttachmentsBuilder().fromJson(json.attachments).build();
             this.extraData = [];
             json.meta.forEach((extraDataJson: api.content.json.ExtraDataJson) => {
-                this.extraData.push(ExtraData.fromJson(extraDataJson, propertyIdProvider));
+                this.extraData.push(ExtraData.fromJson(extraDataJson));
             });
 
             if (this.page) {
-                this.pageObj = new api.content.page.PageBuilder().fromJson(json.page, propertyIdProvider).build();
+                this.pageObj = new api.content.page.PageBuilder().fromJson(json.page).build();
                 this.page = true;
             }
             if (json.permissions) {

@@ -2,6 +2,8 @@ module api.ui.tab {
 
     export class TabBar extends api.dom.UlEl implements api.ui.Navigator {
 
+        private scrollEnabled: boolean = true;
+
         private tabs: TabBarItem[] = [];
 
         private selectedIndex: number = -1;
@@ -10,8 +12,14 @@ module api.ui.tab {
 
         private navigationItemSelectedListeners: {(event: NavigatorEvent):void}[] = [];
 
+        private navigationItemActivatedListeners: {(event: ActivatedEvent):void}[] = [];
+
         constructor(classes?: string) {
             super("tab-bar" + (!classes ? "" : " " + classes));
+        }
+
+        setScrollEnabled(enabled: boolean) {
+            this.scrollEnabled = enabled;
         }
 
         insertNavigationItem(tab: TabBarItem, index?: number, silent?: boolean) {
@@ -62,7 +70,15 @@ module api.ui.tab {
         }
 
         selectNavigationItem(index: number, silent?: boolean, forced?: boolean) {
-            if (index < 0 || index >= this.getSize() || (!forced && this.selectedIndex == index)) {
+            // If index is out of borders, do nothing
+            if (index < 0 || index >= this.getSize()) {
+                return;
+            }
+
+            this.notifyTabActivatedListeners(index);
+
+            // Do nothing, if index remain the same and
+            if (!forced && this.selectedIndex == index) {
                 return;
             }
 
@@ -71,13 +87,13 @@ module api.ui.tab {
             var selectedTab = this.getSelectedNavigationItem();
             selectedTab.setActive(true);
 
-            if (!silent) {
-                this.notifyTabShownListeners(selectedTab);
+            if (!silent && this.scrollEnabled) {
+                this.notifyTabSelectedListeners(selectedTab);
             }
         }
 
         deselectNavigationItem() {
-            if (this.selectedIndex != -1) {
+            if (this.selectedIndex != -1 && this.getSelectedNavigationItem()) {
                 this.getSelectedNavigationItem().setActive(false);
             }
 
@@ -120,6 +136,10 @@ module api.ui.tab {
             //Not used here
         }
 
+        onNavigationItemActivated(listener: (event: ActivatedEvent) => void) {
+            this.navigationItemActivatedListeners.push(listener);
+        }
+
         unNavigationItemAdded(listener: (event: NavigatorEvent) => void) {
             this.navigationItemAddedListeners =
             this.navigationItemAddedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
@@ -138,15 +158,28 @@ module api.ui.tab {
             //Not used here
         }
 
+        unNavigationItemActivated(listener: (event: ActivatedEvent) => void) {
+            this.navigationItemActivatedListeners =
+                this.navigationItemActivatedListeners.filter((currentListener: (event: ActivatedEvent)=>void) => {
+                    return listener != currentListener;
+                });
+        }
+
         private notifyTabAddedListeners(tab: TabBarItem) {
             this.navigationItemAddedListeners.forEach((listener: (event: NavigatorEvent)=>void) => {
                 listener.call(this, new NavigatorEvent(tab));
             });
         }
 
-        private notifyTabShownListeners(tab: TabBarItem) {
+        private notifyTabSelectedListeners(tab: TabBarItem) {
             this.navigationItemSelectedListeners.forEach((listener: (event: NavigatorEvent)=>void) => {
                 listener.call(this, new NavigatorEvent(tab));
+            });
+        }
+
+        private notifyTabActivatedListeners(index: number) {
+            this.navigationItemActivatedListeners.forEach((listener: (event: ActivatedEvent)=>void) => {
+                listener.call(this, new ActivatedEvent(index));
             });
         }
     }

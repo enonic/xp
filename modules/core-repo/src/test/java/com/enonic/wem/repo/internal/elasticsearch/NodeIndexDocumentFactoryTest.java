@@ -12,7 +12,6 @@ import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocument
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
@@ -156,7 +155,7 @@ public class NodeIndexDocumentFactoryTest
     public void add_properties_then_index_document_items_created_for_each_property()
         throws Exception
     {
-        PropertyTree rootDataSet = new PropertyTree( new CounterPropertyIdProvider() );
+        PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setDouble( "a.b.c", 2.0 );
         rootDataSet.setLocalDate( "a.b.d", LocalDate.now() );
 

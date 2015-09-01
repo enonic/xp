@@ -10,7 +10,6 @@
             "type": "String",
             "values": [
                 {
-                    "id": "4",
                     "v": "myValue"
                 }
             ]
@@ -35,7 +34,6 @@
                     "type": "Long",
                     "values": [
                         {
-                            "id": "3",
                             "v": 1
                         }
                     ]
@@ -55,7 +53,6 @@
                 "type": "String",
                 "values": [
                     {
-                        "id": "2",
                         "v": "blue"
                     }
                 ]
@@ -74,7 +71,6 @@
                                     "type": "String",
                                     "values": [
                                         {
-                                            "id": "1",
                                             "v": "value"
                                         }
                                     ]

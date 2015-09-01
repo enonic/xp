@@ -62,7 +62,7 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): TextComponent {
+        clone(): TextComponent {
             return new TextComponentBuilder(this).build();
         }
     }

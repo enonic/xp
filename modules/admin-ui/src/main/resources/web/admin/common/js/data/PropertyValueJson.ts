@@ -1,11 +1,10 @@
 module api.data {
 
-    export interface ValueAndPropertyIdJson {
+    export interface PropertyValueJson {
 
         v? : any;
 
         set? : PropertyArrayJson[];
 
-        id : string;
     }
 }

@@ -91,7 +91,7 @@ module app.wizard.page.contextwindow.inspect.page {
                                 api.DefaultErrorHandler.handle(reason);
                             }).done();
                     }
-                    else if (this.pageModel.hasDefaultTemplate()) {
+                    else if (this.pageModel.hasDefaultPageTemplate()) {
                         this.pageControllerForm.hide();
                         this.pageModel.setAutomaticTemplate(this, true);
                     }
@@ -110,7 +110,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.pageModel.onReset(() => {
                 this.pageControllerForm.getSelector().reset();
-                if (!this.pageModel.isPageTemplate() && this.pageModel.getDefaultPageTemplate()) {
+                if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
                     this.pageControllerForm.hide()
                 }
             });
@@ -121,7 +121,8 @@ module app.wizard.page.contextwindow.inspect.page {
         }
 
         private pageModeImpliesPageControllerShown(): boolean {
-            return this.pageModel.isCustomized() || this.pageModel.getMode() == PageMode.FORCED_CONTROLLER || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
+            return (this.pageModel.isCustomized() && this.pageModel.hasController()) ||
+                   this.pageModel.getMode() == PageMode.FORCED_CONTROLLER;
         }
     }
 

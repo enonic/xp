@@ -131,7 +131,7 @@ module api.liveedit {
                 this.replaceWith(clone);
                 clone.select();
 
-                new api.liveedit.ComponentResetEvent(clone).fire();
+                new api.liveedit.ComponentResetEvent(clone, this).fire();
             };
 
             this.setComponent(builder.component);
@@ -162,7 +162,7 @@ module api.liveedit {
 
         private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
             var actions = actions || [];
-            actions.push(new api.ui.Action("Parent").onExecuted(() => {
+            actions.push(new api.ui.Action("Select parent").onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
@@ -170,7 +170,7 @@ module api.liveedit {
                     parentView.scrollComponentIntoView();
                 }
             }));
-            actions.push(new api.ui.Action("Empty").onExecuted(() => {
+            actions.push(new api.ui.Action("Reset").onExecuted(() => {
                 this.component.reset();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
@@ -345,8 +345,8 @@ module api.liveedit {
             })
         }
 
-        notifyItemViewAdded(view: ItemView) {
-            var event = new ItemViewAddedEvent(view);
+        notifyItemViewAdded(view: ItemView, isNew: boolean = false) {
+            var event = new ItemViewAddedEvent(view, isNew);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });

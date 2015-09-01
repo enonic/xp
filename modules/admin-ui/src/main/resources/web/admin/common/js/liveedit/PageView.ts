@@ -110,7 +110,6 @@ module api.liveedit {
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.ignorePropertyChanges = false;
-            PageView.debug = true;
 
             var resetAction = new api.ui.Action('Reset');
             resetAction.onExecuted(() => {
@@ -146,7 +145,7 @@ module api.liveedit {
                     if (this.isTextEditMode()) {
                         this.setTextEditMode(false);
                     }
-                    itemView.select();
+                    itemView.select(null, null, event.isNew());
                 }
 
             };
@@ -179,7 +178,8 @@ module api.liveedit {
             this.refreshEmptyState();
 
             // lock page by default for every content that has not been modified except for page template
-            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel)) {
+            var isCustomized = this.liveEditModel.getPageModel().isCustomized();
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel) && !isCustomized) {
                 this.setLocked(true);
             }
 
@@ -234,7 +234,7 @@ module api.liveedit {
                 if (this.isLocked()) {
                     this.setLocked(false);
                 }
-            })
+            });
 
             this.onMouseOverView(() => {
                 var isDragging = DragAndDrop.get().isDragging();
@@ -284,7 +284,7 @@ module api.liveedit {
             this.setLockVisible(false);
             this.lockedContextMenu.hide();
 
-            new ItemViewDeselectEvent(this).fire();
+            new ItemViewDeselectedEvent(this).fire();
         }
 
         handleShaderClick(event: MouseEvent) {

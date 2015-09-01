@@ -78,7 +78,7 @@ module api.liveedit {
             this.parentView = builder.parentView;
             RegionView.debug = false;
 
-            this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView());
+            this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView(), event.isNew());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
 
                 // Check if removed ItemView is a child, and remove it if so
@@ -140,7 +140,7 @@ module api.liveedit {
 
         private createRegionContextMenuActions() {
             var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Parent').onExecuted(() => {
+            actions.push(new api.ui.Action('Select parent').onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
@@ -148,7 +148,7 @@ module api.liveedit {
                     parentView.scrollComponentIntoView();
                 }
             }));
-            actions.push(new api.ui.Action('Empty').onExecuted(() => {
+            actions.push(new api.ui.Action('Reset').onExecuted(() => {
                 this.deselect();
                 this.empty();
             }));
@@ -242,7 +242,7 @@ module api.liveedit {
             return super.toString() + extra;
         }
 
-        registerComponentView(componentView: ComponentView<Component>, index: number) {
+        registerComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
             if (RegionView.debug) {
                 console.log('RegionView[' + this.toString() + '].registerComponentView: ' + componentView.toString() + " at " + index);
             }
@@ -257,7 +257,7 @@ module api.liveedit {
             componentView.onItemViewAdded(this.itemViewAddedListener);
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
-            this.notifyItemViewAdded(componentView);
+            this.notifyItemViewAdded(componentView, isNew);
         }
 
         unregisterComponentView(componentView: ComponentView<Component>) {
@@ -282,7 +282,7 @@ module api.liveedit {
             }
         }
 
-        addComponentView(componentView: ComponentView<Component>, index: number) {
+        addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
             if (RegionView.debug) {
                 console.log('RegionView[' + this.toString() + ']addComponentView: ' + componentView.toString() + " at " + index);
             }
@@ -291,9 +291,9 @@ module api.liveedit {
             }
 
             this.insertChild(componentView, index);
-            this.registerComponentView(componentView, index);
+            this.registerComponentView(componentView, index, isNew);
 
-            new ComponentAddedEvent(componentView).fire();
+            new ComponentAddedEvent(componentView, this).fire();
         }
 
         removeComponentView(componentView: ComponentView<Component>) {
@@ -308,7 +308,7 @@ module api.liveedit {
                 componentView.getComponent().remove();
             }
 
-            new ComponentRemovedEvent(componentView).fire();
+            new ComponentRemovedEvent(componentView, this).fire();
         }
 
         getComponentViews(): ComponentView<Component>[] {
@@ -404,8 +404,8 @@ module api.liveedit {
             });
         }
 
-        private notifyItemViewAdded(itemView: ItemView) {
-            var event = new ItemViewAddedEvent(itemView);
+        private notifyItemViewAdded(itemView: ItemView, isNew: boolean = false) {
+            var event = new ItemViewAddedEvent(itemView, isNew);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -436,11 +436,8 @@ module api.liveedit {
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
 
-            var type = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
-            if (api.util.StringHelper.isBlank(type)) {
-                return false;
-            }
-            return type == "region";
+            var name = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+            return !api.util.StringHelper.isBlank(name);
         }
 
         private parseComponentViews() {

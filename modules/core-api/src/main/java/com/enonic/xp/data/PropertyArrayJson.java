@@ -18,7 +18,7 @@ public class PropertyArrayJson
     private String type;
 
     @JsonProperty("values")
-    private List<ValueAndPropertyIdJson> values;
+    private List<PropertyValueJson> values;
 
     public PropertyArrayJson()
     {
@@ -33,7 +33,7 @@ public class PropertyArrayJson
         json.values = new ArrayList<>( propertyArray.size() );
         for ( final Property property : propertyArray.getProperties() )
         {
-            json.values.add( new ValueAndPropertyIdJson( property ) );
+            json.values.add( new PropertyValueJson( property ) );
         }
 
         return json;
@@ -44,7 +44,7 @@ public class PropertyArrayJson
         final ValueType valueType = ValueTypes.getByName( type );
         final PropertyArray array = new PropertyArray( parent.getTree(), parent, name, valueType );
 
-        for ( final ValueAndPropertyIdJson valueJson : values )
+        for ( final PropertyValueJson valueJson : values )
         {
             valueJson.fromJson( array, valueType );
         }

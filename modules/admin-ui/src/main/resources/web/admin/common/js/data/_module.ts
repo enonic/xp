@@ -15,7 +15,6 @@
 ///<reference path='ValueTypeLink.ts' />
 ///<reference path='ValueTypes.ts' />
 ///<reference path='Value.ts' />
-///<reference path='PropertyId.ts' />
 ///<reference path='PropertyPath.ts' />
 ///<reference path='PropertyEvent.ts' />
 ///<reference path='PropertyIndexChangedEvent.ts' />
@@ -26,11 +25,9 @@
 ///<reference path='Property.ts' />
 ///<reference path='PropertyVisitor.ts' />
 ///<reference path='PropertyTreeComparator.ts' />
-///<reference path='ValueAndPropertyIdJson.ts' />
+///<reference path='PropertyValueJson.ts' />
 ///<reference path='PropertyArrayJson.ts' />
 ///<reference path='PropertyArray.ts' />
 ///<reference path='PropertySet.ts' />
-///<reference path='PropertyIdProvider.ts' />
-///<reference path='DefaultPropertyIdProvider.ts' />
 ///<reference path='PropertyTree.ts' />
 

@@ -6,18 +6,26 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 @Beta
-public class Name
+public abstract class Name
 {
-    private final String value;
+    protected final String value;
 
-    public Name( final String name )
+    protected Name( final String name )
     {
-        doValidateName( name );
+        this( name, true );
+    }
+
+    protected Name( final String name, final boolean validate )
+    {
+        if ( validate )
+        {
+            validateName( name );
+        }
 
         this.value = name;
     }
 
-    protected void doValidateName( final String name )
+    private static void validateName( final String name )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
@@ -26,9 +34,8 @@ public class Name
         checkValidName( name );
     }
 
-    protected boolean checkValidName( final String value )
+    private static void checkValidName( final String value )
     {
-
         for ( final char c : value.toCharArray() )
         {
             if ( !NameCharacterHelper.isValidCharacter( c ) )
@@ -37,12 +44,10 @@ public class Name
                     "Invalid character in name : " + c + " (" + NameCharacterHelper.getUnicodeString( c ) + ")" );
             }
         }
-
-        return true;
     }
 
     @Override
-    public boolean equals( final Object o )
+    public final boolean equals( final Object o )
     {
         if ( this == o )
         {
@@ -64,19 +69,14 @@ public class Name
     }
 
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         return value != null ? value.hashCode() : 0;
     }
 
     @Override
-    public String toString()
+    public final String toString()
     {
         return value;
-    }
-
-    public static Name from( final String name )
-    {
-        return new Name( name );
     }
 }

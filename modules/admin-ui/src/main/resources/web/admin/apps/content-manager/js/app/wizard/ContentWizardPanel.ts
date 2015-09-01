@@ -114,6 +114,8 @@ module app.wizard {
 
         private publishButtonForMobile: api.ui.dialog.DialogButton;
 
+        private inMobileViewMode: boolean;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -213,7 +215,7 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
-                    this.contentWizardToolbarPublishControls.setContentFormValidity(this.isContentFormValid);
+                    this.contentWizardToolbarPublishControls.setContentCanBePublished(this.checkContentCanBePublished(false));
                 });
 
                 this.addClass("content-wizard-panel");
@@ -221,18 +223,20 @@ module app.wizard {
                     this.getSplitPanel().addClass("prerendered");
                 }
 
+                this.inMobileViewMode = false;
                 var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                     if (this.isVisible()) {
                         this.updateStickyToolbar();
                         if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
+                            this.inMobileViewMode = true;
                             if (this.isSplitView()) {
                                 if (this.isMinimized()) {
                                     this.toggleMinimize();
                                 }
                                 this.cycleViewModeButton.executePrevAction();
                             }
-                        } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200) && !this.isSplitView()) {
-                            this.wizardActions.getShowSplitEditAction().execute();
+                        } else {
+                            this.inMobileViewMode = false;
                         }
                     }
                 });
@@ -248,6 +252,19 @@ module app.wizard {
                         app.Router.setHash("new/" + this.contentType.getName());
                     }
                     //Set split panel default
+
+                    this.wizardActions.getShowSplitEditAction().onExecuted(() => {
+                        if (!this.inMobileViewMode) {
+                            if (this.contentNotRenderable()) {
+                                this.closeLiveEdit();
+                                this.contextWindowToggler.setEnabled(false);
+                            } else {
+                                this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
+                                this.contextWindowToggler.setEnabled(true);
+                            }
+                        }
+                    });
+
                     this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
@@ -269,6 +286,7 @@ module app.wizard {
                 onSuccess(this);
             }, onError);
 
+            this.initPanelMask();
             this.initPublishButtonForMobile();
         }
 
@@ -302,10 +320,10 @@ module app.wizard {
                 return wemQ.all(applicationPromises);
             }).then((applications: Application[]) => {
                 for (var i = 0; i < applications.length; i++) {
-                    var mdl = applications[i];
-                    if (!mdl.isStarted()) {
+                    var app = applications[i];
+                    if (!app.isStarted()) {
                         var deferred = wemQ.defer<Mixin[]>();
-                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + mdl.getDisplayName() +
+                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + app.getDisplayName() +
                                                           "' is not started.",
                             api.ExceptionType.WARNING));
                         return deferred.promise;
@@ -318,9 +336,9 @@ module app.wizard {
                         return this.fetchMixin(name);
                     }));
 
-                applications.forEach((mdl: Application) => {
+                applications.forEach((app: Application) => {
                     metadataMixinPromises = metadataMixinPromises.concat(
-                        mdl.getMetaSteps().map((name: MixinName) => {
+                        app.getMetaSteps().map((name: MixinName) => {
                             return this.fetchMixin(name);
                         })
                     );
@@ -502,6 +520,7 @@ module app.wizard {
                         deferred.reject(reason);
                     }).done();
             }
+            this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             return deferred.promise;
         }
 
@@ -563,7 +582,7 @@ module app.wizard {
                 schemas.forEach((schema: Mixin, index: number) => {
                     var extraData = content.getExtraData(schema.getMixinName());
                     if (!extraData) {
-                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
@@ -632,9 +651,9 @@ module app.wizard {
                 then((applications: Application[]) => {
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
-                    applications.forEach((mdl: Application) => {
+                    applications.forEach((app: Application) => {
                         metadataMixinPromises = metadataMixinPromises.concat(
-                            mdl.getMetaSteps().map((name: MixinName) => {
+                            app.getMetaSteps().map((name: MixinName) => {
                                 return new GetMixinByQualifiedNameRequest(name).sendAndParse();
                             })
                         );
@@ -689,7 +708,7 @@ module app.wizard {
                             var wizardStep = new WizardStep(mixin.getDisplayName(), stepForm);
                             this.insertStepBefore(wizardStep, this.settingsWizardStep);
 
-                            var extraData = new ExtraData(mixin.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                            var extraData = new ExtraData(mixin.getMixinName(), new PropertyTree());
 
                             stepForm.layout(this.createFormContext(this.getPersistedItem()), extraData.getData(), mixin.toForm());
                         }
@@ -868,22 +887,28 @@ module app.wizard {
         }
 
         showLiveEdit() {
+            if (!this.inMobileViewMode) {
+                this.showSplitEdit();
+                return;
+            }
+
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+            this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
         showSplitEdit() {
-            if (this.getSplitPanel()) {
-                this.getSplitPanel().addClass("toggle-split");
-                this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
-            }
+            this.getSplitPanel().addClass("toggle-split");
+            this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
         showForm() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+            this.closeLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
@@ -891,9 +916,9 @@ module app.wizard {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
         }
 
-        public checkContentCanBePublished(): boolean {
+        public checkContentCanBePublished(displayValidationErrors: boolean): boolean {
             if (!this.isContentFormValid) {
-                this.contentWizardStepForm.displayValidationErrors(true);
+                this.contentWizardStepForm.displayValidationErrors(displayValidationErrors);
             }
             var contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
@@ -903,7 +928,7 @@ module app.wizard {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
                     var form = this.metadataStepFormByName[key];
                     if (!form.isValid()) {
-                        form.displayValidationErrors(true);
+                        form.displayValidationErrors(displayValidationErrors);
                         allMetadataFormsValid = false;
                     }
                     var formHasValidUserInput = form.getFormView().hasValidUserInput();
@@ -1026,12 +1051,29 @@ module app.wizard {
                     var mixinName = new MixinName(key);
                     var extraData = content.getExtraData(mixinName);
                     if (!extraData) { // ensure ExtraData object corresponds to each step form
-                        extraData = new ExtraData(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        extraData = new ExtraData(mixinName, new PropertyTree());
                         content.getAllExtraData().push(extraData);
                     }
                     this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
                 }
             }
+        }
+
+        private initPanelMask() {
+            var mask = new api.ui.mask.Mask(this.formPanel);
+            this.appendChild(mask);
+
+            api.app.wizard.MaskContentWizardPanelEvent.on(event => {
+                if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
+                    if (event.isMask()) {
+                        mask.show();
+                    } else {
+                        mask.hide();
+                    }
+                    //mask.setVisible(event.isMask());
+                    this.actions.suspendActions(event.isMask());
+                }
+            });
         }
 
         private initPublishButtonForMobile() {
@@ -1088,6 +1130,25 @@ module app.wizard {
                 api.content.ContentPublishedEvent.un(publishHandlerOfServerEvent);
                 api.content.ContentsPublishedEvent.un(publishHandler);
             });
+        }
+
+        private openLiveEdit() {
+            this.getSplitPanel().showSecondPanel();
+            this.liveFormPanel.clearPageViewSelectionAndOpenInspectPage();
+            this.showMinimizeEditButton();
+        }
+
+        private closeLiveEdit() {
+            this.getSplitPanel().hideSecondPanel();
+            this.hideMinimizeEditButton();
+
+            if (this.isMinimized()) {
+                this.toggleMinimize();
+            }
+        }
+
+        private contentNotRenderable(): boolean {
+            return this.liveEditModel.getPageModel().getMode() == api.content.page.PageMode.NO_CONTROLLER;
         }
     }
 

@@ -88,8 +88,9 @@ module api.ui.image {
 
         private cropPositionChangedListeners: {(position: Rect): void}[] = [];
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
+        private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -366,7 +367,7 @@ module api.ui.image {
         }
 
         private setShaderVisible(visible: boolean) {
-            new api.app.wizard.MaskWizardPanelEvent(visible).fire();
+            this.notifyShaderVisibilityChanged(visible);
         }
 
         private createStickyToolbar(): DivEl {
@@ -470,7 +471,10 @@ module api.ui.image {
 
             var zoomContainer = this.createZoomContainer();
 
-            toolbar.appendChildren(this.editCropButton, this.editFocusButton, rightContainer, zoomContainer);
+            var topContainer = new DivEl('top-container');
+            topContainer.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
+
+            toolbar.appendChildren(topContainer, zoomContainer);
 
             return toolbar;
         }
@@ -1581,6 +1585,22 @@ module api.ui.image {
             var normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
             this.cropPositionChangedListeners.forEach((listener) => {
                 listener(normalizedPosition);
+            })
+        }
+
+        onShaderVisibilityChanged(listener: (auto: boolean) => void) {
+            this.shaderVisibilityChangedListeners.push(listener);
+        }
+
+        unShaderVisibilityChanged(listener: (auto: boolean) => void) {
+            this.shaderVisibilityChangedListeners = this.shaderVisibilityChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyShaderVisibilityChanged(auto: boolean) {
+            this.shaderVisibilityChangedListeners.forEach((listener) => {
+                listener(auto);
             })
         }
     }

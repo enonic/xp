@@ -10,14 +10,12 @@
       "type": "PropertySet",
       "values": [
         {
-          "id": "2",
           "set": [
             {
               "name": "applicationKey",
               "type": "String",
               "values": [
                 {
-                  "id": "3",
                   "v": "myapplication"
                 }
               ]
@@ -27,14 +25,12 @@
               "type": "PropertySet",
               "values": [
                 {
-                  "id": "4",
                   "set": [
                     {
                       "name": "A",
                       "type": "Long",
                       "values": [
                         {
-                          "id": "1",
                           "v": 1
                         }
                       ]
@@ -52,7 +48,6 @@
       "type": "String",
       "values": [
         {
-          "id": "5",
           "v": "myValue"
         }
       ]

@@ -4,6 +4,12 @@
   position: relative;
   padding-top: 56px; // equals to the height of sticky toolbar;
 
+  &.sticky-mode {
+    .sticky-toolbar .top-container {
+      padding-bottom: 10px;
+    }
+  }
+
   &.edit-mode {
     .image-frame {
       .image-canvas {
@@ -81,10 +87,6 @@
     div.bordered {
       border: 1px solid @admin-input-blue;
       .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
-
-      .image-canvas {
-        border: none;
-      }
     }
   }
 
@@ -92,6 +94,7 @@
 
     &.focused:not(.edit-mode) {
       .image-frame .image-canvas {
+        border: 1px solid @admin-white;
         > svg {
           display: block;
           .focus-group {
@@ -106,11 +109,10 @@
     overflow: hidden;
     position: relative;
     box-shadow: none;
-    border-bottom: 2px solid @admin-white;
+    border: 1px solid @admin-white;
 
     .image-canvas {
       position: absolute;
-      border: 1px solid @admin-white;
       .box-shadow(none);
 
       .image-bg {
@@ -180,8 +182,6 @@
     z-index: @z-index-mask; // to have it on top of zoomed image
     left: 1px; // account for image editor border
     width: 100%;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, .8);
 
     .box-sizing(border-box);
     .clearfix();
@@ -244,6 +244,12 @@
       }
     }
 
+    .top-container {
+      padding: 10px;
+      padding-bottom: 0;
+      background-color: rgba(255, 255, 255, .8);
+    }
+
     .right-container {
       float: right;
 
@@ -267,8 +273,9 @@
 
     .zoom-container {
       display: none;
-      margin-top: 10px;
+      margin: 20px 12px 0 12px;
       padding: 10px;
+      background-color: rgba(255, 255, 255, .8);
 
       &:hover,
       &.active {

@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -50,7 +49,7 @@ public class XmlNodeSerializerTest
 
     private Node doCreateNode( final Instant instant )
     {
-        final PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree propertyTree = new PropertyTree();
 
         propertyTree.addString( "myString", "myStringValue" );
         propertyTree.addString( "myString", "myStringValue2" );

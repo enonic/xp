@@ -9,8 +9,8 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.xp.script.impl.util.ScriptMapGenerator;
 import com.enonic.xp.script.impl.util.NashornHelper;
+import com.enonic.xp.script.impl.util.ScriptMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class JsObjectConverter
@@ -62,11 +62,6 @@ public final class JsObjectConverter
     public static Object fromJs( final Object value )
     {
         return toObject( value );
-    }
-
-    public static Map<String, Object> fromJsAsMap( final Object value )
-    {
-        return toMap( value );
     }
 
     private static Object toObject( final Object source )
@@ -124,7 +119,7 @@ public final class JsObjectConverter
 
     private static Map<String, Object> toMap( final ScriptObjectMirror source )
     {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
         {
             final Object converted = toObject( entry.getValue() );

@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow {
 
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
-    import Content = api.content.Content;
+    import LiveEditPage = app.wizard.page.LiveEditPageProxy;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -17,9 +17,9 @@ module app.wizard.page.contextwindow {
 
     export interface ContextWindowConfig {
 
-        liveFormPanel:LiveFormPanel;
+        liveEditPage: LiveEditPageProxy;
 
-        contentWizardPanel: ContentWizardPanel;
+        liveFormPanel:LiveFormPanel;
 
         inspectionPanel:InspectionsPanel;
 
@@ -41,10 +41,6 @@ module app.wizard.page.contextwindow {
         private contextWindowState: ContextWindowState = ContextWindowState.HIDDEN;
 
         private splitter: api.dom.DivEl;
-
-        private buttonBar: api.dom.DivEl;
-
-        private componentsView: app.wizard.PageComponentsView;
 
         private ghostDragger: api.dom.DivEl;
 
@@ -83,27 +79,6 @@ module app.wizard.page.contextwindow {
             this.addItem("Insert", false, this.insertablesPanel);
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
-            /*
-            this.componentsView = new app.wizard.PageComponentsView();
-            this.componentsView.onShown((event: api.dom.ElementShownEvent) => button.setLabel('Hide Components View'));
-            this.componentsView.onHidden((event: api.dom.ElementHiddenEvent) => button.setLabel('Show Components View'));
-
-            var button = new api.ui.button.Button('Show Components View');
-            button.addClass('transparent').onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-
-                if (!this.componentsView.getParentElement()) {
-                    // append it on click only to be sure that content wizard panel is ready
-                    config.contentWizardPanel.appendChild(this.componentsView);
-                }
-
-                this.componentsView.isVisible() ? this.componentsView.hide() : this.componentsView.show();
-            });
-
-            this.buttonBar = new api.dom.DivEl('button-bar');
-            this.buttonBar.appendChild(button);
-            this.appendChild(this.buttonBar);
-             */
 
             this.onRendered(() => this.onRenderedHandler());
 
@@ -111,14 +86,6 @@ module app.wizard.page.contextwindow {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
             });
-        }
-
-        setPageView(pageView: api.liveedit.PageView) {
-            // this.componentsView.setPageView(pageView);
-        }
-
-        setContent(content: Content) {
-            // this.componentsView.setContent(content);
         }
 
         private onRenderedHandler() {

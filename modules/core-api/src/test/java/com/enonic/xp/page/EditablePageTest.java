@@ -2,7 +2,6 @@ package com.enonic.xp.page;
 
 import org.junit.Test;
 
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -39,7 +38,7 @@ public class EditablePageTest
 
     private Page createPage()
     {
-        final PropertyTree config1 = new PropertyTree( new CounterPropertyIdProvider() );
+        final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );
 
         final Region region1 = Region.create().
@@ -47,12 +46,12 @@ public class EditablePageTest
             add( PartComponent.create().
                 name( "MyPart" ).
                 descriptor( "descriptor-x" ).
-                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+                config( new PropertyTree() ).
                 build() ).
             add( PartComponent.create().
                 name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
-                config( new PropertyTree( new CounterPropertyIdProvider() ) ).
+                config( new PropertyTree() ).
                 build() ).
             build();
 

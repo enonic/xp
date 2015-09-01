@@ -192,6 +192,8 @@ module api.liveedit {
         }
 
         private bindMouseListeners() {
+            var pageView = this.getPageView();
+
             this.mouseEnterListener = this.handleMouseEnter.bind(this);
             this.onMouseEnter(this.mouseEnterListener);
 
@@ -226,7 +228,7 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = this.getPageView().hasSelectedView();
+                var hasSelectedView = pageView.hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!hasSelectedView && !isDragging) {
@@ -246,7 +248,7 @@ module api.liveedit {
                     // the component has not been registered yet
                     return;
                 }
-                var hasSelectedView = this.getPageView().hasSelectedView();
+                var hasSelectedView = pageView.hasSelectedView();
                 var isDragging = DragAndDrop.get().isDragging();
 
                 if (!hasSelectedView && !isDragging) {
@@ -257,7 +259,10 @@ module api.liveedit {
             };
             this.onMouseLeaveView(this.mouseLeaveViewListener);
 
-            this.getPageView().onItemViewAdded(this.shaderClickedListener);
+            pageView.onItemViewAdded(this.shaderClickedListener);
+            this.onRemoved(() => {
+                pageView.unItemViewAdded(this.shaderClickedListener);
+            });
         }
 
         private unbindMouseListeners() {
@@ -271,7 +276,6 @@ module api.liveedit {
             Shader.get().unClicked(this.shaderClickedListener);
             this.unMouseOverView(this.mouseOverViewListener);
             this.unMouseLeaveView(this.mouseLeaveViewListener);
-            this.getPageView().unItemViewAdded(this.shaderClickedListener);
         }
 
         highlight() {
@@ -335,10 +339,8 @@ module api.liveedit {
         }
 
         scrollComponentIntoView(): void {
-            var dimensions = this.getElementDimensions();
-            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
-            if (dimensions.top != undefined && dimensions.top - 10 < screenTopPosition) {
-                wemjq("html,body").animate({scrollTop: dimensions.top - 10}, 200);
+            if (!this.visibleInViewport()) {
+                wemjq("html,body").animate({scrollTop: this.getElementDimensions().top - 10}, 200);
             }
         }
 
@@ -596,10 +598,13 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
 
             var selectedView = this.getPageView().getSelectedView();
-            if (selectedView) {
+            if (selectedView == this) {
+                // view is already selected
+                return;
+            } else if (selectedView) {
                 // deselect selected item view if any
                 selectedView.deselect();
             }
@@ -619,7 +624,7 @@ module api.liveedit {
                 this.selectPlaceholder();
             }
 
-            new ItemViewSelectedEvent(this, clickPosition).fire();
+            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
         }
 
         deselect(silent?: boolean) {
@@ -634,7 +639,7 @@ module api.liveedit {
             }
 
             if (!silent) {
-                new ItemViewDeselectEvent(this).fire();
+                new ItemViewDeselectedEvent(this).fire();
             }
         }
 
@@ -747,6 +752,14 @@ module api.liveedit {
 
         protected getContextMenuTitle(): ItemViewContextMenuTitle {
             return this.contextMenuTitle;
+        }
+
+        private  visibleInViewport(): boolean {
+            var dimensions = this.getElementDimensions();
+            var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+
+            return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
+
         }
     }
 }

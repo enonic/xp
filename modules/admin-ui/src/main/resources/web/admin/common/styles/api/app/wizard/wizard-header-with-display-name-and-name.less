@@ -1,6 +1,8 @@
 .wizard-header-with-display-name-and-name {
-  .name-wrapper {
-    display: inline-block;
+  .name-wrapper, .text-input {
+    max-width: 100%;
+    box-sizing: content-box;
+    .ellipsis();
   }
 
   .text-input:disabled {
@@ -10,5 +12,17 @@
       cursor: pointer;
       border: 1px solid transparent;
     }
+  }
+}
+
+._0-240, ._240-360 {
+  .name-wrapper, .text-input.large {
+    min-width: 100px;
+  }
+}
+
+._360-540 {
+  .name-wrapper, .text-input.large {
+    min-width: 200px;
   }
 }

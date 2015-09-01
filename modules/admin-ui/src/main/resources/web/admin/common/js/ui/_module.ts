@@ -19,3 +19,4 @@
 ///<reference path='Checkbox.ts' />
 ///<reference path='DragHelper.ts' />
 ///<reference path='NamesAndIconViewer.ts' />
+///<reference path='ActivatedEvent.ts' />

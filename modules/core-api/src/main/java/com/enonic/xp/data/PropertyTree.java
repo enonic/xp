@@ -5,14 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -21,44 +18,26 @@ import com.enonic.xp.util.Reference;
 
 @Beta
 public final class PropertyTree
-    implements PropertyIdProvider
 {
-    private final PropertyIdProvider idProvider;
 
     private final PropertySet root;
-
-    private final LinkedHashMap<PropertyId, Property> propertyById = new LinkedHashMap<>();
 
     /**
      * Creates a new PropertyTree using a default PropertyIdProvider which uses UUID.randomUUID().
      */
     public PropertyTree()
     {
-        idProvider = PropertyIdProviderAccessor.instance().get();
         root = new PropertySet( this );
     }
 
-    public PropertyTree( final PropertyIdProvider idProvider )
+    PropertyTree( final PropertyTree source )
     {
-        this.idProvider = idProvider;
-        root = new PropertySet( this );
-    }
-
-    PropertyTree( final PropertyTree source, final PropertyIdProvider idProvider )
-    {
-        this.idProvider = idProvider;
         root = source.getRoot().copy( this );
     }
 
     PropertyTree( final PropertySet source )
     {
-        idProvider = source.getTree().getIdProvider();
         root = source.copy( this );
-    }
-
-    PropertyIdProvider getIdProvider()
-    {
-        return idProvider;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -105,22 +84,12 @@ public final class PropertyTree
 
     public PropertyTree copy()
     {
-        return new PropertyTree( this, this.idProvider );
+        return new PropertyTree( this );
     }
 
-    public Set<Property> getByValueType( final ValueType valueType )
+    public ImmutableList<Property> getProperties( final ValueType valueType )
     {
-        final Set<Property> properties = Sets.newHashSet();
-
-        for ( final PropertyId propertyId : propertyById.keySet() )
-        {
-            if ( propertyById.get( propertyId ).getType().equals( valueType ) )
-            {
-                properties.add( propertyById.get( propertyId ) );
-            }
-        }
-
-        return properties;
+        return root.getProperties( valueType );
     }
 
     public PropertyTree ifNotNull()
@@ -214,11 +183,6 @@ public final class PropertyTree
         return root.hasProperty( name, index );
     }
 
-    public Property getProperty( final PropertyId id )
-    {
-        return propertyById.get( id );
-    }
-
     public Property getProperty( final String name, final int index )
     {
         return root.getProperty( name, index );
@@ -276,28 +240,7 @@ public final class PropertyTree
 
     public int getTotalSize()
     {
-        return this.propertyById.size();
-    }
-
-    @Override
-    public PropertyId nextId()
-    {
-        return idProvider.nextId();
-    }
-
-    void registerProperty( final Property property )
-    {
-        Property previous = this.propertyById.put( property.getId(), property );
-        if ( previous != null )
-        {
-            throw new IllegalStateException( "Duplicate Property id detected [" + property.getId() + "]! Existing Property \"" +
-                                                 previous.getPath() + "\", new Property: \"" + property.getPath() + "\"" );
-        }
-    }
-
-    void unregisterProperty( final PropertyId property )
-    {
-        this.propertyById.remove( property );
+        return this.root.getPropertySize();
     }
 
     // Typed methods for creating a Property

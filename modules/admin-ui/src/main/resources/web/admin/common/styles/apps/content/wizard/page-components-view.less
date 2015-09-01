@@ -1,11 +1,16 @@
 .page-components-view {
   position: absolute;
   width: 400px;
-  background-color: rgba(235, 235, 235, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   z-index: @z-index-modal-dialog;
   display: none;
   left: 50%;
   margin-left: -200px;
+  .notSelectable();
+  .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+  .flexbox();
+  flex-flow: column nowrap;
+  align-items: stretch;
 
   &.modal {
     left: 0 !important;
@@ -21,17 +26,39 @@
     }
   }
 
+  .tree-grid {
+    margin: 0 30px 30px;
+    width: auto;
+    height: 100%;
+    overflow-y: auto;
+    .flex(1 100%);
+
+    .grid {
+
+      .slick-viewport {
+        height: auto !important; // for FF to show scroll
+
+        .slick-row:not(:hover) {
+          &, &.odd {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+
   .close-button {
+    .button(@admin-dark-gray, transparent);
+    .box-sizing(content-box);
+
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 5px;
+    right: 5px;
+    padding: 0;
   }
 
   .header {
-    padding: 5px 41px 5px 15px;
-  }
-
-  .tree-grid {
-    padding: 0 15px 15px;
+    line-height: 0.8em;
+    padding: 30px 30px 20px;
   }
 }

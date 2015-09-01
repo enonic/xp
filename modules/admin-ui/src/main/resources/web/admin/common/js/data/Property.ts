@@ -29,8 +29,6 @@ module api.data {
 
         private value: Value;
 
-        private id: PropertyId;
-
         private propertyIndexChangedListeners: {(event: PropertyIndexChangedEvent):void}[] = [];
 
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
@@ -46,17 +44,11 @@ module api.data {
             this.name = builder.name;
             this.index = builder.index;
             this.value = builder.value;
-            this.id = builder.id;
 
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
                 var valuePropertySet = this.value.getPropertySet();
                 valuePropertySet.setContainerProperty(this);
             }
-        }
-
-        setId(id: PropertyId) {
-            api.util.assert(!(this.id && id), "The id of an Property cannot be changed.");
-            this.id = id;
         }
 
         /**
@@ -110,13 +102,8 @@ module api.data {
         detach() {
             this.array = null;
             this.parent = null;
-            this.id = null;
             this.propertyIndexChangedListeners = [];
             this.propertyValueChangedListeners = [];
-        }
-
-        getId(): PropertyId {
-            return this.id;
         }
 
         getParent(): PropertySet {
@@ -220,10 +207,6 @@ module api.data {
 
             var other = <Property>o;
 
-            if (!api.ObjectHelper.equals(this.id, other.id)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
@@ -239,20 +222,13 @@ module api.data {
             return true;
         }
 
-        copy(destinationPropertyArray: PropertyArray, generateNewPropertyId: boolean = false) {
+        copy(destinationPropertyArray: PropertyArray) {
 
             var destinationTree = destinationPropertyArray.getTree();
-            var id: PropertyId = null;
-            if (generateNewPropertyId) {
-                id = destinationTree ? destinationTree.getNextId() : null;
-            }
-            else {
-                id = this.id;
-            }
 
             var value: Value;
             if (this.value.isPropertySet() && this.value.isNotNull()) {
-                var copiedPropertySet = this.value.getPropertySet().copy(destinationTree, generateNewPropertyId);
+                var copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
             }
             else {
@@ -260,7 +236,6 @@ module api.data {
             }
 
             var copy = Property.create().
-                setId(id).
                 setName(this.name).
                 setValue(value).
                 setIndex(this.index).
@@ -333,8 +308,6 @@ module api.data {
 
         value: Value;
 
-        id: PropertyId;
-
         setArray(value: PropertyArray): PropertyBuilder {
             this.array = value;
             return this;
@@ -352,11 +325,6 @@ module api.data {
 
         setValue(value: Value): PropertyBuilder {
             this.value = value;
-            return this;
-        }
-
-        setId(value: PropertyId): PropertyBuilder {
-            this.id = value;
             return this;
         }
 

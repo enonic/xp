@@ -116,10 +116,6 @@ module app.browse {
 
         private handleGlobalEvents() {
 
-            api.content.ContentMovedEvent.on((event) => {
-                this.contentTreeGrid.reload();
-            });
-
             api.content.ContentChildOrderUpdatedEvent.on((event) => {
                 //this.handleChildOrderUpdated(event);
             });

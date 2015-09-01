@@ -1,22 +1,7 @@
 describe("api.data.PropertyTest", function () {
 
-    var PropertySet = api.data.PropertySet;
     var PropertyTree = api.data.PropertyTree;
-    var PropertyChangedEvent = api.data.PropertyChangedEvent;
-    var PropertyChangedEventType = api.data.PropertyChangedEventType;
     var ValueTypes = api.data.ValueTypes;
-    var Value = api.data.Value;
-    var PropertyPath = api.data.PropertyPath;
-
-    describe("when getId", function () {
-
-        it("given a Property then not null is returned", function () {
-            var tree = new PropertyTree();
-            var property = tree.setString("myProp", 0, "myValue");
-            expect(property).not.toBeNull();
-            expect(property.getId()).not.toBeNull();
-        });
-    });
 
     describe("when getName", function () {
 

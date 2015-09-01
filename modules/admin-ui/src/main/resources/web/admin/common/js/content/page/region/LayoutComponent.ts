@@ -1,6 +1,5 @@
 module api.content.page.region {
 
-    import PropertyIdProvider = api.data.PropertyIdProvider;
     import PropertyTree = api.data.PropertyTree;
 
     export class LayoutComponent extends DescriptorBasedComponent implements api.Equitable, api.Cloneable {
@@ -111,8 +110,8 @@ module api.content.page.region {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): LayoutComponent {
-            return new LayoutComponentBuilder(this, generateNewPropertyIds).build();
+        clone(): LayoutComponent {
+            return new LayoutComponentBuilder(this).build();
         }
 
         private registerRegionsListeners(regions: api.content.page.region.Regions) {
@@ -143,28 +142,28 @@ module api.content.page.region {
 
         regions: Regions;
 
-        constructor(source?: LayoutComponent, generateNewPropertyIds: boolean = false) {
+        constructor(source?: LayoutComponent) {
 
-            super(source, generateNewPropertyIds);
+            super(source);
 
             if (source) {
-                this.regions = source.getRegions().clone(generateNewPropertyIds);
+                this.regions = source.getRegions().clone();
             }
         }
 
-        public fromJson(json: LayoutComponentJson, region: Region, propertyIdProvider: PropertyIdProvider): LayoutComponent {
+        public fromJson(json: LayoutComponentJson, region: Region): LayoutComponent {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
             this.setName(json.name ? new ComponentName(json.name) : null);
             if (json.config) {
-                this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+                this.setConfig(PropertyTree.fromJson(json.config));
             }
             this.setParent(region);
 
             var layoutComponent = this.build();
-            var layoutRegions = Regions.create().fromJson(json.regions, propertyIdProvider, layoutComponent).build();
+            var layoutRegions = Regions.create().fromJson(json.regions, layoutComponent).build();
             layoutComponent.setRegions(layoutRegions);
             return layoutComponent;
         }

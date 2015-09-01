@@ -19,9 +19,19 @@ public final class ScriptLogger
         this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
     }
 
+    public void debug( final String message, final Object arg )
+    {
+        this.log.debug( format( message, arg ) );
+    }
+
     public void debug( final String message, final Object... args )
     {
         this.log.debug( format( message, args ) );
+    }
+
+    public void info( final String message, final Object arg )
+    {
+        this.log.info( format( message, arg ) );
     }
 
     public void info( final String message, final Object... args )
@@ -29,14 +39,29 @@ public final class ScriptLogger
         this.log.info( format( message, args ) );
     }
 
+    public void warning( final String message, final Object arg )
+    {
+        this.log.warn( format( message, arg ) );
+    }
+
     public void warning( final String message, final Object... args )
     {
         this.log.warn( format( message, args ) );
     }
 
+    public void error( final String message, final Object arg )
+    {
+        this.log.error( format( message, arg ) );
+    }
+
     public void error( final String message, final Object... args )
     {
         this.log.error( format( message, args ) );
+    }
+
+    public String format( final String message, final Object arg )
+    {
+        return format( message, new Object[]{arg} );
     }
 
     public String format( final String message, final Object... args )

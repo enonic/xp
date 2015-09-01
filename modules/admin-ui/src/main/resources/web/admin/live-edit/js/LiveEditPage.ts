@@ -19,7 +19,7 @@ module LiveEdit {
     import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
     import ComponentViewDragStoppedEvent = api.liveedit.ComponentViewDragStoppedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-    import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemovedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
@@ -77,15 +77,16 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
 
-            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+            api.dom.WindowDOM.get().onBeforeUnload((event) => {
                 if (!this.skipNextReloadConfirmation) {
                     var message = "This will close this wizard!";
                     (event || window.event)['returnValue'] = message;
                     return message;
                 }
-            };
+            });
 
-            api.dom.WindowDOM.get().asWindow().onunload = (event) => {
+            api.dom.WindowDOM.get().onUnload((event) => {
+
                 if (!this.skipNextReloadConfirmation) {
                     new api.liveedit.PageUnloadedEvent(this.pageView).fire();
                     // do remove to trigger model unbinding
@@ -93,12 +94,12 @@ module LiveEdit {
                     this.skipNextReloadConfirmation = false;
                 }
                 this.pageView.remove();
-            };
+            });
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 
-                if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
-                    DragAndDrop.get().createSortableLayout(event.getItemView());
+                if (api.liveedit.layout.LayoutItemType.get().equals(event.getNewComponentView().getType())) {
+                    DragAndDrop.get().createSortableLayout(event.getNewComponentView());
                 } else {
                     DragAndDrop.get().refreshSortable();
                 }

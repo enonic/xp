@@ -6,15 +6,21 @@ module api.liveedit {
 
     export class ComponentResetEvent extends api.event.Event {
 
-        private componentView: ComponentView<Component>;
+        private newComponentView: ComponentView<Component>;
+        private oldComponentView: ComponentView<Component>;
 
-        constructor(componentView: ComponentView<Component>) {
+        constructor(newComponentView: ComponentView<Component>, oldComponentView: ComponentView<Component>) {
             super();
-            this.componentView = componentView;
+            this.newComponentView = newComponentView;
+            this.oldComponentView = oldComponentView;
         }
 
-        getComponentView(): ComponentView<Component> {
-            return this.componentView;
+        getNewComponentView(): ComponentView<Component> {
+            return this.newComponentView;
+        }
+
+        getOldComponentView(): ComponentView<Component> {
+            return this.oldComponentView;
         }
 
         static on(handler: (event: ComponentResetEvent) => void, contextWindow: Window = window) {

@@ -17,8 +17,6 @@ module api.content {
 
     export class MediaUploader extends api.ui.uploader.Uploader<Content> {
 
-        private propertyIdProvider: api.data.PropertyIdProvider;
-
         private fileName: string;
 
         constructor(config: MediaUploaderConfig) {
@@ -30,14 +28,13 @@ module api.content {
             super(config);
 
             this.addClass('media-uploader');
-            this.propertyIdProvider = api.Client.get().getPropertyIdProvider();
         }
 
 
         createModel(serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
                 return new api.content.ContentBuilder().
-                    fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).
+                    fromContentJson(<api.content.json.ContentJson> serverResponse).
                     build();
             }
             else {

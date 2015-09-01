@@ -144,14 +144,11 @@ public class ContentNodeTranslator
 
     private String resolveNodeName( final ContentName name )
     {
-        if ( name instanceof ContentName.Unnamed )
+        if ( name.isUnnamed() && !name.hasUniqueness() )
         {
-            ContentName.Unnamed unnammed = (ContentName.Unnamed) name;
-            if ( !unnammed.hasUniqueness() )
-            {
-                return ContentName.Unnamed.withUniqueness().toString();
-            }
+            return ContentName.uniqueUnnamed().toString();
         }
+
         return name.toString();
     }
 
@@ -159,5 +156,4 @@ public class ContentNodeTranslator
     {
         return NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
-
 }

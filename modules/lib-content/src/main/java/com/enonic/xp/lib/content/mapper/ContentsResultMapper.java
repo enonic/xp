@@ -33,13 +33,14 @@ public final class ContentsResultMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "total", this.total );
+        gen.value( "count", this.contents.getSize() );
         serialize( gen, this.contents );
         serialize( gen, aggregations );
     }
 
     private void serialize( final MapGenerator gen, final Contents contents )
     {
-        gen.array( "contents" );
+        gen.array( "hits" );
         for ( Content content : contents )
         {
             gen.map();

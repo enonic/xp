@@ -1,7 +1,6 @@
 module api.content.site {
 
     import Property = api.data.Property;
-    import PropertyIdProvider = api.data.PropertyIdProvider;
     import ApplicationKey = api.application.ApplicationKey;
     import ValueTypes = api.data.ValueTypes;
 
@@ -62,8 +61,8 @@ module api.content.site {
             super(source);
         }
 
-        fromContentJson(contentJson: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): SiteBuilder {
-            super.fromContentJson(contentJson, propertyIdProvider);
+        fromContentJson(contentJson: api.content.json.ContentJson): SiteBuilder {
+            super.fromContentJson(contentJson);
             return this;
         }
 

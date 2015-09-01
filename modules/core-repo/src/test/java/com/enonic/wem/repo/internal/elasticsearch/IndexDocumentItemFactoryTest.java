@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
-import com.enonic.xp.data.CounterPropertyIdProvider;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -18,7 +17,7 @@ import static org.junit.Assert.*;
 
 public class IndexDocumentItemFactoryTest
 {
-    private PropertyTree propertyTree = new PropertyTree( new CounterPropertyIdProvider() );
+    private PropertyTree propertyTree = new PropertyTree();
 
     @Test
     public void double_property()

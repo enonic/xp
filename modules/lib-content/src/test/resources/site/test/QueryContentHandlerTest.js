@@ -1,119 +1,140 @@
-var scriptAssert = Java.type('com.enonic.xp.testing.script.ScriptAssert');
+var assert = require('/lib/xp/assert.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
+    "total": 20,
+    "count": 3,
+    "hits": [
+        {
+            "_id": "111111",
+            "_name": "mycontent",
+            "_path": "/a/b/mycontent",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "My Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        },
+        {
+            "_id": "222222",
+            "_name": "othercontent",
+            "_path": "/a/b/othercontent",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "Other Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        },
+        {
+            "_id": "333333",
+            "_name": "another",
+            "_path": "/a/b/another",
+            "creator": "user:system:admin",
+            "modifier": "user:system:admin",
+            "createdTime": "1970-01-01T00:00:00Z",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "type": "base:unstructured",
+            "displayName": "Another Content",
+            "hasChildren": false,
+            "valid": false,
+            "data": {},
+            "x": {},
+            "page": {}
+        }
+    ],
     "aggregations": {
-        "by_month": {
-            "buckets": [{
-                "docCount": 8,
-                "key": "2014-01"
-            }, {
-                "docCount": 10,
-                "key": "2014-02"
-            }, {
-                "docCount": 12,
-                "key": "2014-03"
-            }]
-        },
         "genders": {
-            "buckets": [{
-                "docCount": 10,
-                "key": "male"
-            }, {
-                "docCount": 12,
-                "key": "female"
-            }]
+            "buckets": [
+                {
+                    "key": "male",
+                    "docCount": 10
+                },
+                {
+                    "key": "female",
+                    "docCount": 12
+                }
+            ]
         },
-        "item_count": {
-            "avg": 3.0,
-            "count": 5.0,
-            "max": 5.0,
-            "min": 1.0,
-            "sum": 15.0
-        },
-        "my_date_range": {
-            "buckets": [{
-                "docCount": 2,
-                "from": "2014-09-01T00:00:00Z"
-            }, {
-                "docCount": 5,
-                "from": "2014-10-01T00:00:00Z",
-                "to": "2014-09-01T00:00:00Z"
-            }, {
-                "docCount": 7,
-                "to": "2014-11-01T00:00:00Z"
-            }]
+        "by_month": {
+            "buckets": [
+                {
+                    "key": "2014-01",
+                    "docCount": 8
+                },
+                {
+                    "key": "2014-02",
+                    "docCount": 10
+                },
+                {
+                    "key": "2014-03",
+                    "docCount": 12
+                }
+            ]
         },
         "price_ranges": {
-            "buckets": [{
-                "docCount": 2,
-                "key": "a",
-                "to": 50
-            }, {
-                "docCount": 4,
-                "from": 50,
-                "key": "b",
-                "to": 100
-            }, {
-                "docCount": 4,
-                "from": 100,
-                "key": "c"
-            }]
+            "buckets": [
+                {
+                    "key": "a",
+                    "docCount": 2,
+                    "to": 50
+                },
+                {
+                    "key": "b",
+                    "docCount": 4,
+                    "from": 50,
+                    "to": 100
+                },
+                {
+                    "key": "c",
+                    "docCount": 4,
+                    "from": 100,
+                }
+            ]
+        },
+        "my_date_range": {
+            "buckets": [
+                {
+                    "docCount": 2,
+                    "from": "2014-09-01T00:00:00Z",
+                },
+                {
+                    "docCount": 5,
+                    "from": "2014-10-01T00:00:00Z",
+                    "to": "2014-09-01T00:00:00Z"
+                },
+                {
+                    "docCount": 7,
+                    "to": "2014-11-01T00:00:00Z"
+                }
+            ]
+        },
+        "item_count": {
+            "count": 5,
+            "min": 1,
+            "max": 5,
+            "avg": 3,
+            "sum": 15
         }
-    },
-    "contents": [{
-        "_id": "111111",
-        "_name": "mycontent",
-        "_path": "/a/b/mycontent",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "My Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }, {
-        "_id": "222222",
-        "_name": "othercontent",
-        "_path": "/a/b/othercontent",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "Other Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }, {
-        "_id": "333333",
-        "_name": "another",
-        "_path": "/a/b/another",
-        "createdTime": "1970-01-01T00:00:00Z",
-        "creator": "user:system:admin",
-        "data": {},
-        "displayName": "Another Content",
-        "hasChildren": false,
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "modifier": "user:system:admin",
-        "page": {},
-        "type": "base:unstructured",
-        "valid": false,
-        "x": {}
-    }],
-    "total": 20
+    }
 };
 
 var expectedEmptyJson = {
-    "aggregations": {},
-    "contents": [],
-    "total": 0
+    "total": 0,
+    "count": 0,
+    "hits": [],
+    "aggregations": {}
 };
 
 exports.query = function () {
@@ -148,7 +169,7 @@ exports.query = function () {
                     }
                 },
                 "by_month": {
-                    "date_histogram": {
+                    "dateHistogram": {
                         "field": "init_date",
                         "interval": "1M",
                         "minDocCount": 0,
@@ -166,7 +187,7 @@ exports.query = function () {
                     }
                 },
                 "my_date_range": {
-                    "date_range": {
+                    "dateRange": {
                         "field": "date",
                         "format": "MM-yyy",
                         "ranges": [
@@ -184,11 +205,11 @@ exports.query = function () {
         }
     );
 
-    scriptAssert.assertJson(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.queryEmpty = function () {
     var result = content.query({});
-
-    scriptAssert.assertJson(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedEmptyJson, result);
 };
+

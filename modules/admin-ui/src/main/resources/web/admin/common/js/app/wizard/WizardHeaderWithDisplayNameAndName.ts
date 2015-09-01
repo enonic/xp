@@ -37,6 +37,8 @@ module api.app.wizard {
 
         private ignoreGenerateStatusForName: boolean = true;
 
+        private simplifiedNameGeneration: boolean = false;
+
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
             this.addClass("wizard-header-with-display-name-and-name");
@@ -156,6 +158,10 @@ module api.app.wizard {
             }
         }
 
+        setSimplifiedNameGeneration(value: boolean) {
+            this.simplifiedNameGeneration = value;
+        }
+
         disableNameInput() {
             this.nameEl.getEl().setAttribute("disabled", "disabled");
         }
@@ -173,7 +179,21 @@ module api.app.wizard {
         }
 
         private generateName(value: string): string {
-            return api.Name.ensureValidName(value);
+            return this.ensureValidName(value);
+        }
+
+        private ensureValidName(possibleInvalidName: string): string {
+            if (!possibleInvalidName) {
+                return "";
+            }
+            var generated;
+            if (this.simplifiedNameGeneration) {
+                generated = possibleInvalidName.replace(Name.SIMPLIFIED_FORBIDDEN_CHARS, '').toLowerCase();
+            } else {
+                generated = possibleInvalidName.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').
+                    replace(Name.FORBIDDEN_CHARS, '').toLowerCase();
+            }
+            return (generated || '');
         }
 
         private setIgnoreGenerateStatusForName(value: boolean) {
