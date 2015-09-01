@@ -42,6 +42,7 @@ include 'lib-portal'
 include 'lib-mustache'
 include 'lib-xslt'
 include 'lib-thymeleaf'
+include 'lib-mail'
 
 rootProject.name = 'xp'
 
