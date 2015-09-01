@@ -6,6 +6,7 @@ include 'core-security'
 include 'core-image'
 include 'core-export'
 include 'core-impl'
+include 'core-mail'
 include 'core-itest'
 
 include 'script-api'
