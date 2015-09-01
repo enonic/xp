@@ -200,7 +200,7 @@ module app.wizard.page {
                 this.loadMask.hide();
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
 
-            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+            } else if (!liveEditWindow.document.body || (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID)) {
                 this.loadMask.hide();
             }
 

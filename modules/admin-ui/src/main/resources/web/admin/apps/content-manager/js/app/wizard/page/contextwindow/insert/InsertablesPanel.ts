@@ -190,6 +190,15 @@ module app.wizard.page.contextwindow.insert {
             this.liveEditPageProxy.getDragMask().hide();
             var livejq = this.liveEditPageProxy.getJQuery();
 
+            var iFrame = <HTMLIFrameElement>this.liveEditPageProxy.getIFrame().getHTMLElement();
+            var hasBody = iFrame && iFrame.contentDocument && iFrame.contentDocument.body;
+            if (!hasBody) {
+                if (InsertablesPanel.debug) {
+                    console.warn('InsertablesPanel.onEnterIFrame, skip due to missing body in document');
+                }
+                return;
+            }
+
             if (!this.iFrameDraggable) {
                 this.iFrameDraggable = livejq(event.target).clone();
                 livejq('body').append(this.iFrameDraggable);
