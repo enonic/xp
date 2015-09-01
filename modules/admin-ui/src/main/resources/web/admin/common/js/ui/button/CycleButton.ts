@@ -58,5 +58,17 @@ module api.ui.button {
             }
         }
 
+        selectActiveAction(action: Action) {
+            var i, l = this.actionList.length;
+            for (i = 0; i < l; i++) {
+                if (this.actionList[i] === action) {
+                    this.active = i;
+                    this.updateActive();
+                    return;
+                }
+            }
+            console.warn('Action not found in CycleButton', action);
+        }
+
     }
 }

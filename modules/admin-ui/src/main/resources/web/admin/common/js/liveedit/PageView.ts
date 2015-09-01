@@ -110,7 +110,6 @@ module api.liveedit {
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.ignorePropertyChanges = false;
-            PageView.debug = true;
 
             var resetAction = new api.ui.Action('Reset');
             resetAction.onExecuted(() => {

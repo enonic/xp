@@ -114,6 +114,8 @@ module app.wizard {
 
         private publishButtonForMobile: api.ui.dialog.DialogButton;
 
+        private inMobileViewMode: boolean;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -221,18 +223,20 @@ module app.wizard {
                     this.getSplitPanel().addClass("prerendered");
                 }
 
+                this.inMobileViewMode = false;
                 var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                     if (this.isVisible()) {
                         this.updateStickyToolbar();
                         if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
+                            this.inMobileViewMode = true;
                             if (this.isSplitView()) {
                                 if (this.isMinimized()) {
                                     this.toggleMinimize();
                                 }
                                 this.cycleViewModeButton.executePrevAction();
                             }
-                        } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200) && !this.isSplitView()) {
-                            this.wizardActions.getShowSplitEditAction().execute();
+                        } else {
+                            this.inMobileViewMode = false;
                         }
                     }
                 });
@@ -250,7 +254,15 @@ module app.wizard {
                     //Set split panel default
 
                     this.wizardActions.getShowSplitEditAction().onExecuted(() => {
-                        this.updateContextWindowTogglerBehaviour();
+                        if (!this.inMobileViewMode) {
+                            if (this.contentNotRenderable()) {
+                                this.closeLiveEdit();
+                                this.contextWindowToggler.setEnabled(false);
+                            } else {
+                                this.cycleViewModeButton.selectActiveAction(this.showLiveEditAction);
+                                this.contextWindowToggler.setEnabled(true);
+                            }
+                        }
                     });
 
                     this.wizardActions.getShowSplitEditAction().execute();
@@ -308,10 +320,10 @@ module app.wizard {
                 return wemQ.all(applicationPromises);
             }).then((applications: Application[]) => {
                 for (var i = 0; i < applications.length; i++) {
-                    var mdl = applications[i];
-                    if (!mdl.isStarted()) {
+                    var app = applications[i];
+                    if (!app.isStarted()) {
                         var deferred = wemQ.defer<Mixin[]>();
-                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + mdl.getDisplayName() +
+                        deferred.reject(new api.Exception("Content cannot be opened. Required application '" + app.getDisplayName() +
                                                           "' is not started.",
                             api.ExceptionType.WARNING));
                         return deferred.promise;
@@ -324,9 +336,9 @@ module app.wizard {
                         return this.fetchMixin(name);
                     }));
 
-                applications.forEach((mdl: Application) => {
+                applications.forEach((app: Application) => {
                     metadataMixinPromises = metadataMixinPromises.concat(
-                        mdl.getMetaSteps().map((name: MixinName) => {
+                        app.getMetaSteps().map((name: MixinName) => {
                             return this.fetchMixin(name);
                         })
                     );
@@ -639,9 +651,9 @@ module app.wizard {
                 then((applications: Application[]) => {
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
-                    applications.forEach((mdl: Application) => {
+                    applications.forEach((app: Application) => {
                         metadataMixinPromises = metadataMixinPromises.concat(
-                            mdl.getMetaSteps().map((name: MixinName) => {
+                            app.getMetaSteps().map((name: MixinName) => {
                                 return new GetMixinByQualifiedNameRequest(name).sendAndParse();
                             })
                         );
@@ -875,22 +887,28 @@ module app.wizard {
         }
 
         showLiveEdit() {
+            if (!this.inMobileViewMode) {
+                this.showSplitEdit();
+                return;
+            }
+
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
+            this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
         showSplitEdit() {
-            if (this.getSplitPanel()) {
-                this.getSplitPanel().addClass("toggle-split");
-                this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
-            }
+            this.getSplitPanel().addClass("toggle-split");
+            this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
         showForm() {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
+            this.closeLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
 
@@ -1114,32 +1132,19 @@ module app.wizard {
             });
         }
 
-        private updateContextWindowTogglerBehaviour() {
-            if (this.contentIsNotSiteAndNotTemplate()) {
-
-                if (this.contentNotRenderable()) {
-                    this.getSplitPanel().hideSecondPanel();
-                    this.hideMinimizeEditButton();
-                }
-
-                this.getContextWindowToggler().onActiveChanged((isActive: boolean) => {
-                    if (this.contentNotRenderable()) {
-                        if (isActive) {
-                            this.getSplitPanel().showSecondPanel();
-                            this.liveFormPanel.clearPageViewSelectionAndOpenInspectPage();
-                            this.showMinimizeEditButton();
-                        }
-                        else {
-                            this.getSplitPanel().hideSecondPanel();
-                            this.hideMinimizeEditButton();
-                        }
-                    }
-                });
-            }
+        private openLiveEdit() {
+            this.getSplitPanel().showSecondPanel();
+            this.liveFormPanel.clearPageViewSelectionAndOpenInspectPage();
+            this.showMinimizeEditButton();
         }
 
-        private contentIsNotSiteAndNotTemplate(): boolean {
-            return !(this.liveEditModel.getContent().isSite() || this.liveEditModel.getContent().isPageTemplate());
+        private closeLiveEdit() {
+            this.getSplitPanel().hideSecondPanel();
+            this.hideMinimizeEditButton();
+
+            if (this.isMinimized()) {
+                this.toggleMinimize();
+            }
         }
 
         private contentNotRenderable(): boolean {

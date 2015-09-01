@@ -93,10 +93,11 @@ module app.wizard.page {
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
+        private static debug: boolean = false;
+
         constructor() {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-            console.log("LiveEditPageProxy.constructor ");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
@@ -169,7 +170,9 @@ module app.wizard.page {
             this.loadMask.show();
             var contentId = this.liveEditModel.getContent().getContentId().toString();
             var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
-            console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
+            if (LiveEditPageProxy.debug) {
+                console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
+            }
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
