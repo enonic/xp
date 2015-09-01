@@ -72,8 +72,8 @@ module api.liveedit {
             api.dom.Body.get().appendChild(this);
         }
 
-        showAt(x: number, y: number) {
-            this.menu.showAt.call(this, this.getXPosition(x), this.getYPosition(y));
+        showAt(x: number, y: number, notClicked: boolean = false) {
+            this.menu.showAt.call(this, this.getXPosition(x), this.getYPosition(y, notClicked));
         }
 
         moveBy(dx: number, dy: number) {
@@ -112,8 +112,8 @@ module api.liveedit {
             }
         }
 
-        private getYPosition(y:number): number {
-            if (this.oveflowsBottom(y)) {
+        private getYPosition(y:number, notClicked?: boolean): number {
+            if (this.oveflowsBottom(y, notClicked)) {
                 this.arrow.toggleVerticalPosition(false);
                 return y - this.getEl().getHeight() - this.arrow.getHeight();
             } else {
@@ -131,10 +131,11 @@ module api.liveedit {
             return (x + this.getEl().getWidth() / 2) > window.innerWidth;
         }
 
-        private oveflowsBottom(y:number): boolean {
-            return (y + this.getEl().getHeight() + this.arrow.getHeight() + 1) > (wemjq(window).scrollTop() + window.innerHeight);
-        }
+        private oveflowsBottom(y:number, notClicked?: boolean): boolean {
+            var yPos = y + this.getEl().getHeight() + this.arrow.getHeight() + 1;
 
+            return yPos > (notClicked ? document.body.scrollHeight : (wemjq(window).scrollTop() + window.innerHeight));
+        }
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
