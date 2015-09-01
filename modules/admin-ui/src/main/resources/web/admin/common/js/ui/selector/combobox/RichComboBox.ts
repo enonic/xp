@@ -175,6 +175,11 @@ module api.ui.selector.combobox {
             this.comboBox.deselectOption(this.createOption(value));
         }
 
+        clearCombobox() {
+            this.clearSelection(true);
+            this.comboBox.getInput().getEl().setValue("");
+        }
+
         clearSelection(forceClear: boolean = false) {
             this.comboBox.clearSelection(false, true, forceClear);
         }

@@ -44,7 +44,7 @@ module app.browse {
             OpenMoveDialogEvent.on((event) => {
 
                 this.movedContentSummaries = event.getContentSummaries();
-                this.contentComboBox.clearSelection();
+                this.contentComboBox.clearCombobox();
 
                 if (event.getContentSummaries().length == 1) {
                     var contentToMove = event.getContentSummaries()[0];
