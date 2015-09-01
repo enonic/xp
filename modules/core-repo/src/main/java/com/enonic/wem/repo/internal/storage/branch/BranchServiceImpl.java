@@ -13,14 +13,12 @@ import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
-import com.enonic.wem.repo.internal.storage.GetResultCanReadResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
 import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
@@ -57,8 +55,7 @@ public class BranchServiceImpl
                 storageType( StaticStorageType.BRANCH ).
                 build() ).
             returnFields(
-                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP,
-                                   BranchIndexPath.READ_ACCESS_LIST ) ).
+                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
             routing( nodeId.toString() ).
             build();
 
@@ -69,13 +66,11 @@ public class BranchServiceImpl
             return null;
         }
 
-        final ReturnValue readAccess = getResult.getReturnValues().get( BranchIndexPath.READ_ACCESS_LIST.getPath() );
-
-        final boolean canRead = GetResultCanReadResolver.canRead( context.getPrincipalsKeys(), readAccess );
-
-        return canRead ? NodeBranchVersionFactory.create( getResult ) : null;
+        return NodeBranchVersionFactory.create( getResult );
     }
 
+
+    // TODO: Move to search service
     @Override
     public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {

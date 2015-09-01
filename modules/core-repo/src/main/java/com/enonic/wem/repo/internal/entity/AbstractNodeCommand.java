@@ -26,7 +26,9 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractNodeCommand
@@ -177,6 +179,18 @@ abstract class AbstractNodeCommand
             }
             return node.getPermissions();
         }
+    }
+
+    protected boolean canRead( final Node node )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
+        {
+            return true;
+        }
+
+        return node.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.READ );
     }
 
     public static abstract class Builder<B extends Builder>

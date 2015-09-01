@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -54,7 +53,7 @@ public class GetNodeByIdCommandTest
         printBranchIndex();
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void get_by_id_no_access()
         throws Exception
     {

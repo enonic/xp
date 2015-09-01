@@ -36,7 +36,6 @@ public class BranchStorageRequestFactory
             add( BranchIndexPath.STATE.getPath(), node.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), node.path().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(), node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).
-            add( BranchIndexPath.READ_ACCESS_LIST.getPath(), keysAsStrings ).
             parent( new NodeVersionDocumentId( node.id(), doc.getNodeVersionId() ).toString() ).
             routing( node.id().toString() ).
             build();

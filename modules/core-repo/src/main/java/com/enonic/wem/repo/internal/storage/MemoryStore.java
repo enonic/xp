@@ -11,13 +11,13 @@ public class MemoryStore
 
     private Map<String, StorageData> idEntryMap = Maps.newHashMap();
 
-    private Map<NodePath, StorageData> pathEntryMap = Maps.newHashMap();
+    private Map<NodePath, String> pathEntryMap = Maps.newHashMap();
 
 
     public void put( final String id, final NodePath path, final StorageData data )
     {
         this.idEntryMap.put( id, data );
-        this.pathEntryMap.put( path, data );
+        this.pathEntryMap.put( path, id );
     }
 
     public void remove( final String id )
@@ -33,7 +33,8 @@ public class MemoryStore
 
     public StorageData getByPath( final NodePath path )
     {
-        return pathEntryMap.get( path );
+        final String id = pathEntryMap.get( path );
+        return this.idEntryMap.get( id );
     }
 
 }

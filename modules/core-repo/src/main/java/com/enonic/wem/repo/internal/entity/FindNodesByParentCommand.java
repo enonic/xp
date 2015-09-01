@@ -87,12 +87,20 @@ public class FindNodesByParentCommand
     {
         final Context context = ContextAccessor.current();
         final NodeVersionId currentVersion = this.branchService.get( nodeId, InternalContext.from( context ) ).getVersionId();
+
         if ( currentVersion == null )
         {
             return null;
         }
+
         final Node currentNode = nodeDao.getByVersionId( currentVersion );
-        return currentNode == null ? null : currentNode.path();
+
+        if ( currentNode == null || !canRead( currentNode ) )
+        {
+            return null;
+        }
+
+        return currentNode.path();
     }
 
     public static class Builder

@@ -28,9 +28,28 @@ public final class AccessControlList
 
     public boolean isAllowedFor( final PrincipalKey principal, final Permission... permissions )
     {
+        return doIsAllowedFor( principal, permissions );
+    }
+
+    public boolean isAllowedFor( final PrincipalKeys principals, final Permission... permissions )
+    {
+        for ( final PrincipalKey principal : principals )
+        {
+            if ( doIsAllowedFor( principal, permissions ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean doIsAllowedFor( final PrincipalKey principal, final Permission[] permissions )
+    {
         final AccessControlEntry entry = this.entries.get( principal );
         return entry != null && entry.isAllowed( permissions );
     }
+
 
     public PrincipalKeys getAllPrincipals()
     {

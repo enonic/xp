@@ -3,17 +3,20 @@ package com.enonic.wem.repo.internal.index;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
+import com.enonic.wem.repo.internal.entity.FindNodesByQueryCommand;
+import com.enonic.wem.repo.internal.entity.PushNodesCommand;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
-import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
-import com.enonic.wem.repo.internal.entity.PushNodesCommand;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.Assert.*;
 
@@ -47,6 +50,8 @@ public class IndexServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
+        refresh();
+
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
@@ -55,8 +60,8 @@ public class IndexServiceImplTest
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
-        assertNotNull( getNodeById( node.id() ) );
-        assertNotNull( getNodeById( rootNode.id() ) );
+        assertNotNull( queryForNode( node.id() ) );
+        assertNotNull( queryForNode( rootNode.id() ) );
     }
 
     @Test
@@ -68,6 +73,8 @@ public class IndexServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
+        refresh();
+
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
@@ -76,8 +83,8 @@ public class IndexServiceImplTest
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
-        assertNotNull( getNodeById( node.id() ) );
-        assertNotNull( getNodeById( rootNode.id() ) );
+        assertNotNull( queryForNode( node.id() ) );
+        assertNotNull( queryForNode( rootNode.id() ) );
     }
 
 
@@ -90,9 +97,11 @@ public class IndexServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
+        refresh();
+
         this.indexService.purgeSearchIndex( new PurgeIndexParams( CTX_DEFAULT.getRepositoryId() ) );
 
-        assertNull( getNodeById( node.id() ) );
+        assertNull( queryForNode( node.id() ) );
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
@@ -102,8 +111,8 @@ public class IndexServiceImplTest
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
-        assertNotNull( getNodeById( node.id() ) );
-        assertNotNull( getNodeById( rootNode.id() ) );
+        assertNotNull( queryForNode( node.id() ) );
+        assertNotNull( queryForNode( rootNode.id() ) );
     }
 
     @Test
@@ -126,12 +135,16 @@ public class IndexServiceImplTest
             build().
             execute();
 
-        assertNotNull( getNodeById( node.id() ) );
-        assertNotNull( CTX_OTHER.callWith( () -> getNodeById( node.id() ) ) );
+        refresh();
+
+        assertNotNull( queryForNode( node.id() ) );
+        assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( CTX_DEFAULT.getRepositoryId() ) );
 
-        assertNull( getNodeById( node.id() ) );
+        refresh();
+
+        assertNull( queryForNode( node.id() ) );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
@@ -139,8 +152,8 @@ public class IndexServiceImplTest
             initialize( false ).
             build() );
 
-        assertNotNull( getNodeById( node.id() ) );
-        assertNull( CTX_OTHER.callWith( () -> getNodeById( node.id() ) ) );
+        assertNotNull( queryForNode( node.id() ) );
+        assertNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_OTHER.getBranch() ).
@@ -148,21 +161,23 @@ public class IndexServiceImplTest
             initialize( true ).
             build() );
 
-        assertNull( getNodeById( node.id() ) );
-        assertNotNull( CTX_OTHER.callWith( () -> getNodeById( node.id() ) ) );
+        assertNull( queryForNode( node.id() ) );
+        assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
     }
 
-    private Node getNodeById( final NodeId nodeId )
+    private Node queryForNode( final NodeId nodeId )
     {
-        return GetNodeByIdCommand.create().
-            id( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
+        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
+            versionService( this.versionService ).
+            query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).
             build().
             execute();
+
+        return result.getNodes().getNodeById( nodeId );
     }
 
 }

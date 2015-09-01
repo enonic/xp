@@ -44,6 +44,11 @@ public class GetNodeByIdCommand
 
         final Node node = nodeDao.getByVersionId( currentVersion );
 
+        if ( node == null || !canRead( node ) )
+        {
+            return null;
+        }
+
         return !resolveHasChild ? node : NodeHasChildResolver.create().
             queryService( this.queryService ).
             build().
