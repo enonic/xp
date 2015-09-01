@@ -5,15 +5,18 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.acl.Permission;
 
 public class MoveNodeCommand
     extends AbstractNodeCommand
@@ -37,12 +40,12 @@ public class MoveNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = doGetById( nodeId, false );
+        final Node existingSourceNode = doGetById( nodeId, false );
 
         final NodeName newNodeName;
         if ( this.newNodeName == null )
         {
-            newNodeName = existingNode.name();
+            newNodeName = existingSourceNode.name();
         }
         else
         {
@@ -52,34 +55,51 @@ public class MoveNodeCommand
         final NodePath newParentPath;
         if ( this.newParentPath == null )
         {
-            newParentPath = existingNode.parentPath();
+            newParentPath = existingSourceNode.parentPath();
         }
         else
         {
             newParentPath = this.newParentPath;
         }
 
-        if ( samePath( existingNode, newParentPath, newNodeName ) )
+        if ( samePath( existingSourceNode, newParentPath, newNodeName ) )
         {
-            return existingNode;
+            return existingSourceNode;
         }
 
-        checkNotMovedToSelfOrChild( existingNode, newParentPath );
+        checkNotMovedToSelfOrChild( existingSourceNode, newParentPath );
+
+        checkContextUserPermissionOrAdmin( existingSourceNode, newParentPath );
 
         return doMoveNode( newParentPath, newNodeName, nodeId, true );
     }
 
-    private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
+    private void checkNotMovedToSelfOrChild( final Node existingSourceNode, final NodePath newParentPath )
     {
-        if ( newParentPath.equals( existingNode.path() ) )
+        if ( newParentPath.equals( existingSourceNode.path() ) )
         {
-            throw new MoveNodeException( "Not allowed to move to " + newParentPath + " because child of self ( " + existingNode.path() );
+            throw new MoveNodeException(
+                "Not allowed to move to " + newParentPath + " because child of self ( " + existingSourceNode.path() );
         }
 
-        if ( newParentPath.getParentPaths().contains( existingNode.path() ) )
+        if ( newParentPath.getParentPaths().contains( existingSourceNode.path() ) )
         {
-            throw new MoveNodeException( "Not allowed to move to " + newParentPath + " because child of self ( " + existingNode.path() );
+            throw new MoveNodeException(
+                "Not allowed to move to " + newParentPath + " because child of self ( " + existingSourceNode.path() );
         }
+    }
+
+    private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
+    {
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
+
+        final Node newParentNode = doGetByPath( newParentPath, false );
+        if ( newParentNode == null )
+        {
+            throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), newParentPath, Permission.READ );
+        }
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
+
     }
 
     private boolean samePath( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
@@ -95,23 +115,19 @@ public class MoveNodeCommand
 
         if ( checkExistingNode )
         {
-            final Node existingNode = getExistingNode( newParentPath, newNodeName );
+            final Node existingTargetNode = getExistingNode( newParentPath, newNodeName );
 
-            if ( existingNode != null )
+            if ( existingTargetNode != null )
             {
                 if ( !overwriteExisting )
                 {
-                    throw new NodeAlreadyExistAtPathException( existingNode.path() );
+                    throw new NodeAlreadyExistAtPathException( existingTargetNode.path() );
                 }
                 else
                 {
                     nodeName = NodeName.from( DuplicateValueResolver.name( nodeName ) );
                 }
             }
-        }
-        else
-        {
-            checkExistingNode = false;
         }
 
         Node nodeToMove = Node.create( persistedNode ).
