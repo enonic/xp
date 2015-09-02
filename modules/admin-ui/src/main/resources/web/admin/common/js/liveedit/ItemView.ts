@@ -546,7 +546,7 @@ module api.liveedit {
                 x = dimensions.left + dimensions.width / 2;
                 y = dimensions.top + (ItemViewContextMenuPosition.TOP == menuPosition ? 0 : dimensions.height);
             }
-            this.contextMenu.showAt(x, y);
+            this.contextMenu.showAt(x, y, !clickPosition);
         }
 
         hideContextMenu() {
@@ -754,7 +754,7 @@ module api.liveedit {
             return this.contextMenuTitle;
         }
 
-        private  visibleInViewport(): boolean {
+        private visibleInViewport(): boolean {
             var dimensions = this.getElementDimensions();
             var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
 
