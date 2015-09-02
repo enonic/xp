@@ -89,7 +89,7 @@ module api.ui.image {
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
         private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -958,7 +958,7 @@ module api.ui.image {
                 console.group('ImageEditor.setCropPositionPx');
                 console.log('Before restraining', crop.x - oldX, crop.y - oldY, crop);
             }
-            debugger;
+
             this.cropData.w = this.restrainCropW(crop.w);
             this.cropData.h = this.restrainCropH(crop.h);
             this.cropData.x = this.restrainCropX(crop.x);
@@ -1272,7 +1272,7 @@ module api.ui.image {
                 console.group('ImageEditor.setZoomPositionPx');
                 console.log('Before restraining', zoom.x - oldX, zoom.y - oldY, zoom);
             }
-            debugger;
+
             this.zoomData.w = this.restrainZoomW(zoom.w);
             this.zoomData.h = this.restrainZoomH(zoom.h);
             this.zoomData.x = this.restrainZoomX(zoom.x);
@@ -1344,7 +1344,7 @@ module api.ui.image {
 
             if (knobNewX != knobX) {
                 zoomKnobEl.setLeftPx(knobNewX);
-                debugger;
+
                 var knobPct = knobNewX / sliderLength,
                     zoomCoeff = 1 + knobPct * ( this.maxZoom - 1),
                     newW = this.restrainZoomW(this.frameW * zoomCoeff),
