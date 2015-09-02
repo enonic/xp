@@ -72,6 +72,12 @@ module app.browse {
         private prev = 0;
 
         handleBeforeMoveRows(event: Event, data: DragEventData) {
+            // no point in moving before or after itself
+            if (data.rows[0] == data.insertBefore || data.rows[0] == data.insertBefore - 1) {
+                event.stopPropagation();
+                return false;
+            }
+
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
@@ -102,7 +108,7 @@ module app.browse {
         }
 
 
-        handleMoveRows(event: Event, args: DragEventData) {
+        handleMoveRows(event: Event, args: DragEventData) {debugger;
             var dataView = this.contentGrid.getGrid().getDataView();
             var draggableRow = args.rows[0];
 
