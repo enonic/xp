@@ -3,6 +3,7 @@ package com.enonic.xp.portal;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -62,6 +63,10 @@ public final class PortalRequest
     private ApplicationKey applicationKey;
 
     private PageDescriptor pageDescriptor;
+
+    private String endpointPath;
+
+    private String rawPath;
 
     public PortalRequest()
     {
@@ -258,5 +263,25 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
+    }
+
+    public String getEndpointPath()
+    {
+        return this.endpointPath;
+    }
+
+    public void setEndpointPath( final String endpointPath )
+    {
+        this.endpointPath = Strings.emptyToNull( endpointPath );
+    }
+
+    public String getRawPath()
+    {
+        return this.rawPath;
+    }
+
+    public void setRawPath( final String rawPath )
+    {
+        this.rawPath = rawPath;
     }
 }

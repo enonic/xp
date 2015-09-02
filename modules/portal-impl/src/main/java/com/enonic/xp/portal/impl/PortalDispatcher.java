@@ -1,0 +1,113 @@
+package com.enonic.xp.portal.impl;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+
+@Component(immediate = true, service = WebHandler.class)
+public final class PortalDispatcher
+    extends BaseWebHandler
+{
+    private final static String PATH_PREFIX = "/portal2/";
+
+    private final PortalHandlerRegistry registry;
+
+    public PortalDispatcher()
+    {
+        this.registry = new PortalHandlerRegistry();
+        setOrder( -1 );
+    }
+
+    @Override
+    protected boolean canHandle( final HttpServletRequest req )
+    {
+        return req.getRequestURI().startsWith( PATH_PREFIX );
+    }
+
+    @Override
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
+        throws Exception
+    {
+        final PortalRequest portalRequest = newPortalRequest( req );
+        final PortalResponse portalResponse = doHandle( portalRequest );
+        new ResponseSerializer( portalResponse ).serialize( res );
+    }
+
+    private PortalRequest newPortalRequest( final HttpServletRequest req )
+    {
+        final PortalRequest result = new PortalRequest();
+        result.setMethod( req.getMethod() );
+
+        final String rawPath = req.getPathInfo();
+        result.setBranch( findBranch( rawPath ) );
+        result.setEndpointPath( findEndpointPath( rawPath ) );
+        result.setContentPath( findContentPath( rawPath ) );
+        result.setRawPath( rawPath );
+
+        return result;
+    }
+
+    private PortalResponse doHandle( final PortalRequest req )
+        throws Exception
+    {
+        if ( req.getBranch() == null )
+        {
+            throw PortalException.notFound( "Branch needs to be specified" );
+        }
+
+        final PortalHandler2 handler = this.registry.find( req );
+        return handler.handle( req );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addHandler( final PortalHandler2 handler )
+    {
+        this.registry.add( handler );
+    }
+
+    public void removeHandler( final PortalHandler2 handler )
+    {
+        this.registry.remove( handler );
+    }
+
+    private static Branch findBranch( final String path )
+    {
+        final int index = path.indexOf( '/', PATH_PREFIX.length() );
+        final String result = path.substring( PATH_PREFIX.length(), index > 0 ? index : path.length() );
+        return Branch.from( result );
+    }
+
+    private static String findPathAfterBranch( final String path )
+    {
+        final int index = path.indexOf( '/', PATH_PREFIX.length() );
+        return path.substring( index > 0 ? index : path.length() );
+    }
+
+    private static ContentPath findContentPath( final String path )
+    {
+        final String restPath = findPathAfterBranch( path );
+        final int underscore = restPath.indexOf( "/_/" );
+        final String result = restPath.substring( 0, underscore > 0 ? underscore : restPath.length() );
+        return ContentPath.from( result.startsWith( "/" ) ? result : ( "/" + result ) );
+    }
+
+    private static String findEndpointPath( final String path )
+    {
+        final String restPath = findPathAfterBranch( path );
+        final int underscore = restPath.indexOf( "/_/" );
+        return restPath.substring( underscore > 0 ? underscore : restPath.length() );
+    }
+}
