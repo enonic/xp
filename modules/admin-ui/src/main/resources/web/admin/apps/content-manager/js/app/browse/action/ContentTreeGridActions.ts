@@ -109,7 +109,12 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(true);
-                deferred.resolve(contentBrowseItems);
+                var promise = this.updateActionsEnabledStateByPermissions(contentSummaries);
+
+                promise.then<void>(() => {
+                    deferred.resolve(contentBrowseItems);
+                    return wemQ(null);
+                }).done();
             }
             return deferred.promise;
         }
@@ -139,18 +144,21 @@ module app.browse.action {
                         var hasParentCreatePermission = true;
 
                         var parallelPromises: wemQ.Promise<any>[] = [];
+                        var nestedParallelPromises: wemQ.Promise<any>[] = [];
 
                         for (var i = 0; i < contentSummaries.length; i++) {
 
                             var contentSummary = contentSummaries[i];
 
-                            parallelPromises.push(
-                                new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
-                                    sendAndParse().
-                                    then((contentType: api.schema.content.ContentType) => {
-                                        contentTypesAllowChildren =
-                                            contentTypesAllowChildren && (contentType && contentType.isAllowChildContent());
-                                    }))
+                            if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
+                                parallelPromises.push(
+                                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
+                                        sendAndParse().
+                                        then((contentType: api.schema.content.ContentType) => {
+                                            contentTypesAllowChildren =
+                                                contentTypesAllowChildren && (contentType && contentType.isAllowChildContent());
+                                        }))
+                            }
                             parallelPromises.push(
                                 new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
                                     sendAndParse().
@@ -165,35 +173,37 @@ module app.browse.action {
                                                                this.hasPermission(api.security.acl.Permission.PUBLISH, loginResult,
                                                                    accessControlList);
                                     }))
-                            if (contentSummary.hasParent()) {
-                                parallelPromises.push(
-                                    new api.schema.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
-                                        sendAndParse().
-                                        then((parent: api.content.Content) => {
-
-                                            new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
-                                                sendAndParse().
-                                                then((accessControlList: AccessControlList) => {
-                                                    hasParentCreatePermission = hasCreatePermission &&
-                                                                                this.hasPermission(api.security.acl.Permission.CREATE,
-                                                                                    loginResult,
-                                                                                    accessControlList);
-                                                })
-                                        }))
-                            } else {
-                                parallelPromises.push(
-                                    new api.content.GetContentRootPermissionsRequest().
-                                        sendAndParse().
-                                        then((accessControlList: AccessControlList) => {
-                                            hasParentCreatePermission = hasCreatePermission &&
-                                                                        this.hasPermission(api.security.acl.Permission.CREATE,
-                                                                            loginResult,
-                                                                            accessControlList);
-                                        }))
+                            if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
+                                if (contentSummary.hasParent()) {
+                                    parallelPromises.push(
+                                        new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
+                                            sendAndParse().
+                                            then((parent: api.content.Content) => {
+                                                nestedParallelPromises.push(
+                                                    new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
+                                                        sendAndParse().
+                                                        then((accessControlList: AccessControlList) => {
+                                                            hasParentCreatePermission = hasParentCreatePermission &&
+                                                                                        this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                            loginResult,
+                                                                                            accessControlList);
+                                                        }))
+                                            }))
+                                } else {
+                                    parallelPromises.push(
+                                        new api.content.GetContentRootPermissionsRequest().
+                                            sendAndParse().
+                                            then((accessControlList: AccessControlList) => {
+                                                hasParentCreatePermission = hasParentCreatePermission &&
+                                                                            this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                loginResult,
+                                                                                accessControlList);
+                                            }))
+                                }
                             }
                         }
 
-                        wemQ.all(parallelPromises).spread<void>(() => {
+                        wemQ.all(parallelPromises).spread(() => {
                             if (!contentTypesAllowChildren || !hasCreatePermission) {
                                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                                 this.SORT_CONTENT.setEnabled(false);
@@ -205,9 +215,12 @@ module app.browse.action {
                             if (!hasPublishPermission) {
                                 this.PUBLISH_CONTENT.setEnabled(false);
                             }
-                            if (!hasParentCreatePermission) {
-                                this.DUPLICATE_CONTENT.setEnabled(false);
-                            }
+                            wemQ.all(nestedParallelPromises).spread(() => {
+                                if (!hasParentCreatePermission) {
+                                    this.DUPLICATE_CONTENT.setEnabled(false);
+                                }
+                                return wemQ(null);
+                            }).done();
                             return wemQ(null);
                         }).done();
                     }
