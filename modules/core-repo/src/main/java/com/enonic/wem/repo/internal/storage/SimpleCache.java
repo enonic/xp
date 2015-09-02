@@ -24,13 +24,7 @@ public class SimpleCache
 
         final StorageSettings settings = request.getSettings();
 
-        MemoryStore store = memoryStoreMap.get( settings );
-
-        if ( store == null )
-        {
-            store = new MemoryStore();
-            memoryStoreMap.put( settings, store );
-        }
+        MemoryStore store = getStore( settings );
 
         store.put( request.getId(), request.getPath(), request.getData() );
 
@@ -48,13 +42,7 @@ public class SimpleCache
     @Override
     public GetResult getById( final GetByIdRequest request )
     {
-        MemoryStore store = this.memoryStoreMap.get( request.getStorageSettings() );
-
-        if ( store == null )
-        {
-            store = new MemoryStore();
-            this.memoryStoreMap.put( request.getStorageSettings(), store );
-        }
+        MemoryStore store = getStore( request.getStorageSettings() );
 
         final StorageData data = store.getById( request.getId() );
 
@@ -83,6 +71,18 @@ public class SimpleCache
             id( request.getId() ).
             resultFieldValues( builder.build() ).
             build();
+    }
+
+    private synchronized MemoryStore getStore( final StorageSettings storageSettings )
+    {
+        MemoryStore store = this.memoryStoreMap.get( storageSettings );
+
+        if ( store == null )
+        {
+            store = new MemoryStore();
+            this.memoryStoreMap.put( storageSettings, store );
+        }
+        return store;
     }
 
     @Override
