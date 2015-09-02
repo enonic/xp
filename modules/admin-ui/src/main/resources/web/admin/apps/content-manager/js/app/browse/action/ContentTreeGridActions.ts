@@ -59,7 +59,7 @@ module app.browse.action {
 
             switch (contentBrowseItems.length) {
             case 0:
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                 this.EDIT_CONTENT.setEnabled(false);
                 this.DELETE_CONTENT.setEnabled(false);
                 this.DUPLICATE_CONTENT.setEnabled(false);
@@ -124,7 +124,6 @@ module app.browse.action {
             return new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().
                 then((loginResult: api.security.auth.LoginResult) => {
-                    console.log("updateActionsEnabledStateByPermissions");
                     if (contentSummaries.length == 0) {
                         new api.content.GetContentRootPermissionsRequest().
                             sendAndParse().
