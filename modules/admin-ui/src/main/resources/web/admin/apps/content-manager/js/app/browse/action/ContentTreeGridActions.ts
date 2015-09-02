@@ -68,17 +68,7 @@ module app.browse.action {
                 this.PREVIEW_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(false);
 
-                var promise = new api.security.auth.IsAuthenticatedRequest().
-                    sendAndParse().
-                    then((loginResult: api.security.auth.LoginResult) => {
-                        new api.content.GetContentRootPermissionsRequest().
-                            sendAndParse().
-                            then((accessControlList: AccessControlList) => {
-                                var hasCreatePermission =
-                                    this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
-                                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(hasCreatePermission);
-                            })
-                    });
+                var promise = this.updateActionsEnabledStateByPermissions(contentSummaries);
 
                 promise.then<void>(() => {
                     deferred.resolve(contentBrowseItems);
@@ -87,12 +77,13 @@ module app.browse.action {
                 break;
             case 1:
                 var contentSummary = contentSummaries[0];
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                 this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
                 this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
+                this.SORT_CONTENT.setEnabled(true);
                 this.PREVIEW_CONTENT.setEnabled(false);
                 var parallelPromises: wemQ.Promise<any>[] = [
                     new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
@@ -102,26 +93,7 @@ module app.browse.action {
                                 contentBrowseItems[0].setRenderable(renderable);
                             }
                         }),
-                    // check if selected content allows children and if user has create permission for it
-                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
-                        sendAndParse().
-                        then((contentType: api.schema.content.ContentType) => {
-                            var contentTypeAllowsChildren = (contentType && contentType.isAllowChildContent());
-                            this.SORT_CONTENT.setEnabled(contentTypeAllowsChildren);
-                            var hasCreatePermission = false;
-                            new api.security.auth.IsAuthenticatedRequest().
-                                sendAndParse().
-                                then((loginResult: api.security.auth.LoginResult) => {
-                                    new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
-                                        sendAndParse().
-                                        then((accessControlList: AccessControlList) => {
-                                            hasCreatePermission =
-                                                this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
-                                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentTypeAllowsChildren &&
-                                                                                           hasCreatePermission);
-                                        })
-                                })
-                        })
+                    this.updateActionsEnabledStateByPermissions(contentSummaries)
                 ];
                 wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
@@ -140,6 +112,108 @@ module app.browse.action {
                 deferred.resolve(contentBrowseItems);
             }
             return deferred.promise;
+        }
+
+        private updateActionsEnabledStateByPermissions(contentSummaries: ContentSummary[]): wemQ.Promise<any> {
+
+            return new api.security.auth.IsAuthenticatedRequest().
+                sendAndParse().
+                then((loginResult: api.security.auth.LoginResult) => {
+                    console.log("updateActionsEnabledStateByPermissions");
+                    if (contentSummaries.length == 0) {
+                        new api.content.GetContentRootPermissionsRequest().
+                            sendAndParse().
+                            then((accessControlList: AccessControlList) => {
+                                var hasCreatePermission =
+                                    this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                if (!hasCreatePermission) {
+                                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                                }
+                            })
+                    } else {
+
+                        var contentTypesAllowChildren = true;
+                        var hasCreatePermission = true;
+                        var hasDeletePermission = true;
+                        var hasPublishPermission = true;
+                        var hasParentCreatePermission = true;
+
+                        var parallelPromises: wemQ.Promise<any>[] = [];
+
+                        for (var i = 0; i < contentSummaries.length; i++) {
+
+                            var contentSummary = contentSummaries[i];
+
+                            parallelPromises.push(
+                                new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
+                                    sendAndParse().
+                                    then((contentType: api.schema.content.ContentType) => {
+                                        contentTypesAllowChildren =
+                                            contentTypesAllowChildren && (contentType && contentType.isAllowChildContent());
+                                    }))
+                            parallelPromises.push(
+                                new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
+                                    sendAndParse().
+                                    then((accessControlList: AccessControlList) => {
+                                        hasCreatePermission = hasCreatePermission &&
+                                                              this.hasPermission(api.security.acl.Permission.CREATE, loginResult,
+                                                                  accessControlList);
+                                        hasDeletePermission = hasDeletePermission &&
+                                                              this.hasPermission(api.security.acl.Permission.DELETE, loginResult,
+                                                                  accessControlList);
+                                        hasPublishPermission = hasDeletePermission &&
+                                                               this.hasPermission(api.security.acl.Permission.PUBLISH, loginResult,
+                                                                   accessControlList);
+                                    }))
+                            if (contentSummary.hasParent()) {
+                                parallelPromises.push(
+                                    new api.schema.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
+                                        sendAndParse().
+                                        then((parent: api.content.Content) => {
+
+                                            new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
+                                                sendAndParse().
+                                                then((accessControlList: AccessControlList) => {
+                                                    hasParentCreatePermission = hasCreatePermission &&
+                                                                                this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                    loginResult,
+                                                                                    accessControlList);
+                                                })
+                                        }))
+                            } else {
+                                parallelPromises.push(
+                                    new api.content.GetContentRootPermissionsRequest().
+                                        sendAndParse().
+                                        then((accessControlList: AccessControlList) => {
+                                            hasParentCreatePermission = hasCreatePermission &&
+                                                                        this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                            loginResult,
+                                                                            accessControlList);
+                                        }))
+                            }
+                        }
+
+                        wemQ.all(parallelPromises).spread<void>(() => {
+                            if (!contentTypesAllowChildren || !hasCreatePermission) {
+                                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                                this.SORT_CONTENT.setEnabled(false);
+                            }
+                            if (!hasDeletePermission) {
+                                this.DELETE_CONTENT.setEnabled(false);
+                                this.MOVE_CONTENT.setEnabled(false);
+                            }
+                            if (!hasPublishPermission) {
+                                this.PUBLISH_CONTENT.setEnabled(false);
+                            }
+                            if (!hasParentCreatePermission) {
+                                this.DUPLICATE_CONTENT.setEnabled(false);
+                            }
+                            return wemQ(null);
+                        }).done();
+                    }
+
+
+                });
         }
 
         private anyEditable(contentSummaries: api.content.ContentSummary[]): boolean {
