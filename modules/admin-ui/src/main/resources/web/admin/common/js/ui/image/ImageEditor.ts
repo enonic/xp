@@ -64,8 +64,7 @@ module api.ui.image {
         private imgH: number;
         private frameW: number;
         private frameH: number;
-        private maxZoom = 1;
-        private imageSmallerThanFrame: boolean = false;
+        private maxZoom = 5;
 
         private mouseUpListener;
         private mouseMoveListener;
@@ -103,9 +102,6 @@ module api.ui.image {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
                     this.updateImageDimensions();
-                    // select element for bordering
-                    var borderedEl = this.imgW < this.frameW ? this.canvas : this.frame;
-                    borderedEl.addClass("bordered");
                 }
             });
 
@@ -244,13 +240,11 @@ module api.ui.image {
          * @returns {SVGRect} normalized to 0-1 rectangle
          */
         private normalizeRect(rect: SVGRect): SVGRect {
-            var minW = Math.min(this.frameW, this.imgW);
-            var minH = Math.min(this.frameH, this.imgH);
             return {
-                x: rect.x / minW,
-                y: rect.y / minH,
-                w: rect.w / minW,
-                h: rect.h / minH
+                x: rect.x / this.frameW,
+                y: rect.y / this.frameH,
+                w: rect.w / this.frameW,
+                h: rect.h / this.frameH
             }
         }
 
@@ -260,13 +254,11 @@ module api.ui.image {
          * @returns {SVGRect} denormalized rectangle
          */
         private denormalizeRect(rect: SVGRect): SVGRect {
-            var minW = Math.min(this.frameW, this.imgW);
-            var minH = Math.min(this.frameH, this.imgH);
             return {
-                x: rect.x * minW,
-                y: rect.y * minH,
-                w: rect.w * minW,
-                h: rect.h * minH
+                x: rect.x * this.frameW,
+                y: rect.y * this.frameH,
+                w: rect.w * this.frameW,
+                h: rect.h * this.frameH
             }
         }
 
@@ -276,7 +268,7 @@ module api.ui.image {
          * @returns {number} normalized to 0-1 radius
          */
         private normalizeRadius(r: number): number {
-            return r / Math.min(this.frameW, this.frameH, this.imgW, this.imgH);
+            return r / Math.min(this.frameW, this.frameH);
         }
 
         /**
@@ -285,7 +277,7 @@ module api.ui.image {
          * @returns {number} denormalized radius
          */
         private denormalizeRadius(r: number): number {
-            return r * Math.min(this.frameW, this.frameH, this.imgW, this.imgH);
+            return r * Math.min(this.frameW, this.frameH);
         }
 
         private getOffsetX(e: MouseEvent): number {
@@ -308,11 +300,9 @@ module api.ui.image {
 
             this.imgW = imgEl.getNaturalWidth();
             this.imgH = imgEl.getNaturalHeight();
-            this.maxZoom = this.imgW / this.frameW;
+            // this.maxZoom = this.imgW / this.frameW;  sets max zoom to image real size
 
             this.frameH = (this.frameW * this.imgH) / this.imgW;
-
-            this.imageSmallerThanFrame = this.imgW < this.frameW;
 
             if (ImageEditor.debug) {
                 console.group('ImageEditor.updateImageDimensions');
@@ -1304,19 +1294,14 @@ module api.ui.image {
                     this.updateZoomPosition();
                 }
 
-                if (!this.imageSmallerThanFrame) {
-                    // update crop position for it to stay in place as zoom changes parent svg size
-                    this.setCropPositionPx({
-                        x: this.cropData.x - dx,
-                        y: this.cropData.y - dy,
-                        w: this.cropData.w,
-                        h: this.cropData.h
-                    }, updateAuto);
+                // update crop position for it to stay in place as zoom changes parent svg size
+                this.setCropPositionPx({
+                    x: this.cropData.x - dx,
+                    y: this.cropData.y - dy,
+                    w: this.cropData.w,
+                    h: this.cropData.h
+                }, updateAuto);
 
-                } else if (updateAuto) {
-                    // don't forget to flag crop as manually overridden
-                    this.setCropAutoPositioned(this.isCropNotModified(this.cropData));
-                }
             }
 
             if (ImageEditor.debug) {
@@ -1338,17 +1323,8 @@ module api.ui.image {
         }
 
         resetZoomPosition() {
-
-            var w = Math.min(this.imgW, this.frameW),
-                h = Math.min(this.imgH, this.frameH);
-
-            this.setZoomPositionPx({
-                w: w,
-                h: h,
-                x: (this.frameW - w) / 2,
-                y: (this.frameH - h) / 2
-            }, false);
-
+            var zoom = {x: 0, y: 0, w: 1, h: 1};
+            this.setZoomPositionPx(this.denormalizeRect(zoom), false);
             this.setCropAutoPositioned(true);
         }
 
@@ -1397,10 +1373,6 @@ module api.ui.image {
                 setLeftPx(this.zoomData.x).
                 setTopPx(this.zoomData.y);
 
-            if (this.imageSmallerThanFrame) {
-                // zoom is disabled in this case
-                return;
-            }
             var zoomKnobEl = this.zoomKnob.getEl(),
                 zoomLineEl = this.zoomLine.getEl();
 
@@ -1453,25 +1425,19 @@ module api.ui.image {
          * @returns {number}
          */
         private restrainZoomX(x: number) {
-            var deltaW = this.frameW - this.zoomData.w;
-            return Math.max(this.imageSmallerThanFrame ? 0 : deltaW,
-                Math.min(this.imageSmallerThanFrame ? deltaW : 0, x));
+            return Math.max(this.frameW - this.zoomData.w, Math.min(0, x));
         }
 
         private restrainZoomY(y: number) {
-            var deltaH = this.cropData.h - this.zoomData.h;
-            return Math.max(this.imageSmallerThanFrame ? 0 : deltaH,
-                Math.min(this.imageSmallerThanFrame ? deltaH : 0, y));
+            return Math.max(this.frameH - this.zoomData.h, Math.min(0, y));
         }
 
         private restrainZoomW(x: number) {
-            return Math.max(this.imageSmallerThanFrame ? this.imgW : this.frameW,
-                Math.min(this.imageSmallerThanFrame ? this.frameW : this.imgW, x));
+            return Math.max(this.frameW, Math.min(this.maxZoom * this.frameW, x));
         }
 
         private restrainZoomH(y: number) {
-            return Math.max(this.imageSmallerThanFrame ? this.imgH : this.frameH,
-                Math.min(this.imageSmallerThanFrame ? this.frameH : this.imgH, y));
+            return Math.max(this.frameH, Math.min(this.maxZoom * this.frameH, y));
         }
 
 
