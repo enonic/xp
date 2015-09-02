@@ -1,5 +1,20 @@
-exports.login = function (user, password) {
-    // TODO: Implement
+function required(params, name) {
+    var value = params[name];
+    if (value === undefined) {
+        throw "Parameter '" + name + "' is required";
+    }
+
+    return value;
+}
+
+exports.login = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.LoginHandler');
+
+    bean.user = required(params, 'user');
+    bean.password = required(params, 'password');
+    bean.userStore = required(params, 'userStore');
+
+    return __.toNativeObject(bean.login());
 };
 
 exports.logout = function () {
@@ -10,4 +25,7 @@ exports.getUser = function () {
     // TODO: Implement
 };
 
+exports.hasRole = function (roleKey) {
+    // TODO: Implement
+};
 
