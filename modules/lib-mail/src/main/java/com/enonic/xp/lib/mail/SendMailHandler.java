@@ -1,13 +1,19 @@
 package com.enonic.xp.lib.mail;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import javax.mail.Message;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.google.common.base.Joiner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.script.bean.BeanContext;
@@ -16,22 +22,54 @@ import com.enonic.xp.script.bean.ScriptBean;
 public final class SendMailHandler
     implements MailMessage, ScriptBean
 {
+    private final static Logger LOG = LoggerFactory.getLogger( SendMailHandler.class );
+
     private String[] to;
 
     private String[] from;
 
+    private String[] cc;
+
+    private String[] bcc;
+
+    private String[] replyTo;
+
     private String subject;
+
+    private String body;
 
     private Supplier<MailService> mailService;
 
-    public void setTo( final String... to )
+    private Map<String, String> headers;
+
+    public void setTo( final String[] to )
     {
         this.to = to;
     }
 
-    public void setFrom( final String... from )
+    public void setFrom( final String[] from )
     {
         this.from = from;
+    }
+
+    public void setCc( final String[] cc )
+    {
+        this.cc = cc;
+    }
+
+    public void setBcc( final String[] bcc )
+    {
+        this.bcc = bcc;
+    }
+
+    public void setReplyTo( final String[] replyTo )
+    {
+        this.replyTo = replyTo;
+    }
+
+    public void setBody( final String body )
+    {
+        this.body = body;
     }
 
     public void setSubject( final String subject )
@@ -41,7 +79,7 @@ public final class SendMailHandler
 
     public void setHeaders( final Map<String, String> headers )
     {
-        System.out.println( Joiner.on(",").withKeyValueSeparator( "=" ).join( headers ) );
+        this.headers = headers;
     }
 
     public boolean send()
@@ -53,6 +91,7 @@ public final class SendMailHandler
         }
         catch ( final Exception e )
         {
+            LOG.warn( "Mail could not be sent", e );
             return false;
         }
     }
@@ -62,19 +101,40 @@ public final class SendMailHandler
         throws Exception
     {
         message.setSubject( this.subject );
-        // message.addRecipients( Message.RecipientType.TO, toAddresses( this.to ) );
+        message.setText( this.body, "UTF-8" );
+
+        message.addFrom( toAddresses( this.from ) );
+        message.addRecipients( Message.RecipientType.TO, toAddresses( this.to ) );
+        message.addRecipients( Message.RecipientType.CC, toAddresses( this.cc ) );
+        message.addRecipients( Message.RecipientType.BCC, toAddresses( this.bcc ) );
+        message.setReplyTo( toAddresses( this.replyTo ) );
+
+        if ( this.headers != null )
+        {
+            for ( Map.Entry<String, String> header : this.headers.entrySet() )
+            {
+                message.addHeader( header.getKey(), header.getValue() );
+            }
+        }
     }
 
-    private InternetAddress toAddress( final String str )
-        throws Exception
+    private InternetAddress toAddress( final String address )
+        throws MailException
     {
-        return new InternetAddress( str );
+        try
+        {
+            return new InternetAddress( address );
+        }
+        catch ( AddressException e )
+        {
+            throw new MailException( e.getMessage(), e );
+        }
     }
 
-    private InternetAddress[] toAddresses( final String[] list )
+    private InternetAddress[] toAddresses( final String[] addressList )
         throws Exception
     {
-        return new InternetAddress[0];
+        return Stream.of( addressList ).filter( Objects::nonNull ).map( ( this::toAddress ) ).toArray( InternetAddress[]::new );
     }
 
     @Override
