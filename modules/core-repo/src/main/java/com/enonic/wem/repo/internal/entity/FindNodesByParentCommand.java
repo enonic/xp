@@ -61,7 +61,7 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
 
-        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
+        final Nodes nodes = doFindByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).

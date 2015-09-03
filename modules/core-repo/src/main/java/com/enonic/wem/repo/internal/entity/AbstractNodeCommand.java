@@ -100,9 +100,9 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    Nodes doGetByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
+    Nodes doFindByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
     {
-        return GetNodesByIdsCommand.create( this ).
+        return FindNodesByIdsCommand.create( this ).
             ids( ids ).
             orderExpressions( orderExprs ).
             resolveHasChild( resolveHasChild ).

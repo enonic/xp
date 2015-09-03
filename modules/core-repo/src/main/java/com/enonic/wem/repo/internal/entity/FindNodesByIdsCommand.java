@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.OrderExpressions;
 
-public class GetNodesByIdsCommand
+public class FindNodesByIdsCommand
     extends AbstractNodeCommand
 {
     private final NodeIds ids;
@@ -18,7 +18,7 @@ public class GetNodesByIdsCommand
 
     private final OrderExpressions orderExpressions;
 
-    private GetNodesByIdsCommand( final Builder builder )
+    private FindNodesByIdsCommand( final Builder builder )
     {
         super( builder );
         this.ids = builder.ids;
@@ -93,10 +93,10 @@ public class GetNodesByIdsCommand
             Preconditions.checkNotNull( this.ids );
         }
 
-        public GetNodesByIdsCommand build()
+        public FindNodesByIdsCommand build()
         {
             this.validate();
-            return new GetNodesByIdsCommand( this );
+            return new FindNodesByIdsCommand( this );
         }
     }
 }

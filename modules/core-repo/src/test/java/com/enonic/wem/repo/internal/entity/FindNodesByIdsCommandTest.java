@@ -11,7 +11,7 @@ import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 
-public class GetNodesByIdsCommandTest
+public class FindNodesByIdsCommandTest
     extends AbstractNodeTest
 {
 
@@ -41,7 +41,7 @@ public class GetNodesByIdsCommandTest
 
         printContentRepoIndex();
 
-        final Nodes result = GetNodesByIdsCommand.create().
+        final Nodes result = FindNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
             branchService( this.branchService ).
@@ -76,7 +76,7 @@ public class GetNodesByIdsCommandTest
 
         refresh();
 
-        final Nodes result = GetNodesByIdsCommand.create().
+        final Nodes result = FindNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
             branchService( this.branchService ).

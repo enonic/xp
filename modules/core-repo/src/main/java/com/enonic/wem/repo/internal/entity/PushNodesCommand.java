@@ -53,7 +53,7 @@ public class PushNodesCommand
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final Nodes nodes =
-            doGetByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
+            doFindByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
