@@ -22,7 +22,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
-// TODO: Make this as a immutable request
 public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
@@ -41,7 +40,7 @@ public final class PortalRequest
 
     private String host;
 
-    private String port;
+    private int port;
 
     private String path;
 
@@ -83,6 +82,7 @@ public final class PortalRequest
         this.cookies = Maps.newHashMap();
     }
 
+    // TODO: Get from rawRequest
     public String getMethod()
     {
         return this.method;
@@ -93,37 +93,43 @@ public final class PortalRequest
         return branch;
     }
 
+    // TODO: Get from rawRequest
     public Multimap<String, String> getParams()
     {
         return this.params;
     }
 
+    // TODO: Remove. Not needed.
     public Multimap<String, String> getFormParams()
     {
         return this.formParams;
     }
 
+    // TODO: Get from rawRequest
     public String getScheme()
     {
         return scheme;
     }
 
+    // TODO: Get from rawRequest
     public String getHost()
     {
         return host;
     }
 
-    // TODO: Port should be a number
-    public String getPort()
+    // TODO: Get from rawRequest
+    public int getPort()
     {
         return port;
     }
 
+    // TODO: Get from rawRequest
     public String getPath()
     {
         return path;
     }
 
+    // TODO: Get from rawRequest
     public String getUrl()
     {
         return url;
@@ -149,7 +155,7 @@ public final class PortalRequest
         this.host = host;
     }
 
-    public void setPort( final String port )
+    public void setPort( final int port )
     {
         this.port = port;
     }
@@ -174,6 +180,7 @@ public final class PortalRequest
         this.branch = branch;
     }
 
+    // TODO: Get from rawRequest
     public Map<String, String> getHeaders()
     {
         return this.headers;
@@ -264,6 +271,7 @@ public final class PortalRequest
         this.baseUri = baseUri;
     }
 
+    // TODO: Get from rawRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;

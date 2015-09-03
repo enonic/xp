@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.net.HostAndPort;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -63,41 +64,37 @@ public final class ServletRequestUrlHelper
         return scheme;
     }
 
+    public static HostAndPort getHostAndPort( final HttpServletRequest req )
+    {
+        final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
+        if ( xForwardedHost != null )
+        {
+            return HostAndPort.fromString( xForwardedHost );
+        }
+        else
+        {
+            return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
+        }
+    }
+
     public static String getHost()
     {
         return getHost( ServletRequestHolder.getRequest() );
     }
 
-    public static String getHost( final HttpServletRequest httpServletRequest )
+    public static String getHost( final HttpServletRequest req )
     {
-        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
-        if ( xForwardedHost != null )
-        {
-            return xForwardedHost.split( ":" )[0];
-        }
-        else
-        {
-            return httpServletRequest.getServerName();
-        }
+        return getHostAndPort( req ).getHostText();
     }
 
-    public static String getPort()
+    public static int getPort()
     {
         return getPort( ServletRequestHolder.getRequest() );
     }
 
-    public static String getPort( final HttpServletRequest httpServletRequest )
+    public static int getPort( final HttpServletRequest req )
     {
-        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
-        if ( xForwardedHost != null )
-        {
-            final String[] xForwardedHostValues = xForwardedHost.split( ":" );
-            if ( xForwardedHostValues.length > 1 )
-            {
-                return xForwardedHostValues[1];
-            }
-        }
-        return Integer.toString( httpServletRequest.getServerPort() );
+        return getHostAndPort( req ).getPort();
     }
 
     public static String getPath()
@@ -132,7 +129,7 @@ public final class ServletRequestUrlHelper
         str.append( "://" ).append( getHost( httpServletRequest ) );
 
         //Appends the port if necessary
-        final String port = getPort( httpServletRequest );
+        final int port = getPort( httpServletRequest );
         if ( needPortNumber( scheme, port ) )
         {
             str.append( ":" ).append( port );
@@ -165,10 +162,10 @@ public final class ServletRequestUrlHelper
     }
 
 
-    private static boolean needPortNumber( final String scheme, final String port )
+    private static boolean needPortNumber( final String scheme, final int port )
     {
-        final boolean isHttp = "http".equals( scheme ) && ( "80".equals( port ) );
-        final boolean isHttps = "https".equals( scheme ) && ( "443".equals( port ) );
+        final boolean isHttp = "http".equals( scheme ) && ( 80 == port );
+        final boolean isHttps = "https".equals( scheme ) && ( 443 == port );
         return !( isHttp || isHttps );
     }
 
@@ -219,5 +216,4 @@ public final class ServletRequestUrlHelper
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
         return "/" + Joiner.on( '/' ).join( parts );
     }
-
 }

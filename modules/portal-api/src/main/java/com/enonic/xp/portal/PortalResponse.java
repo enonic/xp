@@ -43,11 +43,13 @@ public final class PortalResponse
         this.options = builder.options.build();
     }
 
+    // TODO: Use HttpStatus
     public int getStatus()
     {
         return this.status;
     }
 
+    // TODO: Use Guava MediaType
     public String getContentType()
     {
         return this.contentType;
@@ -58,6 +60,7 @@ public final class PortalResponse
         return this.body;
     }
 
+    // TODO: Expose map, not immutable map
     public ImmutableMap<String, String> getHeaders()
     {
         return this.headers;
@@ -68,6 +71,7 @@ public final class PortalResponse
         return postProcess;
     }
 
+    // TODO: Expose map, not immutable map
     public ImmutableList<String> getContributions( final HtmlTag tag )
     {
         return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : ImmutableList.of();
@@ -78,6 +82,7 @@ public final class PortalResponse
         return !this.contributions.isEmpty();
     }
 
+    // TODO: Remove. Not needed.
     public ImmutableMap<String, Object> getOptions()
     {
         return options;

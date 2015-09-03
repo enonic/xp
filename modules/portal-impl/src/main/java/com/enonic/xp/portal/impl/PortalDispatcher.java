@@ -29,7 +29,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalDispatcher
     extends BaseWebHandler
 {
-    private final static String BASE_URI = "/portal2";
+    private final static String BASE_URI = "/portal";
 
     private final static String PATH_PREFIX = BASE_URI + "/";
 

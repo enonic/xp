@@ -2,7 +2,7 @@
   "method": "GET",
   "scheme": "http",
   "host": "localhost",
-  "port": "80",
+  "port": 80,
   "path": "/portal/live/master/a/b",
   "url": "http://localhost/portal/live/master/a/b?param1=value1",
   "mode": "live",
@@ -17,10 +17,7 @@
   },
   "formParams": {},
   "headers": {
-    "header3": [
-      "value3-B",
-      "value3-A"
-    ],
+    "header3": "value3",
     "header2": "value2",
     "header1": "value1"
   },

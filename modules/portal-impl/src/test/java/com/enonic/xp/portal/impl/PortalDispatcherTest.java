@@ -41,7 +41,7 @@ public class PortalDispatcherTest
     public void testNoBranch()
         throws Exception
     {
-        final Request request = newRequest( "/portal2/" ).
+        final Request request = newRequest( "/portal/" ).
             get().
             build();
 
@@ -59,21 +59,21 @@ public class PortalDispatcherTest
             body( "Hello World" ).
             build();
 
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             get().
             build();
 
         this.handler.verifier = req -> {
             assertEquals( "master", req.getBranch().toString() );
             assertEquals( RenderMode.LIVE, req.getMode() );
-            assertEquals( "" + this.server.getPort(), req.getPort() );
+            assertEquals( this.server.getPort(), req.getPort() );
             assertEquals( "localhost", req.getHost() );
-            assertEquals( "/portal2/master/a/b", req.getPath() );
+            assertEquals( "/portal/master/a/b", req.getPath() );
             assertEquals( "http", req.getScheme() );
-            assertEquals( "http://localhost:" + this.server.getPort() + "/portal2/master/a/b", req.getUrl() );
+            assertEquals( "http://localhost:" + this.server.getPort() + "/portal/master/a/b", req.getUrl() );
             assertEquals( "GET", req.getMethod() );
             assertEquals( "/a/b", req.getContentPath().toString() );
-            assertEquals( "/portal2", req.getBaseUri() );
+            assertEquals( "/portal", req.getBaseUri() );
         };
 
         final Response response = callRequest( request );
@@ -93,7 +93,7 @@ public class PortalDispatcherTest
             header( "X-Header", "Value" ).
             build();
 
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             get().
             build();
 
@@ -106,7 +106,7 @@ public class PortalDispatcherTest
     public void testRequestHeaders()
         throws Exception
     {
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             get().
             header( "X-Header", "Value" ).
             build();
@@ -124,7 +124,7 @@ public class PortalDispatcherTest
     public void testReadCookies()
         throws Exception
     {
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             get().
             header( "Cookie", "theme=light; sessionToken=abc123" ).
             build();
@@ -142,7 +142,7 @@ public class PortalDispatcherTest
     public void testParameters()
         throws Exception
     {
-        final Request request = newRequest( "/portal2/master/a/b?a=1&b=2&b=3" ).
+        final Request request = newRequest( "/portal/master/a/b?a=1&b=2&b=3" ).
             get().
             build();
 
@@ -164,7 +164,7 @@ public class PortalDispatcherTest
             add( "expand", "true" ).
             build();
 
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             post( formBody ).
             build();
 
@@ -185,7 +185,7 @@ public class PortalDispatcherTest
     {
         final RequestBody formBody = RequestBody.create( MediaType.parse( "text/plain" ), "Hello World" );
 
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             post( formBody ).
             build();
 
@@ -206,7 +206,7 @@ public class PortalDispatcherTest
     {
         final RequestBody formBody = RequestBody.create( MediaType.parse( "application/json" ), "{}" );
 
-        final Request request = newRequest( "/portal2/master/a/b" ).
+        final Request request = newRequest( "/portal/master/a/b" ).
             post( formBody ).
             build();
 
