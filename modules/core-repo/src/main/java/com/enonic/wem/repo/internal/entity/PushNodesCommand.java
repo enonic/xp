@@ -52,8 +52,12 @@ public class PushNodesCommand
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
-        final Nodes nodes =
-            doFindByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
+        final Nodes nodes = FindNodesByIdsCommand.create( this ).
+            ids( ids ).
+            orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
+            resolveHasChild( false ).
+            build().
+            execute();
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 

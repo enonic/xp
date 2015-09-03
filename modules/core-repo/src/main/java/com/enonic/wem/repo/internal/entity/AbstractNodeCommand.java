@@ -16,11 +16,9 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -100,17 +98,6 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    Nodes doFindByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
-    {
-        return FindNodesByIdsCommand.create( this ).
-            ids( ids ).
-            orderExpressions( orderExprs ).
-            resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
-
     Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore )
     {
         return CreateNodeCommand.create( this ).
@@ -136,14 +123,6 @@ abstract class AbstractNodeCommand
         return UpdateNodeCommand.create( this ).
             params( params ).
             binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-    Node doDeleteNode( final NodeId nodeId )
-    {
-        return DeleteNodeByIdCommand.create( this ).
-            nodeId( nodeId ).
             build().
             execute();
     }
