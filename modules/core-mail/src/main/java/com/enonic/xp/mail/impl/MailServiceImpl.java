@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.mail.session.configurator.MailConfigurator;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.mail")
 public final class MailServiceImpl
@@ -24,7 +25,7 @@ public final class MailServiceImpl
     public void activate( final Map<String, String> config )
         throws Exception
     {
-        // TODO: Create session and configure here...
+        session = new MailConfigurator( config ).configure();
     }
 
     @Override

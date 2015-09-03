@@ -3,6 +3,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':core-api' )
     testCompile project( path: ':core-api', configuration: 'testOutput' )
+    testCompile 'org.jvnet.mock-javamail:mock-javamail:1.9'
 }
 
 bundle {
