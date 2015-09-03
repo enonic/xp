@@ -5,6 +5,7 @@ module app.browse.action {
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
     import Content = api.content.Content;
+    import PermissionHelper = api.security.acl.PermissionHelper;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import AccessControlList = api.security.acl.AccessControlList;
 
@@ -129,7 +130,7 @@ module app.browse.action {
                             sendAndParse().
                             then((accessControlList: AccessControlList) => {
                                 var hasCreatePermission =
-                                    this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                    PermissionHelper.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
                                 if (!hasCreatePermission) {
                                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
                                 }
@@ -163,13 +164,16 @@ module app.browse.action {
                                     sendAndParse().
                                     then((accessControlList: AccessControlList) => {
                                         hasCreatePermission = hasCreatePermission &&
-                                                              this.hasPermission(api.security.acl.Permission.CREATE, loginResult,
+                                                              PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                                                  loginResult,
                                                                   accessControlList);
                                         hasDeletePermission = hasDeletePermission &&
-                                                              this.hasPermission(api.security.acl.Permission.DELETE, loginResult,
+                                                              PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                                                                  loginResult,
                                                                   accessControlList);
                                         hasPublishPermission = hasDeletePermission &&
-                                                               this.hasPermission(api.security.acl.Permission.PUBLISH, loginResult,
+                                                               PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+                                                                   loginResult,
                                                                    accessControlList);
                                     }))
                             if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
@@ -183,7 +187,7 @@ module app.browse.action {
                                                         sendAndParse().
                                                         then((accessControlList: AccessControlList) => {
                                                             hasParentCreatePermission = hasParentCreatePermission &&
-                                                                                        this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                        PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                                                                                             loginResult,
                                                                                             accessControlList);
                                                         }))
@@ -194,7 +198,7 @@ module app.browse.action {
                                             sendAndParse().
                                             then((accessControlList: AccessControlList) => {
                                                 hasParentCreatePermission = hasParentCreatePermission &&
-                                                                            this.hasPermission(api.security.acl.Permission.CREATE,
+                                                                            PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                                                                                 loginResult,
                                                                                 accessControlList);
                                             }))
@@ -246,38 +250,6 @@ module app.browse.action {
                 }
             }
             return false;
-        }
-
-        private isPrincipalPresent(principalKey: api.security.PrincipalKey,
-                                   accessEntriesToCheck: AccessControlEntry[]): boolean {
-            var result = false;
-            accessEntriesToCheck.some((entry: AccessControlEntry) => {
-                if (entry.getPrincipalKey().equals(principalKey)) {
-                    result = true;
-                    return true;
-                }
-            });
-
-            return result;
-        }
-
-        private hasPermission(permission: api.security.acl.Permission,
-                              loginResult: api.security.auth.LoginResult,
-                              accessControlList: AccessControlList): boolean {
-            var result = false;
-            var entries = accessControlList.getEntries();
-            var accessEntriesWithGivenPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-                return item.isAllowed(permission);
-            });
-
-            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                    this.isPrincipalPresent(principalKey, accessEntriesWithGivenPermissions)) {
-                    result = true;
-                    return true;
-                }
-            });
-            return result;
         }
     }
 }
