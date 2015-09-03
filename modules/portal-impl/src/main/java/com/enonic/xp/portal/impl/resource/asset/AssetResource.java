@@ -41,7 +41,7 @@ public final class AssetResource
         final Resource resource =
             this.services.getResourceService().getResource( ResourceKey.from( applicationKey, "site/assets/" + path ) );
 
-        if ( resource == null )
+        if ( !resource.exists() )
         {
             throw notFound( "Application [%s] or file [%s] in it not found", key, path );
         }
