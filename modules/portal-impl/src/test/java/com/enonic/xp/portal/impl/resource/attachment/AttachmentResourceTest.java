@@ -81,6 +81,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
+
         final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/attachment/inline/123456/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
