@@ -2,12 +2,12 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.query.expr.OrderExpressions;
 
 public class GetNodesByIdsCommand
     extends AbstractNodeCommand
@@ -16,22 +16,20 @@ public class GetNodesByIdsCommand
 
     private final boolean resolveHasChild;
 
-    private final OrderExpressions orderExpressions;
-
     private GetNodesByIdsCommand( final Builder builder )
     {
         super( builder );
         this.ids = builder.ids;
         this.resolveHasChild = builder.resolveHasChild;
-        this.orderExpressions = builder.orderExpressions;
     }
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds =
-            this.queryService.find( this.ids, this.orderExpressions, IndexContext.from( ContextAccessor.current() ) );
+        final NodeBranchVersions nodeBranchVersions = this.branchService.get( ids, InternalContext.from( ContextAccessor.current() ) );
+        final NodeVersionIds.Builder builder = NodeVersionIds.create();
+        nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
-        final Nodes nodes = nodeDao.getByVersionIds( versionIds );
+        final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
 
         return resolveHasChild ? NodeHasChildResolver.create().
             queryService( this.queryService ).
@@ -56,8 +54,6 @@ public class GetNodesByIdsCommand
 
         private boolean resolveHasChild = true;
 
-        private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
-
         private Builder()
         {
             super();
@@ -77,12 +73,6 @@ public class GetNodesByIdsCommand
         public Builder resolveHasChild( boolean resolveHasChild )
         {
             this.resolveHasChild = resolveHasChild;
-            return this;
-        }
-
-        public Builder orderExpressions( final OrderExpressions orderExpressions )
-        {
-            this.orderExpressions = orderExpressions;
             return this;
         }
 

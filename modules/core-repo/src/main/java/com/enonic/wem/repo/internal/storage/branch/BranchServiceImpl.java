@@ -1,10 +1,13 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
@@ -36,6 +39,7 @@ import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.filter.ValueFilter;
 
@@ -75,6 +79,11 @@ public class BranchServiceImpl
     @Override
     public NodeBranchVersion get( final NodeId nodeId, final InternalContext context )
     {
+        return doGetById( nodeId, context );
+    }
+
+    private NodeBranchVersion doGetById( final NodeId nodeId, final InternalContext context )
+    {
         final CacheResult cacheResult = this.cache.get( nodeId.toString() );
         // final CacheResult cacheResult = CacheResult.empty();
 
@@ -100,6 +109,24 @@ public class BranchServiceImpl
             build() );
 
         return nodeBranchVersion;
+    }
+
+    @Override
+    public NodeBranchVersions get( final NodeIds nodeIds, final InternalContext context )
+    {
+        Set<NodeBranchVersion> nodeBranchVersions = Sets.newHashSet();
+
+        for ( final NodeId nodeId : nodeIds )
+        {
+            final NodeBranchVersion branchVersion = doGetById( nodeId, context );
+
+            if ( branchVersion != null )
+            {
+                nodeBranchVersions.add( branchVersion );
+            }
+        }
+
+        return NodeBranchVersions.from( nodeBranchVersions );
     }
 
     @Override
