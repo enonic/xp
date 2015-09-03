@@ -20,15 +20,23 @@ public abstract class BaseHandler
 
     private EnumSet<HttpMethod> methodsAllowed;
 
+    private boolean handleOptions;
+
     public BaseHandler( final int order )
     {
         this.order = order;
         setMethodsAllowed( EnumSet.allOf( HttpMethod.class ) );
+        setHandleOptions( true );
     }
 
     protected final void setMethodsAllowed( final HttpMethod... methods )
     {
         setMethodsAllowed( EnumSet.copyOf( Lists.newArrayList( methods ) ) );
+    }
+
+    protected final void setHandleOptions( final boolean handleOptions )
+    {
+        this.handleOptions = handleOptions;
     }
 
     protected final void setMethodsAllowed( final EnumSet<HttpMethod> methods )
@@ -50,7 +58,7 @@ public abstract class BaseHandler
         final HttpMethod method = HttpMethod.valueOf( req.getMethod() );
         checkMethodAllowed( method );
 
-        if ( method == HttpMethod.OPTIONS )
+        if ( this.handleOptions && ( method == HttpMethod.OPTIONS ) )
         {
             return handleOptions();
         }
