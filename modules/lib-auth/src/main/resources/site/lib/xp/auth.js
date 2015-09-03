@@ -18,7 +18,9 @@ exports.login = function (params) {
 };
 
 exports.logout = function () {
-    // TODO: Implement
+    var bean = __.newBean('com.enonic.xp.lib.auth.LogoutHandler');
+
+    bean.logout();
 };
 
 exports.getUser = function () {
