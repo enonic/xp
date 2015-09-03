@@ -55,34 +55,27 @@ module app.wizard.action {
         }
 
         private enableActionsForExistingByPermissions(existing: api.content.Content) {
-            console.log("enableActionsForExistingByPermissions")
             new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().
                 then((loginResult: api.security.auth.LoginResult) => {
-                    new api.content.GetContentPermissionsByIdRequest(existing.getContentId()).
-                        sendAndParse().
-                        then((accessControlList: api.security.acl.AccessControlList) => {
-                            var hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
-                                loginResult,
-                                accessControlList);
-                            var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
-                                loginResult,
-                                accessControlList);
-                            var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
-                                loginResult,
-                                accessControlList);
 
-                            if (!hasModifyPermission) {
-                                this.save.setEnabled(false);
-                                this.saveAndClose.setEnabled(false);
-                            }
-                            if (!hasDeletePermission) {
-                                this.delete.setEnabled(false);
-                            }
-                            if (!hasPublishPermission) {
-                                this.publish.setEnabled(false);
-                            }
-                        })
+                    var hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
+                        loginResult, existing.getPermissions());
+                    var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                        loginResult, existing.getPermissions());
+                    var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+                        loginResult, existing.getPermissions());
+
+                    if (!hasModifyPermission) {
+                        this.save.setEnabled(false);
+                        this.saveAndClose.setEnabled(false);
+                    }
+                    if (!hasDeletePermission) {
+                        this.delete.setEnabled(false);
+                    }
+                    if (!hasPublishPermission) {
+                        this.publish.setEnabled(false);
+                    }
 
                     if (existing.hasParent()) {
                         new api.content.GetContentByPathRequest(existing.getPath().getParentPath()).

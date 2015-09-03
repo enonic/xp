@@ -59,14 +59,9 @@ module app.wizard {
             new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().
                 then((loginResult: api.security.auth.LoginResult) => {
-                    new api.content.GetContentPermissionsByIdRequest(existing.getContentId()).
-                        sendAndParse().
-                        then((accessControlList: api.security.acl.AccessControlList) => {
-                            var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
-                                loginResult,
-                                accessControlList);
-                            this.setUserCanPublish(hasPublishPermission);
-                        })
+                    var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+                        loginResult, existing.getPermissions());
+                    this.setUserCanPublish(hasPublishPermission);
                 });
         }
 
