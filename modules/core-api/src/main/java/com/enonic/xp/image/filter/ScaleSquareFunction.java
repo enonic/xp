@@ -39,7 +39,7 @@ public final class ScaleSquareFunction
         if ( width < height )
         {
             int heightDiff = height - width;
-            int offset = (int) ( height * this.yOffset ) - ( this.size / 2 ); // center offset
+            int offset = (int) ( height * this.yOffset ) - ( width / 2 ); // center offset
             offset = inRange( offset, 0, heightDiff ); // adjust to view limits
 
             cropped = source.getSubimage( 0, offset, width, width );
@@ -47,7 +47,7 @@ public final class ScaleSquareFunction
         else
         {
             int widthDiff = width - height;
-            int offset = (int) ( width * this.xOffset ) - ( this.size / 2 ); // center offset
+            int offset = (int) ( width * this.xOffset ) - ( height / 2 ); // center offset
             offset = inRange( offset, 0, widthDiff ); // adjust to view limits
 
             cropped = source.getSubimage( offset, 0, height, height );
