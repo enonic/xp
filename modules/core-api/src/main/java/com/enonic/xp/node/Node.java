@@ -168,7 +168,7 @@ public class Node
     @Override
     public String toString()
     {
-        return this.path.toString();
+        return path == null ? "/" : this.path.toString();
     }
 
     public static Builder create()

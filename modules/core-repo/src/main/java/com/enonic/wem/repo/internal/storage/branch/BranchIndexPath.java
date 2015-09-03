@@ -15,6 +15,4 @@ public class BranchIndexPath
     public static final IndexPath STATE = IndexPath.from( "state" );
 
     public static final IndexPath PATH = IndexPath.from( "path" );
-
-    public static final IndexPath READ_ACCESS_LIST = IndexPath.from( "permissions.read" );
 }

@@ -19,7 +19,6 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
-import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -32,7 +31,6 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.ValueFilter;
 
@@ -68,52 +66,6 @@ public class ElasticsearchQueryService
         final SearchResult searchResult = elasticsearchDao.find( query );
 
         return translateResult( searchResult );
-    }
-
-    @Override
-    public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )
-    {
-        final Branch branch = indexContext.getBranch();
-
-        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.PATH.getPath() ).
-                addValue( ValueFactory.newString( nodePath.toString() ) ).
-                build() ).
-            build();
-
-        final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( branch.getName() ).
-            query( queryBuilder ).
-            size( 1 ).
-            setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
-            build();
-
-        final SearchResult searchResult = elasticsearchDao.find( query );
-
-        if ( searchResult.isEmpty() )
-        {
-            return null;
-        }
-
-        if ( searchResult.getResults().getTotalHits() > 1 )
-        {
-            throw new QueryException( "Expected at most 1 hit, found " + searchResult.getResults().getTotalHits() );
-        }
-
-        final SearchHit firstHit = searchResult.getResults().getFirstHit();
-
-        final ReturnValue versionKeyField = firstHit.getField( NodeIndexPath.VERSION.getPath() );
-
-        if ( versionKeyField == null )
-        {
-            throw new ElasticsearchDataException( "Field " + NodeIndexPath.VERSION.getPath() + " not found on node with path " +
-                                                      nodePath + " in branch " + branch );
-        }
-
-        return NodeVersionId.from( versionKeyField.getSingleValue().toString() );
     }
 
     @Override

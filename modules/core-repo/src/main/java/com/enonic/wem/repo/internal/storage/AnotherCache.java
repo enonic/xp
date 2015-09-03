@@ -1,22 +1,23 @@
 package com.enonic.wem.repo.internal.storage;
 
-
-import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.collect.Maps;
-
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.ReturnValues;
+import com.google.common.collect.Sets;
 
 public class AnotherCache
 {
     private final ConcurrentMap<String, StorageData> idCache = Maps.newConcurrentMap();
 
+    private final ConcurrentMap<String, Set<CacheKey>> idCacheKeyMap = Maps.newConcurrentMap();
+
     private final ConcurrentMap<CacheKey, String> valueCache = Maps.newConcurrentMap();
 
     public void store( final CacheStoreRequest cacheStoreRequest )
     {
+        doDelete( cacheStoreRequest.getId() );
+
         if ( cacheStoreRequest.getStorageData() == null )
         {
             return;
@@ -29,6 +30,15 @@ public class AnotherCache
         for ( final CacheKey key : cacheStoreRequest.getCacheKeys() )
         {
             valueCache.put( key, id );
+            Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
+
+            if ( cacheKeys == null )
+            {
+                cacheKeys = Sets.newHashSet();
+                idCacheKeyMap.put( id, cacheKeys );
+            }
+
+            cacheKeys.add( key );
         }
     }
 
@@ -39,56 +49,36 @@ public class AnotherCache
 
     public CacheResult get( final CacheKey cacheKey )
     {
-
         final String id = valueCache.get( cacheKey );
 
         if ( id == null )
         {
-            return null;
+            return CacheResult.empty();
         }
 
         return new CacheResult( this.idCache.get( id ), id );
     }
 
-    public GetResult get( final GetByIdRequest request )
+    public void delete( final String id )
     {
-        final StorageData data = idCache.get( request.getId() );
-
-        if ( data == null )
-        {
-            return null;
-        }
-
-        final ReturnFields returnFields = request.getReturnFields();
-
-        final ReturnValues.Builder builder = ReturnValues.create();
-
-        for ( final ReturnField field : returnFields )
-        {
-            final Collection<Object> values = data.get( field.getPath() );
-
-            if ( values == null || values.isEmpty() )
-            {
-                throw new RuntimeException( "Expected data with path '" + field.getPath() + " in storage" );
-            }
-
-            builder.add( field.getPath(), values ).build();
-        }
-
-        return GetResult.create().
-            id( request.getId() ).
-            resultFieldValues( builder.build() ).
-            build();
+        doDelete( id );
     }
 
-    public void delete( final CacheDeleteRequest request )
+    private void doDelete( final String id )
     {
-        idCache.remove( request.getId() );
+        idCache.remove( id );
 
-        for ( final CacheKey key : request.getCacheKeys() )
+        final Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
+
+        if ( cacheKeys != null )
         {
-            valueCache.remove( key );
+            for ( final CacheKey key : cacheKeys )
+            {
+                this.valueCache.remove( key );
+            }
         }
+
+        idCacheKeyMap.remove( id );
     }
 
 }

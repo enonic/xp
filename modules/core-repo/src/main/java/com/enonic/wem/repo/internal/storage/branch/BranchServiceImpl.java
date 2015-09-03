@@ -16,7 +16,6 @@ import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFact
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.AnotherCache;
 import com.enonic.wem.repo.internal.storage.BranchPathCacheKey;
-import com.enonic.wem.repo.internal.storage.CacheDeleteRequest;
 import com.enonic.wem.repo.internal.storage.CacheResult;
 import com.enonic.wem.repo.internal.storage.CacheStoreRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
@@ -27,6 +26,7 @@ import com.enonic.wem.repo.internal.storage.StaticStorageType;
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 import com.enonic.wem.repo.internal.storage.result.ReturnValues;
@@ -51,11 +51,13 @@ public class BranchServiceImpl
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )
     {
-        final String id = this.storageDao.store( BranchStorageRequestFactory.create( storeBranchDocument, context ) );
+        final StoreRequest storeRequest = BranchStorageRequestFactory.create( storeBranchDocument, context );
+        final String id = this.storageDao.store( storeRequest );
 
         cache.store( CacheStoreRequest.create().
             id( id ).
             addCacheKey( new BranchPathCacheKey( context.getBranch(), storeBranchDocument.getNode().path() ) ).
+            storageData( storeRequest.getData() ).
             build() );
 
         return id;
@@ -66,44 +68,22 @@ public class BranchServiceImpl
     {
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
 
-        final CacheResult cacheResult = cache.get( nodeId.toString() );
-
-        if ( !cacheResult.exists() )
-        {
-            return;
-        }
-
-        final CacheDeleteRequest.Builder builder = CacheDeleteRequest.create().
-            id( nodeId.toString() );
-
-        final GetResult getResult = create( cacheResult );
-
-        final Object cachedPath = getResult.getReturnValues().getSingleValue( BranchIndexPath.PATH.getPath() );
-
-        if ( cachedPath != null )
-        {
-            builder.addCacheKey( new BranchPathCacheKey( context.getBranch(), NodePath.create( cachedPath.toString() ).build() ) );
-        }
-
-        cache.delete( builder.build() );
+        cache.delete( nodeId.toString() );
     }
 
     @Override
     public NodeBranchVersion get( final NodeId nodeId, final InternalContext context )
     {
-        GetResult getResult;
-
         final CacheResult cacheResult = this.cache.get( nodeId.toString() );
+        // final CacheResult cacheResult = CacheResult.empty();
 
         if ( cacheResult.exists() )
         {
-            getResult = create( cacheResult );
+            return NodeBranchVersionFactory.create( createGetResult( cacheResult ) );
         }
-        else
-        {
-            final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
-            getResult = this.storageDao.getById( getByIdRequest );
-        }
+
+        final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
+        final GetResult getResult = this.storageDao.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
         {
@@ -112,13 +92,11 @@ public class BranchServiceImpl
 
         final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
 
-        if ( !cacheResult.exists() )
-        {
-            cache.store( CacheStoreRequest.create().
-                id( nodeId.toString() ).
-                addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
-                build() );
-        }
+        cache.store( CacheStoreRequest.create().
+            id( getResult.getId() ).
+            addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
+            storageData( createStorageData( nodeBranchVersion, nodeId, context ) ).
+            build() );
 
         return nodeBranchVersion;
     }
@@ -128,41 +106,59 @@ public class BranchServiceImpl
     {
         final CacheResult cacheResult = this.cache.get( new BranchPathCacheKey( context.getBranch(), nodePath ) );
 
-        GetResult getResult;
-
         if ( cacheResult.exists() )
         {
-            getResult = create( cacheResult );
+            return NodeBranchVersionFactory.create( createGetResult( cacheResult ) );
         }
-        else
-        {
-            final SearchResult result = this.storageDao.getByValues( GetByValuesRequest.create().
-                storageSettings( createStorageSettings( context ) ).
-                addValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
-                addValue( BranchIndexPath.PATH.getPath(), nodePath.toString() ).
-                expectSingleValue( true ).
-                build() );
 
+        final SearchResult result = this.storageDao.getByValues( GetByValuesRequest.create().
+            storageSettings( createStorageSettings( context ) ).
+            addValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
+            addValue( BranchIndexPath.PATH.getPath(), nodePath.toString() ).
+            returnFields(
+                ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
+                                   BranchIndexPath.TIMESTAMP ) ).
+            expectSingleValue( true ).
+            build() );
+
+        if ( !result.isEmpty() )
+        {
             final SearchHit firstHit = result.getResults().getFirstHit();
 
-            getResult = create( firstHit );
+            final GetResult getResult = createGetResult( firstHit );
+
+            cacheResult( context, getResult );
+
+            return NodeBranchVersionFactory.create( getResult );
         }
 
-        final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
-
-        if ( !cacheResult.exists() )
-        {
-            cache.store( CacheStoreRequest.create().
-                id( getResult.getId() ).
-                addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
-                build() );
-        }
-
-        return nodeBranchVersion;
-
+        return null;
     }
 
-    private GetResult create( final SearchHit searchHit )
+    private StorageData createStorageData( final NodeBranchVersion nodeBranchVersion, final NodeId nodeId, final InternalContext context )
+    {
+        return StorageData.create().
+            add( BranchIndexPath.NODE_ID.getPath(), nodeId.toString() ).
+            add( BranchIndexPath.PATH.getPath(), nodeBranchVersion.getNodePath().toString() ).
+            add( BranchIndexPath.VERSION_ID.getPath(), nodeBranchVersion.getVersionId() ).
+            add( BranchIndexPath.STATE.getPath(), nodeBranchVersion.getNodeState().value() ).
+            add( BranchIndexPath.TIMESTAMP.getPath(), nodeBranchVersion.getTimestamp() ).
+            add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
+            build();
+    }
+
+    private void cacheResult( final InternalContext context, final GetResult getResult )
+    {
+        final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
+
+        cache.store( CacheStoreRequest.create().
+            id( getResult.getId() ).
+            addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
+            storageData( createStorageData( nodeBranchVersion, NodeId.from( getResult.getId() ), context ) ).
+            build() );
+    }
+
+    private GetResult createGetResult( final SearchHit searchHit )
     {
         return GetResult.create().
             id( searchHit.getId() ).
@@ -170,7 +166,7 @@ public class BranchServiceImpl
             build();
     }
 
-    private GetResult create( final CacheResult cacheResult )
+    private GetResult createGetResult( final CacheResult cacheResult )
     {
         if ( !cacheResult.exists() )
         {

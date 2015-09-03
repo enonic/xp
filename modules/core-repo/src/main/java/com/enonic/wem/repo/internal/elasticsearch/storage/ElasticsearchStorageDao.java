@@ -115,6 +115,7 @@ public class ElasticsearchStorageDao
             index( settings.getStorageName().getName() ).
             indexType( settings.getStorageType().getName() ).
             query( boolQueryBuilder ).
+            setReturnFields( request.getReturnFields() ).
             build();
 
         // TODO: Resolve size

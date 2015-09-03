@@ -2,12 +2,12 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodeByPathCommand
     extends AbstractNodeCommand
@@ -27,14 +27,19 @@ public class GetNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId currentVersion = this.queryService.get( path, IndexContext.from( context ) );
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( path, InternalContext.from( context ) );
 
-        if ( currentVersion == null )
+        if ( nodeBranchVersion == null )
         {
             return null;
         }
 
-        final Node node = nodeDao.getByVersionId( currentVersion );
+        final Node node = nodeDao.getByVersionId( nodeBranchVersion.getVersionId() );
+
+        if ( !canRead( node ) )
+        {
+            return null;
+        }
 
         return resolveHasChild ? NodeHasChildResolver.create().
             queryService( this.queryService ).

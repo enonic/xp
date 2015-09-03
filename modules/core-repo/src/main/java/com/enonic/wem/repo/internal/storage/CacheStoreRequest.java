@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.storage;
 
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 public class CacheStoreRequest
@@ -69,8 +70,15 @@ public class CacheStoreRequest
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.id, "id must be set in CacheStoreRequest" );
+            Preconditions.checkNotNull( this.storageData, "storageData must be set in CacheStoreRequest" );
+        }
+
         public CacheStoreRequest build()
         {
+            this.validate();
             return new CacheStoreRequest( this );
         }
     }

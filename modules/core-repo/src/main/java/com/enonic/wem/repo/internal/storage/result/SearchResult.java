@@ -14,6 +14,17 @@ public class SearchResult
         this.aggregations = builder.aggregations;
     }
 
+    private SearchResult( final SearchHits results, final Aggregations aggregations )
+    {
+        this.results = results;
+        this.aggregations = aggregations;
+    }
+
+    public static SearchResult empty()
+    {
+        return new SearchResult( SearchHits.create().build(), Aggregations.empty() );
+    }
+
     public boolean isEmpty()
     {
         return results.getSize() == 0;
