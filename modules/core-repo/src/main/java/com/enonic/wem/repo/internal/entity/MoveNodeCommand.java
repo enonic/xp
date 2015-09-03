@@ -132,11 +132,20 @@ public class MoveNodeCommand
                 // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
                 nodeToMove = Node.create( nodeToMove ).inheritPermissions( false ).build();
             }
-            movedNode = doStoreNode( nodeToMove );
+
+            movedNode = StoreNodeCommand.create( this ).
+                node( nodeToMove ).
+                updateMetadataOnly( false ).
+                build().
+                execute();
         }
         else
         {
-            movedNode = updateNodeMetadata( nodeToMove );
+            movedNode = StoreNodeCommand.create( this ).
+                updateMetadataOnly( true ).
+                node( nodeToMove ).
+                build().
+                execute();
         }
 
         if ( persistedNode.getHasChildren() )
@@ -156,7 +165,11 @@ public class MoveNodeCommand
     {
         final NodePath newNodePath = NodePath.create( newParentNodePath, newNodeName.toString() ).build();
 
-        return doGetByPath( newNodePath, false );
+        return GetNodeByPathCommand.create( this ).
+            nodePath( newNodePath ).
+            resolveHasChild( false ).
+            build().
+            execute();
     }
 
     private Nodes getChildren( final Node parentNode )

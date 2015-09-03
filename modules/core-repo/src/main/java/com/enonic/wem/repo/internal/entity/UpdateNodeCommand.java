@@ -85,7 +85,10 @@ public final class UpdateNodeCommand
 
         if ( !this.params.isDryRun() )
         {
-            doStoreNode( updatedNode );
+            StoreNodeCommand.create( this ).
+                node( updatedNode ).
+                build().
+                execute();
 
             return NodeHasChildResolver.create().
                 queryService( this.queryService ).

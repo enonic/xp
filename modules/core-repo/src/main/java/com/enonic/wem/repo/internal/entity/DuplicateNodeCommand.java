@@ -43,7 +43,11 @@ public final class DuplicateNodeCommand
             name( newNodeName );
         attachBinaries( existingNode, createNodeParams );
 
-        final Node duplicatedNode = doCreateNode( createNodeParams.build(), this.binaryBlobStore );
+        final Node duplicatedNode = CreateNodeCommand.create( this ).
+            params( createNodeParams.build() ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
             add( existingNode.id(), duplicatedNode.id() );
@@ -75,7 +79,11 @@ public final class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
-            final Node newChildNode = this.doCreateNode( paramsBuilder.build(), this.binaryBlobStore );
+            final Node newChildNode = CreateNodeCommand.create( this ).
+                params( paramsBuilder.build() ).
+                binaryBlobStore( binaryBlobStore ).
+                build().
+                execute();
 
             builder.add( node.id(), newChildNode.id() );
 
@@ -134,10 +142,14 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            doUpdateNode( UpdateNodeParams.create().
-                id( node.id() ).
-                editor( toBeEdited -> toBeEdited.data = data ).
-                build(), this.binaryBlobStore );
+            UpdateNodeCommand.create( this ).
+                params( UpdateNodeParams.create().
+                    id( node.id() ).
+                    editor( toBeEdited -> toBeEdited.data = data ).
+                    build() ).
+                binaryBlobStore( binaryBlobStore ).
+                build().
+                execute();
         }
     }
 
@@ -150,7 +162,12 @@ public final class DuplicateNodeCommand
         while ( !resolvedUnique )
         {
             final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
-            Node foundNode = this.doGetByPath( checkIfExistsPath, false );
+
+            final Node foundNode = GetNodeByPathCommand.create( this ).
+                nodePath( checkIfExistsPath ).
+                resolveHasChild( false ).
+                build().
+                execute();
 
             if ( foundNode == null )
             {

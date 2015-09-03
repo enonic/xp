@@ -161,7 +161,11 @@ public class ResolveSyncWorkCommand
     {
         if ( !node.isRoot() && !node.parentPath().equals( NodePath.ROOT ) )
         {
-            final Node thisParentNode = doGetByPath( node.parentPath(), false );
+            final Node thisParentNode = GetNodeByPathCommand.create( this ).
+                nodePath( node.parentPath() ).
+                resolveHasChild( false ).
+                build().
+                execute();
 
             final NodeComparison nodeComparison = getNodeComparison( thisParentNode.id() );
 
@@ -272,7 +276,11 @@ public class ResolveSyncWorkCommand
 
             final NodePath parentPath = node.parentPath();
 
-            final Node parentNode = doGetByPath( parentPath, false );
+            final Node parentNode = GetNodeByPathCommand.create( this ).
+                nodePath( parentPath ).
+                resolveHasChild( false ).
+                build().
+                execute();
 
             if ( isDelete )
             {

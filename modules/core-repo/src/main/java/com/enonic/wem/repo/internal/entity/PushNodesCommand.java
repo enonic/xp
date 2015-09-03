@@ -123,7 +123,11 @@ public class PushNodesCommand
                 authInfo( context.getAuthInfo() ).
                 branch( this.target ).
                 repositoryId( context.getRepositoryId() ).
-                build().runWith( () -> updateNodeMetadata( child ) );
+                build().runWith( () -> StoreNodeCommand.create( this ).
+                node( child ).
+                updateMetadataOnly( true ).
+                build().
+                execute() );
 
             resultBuilder.addChildSuccess( child );
 
@@ -156,7 +160,11 @@ public class PushNodesCommand
 
         final Context targetContext = createTargetContext( currentContext );
 
-        final Node targetParent = targetContext.callWith( () -> doGetByPath( node.parentPath(), false ) );
+        final Node targetParent = targetContext.callWith( () -> GetNodeByPathCommand.create( this ).
+            nodePath( node.parentPath() ).
+            resolveHasChild( false ).
+            build().
+            execute() );
 
         if ( targetParent == null )
         {

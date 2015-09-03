@@ -1,25 +1,19 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
@@ -53,76 +47,11 @@ abstract class AbstractNodeCommand
         this.queryService = builder.queryService;
     }
 
-    Node updateNodeMetadata( final Node node )
-    {
-        return StoreNodeCommand.create( this ).
-            node( node ).
-            updateMetadataOnly( true ).
-            build().
-            execute();
-    }
-
-    Node doStoreNode( final Node node )
-    {
-        return StoreNodeCommand.create( this ).
-            node( node ).
-            build().
-            execute();
-    }
-
-    Node doMoveNode( final NodePath newParentPath, final NodeName nodeName, final NodeId nodeId )
-    {
-        return MoveNodeCommand.create( this ).
-            id( nodeId ).
-            newParent( newParentPath ).
-            newNodeName( nodeName ).
-            build().
-            execute();
-    }
-
-    Node doGetByPath( final NodePath path, final boolean resolveHasChild )
-    {
-        return GetNodeByPathCommand.create( this ).
-            nodePath( path ).
-            resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
     Node doGetById( final NodeId id, final boolean resolveHasChild )
     {
         return GetNodeByIdCommand.create( this ).
             id( id ).
             resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
-    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore )
-    {
-        return CreateNodeCommand.create( this ).
-            params( params ).
-            binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore, final Instant timestamp )
-    {
-        return CreateNodeCommand.create( this ).
-            params( params ).
-            timestamp( timestamp ).
-            binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-
-    Node doUpdateNode( final UpdateNodeParams params, final BlobStore binaryBlobStore )
-    {
-        return UpdateNodeCommand.create( this ).
-            params( params ).
-            binaryBlobStore( binaryBlobStore ).
             build().
             execute();
     }
@@ -151,7 +80,12 @@ abstract class AbstractNodeCommand
         }
         else
         {
-            final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath, false ) );
+            final Node node = NodeHelper.runAsAdmin( () -> GetNodeByPathCommand.create( this ).
+                nodePath( parentPath ).
+                resolveHasChild( false ).
+                build().
+                execute() );
+
             if ( node == null || node.getPermissions().isEmpty() )
             {
                 throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath.toString() + "]" );

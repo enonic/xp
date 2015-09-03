@@ -103,9 +103,10 @@ public class ReorderChildNodeCommand
             manualOrderValue( newOrderValue ).
             build();
 
-        doStoreNode( updatedNode );
-
-        return updatedNode;
+        return StoreNodeCommand.create( this ).
+            node( updatedNode ).
+            build().
+            execute();
     }
 
     private NodeQuery createFirstNodeBeforeInsertQuery( final Long nodeAfterOrderValue )

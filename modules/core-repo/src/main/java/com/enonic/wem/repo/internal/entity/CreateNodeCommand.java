@@ -103,7 +103,11 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        return this.doStoreNode( newNode );
+        return StoreNodeCommand.create( this ).
+            node( newNode ).
+            updateMetadataOnly( false ).
+            build().
+            execute();
     }
 
     private AttachedBinaries storeAndAttachBinaries()
@@ -154,10 +158,18 @@ public final class CreateNodeCommand
     {
         if ( NodePath.ROOT.equals( params.getParent() ) )
         {
-            return doGetByPath( NodePath.ROOT, false );
+            return GetNodeByPathCommand.create( this ).
+                nodePath( NodePath.ROOT ).
+                resolveHasChild( false ).
+                build().
+                execute();
         }
 
-        final Node parentNode = doGetByPath( params.getParent(), false );
+        final Node parentNode = GetNodeByPathCommand.create( this ).
+            nodePath( params.getParent() ).
+            resolveHasChild( false ).
+            build().
+            execute();
 
         if ( parentNode == null )
         {
@@ -264,7 +276,11 @@ public final class CreateNodeCommand
 
         NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
 
-        Node existingNode = doGetByPath( nodePath, false );
+        final Node existingNode = GetNodeByPathCommand.create( this ).
+            nodePath( nodePath ).
+            resolveHasChild( false ).
+            build().
+            execute();
 
         if ( existingNode != null )
         {

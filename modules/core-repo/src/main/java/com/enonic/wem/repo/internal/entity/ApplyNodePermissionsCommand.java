@@ -93,8 +93,13 @@ final class ApplyNodePermissionsCommand
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
-        doStoreNode( updatedNode );
-        return updatedNode;
+        final Node result = StoreNodeCommand.create( this ).
+            node( updatedNode ).
+            updateMetadataOnly( false ).
+            build().
+            execute();
+
+        return result;
     }
 
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
