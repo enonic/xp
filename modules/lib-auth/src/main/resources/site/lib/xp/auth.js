@@ -22,7 +22,9 @@ exports.logout = function () {
 };
 
 exports.getUser = function () {
-    // TODO: Implement
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserHandler');
+
+    return __.toNativeObject(bean.getUser());
 };
 
 exports.hasRole = function (roleKey) {
