@@ -152,10 +152,14 @@ module api.ui.image {
             this.stickyToolbar = this.createStickyToolbar();
             this.appendChildren(this.stickyToolbar, this.frame);
 
-            // sticky toolbar needs to have access to parent elements
+            var scrollListener = (event) => this.updateStickyToolbar();
             this.onAdded((event: api.dom.ElementAddedEvent) => {
-                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll",
-                    (event) => this.updateStickyToolbar());
+                // sticky toolbar needs to have access to parent elements
+                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind("scroll", scrollListener);
+            });
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => {
+                // element has already been removed so use parent
+                wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
             });
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => this.updateImageDimensions(false, true));
