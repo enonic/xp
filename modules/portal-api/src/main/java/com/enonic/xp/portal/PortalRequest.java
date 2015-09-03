@@ -67,6 +67,8 @@ public final class PortalRequest
 
     private String endpointPath;
 
+    private String contentType;
+
     public PortalRequest()
     {
         this.baseUri = "";
@@ -273,5 +275,15 @@ public final class PortalRequest
     public void setEndpointPath( final String endpointPath )
     {
         this.endpointPath = Strings.emptyToNull( endpointPath );
+    }
+
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
     }
 }
