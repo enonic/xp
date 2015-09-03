@@ -51,10 +51,10 @@ module api.ui.image {
         private focusClipPath: Element;
         private cropClipPath: Element;
 
-        private focusData: FocusData = {x: 0, y: 0, r: 0.25, auto: true};
+        private focusData: FocusData = {x: 0, y: 0, r: 0.25, auto: undefined};
         private revertFocusData: FocusData;
 
-        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: true};
+        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: undefined};
         private revertCropData: CropData;
 
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
@@ -102,6 +102,7 @@ module api.ui.image {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
                     this.updateImageDimensions(true);
+                    this.updateStickyToolbar();
                 }
             });
 
@@ -153,16 +154,20 @@ module api.ui.image {
             this.appendChildren(this.stickyToolbar, this.frame);
 
             var scrollListener = (event) => this.updateStickyToolbar();
+            var resizeListener = (item) => {
+                this.updateImageDimensions(false, true);
+                this.updateStickyToolbar();
+            };
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 // sticky toolbar needs to have access to parent elements
                 wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind("scroll", scrollListener);
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
             });
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 // element has already been removed so use parent
                 wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
+                api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             });
-
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => this.updateImageDimensions(false, true));
 
             if (src) {
                 this.setSrc(src);
@@ -432,6 +437,7 @@ module api.ui.image {
 
                 if (this.isFocusEditMode()) {
                     this.resetFocusPosition();
+                    this.resetFocusRadius();
                 } else if (this.isCropEditMode()) {
                     this.resetZoomPosition();
                     this.resetCropPosition();
@@ -470,15 +476,16 @@ module api.ui.image {
                 this.resetCropPosition();
                 this.resetZoomPosition();
                 this.resetFocusPosition();
+                this.resetFocusRadius();
             });
 
             this.onFocusAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.focusData.auto);
+                resetButton.setVisible(!auto || !this.cropData.auto);
             });
             this.onCropAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.cropData.auto);
+                resetButton.setVisible(!auto || !this.focusData.auto);
             });
 
             this.uploadButton = new Button();
@@ -792,7 +799,7 @@ module api.ui.image {
             this.focusData.r = this.restrainFocusRadius(r);
 
             if (updateAuto) {
-                this.setFocusAutoPositioned(false);
+                this.setFocusAutoPositioned(this.isFocusNotModified(this.focusData));
             }
 
             if (oldR != this.focusData.r) {
@@ -934,8 +941,10 @@ module api.ui.image {
             return Math.max(0, Math.min(this.frameW, this.frameH, this.cropData.w, this.cropData.h, r));
         }
 
-        private isFocusNotModified(point: Point): boolean {
-            return point.x == Math.min(this.frameW, this.cropData.w) / 2 && point.y == Math.min(this.frameH, this.cropData.h) / 2;
+        private isFocusNotModified(focus: FocusData): boolean {
+            return focus.x == Math.min(this.frameW, this.cropData.w) / 2 &&
+                   focus.y == Math.min(this.frameH, this.cropData.h) / 2 &&
+                   focus.r == Math.min(this.frameW, this.frameH) / 4;
         }
 
 
@@ -1078,7 +1087,7 @@ module api.ui.image {
             }
             var crop = {x: 0, y: 0, w: 1, h: 1};
             this.setCropPositionPx(this.denormalizeRect(crop), false);
-            this.resetZoomPosition();
+            this.setCropAutoPositioned(true);
         }
 
         private setCropAutoPositioned(auto: boolean) {
