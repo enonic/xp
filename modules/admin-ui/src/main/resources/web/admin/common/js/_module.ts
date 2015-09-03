@@ -1,4 +1,5 @@
 ///<reference path='lib/Mousetrap.d.ts' />
+///<reference path='lib/mousetrap-global-bind.d.ts' />
 ///<reference path='lib/jquery.d.ts' />
 ///<reference path='lib/jqueryui.d.ts' />
 ///<reference path='lib/jquery.simulate.d.ts' />
