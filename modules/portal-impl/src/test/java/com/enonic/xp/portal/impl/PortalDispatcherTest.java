@@ -63,24 +63,25 @@ public class PortalDispatcherTest
             get().
             build();
 
+        this.handler.verifier = req -> {
+            assertEquals( "master", req.getBranch().toString() );
+            assertEquals( RenderMode.LIVE, req.getMode() );
+            assertEquals( "" + this.server.getPort(), req.getPort() );
+            assertEquals( "localhost", req.getHost() );
+            assertEquals( "/portal2/master/a/b", req.getPath() );
+            assertEquals( "http", req.getScheme() );
+            assertEquals( "http://localhost:" + this.server.getPort() + "/portal2/master/a/b", req.getUrl() );
+            assertEquals( "GET", req.getMethod() );
+            assertEquals( "/a/b", req.getContentPath().toString() );
+            assertEquals( "/portal2", req.getBaseUri() );
+        };
+
         final Response response = callRequest( request );
 
         assertEquals( 200, response.code() );
         assertEquals( "text/plain", response.body().contentType().toString() );
         assertEquals( "Hello World", response.body().string() );
         assertEquals( 11, response.body().contentLength() );
-
-        assertNotNull( this.handler.request );
-        assertEquals( "master", this.handler.request.getBranch().toString() );
-        assertEquals( RenderMode.LIVE, this.handler.request.getMode() );
-        assertEquals( "" + this.server.getPort(), this.handler.request.getPort() );
-        assertEquals( "localhost", this.handler.request.getHost() );
-        assertEquals( "/portal2/master/a/b", this.handler.request.getPath() );
-        assertEquals( "http", this.handler.request.getScheme() );
-        assertEquals( "http://localhost:" + this.server.getPort() + "/portal2/master/a/b", this.handler.request.getUrl() );
-        assertEquals( "GET", this.handler.request.getMethod() );
-        assertEquals( "/a/b", this.handler.request.getContentPath().toString() );
-        assertEquals( "/portal2", this.handler.request.getBaseUri() );
     }
 
     @Test
@@ -97,7 +98,6 @@ public class PortalDispatcherTest
             build();
 
         final Response response = callRequest( request );
-
         assertEquals( 200, response.code() );
         assertEquals( "Value", response.header( "X-Header" ) );
     }
@@ -111,10 +111,13 @@ public class PortalDispatcherTest
             header( "X-Header", "Value" ).
             build();
 
-        final Response response = callRequest( request );
+        this.handler.verifier = req -> {
+            assertEquals( 5, req.getHeaders().size() );
+            assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
+        };
 
+        final Response response = callRequest( request );
         assertEquals( 200, response.code() );
-        assertEquals( "Value", this.handler.request.getHeaders().get( "X-Header" ) );
     }
 
     @Test
@@ -126,11 +129,13 @@ public class PortalDispatcherTest
             header( "Cookie", "theme=light; sessionToken=abc123" ).
             build();
 
-        final Response response = callRequest( request );
+        this.handler.verifier = req -> {
+            assertEquals( "light", req.getCookies().get( "theme" ) );
+            assertEquals( "abc123", req.getCookies().get( "sessionToken" ) );
+        };
 
+        final Response response = callRequest( request );
         assertEquals( 200, response.code() );
-        assertEquals( "light", this.handler.request.getCookies().get( "theme" ) );
-        assertEquals( "abc123", this.handler.request.getCookies().get( "sessionToken" ) );
     }
 
     @Test
@@ -141,11 +146,13 @@ public class PortalDispatcherTest
             get().
             build();
 
-        final Response response = callRequest( request );
+        this.handler.verifier = req -> {
+            assertEquals( "1", Joiner.on( "," ).join( req.getParams().get( "a" ) ) );
+            assertEquals( "2,3", Joiner.on( "," ).join( req.getParams().get( "b" ) ) );
+        };
 
+        final Response response = callRequest( request );
         assertEquals( 200, response.code() );
-        assertEquals( "1", Joiner.on( "," ).join( this.handler.request.getParams().get( "a" ) ) );
-        assertEquals( "2,3", Joiner.on( "," ).join( this.handler.request.getParams().get( "b" ) ) );
     }
 
     @Test
@@ -161,13 +168,15 @@ public class PortalDispatcherTest
             post( formBody ).
             build();
 
-        final Response response = callRequest( request );
+        this.handler.verifier = req -> {
+            assertEquals( "POST", req.getMethod() );
+            assertEquals( "application/x-www-form-urlencoded", req.getContentType() );
+            assertEquals( "Jurassic Park", Joiner.on( "," ).join( req.getParams().get( "search" ) ) );
+            assertEquals( "true", Joiner.on( "," ).join( req.getParams().get( "expand" ) ) );
+        };
 
+        final Response response = callRequest( request );
         assertEquals( 200, response.code() );
-        assertEquals( "POST", this.handler.request.getMethod() );
-        assertEquals( "application/x-www-form-urlencoded", this.handler.request.getContentType() );
-        assertEquals( "Jurassic Park", Joiner.on( "," ).join( this.handler.request.getParams().get( "search" ) ) );
-        assertEquals( "true", Joiner.on( "," ).join( this.handler.request.getParams().get( "expand" ) ) );
     }
 
     @Test
@@ -180,13 +189,15 @@ public class PortalDispatcherTest
             post( formBody ).
             build();
 
+        this.handler.verifier = req -> {
+            assertEquals( "POST", req.getMethod() );
+            assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
+
+            // TODO: Should check body for request...
+        };
+
         final Response response = callRequest( request );
-
         assertEquals( 200, response.code() );
-        assertEquals( "POST", this.handler.request.getMethod() );
-        assertEquals( "text/plain; charset=UTF-8", this.handler.request.getContentType() );
-
-        // TODO: Should check body for request...
     }
 
     @Test
@@ -199,12 +210,14 @@ public class PortalDispatcherTest
             post( formBody ).
             build();
 
+        this.handler.verifier = req -> {
+            assertEquals( "POST", req.getMethod() );
+            assertEquals( "application/json; charset=utf-8", req.getContentType() );
+
+            // TODO: Should check body for request...
+        };
+
         final Response response = callRequest( request );
-
         assertEquals( 200, response.code() );
-        assertEquals( "POST", this.handler.request.getMethod() );
-        assertEquals( "application/json; charset=utf-8", this.handler.request.getContentType() );
-
-        // TODO: Should check body for request...
     }
 }

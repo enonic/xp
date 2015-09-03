@@ -6,9 +6,10 @@ import com.enonic.xp.portal.PortalResponse;
 public final class TestPortalHandler
     implements PortalHandler
 {
-    protected PortalRequest request;
-
     protected PortalResponse response;
+
+    protected RequestVerifier verifier = req -> {
+    };
 
     @Override
     public int getOrder()
@@ -26,7 +27,7 @@ public final class TestPortalHandler
     public PortalResponse handle( final PortalRequest req )
         throws Exception
     {
-        this.request = req;
+        this.verifier.verify( req );
         return this.response;
     }
 }

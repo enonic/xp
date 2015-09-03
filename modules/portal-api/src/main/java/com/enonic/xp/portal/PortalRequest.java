@@ -2,6 +2,8 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -67,7 +69,7 @@ public final class PortalRequest
 
     private String endpointPath;
 
-    private String contentType;
+    private HttpServletRequest rawRequest;
 
     public PortalRequest()
     {
@@ -279,11 +281,16 @@ public final class PortalRequest
 
     public String getContentType()
     {
-        return contentType;
+        return this.rawRequest.getContentType();
     }
 
-    public void setContentType( final String contentType )
+    public HttpServletRequest getRawRequest()
     {
-        this.contentType = contentType;
+        return rawRequest;
+    }
+
+    public void setRawRequest( final HttpServletRequest rawRequest )
+    {
+        this.rawRequest = rawRequest;
     }
 }

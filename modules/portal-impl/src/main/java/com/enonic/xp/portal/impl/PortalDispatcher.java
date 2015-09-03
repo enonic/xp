@@ -68,7 +68,7 @@ public final class PortalDispatcher
         result.setBranch( findBranch( rawPath ) );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
-        result.setContentType( req.getContentType() );
+        result.setRawRequest( req );
 
         result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         result.setHost( ServletRequestUrlHelper.getHost( req ) );
