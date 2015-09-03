@@ -34,6 +34,13 @@ public final class Converters
         return (T) INSTANCE.doConvert( source, toType );
     }
 
+    @SuppressWarnings("unchecked")
+    public static <S, T> T convertOrDefault( final S source, final Class<T> toType, T defaultValue )
+    {
+        Object converted = convert( source, toType );
+        return converted == null ? defaultValue : (T) converted;
+    }
+
     private Object doConvert( final Object source, final Class type )
     {
         if ( source == null )
