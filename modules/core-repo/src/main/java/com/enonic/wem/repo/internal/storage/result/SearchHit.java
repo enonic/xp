@@ -50,6 +50,11 @@ public class SearchHit
         return doGetField( fieldName, failOnMissing );
     }
 
+    public ReturnValues getReturnValues()
+    {
+        return returnValues;
+    }
+
     public String getStringValue( final String fieldName )
     {
         final ReturnValue returnValue = doGetField( fieldName, true );

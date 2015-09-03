@@ -20,7 +20,7 @@ public class SimpleCache
     @Override
     public String put( final StoreRequest request )
     {
-        Preconditions.checkNotNull( request.getId(), "id must be provided for memoryDao" );
+        Preconditions.checkNotNull( request.getId(), "id must be provided for storageCache" );
 
         final StorageSettings settings = request.getSettings();
 

@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.wem.repo.internal.storage.result.GetResult;
+import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
 public interface StorageDao
 {
@@ -10,8 +11,6 @@ public interface StorageDao
 
     GetResult getById( final GetByIdRequest request );
 
-    GetResult getByPath( final GetByPathRequest request );
-
-    GetResult getByParent( final GetByParentRequest request );
+    SearchResult getByValues( final GetByValuesRequest request );
 
 }

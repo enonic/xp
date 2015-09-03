@@ -17,6 +17,11 @@ public class GetResult
         return returnValues;
     }
 
+    public String getId()
+    {
+        return id;
+    }
+
     public static Builder create()
     {
         return new Builder();

@@ -10,6 +10,7 @@ import org.junit.rules.TemporaryFolder;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
@@ -89,16 +90,23 @@ public class SecurityServiceImplTest
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
+        final ElasticsearchStorageDao esDaoInternal = new ElasticsearchStorageDao();
+        esDaoInternal.setClient( this.client );
+
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageService( storageDao );
+        this.branchService.setStorageDao( esDaoInternal );
+
+        this.branchService = new BranchServiceImpl();
+        this.branchService.setElasticsearchDao( elasticsearchDao );
+        this.branchService.setStorageDao( esDaoInternal );
 
         this.nodeDao = new NodeDaoImpl();
         this.nodeDao.setBranchService( this.branchService );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
-        this.versionService.setStorageService( storageDao );
+        this.versionService.setStorageService( storageService );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );

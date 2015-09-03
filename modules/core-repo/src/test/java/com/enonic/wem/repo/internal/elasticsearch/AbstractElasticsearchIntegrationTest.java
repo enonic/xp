@@ -27,7 +27,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected ElasticsearchDaoImpl elasticsearchDao;
 
-    protected CachedStorageServiceImpl storageDao;
+    protected CachedStorageServiceImpl storageService;
 
     protected ElasticsearchIndexServiceInternal elasticsearchIndexService;
 
@@ -48,9 +48,9 @@ public abstract class AbstractElasticsearchIntegrationTest
         final ElasticsearchStorageDao esDaoInternal = new ElasticsearchStorageDao();
         esDaoInternal.setClient( this.client );
 
-        this.storageDao = new CachedStorageServiceImpl();
-        this.storageDao.setStorageDao( esDaoInternal );
-        this.storageDao.setStorageCache( new SimpleCache() );
+        this.storageService = new CachedStorageServiceImpl();
+        this.storageService.setStorageDao( esDaoInternal );
+        this.storageService.setStorageCache( new SimpleCache() );
 
         this.elasticsearchIndexService = new ElasticsearchIndexServiceInternal();
         elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );
