@@ -8,6 +8,7 @@ import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 
 public interface BranchService
 {
@@ -20,6 +21,8 @@ public interface BranchService
     NodeBranchVersions get( final NodeIds nodeIds, final InternalContext context );
 
     NodeBranchVersion get( final NodePath nodePath, final InternalContext context );
+
+    NodeBranchVersions get( final NodePaths nodePath, final InternalContext context );
 
     NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final InternalContext branchContext );
 }

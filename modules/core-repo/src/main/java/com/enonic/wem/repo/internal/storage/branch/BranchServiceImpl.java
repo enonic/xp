@@ -41,6 +41,7 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
@@ -131,6 +132,30 @@ public class BranchServiceImpl
 
     @Override
     public NodeBranchVersion get( final NodePath nodePath, final InternalContext context )
+    {
+        return doGetByPath( nodePath, context );
+    }
+
+    @Override
+    public NodeBranchVersions get( final NodePaths nodePaths, final InternalContext context )
+    {
+        Set<NodeBranchVersion> nodeBranchVersions = Sets.newHashSet();
+
+        for ( final NodePath nodePath : nodePaths )
+        {
+            final NodeBranchVersion branchVersion = doGetByPath( nodePath, context );
+
+            if ( branchVersion != null )
+            {
+                nodeBranchVersions.add( branchVersion );
+            }
+        }
+
+        return NodeBranchVersions.from( nodeBranchVersions );
+    }
+
+
+    private NodeBranchVersion doGetByPath( final NodePath nodePath, final InternalContext context )
     {
         final CacheResult cacheResult = this.cache.get( new BranchPathCacheKey( context.getBranch(), nodePath ) );
 
