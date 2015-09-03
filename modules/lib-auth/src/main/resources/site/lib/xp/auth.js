@@ -30,6 +30,10 @@ exports.getUser = function () {
 };
 
 exports.hasRole = function (roleKey) {
-    // TODO: Implement
+    var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
+
+    bean.role = __.nullOrValue(roleKey);
+
+    return bean.hasRole();
 };
 
