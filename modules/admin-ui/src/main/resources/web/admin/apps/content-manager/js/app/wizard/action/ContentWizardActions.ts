@@ -50,6 +50,64 @@ module app.wizard.action {
             this.save.setEnabled(existing.isEditable());
             this.duplicate.setEnabled(true);
             this.delete.setEnabled(existing.isDeletable());
+
+            this.enableActionsForExistingByPermissions(existing);
+        }
+
+        private enableActionsForExistingByPermissions(existing: api.content.Content) {
+            new api.security.auth.IsAuthenticatedRequest().
+                sendAndParse().
+                then((loginResult: api.security.auth.LoginResult) => {
+
+                    var hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
+                        loginResult, existing.getPermissions());
+                    var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                        loginResult, existing.getPermissions());
+                    var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+                        loginResult, existing.getPermissions());
+
+                    if (!hasModifyPermission) {
+                        this.save.setEnabled(false);
+                        this.saveAndClose.setEnabled(false);
+                    }
+                    if (!hasDeletePermission) {
+                        this.delete.setEnabled(false);
+                    }
+                    if (!hasPublishPermission) {
+                        this.publish.setEnabled(false);
+                    }
+
+                    if (existing.hasParent()) {
+                        new api.content.GetContentByPathRequest(existing.getPath().getParentPath()).
+                            sendAndParse().
+                            then((parent: api.content.Content) => {
+                                new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
+                                    sendAndParse().
+                                    then((accessControlList: api.security.acl.AccessControlList) => {
+                                        var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                            loginResult,
+                                            accessControlList);
+
+                                        if (!hasParentCreatePermission) {
+                                            this.duplicate.setEnabled(false);
+                                        }
+                                    })
+                            })
+                    } else {
+                        new api.content.GetContentRootPermissionsRequest().
+                            sendAndParse().
+                            then((accessControlList: api.security.acl.AccessControlList) => {
+                                var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                    loginResult,
+                                    accessControlList);
+
+                                if (!hasParentCreatePermission) {
+                                    this.duplicate.setEnabled(false);
+                                }
+                            })
+                    }
+
+                })
         }
 
         getDeleteAction(): api.ui.Action {
