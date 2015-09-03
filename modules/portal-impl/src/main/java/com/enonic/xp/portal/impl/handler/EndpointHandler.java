@@ -19,7 +19,7 @@ public abstract class EndpointHandler
     public final boolean canHandle( final PortalRequest req )
     {
         final String endpointPath = Strings.nullToEmpty( req.getEndpointPath() );
-        return endpointPath.contains( this.pathPrefix );
+        return endpointPath.startsWith( this.pathPrefix );
     }
 
     protected final String findRestPath( final PortalRequest req )

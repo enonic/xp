@@ -21,7 +21,9 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class PortalDispatcher
     extends BaseWebHandler
 {
-    private final static String PATH_PREFIX = "/portal2/";
+    private final static String BASE_URI = "/portal2";
+
+    private final static String PATH_PREFIX = BASE_URI + "/";
 
     private final PortalHandlerRegistry registry;
 
@@ -52,6 +54,7 @@ public final class PortalDispatcher
     {
         final PortalRequest result = new PortalRequest();
         result.setMethod( req.getMethod() );
+        result.setBaseUri( BASE_URI );
 
         final String rawPath = req.getPathInfo();
         result.setBranch( findBranch( rawPath ) );
@@ -92,17 +95,11 @@ public final class PortalDispatcher
         return Branch.from( result );
     }
 
-    private static String findPathAfterBranch( final String path )
-    {
-        final int index = path.indexOf( '/', PATH_PREFIX.length() );
-        return path.substring( index > 0 ? index : path.length() );
-    }
-
     private static ContentPath findContentPath( final String path )
     {
         final String restPath = findPathAfterBranch( path );
         final int underscore = restPath.indexOf( "/_/" );
-        final String result = restPath.substring( 0, underscore > 0 ? underscore : restPath.length() );
+        final String result = restPath.substring( 0, underscore > -1 ? underscore : restPath.length() );
         return ContentPath.from( result.startsWith( "/" ) ? result : ( "/" + result ) );
     }
 
@@ -110,6 +107,12 @@ public final class PortalDispatcher
     {
         final String restPath = findPathAfterBranch( path );
         final int underscore = restPath.indexOf( "/_/" );
-        return restPath.substring( underscore > 0 ? underscore : restPath.length() );
+        return restPath.substring( underscore > -1 ? underscore : restPath.length() );
+    }
+
+    private static String findPathAfterBranch( final String path )
+    {
+        final int index = path.indexOf( '/', PATH_PREFIX.length() );
+        return path.substring( index > 0 ? index : path.length() );
     }
 }

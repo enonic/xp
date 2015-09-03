@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -41,10 +42,22 @@ public final class ResponseSerializer
             return;
         }
 
+        if ( body instanceof ByteSource )
+        {
+            serializeBody( response, (ByteSource) body );
+            return;
+        }
+
         if ( body != null )
         {
             serializeBody( response, body.toString() );
         }
+    }
+
+    private void serializeBody( final HttpServletResponse response, final ByteSource body )
+        throws Exception
+    {
+        writeToStream( response, body.read() );
     }
 
     private void serializeBody( final HttpServletResponse response, final String body )
