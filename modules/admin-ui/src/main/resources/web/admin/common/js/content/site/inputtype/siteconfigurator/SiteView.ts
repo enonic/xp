@@ -55,13 +55,11 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.formView = this.createFormView(formContext);
 
-            if (!this.siteConfig.getConfig().isEmpty()) {
-
+            if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createCollapseButton());
 
                 this.appendChild(this.formView);
             }
-
         }
 
         private createCollapseButton(): api.dom.AEl {
