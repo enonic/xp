@@ -20,6 +20,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
+// TODO: Make this as a immutable request
 public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
@@ -170,6 +171,7 @@ public final class PortalRequest
         this.branch = branch;
     }
 
+    // TODO: Change to use a map
     public Multimap<String, String> getHeaders()
     {
         return this.headers;
