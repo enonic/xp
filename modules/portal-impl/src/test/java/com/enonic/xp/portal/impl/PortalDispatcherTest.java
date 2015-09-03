@@ -72,6 +72,7 @@ public class PortalDispatcherTest
         assertEquals( "http://localhost:" + this.server.getPort() + "/portal2/master/a/b", this.handler.request.getUrl() );
         assertEquals( "GET", this.handler.request.getMethod() );
         assertEquals( "/a/b", this.handler.request.getContentPath().toString() );
+        assertEquals( "/portal2", this.handler.request.getBaseUri() );
     }
 
     @Test
