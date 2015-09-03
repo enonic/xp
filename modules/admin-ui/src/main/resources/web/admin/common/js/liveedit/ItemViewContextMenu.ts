@@ -113,13 +113,13 @@ module api.liveedit {
         }
 
         private getYPosition(y:number, notClicked?: boolean): number {
-            //if (this.oveflowsBottom(y, notClicked)) {
-            //    this.arrow.toggleVerticalPosition(false);
-            //    return y - this.getEl().getHeight() - this.arrow.getHeight();
-            //} else {
+            if (this.oveflowsBottom(y, notClicked)) {
+                this.arrow.toggleVerticalPosition(false);
+                return y - this.getEl().getHeight() - this.arrow.getHeight();
+            } else {
                 this.arrow.toggleVerticalPosition(true);
                 return y + this.arrow.getHeight();
-            //}
+            }
 
         }
 
@@ -134,7 +134,7 @@ module api.liveedit {
         private oveflowsBottom(y:number, notClicked?: boolean): boolean {
             var yPos = y + this.getEl().getHeight() + this.arrow.getHeight() + 1;
 
-            return yPos > (notClicked ? document.body.scrollHeight : (wemjq(window).scrollTop() + window.innerHeight));
+            return yPos > (notClicked ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) : (wemjq(window).scrollTop() + window.innerHeight));
         }
     }
 
