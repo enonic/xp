@@ -155,8 +155,10 @@ module api.ui.image {
 
             var scrollListener = (event) => this.updateStickyToolbar();
             var resizeListener = (item) => {
-                this.updateImageDimensions(false, true);
-                this.updateStickyToolbar();
+                if (this.isVisible()) {
+                    this.updateImageDimensions(false, true);
+                    this.updateStickyToolbar();
+                }
             };
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 // sticky toolbar needs to have access to parent elements
