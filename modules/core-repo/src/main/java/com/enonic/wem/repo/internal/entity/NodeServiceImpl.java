@@ -15,11 +15,13 @@ import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.snapshot.SnapshotService;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
@@ -475,6 +477,15 @@ public class NodeServiceImpl
     public SnapshotResults listSnapshots()
     {
         return this.snapshotService.list();
+    }
+
+    @Override
+    public void refresh()
+    {
+        final Context context = ContextAccessor.current();
+
+        this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) );
+        this.indexServiceInternal.refresh( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) );
     }
 
     @Override

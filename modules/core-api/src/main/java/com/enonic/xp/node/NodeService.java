@@ -72,6 +72,8 @@ public interface NodeService
 
     SnapshotResults listSnapshots();
 
+    void refresh();
+
     void deleteSnapshotRespository();
 
     int applyPermissions( ApplyNodePermissionsParams params );

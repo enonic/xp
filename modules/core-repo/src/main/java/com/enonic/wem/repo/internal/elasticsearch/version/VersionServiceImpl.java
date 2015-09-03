@@ -18,6 +18,7 @@ import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
+import com.enonic.wem.repo.internal.storage.VersionIdCacheKey;
 import com.enonic.wem.repo.internal.storage.VersionPathCacheKey;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
@@ -48,11 +49,12 @@ public class VersionServiceImpl
     {
         final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersionDocument, context.getRepositoryId() );
 
-        final String id = this.storageDao.store( storeRequest );
+        this.storageDao.store( storeRequest );
 
         cache.put( CacheStoreRequest.create().
-            id( nodeVersionDocument.getNodeVersionId().toString() ).
+            id( nodeVersionDocument.getNodeId().toString() ).
             addCacheKey( new VersionPathCacheKey( nodeVersionDocument.getNodePath() ) ).
+            addCacheKey( new VersionIdCacheKey( nodeVersionDocument.getNodeVersionId() ) ).
             storageData( storeRequest.getData() ).
             build() );
     }
@@ -60,7 +62,7 @@ public class VersionServiceImpl
     @Override
     public NodeVersion getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final CacheResult cacheResult = this.cache.get( nodeVersionId.toString() );
+        final CacheResult cacheResult = this.cache.get( new VersionIdCacheKey( nodeVersionId ) );
 
         if ( cacheResult.exists() )
         {

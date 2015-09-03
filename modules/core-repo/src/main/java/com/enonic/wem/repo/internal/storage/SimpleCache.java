@@ -1,10 +1,16 @@
 package com.enonic.wem.repo.internal.storage;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 
 public class SimpleCache
     implements StorageCache
@@ -15,9 +21,15 @@ public class SimpleCache
 
     private final ConcurrentMap<CacheKey, String> valueCache = Maps.newConcurrentMap();
 
+    private static final Logger LOG = LoggerFactory.getLogger( SimpleCache.class );
+
     public synchronized void put( final CacheStoreRequest cacheStoreRequest )
     {
+        LOG.info( "-------------" );
+
         doDelete( cacheStoreRequest.getId() );
+
+        LOG.info( "Branch: " + isBranch( cacheStoreRequest ) + " - Insert into cache: " + cacheStoreRequest.getId() );
 
         if ( cacheStoreRequest.getStorageData() == null )
         {
@@ -43,9 +55,26 @@ public class SimpleCache
         }
     }
 
+    private boolean isBranch( final CacheStoreRequest cacheStoreRequest )
+    {
+        final Collection<Object> objects = cacheStoreRequest.getStorageData().getValues().get( BranchIndexPath.BRANCH_NAME.getPath() );
+        return objects != null && !objects.isEmpty();
+    }
+
     public CacheResult get( final String id )
     {
-        return new CacheResult( this.idCache.get( id ), id );
+        final StorageData storageData = this.idCache.get( id );
+
+        if ( storageData == null )
+        {
+            LOG.info( "CacheMiss: " + id );
+        }
+        else
+        {
+            LOG.info( "CacheHit: " + id );
+        }
+
+        return new CacheResult( storageData, id );
     }
 
     public CacheResult get( final CacheKey cacheKey )
@@ -65,9 +94,43 @@ public class SimpleCache
         doDelete( id );
     }
 
+    public void evict( final CacheKey cacheKey )
+    {
+        final String id = valueCache.get( cacheKey );
+
+        if ( id == null )
+        {
+            LOG.info( "Evict cachekey miss: " + id );
+            return;
+        }
+        else
+        {
+            LOG.info( "Evict cachekey hit: " + id );
+        }
+
+        final Set<CacheKey> cacheKeys = this.idCacheKeyMap.get( id );
+
+        this.idCache.remove( id );
+        this.idCacheKeyMap.remove( id );
+
+        for ( final CacheKey key : cacheKeys )
+        {
+            this.valueCache.remove( key );
+        }
+    }
+
     private synchronized void doDelete( final String id )
     {
-        idCache.remove( id );
+        final StorageData remove = idCache.remove( id );
+
+        if ( remove == null )
+        {
+            LOG.info( "DELETE MISS: " + id );
+        }
+        else
+        {
+            LOG.info( "DELETE HIT: " + id );
+        }
 
         final Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
 

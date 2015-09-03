@@ -50,7 +50,7 @@ public class BranchServiceImplTest
         throws Exception
     {
         Mockito.when( this.storageDao.store( Mockito.isNotNull( StoreRequest.class ) ) ).
-            thenReturn( "myId" );
+            thenReturn( "myId_myBranch" );
 
         this.branchService.store( StoreBranchDocument.create().
             node( Node.create().

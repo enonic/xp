@@ -61,6 +61,8 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
+        this.nodeService.refresh();
+
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -69,6 +71,8 @@ public class PushContentCommand
         {
             pushWithoutDependencyResolve();
         }
+
+        this.nodeService.refresh();
 
         return resultBuilder.build();
     }
@@ -185,7 +189,6 @@ public class PushContentCommand
             branch( target ).
             build() ) );
 
-
         if ( !deletedContents.isEmpty() )
         {
             eventPublisher.publish(
@@ -198,9 +201,9 @@ public class PushContentCommand
         final List<ContentPath> publishedContentPaths = pushNodesResult.getSuccessfull().stream().
             map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
             collect( toList() );
-        publishedContentPaths.addAll(pushNodesResult.getChildrenSuccessfull().stream().
+        publishedContentPaths.addAll( pushNodesResult.getChildrenSuccessfull().stream().
             map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
-            collect( toList() ));
+            collect( toList() ) );
         if ( !publishedContentPaths.isEmpty() )
         {
             final ContentPaths contentPaths = ContentPaths.from( publishedContentPaths );

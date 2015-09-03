@@ -73,8 +73,7 @@ public class BranchServiceImpl
     public void delete( final NodeId nodeId, final InternalContext context )
     {
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
-
-        cache.evict( nodeId.toString() );
+        cache.evict( new BranchDocumentId( nodeId, context.getBranch() ).toString() );
     }
 
     @Override
@@ -85,7 +84,7 @@ public class BranchServiceImpl
 
     private NodeBranchVersion doGetById( final NodeId nodeId, final InternalContext context )
     {
-        final CacheResult cacheResult = this.cache.get( nodeId.toString() );
+        final CacheResult cacheResult = this.cache.get( new BranchDocumentId( nodeId, context.getBranch() ).toString() );
         // final CacheResult cacheResult = CacheResult.empty();
 
         if ( cacheResult.exists() )
