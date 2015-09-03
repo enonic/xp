@@ -113,16 +113,16 @@ public abstract class AbstractNodeTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
-        final ElasticsearchStorageDao esDaoInternal = new ElasticsearchStorageDao();
-        esDaoInternal.setClient( this.client );
+        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        storageDao.setClient( this.client );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageDao( esDaoInternal );
+        this.branchService.setStorageDao( storageDao );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
-        this.versionService.setStorageService( storageService );
+        this.versionService.setStorageDao( storageDao );
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );

@@ -62,7 +62,10 @@ class AbstractVersionsCommand
         final String timestamp = getStringValue( hit, VersionIndexPath.TIMESTAMP, true );
         final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
 
-        return new NodeVersion( NodeVersionId.from( versionId ), Instant.parse( timestamp ) );
+        return NodeVersion.create().
+            nodeVersionId( NodeVersionId.from( versionId ) ).
+            timestamp( Instant.parse( timestamp ) ).
+            build();
     }
 
     private String getStringValue( final SearchHit hit, final IndexPath indexPath, final boolean required )

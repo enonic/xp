@@ -14,7 +14,6 @@ import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.storage.AnotherCache;
 import com.enonic.wem.repo.internal.storage.BranchPathCacheKey;
 import com.enonic.wem.repo.internal.storage.CacheResult;
 import com.enonic.wem.repo.internal.storage.CacheStoreRequest;
@@ -23,6 +22,8 @@ import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
 import com.enonic.wem.repo.internal.storage.ReturnField;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
+import com.enonic.wem.repo.internal.storage.StorageCache;
+import com.enonic.wem.repo.internal.storage.StorageCacheProvider;
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
@@ -46,7 +47,7 @@ public class BranchServiceImpl
 
     protected StorageDao storageDao;
 
-    protected AnotherCache cache = new AnotherCache();
+    protected StorageCache cache = StorageCacheProvider.provide();
 
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )
@@ -54,7 +55,7 @@ public class BranchServiceImpl
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( storeBranchDocument, context );
         final String id = this.storageDao.store( storeRequest );
 
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( id ).
             addCacheKey( new BranchPathCacheKey( context.getBranch(), storeBranchDocument.getNode().path() ) ).
             storageData( storeRequest.getData() ).
@@ -68,7 +69,7 @@ public class BranchServiceImpl
     {
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
 
-        cache.delete( nodeId.toString() );
+        cache.evict( nodeId.toString() );
     }
 
     @Override
@@ -92,7 +93,7 @@ public class BranchServiceImpl
 
         final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
 
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( getResult.getId() ).
             addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
             storageData( createStorageData( nodeBranchVersion, nodeId, context ) ).
@@ -151,7 +152,7 @@ public class BranchServiceImpl
     {
         final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
 
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( getResult.getId() ).
             addCacheKey( new BranchPathCacheKey( context.getBranch(), nodeBranchVersion.getNodePath() ) ).
             storageData( createStorageData( nodeBranchVersion, NodeId.from( getResult.getId() ), context ) ).

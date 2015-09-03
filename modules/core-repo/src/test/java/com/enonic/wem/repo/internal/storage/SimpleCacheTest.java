@@ -8,16 +8,16 @@ import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 
-public class AnotherCacheTest
+public class SimpleCacheTest
 {
 
-    private AnotherCache cache;
+    private SimpleCache cache;
 
     @Before
     public void setUp()
         throws Exception
     {
-        cache = new AnotherCache();
+        cache = new SimpleCache();
     }
 
     @Test
@@ -30,7 +30,7 @@ public class AnotherCacheTest
 
         final BranchPathCacheKey cacheKey = new BranchPathCacheKey( Branch.from( "myBranch" ), NodePath.create( "oldPath" ).build() );
 
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( "myId" ).
             storageData( data ).
             addCacheKey( cacheKey ).
@@ -40,7 +40,7 @@ public class AnotherCacheTest
 
         assertTrue( cacheResult.exists() );
 
-        cache.delete( "myId" );
+        cache.evict( "myId" );
 
         cacheResult = cache.get( cacheKey );
 
@@ -51,7 +51,7 @@ public class AnotherCacheTest
     public void update_cached_entry()
         throws Exception
     {
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( "myId" ).
             storageData( StorageData.create().
                 add( "path", "/oldPath" ).
@@ -59,7 +59,7 @@ public class AnotherCacheTest
             addCacheKey( new BranchPathCacheKey( Branch.from( "myBranch" ), NodePath.create( "oldPath" ).build() ) ).
             build() );
 
-        cache.store( CacheStoreRequest.create().
+        cache.put( CacheStoreRequest.create().
             id( "myId" ).
             storageData( StorageData.create().
                 add( "path", "/newPath" ).

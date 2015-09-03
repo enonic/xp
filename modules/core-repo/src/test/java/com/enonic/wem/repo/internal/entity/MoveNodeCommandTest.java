@@ -305,6 +305,8 @@ public class MoveNodeCommandTest
             build().
             execute();
 
+        refresh();
+
         assertEquals( 2, getVersions( node ).getHits() );
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );

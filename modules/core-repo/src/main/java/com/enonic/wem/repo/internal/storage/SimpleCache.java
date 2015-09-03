@@ -1,99 +1,85 @@
 package com.enonic.wem.repo.internal.storage;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
-import org.osgi.service.component.annotations.Component;
-
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.ReturnValues;
-
-@Component
 public class SimpleCache
     implements StorageCache
 {
-    private final Map<StorageSettings, MemoryStore> memoryStoreMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<String, StorageData> idCache = Maps.newConcurrentMap();
 
-    @Override
-    public String put( final StoreRequest request )
+    private final ConcurrentMap<String, Set<CacheKey>> idCacheKeyMap = Maps.newConcurrentMap();
+
+    private final ConcurrentMap<CacheKey, String> valueCache = Maps.newConcurrentMap();
+
+    public synchronized void put( final CacheStoreRequest cacheStoreRequest )
     {
-        Preconditions.checkNotNull( request.getId(), "id must be provided for storageCache" );
+        doDelete( cacheStoreRequest.getId() );
 
-        final StorageSettings settings = request.getSettings();
-
-        MemoryStore store = getStore( settings );
-
-        store.put( request.getId(), request.getPath(), request.getData() );
-
-        return request.getId();
-    }
-
-    @Override
-    public void remove( final DeleteRequest request )
-    {
-        MemoryStore store = memoryStoreMap.get( request.getSettings() );
-
-        store.remove( request.getId() );
-    }
-
-    @Override
-    public GetResult getById( final GetByIdRequest request )
-    {
-        MemoryStore store = getStore( request.getStorageSettings() );
-
-        final StorageData data = store.getById( request.getId() );
-
-        if ( data == null )
+        if ( cacheStoreRequest.getStorageData() == null )
         {
-            return null;
+            return;
         }
 
-        final ReturnFields returnFields = request.getReturnFields();
+        final String id = cacheStoreRequest.getId();
 
-        final ReturnValues.Builder builder = ReturnValues.create();
+        idCache.put( id, cacheStoreRequest.getStorageData() );
 
-        for ( final ReturnField field : returnFields )
+        for ( final CacheKey key : cacheStoreRequest.getCacheKeys() )
         {
-            final Collection<Object> values = data.get( field.getPath() );
+            valueCache.put( key, id );
+            Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
 
-            if ( values == null || values.isEmpty() )
+            if ( cacheKeys == null )
             {
-                throw new RuntimeException( "Expected data with path '" + field.getPath() + " in storage" );
+                cacheKeys = Sets.newHashSet();
+                idCacheKeyMap.put( id, cacheKeys );
             }
 
-            builder.add( field.getPath(), values ).build();
+            cacheKeys.add( key );
         }
-
-        return GetResult.create().
-            id( request.getId() ).
-            resultFieldValues( builder.build() ).
-            build();
     }
 
-    private synchronized MemoryStore getStore( final StorageSettings storageSettings )
+    public CacheResult get( final String id )
     {
-        MemoryStore store = this.memoryStoreMap.get( storageSettings );
+        return new CacheResult( this.idCache.get( id ), id );
+    }
 
-        if ( store == null )
+    public CacheResult get( final CacheKey cacheKey )
+    {
+        final String id = valueCache.get( cacheKey );
+
+        if ( id == null )
         {
-            store = new MemoryStore();
-            this.memoryStoreMap.put( storageSettings, store );
+            return CacheResult.empty();
         }
-        return store;
+
+        return new CacheResult( this.idCache.get( id ), id );
     }
 
-    @Override
-    public GetResult getByPath( final GetByPathRequest query )
+    public void evict( final String id )
     {
-        return null;
+        doDelete( id );
     }
 
-    @Override
-    public GetResult getByParent( final GetByParentRequest query )
+    private synchronized void doDelete( final String id )
     {
-        return null;
+        idCache.remove( id );
+
+        final Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
+
+        if ( cacheKeys != null )
+        {
+            for ( final CacheKey key : cacheKeys )
+            {
+                this.valueCache.remove( key );
+            }
+        }
+
+        idCacheKeyMap.remove( id );
     }
+
 }

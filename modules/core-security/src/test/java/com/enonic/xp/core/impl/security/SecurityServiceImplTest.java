@@ -90,23 +90,23 @@ public class SecurityServiceImplTest
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
-        final ElasticsearchStorageDao esDaoInternal = new ElasticsearchStorageDao();
-        esDaoInternal.setClient( this.client );
+        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        storageDao.setClient( this.client );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageDao( esDaoInternal );
+        this.branchService.setStorageDao( storageDao );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageDao( esDaoInternal );
+        this.branchService.setStorageDao( storageDao );
 
         this.nodeDao = new NodeDaoImpl();
         this.nodeDao.setBranchService( this.branchService );
 
         this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
-        this.versionService.setStorageService( storageService );
+        this.versionService.setStorageDao( storageDao );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );

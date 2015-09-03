@@ -10,17 +10,38 @@ public class NodeVersion
 {
     private final NodeVersionId nodeVersionId;
 
+    private final NodeId nodeId;
+
+    private final NodePath nodePath;
+
     private final Instant timestamp;
 
-    public NodeVersion( final NodeVersionId nodeVersionId, final Instant timestamp )
+    private NodeVersion( Builder builder )
     {
-        this.nodeVersionId = nodeVersionId;
-        this.timestamp = timestamp;
+        nodeVersionId = builder.nodeVersionId;
+        nodeId = builder.nodeId;
+        nodePath = builder.nodePath;
+        timestamp = builder.timestamp;
     }
 
-    public NodeVersionId getId()
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
+
+    public NodePath getNodePath()
+    {
+        return nodePath;
     }
 
     public Instant getTimestamp()
@@ -45,6 +66,50 @@ public class NodeVersion
         return -1;
     }
 
+    public static final class Builder
+    {
+        private NodeVersionId nodeVersionId;
+
+        private NodeId nodeId;
+
+        private NodePath nodePath;
+
+        private Instant timestamp;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeVersionId( NodeVersionId nodeVersionId )
+        {
+            this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder nodeId( NodeId nodeId )
+        {
+            this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder nodePath( NodePath nodePath )
+        {
+            this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder timestamp( Instant timestamp )
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public NodeVersion build()
+        {
+            return new NodeVersion( this );
+        }
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -63,18 +128,24 @@ public class NodeVersion
         {
             return false;
         }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
         }
+        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
+        {
+            return false;
+        }
+        return !( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null );
 
-        return true;
     }
 
     @Override
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
+        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
+        result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         return result;
     }

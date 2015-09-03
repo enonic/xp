@@ -572,6 +572,8 @@ public class ResolveSyncWorkCommandTest
 
         final Node node1Duplicate = duplicateNode( node1 );
 
+        refresh();
+
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1Duplicate.id() ).

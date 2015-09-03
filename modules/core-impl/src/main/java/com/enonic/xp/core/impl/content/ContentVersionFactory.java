@@ -50,13 +50,13 @@ class ContentVersionFactory
             displayName( content.getDisplayName() ).
             modified( content.getModifiedTime() ).
             modifier( content.getModifier() ).
-            id( ContentVersionId.from( nodeVersion.getId().toString() ) ).
+            id( ContentVersionId.from( nodeVersion.getNodeId().toString() ) ).
             build();
     }
 
     private Node getNode( final NodeVersion nodeVersion )
     {
-        return nodeService.getByVersionId( nodeVersion.getId() );
+        return nodeService.getByVersionId( nodeVersion.getNodeVersionId() );
     }
 
 }

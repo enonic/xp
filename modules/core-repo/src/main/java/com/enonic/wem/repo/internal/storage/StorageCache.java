@@ -1,16 +1,13 @@
 package com.enonic.wem.repo.internal.storage;
 
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-
 public interface StorageCache
 {
-    String put( final StoreRequest request );
+    void put( final CacheStoreRequest cacheStoreRequest );
 
-    void remove( final DeleteRequest request );
+    CacheResult get( final String id );
 
-    GetResult getById( final GetByIdRequest request );
+    CacheResult get( final CacheKey cacheKey );
 
-    GetResult getByPath( final GetByPathRequest request );
+    void evict( final String id );
 
-    GetResult getByParent( final GetByParentRequest request );
 }

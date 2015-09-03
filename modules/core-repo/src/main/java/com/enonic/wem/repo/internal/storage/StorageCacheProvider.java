@@ -6,5 +6,4 @@ public class StorageCacheProvider
     {
         return new SimpleCache();
     }
-
 }

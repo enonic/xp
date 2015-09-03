@@ -64,6 +64,8 @@ public class GetNodeVersionsCommandTest
         doUpdateNode( node );
         doUpdateNode( node );
 
+        refresh();
+
         final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
