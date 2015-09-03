@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.impl.handler.attachment;
 
 import java.time.Instant;
 
@@ -16,6 +16,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
+import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;

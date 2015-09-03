@@ -4,12 +4,12 @@ import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.portal.impl.PortalHandler;
+import com.enonic.xp.portal.impl.OldPortalHandler;
 import com.enonic.xp.portal.impl.services.PortalServicesImpl;
 
 public abstract class BaseResourceTest
 {
-    protected PortalHandler handler;
+    protected OldPortalHandler handler;
 
     protected PortalServicesImpl services;
 
@@ -17,7 +17,7 @@ public abstract class BaseResourceTest
     public final void setup()
         throws Exception
     {
-        this.handler = new PortalHandler();
+        this.handler = new OldPortalHandler();
         this.services = new PortalServicesImpl();
         this.handler.setServices( this.services );
         configure();

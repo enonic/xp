@@ -5,7 +5,7 @@ import org.junit.Before;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.PortalHandler2;
+import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -27,7 +27,7 @@ public abstract class BaseHandlerTest
     protected abstract void configure()
         throws Exception;
 
-    protected final void assertMetodNotAllowed( final PortalHandler2 handler, final HttpMethod method )
+    protected final void assertMetodNotAllowed( final PortalHandler handler, final HttpMethod method )
         throws Exception
     {
         try

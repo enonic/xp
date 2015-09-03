@@ -9,7 +9,7 @@ import com.enonic.xp.portal.PortalRequest;
 
 final class PortalHandlerRegistry
 {
-    private final List<PortalHandler2> list;
+    private final List<PortalHandler> list;
 
     public PortalHandlerRegistry()
     {
@@ -21,19 +21,19 @@ final class PortalHandlerRegistry
         Collections.sort( this.list, this::compare );
     }
 
-    public synchronized void add( final PortalHandler2 handler )
+    public synchronized void add( final PortalHandler handler )
     {
         this.list.add( handler );
         sortList();
     }
 
-    public synchronized void remove( final PortalHandler2 handler )
+    public synchronized void remove( final PortalHandler handler )
     {
         this.list.remove( handler );
         sortList();
     }
 
-    private int compare( final PortalHandler2 o1, final PortalHandler2 o2 )
+    private int compare( final PortalHandler o1, final PortalHandler o2 )
     {
         if ( o1.getOrder() > o2.getOrder() )
         {
@@ -48,9 +48,9 @@ final class PortalHandlerRegistry
         return 0;
     }
 
-    public PortalHandler2 find( final PortalRequest req )
+    public PortalHandler find( final PortalRequest req )
     {
-        for ( final PortalHandler2 handler : this.list )
+        for ( final PortalHandler handler : this.list )
         {
             if ( handler.canHandle( req ) )
             {

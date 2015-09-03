@@ -70,17 +70,17 @@ public final class PortalDispatcher
             throw PortalException.notFound( "Branch needs to be specified" );
         }
 
-        final PortalHandler2 handler = this.registry.find( req );
+        final PortalHandler handler = this.registry.find( req );
         return handler.handle( req );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addHandler( final PortalHandler2 handler )
+    public void addHandler( final PortalHandler handler )
     {
         this.registry.add( handler );
     }
 
-    public void removeHandler( final PortalHandler2 handler )
+    public void removeHandler( final PortalHandler handler )
     {
         this.registry.remove( handler );
     }

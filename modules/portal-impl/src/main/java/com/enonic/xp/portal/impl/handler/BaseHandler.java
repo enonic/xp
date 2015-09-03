@@ -9,12 +9,12 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
-import com.enonic.xp.portal.impl.PortalHandler2;
+import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 public abstract class BaseHandler
-    implements PortalHandler2
+    implements PortalHandler
 {
     private final int order;
 
@@ -55,10 +55,15 @@ public abstract class BaseHandler
             return handleOptions();
         }
 
-        return doHandle( req );
+        final PortalHandlerWorker worker = newWorker( req );
+        worker.request = req;
+        worker.response = PortalResponse.create();
+        worker.execute();
+
+        return worker.response.build();
     }
 
-    protected abstract PortalResponse doHandle( final PortalRequest req )
+    protected abstract PortalHandlerWorker newWorker( PortalRequest req )
         throws Exception;
 
     protected final PortalException notFound( final String message, final Object... args )

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.Map;
 
@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalException;
+import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
