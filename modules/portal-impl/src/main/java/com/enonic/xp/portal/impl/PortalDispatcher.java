@@ -43,7 +43,9 @@ public final class PortalDispatcher
     {
         final PortalRequest portalRequest = newPortalRequest( req );
         final PortalResponse portalResponse = doHandle( portalRequest );
-        new ResponseSerializer( portalResponse ).serialize( res );
+
+        final ResponseSerializer serializer = new ResponseSerializer( portalRequest, portalResponse );
+        serializer.serialize( res );
     }
 
     private PortalRequest newPortalRequest( final HttpServletRequest req )

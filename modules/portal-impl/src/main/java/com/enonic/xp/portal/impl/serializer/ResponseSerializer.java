@@ -6,15 +6,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Charsets;
 
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.Resource;
 
 public final class ResponseSerializer
 {
+    private final PortalRequest portalRequest;
+
     private final PortalResponse portalResponse;
 
-    public ResponseSerializer( final PortalResponse portalResponse )
+    public ResponseSerializer( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
+        this.portalRequest = portalRequest;
         this.portalResponse = portalResponse;
     }
 
@@ -53,7 +57,11 @@ public final class ResponseSerializer
         throws Exception
     {
         response.setContentLength( data.length );
-        response.getOutputStream().write( data );
+
+        if ( !isHeadRequest() )
+        {
+            response.getOutputStream().write( data );
+        }
     }
 
     private void serializeBody( final HttpServletResponse response, final Resource body )
@@ -68,5 +76,10 @@ public final class ResponseSerializer
         {
             response.setHeader( entry.getKey(), entry.getValue() );
         }
+    }
+
+    private boolean isHeadRequest()
+    {
+        return this.portalRequest.getMethod().equals( "HEAD" );
     }
 }
