@@ -63,6 +63,11 @@ public class SimpleCache
 
     public CacheResult get( final String id )
     {
+        return doGetById( id );
+    }
+
+    private CacheResult doGetById( final String id )
+    {
         final StorageData storageData = this.idCache.get( id );
 
         if ( storageData == null )
@@ -86,7 +91,7 @@ public class SimpleCache
             return CacheResult.empty();
         }
 
-        return new CacheResult( this.idCache.get( id ), id );
+        return doGetById( id );
     }
 
     public void evict( final String id )

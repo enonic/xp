@@ -18,7 +18,6 @@ import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
-import com.enonic.wem.repo.internal.storage.VersionIdCacheKey;
 import com.enonic.wem.repo.internal.storage.VersionPathCacheKey;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
@@ -45,16 +44,15 @@ public class VersionServiceImpl
     private StorageCache cache = StorageCacheProvider.provide();
 
     @Override
-    public void store( final NodeVersionDocument nodeVersionDocument, final InternalContext context )
+    public void store( final NodeVersionDocument document, final InternalContext context )
     {
-        final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersionDocument, context.getRepositoryId() );
+        final StoreRequest storeRequest = VersionStorageDocFactory.create( document, context.getRepositoryId() );
 
         this.storageDao.store( storeRequest );
 
         cache.put( CacheStoreRequest.create().
-            id( nodeVersionDocument.getNodeId().toString() ).
-            addCacheKey( new VersionPathCacheKey( nodeVersionDocument.getNodePath() ) ).
-            addCacheKey( new VersionIdCacheKey( nodeVersionDocument.getNodeVersionId() ) ).
+            id( document.getNodeVersionId().toString() ).
+            addCacheKey( new VersionPathCacheKey( document.getNodePath() ) ).
             storageData( storeRequest.getData() ).
             build() );
     }
@@ -62,7 +60,7 @@ public class VersionServiceImpl
     @Override
     public NodeVersion getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final CacheResult cacheResult = this.cache.get( new VersionIdCacheKey( nodeVersionId ) );
+        final CacheResult cacheResult = this.cache.get( nodeVersionId.toString() );
 
         if ( cacheResult.exists() )
         {
@@ -99,15 +97,6 @@ public class VersionServiceImpl
         return nodeVersion;
     }
 
-
-    private StorageSettings createStorageSettings( final InternalContext context )
-    {
-        return StorageSettings.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
-            storageType( StaticStorageType.VERSION ).
-            build();
-    }
-
     @Override
     public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final InternalContext context )
     {
@@ -128,6 +117,14 @@ public class VersionServiceImpl
             query( query ).
             build().
             execute();
+    }
+
+    private StorageSettings createStorageSettings( final InternalContext context )
+    {
+        return StorageSettings.create().
+            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+            storageType( StaticStorageType.VERSION ).
+            build();
     }
 
     @Reference
