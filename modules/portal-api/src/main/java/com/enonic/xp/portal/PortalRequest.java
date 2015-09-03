@@ -67,8 +67,6 @@ public final class PortalRequest
 
     private String endpointPath;
 
-    private String rawPath;
-
     public PortalRequest()
     {
         this.baseUri = "";
@@ -111,6 +109,7 @@ public final class PortalRequest
         return host;
     }
 
+    // TODO: Port should be a number
     public String getPort()
     {
         return port;
@@ -275,15 +274,5 @@ public final class PortalRequest
     public void setEndpointPath( final String endpointPath )
     {
         this.endpointPath = Strings.emptyToNull( endpointPath );
-    }
-
-    public String getRawPath()
-    {
-        return this.rawPath;
-    }
-
-    public void setRawPath( final String rawPath )
-    {
-        this.rawPath = rawPath;
     }
 }

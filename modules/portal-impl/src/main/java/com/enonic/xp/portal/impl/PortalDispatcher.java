@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
@@ -16,6 +18,7 @@ import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class PortalDispatcher
@@ -60,7 +63,12 @@ public final class PortalDispatcher
         result.setBranch( findBranch( rawPath ) );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
-        result.setRawPath( rawPath );
+
+        result.setScheme( ServletRequestUrlHelper.getScheme() );
+        result.setHost( ServletRequestUrlHelper.getHost() );
+        result.setPort( ServletRequestUrlHelper.getPort() );
+        result.setPath( ServletRequestUrlHelper.getPath() );
+        result.setUrl( ServletRequestUrlHelper.getFullUrl() );
 
         return result;
     }
@@ -92,7 +100,7 @@ public final class PortalDispatcher
     {
         final int index = path.indexOf( '/', PATH_PREFIX.length() );
         final String result = path.substring( PATH_PREFIX.length(), index > 0 ? index : path.length() );
-        return Branch.from( result );
+        return Strings.isNullOrEmpty( result ) ? null : Branch.from( result );
     }
 
     private static ContentPath findContentPath( final String path )
