@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.base.Joiner;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -92,5 +93,63 @@ public class PortalDispatcherTest
 
         assertEquals( 200, response.code() );
         assertEquals( "Value", response.header( "X-Header" ) );
+    }
+
+    @Test
+    public void testRequestHeaders()
+        throws Exception
+    {
+        this.handler.response = PortalResponse.create().
+            status( 200 ).
+            build();
+
+        final Request request = newRequest( "/portal2/master/a/b" ).
+            get().
+            header( "X-Header", "Value" ).
+            build();
+
+        final Response response = callRequest( request );
+
+        assertEquals( 200, response.code() );
+        assertEquals( "Value", this.handler.request.getHeaders().get( "X-Header" ) );
+    }
+
+    @Test
+    public void testReadCookies()
+        throws Exception
+    {
+        this.handler.response = PortalResponse.create().
+            status( 200 ).
+            build();
+
+        final Request request = newRequest( "/portal2/master/a/b" ).
+            get().
+            header( "Cookie", "theme=light; sessionToken=abc123" ).
+            build();
+
+        final Response response = callRequest( request );
+
+        assertEquals( 200, response.code() );
+        assertEquals( "light", this.handler.request.getCookies().get( "theme" ) );
+        assertEquals( "abc123", this.handler.request.getCookies().get( "sessionToken" ) );
+    }
+
+    @Test
+    public void testParameters()
+        throws Exception
+    {
+        this.handler.response = PortalResponse.create().
+            status( 200 ).
+            build();
+
+        final Request request = newRequest( "/portal2/master/a/b?a=1&b=2&b=3" ).
+            get().
+            build();
+
+        final Response response = callRequest( request );
+
+        assertEquals( 200, response.code() );
+        assertEquals( "1", Joiner.on( "," ).join( this.handler.request.getParams().get( "a" ) ) );
+        assertEquals( "2,3", Joiner.on( "," ).join( this.handler.request.getParams().get( "b" ) ) );
     }
 }

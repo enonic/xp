@@ -1,5 +1,9 @@
 package com.enonic.xp.portal.impl;
 
+import java.util.Collections;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,6 +13,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
@@ -64,13 +69,41 @@ public final class PortalDispatcher
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
 
-        result.setScheme( ServletRequestUrlHelper.getScheme() );
-        result.setHost( ServletRequestUrlHelper.getHost() );
-        result.setPort( ServletRequestUrlHelper.getPort() );
-        result.setPath( ServletRequestUrlHelper.getPath() );
-        result.setUrl( ServletRequestUrlHelper.getFullUrl() );
+        result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
+        result.setHost( ServletRequestUrlHelper.getHost( req ) );
+        result.setPort( ServletRequestUrlHelper.getPort( req ) );
+        result.setPath( ServletRequestUrlHelper.getPath( req ) );
+        result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
+
+        setParameters( req, result );
+        setHeaders( req, result );
+        setCookies( req, result );
 
         return result;
+    }
+
+    private void setHeaders( final HttpServletRequest from, final PortalRequest to )
+    {
+        for ( final String key : Collections.list( from.getHeaderNames() ) )
+        {
+            to.getHeaders().put( key, from.getHeader( key ) );
+        }
+    }
+
+    private void setCookies( final HttpServletRequest from, final PortalRequest to )
+    {
+        for ( final Cookie cookie : from.getCookies() )
+        {
+            to.getCookies().put( cookie.getName(), cookie.getValue() );
+        }
+    }
+
+    private void setParameters( final HttpServletRequest from, final PortalRequest to )
+    {
+        for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
+        {
+            to.getParams().putAll( entry.getKey(), Lists.newArrayList( entry.getValue() ) );
+        }
     }
 
     private PortalResponse doHandle( final PortalRequest req )

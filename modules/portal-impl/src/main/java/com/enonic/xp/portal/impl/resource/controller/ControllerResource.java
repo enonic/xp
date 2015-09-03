@@ -75,8 +75,12 @@ public abstract class ControllerResource
         portalRequest.setBranch( this.branch );
         portalRequest.getCookies().putAll( getCookieMap() );
 
-        final Multimap<String, String> contextHeaders = portalRequest.getHeaders();
-        this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );
+        final Map<String, String> contextHeaders = portalRequest.getHeaders();
+        for ( final String key : this.httpHeaders.getRequestHeaders().keySet() )
+        {
+            contextHeaders.put( key, this.httpHeaders.getHeaderString( key ) );
+        }
+
         setParams( portalRequest.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )

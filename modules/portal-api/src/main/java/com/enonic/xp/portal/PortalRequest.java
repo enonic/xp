@@ -31,7 +31,7 @@ public final class PortalRequest
 
     private final Multimap<String, String> formParams;
 
-    private final Multimap<String, String> headers;
+    private final Map<String, String> headers;
 
     private final Map<String, String> cookies;
 
@@ -75,7 +75,7 @@ public final class PortalRequest
         this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
         this.formParams = HashMultimap.create();
-        this.headers = HashMultimap.create();
+        this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
 
@@ -170,8 +170,7 @@ public final class PortalRequest
         this.branch = branch;
     }
 
-    // TODO: Change to use a map
-    public Multimap<String, String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         return this.headers;
     }

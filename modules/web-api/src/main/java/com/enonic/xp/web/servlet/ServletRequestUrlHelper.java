@@ -53,7 +53,7 @@ public final class ServletRequestUrlHelper
         return getScheme( ServletRequestHolder.getRequest() );
     }
 
-    private static String getScheme( final HttpServletRequest httpServletRequest )
+    public static String getScheme( final HttpServletRequest httpServletRequest )
     {
         String scheme = httpServletRequest.getHeader( X_FORWARDED_PROTO );
         if ( scheme == null )
@@ -68,7 +68,7 @@ public final class ServletRequestUrlHelper
         return getHost( ServletRequestHolder.getRequest() );
     }
 
-    private static String getHost( final HttpServletRequest httpServletRequest )
+    public static String getHost( final HttpServletRequest httpServletRequest )
     {
         String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
@@ -86,7 +86,7 @@ public final class ServletRequestUrlHelper
         return getPort( ServletRequestHolder.getRequest() );
     }
 
-    private static String getPort( final HttpServletRequest httpServletRequest )
+    public static String getPort( final HttpServletRequest httpServletRequest )
     {
         String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
@@ -105,7 +105,7 @@ public final class ServletRequestUrlHelper
         return getPath( ServletRequestHolder.getRequest() );
     }
 
-    private static String getPath( final HttpServletRequest httpServletRequest )
+    public static String getPath( final HttpServletRequest httpServletRequest )
     {
         return createUri( httpServletRequest.getRequestURI() );
     }
@@ -146,7 +146,7 @@ public final class ServletRequestUrlHelper
         return getFullUrl( ServletRequestHolder.getRequest() );
     }
 
-    private static String getFullUrl( final HttpServletRequest httpServletRequest )
+    public static String getFullUrl( final HttpServletRequest httpServletRequest )
     {
         //Appends the server part
         StringBuffer fullUrl = new StringBuffer( getServerUrl( httpServletRequest ) );
