@@ -113,13 +113,13 @@ module api.liveedit {
         }
 
         private getYPosition(y:number, notClicked?: boolean): number {
-            if (this.oveflowsBottom(y, notClicked)) {
-                this.arrow.toggleVerticalPosition(false);
-                return y - this.getEl().getHeight() - this.arrow.getHeight();
-            } else {
+            //if (this.oveflowsBottom(y, notClicked)) {
+            //    this.arrow.toggleVerticalPosition(false);
+            //    return y - this.getEl().getHeight() - this.arrow.getHeight();
+            //} else {
                 this.arrow.toggleVerticalPosition(true);
                 return y + this.arrow.getHeight();
-            }
+            //}
 
         }
 
