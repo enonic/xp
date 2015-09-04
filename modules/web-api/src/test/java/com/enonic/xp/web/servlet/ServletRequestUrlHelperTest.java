@@ -96,6 +96,22 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
+    public void createServerUrl_x_forwarded_headers_no_port()
+    {
+        this.req.setServerName( "localhost" );
+        this.req.setScheme( "http" );
+        this.req.setServerPort( 8080 );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO, "https" );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_HOST, "127.0.0.1" );
+
+        assertEquals( "https", ServletRequestUrlHelper.getScheme() );
+        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
+        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHostAndPort().toString() );
+        assertEquals( -1, ServletRequestUrlHelper.getPort() );
+        assertEquals( "https://127.0.0.1", ServletRequestUrlHelper.getServerUrl() );
+    }
+
+    @Test
     public void rewriteUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
