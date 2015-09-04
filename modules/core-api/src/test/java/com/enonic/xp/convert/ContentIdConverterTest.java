@@ -19,6 +19,7 @@ public class ContentIdConverterTest
     public void testToString()
     {
         assertEquals( ContentId.from( "123" ), Converters.convert( "123", ContentId.class ) );
+        assertEquals( ContentId.from( "123" ), Converters.convertOrDefault( null, ContentId.class, ContentId.from( "123" ) ) );
     }
 }
 

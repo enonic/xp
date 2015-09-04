@@ -24,7 +24,7 @@ public final class MailServiceImpl
     public void activate( final Map<String, String> config )
         throws Exception
     {
-        // TODO: Create session and configure here...
+        session = new MailConfigurator( config ).configure();
     }
 
     @Override
