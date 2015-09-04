@@ -15,10 +15,6 @@ import com.enonic.xp.web.HttpStatus;
 @Beta
 public final class PortalResponse
 {
-    public final static int STATUS_OK = 200;
-
-    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
-
     private final int status;
 
     private final String contentType;

@@ -62,7 +62,7 @@ final class ControllerScriptImpl
     private PortalResponse createResponse( final ScriptValue result )
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
+        builder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
 
         if ( ( result == null ) || !result.isObject() )
         {

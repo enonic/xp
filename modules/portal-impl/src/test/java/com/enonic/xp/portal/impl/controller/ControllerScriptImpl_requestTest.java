@@ -20,7 +20,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setPort( 80 );
         execute( "myapplication:/controller/request.js" );
 
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsString() );
     }
 
@@ -54,7 +54,7 @@ public class ControllerScriptImpl_requestTest
     {
         this.portalRequest.setMethod( "HEAD" );
         execute( "myapplication:/controller/request.js" );
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
     }
 }
 
