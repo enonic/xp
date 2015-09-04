@@ -10,6 +10,7 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.HttpStatus;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -81,7 +82,7 @@ final class ControllerScriptImpl
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? status : PortalResponse.STATUS_OK );
+        builder.status( status != null ? status : HttpStatus.OK.value() );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )

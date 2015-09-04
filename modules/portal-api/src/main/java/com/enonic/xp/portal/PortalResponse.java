@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.web.HttpStatus;
 
 @Beta
 public final class PortalResponse
@@ -102,7 +103,7 @@ public final class PortalResponse
 
         private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
 
-        private int status = STATUS_OK;
+        private int status = HttpStatus.OK.value();
 
         private Builder()
         {

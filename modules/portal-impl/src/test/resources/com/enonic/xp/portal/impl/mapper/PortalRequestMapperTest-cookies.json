@@ -17,10 +17,7 @@
   },
   "formParams": {},
   "headers": {
-    "header3": [
-      "value3-B",
-      "value3-A"
-    ],
+    "header3": "value3",
     "header2": "value2",
     "header1": "value1"
   },
