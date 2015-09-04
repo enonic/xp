@@ -9,3 +9,8 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Image'
 }
+
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+}
