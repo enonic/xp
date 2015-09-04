@@ -35,7 +35,6 @@ import com.enonic.xp.image.filter.ScaleSquareFunction;
 import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.util.FilesHelper;
 
 @Component
 public class ImageServiceImpl

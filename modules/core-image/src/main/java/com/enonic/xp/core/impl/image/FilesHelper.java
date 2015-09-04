@@ -1,4 +1,4 @@
-package com.enonic.xp.util;
+package com.enonic.xp.core.impl.image;
 
 import java.io.IOException;
 import java.nio.file.Files;
