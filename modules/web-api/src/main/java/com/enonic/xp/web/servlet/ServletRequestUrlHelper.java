@@ -91,7 +91,8 @@ public final class ServletRequestUrlHelper
         final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
         {
-            return HostAndPort.fromString( xForwardedHost );
+            final HostAndPort hostAndPort = HostAndPort.fromString( xForwardedHost );
+            return hostAndPort.withDefaultPort( req.getServerPort() );
         }
 
         return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );

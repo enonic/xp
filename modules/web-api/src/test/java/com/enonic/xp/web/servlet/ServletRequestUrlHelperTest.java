@@ -106,9 +106,9 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHostAndPort().toString() );
-        assertEquals( -1, ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1", ServletRequestUrlHelper.getServerUrl() );
+        assertEquals( "127.0.0.1:8080", ServletRequestUrlHelper.getHostAndPort().toString() );
+        assertEquals( 8080, ServletRequestUrlHelper.getPort() );
+        assertEquals( "https://127.0.0.1:8080", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test
