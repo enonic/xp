@@ -117,7 +117,7 @@ public final class ContentIconResource
                         orientation( imageOrientation ).
                         build();
 
-                    final byte[] thumbnailImage = imageService.readImage( readImageParams );
+                    final ByteSource thumbnailImage = imageService.readImage( readImageParams );
                     return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
                 }
                 catch ( IOException e )
@@ -148,7 +148,7 @@ public final class ContentIconResource
                     orientation( getSourceAttachmentOrientation( media ) ).
                     build();
 
-                final byte[] contentImage = imageService.readImage( readImageParams );
+                final ByteSource contentImage = imageService.readImage( readImageParams );
                 return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
             }
             catch ( IOException e )

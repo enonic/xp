@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.image.Cropping;
@@ -65,9 +66,9 @@ public final class ImageHandleResource
             quality( getImageQuality() ).
             build();
 
-        final byte[] imageData = this.services.getImageService().readImage( readImageParams );
+        final ByteSource imageData = this.services.getImageService().readImage( readImageParams );
 
-        return Response.ok().type( this.mimeType ).entity( imageData ).build();
+        return Response.ok().type( this.mimeType ).entity( imageData.read() ).build();
     }
 
     private String getFormat( final String fileName )

@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
 
 @Beta
 public class FilesHelper
@@ -27,7 +28,7 @@ public class FilesHelper
         WRITE
     }
 
-    public static void write( Path path, byte[] bytes )
+    public static void write( Path path, ByteSource bytes )
         throws IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
@@ -38,7 +39,7 @@ public class FilesHelper
         try
         {
             Files.createDirectories( path.getParent() );
-            Files.write( path, bytes );
+            Files.write( path, bytes.read() );
         }
         finally
         {
@@ -46,11 +47,11 @@ public class FilesHelper
         }
     }
 
-    public static byte[] readAllBytes( Path path )
+    public static ByteSource readAllBytes( Path path )
         throws IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
-        byte[] bytes = null;
+        ByteSource bytes = null;
 
         lock( path, LOCK_TYPE.READ );
 
@@ -58,7 +59,7 @@ public class FilesHelper
         {
             if ( Files.exists( path ) )
             {
-                bytes = Files.readAllBytes( path );
+                bytes = ByteSource.wrap( Files.readAllBytes( path ) );
             }
         }
         finally
