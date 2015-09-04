@@ -27,6 +27,7 @@ module api.ui.uploader {
         url?: string;
         allowBrowse?: boolean;
         allowDrop?: boolean;
+        dropAlwaysAllowed?: boolean;            // allow drop no matter if the dropzone is visible
         resultAlwaysVisisble?: boolean;         // never hide the result
         dropzoneAlwaysVisible?: boolean;       // never hide the dropzone
         allowTypes?: {title: string; extensions: string}[];
@@ -164,7 +165,10 @@ module api.ui.uploader {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(this.dropzone.getId());
+                    this.uploader = this.initUploader(
+                        this.dropzone.getId(),
+                        this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
+                    );
 
                     if (this.value) {
                         this.setValue(this.value);
@@ -208,6 +212,9 @@ module api.ui.uploader {
             }
             if (this.config.allowDrop == undefined) {
                 this.config.allowDrop = true;
+            }
+            if (this.config.dropAlwaysAllowed == undefined) {
+                this.config.dropAlwaysAllowed = false;
             }
             if (this.config.dropzoneAlwaysVisible == undefined) {
                 this.config.dropzoneAlwaysVisible = false;
@@ -450,7 +457,7 @@ module api.ui.uploader {
             return files.length > 0;
         }
 
-        private initUploader(elId: string) {
+        private initUploader(browseId: string, dropId: string) {
 
             if (!plupload) {
                 throw new Error("Uploader: plupload not found, check if it is included in page.");
@@ -460,10 +467,10 @@ module api.ui.uploader {
                 multipart_params: this.config.params,
                 runtimes: 'html5,flash,silverlight,html4',
                 multi_selection: this.config.allowMultiSelection,
-                browse_button: this.config.allowBrowse ? elId : undefined,
+                browse_button: this.config.allowBrowse ? browseId : undefined,
                 url: this.config.url,
                 multipart: true,
-                drop_element: this.config.allowDrop ? elId : undefined,
+                drop_element: this.config.allowDrop ? dropId : undefined,
                 flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
                 silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
                 filters: {

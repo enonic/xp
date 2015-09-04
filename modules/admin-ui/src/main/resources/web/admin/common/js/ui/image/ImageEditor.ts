@@ -424,6 +424,10 @@ module api.ui.image {
             }
         }
 
+        private updateFrameHeight() {
+            this.frame.getEl().setHeightPx(this.cropData.h);
+        }
+
         private setShaderVisible(visible: boolean) {
             this.notifyShaderVisibilityChanged(visible);
         }
@@ -587,7 +591,6 @@ module api.ui.image {
 
             return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
         }
-
 
         private setEditMode(edit: boolean, applyChanges: boolean = true) {
             if (ImageEditor.debug) {
@@ -1463,11 +1466,6 @@ module api.ui.image {
                 knobNewX = Math.max(0, Math.min(sliderLength, knobPct * sliderLength));
 
             zoomKnobEl.setLeftPx(knobNewX);
-        }
-
-        private updateFrameHeight() {  // making bottom border and everything underneath the image draggable
-            this.frame.getEl().setHeightPx(this.cropData.h);
-            wemjq(this.frame.getHTMLElement()).closest(".result-container").height(this.cropData.h);
         }
 
         private updateRevertCropData() {
