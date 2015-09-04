@@ -108,7 +108,7 @@ public class ComponentResourceTest
 
         assertEquals( "http", jsRequest.getValue().getScheme() );
         assertEquals( "localhost", jsRequest.getValue().getHost() );
-        assertEquals( "80", jsRequest.getValue().getPort() );
+        assertEquals( 80, jsRequest.getValue().getPort() );
         assertEquals( "/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getPath() );
         assertEquals( "http://localhost/portal/master/site/somepath/content/_/component/main-region/0", jsRequest.getValue().getUrl() );
     }

@@ -23,7 +23,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;

@@ -46,7 +46,8 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( "80", ServletRequestUrlHelper.getPort() );
+        assertEquals( 80, ServletRequestUrlHelper.getPort() );
+        assertEquals( "localhost:80", ServletRequestUrlHelper.getHostAndPort().toString() );
         assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
@@ -59,7 +60,8 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( "443", ServletRequestUrlHelper.getPort() );
+        assertEquals( "localhost:443", ServletRequestUrlHelper.getHostAndPort().toString() );
+        assertEquals( 443, ServletRequestUrlHelper.getPort() );
         assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
@@ -72,7 +74,8 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( "8080", ServletRequestUrlHelper.getPort() );
+        assertEquals( "localhost:8080", ServletRequestUrlHelper.getHostAndPort().toString() );
+        assertEquals( 8080, ServletRequestUrlHelper.getPort() );
         assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl() );
     }
 
@@ -87,7 +90,8 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( "123", ServletRequestUrlHelper.getPort() );
+        assertEquals( "127.0.0.1:123", ServletRequestUrlHelper.getHostAndPort().toString() );
+        assertEquals( 123, ServletRequestUrlHelper.getPort() );
         assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.getServerUrl() );
     }
 

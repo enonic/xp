@@ -521,6 +521,7 @@ module app.wizard {
                     }).done();
             }
             this.contentWizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
+            this.contentWizardToolbarPublishControls.enableActionsForExisting(persistedContent);
             return deferred.promise;
         }
 

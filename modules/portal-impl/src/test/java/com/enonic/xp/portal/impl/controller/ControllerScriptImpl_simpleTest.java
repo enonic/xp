@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.controller;
 
 import org.junit.Test;
 
-import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ public class ControllerScriptImpl_simpleTest
     {
         this.portalRequest.setMethod( "GET" );
         execute( "myapplication:/controller/simple.js" );
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
     }
 
 
@@ -23,7 +23,7 @@ public class ControllerScriptImpl_simpleTest
     {
         this.portalRequest.setMethod( "POST" );
         execute( "myapplication:/controller/simple.js" );
-        assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED.value(), this.portalResponse.getStatus() );
     }
 
 }
