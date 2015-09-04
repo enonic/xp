@@ -103,22 +103,4 @@ public class PortalResponseSerializerTest
         assertEquals( "Value", result.getHeaders().get( "X-MyHeader" ) );
         assertEquals( "With headers", result.getBody() );
     }
-
-    @Test
-    public void testOptionsWithResult()
-    {
-        this.responseBuilder.contentType( "text/plain" ).
-            body( "With options" ).
-            option( "Option1", "OValue1" ).
-            option( "Option2", 100 );
-        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
-        final PortalResponse result = this.serializer.serialize();
-
-        assertNotNull( result );
-        assertEquals( PortalResponse.STATUS_OK, result.getStatus() );
-        assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
-        assertEquals( "OValue1", result.getOptions().get( "Option1" ) );
-        assertEquals( 100, result.getOptions().get( "Option2" ) );
-        assertEquals( "With options", result.getBody() );
-    }
 }
