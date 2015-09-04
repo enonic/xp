@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.impl.resource.asset;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.portal.impl.resource.base.ApplicationBaseResourceTest;
+import com.enonic.xp.resource.Resource;
 
 import static org.junit.Assert.*;
 
@@ -36,6 +38,10 @@ public class AssetResourceTest
     public void getAssetResource_fileNotFound()
         throws Exception
     {
+        final Resource missingResource = Mockito.mock( Resource.class );
+        Mockito.when( missingResource.exists() ).thenReturn( false );
+        Mockito.when( this.resourceService.getResource( Mockito.any() ) ).thenReturn( missingResource );
+
         final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
 

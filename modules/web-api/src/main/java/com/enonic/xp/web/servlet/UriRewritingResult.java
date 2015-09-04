@@ -1,6 +1,6 @@
 package com.enonic.xp.web.servlet;
 
-public class UriRewritingResult
+public final class UriRewritingResult
 {
     private final String rewrittenUri;
 

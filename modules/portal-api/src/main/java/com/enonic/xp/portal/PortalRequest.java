@@ -27,9 +27,7 @@ public final class PortalRequest
 
     private final Multimap<String, String> params;
 
-    private final Multimap<String, String> formParams;
-
-    private final Multimap<String, String> headers;
+    private final Map<String, String> headers;
 
     private final Map<String, String> cookies;
 
@@ -37,7 +35,7 @@ public final class PortalRequest
 
     private String host;
 
-    private String port;
+    private int port;
 
     private String path;
 
@@ -70,8 +68,7 @@ public final class PortalRequest
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
-        this.formParams = HashMultimap.create();
-        this.headers = HashMultimap.create();
+        this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
 
@@ -90,11 +87,6 @@ public final class PortalRequest
         return this.params;
     }
 
-    public Multimap<String, String> getFormParams()
-    {
-        return this.formParams;
-    }
-
     public String getScheme()
     {
         return scheme;
@@ -105,7 +97,7 @@ public final class PortalRequest
         return host;
     }
 
-    public String getPort()
+    public int getPort()
     {
         return port;
     }
@@ -140,7 +132,7 @@ public final class PortalRequest
         this.host = host;
     }
 
-    public void setPort( final String port )
+    public void setPort( final int port )
     {
         this.port = port;
     }
@@ -165,7 +157,7 @@ public final class PortalRequest
         this.branch = branch;
     }
 
-    public Multimap<String, String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         return this.headers;
     }

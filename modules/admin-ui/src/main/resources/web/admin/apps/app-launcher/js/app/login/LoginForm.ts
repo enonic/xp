@@ -33,8 +33,10 @@ module app.login {
             this.loginButton = new api.ui.button.Button();
             this.loginButton.addClass("login-button");
             this.loginButton.hide();
-            this.loginButton.onClicked(() => {
+
+            this.loginButton.onClicked((event) => {
                 this.loginButtonClick();
+                event.preventDefault();
             })
 
 

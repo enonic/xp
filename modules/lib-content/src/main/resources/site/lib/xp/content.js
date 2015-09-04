@@ -47,6 +47,7 @@ exports.create = function (params) {
     bean.contentType = nullOrValue(params.contentType);
     bean.requireValid = params.requireValid;
     bean.language = nullOrValue(params.language);
+    bean.branch = nullOrValue(params.branch);
 
     bean.data = __.toScriptValue(params.data);
     bean.x = __.toScriptValue(params.x);

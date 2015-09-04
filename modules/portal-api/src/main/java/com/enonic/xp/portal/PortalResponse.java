@@ -10,14 +10,11 @@ import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.web.HttpStatus;
 
 @Beta
 public final class PortalResponse
 {
-    public final static int STATUS_OK = 200;
-
-    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
-
     private final int status;
 
     private final String contentType;
@@ -25,8 +22,6 @@ public final class PortalResponse
     private final Object body;
 
     private final ImmutableMap<String, String> headers;
-
-    private final ImmutableMap<String, Object> options;
 
     private final boolean postProcess;
 
@@ -40,7 +35,6 @@ public final class PortalResponse
         this.headers = builder.headers.build();
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
-        this.options = builder.options.build();
     }
 
     public int getStatus()
@@ -78,11 +72,6 @@ public final class PortalResponse
         return !this.contributions.isEmpty();
     }
 
-    public ImmutableMap<String, Object> getOptions()
-    {
-        return options;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -104,20 +93,17 @@ public final class PortalResponse
 
         private ImmutableMap.Builder<String, String> headers;
 
-        private ImmutableMap.Builder<String, Object> options;
-
         private String contentType = "text/plain; charset=utf-8";
 
         private boolean postProcess = true;
 
         private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
 
-        private int status = STATUS_OK;
+        private int status = HttpStatus.OK.value();
 
         private Builder()
         {
             clearHeaders();
-            clearOptions();
             clearContributions();
         }
 
@@ -125,7 +111,6 @@ public final class PortalResponse
         {
             this.body = source.body;
             headers( source.headers );
-            options( source.options );
             this.contentType = source.contentType;
             this.postProcess = source.postProcess;
             contributions( source.contributions );
@@ -161,32 +146,6 @@ public final class PortalResponse
         public Builder clearHeaders()
         {
             headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
-            return this;
-        }
-
-        public Builder options( final Map<String, Object> options )
-        {
-            if ( this.options == null )
-            {
-                clearOptions();
-            }
-            this.options.putAll( options );
-            return this;
-        }
-
-        public Builder option( final String key, final Object value )
-        {
-            if ( this.options == null )
-            {
-                clearOptions();
-            }
-            this.options.put( key, value );
-            return this;
-        }
-
-        public Builder clearOptions()
-        {
-            options = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
             return this;
         }
 

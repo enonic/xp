@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.controller;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
 
@@ -16,9 +16,10 @@ public class ControllerScriptImpl_requestTest
         throws Exception
     {
         this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setPort( 80 );
         execute( "myapplication:/controller/request.js" );
 
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsString() );
     }
 
@@ -29,7 +30,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setMethod( "GET" );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "enonic.com" );
-        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
         this.portalRequest.setBranch( Branch.from( "master" ) );
@@ -42,7 +43,7 @@ public class ControllerScriptImpl_requestTest
 
         execute( "myapplication:/controller/request.js" );
 
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
         assertJson( "all", getResponseAsString() );
     }
 
@@ -52,7 +53,7 @@ public class ControllerScriptImpl_requestTest
     {
         this.portalRequest.setMethod( "HEAD" );
         execute( "myapplication:/controller/request.js" );
-        assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
     }
 }
 

@@ -68,9 +68,6 @@ module app.wizard.page.contextwindow {
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
             this.splitter = new api.dom.DivEl("splitter");
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                this.updateFrameSize();
-            });
             ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
@@ -210,7 +207,7 @@ module app.wizard.page.contextwindow {
         isFloating(): boolean {
             var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
             var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
-            return (liveFormPanelWidth < 1200) || ((liveFormPanelWidth - contextWindowWidth) < 960);
+            return (liveFormPanelWidth < 1200) || ((liveFormPanelWidth - contextWindowWidth) < 920);
         }
 
         notifyDisplayModeChanged() {

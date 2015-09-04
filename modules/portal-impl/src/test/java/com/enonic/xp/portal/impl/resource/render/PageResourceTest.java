@@ -94,7 +94,7 @@ public class PageResourceTest
 
         assertEquals( "http", jsRequest.getValue().getScheme() );
         assertEquals( "localhost", jsRequest.getValue().getHost() );
-        assertEquals( "80", jsRequest.getValue().getPort() );
+        assertEquals( 80, jsRequest.getValue().getPort() );
         assertEquals( "/portal/master/site/somepath/content", jsRequest.getValue().getPath() );
         assertEquals( "http://localhost/portal/master/site/somepath/content", jsRequest.getValue().getUrl() );
     }

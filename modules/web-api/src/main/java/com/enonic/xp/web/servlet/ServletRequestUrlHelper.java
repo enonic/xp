@@ -6,6 +6,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.net.HostAndPort;
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -13,21 +15,16 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 @Beta
 public final class ServletRequestUrlHelper
 {
-    public static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
+    public static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
 
     public static final String X_FORWARDED_HOST = "X-Forwarded-Host";
-
-
-    private ServletRequestUrlHelper()
-    {
-    }
 
     public static String createUri( final String path )
     {
         return createUri( ServletRequestHolder.getRequest(), path );
     }
 
-    private static String createUri( final HttpServletRequest req, final String path )
+    public static String createUri( final HttpServletRequest req, final String path )
     {
         final StringBuilder str = new StringBuilder();
 
@@ -53,12 +50,12 @@ public final class ServletRequestUrlHelper
         return getScheme( ServletRequestHolder.getRequest() );
     }
 
-    private static String getScheme( final HttpServletRequest httpServletRequest )
+    public static String getScheme( final HttpServletRequest req )
     {
-        String scheme = httpServletRequest.getHeader( X_FORWARDED_PROTO );
+        String scheme = req.getHeader( X_FORWARDED_PROTO );
         if ( scheme == null )
         {
-            scheme = httpServletRequest.getScheme();
+            scheme = req.getScheme();
         }
         return scheme;
     }
@@ -68,36 +65,35 @@ public final class ServletRequestUrlHelper
         return getHost( ServletRequestHolder.getRequest() );
     }
 
-    private static String getHost( final HttpServletRequest httpServletRequest )
+    public static String getHost( final HttpServletRequest req )
     {
-        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
-        if ( xForwardedHost != null )
-        {
-            return xForwardedHost.split( ":" )[0];
-        }
-        else
-        {
-            return httpServletRequest.getServerName();
-        }
+        return getHostAndPort( req ).getHostText();
     }
 
-    public static String getPort()
+    public static int getPort()
     {
         return getPort( ServletRequestHolder.getRequest() );
     }
 
-    private static String getPort( final HttpServletRequest httpServletRequest )
+    public static int getPort( final HttpServletRequest req )
     {
-        String xForwardedHost = httpServletRequest.getHeader( X_FORWARDED_HOST );
+        return getHostAndPort( req ).getPort();
+    }
+
+    public static HostAndPort getHostAndPort()
+    {
+        return getHostAndPort( ServletRequestHolder.getRequest() );
+    }
+
+    public static HostAndPort getHostAndPort( final HttpServletRequest req )
+    {
+        final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
         {
-            final String[] xForwardedHostValues = xForwardedHost.split( ":" );
-            if ( xForwardedHostValues.length > 1 )
-            {
-                return xForwardedHostValues[1];
-            }
+            return HostAndPort.fromString( xForwardedHost );
         }
-        return Integer.toString( httpServletRequest.getServerPort() );
+
+        return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
     }
 
     public static String getPath()
@@ -105,14 +101,14 @@ public final class ServletRequestUrlHelper
         return getPath( ServletRequestHolder.getRequest() );
     }
 
-    private static String getPath( final HttpServletRequest httpServletRequest )
+    public static String getPath( final HttpServletRequest req )
     {
-        return createUri( httpServletRequest.getRequestURI() );
+        return createUri( req.getRequestURI() );
     }
 
-    private static String getQueryString( final HttpServletRequest httpServletRequest )
+    private static String getQueryString( final HttpServletRequest req )
     {
-        return httpServletRequest.getQueryString();
+        return req.getQueryString();
     }
 
     public static String getServerUrl()
@@ -120,19 +116,19 @@ public final class ServletRequestUrlHelper
         return getServerUrl( ServletRequestHolder.getRequest() );
     }
 
-    private static String getServerUrl( final HttpServletRequest httpServletRequest )
+    public static String getServerUrl( final HttpServletRequest req )
     {
         final StringBuilder str = new StringBuilder();
 
         //Appends the scheme part
-        String scheme = getScheme( httpServletRequest );
+        String scheme = getScheme( req );
         str.append( scheme );
 
         //Appends the host
-        str.append( "://" ).append( getHost( httpServletRequest ) );
+        str.append( "://" ).append( getHost( req ) );
 
         //Appends the port if necessary
-        final String port = getPort( httpServletRequest );
+        final int port = getPort( req );
         if ( needPortNumber( scheme, port ) )
         {
             str.append( ":" ).append( port );
@@ -146,16 +142,16 @@ public final class ServletRequestUrlHelper
         return getFullUrl( ServletRequestHolder.getRequest() );
     }
 
-    private static String getFullUrl( final HttpServletRequest httpServletRequest )
+    public static String getFullUrl( final HttpServletRequest req )
     {
         //Appends the server part
-        StringBuffer fullUrl = new StringBuffer( getServerUrl( httpServletRequest ) );
+        StringBuffer fullUrl = new StringBuffer( getServerUrl( req ) );
 
         //Appends the path part
-        fullUrl.append( getPath( httpServletRequest ) );
+        fullUrl.append( getPath( req ) );
 
         //Appends the query string part
-        final String queryString = getQueryString( httpServletRequest );
+        final String queryString = getQueryString( req );
         if ( queryString != null )
         {
             fullUrl.append( "?" ).append( queryString );
@@ -164,11 +160,10 @@ public final class ServletRequestUrlHelper
         return fullUrl.toString();
     }
 
-
-    private static boolean needPortNumber( final String scheme, final String port )
+    private static boolean needPortNumber( final String scheme, final int port )
     {
-        final boolean isHttp = "http".equals( scheme ) && ( "80".equals( port ) );
-        final boolean isHttps = "https".equals( scheme ) && ( "443".equals( port ) );
+        final boolean isHttp = "http".equals( scheme ) && ( 80 == port );
+        final boolean isHttps = "https".equals( scheme ) && ( 443 == port );
         return !( isHttp || isHttps );
     }
 
@@ -177,7 +172,7 @@ public final class ServletRequestUrlHelper
         return rewriteUri( ServletRequestHolder.getRequest(), uri );
     }
 
-    private static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
+    public static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
     {
         UriRewritingResult.Builder resultBuilder = UriRewritingResult.create().
             rewrittenUri( uri );
@@ -219,5 +214,4 @@ public final class ServletRequestUrlHelper
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
         return "/" + Joiner.on( '/' ).join( parts );
     }
-
 }

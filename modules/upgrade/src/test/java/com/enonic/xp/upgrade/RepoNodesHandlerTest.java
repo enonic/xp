@@ -15,7 +15,7 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.upgrade.model.UpgradeModel;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 public class RepoNodesHandlerTest
 {

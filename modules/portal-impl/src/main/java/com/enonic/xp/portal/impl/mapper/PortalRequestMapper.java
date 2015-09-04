@@ -36,8 +36,7 @@ public final class PortalRequestMapper
         }
 
         serializeMultimap( "params", gen, this.request.getParams() );
-        serializeMultimap( "formParams", gen, this.request.getFormParams() );
-        serializeMultimap( "headers", gen, this.request.getHeaders() );
+        serializeMap( "headers", gen, this.request.getHeaders() );
         serializeMap( "cookies", gen, this.request.getCookies() );
     }
 

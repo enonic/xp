@@ -5,8 +5,3 @@ dependencies {
     compile project( ':core-event' )
     testCompile project( path: ':core-repo', configuration: 'testOutput' )
 }
-
-checkstyle {
-    ignoreFailures = false
-    showViolations = true
-}

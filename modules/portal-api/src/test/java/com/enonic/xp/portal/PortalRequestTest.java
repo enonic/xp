@@ -42,10 +42,9 @@ public class PortalRequestTest
     public void setPort()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getPort() );
 
-        request.setPort( "8080" );
-        assertEquals( "8080", request.getPort() );
+        request.setPort( 8080 );
+        assertEquals( 8080, request.getPort() );
     }
 
     @Test

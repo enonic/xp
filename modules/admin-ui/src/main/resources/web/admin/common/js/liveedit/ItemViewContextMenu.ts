@@ -72,8 +72,8 @@ module api.liveedit {
             api.dom.Body.get().appendChild(this);
         }
 
-        showAt(x: number, y: number) {
-            this.menu.showAt.call(this, this.getXPosition(x), this.getYPosition(y));
+        showAt(x: number, y: number, notClicked: boolean = false) {
+            this.menu.showAt.call(this, this.getXPosition(x), this.getYPosition(y, notClicked));
         }
 
         moveBy(dx: number, dy: number) {
@@ -98,11 +98,11 @@ module api.liveedit {
             var pageView = wemjq(this.getHTMLElement()).closest(".page-view");
             var minDistFromFrameBorder = (pageView.outerWidth(true) - pageView.innerWidth()) / 2;
 
-            if (this.oveflowsLeftFrameBorder(x)) {
+            if (this.overflowsLeftFrameBorder(x)) {
                 this.arrow.shiftXPositionLeft(x, pageView);
                 return minDistFromFrameBorder;
             }
-            else if (this.oveflowsRightFrameBorder(x)) {
+            else if (this.overflowsRightFrameBorder(x)) {
                 this.arrow.shiftXPositionRight(x, pageView);
                 return pageView.outerWidth(true) - this.getEl().getWidth() - minDistFromFrameBorder;
             }
@@ -112,8 +112,8 @@ module api.liveedit {
             }
         }
 
-        private getYPosition(y:number): number {
-            if (this.oveflowsBottom(y)) {
+        private getYPosition(y:number, notClicked?: boolean): number {
+            if (this.overflowsBottom(y, notClicked)) {
                 this.arrow.toggleVerticalPosition(false);
                 return y - this.getEl().getHeight() - this.arrow.getHeight();
             } else {
@@ -123,18 +123,19 @@ module api.liveedit {
 
         }
 
-        private oveflowsLeftFrameBorder(x:number): boolean {
+        private overflowsLeftFrameBorder(x:number): boolean {
             return (x - this.getEl().getWidth() / 2) < 0;
         }
 
-        private oveflowsRightFrameBorder(x:number): boolean {
+        private overflowsRightFrameBorder(x:number): boolean {
             return (x + this.getEl().getWidth() / 2) > window.innerWidth;
         }
 
-        private oveflowsBottom(y:number): boolean {
-            return (y + this.getEl().getHeight() + this.arrow.getHeight() + 1) > (wemjq(window).scrollTop() + window.innerHeight);
-        }
+        private overflowsBottom(y:number, notClicked?: boolean): boolean {
+            var yPos = y + this.getEl().getHeight() + this.arrow.getHeight() + 1;
 
+            return yPos > (notClicked ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) : (wemjq(window).scrollTop() + window.innerHeight));
+        }
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {

@@ -5,6 +5,7 @@ module app.browse.action {
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
     import Content = api.content.Content;
+    import PermissionHelper = api.security.acl.PermissionHelper;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import AccessControlList = api.security.acl.AccessControlList;
 
@@ -59,7 +60,7 @@ module app.browse.action {
 
             switch (contentBrowseItems.length) {
             case 0:
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                 this.EDIT_CONTENT.setEnabled(false);
                 this.DELETE_CONTENT.setEnabled(false);
                 this.DUPLICATE_CONTENT.setEnabled(false);
@@ -68,17 +69,7 @@ module app.browse.action {
                 this.PREVIEW_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(false);
 
-                var promise = new api.security.auth.IsAuthenticatedRequest().
-                    sendAndParse().
-                    then((loginResult: api.security.auth.LoginResult) => {
-                        new api.content.GetContentRootPermissionsRequest().
-                            sendAndParse().
-                            then((accessControlList: AccessControlList) => {
-                                var hasCreatePermission =
-                                    this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
-                                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(hasCreatePermission);
-                            })
-                    });
+                var promise = this.updateActionsEnabledStateByPermissions(contentSummaries);
 
                 promise.then<void>(() => {
                     deferred.resolve(contentBrowseItems);
@@ -87,12 +78,13 @@ module app.browse.action {
                 break;
             case 1:
                 var contentSummary = contentSummaries[0];
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                 this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
                 this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
+                this.SORT_CONTENT.setEnabled(true);
                 this.PREVIEW_CONTENT.setEnabled(false);
                 var parallelPromises: wemQ.Promise<any>[] = [
                     new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
@@ -102,26 +94,7 @@ module app.browse.action {
                                 contentBrowseItems[0].setRenderable(renderable);
                             }
                         }),
-                    // check if selected content allows children and if user has create permission for it
-                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
-                        sendAndParse().
-                        then((contentType: api.schema.content.ContentType) => {
-                            var contentTypeAllowsChildren = (contentType && contentType.isAllowChildContent());
-                            this.SORT_CONTENT.setEnabled(contentTypeAllowsChildren);
-                            var hasCreatePermission = false;
-                            new api.security.auth.IsAuthenticatedRequest().
-                                sendAndParse().
-                                then((loginResult: api.security.auth.LoginResult) => {
-                                    new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
-                                        sendAndParse().
-                                        then((accessControlList: AccessControlList) => {
-                                            hasCreatePermission =
-                                                this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
-                                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentTypeAllowsChildren &&
-                                                                                           hasCreatePermission);
-                                        })
-                                })
-                        })
+                    this.updateActionsEnabledStateByPermissions(contentSummaries)
                 ];
                 wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
@@ -137,9 +110,126 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(true);
-                deferred.resolve(contentBrowseItems);
+                var promise = this.updateActionsEnabledStateByPermissions(contentSummaries);
+
+                promise.then<void>(() => {
+                    deferred.resolve(contentBrowseItems);
+                    return wemQ(null);
+                }).done();
             }
             return deferred.promise;
+        }
+
+        private updateActionsEnabledStateByPermissions(contentSummaries: ContentSummary[]): wemQ.Promise<any> {
+
+            return new api.security.auth.IsAuthenticatedRequest().
+                sendAndParse().
+                then((loginResult: api.security.auth.LoginResult) => {
+                    if (contentSummaries.length == 0) {
+                        new api.content.GetContentRootPermissionsRequest().
+                            sendAndParse().
+                            then((accessControlList: AccessControlList) => {
+                                var hasCreatePermission =
+                                    PermissionHelper.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                if (!hasCreatePermission) {
+                                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                                }
+                            })
+                    } else {
+
+                        var contentTypesAllowChildren = true;
+                        var hasCreatePermission = true;
+                        var hasDeletePermission = true;
+                        var hasPublishPermission = true;
+                        var hasParentCreatePermission = true;
+
+                        var parallelPromises: wemQ.Promise<any>[] = [];
+                        var nestedParallelPromises: wemQ.Promise<any>[] = [];
+
+                        for (var i = 0; i < contentSummaries.length; i++) {
+
+                            var contentSummary = contentSummaries[i];
+
+                            if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
+                                parallelPromises.push(
+                                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
+                                        sendAndParse().
+                                        then((contentType: api.schema.content.ContentType) => {
+                                            contentTypesAllowChildren =
+                                                contentTypesAllowChildren && (contentType && contentType.isAllowChildContent());
+                                        }))
+                            }
+                            parallelPromises.push(
+                                new api.content.GetContentPermissionsByIdRequest(contentSummary.getContentId()).
+                                    sendAndParse().
+                                    then((accessControlList: AccessControlList) => {
+                                        hasCreatePermission = hasCreatePermission &&
+                                                              PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                                                  loginResult,
+                                                                  accessControlList);
+                                        hasDeletePermission = hasDeletePermission &&
+                                                              PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+                                                                  loginResult,
+                                                                  accessControlList);
+                                        hasPublishPermission = hasDeletePermission &&
+                                                               PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+                                                                   loginResult,
+                                                                   accessControlList);
+                                    }))
+                            if (contentSummaries.length == 1) { // Unnecessary request for multiple selection
+                                if (contentSummary.hasParent()) {
+                                    parallelPromises.push(
+                                        new api.content.GetContentByPathRequest(contentSummary.getPath().getParentPath()).
+                                            sendAndParse().
+                                            then((parent: api.content.Content) => {
+                                                nestedParallelPromises.push(
+                                                    new api.content.GetContentPermissionsByIdRequest(parent.getContentId()).
+                                                        sendAndParse().
+                                                        then((accessControlList: AccessControlList) => {
+                                                            hasParentCreatePermission = hasParentCreatePermission &&
+                                                                                        PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                            loginResult,
+                                                                                            accessControlList);
+                                                        }))
+                                            }))
+                                } else {
+                                    parallelPromises.push(
+                                        new api.content.GetContentRootPermissionsRequest().
+                                            sendAndParse().
+                                            then((accessControlList: AccessControlList) => {
+                                                hasParentCreatePermission = hasParentCreatePermission &&
+                                                                            PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                                                                                loginResult,
+                                                                                accessControlList);
+                                            }))
+                                }
+                            }
+                        }
+
+                        wemQ.all(parallelPromises).spread(() => {
+                            if (!contentTypesAllowChildren || !hasCreatePermission) {
+                                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                                this.SORT_CONTENT.setEnabled(false);
+                            }
+                            if (!hasDeletePermission) {
+                                this.DELETE_CONTENT.setEnabled(false);
+                                this.MOVE_CONTENT.setEnabled(false);
+                            }
+                            if (!hasPublishPermission) {
+                                this.PUBLISH_CONTENT.setEnabled(false);
+                            }
+                            wemQ.all(nestedParallelPromises).spread(() => {
+                                if (!hasParentCreatePermission) {
+                                    this.DUPLICATE_CONTENT.setEnabled(false);
+                                }
+                                return wemQ(null);
+                            }).done();
+                            return wemQ(null);
+                        }).done();
+                    }
+
+
+                });
         }
 
         private anyEditable(contentSummaries: api.content.ContentSummary[]): boolean {
@@ -160,38 +250,6 @@ module app.browse.action {
                 }
             }
             return false;
-        }
-
-        private isPrincipalPresent(principalKey: api.security.PrincipalKey,
-                                   accessEntriesToCheck: AccessControlEntry[]): boolean {
-            var result = false;
-            accessEntriesToCheck.some((entry: AccessControlEntry) => {
-                if (entry.getPrincipalKey().equals(principalKey)) {
-                    result = true;
-                    return true;
-                }
-            });
-
-            return result;
-        }
-
-        private hasPermission(permission: api.security.acl.Permission,
-                              loginResult: api.security.auth.LoginResult,
-                              accessControlList: AccessControlList): boolean {
-            var result = false;
-            var entries = accessControlList.getEntries();
-            var accessEntriesWithGivenPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
-                return item.isAllowed(permission);
-            });
-
-            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                    this.isPrincipalPresent(principalKey, accessEntriesWithGivenPermissions)) {
-                    result = true;
-                    return true;
-                }
-            });
-            return result;
         }
     }
 }

@@ -4,12 +4,6 @@
   position: relative;
   padding-top: 56px; // equals to the height of sticky toolbar;
 
-  &.sticky-mode {
-    .sticky-toolbar .top-container {
-      padding-bottom: 10px;
-    }
-  }
-
   &.edit-mode {
     .image-frame {
       .image-canvas {
@@ -84,7 +78,7 @@
 
   &.selected, &.edit-mode {
 
-    div.bordered {
+    .image-frame {
       border: 1px solid @admin-input-blue;
       .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
     }
@@ -93,10 +87,12 @@
   &.selected {
 
     &.focused:not(.edit-mode) {
+
       .image-frame .image-canvas {
-        border: 1px solid @admin-white;
+
         > svg {
           display: block;
+
           .focus-group {
             display: block;
           }
@@ -246,7 +242,6 @@
 
     .top-container {
       padding: 10px;
-      padding-bottom: 0;
       background-color: rgba(255, 255, 255, .8);
     }
 
@@ -273,7 +268,7 @@
 
     .zoom-container {
       display: none;
-      margin: 20px 12px 0 12px;
+      margin: 10px 12px 0 12px;
       padding: 10px;
       background-color: rgba(255, 255, 255, .8);
 
