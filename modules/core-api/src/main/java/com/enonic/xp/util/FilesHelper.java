@@ -9,8 +9,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public class FilesHelper
 {
     private static final Lock LOCK = new ReentrantLock();
