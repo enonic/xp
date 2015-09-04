@@ -16,6 +16,7 @@ public class ControllerScriptImpl_requestTest
         throws Exception
     {
         this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setPort( 80 );
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( PortalResponse.STATUS_OK, this.portalResponse.getStatus() );
@@ -29,7 +30,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setMethod( "GET" );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "enonic.com" );
-        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
         this.portalRequest.setBranch( Branch.from( "master" ) );

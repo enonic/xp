@@ -2,7 +2,7 @@
   "method": "GET",
   "scheme": "http",
   "host": "enonic.com",
-  "port": "80",
+  "port": 80,
   "path": "/my/page",
   "url": "http://enonic.com/my/page?debug=true",
   "mode": "edit",

@@ -100,7 +100,7 @@ public class ServiceResourceTest
         final PortalRequest portalRequest = jsRequest.getValue();
         assertEquals( "http", portalRequest.getScheme() );
         assertEquals( "localhost", portalRequest.getHost() );
-        assertEquals( "80", portalRequest.getPort() );
+        assertEquals( 80, portalRequest.getPort() );
         assertEquals( "/portal/master/path/to/content/_/service/demo/test", portalRequest.getPath() );
     }
 

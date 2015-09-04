@@ -37,7 +37,7 @@ public final class PortalRequest
 
     private String host;
 
-    private String port;
+    private int port;
 
     private String path;
 
@@ -105,7 +105,7 @@ public final class PortalRequest
         return host;
     }
 
-    public String getPort()
+    public int getPort()
     {
         return port;
     }
@@ -140,7 +140,7 @@ public final class PortalRequest
         this.host = host;
     }
 
-    public void setPort( final String port )
+    public void setPort( final int port )
     {
         this.port = port;
     }

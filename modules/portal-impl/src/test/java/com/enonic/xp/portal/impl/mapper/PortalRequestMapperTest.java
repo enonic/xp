@@ -56,7 +56,7 @@ public class PortalRequestMapperTest
         this.portalRequest.setMethod( "GET" );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "localhost" );
-        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/portal/live/master/a/b" );
         this.portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
         this.portalRequest.getParams().put( "param1", "value1" );
