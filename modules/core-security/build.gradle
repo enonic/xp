@@ -11,8 +11,3 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Security'
 }
-
-checkstyle {
-    ignoreFailures = false
-    showViolations = true
-}

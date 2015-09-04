@@ -7,7 +7,6 @@ import com.google.common.base.Joiner;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.AbstractScriptTest;
 
 import static org.junit.Assert.*;
 

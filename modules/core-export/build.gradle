@@ -8,8 +8,3 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Export'
 }
-
-checkstyle {
-    ignoreFailures = false
-    showViolations = true
-}

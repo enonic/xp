@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.controller;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpStatus;
 
