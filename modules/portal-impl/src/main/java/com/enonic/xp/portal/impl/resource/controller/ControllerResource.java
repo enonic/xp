@@ -81,11 +81,11 @@ public abstract class ControllerResource
             contextHeaders.put( key, this.httpHeaders.getHeaderString( key ) );
         }
 
-        setParams( portalRequest.getParams(), this.uriInfo.getQueryParameters() );
+        putParams( portalRequest.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
         {
-            setParams( portalRequest.getFormParams(), this.form.asMap() );
+            putParams( portalRequest.getParams(), this.form.asMap() );
         }
 
         configure( portalRequest );
@@ -94,7 +94,7 @@ public abstract class ControllerResource
         return toResponse( response );
     }
 
-    private void setParams( final Multimap<String, String> to, final MultivaluedMap<String, String> from )
+    private void putParams( final Multimap<String, String> to, final MultivaluedMap<String, String> from )
     {
         for ( final Map.Entry<String, List<String>> entry : from.entrySet() )
         {
