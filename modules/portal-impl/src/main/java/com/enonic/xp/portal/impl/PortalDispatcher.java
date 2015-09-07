@@ -21,6 +21,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.exception.ExceptionMapper;
+import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -35,10 +37,15 @@ public final class PortalDispatcher
 
     private final static String PATH_PREFIX = BASE_URI + "/";
 
+    private final ExceptionMapper exceptionMapper;
+
     private final PortalHandlerRegistry registry;
+
+    private ExceptionRenderer exceptionRenderer;
 
     public PortalDispatcher()
     {
+        this.exceptionMapper = new ExceptionMapper();
         this.registry = new PortalHandlerRegistry();
         setOrder( -1 );
     }
@@ -112,13 +119,34 @@ public final class PortalDispatcher
     private PortalResponse doHandle( final PortalRequest req )
         throws Exception
     {
-        if ( req.getBranch() == null )
+        try
         {
-            throw PortalException.notFound( "Branch needs to be specified" );
-        }
+            if ( req.getBranch() == null )
+            {
+                throw PortalException.notFound( "Branch needs to be specified" );
+            }
 
-        final PortalHandler handler = this.registry.find( req );
-        return handler.handle( req );
+            final PortalHandler handler = this.registry.find( req );
+            return filterResponse( handler.handle( req ) );
+        }
+        catch ( final Exception e )
+        {
+            return handleError( req, e );
+        }
+    }
+
+    private PortalResponse handleError( final PortalRequest req, final Exception cause )
+        throws Exception
+    {
+        final PortalException exception = this.exceptionMapper.map( cause );
+        return this.exceptionRenderer.render( req, exception );
+    }
+
+    private PortalResponse filterResponse( final PortalResponse res )
+        throws Exception
+    {
+        this.exceptionMapper.throwIfNeeded( res );
+        return res;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -170,5 +198,11 @@ public final class PortalDispatcher
         {
             throw PortalException.internalServerError( "Error while decoding URL: " + url );
         }
+    }
+
+    @Reference
+    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
+    {
+        this.exceptionRenderer = exceptionRenderer;
     }
 }

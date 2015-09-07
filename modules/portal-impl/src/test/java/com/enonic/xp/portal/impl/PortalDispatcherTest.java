@@ -13,6 +13,7 @@ import com.squareup.okhttp.Response;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.impl.WebHandlerTestSupport;
 
 import static org.junit.Assert.*;
@@ -29,6 +30,7 @@ public class PortalDispatcherTest
 
         final PortalDispatcher dispatcher = new PortalDispatcher();
         dispatcher.addHandler( this.handler );
+        dispatcher.setExceptionRenderer( new ExceptionRendererImpl() );
         addHandler( dispatcher );
 
         this.handler.response = PortalResponse.create().

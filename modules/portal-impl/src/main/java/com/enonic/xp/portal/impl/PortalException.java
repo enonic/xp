@@ -13,6 +13,12 @@ public final class PortalException
         this.status = status;
     }
 
+    public PortalException( final HttpStatus status, final Throwable cause )
+    {
+        super( cause.getMessage(), cause );
+        this.status = status;
+    }
+
     public HttpStatus getStatus()
     {
         return this.status;
