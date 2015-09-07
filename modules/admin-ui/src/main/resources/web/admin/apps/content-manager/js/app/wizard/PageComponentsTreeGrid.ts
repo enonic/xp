@@ -43,9 +43,16 @@ module app.wizard {
                     setHideColumnHeaders(true).
                     setForceFitColumns(true).
                     setFullWidthRows(true).
-                    setRowHeight(45).
+
+                    // It is necessary to turn off the library key handling. It may cause
+                    // the conflicts with Mousetrap, which leads to skipping the key events
+                    // Do not set to true, if you are not fully aware of the result
+                    setEnableCellNavigation(false).
+
                     setCheckableRows(false).
+                    disableMultipleSelection(true).
                     setMultiSelect(false).
+                    setRowHeight(45).
                     build()).
                 setShowToolbar(false).
                 setAutoLoad(true).

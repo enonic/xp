@@ -56,7 +56,7 @@ module app.wizard {
 
             this.onShown((event) => {
                 this.constrainToParent();
-            })
+            });
 
             ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
                 var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
@@ -167,15 +167,24 @@ module app.wizard {
                     // do nothing if expand toggle is clicked
                     return;
                 }
-                var treeNode: TreeNode<ItemView> = this.tree.getGrid().getDataView().getItem(data.row);
-                treeNode.getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
-                treeNode.getData().scrollComponentIntoView();
+
+                this.tree.getGrid().selectRow(data.row);
 
                 if (this.isModal()) {
                     this.hide();
                 }
             };
             this.tree.getGrid().subscribeOnClick(this.clickListener);
+            this.tree.onSelectionChanged((data, nodes) => {
+                if (nodes.length > 0) {
+                    nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
+                    nodes[0].getData().scrollComponentIntoView();
+
+                    if (this.isModal()) {
+                        this.hide();
+                    }
+                }
+            });
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));

@@ -51,10 +51,10 @@ module api.ui.image {
         private focusClipPath: Element;
         private cropClipPath: Element;
 
-        private focusData: FocusData = {x: 0, y: 0, r: 0, auto: true};
+        private focusData: FocusData = {x: 0, y: 0, r: 0.25, auto: undefined};
         private revertFocusData: FocusData;
 
-        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: true};
+        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: undefined};
         private revertCropData: CropData;
 
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
@@ -101,7 +101,8 @@ module api.ui.image {
             this.image.onLoaded((event: UIEvent) => {
                 if (this.isImageLoaded()) {
                     // check that real image has been loaded
-                    this.updateImageDimensions();
+                    this.updateImageDimensions(true);
+                    this.updateStickyToolbar();
                 }
             });
 
@@ -152,10 +153,22 @@ module api.ui.image {
             this.stickyToolbar = this.createStickyToolbar();
             this.appendChildren(this.stickyToolbar, this.frame);
 
-            // sticky toolbar needs to have access to parent elements
+            var scrollListener = (event) => this.updateStickyToolbar();
+            var resizeListener = (item) => {
+                if (this.isVisible()) {
+                    this.updateImageDimensions(false, true);
+                    this.updateStickyToolbar();
+                }
+            };
             this.onAdded((event: api.dom.ElementAddedEvent) => {
-                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).on("scroll",
-                    (event) => this.updateStickyToolbar());
+                // sticky toolbar needs to have access to parent elements
+                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind("scroll", scrollListener);
+                api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
+            });
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => {
+                // element has already been removed so use parent
+                wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
+                api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
             });
 
             if (src) {
@@ -292,64 +305,119 @@ module api.ui.image {
             return this.image.isLoaded() && !this.image.isPlaceholder();
         }
 
-        private updateImageDimensions() {
+        private updateImageDimensions(reset: boolean = false, scale: boolean = false) {
             var imgEl = this.image.getEl(),
                 frameEl = this.frame.getEl();
 
-            this.frameW = frameEl.getWidthWithBorder();
+            var zoomPct: SVGRect, cropPct: SVGRect, focusPosPct: Point, focusRadPct,
+                revZoomPct: SVGRect, revCropPct: SVGRect, revFocusPosPct: Point, revFocusRadPct;
+
+            if (scale) {
+                // save all positions in percents before updating dimensions to scale them accordingly
+                zoomPct = this.normalizeRect(this.getZoomPositionPx());
+                cropPct = this.normalizeRect(this.getCropPositionPx());
+                focusPosPct = this.normalizePoint(this.getFocusPositionPx());
+                focusRadPct = this.normalizeRadius(this.getFocusRadiusPx());
+                if (this.revertZoomData) {
+                    revZoomPct = this.normalizeRect(this.revertZoomData);
+                }
+                if (this.revertCropData) {
+                    revCropPct = this.normalizeRect(this.revertCropData);
+                }
+                if (this.revertFocusData) {
+                    revFocusPosPct = this.normalizePoint(this.revertFocusData);
+                    revFocusRadPct = this.normalizeRadius(this.revertFocusData.r);
+                }
+            }
 
             this.imgW = imgEl.getNaturalWidth();
             this.imgH = imgEl.getNaturalHeight();
-            // this.maxZoom = this.imgW / this.frameW;  sets max zoom to image real size
 
+            this.frameW = this.getEl().getWidth();
             this.frameH = (this.frameW * this.imgH) / this.imgW;
+
+            frameEl.setWidthPx(this.frameW).setHeightPx(this.frameH);
 
             if (ImageEditor.debug) {
                 console.group('ImageEditor.updateImageDimensions');
-                console.log('Image loaded: ' + this.frameW + ' x ' + this.frameH + ', frame: ' + this.frameW + ' x ' + this.frameH);
+                console.log('Image loaded: ' + this.imgW + ' x ' + this.imgH + ', frame: ' + this.frameW + ' x ' + this.frameH);
             }
 
-            this.frame.getEl().setWidthPx(this.frameW).setHeightPx(this.frameH);
+            if (reset) {
+                if (this.revertZoomData) {
+                    // zoom was set while images was not yet loaded (saved in px);
+                    this.setZoomPositionPx(this.denormalizeRect(this.revertZoomData));
 
-            if (this.revertZoomData) {
-                // zoom was set while images was not yet loaded (saved in px);
-                this.setZoomPositionPx(this.denormalizeRect(this.revertZoomData));
+                    this.revertZoomData = undefined;
+                } else if (this.cropData.auto) {
+                    // use cropData.auto flag for zoom as well
+                    this.resetZoomPosition();
+                }
 
-                this.revertZoomData = undefined;
-            } else if (this.cropData.auto) {
-                // use cropData.auto flag for zoom as well
-                this.resetZoomPosition();
+                // crop depends on zoom so init it after
+                if (this.revertCropData) {
+                    // crop was set while images was not yet loaded (saved in px);
+                    this.setCropPositionPx(this.denormalizeRect(this.revertCropData));
+
+                    this.revertCropData = undefined;
+                } else if (this.cropData.auto) {
+                    this.resetCropPosition();
+                }
+
+                // focus depends on zoom so init it after
+                if (this.revertFocusData) {
+                    // position was set while image was not yet loaded
+                    this.setFocusPositionPx(this.denormalizePoint(
+                        this.revertFocusData.x,
+                        this.revertFocusData.y));
+
+                    this.setFocusRadiusPx(this.denormalizeRadius(this.revertFocusData.r));
+
+                    this.revertFocusData = undefined;
+                } else if (this.focusData.auto) {
+                    // set position to center by default
+                    this.resetFocusPosition();
+                    this.resetFocusRadius();
+                }
+
+                this.updateFocusMaskPosition();
+                this.updateCropMaskPosition();
+                this.updateZoomPosition();
+
             }
 
-            // crop depends on zoom so init it after
-            if (this.revertCropData) {
-                // crop was set while images was not yet loaded (saved in px);
-                this.setCropPositionPx(this.denormalizeRect(this.revertCropData));
+            if (scale) {
+                // scale all positions accordingly to dimensions change in edit mode
+                this.setZoomPositionPx(this.denormalizeRect(zoomPct), false);
+                this.setCropPositionPx(this.denormalizeRect(cropPct), false);
+                this.setFocusPositionPx(this.denormalizePoint(focusPosPct.x, focusPosPct.y), false);
+                this.setFocusRadiusPx(this.denormalizeRadius(focusRadPct), false);
 
-                this.revertCropData = undefined;
-            } else if (this.cropData.auto) {
-                this.resetCropPosition();
+                //also update revert positions in case user will cancel changes
+                if (revZoomPct) {
+                    this.revertZoomData = this.denormalizeRect(revZoomPct);
+                }
+                if (revCropPct) {
+                    var revCrop = this.denormalizeRect(revCropPct);
+                    this.revertCropData = {
+                        x: revCrop.x,
+                        y: revCrop.y,
+                        w: revCrop.w,
+                        h: revCrop.h,
+                        auto: this.revertCropData.auto
+                    };
+                }
+                if (revFocusPosPct && revFocusRadPct) {
+                    var revFocusPos = this.denormalizePoint(revFocusPosPct.x, revFocusPosPct.y);
+                    var revFocusRad = this.denormalizeRadius(revFocusRadPct);
+                    this.revertFocusData = {
+                        x: revFocusPos.x,
+                        y: revFocusPos.y,
+                        r: revFocusRad,
+                        auto: this.revertFocusData.auto
+                    };
+                }
             }
-
-            // focus is not modifiable for now so just reset it to default value
-            this.resetFocusRadius();
-
-            // focus depends on zoom so init it after
-            if (this.revertFocusData) {
-                // position was set while image was not yet loaded
-                this.setFocusPositionPx(this.denormalizePoint(
-                    this.revertFocusData.x,
-                    this.revertFocusData.y));
-
-                this.revertFocusData = undefined;
-            } else if (this.focusData.auto) {
-                // set position to center by default
-                this.resetFocusPosition();
-            }
-
-            this.updateFocusMaskPosition();
-            this.updateCropMaskPosition();
-            this.updateZoomPosition();
 
             if (ImageEditor.debug) {
                 console.groupEnd();
@@ -371,6 +439,7 @@ module api.ui.image {
 
                 if (this.isFocusEditMode()) {
                     this.resetFocusPosition();
+                    this.resetFocusRadius();
                 } else if (this.isCropEditMode()) {
                     this.resetZoomPosition();
                     this.resetCropPosition();
@@ -409,15 +478,16 @@ module api.ui.image {
                 this.resetCropPosition();
                 this.resetZoomPosition();
                 this.resetFocusPosition();
+                this.resetFocusRadius();
             });
 
             this.onFocusAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.focusData.auto);
+                resetButton.setVisible(!auto || !this.cropData.auto);
             });
             this.onCropAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.cropData.auto);
+                resetButton.setVisible(!auto || !this.focusData.auto);
             });
 
             this.uploadButton = new Button();
@@ -538,28 +608,32 @@ module api.ui.image {
                 if (ImageEditor.debug) {
                     console.log('updated revert data');
                 }
-            } else if (applyChanges) {
-                crop = this.getCropPosition();
-                zoom = this.getZoomPosition();
-                focus = this.getFocusPosition();
-
-                if (ImageEditor.debug) {
-                    console.log('Crop', crop, '\nZoom', zoom, '\nFocus', focus);
-                }
             } else {
-                if (ImageEditor.debug) {
-                    console.log('reverting focus to', this.revertFocusData);
-                    console.log('reverting crop to', this.revertCropData);
-                    console.log('reverting zoom to', this.revertZoomData);
-                }
-                this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
-                this.setFocusRadiusPx(this.revertFocusData.r, false);
-                this.setFocusAutoPositioned(this.revertFocusData.auto);
-                this.revertFocusData = undefined;
+                if (applyChanges) {
+                    crop = this.getCropPosition();
+                    zoom = this.getZoomPosition();
+                    focus = this.getFocusPosition();
 
-                this.setZoomPositionPx(this.revertZoomData, false);
-                this.setCropPositionPx(this.revertCropData, false);
-                this.setCropAutoPositioned(this.revertCropData.auto);
+                    if (ImageEditor.debug) {
+                        console.log('Applying changes: \nCrop', crop, '\nZoom', zoom, '\nFocus', focus);
+                    }
+                } else {
+                    if (ImageEditor.debug) {
+                        console.log('reverting focus to', this.revertFocusData);
+                        console.log('reverting crop to', this.revertCropData);
+                        console.log('reverting zoom to', this.revertZoomData);
+                    }
+                    this.setFocusPositionPx({x: this.revertFocusData.x, y: this.revertFocusData.y}, false);
+                    this.setFocusRadiusPx(this.revertFocusData.r, false);
+                    this.setFocusAutoPositioned(this.revertFocusData.auto);
+
+
+                    this.setZoomPositionPx(this.revertZoomData, false);
+                    this.setCropPositionPx(this.revertCropData, false);
+                    this.setCropAutoPositioned(this.revertCropData.auto);
+                }
+
+                this.revertFocusData = undefined;
                 this.revertCropData = undefined;
                 this.revertZoomData = undefined;
             }
@@ -727,7 +801,7 @@ module api.ui.image {
             this.focusData.r = this.restrainFocusRadius(r);
 
             if (updateAuto) {
-                this.setFocusAutoPositioned(false);
+                this.setFocusAutoPositioned(this.isFocusNotModified(this.focusData));
             }
 
             if (oldR != this.focusData.r) {
@@ -869,8 +943,10 @@ module api.ui.image {
             return Math.max(0, Math.min(this.frameW, this.frameH, this.cropData.w, this.cropData.h, r));
         }
 
-        private isFocusNotModified(point: Point): boolean {
-            return point.x == Math.min(this.frameW, this.cropData.w) / 2 && point.y == Math.min(this.frameH, this.cropData.h) / 2;
+        private isFocusNotModified(focus: FocusData): boolean {
+            return focus.x == Math.min(this.frameW, this.cropData.w) / 2 &&
+                   focus.y == Math.min(this.frameH, this.cropData.h) / 2 &&
+                   focus.r == Math.min(this.frameW, this.frameH) / 4;
         }
 
 
@@ -1008,9 +1084,12 @@ module api.ui.image {
         }
 
         resetCropPosition() {
+            if (ImageEditor.debug) {
+                console.log('resetCropPosition');
+            }
             var crop = {x: 0, y: 0, w: 1, h: 1};
             this.setCropPositionPx(this.denormalizeRect(crop), false);
-            this.resetZoomPosition();
+            this.setCropAutoPositioned(true);
         }
 
         private setCropAutoPositioned(auto: boolean) {
@@ -1323,6 +1402,9 @@ module api.ui.image {
         }
 
         resetZoomPosition() {
+            if (ImageEditor.debug) {
+                console.log('resetZoomPosition');
+            }
             var zoom = {x: 0, y: 0, w: 1, h: 1};
             this.setZoomPositionPx(this.denormalizeRect(zoom), false);
             this.setCropAutoPositioned(true);

@@ -30,8 +30,6 @@ public final class PortalRequest
 
     private final Multimap<String, String> params;
 
-    private final Multimap<String, String> formParams;
-
     private final Map<String, String> headers;
 
     private final Map<String, String> cookies;
@@ -77,12 +75,10 @@ public final class PortalRequest
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
-        this.formParams = HashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
 
-    // TODO: Get from rawRequest
     public String getMethod()
     {
         return this.method;
@@ -93,43 +89,31 @@ public final class PortalRequest
         return branch;
     }
 
-    // TODO: Get from rawRequest
     public Multimap<String, String> getParams()
     {
         return this.params;
     }
 
-    // TODO: Remove. Not needed.
-    public Multimap<String, String> getFormParams()
-    {
-        return this.formParams;
-    }
-
-    // TODO: Get from rawRequest
     public String getScheme()
     {
         return scheme;
     }
 
-    // TODO: Get from rawRequest
     public String getHost()
     {
         return host;
     }
 
-    // TODO: Get from rawRequest
     public int getPort()
     {
         return port;
     }
 
-    // TODO: Get from rawRequest
     public String getPath()
     {
         return path;
     }
 
-    // TODO: Get from rawRequest
     public String getUrl()
     {
         return url;
@@ -180,7 +164,6 @@ public final class PortalRequest
         this.branch = branch;
     }
 
-    // TODO: Get from rawRequest
     public Map<String, String> getHeaders()
     {
         return this.headers;
@@ -271,7 +254,6 @@ public final class PortalRequest
         this.baseUri = baseUri;
     }
 
-    // TODO: Get from rawRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
