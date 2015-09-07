@@ -27,7 +27,7 @@ public abstract class BaseHandlerTest
     protected abstract void configure()
         throws Exception;
 
-    protected final void assertMetodNotAllowed( final PortalHandler handler, final HttpMethod method )
+    protected final void assertMethodNotAllowed( final PortalHandler handler, final HttpMethod method )
         throws Exception
     {
         try

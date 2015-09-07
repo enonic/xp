@@ -121,10 +121,10 @@ public class ImageHandlerTest
     public void testMethodNotAllowed()
         throws Exception
     {
-        assertMetodNotAllowed( this.handler, HttpMethod.POST );
-        assertMetodNotAllowed( this.handler, HttpMethod.DELETE );
-        assertMetodNotAllowed( this.handler, HttpMethod.PUT );
-        assertMetodNotAllowed( this.handler, HttpMethod.TRACE );
+        assertMethodNotAllowed( this.handler, HttpMethod.POST );
+        assertMethodNotAllowed( this.handler, HttpMethod.DELETE );
+        assertMethodNotAllowed( this.handler, HttpMethod.PUT );
+        assertMethodNotAllowed( this.handler, HttpMethod.TRACE );
     }
 
     @Test

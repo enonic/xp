@@ -5,7 +5,6 @@ import org.junit.Test;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -48,16 +47,6 @@ public class ErrorHandlerTest
     }
 
     @Test
-    public void testMethodNotAllowed()
-        throws Exception
-    {
-        assertMetodNotAllowed( this.handler, HttpMethod.POST );
-        assertMetodNotAllowed( this.handler, HttpMethod.DELETE );
-        assertMetodNotAllowed( this.handler, HttpMethod.PUT );
-        assertMetodNotAllowed( this.handler, HttpMethod.TRACE );
-    }
-
-    @Test
     public void testOptions()
         throws Exception
     {
@@ -66,7 +55,7 @@ public class ErrorHandlerTest
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( 200, res.getStatus() );
-        assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
     }
 
     @Test
