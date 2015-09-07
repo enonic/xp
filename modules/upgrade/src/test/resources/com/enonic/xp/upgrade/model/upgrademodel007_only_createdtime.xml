@@ -1,0 +1,81 @@
+<node>
+  <id>920ff652-f20b-4407-ae74-c96b8a2bf5bd</id>
+  <childOrder>displayname ASC</childOrder>
+  <nodeType>default</nodeType>
+  <inheritPermissions>false</inheritPermissions>
+  <permissions>
+    <principal key="role:system.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:cms.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data>
+    <string name="type">base:folder</string>
+    <string name="displayName">Content</string>
+    <property-set name="data"/>
+    <property-set name="form"/>
+    <string name="creator">user:system:su</string>
+    <dateTime name="createdTime">2015-06-11T14:30:09.281Z</dateTime>
+  </data>
+  <indexConfigs>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>creator</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>owner</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>modifier</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>
