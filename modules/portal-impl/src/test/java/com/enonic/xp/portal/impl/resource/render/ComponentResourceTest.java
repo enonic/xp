@@ -42,7 +42,7 @@ public class ComponentResourceTest
         setupTemplates();
         final PortalResponse portalResponse = PortalResponse.create().
             body( "component rendered" ).
-            header( "some-heaer", "some-value" ).
+            header( "some-header", "some-value" ).
             status( 200 ).
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
@@ -93,7 +93,7 @@ public class ComponentResourceTest
         setupTemplates();
         final PortalResponse portalResponse = PortalResponse.create().
             body( "component rendered" ).
-            header( "some-heaer", "some-value" ).
+            header( "some-header", "some-value" ).
             status( 200 ).
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
