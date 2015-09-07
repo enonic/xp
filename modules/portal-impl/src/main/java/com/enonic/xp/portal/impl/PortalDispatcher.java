@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Map;
 
@@ -64,7 +66,7 @@ public final class PortalDispatcher
         result.setMethod( req.getMethod() );
         result.setBaseUri( BASE_URI );
 
-        final String rawPath = req.getRequestURI();
+        final String rawPath = decodeUrl( req.getRequestURI() );
         result.setBranch( findBranch( rawPath ) );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
@@ -156,5 +158,17 @@ public final class PortalDispatcher
     {
         final int index = path.indexOf( '/', PATH_PREFIX.length() );
         return path.substring( index > 0 ? index : path.length() );
+    }
+
+    private static String decodeUrl( final String url )
+    {
+        try
+        {
+            return URLDecoder.decode( url, "UTF-8" );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            throw PortalException.internalServerError( "Error while decoding URL: " + url );
+        }
     }
 }

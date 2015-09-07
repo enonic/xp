@@ -22,4 +22,9 @@ public final class PortalException
     {
         return new PortalException( HttpStatus.NOT_FOUND, message );
     }
+
+    public static PortalException internalServerError( final String message )
+    {
+        return new PortalException( HttpStatus.INTERNAL_SERVER_ERROR, message );
+    }
 }
