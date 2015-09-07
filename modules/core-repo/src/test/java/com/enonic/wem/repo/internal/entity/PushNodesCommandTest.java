@@ -194,6 +194,36 @@ public class PushNodesCommandTest
     }
 
     @Test
+    public void push_rename_push()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node1" ).
+            build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child1" ).
+            build() );
+
+        final Node child1_1 = createNode( CreateNodeParams.create().
+            parent( child1.path() ).
+            name( "my-child1_1" ).
+            build() );
+
+        pushNodes( NodeIds.from( node.id(), child1.id() ), WS_OTHER );
+
+        renameNode( node );
+        renameNode( child1 );
+        renameNode( child1_1 );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child1.id() ), WS_OTHER );
+
+        assertEquals( 2, result.getSuccessfull().getSize() );
+    }
+
+    @Test
     public void push_after_rename()
         throws Exception
     {
@@ -235,12 +265,16 @@ public class PushNodesCommandTest
         pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
                    WS_OTHER );
 
+        refresh();
+
         renameNode( node2 );
         renameNode( node );
         renameNode( child1 );
         renameNode( child2 );
         renameNode( child2_1 );
         renameNode( child1_1_1 );
+
+        refresh();
 
         final PushNodesResult result =
             pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
