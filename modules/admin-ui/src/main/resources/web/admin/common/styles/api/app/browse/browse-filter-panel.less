@@ -14,6 +14,34 @@
     &:hover {
       color: @admin-button-blue3;
     }
+    font-size: 14px;
+  }
+
+  .aggregation-bucket-view {
+    padding: 1px 0px;
+
+    .checkbox {
+      input[type="checkbox"] {
+
+        &:checked + label {
+          color: @admin-black !important;
+          &:before {
+            top: 2px;
+            left: 1px;
+          }
+        }
+
+        & + label {
+          color: @admin-font-gray2 !important;
+          padding-left: 21px;
+          &:before {
+            top: 2px;
+            left: 1px;
+          }
+        }
+      }
+    }
+
   }
 
   input.text-search-field {
@@ -36,8 +64,8 @@
 
   h2 {
     color: #000000 !important;
-    font-size: 15px !important;
-    padding: 0 !important;
+    font-size: 14px !important;
+    padding: 0px 0px 0px 21px !important;
     text-transform: capitalize;
     white-space: nowrap;
   }
@@ -45,6 +73,8 @@
   .hits-and-clear {
     line-height: 24px;
     font-size: 16px;
+    margin-bottom: 20px;
+    padding-left: 21px;
   }
 
   .hide-filter-panel-button {
