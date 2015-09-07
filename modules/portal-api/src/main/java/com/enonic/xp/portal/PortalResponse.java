@@ -1,6 +1,9 @@
 package com.enonic.xp.portal;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +30,8 @@ public final class PortalResponse
 
     private final ImmutableListMultimap<HtmlTag, String> contributions;
 
+    private final ImmutableList<Cookie> cookies;
+
     public PortalResponse( final Builder builder )
     {
         this.status = builder.status;
@@ -35,6 +40,7 @@ public final class PortalResponse
         this.headers = builder.headers.build();
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
+        this.cookies = builder.cookies.build();
     }
 
     public int getStatus()
@@ -82,6 +88,11 @@ public final class PortalResponse
         return ( this.body != null ) ? this.body.toString() : null;
     }
 
+    public ImmutableList<Cookie> getCookies()
+    {
+        return cookies;
+    }
+
     public static Builder create( final PortalResponse source )
     {
         return new Builder( source );
@@ -101,10 +112,13 @@ public final class PortalResponse
 
         private int status = HttpStatus.OK.value();
 
+        private ImmutableList.Builder<Cookie> cookies;
+
         private Builder()
         {
             clearHeaders();
             clearContributions();
+            clearCookies();
         }
 
         private Builder( final PortalResponse source )
@@ -115,6 +129,7 @@ public final class PortalResponse
             this.postProcess = source.postProcess;
             contributions( source.contributions );
             this.status = source.status;
+            cookies( source.cookies );
         }
 
         public Builder body( final Object body )
@@ -146,6 +161,32 @@ public final class PortalResponse
         public Builder clearHeaders()
         {
             headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
+            return this;
+        }
+
+        public Builder cookies( final List<Cookie> cookies )
+        {
+            if ( this.cookies == null )
+            {
+                clearCookies();
+            }
+            this.cookies.addAll( cookies );
+            return this;
+        }
+
+        public Builder cookie( final Cookie cookie )
+        {
+            if ( this.cookies == null )
+            {
+                clearCookies();
+            }
+            this.cookies.add( cookie );
+            return this;
+        }
+
+        public Builder clearCookies()
+        {
+            this.cookies = ImmutableList.builder();
             return this;
         }
 
