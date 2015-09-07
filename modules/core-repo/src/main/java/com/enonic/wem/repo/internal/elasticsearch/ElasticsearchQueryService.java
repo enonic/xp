@@ -27,7 +27,6 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
@@ -69,51 +68,12 @@ public class ElasticsearchQueryService
     }
 
     @Override
-    public NodeVersionIds find( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
-    {
-        if ( nodePaths.isEmpty() )
-        {
-            return NodeVersionIds.empty();
-        }
-
-        final Branch branch = indexContext.getBranch();
-
-        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.PATH.getPath() ).
-                addValues( nodePaths.getAsStrings() ).
-                build() ).
-            build();
-
-        final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( branch.getName() ).
-            query( queryBuilder ).
-            sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
-            setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
-            size( nodePaths.getSize() ).
-            build();
-
-        final SearchResult searchResult = elasticsearchDao.find( query );
-
-        if ( searchResult.isEmpty() )
-        {
-            return NodeVersionIds.empty();
-        }
-
-        final Set<ReturnValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
-
-        return fieldValuesToVersionIds( fieldValues );
-    }
-
-    @Override
     public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
-        return doGetByIds( nodeIds, orderExprs, indexContext );
+        return doFindByIds( nodeIds, orderExprs, indexContext );
     }
 
-    private NodeVersionIds doGetByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    private NodeVersionIds doFindByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
         if ( nodeIds.isEmpty() )
         {

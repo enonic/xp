@@ -86,15 +86,20 @@ public class VersionServiceImpl
 
         cache.put( CacheStoreRequest.create().
             addCacheKey( new VersionPathCacheKey( nodeVersion.getNodePath() ) ).
-            storageData( StorageData.create().
-                add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
-                add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
-                add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
-                add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp().toString() ).
-                build() ).
+            storageData( createStorageData( nodeVersion ) ).
             build() );
 
         return nodeVersion;
+    }
+
+    private StorageData createStorageData( final NodeVersion nodeVersion )
+    {
+        return StorageData.create().
+            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
+            add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
+            add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
+            add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp().toString() ).
+            build();
     }
 
     @Override
