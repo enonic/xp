@@ -8,7 +8,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.portal.impl.handler.EndpointHandler;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = PortalHandler.class)
@@ -18,7 +17,6 @@ public final class ErrorHandler
     public ErrorHandler()
     {
         super( "error" );
-        setMethodsAllowed( HttpMethod.GET, HttpMethod.HEAD );
     }
 
     @Override
