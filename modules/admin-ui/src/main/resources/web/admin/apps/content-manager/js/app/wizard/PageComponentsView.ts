@@ -88,9 +88,15 @@ module app.wizard {
         private createTree(content: Content, pageView: PageView) {
             this.tree = new PageComponentsTreeGrid(content, pageView);
 
-            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
+            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {debugger;
                 if (!event.isNew()) {
-                    this.tree.selectNode(this.tree.getDataId(event.getItemView()));
+                    var selectedItemId = this.tree.getDataId(event.getItemView());
+                    this.tree.selectNode(selectedItemId);
+
+                    if(!event.getPosition()) {
+                        this.scrollToItem(selectedItemId);
+                    }
+
                 }
             });
 
@@ -175,10 +181,9 @@ module app.wizard {
                 }
             };
             this.tree.getGrid().subscribeOnClick(this.clickListener);
-            this.tree.onSelectionChanged((data, nodes) => {
+            this.tree.onSelectionChanged((data, nodes) => {debugger;
                 if (nodes.length > 0) {
                     nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
-                    nodes[0].getData().scrollComponentIntoView();
 
                     if (this.isModal()) {
                         this.hide();
@@ -322,6 +327,10 @@ module app.wizard {
             }
             this.modal = modal;
             return this;
+        }
+
+        private scrollToItem(dataId: string) {
+            this.tree.getGrid().getDataView().getItem(+dataId - 1).getData().scrollComponentIntoView();
         }
     }
 
