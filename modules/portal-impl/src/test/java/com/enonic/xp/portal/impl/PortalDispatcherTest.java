@@ -87,6 +87,23 @@ public class PortalDispatcherTest
     }
 
     @Test
+    public void testPortalAttributes()
+        throws Exception
+    {
+        final Request request = newRequest( "/admin/portal/preview/master/a/b" ).
+            get().
+            build();
+
+        this.handler.verifier = req -> {
+            assertEquals( "/admin/portal/preview", req.getBaseUri() );
+            assertEquals( RenderMode.PREVIEW, req.getMode() );
+        };
+
+        final Response response = callRequest( request );
+        assertEquals( 200, response.code() );
+    }
+
+    @Test
     public void testResponseHeaders()
         throws Exception
     {

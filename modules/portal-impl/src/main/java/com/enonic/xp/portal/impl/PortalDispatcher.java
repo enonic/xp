@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.exception.ExceptionMapper;
@@ -71,7 +72,8 @@ public final class PortalDispatcher
     {
         final PortalRequest result = new PortalRequest();
         result.setMethod( req.getMethod() );
-        result.setBaseUri( BASE_URI );
+        setBaseUri( req, result );
+        setRenderMode( req, result );
 
         final String rawPath = decodeUrl( req.getRequestURI() );
         result.setBranch( findBranch( rawPath ) );
@@ -90,6 +92,28 @@ public final class PortalDispatcher
         setCookies( req, result );
 
         return result;
+    }
+
+    private void setBaseUri( final HttpServletRequest from, final PortalRequest to )
+    {
+        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
+        if ( portalAttributes != null && portalAttributes.getBaseUri() != null )
+        {
+            to.setBaseUri( portalAttributes.getBaseUri() );
+        }
+        else
+        {
+            to.setBaseUri( BASE_URI );
+        }
+    }
+
+    private void setRenderMode( final HttpServletRequest from, final PortalRequest to )
+    {
+        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
+        if ( portalAttributes != null && portalAttributes.getRenderMode() != null )
+        {
+            to.setMode( portalAttributes.getRenderMode() );
+        }
     }
 
     private void setHeaders( final HttpServletRequest from, final PortalRequest to )

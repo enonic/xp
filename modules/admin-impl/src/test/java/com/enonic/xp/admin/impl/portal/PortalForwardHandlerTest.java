@@ -7,8 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -76,10 +75,10 @@ public class PortalForwardHandlerTest
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
         Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
-        final PortalRequest portalRequest = PortalRequestAccessor.get( this.req );
-        Assert.assertNotNull( portalRequest );
-        Assert.assertEquals( "/admin/portal/edit", portalRequest.getBaseUri() );
-        Assert.assertEquals( RenderMode.EDIT, portalRequest.getMode() );
+        final PortalAttributes portalAttributes = (PortalAttributes) this.req.getAttribute( PortalAttributes.class.getName() );
+        Assert.assertNotNull( portalAttributes );
+        Assert.assertEquals( "/admin/portal/edit", portalAttributes.getBaseUri() );
+        Assert.assertEquals( RenderMode.EDIT, portalAttributes.getRenderMode() );
     }
 
     @Test
@@ -93,9 +92,9 @@ public class PortalForwardHandlerTest
         Assert.assertEquals( "/portal/ws/a/b", this.res.getForwardedUrl() );
         Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
 
-        final PortalRequest portalRequest = PortalRequestAccessor.get( this.req );
-        Assert.assertNotNull( portalRequest );
-        Assert.assertEquals( "/admin/portal/preview", portalRequest.getBaseUri() );
-        Assert.assertEquals( RenderMode.PREVIEW, portalRequest.getMode() );
+        final PortalAttributes portalAttributes = (PortalAttributes) this.req.getAttribute( PortalAttributes.class.getName() );
+        Assert.assertNotNull( portalAttributes );
+        Assert.assertEquals( "/admin/portal/preview", portalAttributes.getBaseUri() );
+        Assert.assertEquals( RenderMode.PREVIEW, portalAttributes.getRenderMode() );
     }
 }
