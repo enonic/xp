@@ -64,7 +64,7 @@ public final class PortalDispatcher
         result.setMethod( req.getMethod() );
         result.setBaseUri( BASE_URI );
 
-        final String rawPath = req.getPathInfo();
+        final String rawPath = req.getRequestURI();
         result.setBranch( findBranch( rawPath ) );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
