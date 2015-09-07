@@ -88,7 +88,7 @@ module app.wizard {
         private createTree(content: Content, pageView: PageView) {
             this.tree = new PageComponentsTreeGrid(content, pageView);
 
-            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {debugger;
+            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 if (!event.isNew()) {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
@@ -181,7 +181,7 @@ module app.wizard {
                 }
             };
             this.tree.getGrid().subscribeOnClick(this.clickListener);
-            this.tree.onSelectionChanged((data, nodes) => {debugger;
+            this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
                     nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
 
