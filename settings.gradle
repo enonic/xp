@@ -42,6 +42,8 @@ include 'lib-mustache'
 include 'lib-xslt'
 include 'lib-thymeleaf'
 
+include 'repack-jmustache'
+
 rootProject.name = 'xp'
 
 rootProject.children.each { project ->
