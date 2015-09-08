@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 
 import org.osgi.service.component.annotations.Activate;
@@ -57,6 +58,15 @@ public final class MailServiceImpl
         throws Exception
     {
         final Address[] to = message.getRecipients( Message.RecipientType.TO );
-        this.session.getTransport().sendMessage( message, to );
+        final Transport transport = this.session.getTransport();
+        transport.connect();
+        try
+        {
+            transport.sendMessage( message, to );
+        }
+        finally
+        {
+            transport.close();
+        }
     }
 }

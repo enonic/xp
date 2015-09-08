@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.mail;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -10,6 +9,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +18,8 @@ import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class SendMailHandler
     implements MailMessage, ScriptBean
@@ -101,7 +103,7 @@ public final class SendMailHandler
         throws Exception
     {
         message.setSubject( this.subject );
-        message.setText( this.body, "UTF-8" );
+        message.setText( nullToEmpty( this.body ), "UTF-8" );
 
         message.addFrom( toAddresses( this.from ) );
         message.addRecipients( Message.RecipientType.TO, toAddresses( this.to ) );
@@ -134,7 +136,7 @@ public final class SendMailHandler
     private InternetAddress[] toAddresses( final String[] addressList )
         throws Exception
     {
-        return Stream.of( addressList ).filter( Objects::nonNull ).map( ( this::toAddress ) ).toArray( InternetAddress[]::new );
+        return Stream.of( addressList ).filter( StringUtils::isNotBlank ).map( ( this::toAddress ) ).toArray( InternetAddress[]::new );
     }
 
     @Override
