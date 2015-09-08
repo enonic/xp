@@ -30,7 +30,7 @@
   <bundle level="30">org.apache.tika:tika-core:1.6</bundle>
   <bundle level="30">org.apache.tika:tika-bundle:1.6</bundle>
   <bundle level="30">${group}:repack-jparsec:${version}</bundle>
-  <bundle level="30">com.enonic.osgi.bundles:jhlabs-filters:2.0.235_1</bundle>
+  <bundle level="30">${group}:repack-jhlabs-filters:${version}</bundle>
   <bundle level="30">com.enonic.osgi.bundles:elasticsearch:1.4.4_1</bundle>
 
   <!-- Core app bundles -->

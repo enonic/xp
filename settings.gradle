@@ -46,6 +46,7 @@ include 'repack-jmustache'
 include 'repack-jparsec'
 include 'repack-attoparser'
 include 'repack-resteasy'
+include 'repack-jhlabs-filters'
 
 rootProject.name = 'xp'
 
