@@ -60,6 +60,10 @@ module app.wizard {
                 prependClasses("components-grid"));
         }
 
+        queryScrollable(): api.dom.Element {
+            return this;
+        }
+
         setPageView(pageView: PageView) {
             this.pageView = pageView;
             this.reload();
