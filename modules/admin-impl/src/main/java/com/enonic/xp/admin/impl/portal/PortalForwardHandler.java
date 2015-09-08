@@ -6,8 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -63,14 +62,15 @@ public final class PortalForwardHandler
         res.sendError( HttpServletResponse.SC_NOT_FOUND );
     }
 
-    private void forwardToPortal( final RenderMode mode, final String path, final HttpServletRequest req, final HttpServletResponse res )
+    private void forwardToPortal( final RenderMode renderMode, final String path, final HttpServletRequest req,
+                                  final HttpServletResponse res )
         throws Exception
     {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setBaseUri( PREFIX + "/" + mode.toString() );
-        portalRequest.setMode( mode );
+        final PortalAttributes portalAttributes = new PortalAttributes();
+        portalAttributes.setBaseUri( PREFIX + "/" + renderMode.toString() );
+        portalAttributes.setRenderMode( renderMode );
+        req.setAttribute( PortalAttributes.class.getName(), portalAttributes );
 
-        PortalRequestAccessor.set( req, portalRequest );
         final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/" + path );
         dispatcher.forward( req, res );
     }
