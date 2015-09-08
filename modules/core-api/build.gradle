@@ -7,8 +7,8 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.1'
     compile 'com.enonic.osgi.bundles:jparsec:2.1.0_1'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.osgi:org.osgi.core:5.0.0'
-    compile 'org.osgi:org.osgi.compendium:5.0.0'
+    compile 'org.osgi:osgi.core:6.0.0'
+    compile 'org.osgi:osgi.cmpn:6.0.0'
     compile 'org.slf4j:slf4j-api:1.7.10'
 }
 
