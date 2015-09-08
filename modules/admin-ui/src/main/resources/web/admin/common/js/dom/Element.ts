@@ -775,6 +775,13 @@ module api.dom {
             this.getEl().addEventListener("DOMMouseScroll", listener);
         }
 
+        unScrolled(listener: (event: WheelEvent) => void) {
+            // IE9, Chrome, Safari, Opera
+            this.getEl().removeEventListener("mousewheel", listener);
+            // Firefox
+            this.getEl().removeEventListener("DOMMouseScroll", listener);
+        }
+
         onClicked(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("click", listener);
         }
