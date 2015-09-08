@@ -48,6 +48,36 @@ public class ControllerScriptImpl_requestTest
     }
 
     @Test
+    public void testCookiesParsedFromResponse()
+        throws Exception
+    {
+        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setScheme( "http" );
+        this.portalRequest.setHost( "enonic.com" );
+        this.portalRequest.setPort( 80 );
+        this.portalRequest.setPath( "/my/page" );
+        this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
+        this.portalRequest.setBranch( Branch.from( "master" ) );
+        this.portalRequest.setMode( RenderMode.EDIT );
+        this.portalRequest.getParams().put( "debug", "true" );
+        this.portalRequest.getHeaders().put( "Language", "en" );
+
+        execute( "myapplication:/controller/requestWithCookies.js" );
+
+        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertNotNull( this.portalResponse.getCookies() );
+        assertEquals( 4, this.portalResponse.getCookies().size() );
+        assertEquals( "plain1", this.portalResponse.getCookies().get( 0 ).getName() );
+        assertEquals( "value2", this.portalResponse.getCookies().get( 1 ).getValue() );
+        assertEquals( 2000, this.portalResponse.getCookies().get( 2 ).getMaxAge() );
+        assertEquals( "/valid/path", this.portalResponse.getCookies().get( 2 ).getPath() );
+        assertEquals( "Some cookie comments", this.portalResponse.getCookies().get( 2 ).getComment() );
+        assertEquals( true, this.portalResponse.getCookies().get( 3 ).getSecure() );
+        assertEquals( true, this.portalResponse.getCookies().get( 3 ).isHttpOnly() );
+        assertEquals( "enonic.com", this.portalResponse.getCookies().get( 3 ).getDomain() );
+    }
+
+    @Test
     public void testHead()
         throws Exception
     {
