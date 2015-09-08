@@ -42,6 +42,7 @@
   <bundle level="30">${group}:core-image:${version}</bundle>
   <bundle level="30">${group}:core-export:${version}</bundle>
   <bundle level="30">${group}:core-impl:${version}</bundle>
+  <bundle level="30">${group}:core-mail:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="30">${group}:script-api:${version}</bundle>
