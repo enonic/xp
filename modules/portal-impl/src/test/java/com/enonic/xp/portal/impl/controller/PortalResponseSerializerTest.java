@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.controller;
 
+import javax.servlet.http.Cookie;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,5 +105,20 @@ public class PortalResponseSerializerTest
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Value", result.getHeaders().get( "X-MyHeader" ) );
         assertEquals( "With headers", result.getBody() );
+    }
+
+    @Test
+    public void testCookiesWithResult()
+    {
+        this.responseBuilder.contentType( "text/plain" ).cookie( new Cookie( "test-cookie", "cookie-value" ) );
+        this.serializer = new PortalResponseSerializer( responseBuilder.build() );
+        final PortalResponse result = this.serializer.serialize();
+
+        assertNotNull( result );
+        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
+        assertNotNull( result.getCookies().get( 0 ) );
+        assertEquals( "test-cookie", result.getCookies().get( 0 ).getName() );
+        assertEquals( "cookie-value", result.getCookies().get( 0 ).getValue() );
     }
 }
