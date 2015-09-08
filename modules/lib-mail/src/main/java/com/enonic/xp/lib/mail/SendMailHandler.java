@@ -19,6 +19,8 @@ import com.enonic.xp.mail.MailService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 public final class SendMailHandler
     implements MailMessage, ScriptBean
 {
@@ -101,7 +103,7 @@ public final class SendMailHandler
         throws Exception
     {
         message.setSubject( this.subject );
-        message.setText( this.body, "UTF-8" );
+        message.setText( nullToEmpty( this.body ), "UTF-8" );
 
         message.addFrom( toAddresses( this.from ) );
         message.addRecipients( Message.RecipientType.TO, toAddresses( this.to ) );
