@@ -1,6 +1,5 @@
 package com.enonic.xp.mail.impl;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.mail.Message;
@@ -9,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.mockito.Mockito;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
@@ -23,45 +23,12 @@ public class MailServiceImplTest
     public void setUp()
         throws Exception
     {
+        final MailConfig config = Mockito.mock( MailConfig.class );
+        Mockito.when( config.smtpHost() ).thenReturn( "localhost" );
+        Mockito.when( config.smtpPort() ).thenReturn( 25 );
+
         this.mailService = new MailServiceImpl();
-        this.mailService.activate( new MailConfig()
-        {
-            @Override
-            public String smtpHost()
-            {
-                return "localhost";
-            }
-
-            @Override
-            public int smtpPort()
-            {
-                return 25;
-            }
-
-            @Override
-            public boolean smtpAuth()
-            {
-                return false;
-            }
-
-            @Override
-            public String smtpUser()
-            {
-                return null;
-            }
-
-            @Override
-            public String smtpPassword()
-            {
-                return null;
-            }
-
-            @Override
-            public Class<? extends Annotation> annotationType()
-            {
-                return MailConfig.class;
-            }
-        } );
+        this.mailService.activate( config );
     }
 
     @After
