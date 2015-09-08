@@ -31,7 +31,7 @@
   <bundle level="30">org.apache.tika:tika-bundle:1.6</bundle>
   <bundle level="30">${group}:repack-jparsec:${version}</bundle>
   <bundle level="30">${group}:repack-jhlabs-filters:${version}</bundle>
-  <bundle level="30">${group}:repack-jhlabs-elasticsearch:${version}</bundle>
+  <bundle level="30">${group}:repack-elasticsearch:${version}</bundle>
 
   <!-- Core app bundles -->
   <bundle level="30">${group}:core-api:${version}</bundle>
