@@ -44,6 +44,7 @@ include 'lib-thymeleaf'
 
 include 'repack-jmustache'
 include 'repack-jparsec'
+include 'repack-attoparser'
 
 rootProject.name = 'xp'
 
