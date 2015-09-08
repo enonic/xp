@@ -59,6 +59,10 @@ public final class ContentInitializer
             principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
             allowAll().
             build() ).
+        add( AccessControlEntry.create().
+            principal( RoleKeys.CONTENT_MANAGER_APP ).
+            allow( Permission.READ ).
+            build() ).
         build();
 
     private static final IndexPath CONTENT_INDEX_PATH_DISPLAY_NAME = IndexPath.from( "displayName" );
