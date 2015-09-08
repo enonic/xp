@@ -48,7 +48,7 @@
   <bundle level="30">${group}:script-impl:${version}</bundle>
 
   <!-- Web app dependencies -->
-  <bundle level="30">com.enonic.osgi.bundles:resteasy:3.0.8_1</bundle>
+  <bundle level="30">${group}:repack-resteasy:${version}</bundle>
 
   <!-- Web app -->
   <bundle level="30">${group}:web-api:${version}</bundle>
