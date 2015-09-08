@@ -702,6 +702,10 @@ module api.liveedit {
             };
         }
 
+        getContextMenuActions(): api.ui.Action[] {
+            return this.contextMenuActions;
+        }
+
         toItemViewArray(): ItemView[] {
 
             return [this];
