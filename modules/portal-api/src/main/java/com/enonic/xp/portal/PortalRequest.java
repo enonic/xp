@@ -2,7 +2,10 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -60,6 +63,10 @@ public final class PortalRequest
     private ApplicationKey applicationKey;
 
     private PageDescriptor pageDescriptor;
+
+    private String endpointPath;
+
+    private HttpServletRequest rawRequest;
 
     public PortalRequest()
     {
@@ -250,5 +257,30 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
+    }
+
+    public String getEndpointPath()
+    {
+        return this.endpointPath;
+    }
+
+    public void setEndpointPath( final String endpointPath )
+    {
+        this.endpointPath = Strings.emptyToNull( endpointPath );
+    }
+
+    public String getContentType()
+    {
+        return this.rawRequest.getContentType();
+    }
+
+    public HttpServletRequest getRawRequest()
+    {
+        return rawRequest;
+    }
+
+    public void setRawRequest( final HttpServletRequest rawRequest )
+    {
+        this.rawRequest = rawRequest;
     }
 }
