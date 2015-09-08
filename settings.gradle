@@ -43,6 +43,7 @@ include 'lib-xslt'
 include 'lib-thymeleaf'
 
 include 'repack-jmustache'
+include 'repack-jparsec'
 
 rootProject.name = 'xp'
 
