@@ -89,6 +89,10 @@ module api.ui.image {
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
         private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
 
+        private maskScrollListener: (event: WheelEvent) => void;
+        private maskClickListener: (event: MouseEvent) => void;
+        private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
+
         public static debug = false;
 
         constructor(src?: string) {
@@ -424,7 +428,48 @@ module api.ui.image {
             }
         }
 
+
         private setShaderVisible(visible: boolean) {
+            if (ImageEditor.debug) {
+                console.log('setShaderVisible', visible);
+            }
+
+            var bodyMask = api.ui.mask.BodyMask.get();
+            if (visible) {
+                if (!this.maskClickListener) {
+                    this.maskClickListener = (event) => {
+                        if (this.isCropEditMode()) {
+                            this.disableCropEditMode();
+                        } else if (this.isFocusEditMode()) {
+                            this.disableFocusEditMode();
+                        }
+                        bodyMask.hide();
+                    };
+                }
+                bodyMask.onClicked(this.maskClickListener);
+
+                if (!this.maskScrollListener) {
+                    this.maskScrollListener = (event: WheelEvent) => {
+                        var el = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
+                        el.scrollTop(el.scrollTop() + event.deltaY);
+                    };
+                }
+                bodyMask.onScrolled(this.maskScrollListener);
+
+                if (!this.maskHideListener) {
+                    this.maskHideListener = (event: api.dom.ElementHiddenEvent) => {
+                        bodyMask.unClicked(this.maskClickListener);
+                        bodyMask.unScrolled(this.maskScrollListener);
+                        bodyMask.unHidden(this.maskHideListener);
+                    }
+                }
+                bodyMask.onHidden(this.maskHideListener);
+
+                bodyMask.show();
+            } else {
+                bodyMask.hide();
+            }
+
             this.notifyShaderVisibilityChanged(visible);
         }
 
@@ -595,6 +640,7 @@ module api.ui.image {
                 console.log('edit=' + edit + ', applyChanges=' + applyChanges);
             }
 
+            this.setShaderVisible(edit);
             this.toggleClass('edit-mode', edit);
             this.updateStickyToolbar();
 
@@ -691,7 +737,6 @@ module api.ui.image {
             }
             this.toggleClass('edit-focus', edit);
             this.setImageClipPath(this.focusClipPath);
-            this.setShaderVisible(edit);
         }
 
         isFocusEditMode(): boolean {
@@ -992,7 +1037,6 @@ module api.ui.image {
             }
             this.toggleClass('edit-crop', edit);
             this.setImageClipPath(this.cropClipPath);
-            this.setShaderVisible(edit);
         }
 
         isCropEditMode(): boolean {
