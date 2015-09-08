@@ -2,10 +2,9 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web-api' )
-    compile 'com.enonic.osgi.bundles:resteasy:3.0.8_1'
+    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
     compile 'org.apache.httpcomponents:httpmime:4.3.4'
     compile 'org.apache.httpcomponents:httpclient:4.3.4'
-
     testCompile project( path: ':web-api', configuration: 'testOutput' )
 }
 
