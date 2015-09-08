@@ -8,16 +8,10 @@ import com.google.common.collect.Multimap;
 
 public class StorageData
 {
-    private final String parent;
-
-    private final String routing;
-
     private final Multimap<String, Object> values;
 
     private StorageData( Builder builder )
     {
-        this.parent = builder.parent;
-        this.routing = builder.routing;
         this.values = builder.values;
     }
 
@@ -36,38 +30,12 @@ public class StorageData
         return values;
     }
 
-    public String getParent()
-    {
-        return parent;
-    }
-
-    public String getRouting()
-    {
-        return routing;
-    }
-
     public static final class Builder
     {
-        private String parent;
-
-        private String routing;
-
         final Multimap<String, Object> values = ArrayListMultimap.create();
 
         private Builder()
         {
-        }
-
-        public Builder parent( String parent )
-        {
-            this.parent = parent;
-            return this;
-        }
-
-        public Builder routing( String routing )
-        {
-            this.routing = routing;
-            return this;
         }
 
         public Builder add( final String key, final Object value )

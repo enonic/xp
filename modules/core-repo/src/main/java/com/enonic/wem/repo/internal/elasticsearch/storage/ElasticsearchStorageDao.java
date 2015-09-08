@@ -30,7 +30,6 @@ import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
 import com.enonic.wem.repo.internal.storage.SearchPreference;
 import com.enonic.wem.repo.internal.storage.StorageDao;
-import com.enonic.wem.repo.internal.storage.StorageData;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
@@ -48,7 +47,6 @@ public class ElasticsearchStorageDao
     public String store( final StoreRequest request )
     {
         final StorageSettings settings = request.getSettings();
-        final StorageData data = request.getData();
 
         final IndexRequest indexRequest = Requests.indexRequest().
             index( settings.getStorageName().getName() ).
@@ -57,14 +55,14 @@ public class ElasticsearchStorageDao
             id( request.getId() ).
             refresh( request.isForceRefresh() );
 
-        if ( data.getRouting() != null )
+        if ( request.getRouting() != null )
         {
-            indexRequest.routing( data.getRouting() );
+            indexRequest.routing( request.getRouting() );
         }
 
-        if ( data.getParent() != null )
+        if ( request.getParent() != null )
         {
-            indexRequest.parent( data.getParent() );
+            indexRequest.parent( request.getParent() );
         }
 
         return doStore( indexRequest, request.getTimeout() );

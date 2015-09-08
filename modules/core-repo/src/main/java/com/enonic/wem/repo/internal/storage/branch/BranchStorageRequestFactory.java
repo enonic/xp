@@ -36,8 +36,6 @@ public class BranchStorageRequestFactory
             add( BranchIndexPath.STATE.getPath(), node.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), node.path().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(), node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).
-            parent( new NodeVersionDocumentId( node.id(), doc.getNodeVersionId() ).toString() ).
-            routing( node.id().toString() ).
             build();
 
         return StoreRequest.create().
@@ -49,6 +47,8 @@ public class BranchStorageRequestFactory
                 storageType( StaticStorageType.BRANCH ).
                 build() ).
             data( data ).
+            parent( new NodeVersionDocumentId( node.id(), doc.getNodeVersionId() ).toString() ).
+            routing( node.id().toString() ).
             build();
     }
 

@@ -18,6 +18,10 @@ public class StoreRequest
 
     private final NodePath path;
 
+    private final String parent;
+
+    private final String routing;
+
     private StoreRequest( Builder builder )
     {
         this.data = builder.data;
@@ -26,6 +30,8 @@ public class StoreRequest
         this.timeout = builder.timeout;
         this.id = builder.id;
         this.path = builder.path;
+        this.routing = builder.routing;
+        this.parent = builder.parent;
 
     }
 
@@ -79,6 +85,16 @@ public class StoreRequest
         return path;
     }
 
+    public String getParent()
+    {
+        return parent;
+    }
+
+    public String getRouting()
+    {
+        return routing;
+    }
+
     public static final class Builder
     {
         private StorageData data;
@@ -93,6 +109,9 @@ public class StoreRequest
 
         private NodePath path;
 
+        private String parent;
+
+        private String routing;
 
         private Builder()
         {
@@ -134,6 +153,17 @@ public class StoreRequest
             return this;
         }
 
+        public Builder parent( final String parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder routing( final String routing )
+        {
+            this.routing = routing;
+            return this;
+        }
 
         public StoreRequest build()
         {
