@@ -47,6 +47,11 @@ public class SystemDumpResource
         return Paths.get( HomeDir.get().toString(), "data", "dump", name ).toAbsolutePath();
     }
 
+    private java.nio.file.Path getDataHome()
+    {
+        return Paths.get( HomeDir.get().toString(), "data" );
+    }
+
     @POST
     @Path("dump")
     public NodeExportResultsJson dump( final SystemDumpRequestJson request )
@@ -77,6 +82,12 @@ public class SystemDumpResource
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
     {
         final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
+
+        if ( !rootDir.toFile().exists() )
+        {
+            throw new IllegalArgumentException( "No dump with name '" + dumpName + "' found in " + getDataHome() );
+        }
+
         final java.nio.file.Path importPath = rootDir.resolve( repoName ).resolve( branch );
 
         return getContext( branch, repoName ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().

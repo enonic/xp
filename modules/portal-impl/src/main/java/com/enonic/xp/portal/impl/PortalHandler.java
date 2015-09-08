@@ -1,36 +1,14 @@
 package com.enonic.xp.portal.impl;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 
-import com.enonic.xp.portal.impl.resource.RootResourceFactory;
-import com.enonic.xp.portal.impl.services.PortalServices;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.jaxrs.JaxRsHandler;
-
-@Component(immediate = true, service = WebHandler.class)
-public final class PortalHandler
-    extends JaxRsHandler
+public interface PortalHandler
 {
-    private final PortalJaxRsFeature portalJaxRsFeature;
+    int getOrder();
 
-    private final RootResourceFactory root;
+    boolean canHandle( PortalRequest req );
 
-    public PortalHandler()
-    {
-        setOrder( MAX_ORDER - 30 );
-        setPath( "/portal/" );
-
-        this.portalJaxRsFeature = new PortalJaxRsFeature();
-        this.root = new RootResourceFactory();
-        addSingleton( this.portalJaxRsFeature );
-        addSingleton( this.root );
-    }
-
-    @Reference
-    public void setServices( final PortalServices services )
-    {
-        this.portalJaxRsFeature.setServices( services );
-        this.root.setServices( services );
-    }
+    PortalResponse handle( PortalRequest req )
+        throws Exception;
 }

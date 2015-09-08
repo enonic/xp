@@ -213,12 +213,12 @@ final class ErrorPageBuilder
 
     private void buildSourceInfo( final HtmlBuilder html )
     {
-        if ( !( this.cause instanceof ResourceProblemException ) )
+        if ( this.cause == null || !( this.cause.getCause() instanceof ResourceProblemException ) )
         {
             return;
         }
 
-        final ResourceProblemException problem = ( (ResourceProblemException) this.cause ).getInnerError();
+        final ResourceProblemException problem = ( (ResourceProblemException) this.cause.getCause() ).getInnerError();
         if ( problem.getResource() != null )
         {
             html.open( "h2" );

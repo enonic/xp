@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
@@ -50,7 +51,9 @@ public final class XmlNodeParser
             this.builder.id( NodeId.from( id ) );
         }
 
-        this.builder.timestamp( root.getChildValue( "timestamp" ) != null ? Instant.parse( root.getChildValue( "timestamp" ) ) : null );
+        final String timestampString = root.getChildValue( "timestamp" );
+        this.builder.timestamp(
+            timestampString != null && StringUtils.isNotBlank( timestampString ) ? Instant.parse( timestampString ) : null );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );

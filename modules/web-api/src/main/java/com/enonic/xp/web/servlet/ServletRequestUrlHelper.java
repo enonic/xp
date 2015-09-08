@@ -77,7 +77,8 @@ public final class ServletRequestUrlHelper
 
     public static int getPort( final HttpServletRequest req )
     {
-        return getHostAndPort( req ).getPort();
+        final HostAndPort hostAndPort = getHostAndPort( req );
+        return hostAndPort.getPortOrDefault( -1 );
     }
 
     public static HostAndPort getHostAndPort()
@@ -90,7 +91,8 @@ public final class ServletRequestUrlHelper
         final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
         if ( xForwardedHost != null )
         {
-            return HostAndPort.fromString( xForwardedHost );
+            final HostAndPort hostAndPort = HostAndPort.fromString( xForwardedHost );
+            return hostAndPort.withDefaultPort( req.getServerPort() );
         }
 
         return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
@@ -162,9 +164,10 @@ public final class ServletRequestUrlHelper
 
     private static boolean needPortNumber( final String scheme, final int port )
     {
+        final boolean isNegative = port < 0;
         final boolean isHttp = "http".equals( scheme ) && ( 80 == port );
         final boolean isHttps = "https".equals( scheme ) && ( 443 == port );
-        return !( isHttp || isHttps );
+        return !( isNegative || isHttp || isHttps );
     }
 
     public static UriRewritingResult rewriteUri( final String uri )

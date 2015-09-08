@@ -125,4 +125,17 @@ public enum HttpStatus
     {
         return Integer.toString( this.value );
     }
+
+    public static HttpStatus from( final int value )
+    {
+        for ( final HttpStatus status : HttpStatus.values() )
+        {
+            if ( status.value == value )
+            {
+                return status;
+            }
+        }
+
+        return null;
+    }
 }

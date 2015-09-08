@@ -4,6 +4,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -55,6 +56,7 @@ public class SystemDumpResourceTest
         assertJson( "dump.json", result );
     }
 
+    @Ignore
     @Test
     public void load()
         throws Exception
