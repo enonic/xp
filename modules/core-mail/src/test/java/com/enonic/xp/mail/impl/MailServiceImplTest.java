@@ -1,6 +1,6 @@
 package com.enonic.xp.mail.impl;
 
-import java.util.HashMap;
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.mail.Message;
@@ -17,43 +17,86 @@ import static org.junit.Assert.*;
 
 public class MailServiceImplTest
 {
-    MailServiceImpl mailService;
+    private MailServiceImpl mailService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()
+        throws Exception
+    {
         this.mailService = new MailServiceImpl();
-        this.mailService.activate( new HashMap<>() );
+        this.mailService.activate( new MailConfig()
+        {
+            @Override
+            public String smtpHost()
+            {
+                return "localhost";
+            }
+
+            @Override
+            public int smtpPort()
+            {
+                return 25;
+            }
+
+            @Override
+            public boolean smtpAuth()
+            {
+                return false;
+            }
+
+            @Override
+            public String smtpUser()
+            {
+                return null;
+            }
+
+            @Override
+            public String smtpPassword()
+            {
+                return null;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType()
+            {
+                return MailConfig.class;
+            }
+        } );
     }
 
     @After
-    public void tearDown() throws Exception {
-       Mailbox.clearAll();
+    public void tearDown()
+        throws Exception
+    {
+        Mailbox.clearAll();
     }
 
     @Test
-    public void sendTest() throws Exception {
-
+    public void sendTest()
+        throws Exception
+    {
         this.mailService.send( createMockMessage() );
 
         List<Message> inbox = Mailbox.get( "testuser@mockserver.com" );
         assertEquals( 1, inbox.size() );
     }
 
-    @Test (expected = MailException.class)
-    public void sessionNotActivatedTest() throws Exception {
+    @Test(expected = MailException.class)
+    public void sessionNotActivatedTest()
+        throws Exception
+    {
 
         MailServiceImpl mailService = new MailServiceImpl();
 
         mailService.send( createMockMessage() );
     }
 
-    private MailMessage createMockMessage() {
-        return  msg -> {
+    private MailMessage createMockMessage()
+    {
+        return msg -> {
             msg.setRecipients( Message.RecipientType.TO, "testuser@mockserver.com" );
             msg.setSubject( "Some Subject" );
             msg.setText( "sometext" );
         };
     }
-
-
 }

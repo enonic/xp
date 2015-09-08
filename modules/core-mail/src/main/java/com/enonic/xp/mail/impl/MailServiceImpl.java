@@ -1,9 +1,11 @@
 package com.enonic.xp.mail.impl;
 
-import java.util.Map;
+import java.util.Properties;
 
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
@@ -22,10 +24,23 @@ public final class MailServiceImpl
     private Session session;
 
     @Activate
-    public void activate( final Map<String, String> config )
+    public void activate( final MailConfig config )
         throws Exception
     {
-        session = new MailConfigurator( config ).configure();
+        System.out.println( "# configure..." );
+        System.out.println( config.smtpHost() );
+        System.out.println( config.smtpPort() );
+
+        final Properties properties = new Properties();
+
+        properties.put( "mail.transport.protocol", "smtp" );
+        properties.put( "mail.smtp.host", config.smtpHost() );
+        properties.put( "mail.smtp.port", config.smtpPort() );
+
+        final boolean auth = config.smtpAuth();
+        properties.put( "mail.smtp.auth", Boolean.toString( auth ) );
+
+        this.session = Session.getInstance( properties, auth ? createAuthenticator( config ) : null );
     }
 
     @Override
@@ -60,6 +75,7 @@ public final class MailServiceImpl
         final Address[] to = message.getRecipients( Message.RecipientType.TO );
         final Transport transport = this.session.getTransport();
         transport.connect();
+
         try
         {
             transport.sendMessage( message, to );
@@ -68,5 +84,16 @@ public final class MailServiceImpl
         {
             transport.close();
         }
+    }
+
+    private Authenticator createAuthenticator( final MailConfig config )
+    {
+        return new javax.mail.Authenticator()
+        {
+            protected PasswordAuthentication getPasswordAuthentication()
+            {
+                return new PasswordAuthentication( config.smtpUser(), config.smtpPassword() );
+            }
+        };
     }
 }
