@@ -5,6 +5,7 @@ include 'core-repo'
 include 'core-security'
 include 'core-image'
 include 'core-export'
+include 'core-mail'
 include 'core-impl'
 include 'core-itest'
 
