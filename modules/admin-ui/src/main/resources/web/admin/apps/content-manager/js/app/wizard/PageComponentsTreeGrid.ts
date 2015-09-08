@@ -16,6 +16,7 @@ module app.wizard {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import Content = api.content.Content;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
@@ -34,6 +35,15 @@ module app.wizard {
                         setField("displayName").
                         setFormatter(this.nameFormatter.bind(this)).
                         setMinWidth(250).
+                        build(),
+                    new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                        setName("Menu").
+                        setId("menu").
+                        setMinWidth(45).
+                        setMaxWidth(45).
+                        setField("menu").
+                        setCssClass("menu-icon").
+                        setFormatter(this.menuFormatter).
                         build()
                 ]).
                 setOptions(
@@ -116,6 +126,14 @@ module app.wizard {
                 children = layoutView.getRegions();
             }
             return children;
+        }
+
+        private menuFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var wrapper = new api.dom.SpanEl();
+
+            var icon = new api.dom.DivEl("icon-menu3 menu-icon");
+            wrapper.getEl().setInnerHtml(icon.toString());
+            return wrapper.toString();
         }
 
     }

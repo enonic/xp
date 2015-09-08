@@ -25,6 +25,7 @@ module app.wizard {
         private content: Content;
         private pageView: PageView;
         private liveEditPage: LiveEditPageProxy;
+        private contextMenu: api.liveedit.ItemViewContextMenu;
 
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
@@ -90,7 +91,13 @@ module app.wizard {
 
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 if (!event.isNew()) {
-                    this.tree.selectNode(this.tree.getDataId(event.getItemView()));
+                    var selectedItemId = this.tree.getDataId(event.getItemView());
+                    this.tree.selectNode(selectedItemId);
+
+                    if(!event.getPosition()) {
+                        this.scrollToItem(selectedItemId);
+                    }
+
                 }
             });
 
@@ -170,6 +177,10 @@ module app.wizard {
 
                 this.tree.getGrid().selectRow(data.row);
 
+                if(this.isMenuIconClicked(data.cell)) {
+                    this.showContextMenu(this.tree.getGrid().getDataView().getItem(data.row).getData().getContextMenuActions(), {x: event.pageX, y: event.pageY});
+                }
+
                 if (this.isModal()) {
                     this.hide();
                 }
@@ -178,13 +189,24 @@ module app.wizard {
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
                     nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
-                    nodes[0].getData().scrollComponentIntoView();
 
                     if (this.isModal()) {
                         this.hide();
                     }
                 }
+
+                this.hideContextMenu();
             });
+
+            this.tree.getGrid().subscribeOnContextMenu((event) => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                var cell = this.tree.getGrid().getCellFromEvent(event);
+
+                this.showContextMenu(this.tree.getGrid().getDataView().getItem(cell.row).getData().getContextMenuActions(), {x: event.pageX, y: event.pageY});
+            });
+
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
@@ -256,6 +278,8 @@ module app.wizard {
                             this.constrainToParent(newOffset);
 
                             lastPos = newPos;
+
+                            this.hideContextMenu();
                         }
                     }
                 }
@@ -323,6 +347,36 @@ module app.wizard {
             this.modal = modal;
             return this;
         }
+
+        private scrollToItem(dataId: string) {
+            this.tree.getRoot().getCurrentRoot().findNode(dataId).getData().scrollComponentIntoView();
+        }
+
+        private isMenuIconClicked(cellNumber: number): boolean {
+            return cellNumber == 1;
+        }
+
+        private showContextMenu(contextMenuActions: api.ui.Action[], clickPosition: api.liveedit.Position) {
+            if (!this.contextMenu) {
+                this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
+            }
+            else {
+                this.contextMenu.setActions(contextMenuActions);
+            }
+
+            // show menu at position
+            var x = clickPosition.x;
+            var y = clickPosition.y;
+
+            this.contextMenu.showAt(x, y, false);
+        }
+
+        private hideContextMenu() {
+            if (this.contextMenu) {
+                this.contextMenu.hide();
+            }
+        }
+
     }
 
 }
