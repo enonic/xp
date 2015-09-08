@@ -47,6 +47,7 @@ include 'repack-jparsec'
 include 'repack-attoparser'
 include 'repack-resteasy'
 include 'repack-jhlabs-filters'
+include 'repack-elasticsearch'
 
 rootProject.name = 'xp'
 
