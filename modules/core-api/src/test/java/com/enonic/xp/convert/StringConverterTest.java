@@ -17,5 +17,6 @@ public class StringConverterTest
     {
         assertEquals( "true", Converters.convert( true, String.class ) );
         assertEquals( "11", Converters.convert( 11, String.class ) );
+        assertEquals( "default", Converters.convertOrDefault( null, String.class, "default" ) );
     }
 }

@@ -10,6 +10,7 @@ dependencies {
     compile 'org.osgi:org.osgi.core:5.0.0'
     compile 'org.osgi:org.osgi.compendium:5.0.0'
     compile 'org.slf4j:slf4j-api:1.7.10'
+    compile 'javax.mail:mail:1.4.7'
 }
 
 bundle {

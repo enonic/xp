@@ -19,5 +19,6 @@ public class ContentPathConverterTest
     public void testToString()
     {
         assertEquals( ContentPath.from( "/some/path" ), Converters.convert( "/some/path", ContentPath.class ) );
+        assertEquals( ContentPath.from( "/some/path" ), Converters.convertOrDefault( null, ContentPath.class, ContentPath.from( "/some/path" ) ) );
     }
 }

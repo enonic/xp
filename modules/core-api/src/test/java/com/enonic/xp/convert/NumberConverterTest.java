@@ -37,5 +37,6 @@ public abstract class NumberConverterTest<T extends Number>
         assertEquals( this.num, Converters.convert( 11L, this.type ) );
         assertEquals( this.num, Converters.convert( 11.0f, this.type ) );
         assertEquals( this.num, Converters.convert( 11.0d, this.type ) );
+        assertEquals( this.num, Converters.convertOrDefault( null, this.type, this.num ) );
     }
 }
