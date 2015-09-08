@@ -29,7 +29,14 @@ final class SessionWrapper
     @Override
     public Object getAttribute( final String key )
     {
-        return this.httpSession.getAttribute( key );
+        try
+        {
+            return this.httpSession.getAttribute( key );
+        }
+        catch ( IllegalStateException e )
+        {
+            return null;
+        }
     }
 
     @Override
