@@ -84,9 +84,9 @@ public class ImageServiceImplTest
     {
         final ReadImageParams readImageParams =
             ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).format( "png" ).build();
-        final byte[] imageData = imageService.readImage( readImageParams );
+        final ByteSource imageData = imageService.readImage( readImageParams );
 
-        Assert.assertArrayEquals( imageDataOriginal, imageData );
+        Assert.assertArrayEquals( imageDataOriginal, imageData.read() );
     }
 
     @Test
@@ -107,12 +107,12 @@ public class ImageServiceImplTest
             orientation( ImageOrientation.BottomLeft ).
             build();
 
-        byte[] imageData = imageService.readImage( readImageParams );
-        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData );
+        ByteSource imageData = imageService.readImage( readImageParams );
+        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
         Mockito.verify( imageFilter ).filter( Mockito.any() );
 
         imageData = imageService.readImage( readImageParams );
-        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData );
+        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
         Mockito.verify( imageFilter ).filter( Mockito.any() );
     }
 
