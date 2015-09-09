@@ -90,6 +90,7 @@ module api.ui.image {
         private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
 
         private maskWheelListener: (event: WheelEvent) => void;
+        private maskClickListener: (event: MouseEvent) => void;
         private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
 
         public static debug = false;
@@ -438,6 +439,17 @@ module api.ui.image {
 
             var bodyMask = api.ui.mask.BodyMask.get();
             if (visible) {
+                if (!this.maskClickListener) {
+                    this.maskClickListener = (event) => {
+                        if (this.isCropEditMode()) {
+                            this.disableCropEditMode();
+                        } else if (this.isFocusEditMode()) {
+                            this.disableFocusEditMode();
+                        }
+                        bodyMask.hide();
+                    };
+                }
+                bodyMask.onClicked(this.maskClickListener);
 
                 if (!this.maskWheelListener) {
                     this.maskWheelListener = (event: WheelEvent) => {
@@ -449,6 +461,7 @@ module api.ui.image {
 
                 if (!this.maskHideListener) {
                     this.maskHideListener = (event: api.dom.ElementHiddenEvent) => {
+                        bodyMask.unClicked(this.maskClickListener);
                         bodyMask.unMouseWheel(this.maskWheelListener);
                         bodyMask.unHidden(this.maskHideListener);
                     }
@@ -459,6 +472,8 @@ module api.ui.image {
             } else {
                 bodyMask.hide();
             }
+
+            this.notifyShaderVisibilityChanged(visible);
         }
 
         // Reasonable defaults
