@@ -3,7 +3,7 @@ module api.liveedit {
     export class ItemViewContextMenu extends api.dom.DivEl {
 
         private title: ItemViewContextMenuTitle;
-        private menu: api.ui.menu.ContextMenu;
+        private menu: api.ui.menu.TreeContextMenu;
         private arrow: ItemViewContextMenuArrow;
 
         constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
@@ -52,8 +52,8 @@ module api.liveedit {
                 this.appendChild(this.title);
             }
 
-            this.menu = new api.ui.menu.ContextMenu(actions, false).setHideOnItemClick(false);
-            this.menu.onItemClicked((item: api.ui.menu.MenuItem) => {
+            this.menu = new api.ui.menu.TreeContextMenu(actions, false);
+            this.menu.onItemClicked(() => {
                 this.hide();
             });
             this.appendChild(this.menu);
@@ -78,10 +78,6 @@ module api.liveedit {
 
         moveBy(dx: number, dy: number) {
             this.menu.moveBy.call(this, dx, dy);
-        }
-
-        setActions(actions: api.ui.Action[]) {
-            this.menu.setActions(actions);
         }
 
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {

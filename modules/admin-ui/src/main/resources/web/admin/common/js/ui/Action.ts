@@ -20,6 +20,10 @@ module api.ui {
 
         private propertyChangedListeners: Function[] = [];
 
+        private childActions: Action[] = [];
+
+        private parentAction: Action;
+
         constructor(label: string, shortcut?: string, global?: boolean) {
             this.label = label;
 
@@ -37,6 +41,23 @@ module api.ui {
                     return false;
                 });
             }
+        }
+
+        appendChildAction(action: Action) {
+            action.parentAction = this;
+            this.childActions.push(action);
+        }
+
+        hasChildActions(): boolean {
+            return this.childActions.length > 0;
+        }
+
+        hasParentAction(): boolean {
+            return !!this.parentAction;
+        }
+
+        getChildActions(): Action[] {
+            return this.childActions;
         }
 
         getLabel(): string {
