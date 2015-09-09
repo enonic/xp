@@ -60,7 +60,7 @@ public abstract class ImageBaseResourceTest
 
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( ByteSource.wrap( imageData ) );
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( imageData ) );
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageData );
     }
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )

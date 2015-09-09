@@ -1,0 +1,17 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile( 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final' ) {
+        exclude group: 'org.jboss.spec.javax.annotation'
+    }
+    compile 'javax.annotation:javax.annotation-api:1.2'
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP - Resteasy Repack'
+    instruction 'Export-Package', 'org.jboss.resteasy.*;version=3.0.8'
+    instruction 'Export-Package', 'javax.annotation.*;-split-package:=merge-first'
+    instruction 'Export-Package', 'javax.ws.rs.*;version=2.0'
+    instruction 'Import-Package', '*;resolution:=optional'
+    instruction 'Private-Package', 'META-INF.services.*;-split-package:=merge-first'
+}

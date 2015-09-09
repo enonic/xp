@@ -1,0 +1,18 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile( 'org.elasticsearch:elasticsearch:1.4.4' ) {
+        exclude group: 'org.antlr'
+        exclude group: 'org.ow2.asm'
+    }
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP - Elasticsearch Repack'
+    instruction 'Export-Package', 'org.elasticsearch.*'
+    instruction 'Export-Package', 'com.spatial4j.*'
+    instruction 'Export-Package', 'org.apache.lucene.*;-split-package:=merge-first'
+    instruction 'Export-Package', 'org.tartarus.*'
+    instruction 'Import-Package', '*;resolution:=optional'
+    instruction 'Private-Package', 'config.*,META-INF.services.*;-split-package:=merge-first'
+}

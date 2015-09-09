@@ -17,6 +17,7 @@ public class ControllerScriptImpl_requestTest
     {
         this.portalRequest.setMethod( "GET" );
         this.portalRequest.setPort( 80 );
+
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );

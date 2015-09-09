@@ -20,15 +20,13 @@ import static org.junit.Assert.*;
 
 
 public class ImageUrlBuilderTest
-
 {
-    private PortalUrlBuilder urlBuilder;
+    private ImageUrlBuilder urlBuilder;
 
     private ImageUrlParams imageUrlParams;
 
     private Content content;
-
-
+    
     @Before
     public void init()
     {

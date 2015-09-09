@@ -10,7 +10,6 @@
   "params": {
     "debug": "true"
   },
-  "formParams": {},
   "headers": {
     "Language": "en",
     "Cookies": "mycookie=123; other=abc;"

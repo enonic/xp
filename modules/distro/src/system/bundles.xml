@@ -4,8 +4,8 @@
   <!-- Core bundles -->
   <bundle level="5">org.apache.felix:org.apache.felix.metatype:1.1.2</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.eventadmin:1.4.4</bundle>
-  <bundle level="5">org.apache.felix:org.apache.felix.configadmin:1.8.0</bundle>
-  <bundle level="5">org.apache.felix:org.apache.felix.scr:1.8.2</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.configadmin:1.8.8</bundle>
+  <bundle level="5">org.apache.felix:org.apache.felix.scr:2.0.0</bundle>
   <bundle level="5">org.apache.felix:org.apache.felix.fileinstall:3.5.0</bundle>
 
   <!-- Shell bundles -->
@@ -29,9 +29,9 @@
   <bundle level="30">com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.1</bundle>
   <bundle level="30">org.apache.tika:tika-core:1.6</bundle>
   <bundle level="30">org.apache.tika:tika-bundle:1.6</bundle>
-  <bundle level="30">com.enonic.osgi.bundles:jparsec:2.1.0_1</bundle>
-  <bundle level="30">com.enonic.osgi.bundles:jhlabs-filters:2.0.235_1</bundle>
-  <bundle level="30">com.enonic.osgi.bundles:elasticsearch:1.4.4_1</bundle>
+  <bundle level="30">${group}:repack-jparsec:${version}</bundle>
+  <bundle level="30">${group}:repack-jhlabs-filters:${version}</bundle>
+  <bundle level="30">${group}:repack-elasticsearch:${version}</bundle>
 
   <!-- Core app bundles -->
   <bundle level="30">${group}:core-api:${version}</bundle>
@@ -42,13 +42,14 @@
   <bundle level="30">${group}:core-image:${version}</bundle>
   <bundle level="30">${group}:core-export:${version}</bundle>
   <bundle level="30">${group}:core-impl:${version}</bundle>
+  <bundle level="30">${group}:core-mail:${version}</bundle>
 
   <!-- Script app -->
   <bundle level="30">${group}:script-api:${version}</bundle>
   <bundle level="30">${group}:script-impl:${version}</bundle>
 
   <!-- Web app dependencies -->
-  <bundle level="30">com.enonic.osgi.bundles:resteasy:3.0.8_1</bundle>
+  <bundle level="30">${group}:repack-resteasy:${version}</bundle>
 
   <!-- Web app -->
   <bundle level="30">${group}:web-api:${version}</bundle>
@@ -57,8 +58,8 @@
   <bundle level="30">${group}:web-jaxrs:${version}</bundle>
 
   <!-- Portal app dependencies -->
-  <bundle level="30">com.enonic.osgi.bundles:jmustache:1.9.0_1</bundle>
-  <bundle level="30">com.enonic.osgi.bundles:attoparser:1.3.0_1</bundle>
+  <bundle level="30">${group}:repack-jmustache:${version}</bundle>
+  <bundle level="30">${group}:repack-attoparser:${version}</bundle>
 
   <!-- Portal app -->
   <bundle level="30">${group}:portal-api:${version}</bundle>

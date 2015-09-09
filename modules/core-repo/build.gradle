@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core-api' )
-    compile 'com.enonic.osgi.bundles:elasticsearch:1.4.4_1'
+    compile 'org.elasticsearch:elasticsearch:1.4.4'
     testCompile project( path: ':core-api', configuration: 'testOutput' )
 }
 

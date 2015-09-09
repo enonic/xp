@@ -21,6 +21,7 @@ public class BooleanConverterTest
         assertEquals( true, Converters.convert( "1", Boolean.class ) );
         assertEquals( false, Converters.convert( "jepp", Boolean.class ) );
         assertEquals( false, Converters.convert( "false", Boolean.class ) );
+        assertEquals( true, Converters.convertOrDefault( null, Boolean.class, true ) );
     }
 
     @Test

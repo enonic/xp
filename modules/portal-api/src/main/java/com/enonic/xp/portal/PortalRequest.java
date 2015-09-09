@@ -2,7 +2,10 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -26,8 +29,6 @@ public final class PortalRequest
     private String method;
 
     private final Multimap<String, String> params;
-
-    private final Multimap<String, String> formParams;
 
     private final Map<String, String> headers;
 
@@ -63,6 +64,10 @@ public final class PortalRequest
 
     private PageDescriptor pageDescriptor;
 
+    private String endpointPath;
+
+    private HttpServletRequest rawRequest;
+
     public PortalRequest()
     {
         this.baseUri = "";
@@ -70,7 +75,6 @@ public final class PortalRequest
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
-        this.formParams = HashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
@@ -88,11 +92,6 @@ public final class PortalRequest
     public Multimap<String, String> getParams()
     {
         return this.params;
-    }
-
-    public Multimap<String, String> getFormParams()
-    {
-        return this.formParams;
     }
 
     public String getScheme()
@@ -258,5 +257,30 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
+    }
+
+    public String getEndpointPath()
+    {
+        return this.endpointPath;
+    }
+
+    public void setEndpointPath( final String endpointPath )
+    {
+        this.endpointPath = Strings.emptyToNull( endpointPath );
+    }
+
+    public String getContentType()
+    {
+        return this.rawRequest.getContentType();
+    }
+
+    public HttpServletRequest getRawRequest()
+    {
+        return rawRequest;
+    }
+
+    public void setRawRequest( final HttpServletRequest rawRequest )
+    {
+        this.rawRequest = rawRequest;
     }
 }
