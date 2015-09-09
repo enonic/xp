@@ -138,8 +138,30 @@ module api.liveedit {
             this.mouseDownLastTarget = <HTMLElement> event.target;
         }
 
+        private createChildAction(label: string, cls: string): api.ui.Action {
+            var action = new api.ui.Action(label).onExecuted(() => {
+                console.log("Inserting " + label);
+            });
+            action.setIconClass(cls);
+
+            return action;
+        }
+
+        private createInsertAction(): api.ui.Action {
+            var insertAction = new api.ui.Action('Insert');
+
+            insertAction.appendChildAction(this.createChildAction("Image", "live-edit-font-icon-image icon"));
+            insertAction.appendChildAction(this.createChildAction("Part", "live-edit-font-icon-part icon"));
+            insertAction.appendChildAction(this.createChildAction("Layout", "live-edit-font-icon-layout icon"));
+            insertAction.appendChildAction(this.createChildAction("Text", "live-edit-font-icon-text icon"));
+
+            return insertAction;
+        }
+
         private createRegionContextMenuActions() {
             var actions: api.ui.Action[] = [];
+
+            actions.push(this.createInsertAction());
             actions.push(new api.ui.Action('Select parent').onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
