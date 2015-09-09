@@ -55,6 +55,8 @@ module api.ui.treegrid {
 
         private loadBufferSize: number;
 
+        private scrollable: api.dom.Element;
+
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
@@ -172,6 +174,10 @@ module api.ui.treegrid {
             }
 
             var keyBindings = [];
+
+            this.grid.onShown(() => {
+                this.scrollable = this.queryScrollable();
+            });
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
@@ -352,11 +358,9 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
-        scrollToRow(row: number) {
-            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
-            var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
-            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
-            var scrollEl = viewport.getEl();
+        private scrollToRow(row: number) {
+            var scrollEl = this.scrollable.getEl();
+
             if (row > -1 && this.grid.getSelectedRows().length > 0) {
                 if (scrollEl.getScrollTop() > row * 45) {
                     scrollEl.setScrollTop(row * 45);
@@ -364,6 +368,12 @@ module api.ui.treegrid {
                     scrollEl.setScrollTop((row + 1) * 45 - scrollEl.getHeight());
                 }
             }
+        }
+
+        queryScrollable(): api.dom.Element {
+            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
+            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
+            return viewport;
         }
 
         private loadEmptyNode(node: TreeNode<DATA>) {
