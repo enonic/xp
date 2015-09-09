@@ -93,7 +93,9 @@ module api.ui.image {
         private maskClickListener: (event: MouseEvent) => void;
         private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
 
-        public static debug = false;
+        private skipNextOutsideClick: boolean;
+
+        public static debug = true;
 
         constructor(src?: string) {
             super('image-editor');
@@ -432,6 +434,19 @@ module api.ui.image {
             this.frame.getEl().setHeightPx(this.cropData.h);
         }
 
+        private isOutside(event: MouseEvent) {
+            var el = this.getEl(),
+                offset = el.getOffset(),
+                bottom = offset.top + el.getHeightWithBorder(),
+                right = offset.left + el.getWidthWithBorder(),
+                scrollOffset = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).offset();
+
+            return event.clientX < Math.max(scrollOffset.left, offset.left) ||
+                   event.clientX > right ||
+                   event.clientY < Math.max(scrollOffset.top, offset.top) ||
+                   event.clientY > bottom;
+        }
+
         private setShaderVisible(visible: boolean) {
             if (ImageEditor.debug) {
                 console.log('setShaderVisible', visible);
@@ -440,16 +455,34 @@ module api.ui.image {
             var bodyMask = api.ui.mask.BodyMask.get();
             if (visible) {
                 if (!this.maskClickListener) {
-                    this.maskClickListener = (event) => {
-                        if (this.isCropEditMode()) {
-                            this.disableCropEditMode();
-                        } else if (this.isFocusEditMode()) {
-                            this.disableFocusEditMode();
+                    this.maskClickListener = (event: MouseEvent) => {
+
+                        if (ImageEditor.debug) {
+                            console.log('maskClickListener', event);
                         }
-                        bodyMask.hide();
+
+                        if (this.isOutside(event)) {
+                            event.stopPropagation();
+                            event.preventDefault();
+
+                            if (this.skipNextOutsideClick) {
+                                if (ImageEditor.debug) {
+                                    console.log('maskClickListener, skipping mask click as requested earlier');
+                                }
+                                this.skipNextOutsideClick = false;
+                                return;
+                            }
+
+                            if (this.isCropEditMode()) {
+                                this.disableCropEditMode();
+                            } else if (this.isFocusEditMode()) {
+                                this.disableFocusEditMode();
+                            }
+                            bodyMask.hide();
+                        }
                     };
                 }
-                bodyMask.onClicked(this.maskClickListener);
+                api.dom.Body.get().onClicked(this.maskClickListener);
 
                 if (!this.maskWheelListener) {
                     this.maskWheelListener = (event: WheelEvent) => {
@@ -461,7 +494,7 @@ module api.ui.image {
 
                 if (!this.maskHideListener) {
                     this.maskHideListener = (event: api.dom.ElementHiddenEvent) => {
-                        bodyMask.unClicked(this.maskClickListener);
+                        api.dom.Body.get().unClicked(this.maskClickListener);
                         bodyMask.unMouseWheel(this.maskWheelListener);
                         bodyMask.unHidden(this.maskHideListener);
                     }
@@ -681,7 +714,7 @@ module api.ui.image {
 
         private getRelativeScrollTop(): number {
             var scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
-                wizardToolbarHeight = this.isEditMode() ? 0 : scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).outerHeight(true);
+                wizardToolbarHeight = this.isEditMode() ? 0 : scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).innerHeight();
 
             return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
         }
@@ -1236,14 +1269,19 @@ module api.ui.image {
                 console.log('ImageEditor.bindCropMouseListeners');
             }
 
+            // FF doesn't generate click after mouse down - up events if their originalTarget properties don't match
+            // Chrome doesn't have such property
+            var mouseDownOriginalTarget;
+
             this.dragMouseDownListener = (event: MouseEvent) => {
                 event.stopPropagation();
                 event.preventDefault();
 
                 if (ImageEditor.debug) {
-                    console.log('ImageEditor.dragMouseListener');
+                    console.group('ImageEditor.dragMouseListener');
+                    console.log('mouse down', event);
                 }
-
+                mouseDownOriginalTarget = event['originalTarget'];
                 dragMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -1258,9 +1296,9 @@ module api.ui.image {
                 event.preventDefault();
 
                 if (ImageEditor.debug) {
-                    console.log('ImageEditor.knobMouseListener');
+                    console.log('ImageEditor.knobMouseListener', event);
                 }
-
+                mouseDownOriginalTarget = event['originalTarget'];
                 zoomMouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -1271,17 +1309,22 @@ module api.ui.image {
             this.zoomKnob.onMouseDown(this.knobMouseDownListener);
 
             this.mouseDownListener = (event: MouseEvent) => {
+                event.stopPropagation();
+                event.preventDefault();
+
                 var x = this.getOffsetX(event),
                     y = this.getOffsetY(event);
 
                 if (ImageEditor.debug) {
-                    console.log('ImageEditor.mouseDownListener');
+                    console.group('ImageEditor.mouseDownListener');
+                    console.log('mouse down', event);
                 }
 
                 if (this.isInsideCrop(x, y)) {
                     if (ImageEditor.debug) {
                         console.log('click inside crop area');
                     }
+                    mouseDownOriginalTarget = event['originalTarget'];
                     panMouseDown = true;
                     lastPos = {
                         x: x,
@@ -1344,7 +1387,17 @@ module api.ui.image {
 
             this.mouseUpListener = (event: MouseEvent) => {
                 if (ImageEditor.debug) {
-                    console.log('ImageEditor.mouseUpListener');
+                    console.log('mouse up', event);
+                }
+
+                if (this.isOutside(event) && mouseDownOriginalTarget == event['originalTarget'] &&
+                    (dragMouseDown || zoomMouseDown || panMouseDown)) {
+                    if (ImageEditor.debug) {
+                        console.log('mouseUpListener, set to skip next click');
+                    }
+
+                    // mouse up will trigger click event that should not be processed
+                    this.skipNextOutsideClick = true;
                 }
 
                 if (dragMouseDown) {
@@ -1355,6 +1408,10 @@ module api.ui.image {
                     this.zoomContainer.removeClass('active');
                 } else if (panMouseDown) {
                     panMouseDown = false;
+                }
+
+                if (ImageEditor.debug) {
+                    console.groupEnd();
                 }
             };
             api.dom.Body.get().onMouseUp(this.mouseUpListener);
