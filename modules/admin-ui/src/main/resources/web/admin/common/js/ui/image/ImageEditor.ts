@@ -89,6 +89,9 @@ module api.ui.image {
         private autoCropChangedListeners: {(auto: boolean): void}[] = [];
         private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
 
+        private maskWheelListener: (event: WheelEvent) => void;
+        private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
+
         public static debug = false;
 
         constructor(src?: string) {
@@ -429,7 +432,83 @@ module api.ui.image {
         }
 
         private setShaderVisible(visible: boolean) {
-            this.notifyShaderVisibilityChanged(visible);
+            if (ImageEditor.debug) {
+                console.log('setShaderVisible', visible);
+            }
+
+            var bodyMask = api.ui.mask.BodyMask.get();
+            if (visible) {
+
+                if (!this.maskWheelListener) {
+                    this.maskWheelListener = (event: WheelEvent) => {
+                        var el = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
+                        el.scrollTop(el.scrollTop() + this.normalizeWheel(event).pixelY);
+                    };
+                }
+                bodyMask.onMouseWheel(this.maskWheelListener);
+
+                if (!this.maskHideListener) {
+                    this.maskHideListener = (event: api.dom.ElementHiddenEvent) => {
+                        bodyMask.unMouseWheel(this.maskWheelListener);
+                        bodyMask.unHidden(this.maskHideListener);
+                    }
+                }
+                bodyMask.onHidden(this.maskHideListener);
+
+                bodyMask.show();
+            } else {
+                bodyMask.hide();
+            }
+        }
+
+        // Reasonable defaults
+        private WHEEL_PIXEL_STEP = 10;
+        private WHEEL_LINE_HEIGHT = 20;
+        private WHEEL_PAGE_HEIGHT = 800;
+
+        // https://github.com/facebook/fixed-data-table/blob/master/dist/fixed-data-table.js#L2052
+        private normalizeWheel(event) {
+            var sX = 0, sY = 0,       // spinX, spinY
+                pX = 0, pY = 0;       // pixelX, pixelY
+
+            // Legacy
+            if ('detail'      in event) { sY = event.detail; }
+            if ('wheelDelta'  in event) { sY = -event.wheelDelta / 120; }
+            if ('wheelDeltaY' in event) { sY = -event.wheelDeltaY / 120; }
+            if ('wheelDeltaX' in event) { sX = -event.wheelDeltaX / 120; }
+
+            // side scrolling on FF with DOMMouseScroll
+            if ('axis' in event && event.axis === event.HORIZONTAL_AXIS) {
+                sX = sY;
+                sY = 0;
+            }
+
+            pX = sX * this.WHEEL_PIXEL_STEP;
+            pY = sY * this.WHEEL_PIXEL_STEP;
+
+            if ('deltaY' in event) { pY = event.deltaY; }
+            if ('deltaX' in event) { pX = event.deltaX; }
+
+            if ((pX || pY) && event.deltaMode) {
+                if (event.deltaMode == 1) {          // delta in LINE units
+                    pX *= this.WHEEL_LINE_HEIGHT;
+                    pY *= this.WHEEL_LINE_HEIGHT;
+                } else {                             // delta in PAGE units
+                    pX *= this.WHEEL_PAGE_HEIGHT;
+                    pY *= this.WHEEL_PAGE_HEIGHT;
+                }
+            }
+
+            // Fall-back if spin cannot be determined
+            if (pX && !sX) { sX = (pX < 1) ? -1 : 1; }
+            if (pY && !sY) { sY = (pY < 1) ? -1 : 1; }
+
+            return {
+                spinX: sX,
+                spinY: sY,
+                pixelX: pX,
+                pixelY: pY
+            };
         }
 
         private createStickyToolbar(): DivEl {
@@ -598,6 +677,7 @@ module api.ui.image {
                 console.log('edit=' + edit + ', applyChanges=' + applyChanges);
             }
 
+            this.setShaderVisible(edit);
             this.toggleClass('edit-mode', edit);
             this.updateStickyToolbar();
 
@@ -694,7 +774,6 @@ module api.ui.image {
             }
             this.toggleClass('edit-focus', edit);
             this.setImageClipPath(this.focusClipPath);
-            this.setShaderVisible(edit);
         }
 
         isFocusEditMode(): boolean {
@@ -995,7 +1074,6 @@ module api.ui.image {
             }
             this.toggleClass('edit-crop', edit);
             this.setImageClipPath(this.cropClipPath);
-            this.setShaderVisible(edit);
         }
 
         isCropEditMode(): boolean {

@@ -286,8 +286,13 @@ module app.wizard {
                 onSuccess(this);
             }, onError);
 
-            this.initPanelMask();
             this.initPublishButtonForMobile();
+
+            api.app.wizard.MaskContentWizardPanelEvent.on(event => {
+                if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
+                    this.actions.suspendActions(event.isMask());
+                }
+            });
         }
 
         getContentType(): ContentType {
@@ -1058,23 +1063,6 @@ module app.wizard {
                     this.metadataStepFormByName[key].layout(formContext, extraData.getData(), this.metadataStepFormByName[key].getForm());
                 }
             }
-        }
-
-        private initPanelMask() {
-            var mask = new api.ui.mask.Mask(this.formPanel);
-            this.appendChild(mask);
-
-            api.app.wizard.MaskContentWizardPanelEvent.on(event => {
-                if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
-                    if (event.isMask()) {
-                        mask.show();
-                    } else {
-                        mask.hide();
-                    }
-                    //mask.setVisible(event.isMask());
-                    this.actions.suspendActions(event.isMask());
-                }
-            });
         }
 
         private initPublishButtonForMobile() {
