@@ -125,7 +125,7 @@ public final class ContentImageResource
                         orientation( imageOrientation ).
                         build();
 
-                    final byte[] contentImage = imageService.readImage( readImageParams );
+                    final ByteSource contentImage = imageService.readImage( readImageParams );
                     return new ResolvedImage( contentImage, attachment.getMimeType() );
                 }
                 catch ( IOException e )
