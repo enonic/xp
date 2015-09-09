@@ -42,3 +42,5 @@
 ///<reference path='AsideEl.ts' />
 ///<reference path='SectionEl.ts' />
 ///<reference path='ArticleEl.ts' />
+///<reference path='DlEl.ts' />
+///<reference path='DdDtEl.ts' />
