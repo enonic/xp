@@ -22,6 +22,8 @@ module api.content {
         private originalHeight: number;
         private originalWidth: number;
 
+        private static SELECTED_CLASS = 'selected';
+
         private scaleWidth: boolean; // parameter states if width of the image must be preferred over its height during resolving
 
         constructor(config: ImageUploaderConfig) {
@@ -29,6 +31,9 @@ module api.content {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png'}
                 ];
+            }
+            if (config.dropAlwaysAllowed == undefined) {
+                config.dropAlwaysAllowed = true;
             }
 
             super(config);
@@ -70,7 +75,7 @@ module api.content {
 
             this.onFocus(() => {
                 setTimeout(() => {
-                    if (this.imageEditors.length && !this.imageEditors[0].hasClass('selected')) {
+                    if (this.imageEditors.length && !this.imageEditors[0].hasClass(ImageUploader.SELECTED_CLASS)) {
                         this.toggleSelected(this.imageEditors[0]);
                     }
                 }, 150);
@@ -94,8 +99,8 @@ module api.content {
 
             api.dom.Body.get().onClicked((event: MouseEvent) => {
                 this.imageEditors.forEach((imageEditor: ImageEditor) => {
-                    if (imageEditor.hasClass('selected') && imageEditor.getImage().getHTMLElement() !== event.target) {
-                        imageEditor.removeClass('selected');
+                    if (imageEditor.hasClass(ImageUploader.SELECTED_CLASS) && imageEditor.getImage().getHTMLElement() !== event.target) {
+                        imageEditor.removeClass(ImageUploader.SELECTED_CLASS);
                     }
                 });
             });
@@ -134,8 +139,7 @@ module api.content {
 
         private createImageEditor(imgUrl: string): ImageEditor {
 
-            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight());
-            this.getResultContainer().getEl().addClass("placeholder");
+            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight()).addClass("placeholder");
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
@@ -145,7 +149,7 @@ module api.content {
             imageEditor.onCropAutoPositionedChanged((auto: boolean) => this.notifyCropAutoPositionedChanged(auto));
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.getResultContainer().getEl().removeClass("placeholder");
+                this.getResultContainer().getEl().setHeight('auto').removeClass("placeholder");
             });
 
             imageEditor.getUploadButton().onClicked(() => {
@@ -154,6 +158,19 @@ module api.content {
 
             imageEditor.getLastButtonInContainer().onBlur(() => {
                 this.toggleSelected(imageEditor);
+            });
+
+            var wasSelected;
+            imageEditor.getImage().onDragEnter((event) => {
+                wasSelected = this.hasClass(ImageUploader.SELECTED_CLASS);
+                if (!wasSelected) {
+                    imageEditor.addClass(ImageUploader.SELECTED_CLASS);
+                }
+            });
+            imageEditor.getImage().onDragLeave((event) => {
+                if (!wasSelected) {
+                    imageEditor.removeClass(ImageUploader.SELECTED_CLASS);
+                }
             });
 
             return imageEditor;
@@ -167,9 +184,9 @@ module api.content {
             var contentId = new api.content.ContentId(value),
                 imgUrl = new ContentImageUrlResolver().
                     setContentId(contentId).
-                setTimestamp(new Date()).
-                setSource(true).
-                resolve();
+                    setTimestamp(new Date()).
+                    setSource(true).
+                    resolve();
 
             var imageEditor = this.createImageEditor(imgUrl);
 
@@ -183,7 +200,7 @@ module api.content {
         }
 
         private toggleSelected(imageEditor: ImageEditor) {
-            imageEditor.toggleClass('selected');
+            imageEditor.toggleClass(ImageUploader.SELECTED_CLASS);
         }
 
         setFocalPoint(x: number, y: number) {
