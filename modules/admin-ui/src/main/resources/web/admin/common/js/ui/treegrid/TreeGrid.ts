@@ -139,6 +139,9 @@ module api.ui.treegrid {
                         this.active = true;
                         this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
+                        if (!elem.hasClass("sort-dialog-trigger")) {
+                            new api.content.TreeGridItemClickedEvent().fire();
+                        }
                     }
                 }
                 if (this.contextMenu) {

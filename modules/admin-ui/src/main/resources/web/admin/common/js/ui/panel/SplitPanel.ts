@@ -305,6 +305,7 @@ module api.ui.panel {
 
             if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
                 this.firstPanelSize = (dragOffset / splitPanelSize) * 100;
+                this.setSecondPanelSize(100 - this.firstPanelSize, SplitPanelUnit.PERCENT);
             } else {
                 this.firstPanelSize = dragOffset;
             }
@@ -413,7 +414,7 @@ module api.ui.panel {
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
                 this.splitter.getEl().setWidthPx(this.getSplitterThickness()).setHeight(null);
                 ResponsiveManager.fireResizeEvent();
-                if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
+                if (this.firstPanelUnit == SplitPanelUnit.PERCENT && this.secondPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.getSplitterThickness() / 2) + "px)");
                 } else {

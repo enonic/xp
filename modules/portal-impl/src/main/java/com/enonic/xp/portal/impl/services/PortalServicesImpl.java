@@ -9,6 +9,7 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.rest.PortalRestServiceRegistry;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceService;
@@ -37,6 +38,8 @@ public final class PortalServicesImpl
     private ResourceService resourceService;
 
     private ImageService imageService;
+
+    private PortalRestServiceRegistry portalRestServiceRegistry;
 
     @Override
     public ApplicationService getApplicationService()
@@ -98,6 +101,12 @@ public final class PortalServicesImpl
         return imageService;
     }
 
+    @Override
+    public PortalRestServiceRegistry getPortalRestServiceRegistry()
+    {
+        return portalRestServiceRegistry;
+    }
+
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {
@@ -156,5 +165,11 @@ public final class PortalServicesImpl
     public void setImageService( final ImageService imageService )
     {
         this.imageService = imageService;
+    }
+
+    @Reference
+    public void setPortalRestServiceRegistry( final PortalRestServiceRegistry portalRestServiceRegistry )
+    {
+        this.portalRestServiceRegistry = portalRestServiceRegistry;
     }
 }
