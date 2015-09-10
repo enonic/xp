@@ -79,8 +79,7 @@ final class ImageHandlerWorker
             quality( getImageQuality() ).
             build();
 
-        final byte[] imageData = this.imageService.readImage( readImageParams );
-        final ByteSource source = ByteSource.wrap( imageData );
+        final ByteSource source = this.imageService.readImage( readImageParams );
 
         this.response.status( 200 );
         this.response.body( source );
