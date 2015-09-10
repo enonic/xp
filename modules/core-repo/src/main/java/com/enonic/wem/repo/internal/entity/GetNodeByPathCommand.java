@@ -42,7 +42,7 @@ public class GetNodeByPathCommand
         }
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( node ) : node;
     }

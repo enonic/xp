@@ -33,7 +33,7 @@ public class GetNodesByPathsCommand
         final NodeVersionIds nodeVersionIds = builder.build();
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( nodeDao.getByVersionIds( nodeVersionIds ) ) : nodeDao.getByVersionIds( nodeVersionIds );
     }

@@ -291,7 +291,6 @@ public class MoveNodeCommandTest
         assertEquals( 1, getVersions( node ).getHits() );
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );
-
         assertNotNull( getNodeByPath( NodePath.create( node.path(), child1.name().toString() ).build() ) );
 
         final Node movedNode = MoveNodeCommand.create().
@@ -311,10 +310,7 @@ public class MoveNodeCommandTest
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );
 
-        refresh();
-
-        final NodePath previousChild1Path = NodePath.create( node.path(), child1.name().toString() ).
-            build();
+        final NodePath previousChild1Path = child1.path();
         assertNull( getNodeByPath( previousChild1Path ) );
 
         final NodePath newChild1Path = NodePath.create( movedNode.path(), child1.name().toString() ).

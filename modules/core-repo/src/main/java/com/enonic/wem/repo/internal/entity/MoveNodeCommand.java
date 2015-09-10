@@ -4,9 +4,7 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.GetNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -87,9 +85,21 @@ public class MoveNodeCommand
         return existingNode.parentPath().equals( newParentPath ) && existingNode.name().equals( newNodeName );
     }
 
-    protected Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
+    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
     {
         final Node persistedNode = doGetById( id, true );
+
+        Nodes persistedChildren = Nodes.empty();
+
+        if ( persistedNode.getHasChildren() )
+        {
+            persistedChildren = GetNodesByParentCommand.create( this ).
+                params( GetNodesByParentParams.create().
+                    parentId( persistedNode.id() ).
+                    build() ).
+                build().
+                execute();
+        }
 
         NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
@@ -148,20 +158,15 @@ public class MoveNodeCommand
                 execute();
         }
 
-        if ( persistedNode.getHasChildren() )
+        for ( final Node child : persistedChildren )
         {
-            final Nodes children = getChildren( persistedNode );
-
-            for ( final Node child : children )
-            {
-                doMoveNode( nodeToMove.path(), child.name(), child.id(), checkExistingNode );
-            }
+            doMoveNode( nodeToMove.path(), child.name(), child.id(), checkExistingNode );
         }
 
         return movedNode;
     }
 
-    public Node getExistingNode( final NodePath newParentNodePath, final NodeName newNodeName )
+    private Node getExistingNode( final NodePath newParentNodePath, final NodeName newNodeName )
     {
         final NodePath newNodePath = NodePath.create( newParentNodePath, newNodeName.toString() ).build();
 
@@ -170,21 +175,6 @@ public class MoveNodeCommand
             resolveHasChild( false ).
             build().
             execute();
-    }
-
-    private Nodes getChildren( final Node parentNode )
-    {
-        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
-            build() );
-
-        if ( result.isEmpty() )
-        {
-            return Nodes.empty();
-        }
-
-        return result.getNodes();
     }
 
     public static Builder create()

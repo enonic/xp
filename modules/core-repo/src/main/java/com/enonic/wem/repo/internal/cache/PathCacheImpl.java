@@ -1,9 +1,9 @@
 package com.enonic.wem.repo.internal.cache;
 
-import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -17,7 +17,7 @@ public class PathCacheImpl
     private final Map<String, CachePath> idMap = Maps.newHashMap();
 
     @Override
-    public void put( final CachePath path, final String id )
+    public void cache( final CachePath path, final String id )
     {
         final CachePath parentPath = path.getParentPath();
 
@@ -41,13 +41,13 @@ public class PathCacheImpl
     }
 
     @Override
-    public void remove( final CachePath nodePath )
+    public void evict( final CachePath nodePath )
     {
         doRemove( nodePath );
     }
 
     @Override
-    public void remove( final String id )
+    public void evict( final String id )
     {
         doRemove( id );
     }
@@ -74,9 +74,15 @@ public class PathCacheImpl
     }
 
     @Override
-    public Collection<String> getChildren( final CachePath path )
+    public CachePath get( final String id )
     {
-        return childMap.get( path );
+        return idMap.get( id );
+    }
+
+    @Override
+    public ImmutableSet<String> getChildren( final CachePath path )
+    {
+        return ImmutableSet.copyOf( childMap.get( path ) );
     }
 
 }

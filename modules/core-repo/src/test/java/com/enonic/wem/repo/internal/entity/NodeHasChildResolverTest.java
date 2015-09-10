@@ -37,7 +37,7 @@ public class NodeHasChildResolverTest
             build() );
 
         final Node resolvedNode = NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( parentNode );
 
@@ -74,7 +74,7 @@ public class NodeHasChildResolverTest
             build() );
 
         final Nodes resolvedNodes = NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
 
@@ -94,7 +94,7 @@ public class NodeHasChildResolverTest
             build() );
 
         final Node resolvedNode = NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( parentNode );
 

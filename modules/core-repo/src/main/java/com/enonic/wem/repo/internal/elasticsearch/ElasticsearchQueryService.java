@@ -21,12 +21,8 @@ import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
@@ -109,30 +105,6 @@ public class ElasticsearchQueryService
         final Set<ReturnValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
 
         return fieldValuesToVersionIds( fieldValues );
-    }
-
-    @Override
-    public boolean hasChildren( final NodePath parentPath, final IndexContext indexContext )
-    {
-        final Context context = ContextAccessor.current();
-
-        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.PARENT_PATH.getPath() ).
-                addValue( ValueFactory.newString( parentPath.toString() ) ).
-                build() ).
-            build();
-
-        final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
-            indexType( context.getBranch().getName() ).
-            query( queryBuilder ).
-            build();
-
-        final long count = elasticsearchDao.count( query );
-
-        return count > 0;
     }
 
     private NodeVersionIds fieldValuesToVersionIds( final Collection<ReturnValue> fieldValues )

@@ -27,7 +27,7 @@ public class PathCacheImplTest
 
         final CachePath a = createPath( "a" );
 
-        cache.put( a, "1" );
+        cache.cache( a, "1" );
         assertEquals( "1", cache.get( a ) );
     }
 
@@ -37,8 +37,8 @@ public class PathCacheImplTest
     {
         final PathCacheImpl cache = new PathCacheImpl();
 
-        cache.put( createPath( "a" ), "1" );
-        cache.put( createPath( "a/b" ), "2" );
+        cache.cache( createPath( "a" ), "1" );
+        cache.cache( createPath( "a/b" ), "2" );
 
         final Collection<String> children = cache.getChildren( createPath( "a" ) );
         assertEquals( 1, children.size() );
@@ -51,11 +51,11 @@ public class PathCacheImplTest
     {
         final PathCacheImpl cache = new PathCacheImpl();
 
-        cache.put( createPath( "a" ), "1" );
-        cache.put( createPath( "a/b" ), "4" );
-        cache.put( createPath( "a/d" ), "2" );
-        cache.put( createPath( "a/c" ), "3" );
-        cache.put( createPath( "a/a" ), "5" );
+        cache.cache( createPath( "a" ), "1" );
+        cache.cache( createPath( "a/b" ), "4" );
+        cache.cache( createPath( "a/d" ), "2" );
+        cache.cache( createPath( "a/c" ), "3" );
+        cache.cache( createPath( "a/a" ), "5" );
 
         final Collection<String> children = cache.getChildren( createPath( "a" ) );
         assertEquals( 4, children.size() );
@@ -69,8 +69,8 @@ public class PathCacheImplTest
 
         final CachePath a = createPath( "a" );
 
-        cache.put( a, "1" );
-        cache.remove( a );
+        cache.cache( a, "1" );
+        cache.evict( a );
         assertNull( cache.get( a ) );
     }
 
@@ -81,11 +81,11 @@ public class PathCacheImplTest
     {
         final PathCacheImpl cache = new PathCacheImpl();
 
-        cache.put( createPath( "a" ), "2" );
+        cache.cache( createPath( "a" ), "2" );
 
-        cache.put( createPath( "a/b" ), "2" );
+        cache.cache( createPath( "a/b" ), "2" );
 
-        cache.put( createPath( "b" ), "2" );
+        cache.cache( createPath( "b" ), "2" );
 
         assertTrue( cache.getChildren( createPath( "a" ) ).isEmpty() );
     }

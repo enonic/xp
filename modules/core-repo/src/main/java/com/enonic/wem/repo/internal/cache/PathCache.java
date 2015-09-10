@@ -1,16 +1,18 @@
 package com.enonic.wem.repo.internal.cache;
 
-import java.util.Collection;
+import com.google.common.collect.ImmutableSet;
 
 public interface PathCache
 {
-    void put( final CachePath path, final String id );
+    void cache( final CachePath path, final String id );
 
-    void remove( final CachePath path );
+    void evict( final CachePath path );
 
-    void remove( final String id );
+    void evict( final String id );
 
     String get( final CachePath path );
 
-    Collection<String> getChildren( final CachePath path );
+    CachePath get( final String id );
+
+    ImmutableSet<String> getChildren( final CachePath path );
 }

@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -210,11 +209,6 @@ public class NodeServiceImpl
 
     private Node doCreate( final CreateNodeParams params )
     {
-        return doCreate( params, null );
-    }
-
-    private Node doCreate( final CreateNodeParams params, final Instant timestamp )
-    {
         return CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -223,11 +217,9 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
-            timestamp( timestamp ).
             build().
             execute();
     }
-
 
     @Override
     public Node update( final UpdateNodeParams params )
@@ -405,7 +397,7 @@ public class NodeServiceImpl
     public Node getByVersionId( final NodeVersionId blobKey )
     {
         return NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }

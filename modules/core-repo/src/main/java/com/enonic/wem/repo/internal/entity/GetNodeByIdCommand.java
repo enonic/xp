@@ -50,7 +50,7 @@ public class GetNodeByIdCommand
         }
 
         return !resolveHasChild ? node : NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( node );
     }

@@ -34,7 +34,7 @@ public class FindNodesByIdsCommand
         final Nodes nodes = nodeDao.getByVersionIds( versionIds );
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( nodes ) : nodes;
     }

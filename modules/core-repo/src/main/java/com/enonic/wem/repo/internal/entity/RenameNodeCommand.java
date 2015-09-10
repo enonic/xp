@@ -36,7 +36,7 @@ public final class RenameNodeCommand
             execute();
 
         return NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( renamedNode );
     }

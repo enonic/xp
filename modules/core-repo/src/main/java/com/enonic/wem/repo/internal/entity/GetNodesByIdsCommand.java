@@ -32,7 +32,7 @@ public class GetNodesByIdsCommand
         final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            branchService( this.branchService ).
             build().
             resolve( nodes ) : nodes;
     }

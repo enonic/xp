@@ -91,7 +91,7 @@ public final class UpdateNodeCommand
                 execute();
 
             return NodeHasChildResolver.create().
-                queryService( this.queryService ).
+                branchService( this.branchService ).
                 build().
                 resolve( updatedNode );
         }
