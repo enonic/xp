@@ -762,16 +762,6 @@ module api.liveedit {
 
         }
 
-
-        private createChildAction(label: string, cls: string): api.ui.Action {
-            var action = new api.ui.Action(label).onExecuted(() => {
-                console.log("Inserting " + label);
-            });
-            action.setIconClass(cls);
-
-            return action;
-        }
-
         private createChildAction(label: string, cls: string): api.ui.Action {
             var action = new api.ui.Action(label).onExecuted(() => {
                 console.log("Inserting " + label);
