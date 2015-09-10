@@ -761,5 +761,35 @@ module api.liveedit {
             return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
 
         }
+
+
+        private createChildAction(label: string, cls: string): api.ui.Action {
+            var action = new api.ui.Action(label).onExecuted(() => {
+                console.log("Inserting " + label);
+            });
+            action.setIconClass(cls);
+
+            return action;
+        }
+
+        private createChildAction(label: string, cls: string): api.ui.Action {
+            var action = new api.ui.Action(label).onExecuted(() => {
+                console.log("Inserting " + label);
+            });
+            action.setIconClass(cls);
+
+            return action;
+        }
+
+        protected createInsertAction(): api.ui.Action {
+            var insertAction = new api.ui.Action('Insert');
+
+            insertAction.appendChildAction(this.createChildAction("Image", "live-edit-font-icon-image icon"));
+            insertAction.appendChildAction(this.createChildAction("Part", "live-edit-font-icon-part icon"));
+            insertAction.appendChildAction(this.createChildAction("Layout", "live-edit-font-icon-layout icon"));
+            insertAction.appendChildAction(this.createChildAction("Text", "live-edit-font-icon-text icon"));
+
+            return insertAction;
+        }
     }
 }
