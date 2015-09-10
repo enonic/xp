@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -132,48 +133,59 @@ public class PushNodesCommandTest
     public void moved_nodes_yields_reindex_of_children()
         throws Exception
     {
-        final Node node = createNode( CreateNodeParams.create().
+        final Node node1 = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
-            name( "my-node1" ).
+            name( "node1" ).
+            setNodeId( NodeId.from( "node1" ) ).
             build() );
 
         final Node node2 = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
-            name( "my-node2" ).
+            name( "node2" ).
+            setNodeId( NodeId.from( "node2" ) ).
             build() );
 
         final Node child1 = createNode( CreateNodeParams.create().
-            parent( node.path() ).
-            name( "my-child1" ).
+            parent( node1.path() ).
+            name( "child1" ).
+            setNodeId( NodeId.from( "child1" ) ).
             build() );
 
         final Node child2 = createNode( CreateNodeParams.create().
-            parent( node.path() ).
-            name( "my-child2" ).
+            parent( node1.path() ).
+            name( "child2" ).
+            setNodeId( NodeId.from( "child2" ) ).
             build() );
 
         final Node child1_1 = createNode( CreateNodeParams.create().
             parent( child1.path() ).
-            name( "my-child1_1" ).
+            name( "child1_1" ).
+            setNodeId( NodeId.from( "child1_1" ) ).
             build() );
 
         final Node child1_1_1 = createNode( CreateNodeParams.create().
             parent( child1_1.path() ).
-            name( "my-child1_1" ).
+            name( "child1_1_1" ).
+            setNodeId( NodeId.from( "child1_1_1" ) ).
             build() );
 
         final Node child2_1 = createNode( CreateNodeParams.create().
             parent( child2.path() ).
-            name( "my-child2_1" ).
+            name( "child2_1" ).
+            setNodeId( NodeId.from( "child2_1" ) ).
             build() );
 
-        pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
+        refresh();
+
+        pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
                    WS_OTHER );
 
-        assertNotNull( getNodeByPathInOther( NodePath.create( node.path(), child1.name().toString() ).build() ) );
+        refresh();
+
+        assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
         final Node movedNode = MoveNodeCommand.create().
-            id( node.id() ).
+            id( node1.id() ).
             newParent( node2.path() ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
@@ -183,11 +195,16 @@ public class PushNodesCommandTest
             build().
             execute();
 
-        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        refresh();
+
+        pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
+
+        refresh();
+
         assertNotNull( getNodeByPathInOther( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
 
         refresh();
-        assertNull( getNodeByPathInOther( NodePath.create( node.path(), child1.name().toString() ).build() ) );
+        assertNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
         Node child1Node = CTX_OTHER.callWith( () -> getNodeById( child1.id() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( child1Node.path(), child1_1.name().toString() ).build() ) );
@@ -197,28 +214,31 @@ public class PushNodesCommandTest
     public void push_rename_push()
         throws Exception
     {
-        final Node node = createNode( CreateNodeParams.create().
+        final Node parent = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
-            name( "my-node1" ).
+            name( "parent" ).
+            setNodeId( NodeId.from( "parent" ) ).
             build() );
 
         final Node child1 = createNode( CreateNodeParams.create().
-            parent( node.path() ).
-            name( "my-child1" ).
+            parent( parent.path() ).
+            name( "child1" ).
+            setNodeId( NodeId.from( "child1" ) ).
             build() );
 
         final Node child1_1 = createNode( CreateNodeParams.create().
             parent( child1.path() ).
-            name( "my-child1_1" ).
+            name( "child1_1" ).
+            setNodeId( NodeId.from( "child1_1" ) ).
             build() );
 
-        pushNodes( NodeIds.from( node.id(), child1.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        renameNode( node );
+        renameNode( parent );
         renameNode( child1 );
         renameNode( child1_1 );
 
-        final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child1.id() ), WS_OTHER );
+        final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
         assertEquals( 2, result.getSuccessfull().getSize() );
     }
@@ -300,7 +320,6 @@ public class PushNodesCommandTest
 
     private Node getNodeByPathInOther( final NodePath nodePath )
     {
-        System.out.println( nodePath.toString() );
         return CTX_OTHER.callWith( () -> getNodeByPath( nodePath ) );
     }
 

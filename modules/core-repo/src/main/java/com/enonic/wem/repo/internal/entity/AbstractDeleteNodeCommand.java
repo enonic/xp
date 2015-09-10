@@ -47,12 +47,6 @@ abstract class AbstractDeleteNodeCommand
             build().
             execute();
 
-        System.out.println( "Nodes:" );
-        for ( final Node child : children )
-        {
-            System.out.println( "Node: " + child.id() + ", " + child.path() );
-        }
-
         for ( final Node child : children )
         {
             resolveNodesToDelete( child, nodes );

@@ -2,6 +2,9 @@ package com.enonic.wem.repo.internal.cache;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -16,6 +19,8 @@ public class PathCacheImpl
 
     private final Map<String, CachePath> idMap = Maps.newHashMap();
 
+    private final Logger LOG = LoggerFactory.getLogger( PathCacheImpl.class );
+
     @Override
     public void cache( final CachePath path, final String id )
     {
@@ -26,16 +31,16 @@ public class PathCacheImpl
 
     private synchronized void doPut( final CachePath path, final String id, final CachePath parentPath )
     {
-        pathMap.put( path, id );
+        final CachePath existingEntry = idMap.get( id );
 
-        // Remove from other parent if any
-        final CachePath existingPath = idMap.get( id );
-
-        if ( existingPath != null )
+        if ( existingEntry != null )
         {
-            childMap.remove( existingPath.getParentPath(), id );
+            idMap.remove( id );
+            pathMap.remove( existingEntry );
+            childMap.remove( existingEntry, id );
         }
 
+        pathMap.put( path, id );
         idMap.put( id, path );
         childMap.put( parentPath, id );
     }
@@ -70,7 +75,11 @@ public class PathCacheImpl
     @Override
     public String get( final CachePath path )
     {
-        return pathMap.get( path );
+        final String id = pathMap.get( path );
+
+        LOG.info( "Cache result for path: '" + path + "', id: " + id );
+
+        return id;
     }
 
     @Override

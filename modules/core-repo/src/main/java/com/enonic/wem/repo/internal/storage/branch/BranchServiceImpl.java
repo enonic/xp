@@ -154,8 +154,6 @@ public class BranchServiceImpl
 
         if ( id != null )
         {
-            LOG.info( "Found path in cache: " + nodePath );
-
             final NodeId nodeId = createNodeId( id );
             return doGetById( nodeId, context );
         }

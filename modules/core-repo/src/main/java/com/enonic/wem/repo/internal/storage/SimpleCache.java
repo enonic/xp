@@ -25,11 +25,7 @@ public class SimpleCache
 
     public synchronized void put( final CacheStoreRequest cacheStoreRequest )
     {
-        LOG.info( "-------------" );
-
         doDelete( cacheStoreRequest.getId() );
-
-        LOG.info( "Branch: " + isBranch( cacheStoreRequest ) + " - Insert into cache: " + cacheStoreRequest.getId() );
 
         if ( cacheStoreRequest.getStorageData() == null )
         {
@@ -70,15 +66,6 @@ public class SimpleCache
     {
         final StorageData storageData = this.idCache.get( id );
 
-        if ( storageData == null )
-        {
-            LOG.info( "CacheMiss: " + id );
-        }
-        else
-        {
-            LOG.info( "CacheHit: " + id );
-        }
-
         return new CacheResult( storageData, id );
     }
 
@@ -105,12 +92,7 @@ public class SimpleCache
 
         if ( id == null )
         {
-            LOG.info( "Evict cachekey miss: " + id );
             return;
-        }
-        else
-        {
-            LOG.info( "Evict cachekey hit: " + id );
         }
 
         final Set<CacheKey> cacheKeys = this.idCacheKeyMap.get( id );
@@ -127,15 +109,6 @@ public class SimpleCache
     private synchronized void doDelete( final String id )
     {
         final StorageData remove = idCache.remove( id );
-
-        if ( remove == null )
-        {
-            LOG.info( "DELETE MISS: " + id );
-        }
-        else
-        {
-            LOG.info( "DELETE HIT: " + id );
-        }
 
         final Set<CacheKey> cacheKeys = idCacheKeyMap.get( id );
 

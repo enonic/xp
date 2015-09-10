@@ -102,36 +102,51 @@ public class PushNodesCommand
 
             if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
             {
-                updateNodeChildrenWithNewMetadata( node, builder );
+                updateTargetChildrenMetaData( node, builder );
             }
         }
 
         return builder.build();
     }
 
-    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder )
+    private void updateTargetChildrenMetaData( final Node node, PushNodesResult.Builder resultBuilder )
     {
+        // So, we have moved a node, and the pushed it.
+        // The children of the pushed node are all changed, and every equal node on target must get updated meta-data.
+        // If the child node does not exist in target, just ignore it, no moving necessary
+
+        final Context context = ContextAccessor.current();
+
+        final Context targetContext = ContextBuilder.create().
+            authInfo( context.getAuthInfo() ).
+            branch( this.target ).
+            repositoryId( context.getRepositoryId() ).
+            build();
+
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).
             build() );
 
-        final Context context = ContextAccessor.current();
-
         for ( final Node child : result.getNodes() )
         {
-            ContextBuilder.create().
-                authInfo( context.getAuthInfo() ).
-                branch( this.target ).
-                repositoryId( context.getRepositoryId() ).
-                build().runWith( () -> StoreNodeCommand.create( this ).
-                node( child ).
-                updateMetadataOnly( true ).
+            final Node nodeInTarget = targetContext.callWith( () -> GetNodeByIdCommand.create( this ).
+                id( child.id() ).
+                resolveHasChild( false ).
                 build().
                 execute() );
 
-            resultBuilder.addChildSuccess( child );
+            if ( nodeInTarget != null )
+            {
+                targetContext.runWith( () -> StoreNodeCommand.create( this ).
+                    node( child ).
+                    updateMetadataOnly( true ).
+                    build().
+                    execute() );
 
-            updateNodeChildrenWithNewMetadata( child, resultBuilder );
+                resultBuilder.addChildSuccess( child );
+
+                updateTargetChildrenMetaData( child, resultBuilder );
+            }
         }
     }
 

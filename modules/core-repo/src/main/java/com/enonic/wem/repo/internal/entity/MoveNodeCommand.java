@@ -2,16 +2,19 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.GetNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 
 public class MoveNodeCommand
     extends AbstractNodeCommand
@@ -22,7 +25,7 @@ public class MoveNodeCommand
 
     private final NodeName newNodeName;
 
-    private final boolean overwriteExisting;
+    private final static Logger LOG = LoggerFactory.getLogger( MoveNodeCommand.class );
 
     private MoveNodeCommand( final Builder builder )
     {
@@ -30,23 +33,28 @@ public class MoveNodeCommand
         this.nodeId = builder.id;
         this.newParentPath = builder.newParentPath;
         this.newNodeName = builder.newNodeName;
-        this.overwriteExisting = builder.overwriteExisting;
     }
 
     public Node execute()
     {
         final Node existingNode = doGetById( nodeId, false );
 
-        final NodeName newNodeName;
-        if ( this.newNodeName == null )
+        final NodeName newNodeName = resulveNodeName( existingNode );
+
+        final NodePath newParentPath = resolvePath( existingNode );
+
+        if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            newNodeName = existingNode.name();
-        }
-        else
-        {
-            newNodeName = this.newNodeName;
+            return existingNode;
         }
 
+        checkNotMovedToSelfOrChild( existingNode, newParentPath );
+
+        return doMoveNode( newParentPath, newNodeName, nodeId );
+    }
+
+    private NodePath resolvePath( final Node existingNode )
+    {
         final NodePath newParentPath;
         if ( this.newParentPath == null )
         {
@@ -56,15 +64,21 @@ public class MoveNodeCommand
         {
             newParentPath = this.newParentPath;
         }
+        return newParentPath;
+    }
 
-        if ( samePath( existingNode, newParentPath, newNodeName ) )
+    private NodeName resulveNodeName( final Node existingNode )
+    {
+        final NodeName newNodeName;
+        if ( this.newNodeName == null )
         {
-            return existingNode;
+            newNodeName = existingNode.name();
         }
-
-        checkNotMovedToSelfOrChild( existingNode, newParentPath );
-
-        return doMoveNode( newParentPath, newNodeName, nodeId, true );
+        else
+        {
+            newNodeName = this.newNodeName;
+        }
+        return newNodeName;
     }
 
     private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
@@ -80,49 +94,25 @@ public class MoveNodeCommand
         }
     }
 
-    private boolean samePath( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
+    private boolean noChanges( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
     {
         return existingNode.parentPath().equals( newParentPath ) && existingNode.name().equals( newNodeName );
     }
 
-    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
+    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
-        final Node persistedNode = doGetById( id, true );
+        final Node persistedNode = doGetById( id, false );
 
-        Nodes persistedChildren = Nodes.empty();
+        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
+            params( FindNodesByParentParams.create().
+                parentId( persistedNode.id() ).
+                build() ).
+            build().
+            execute();
 
-        if ( persistedNode.getHasChildren() )
-        {
-            persistedChildren = GetNodesByParentCommand.create( this ).
-                params( GetNodesByParentParams.create().
-                    parentId( persistedNode.id() ).
-                    build() ).
-                build().
-                execute();
-        }
+        final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
-        NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
-
-        if ( checkExistingNode )
-        {
-            final Node existingNode = getExistingNode( newParentPath, newNodeName );
-
-            if ( existingNode != null )
-            {
-                if ( !overwriteExisting )
-                {
-                    throw new NodeAlreadyExistAtPathException( existingNode.path() );
-                }
-                else
-                {
-                    nodeName = NodeName.from( DuplicateValueResolver.name( nodeName ) );
-                }
-            }
-        }
-        else
-        {
-            checkExistingNode = false;
-        }
+        verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
         Node nodeToMove = Node.create( persistedNode ).
             name( nodeName ).
@@ -158,15 +148,25 @@ public class MoveNodeCommand
                 execute();
         }
 
-        for ( final Node child : persistedChildren )
+        for ( final Node child : result.getNodes() )
         {
-            doMoveNode( nodeToMove.path(), child.name(), child.id(), checkExistingNode );
+            doMoveNode( nodeToMove.path(), child.name(), child.id() );
         }
 
         return movedNode;
     }
 
-    private Node getExistingNode( final NodePath newParentNodePath, final NodeName newNodeName )
+    private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
+    {
+        final Node nodeAtNewPath = getNodeAtNewPath( newParentPath, newNodeName );
+
+        if ( nodeAtNewPath != null )
+        {
+            throw new NodeAlreadyExistAtPathException( nodeAtNewPath.path() );
+        }
+    }
+
+    private Node getNodeAtNewPath( final NodePath newParentNodePath, final NodeName newNodeName )
     {
         final NodePath newNodePath = NodePath.create( newParentNodePath, newNodeName.toString() ).build();
 
@@ -197,8 +197,6 @@ public class MoveNodeCommand
 
         private NodeName newNodeName;
 
-        private boolean overwriteExisting = false;
-
         private Builder()
         {
             super();
@@ -224,12 +222,6 @@ public class MoveNodeCommand
         public Builder newNodeName( final NodeName nodeName )
         {
             this.newNodeName = nodeName;
-            return this;
-        }
-
-        public Builder overwriteExisting( final boolean overwriteExisting )
-        {
-            this.overwriteExisting = overwriteExisting;
             return this;
         }
 

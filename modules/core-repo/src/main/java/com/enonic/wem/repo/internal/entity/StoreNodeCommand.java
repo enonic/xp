@@ -5,10 +5,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 
 public class StoreNodeCommand
@@ -54,7 +56,14 @@ public class StoreNodeCommand
         }
         else
         {
-            nodeVersionId = this.branchService.get( node.id(), InternalContext.from( context ) ).getVersionId();
+            final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), InternalContext.from( context ) );
+
+            if ( nodeBranchVersion == null )
+            {
+                throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
+            }
+
+            nodeVersionId = nodeBranchVersion.getVersionId();
         }
 
         this.branchService.store( StoreBranchDocument.create().
