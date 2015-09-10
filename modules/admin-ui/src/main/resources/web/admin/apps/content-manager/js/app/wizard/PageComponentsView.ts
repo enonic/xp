@@ -25,6 +25,7 @@ module app.wizard {
         private content: Content;
         private pageView: PageView;
         private liveEditPage: LiveEditPageProxy;
+        private contextMenu: api.liveedit.ItemViewContextMenu;
 
         private tree: PageComponentsTreeGrid;
         private header: api.dom.H3El;
@@ -90,7 +91,13 @@ module app.wizard {
 
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
                 if (!event.isNew()) {
-                    this.tree.selectNode(this.tree.getDataId(event.getItemView()));
+                    var selectedItemId = this.tree.getDataId(event.getItemView());
+                    this.tree.selectNode(selectedItemId);
+
+                    if(!event.getPosition()) {
+                        this.scrollToItem(selectedItemId);
+                    }
+
                 }
             });
 
@@ -139,6 +146,7 @@ module app.wizard {
 
                     if (event.getNewComponentView().isSelected()) {
                         this.tree.selectNode(newDataId);
+                        this.scrollToItem(newDataId);
                     }
                 });
             });
@@ -170,6 +178,10 @@ module app.wizard {
 
                 this.tree.getGrid().selectRow(data.row);
 
+                if(this.isMenuIconClicked(data.cell)) {
+                    this.showContextMenu(data.row, {x: event.pageX, y: event.pageY});
+                }
+
                 if (this.isModal()) {
                     this.hide();
                 }
@@ -177,14 +189,25 @@ module app.wizard {
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
-                    nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
-                    nodes[0].getData().scrollComponentIntoView();
+                    nodes[0].getData().selectWithoutMenu();
 
                     if (this.isModal()) {
                         this.hide();
                     }
                 }
+
+                this.hideContextMenu();
             });
+
+            this.tree.getGrid().subscribeOnContextMenu((event) => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                var cell = this.tree.getGrid().getCellFromEvent(event);
+
+                this.showContextMenu(cell.row, {x: event.pageX, y: event.pageY});
+            });
+
             this.appendChild(this.tree);
 
             this.tree.onRemoved((event) => this.tree.getGrid().unsubscribeOnClick(this.clickListener));
@@ -256,6 +279,8 @@ module app.wizard {
                             this.constrainToParent(newOffset);
 
                             lastPos = newPos;
+
+                            this.hideContextMenu();
                         }
                     }
                 }
@@ -323,6 +348,55 @@ module app.wizard {
             this.modal = modal;
             return this;
         }
+
+        private scrollToItem(dataId: string) {
+            var node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
+
+            if (node) {
+                this.tree.getRoot().getCurrentRoot().findNode(dataId).getData().scrollComponentIntoView();
+            }
+        }
+
+        private isMenuIconClicked(cellNumber: number): boolean {
+            return cellNumber == 1;
+        }
+
+        private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
+            var contextMenuActions: api.ui.Action[] = this.tree.getGrid().getDataView().getItem(row).getData().getContextMenuActions();
+
+            if (!this.contextMenu) {
+                this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions);
+            }
+            else {
+                this.contextMenu.setActions(contextMenuActions);
+            }
+
+            // show menu at position
+            var x = clickPosition.x;
+            var y = clickPosition.y;
+
+            this.contextMenu.showAt(x, y, false);
+
+            this.setMenuOpenStyleOnMenuIcon(row);
+        }
+
+        private setMenuOpenStyleOnMenuIcon(row: number) {
+            var stylesHash: Slick.CellCssStylesHash = {};
+            stylesHash[row] = {menu: "menu-open"};
+            this.tree.getGrid().setCellCssStyles("menu-open", stylesHash);
+        }
+
+        private removeMenuOpenStyleFromMenuIcon() {
+            this.tree.getGrid().removeCellCssStyles("menu-open");
+        }
+
+        private hideContextMenu() {
+            if (this.contextMenu) {
+                this.contextMenu.hide();
+                this.removeMenuOpenStyleFromMenuIcon();
+            }
+        }
+
     }
 
 }

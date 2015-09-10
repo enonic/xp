@@ -38,11 +38,50 @@
       .slick-viewport {
         height: auto !important; // for FF to show scroll
 
-        .slick-row:not(:hover) {
-          &, &.odd {
-            background-color: transparent;
+        .slick-row {
+          &:not(:hover) {
+            &, &.odd {
+              background-color: transparent;
+            }
+          }
+
+          &:hover {
+            .slick-cell {
+              &.menu-icon {
+                display:inherit;
+              }
+            }
+          }
+
+          .slick-cell {
+            &.menu-icon {
+              display: none;
+
+              .menu-icon {
+                padding-left: 10px;
+                padding-top: 10px;
+              }
+
+              &.selected {
+                display:inherit;
+              }
+
+              &:hover {
+                .menu-icon {
+                  color: @admin-white;
+                }
+              }
+
+              &.menu-open {
+                .menu-icon {
+                  color: @admin-white;
+                }
+              }
+            }
           }
         }
+
+
       }
     }
   }
