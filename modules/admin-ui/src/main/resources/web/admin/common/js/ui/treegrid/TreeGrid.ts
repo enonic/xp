@@ -358,7 +358,7 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
-        private scrollToRow(row: number) {
+        scrollToRow(row: number) {
             var scrollEl = this.scrollable.getEl();
 
             if (row > -1 && this.grid.getSelectedRows().length > 0) {
