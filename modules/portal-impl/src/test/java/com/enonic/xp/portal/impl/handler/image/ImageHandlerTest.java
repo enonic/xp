@@ -72,7 +72,7 @@ public class ImageHandlerTest
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( imageBytes );
 
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes.read() );
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )

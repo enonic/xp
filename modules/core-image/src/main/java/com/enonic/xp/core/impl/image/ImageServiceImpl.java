@@ -47,11 +47,11 @@ public class ImageServiceImpl
     private ImageFilterBuilder imageFilterBuilder;
 
     @Override
-    public byte[] readImage( final ReadImageParams readImageParams )
+    public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        byte[] serializedImage = FilesHelper.readAllBytes( cachedImagePath );
+        ByteSource serializedImage = FilesHelper.readAllBytes( cachedImagePath );
         if ( serializedImage == null )
         {
             final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
@@ -279,10 +279,10 @@ public class ImageServiceImpl
         return op.filter( bufferedImage, destinationImage );
     }
 
-    private byte[] serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
+    private ByteSource serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
         throws IOException
     {
-        final byte[] serializedImage;
+        final ByteSource serializedImage;
         //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
         if ( readImageParams.getQuality() != 0 )
         {
@@ -295,18 +295,19 @@ public class ImageServiceImpl
         return serializedImage;
     }
 
-    private byte[] serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
+    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
         throws IOException
     {
-        return ImageHelper.writeImage( bufferedImage, format, quality );
+        final byte[] bytes = ImageHelper.writeImage( bufferedImage, format, quality );
+        return ByteSource.wrap( bytes );
     }
 
-    private byte[] serializeImage( final BufferedImage bufferedImage, final String format )
+    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format )
         throws IOException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write( bufferedImage, format, out );
-        return out.toByteArray();
+        return ByteSource.wrap( out.toByteArray() );
     }
 
     @Reference
