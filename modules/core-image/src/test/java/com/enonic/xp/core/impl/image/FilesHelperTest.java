@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.io.ByteSource;
+
 public class FilesHelperTest
 {
     private TemporaryFolder temporaryFolder;
@@ -25,21 +27,21 @@ public class FilesHelperTest
     public void test_write_readBytes()
         throws IOException
     {
-        byte[] bytes = new byte[]{2, 3, 5, 7, 13};
+        final byte[] bytes = new byte[]{2, 3, 5, 7, 13};
+        final ByteSource source = ByteSource.wrap( bytes );
         Path path = Paths.get( temporaryFolder.getRoot().toString(), "file.txt" );
-        FilesHelper.write( path, bytes );
-        final byte[] readBytes = FilesHelper.readAllBytes( path );
-        Assert.assertArrayEquals( bytes, readBytes );
+        FilesHelper.write( path, source );
+        final ByteSource readSource = FilesHelper.readAllBytes( path );
+        Assert.assertTrue( source.contentEquals( readSource ) );
     }
 
     @Test
     public void test_incorrect_values()
         throws IOException
     {
-        byte[] bytes = new byte[]{2, 3, 5, 7, 13};
         Path path = Paths.get( temporaryFolder.getRoot().toString(), "unknown_file.txt" );
-        final byte[] readBytes = FilesHelper.readAllBytes( path );
-        Assert.assertArrayEquals( null, readBytes );
+        final ByteSource readBytes = FilesHelper.readAllBytes( path );
+        Assert.assertEquals( null, readBytes );
     }
 
 }
