@@ -17,6 +17,8 @@ module app.home {
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
 
+            this.appendChild(new api.ui.image.LazyImage("/admin/common/images/background-1920.jpg"));
+
             this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element
 
             this.appSelector = builder.appSelector;
