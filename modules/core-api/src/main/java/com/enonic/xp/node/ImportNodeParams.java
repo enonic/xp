@@ -10,12 +10,15 @@ public class ImportNodeParams
 
     private final boolean dryRun;
 
+    private final boolean importPermissions;
+
     private ImportNodeParams( Builder builder )
     {
         binaryAttachments = builder.binaryAttachments;
         node = builder.node;
         insertManualStrategy = builder.insertManualStrategy;
         dryRun = builder.dryRun;
+        importPermissions = builder.importPermissions;
     }
 
     public static Builder create()
@@ -43,6 +46,11 @@ public class ImportNodeParams
         return dryRun;
     }
 
+    public boolean isImportPermissions()
+    {
+        return importPermissions;
+    }
+
     public static final class Builder
     {
         private BinaryAttachments binaryAttachments;
@@ -52,6 +60,8 @@ public class ImportNodeParams
         private InsertManualStrategy insertManualStrategy;
 
         private boolean dryRun;
+
+        private boolean importPermissions;
 
         private Builder()
         {
@@ -78,6 +88,12 @@ public class ImportNodeParams
         public Builder dryRun( boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder importPermissions( boolean importPermissions )
+        {
+            this.importPermissions = importPermissions;
             return this;
         }
 

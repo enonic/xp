@@ -225,6 +225,7 @@ public class NodeImporter
             binaryAttachments( binaryAttachments ).
             insertManualStrategy( settings.getInsertManualStrategy() ).
             dryRun( this.dryRun ).
+            importPermissions( this.importPermissions ).
             build();
 
         final Node importedNode = this.nodeService.importNode( importNodeParams );
