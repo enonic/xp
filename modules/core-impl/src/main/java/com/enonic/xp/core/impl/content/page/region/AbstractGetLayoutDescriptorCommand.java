@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -21,8 +18,6 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
     private final static String PATH = "/site/layouts";
-
-    private final static Pattern PATTERN = Pattern.compile( PATH + "/([^/]+)/\\1.xml" );
 
     protected ApplicationService applicationService;
 
@@ -83,19 +78,15 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     private void readDescriptor( final Application application, final LayoutDescriptors.Builder layoutDescriptors )
     {
-        final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*.xml", true );
+        final ResourceKeys resourceKeys = this.resourceService.findFolders( application.getKey(), PATH );
 
         for ( final ResourceKey resourceKey : resourceKeys )
         {
-            Matcher matcher = PATTERN.matcher( resourceKey.getPath() );
-            if ( matcher.matches() )
+            final DescriptorKey key = DescriptorKey.from( application.getKey(), resourceKey.getName() );
+            final LayoutDescriptor layoutDescriptor = getDescriptor( key );
+            if ( layoutDescriptor != null )
             {
-                final DescriptorKey key = DescriptorKey.from( application.getKey(), matcher.group( 1 ) );
-                final LayoutDescriptor layoutDescriptor = getDescriptor( key );
-                if ( layoutDescriptor != null )
-                {
-                    layoutDescriptors.add( layoutDescriptor );
-                }
+                layoutDescriptors.add( layoutDescriptor );
             }
         }
     }

@@ -89,12 +89,11 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     private void readDescriptor( final Application application, final PartDescriptors.Builder partDescriptors )
     {
-        final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
+        final ResourceKeys resourceKeys = this.resourceService.findFolders( application.getKey(), PATH );
 
         for ( final ResourceKey resourceKey : resourceKeys )
         {
-            final String descriptorName = resourceKey.getName();
-            final DescriptorKey key = DescriptorKey.from( application.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( application.getKey(), resourceKey.getName() );
             final PartDescriptor partDescriptor = getDescriptor( key );
             if ( partDescriptor != null )
             {
