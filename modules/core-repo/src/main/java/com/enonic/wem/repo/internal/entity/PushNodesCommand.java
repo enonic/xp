@@ -5,11 +5,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -106,6 +108,8 @@ public class PushNodesCommand
             }
         }
 
+        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+
         return builder.build();
     }
 
@@ -123,9 +127,13 @@ public class PushNodesCommand
             repositoryId( context.getRepositoryId() ).
             build();
 
-        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( node.path() ).
-            build() );
+        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
+            params( FindNodesByParentParams.create().
+                parentPath( node.path() ).
+                childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
+                build() ).
+            build().
+            execute();
 
         for ( final Node child : result.getNodes() )
         {
@@ -164,6 +172,7 @@ public class PushNodesCommand
             repositoryId( context.getRepositoryId() ).
             authInfo( context.getAuthInfo() ).
             build() );
+
     }
 
     boolean targetParentExists( final Node node, final Context currentContext )

@@ -150,10 +150,11 @@ public class DuplicateNodeCommandTest
         refresh();
 
         final Node node1Duplicate = duplicateNode( node1 );
+
+        refresh();
+
         final Node dNode1_1 = getNodeByPath( NodePath.create( node1Duplicate.path(), node1_1.name().toString() ).build() );
-
         final Reference reference = node1Duplicate.data().getReference( "node1_1-id" );
-
         assertEquals( dNode1_1.id(), reference.getNodeId() );
 
         final Node dNode1_1_1 = getNodeByPath( NodePath.create( dNode1_1.path(), node_1_1_1.name().toString() ).build() );
@@ -327,8 +328,6 @@ public class DuplicateNodeCommandTest
         assertOrder( duplicateParent, "child3", "child1", "child2" );
 
         refresh();
-
-
     }
 
     private void assertOrder( final Node parentNode, final String first, final String second, final String third )

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
@@ -50,7 +52,11 @@ public class MoveNodeCommand
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath );
 
-        return doMoveNode( newParentPath, newNodeName, nodeId );
+        final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
+
+        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
+
+        return movedNode;
     }
 
     private NodePath resolvePath( final Node existingNode )

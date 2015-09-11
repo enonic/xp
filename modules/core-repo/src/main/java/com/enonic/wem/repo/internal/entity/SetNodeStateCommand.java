@@ -25,6 +25,7 @@ public class SetNodeStateCommand
         final Node node = doGetById( this.params.getNodeId(), false );
 
         final SetNodeStateResult.Builder setNodeStateResultBuilder = SetNodeStateResult.create();
+
         if ( this.params.isRecursive() )
         {
             setNodeStateWithChildren( node, setNodeStateResultBuilder );
@@ -57,15 +58,13 @@ public class SetNodeStateCommand
 
     private Node setNodeStateWithChildren( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )
     {
-        //Updates the current node state
         final Node updatedNode = setNodeState( node, setNodeStateResultBuilder );
 
-        //Finds the children
-        FindNodesByParentParams findNodesByParentParams =
-            FindNodesByParentParams.create().parentPath( node.path() ).size( QueryService.GET_ALL_SIZE_FLAG ).build();
-        final FindNodesByParentResult result = doFindNodesByParent( findNodesByParentParams );
+        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( node.path() ).
+            size( QueryService.GET_ALL_SIZE_FLAG ).
+            build() );
 
-        //Updates the children state
         for ( final Node child : result.getNodes() )
         {
             setNodeStateWithChildren( child, setNodeStateResultBuilder );

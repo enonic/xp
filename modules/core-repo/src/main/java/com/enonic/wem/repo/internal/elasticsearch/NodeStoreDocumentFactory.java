@@ -168,7 +168,7 @@ class NodeStoreDocumentFactory
 
         private RepositoryId repositoryId;
 
-        private boolean refresh = true;
+        private boolean refresh = false;
 
         private NodeState state = NodeState.DEFAULT;
 

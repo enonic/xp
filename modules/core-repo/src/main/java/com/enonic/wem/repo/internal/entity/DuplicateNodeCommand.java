@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -55,6 +57,8 @@ public final class DuplicateNodeCommand
         storeChildNodes( existingNode, duplicatedNode, builder );
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
+
+        this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
