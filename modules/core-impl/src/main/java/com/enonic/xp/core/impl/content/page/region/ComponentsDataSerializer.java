@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,14 +8,11 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentType;
-import com.enonic.xp.support.serializer.AbstractDataListSerializer;
 
-public class ComponentsDataSerializer
-    extends AbstractDataListSerializer<Collection<Component>, List<Component>>
+public final class ComponentsDataSerializer
 {
     private final static ComponentDataSerializerProvider COMPONENT_DATA_SERIALIZER_FACTORY = new ComponentDataSerializerProvider();
 
-    @Override
     public void toData( final Collection<Component> components, final PropertySet parent )
     {
         for ( final Component component : components )
@@ -28,7 +24,6 @@ public class ComponentsDataSerializer
         }
     }
 
-    @Override
     public List<Component> fromData( final Iterable<Property> componentProperties )
     {
         final List<Component> componentList = new ArrayList<>();

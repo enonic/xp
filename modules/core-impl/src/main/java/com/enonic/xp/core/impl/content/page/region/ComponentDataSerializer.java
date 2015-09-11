@@ -1,4 +1,4 @@
-package com.enonic.xp.page;
+package com.enonic.xp.core.impl.content.page.region;
 
 
 import com.google.common.annotations.Beta;
@@ -6,7 +6,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
-import com.enonic.xp.support.serializer.AbstractDataSetSerializer;
+import com.enonic.xp.core.impl.content.page.AbstractDataSetSerializer;
 
 @Beta
 public abstract class ComponentDataSerializer<TO_DATA_INPUT extends Component, FROM_DATA_OUTPUT extends Component>

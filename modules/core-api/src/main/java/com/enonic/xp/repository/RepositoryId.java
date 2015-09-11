@@ -1,21 +1,41 @@
 package com.enonic.xp.repository;
 
-import com.google.common.annotations.Beta;
+import java.util.Objects;
 
-import com.enonic.xp.support.AbstractId;
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 @Beta
-public class RepositoryId
-    extends AbstractId
+public final class RepositoryId
 {
-    protected RepositoryId( final String id )
+    private final String value;
+
+    private RepositoryId( final String value )
     {
-        super( id );
+        Preconditions.checkNotNull( value );
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof RepositoryId ) && Objects.equals( this.value, ( (RepositoryId) o ).value );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.value.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.value;
     }
 
     public static RepositoryId from( final String value )
     {
         return new RepositoryId( value );
     }
-
 }

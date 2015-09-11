@@ -27,10 +27,6 @@ public final class MailServiceImpl
     public void activate( final MailConfig config )
         throws Exception
     {
-        System.out.println( "# configure..." );
-        System.out.println( config.smtpHost() );
-        System.out.println( config.smtpPort() );
-
         final Properties properties = new Properties();
 
         properties.put( "mail.transport.protocol", "smtp" );

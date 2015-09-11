@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.ComponentDataSerializer;
 import com.enonic.xp.region.ImageComponent;
 
 public class ImageComponentDataSerializer

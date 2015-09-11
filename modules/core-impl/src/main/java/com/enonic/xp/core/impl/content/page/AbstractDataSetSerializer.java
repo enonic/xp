@@ -1,4 +1,4 @@
-package com.enonic.xp.support.serializer;
+package com.enonic.xp.core.impl.content.page;
 
 import com.google.common.annotations.Beta;
 

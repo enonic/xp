@@ -6,7 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
 @Beta
-public class Repository
+public final class Repository
 {
     private final RepositoryId id;
 
@@ -83,7 +83,7 @@ public class Repository
             return this;
         }
 
-        public Builder id( RepositoryId id )
+        public Builder id( final RepositoryId id )
         {
             this.id = id;
             return this;

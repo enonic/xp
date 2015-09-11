@@ -95,7 +95,7 @@ public final class PageTemplate
         public Builder key( final PageTemplateKey value )
         {
             this.key = value;
-            this.id = value;
+            this.id = value.getContentId();
             return this;
         }
 
