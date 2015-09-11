@@ -2,9 +2,11 @@ package com.enonic.xp.portal.impl.serializer;
 
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -31,6 +33,15 @@ public final class ResponseSerializer
 
         serializeHeaders( response, this.portalResponse.getHeaders() );
         serializeBody( response, this.portalResponse.getBody() );
+        serializeCookies( response, this.portalResponse.getCookies() );
+    }
+
+    private void serializeCookies( final HttpServletResponse response, final ImmutableList<Cookie> cookies )
+    {
+        for ( final Cookie cookie : cookies )
+        {
+            response.addCookie( cookie );
+        }
     }
 
     private void serializeBody( final HttpServletResponse response, final Object body )
