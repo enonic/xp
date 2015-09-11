@@ -35,17 +35,25 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final ResourceKey resourceKey = LayoutDescriptor.toResourceKey( key );
         final Resource resource = resourceService.getResource( resourceKey );
 
-        final String descriptorXml = resource.readString();
+
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
 
-        try
+        if ( resource.exists() )
         {
-            parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+            final String descriptorXml = resource.readString();
+            try
+            {
+                parseXml( resourceKey.getApplicationKey(), builder, descriptorXml );
+            }
+            catch ( final Exception e )
+            {
+                throw new XmlException( e, "Could not load layout descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            }
         }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load layout descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+        else {
+            return null;
         }
+
 
         builder.name( key.getName() ).key( key );
         final LayoutDescriptor layoutDescriptor = builder.build();

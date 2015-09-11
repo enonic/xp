@@ -1,10 +1,8 @@
 package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -39,9 +37,7 @@ abstract class AbstractGetPageDescriptorCommand<T extends AbstractGetPageDescrip
         }
         else
         {
-            builder.displayName( key.getName() ).
-                config( Form.create().build() ).
-                regions( RegionDescriptors.create().build() );
+            return null;
         }
 
         builder.key( key );
