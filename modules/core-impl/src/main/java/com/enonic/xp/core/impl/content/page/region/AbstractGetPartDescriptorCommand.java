@@ -4,7 +4,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
@@ -48,8 +47,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         }
         else
         {
-            builder.displayName( key.getName() ).
-                config( Form.create().build() );
+            return null;
         }
 
         builder.name( key.getName() ).key( key );
