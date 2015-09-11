@@ -23,6 +23,7 @@ module api.content {
         private originalWidth: number;
 
         private static SELECTED_CLASS = 'selected';
+        private static STANDOUT_CLASS = 'standout';
 
         private scaleWidth: boolean; // parameter states if width of the image must be preferred over its height during resolving
 
@@ -137,9 +138,18 @@ module api.content {
             return Math.round(this.initialWidth * this.originalHeight / this.originalWidth);
         }
 
+        private togglePlaceholder(flag: boolean) {
+            var resultEl = this.getResultContainer().toggleClass('placeholder', flag).getEl();
+            if (flag) {
+                resultEl.setHeightPx(resultEl.getHeight() || this.getProportionalHeight());
+            } else {
+                resultEl.setHeight('auto');
+            }
+        }
+
         private createImageEditor(imgUrl: string): ImageEditor {
 
-            this.getResultContainer().getEl().setHeightPx(this.getProportionalHeight()).addClass("placeholder");
+            this.togglePlaceholder(true);
 
             var imageEditor = new ImageEditor(imgUrl);
             imageEditor.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
@@ -149,7 +159,7 @@ module api.content {
             imageEditor.onCropAutoPositionedChanged((auto: boolean) => this.notifyCropAutoPositionedChanged(auto));
 
             imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.getResultContainer().getEl().setHeight('auto').removeClass("placeholder");
+                this.togglePlaceholder(false);
             });
 
             imageEditor.getUploadButton().onClicked(() => {
@@ -173,7 +183,34 @@ module api.content {
                 }
             });
 
+            var index = -1;
+            imageEditor.onEditModeChanged((edit: boolean, position: Rect, zoom: Rect, focus: Point) => {
+                this.togglePlaceholder(edit);
+
+                if (edit) {
+                    index = imageEditor.getSiblingIndex();
+                    api.dom.Body.get().appendChild(imageEditor.addClass(ImageUploader.STANDOUT_CLASS));
+                    this.centerImageEditor(imageEditor);
+                } else {
+                    this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploader.STANDOUT_CLASS), index);
+                }
+            });
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item) => {
+                if (imageEditor.isEditMode()) {
+                    this.centerImageEditor(imageEditor);
+                }
+            });
+
             return imageEditor;
+        }
+
+        private centerImageEditor(imageEditor: ImageEditor) {
+            var imageEl = imageEditor.getEl(),
+                win = api.dom.WindowDOM.get();
+
+            imageEditor.getEl().setTopPx((win.getHeight() - imageEl.getHeight()) / 2).
+                setLeftPx((win.getWidth() - imageEl.getWidth()) / 2);
         }
 
         createResultItem(value: string): api.dom.DivEl {

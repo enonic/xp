@@ -95,7 +95,7 @@ module api.ui.image {
 
         private skipNextOutsideClick: boolean;
 
-        public static debug = true;
+        public static debug = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -439,7 +439,11 @@ module api.ui.image {
                 offset = el.getOffset(),
                 bottom = offset.top + el.getHeightWithBorder(),
                 right = offset.left + el.getWidthWithBorder(),
-                scrollOffset = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).offset();
+                scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
+                scrollOffset = scrollEl.length == 1 ? scrollEl.offset() : {
+                    left: 0,
+                    top: 0
+                };
 
             return event.clientX < Math.max(scrollOffset.left, offset.left) ||
                    event.clientX > right ||
@@ -714,9 +718,14 @@ module api.ui.image {
 
         private getRelativeScrollTop(): number {
             var scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR),
-                wizardToolbarHeight = this.isEditMode() ? 0 : scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).innerHeight();
+                scrollElOffsetTop = scrollEl.length == 1
+                    ? scrollEl.offset().top
+                    : 0,
+                wizardToolbarHeight = !this.isEditMode() && scrollEl.length == 1
+                    ? scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).innerHeight()
+                    : 0;
 
-            return this.getEl().getOffsetTop() - scrollEl.offset().top - wizardToolbarHeight;
+            return this.getEl().getOffsetTop() - scrollElOffsetTop - wizardToolbarHeight;
         }
 
         private setEditMode(edit: boolean, applyChanges: boolean = true) {
@@ -727,7 +736,6 @@ module api.ui.image {
 
             this.setShaderVisible(edit);
             this.toggleClass('edit-mode', edit);
-            this.updateStickyToolbar();
 
             var crop, zoom, focus;
 
@@ -770,6 +778,9 @@ module api.ui.image {
             }
 
             this.notifyEditModeChanged(edit, crop, zoom, focus);
+
+            // update it after listeners in case they modified anything
+            this.updateStickyToolbar();
 
             if (ImageEditor.debug) {
                 console.groupEnd();
