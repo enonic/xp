@@ -106,6 +106,8 @@ public final class ContentInitializer
 
             LOG.info( "Created content root-node: " + root.path() );
 
+            nodeService.refresh();
+
             nodeService.push( NodeIds.from( root.id() ), ContentConstants.BRANCH_MASTER );
         }
     }

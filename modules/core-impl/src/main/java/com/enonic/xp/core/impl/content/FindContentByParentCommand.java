@@ -29,6 +29,8 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
+        nodeService.refresh();
+
         final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
 
         populateParentIdentificator( findNodesParam );

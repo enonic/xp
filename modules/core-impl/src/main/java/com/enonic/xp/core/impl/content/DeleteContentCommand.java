@@ -47,21 +47,10 @@ final class DeleteContentCommand
         try
         {
             final Contents deletedContents = doExecute();
+
             for ( Content deletedContent : deletedContents )
             {
-                if ( deletedContent != null )
-                {
-                    if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
-                    {
-                        eventPublisher.publish(
-                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-                    }
-                    else
-                    {
-                        eventPublisher.publish(
-                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
-                    }
-                }
+                publishEvents( deletedContent );
             }
             return deletedContents;
         }
@@ -73,11 +62,9 @@ final class DeleteContentCommand
 
     private Contents doExecute()
     {
-        //Gets the node to delete
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
-        //Executes the deletion on the node and the sub nodes
         final Set<Node> nodesToDelete = Sets.newLinkedHashSet();
         recursiveDelete( nodeToDelete, nodesToDelete );
 
@@ -90,21 +77,20 @@ final class DeleteContentCommand
 
         if ( status == CompareStatus.NEW )
         {
-            //If the current node is new, deletes it
-            final Node deletedNode = nodeService.deleteByPath( nodeToDelete.path() );
+            final Node deletedNode = nodeService.deleteById( nodeToDelete.id() );
             deletedNodes.add( deletedNode );
         }
         else
         {
-            //Else, marks the current node as PENDING_DELETE
-            final SetNodeStateParams setNodeStateParams = SetNodeStateParams.create().
+            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
                 nodeId( nodeToDelete.id() ).
                 nodeState( NodeState.PENDING_DELETE ).
-                build();
-            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( setNodeStateParams );
+                build() );
+
             deletedNodes.addAll( setNodeStateResult.getUpdatedNodes().getSet() );
 
-            //Recursive call for the children
+            this.nodeService.refresh();
+
             if ( nodeToDelete.getHasChildren() )
             {
                 final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
@@ -136,6 +122,22 @@ final class DeleteContentCommand
         }
         return compare.getCompareStatus();
     }
+
+    private void publishEvents( final Content deletedContent )
+    {
+        if ( deletedContent != null )
+        {
+            if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+            {
+                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
+            }
+            else
+            {
+                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+            }
+        }
+    }
+
 
     public static Builder create()
     {

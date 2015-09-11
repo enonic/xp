@@ -61,8 +61,6 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
-        this.nodeService.refresh();
-
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -79,28 +77,33 @@ public class PushContentCommand
 
     private void pushWithoutDependencyResolve()
     {
-        final GetContentByIdsParams getContentParams = new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false );
-        final boolean validContents = ensureValidContents( getContentByIds( getContentParams ) );
+        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false ) );
 
-        if ( validContents )
+        final boolean validContents = ensureValidContents( contentsToPush );
+
+        if ( !validContents )
         {
-            NodeIds.Builder pushContentsIds = NodeIds.create();
-            NodeIds.Builder deletedContentsIds = NodeIds.create();
-            for ( CompareContentResult compareResult : getContentsComparisons() )
-            {
-                if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
-                {
-                    deletedContentsIds.add( NodeId.from( compareResult.getContentId() ) );
-                }
-                else
-                {
-                    pushContentsIds.add( NodeId.from( compareResult.getContentId() ) );
-                }
-            }
-
-            doPushNodes( pushContentsIds.build() );
-            doDeleteNodes( deletedContentsIds.build() );
+            return;
         }
+
+        NodeIds.Builder pushContentsIds = NodeIds.create();
+        NodeIds.Builder deletedContentsIds = NodeIds.create();
+
+        for ( CompareContentResult compareResult : getContentsComparisons() )
+        {
+            if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
+            {
+                deletedContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+            }
+            else
+            {
+                pushContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+            }
+        }
+
+        doPushNodes( pushContentsIds.build() );
+        doDeleteNodes( deletedContentsIds.build() );
+
     }
 
     private CompareContentResults getContentsComparisons()
@@ -131,14 +134,14 @@ public class PushContentCommand
 
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
+            final ResolveSyncWorkResult syncWorkResult = resolveSyncWork( contentId );
 
             resultsBuilder.add( syncWorkResult );
         }
         return resultsBuilder.build();
     }
 
-    private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
+    private ResolveSyncWorkResult resolveSyncWork( final ContentId contentId )
     {
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).

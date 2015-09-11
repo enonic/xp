@@ -117,26 +117,22 @@ public class ContentServiceImplTest_delete
     public void create_delete_published_content()
         throws Exception
     {
-        //Creates content
-        final CreateContentParams createContentParams = CreateContentParams.create().
+        final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
-            build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        //Publishes the content
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
-            build();
+            build() );
 
         refresh();
 
-        this.contentService.push( pushParams );
+        final PushContentsResult result = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            allowPublishOutsideSelection( false ).
+            build() );
+
+        assertEquals( 1, result.getPushedContent().getSize() );
 
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
@@ -232,56 +228,56 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void create_delete_published_content_with_unpublished_children()
+    public void delete_published_content_with_unpublished_children()
         throws Exception
     {
-
-        //Creates a content with a child
-        final CreateContentParams createContentParams = CreateContentParams.create().
+        final Content parent = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "Root Content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
-            build();
+            build() );
 
-        final Content content = this.contentService.create( createContentParams );
-
-        final CreateContentParams createPublishedChildContentParams = CreateContentParams.create().
+        final Content child = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "Published Child Content" ).
-            parent( content.getPath() ).
+            parent( parent.getPath() ).
             type( ContentTypeName.folder() ).
-            build();
-
-        final Content publishedChildContent = this.contentService.create( createPublishedChildContentParams );
-
-        //Publishes the content
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
-            allowPublishOutsideSelection( false ).
-            build();
+            build() );
 
         refresh();
 
-        final PushContentsResult push = this.contentService.push( pushParams );
+        final PushContentsResult result = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( parent.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            allowPublishOutsideSelection( true ).
+            includeChildren( true ).
+            build() );
+        assertEquals( 2, result.getPushedContent().getSize() );
 
-        //Creates an unpublished child
-        final CreateContentParams createUnpublishedChildContentParams = CreateContentParams.create().
+        refresh();
+
+        //Creates an child that we wont publish
+        final Content unpublishedChildContent = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "Unpublished Child Content" ).
-            parent( content.getPath() ).
+            parent( parent.getPath() ).
             type( ContentTypeName.folder() ).
-            build();
+            build() );
 
-        final Content unpublishedChildContent = this.contentService.create( createUnpublishedChildContentParams );
+        refresh();
 
         //Deletes the root content
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
+        final Contents deletedContents = this.contentService.delete( DeleteContentParams.create().
+            contentPath( parent.getPath() ).
+            build() );
 
-        final Contents deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 3, deletedContents.getSize() );
+
+        DeleteContentParams.create().
+            contentPath( parent.getPath() ).
+            build();
 
         for ( Content deletedContent : deletedContents )
         {
@@ -289,7 +285,7 @@ public class ContentServiceImplTest_delete
             {
                 assertTrue( ContentState.DEFAULT == deletedContent.getContentState() );
             }
-            else if ( content.getId().equals( deletedContent.getId() ) || publishedChildContent.getId().equals( deletedContent.getId() ) )
+            else if ( parent.getId().equals( deletedContent.getId() ) || child.getId().equals( deletedContent.getId() ) )
             {
                 assertTrue( ContentState.PENDING_DELETE == deletedContent.getContentState() );
             }
@@ -300,7 +296,7 @@ public class ContentServiceImplTest_delete
         }
 
         //Checks that the content and published child are marked for deletion and that the unpublished child is deleted
-        final ContentIds contentIds = ContentIds.from( content.getId(), publishedChildContent.getId(), unpublishedChildContent.getId() );
+        final ContentIds contentIds = ContentIds.from( parent.getId(), child.getId(), unpublishedChildContent.getId() );
         final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
 
         final Contents foundContents = this.contentService.getByIds( getContentByIdsParams );
@@ -308,7 +304,7 @@ public class ContentServiceImplTest_delete
         for ( Content foundContent : foundContents )
         {
             assertTrue( ContentState.PENDING_DELETE == foundContent.getContentState() );
-            assertTrue( content.getId().equals( foundContent.getId() ) || publishedChildContent.getId().equals( foundContent.getId() ) );
+            assertTrue( parent.getId().equals( foundContent.getId() ) || child.getId().equals( foundContent.getId() ) );
         }
     }
 

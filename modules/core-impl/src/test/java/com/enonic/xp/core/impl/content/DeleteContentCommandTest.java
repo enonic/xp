@@ -50,22 +50,20 @@ public class DeleteContentCommandTest
             parentPath( NodePath.ROOT ).
             build();
 
-        final SetNodeStateResult setNodeStateResult = SetNodeStateResult.
-            create().
-            addUpdatedNode( node ).
-            build();
-
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( id, CompareStatus.NEW ) );
 
-        Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
+        Mockito.when( this.nodeService.deleteById( node.id() ) ).
             thenReturn( node );
 
         Mockito.when( this.nodeService.setNodeState( Mockito.isA( SetNodeStateParams.class ) ) ).
-            thenReturn( setNodeStateResult );
+            thenReturn( SetNodeStateResult.
+                create().
+                addUpdatedNode( node ).
+                build() );
 
         Mockito.when( this.translator.fromNodes( Mockito.isA( Nodes.class ) ) ).thenReturn( Contents.empty() );
 
@@ -79,7 +77,7 @@ public class DeleteContentCommandTest
             build().
             execute();
 
-        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).deleteByPath( Mockito.isA( NodePath.class ) );
+        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).deleteById( node.id() );
     }
 
     @Test

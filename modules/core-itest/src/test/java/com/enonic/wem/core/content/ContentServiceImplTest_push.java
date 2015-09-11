@@ -38,15 +38,14 @@ public class ContentServiceImplTest_push
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PushContentParams pushParams = PushContentParams.create().
+        refresh();
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( false ).
-            build();
-
-        refresh();
-
-        final PushContentsResult push = this.contentService.push( pushParams );
+            resolveDependencies( false ).
+            build() );
 
         assertEquals( 1, push.getPushedContent().getSize() );
     }

@@ -58,6 +58,8 @@ public class IndexServiceImplTest
             initialize( true ).
             build() );
 
+        refresh();
+
         assertEquals( 2, result.getReindexNodes().getSize() );
 
         assertNotNull( queryForNode( node.id() ) );
@@ -123,6 +125,8 @@ public class IndexServiceImplTest
             name( "myNode" ).
             parent( NodePath.ROOT ).
             build() );
+
+        refresh();
 
         PushNodesCommand.create().
             ids( NodeIds.from( node.id() ) ).

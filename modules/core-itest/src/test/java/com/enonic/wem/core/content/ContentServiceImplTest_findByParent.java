@@ -7,11 +7,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class ContentServiceImplTest_findByParent extends AbstractContentServiceTest
+public class ContentServiceImplTest_findByParent
+    extends AbstractContentServiceTest
 {
     @Override
     public void setUp()
@@ -21,10 +20,12 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void root_content() throws Exception{
+    public void root_content()
+        throws Exception
+    {
 
-        final Content content1 = createContent(ContentPath.ROOT);
-        final Content content2 = createContent(ContentPath.ROOT);
+        final Content content1 = createContent( ContentPath.ROOT );
+        final Content content2 = createContent( ContentPath.ROOT );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -40,7 +41,9 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void root_no_content() throws Exception{
+    public void root_no_content()
+        throws Exception
+    {
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -56,12 +59,14 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void root_children() throws Exception{
+    public void root_children()
+        throws Exception
+    {
 
-        final Content parentContent = createContent(ContentPath.ROOT);
-        final Content content1 = createContent(parentContent.getPath());
-        final Content content2 = createContent(parentContent.getPath());
-        final Content content3 = createContent(parentContent.getPath());
+        final Content parentContent = createContent( ContentPath.ROOT );
+        final Content content1 = createContent( parentContent.getPath() );
+        final Content content2 = createContent( parentContent.getPath() );
+        final Content content3 = createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
 
@@ -79,13 +84,15 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void deep_children() throws Exception{
+    public void deep_children()
+        throws Exception
+    {
 
-        final Content rootContent = createContent(ContentPath.ROOT);
-        final Content childrenLevel1 = createContent(rootContent.getPath());
-        final Content childrenLevel2_1 = createContent(childrenLevel1.getPath());
-        final Content childrenLevel2_2 = createContent(childrenLevel1.getPath());
-        final Content childrenLevel2_3 = createContent(childrenLevel1.getPath());
+        final Content rootContent = createContent( ContentPath.ROOT );
+        final Content childrenLevel1 = createContent( rootContent.getPath() );
+        final Content childrenLevel2_1 = createContent( childrenLevel1.getPath() );
+        final Content childrenLevel2_2 = createContent( childrenLevel1.getPath() );
+        final Content childrenLevel2_3 = createContent( childrenLevel1.getPath() );
 
         final ContentPath parentContentPath = childrenLevel1.getPath();
 
@@ -103,10 +110,12 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void invalid_parent_path() throws Exception{
+    public void invalid_parent_path()
+        throws Exception
+    {
 
-        final Content rootContent = createContent(ContentPath.ROOT);
-        final Content childrenLevel1 = createContent(rootContent.getPath());
+        final Content rootContent = createContent( ContentPath.ROOT );
+        final Content childrenLevel1 = createContent( rootContent.getPath() );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -122,19 +131,18 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void params_size_zero() throws Exception{
-
-        final Content parentContent = createContent(ContentPath.ROOT);
-        final Content content1 = createContent(parentContent.getPath());
-        final Content content2 = createContent(parentContent.getPath());
-        final Content content3 = createContent(parentContent.getPath());
-
-        final ContentPath parentContentPath = parentContent.getPath();
+    public void params_size_zero()
+        throws Exception
+    {
+        final Content parentContent = createContent( ContentPath.ROOT );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 0 ).
-            parentPath( parentContentPath ).
+            parentPath( parentContent.getPath() ).
             build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
@@ -147,12 +155,14 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void params_size_one() throws Exception{
+    public void params_size_one()
+        throws Exception
+    {
 
-        final Content parentContent = createContent(ContentPath.ROOT);
-        final Content content1 = createContent(parentContent.getPath());
-        final Content content2 = createContent(parentContent.getPath());
-        final Content content3 = createContent(parentContent.getPath());
+        final Content parentContent = createContent( ContentPath.ROOT );
+        final Content content1 = createContent( parentContent.getPath() );
+        final Content content2 = createContent( parentContent.getPath() );
+        final Content content3 = createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
 
@@ -172,12 +182,14 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void params_from_beyond() throws Exception{
+    public void params_from_beyond()
+        throws Exception
+    {
 
-        final Content parentContent = createContent(ContentPath.ROOT);
-        final Content content1 = createContent(parentContent.getPath());
-        final Content content2 = createContent(parentContent.getPath());
-        final Content content3 = createContent(parentContent.getPath());
+        final Content parentContent = createContent( ContentPath.ROOT );
+        final Content content1 = createContent( parentContent.getPath() );
+        final Content content2 = createContent( parentContent.getPath() );
+        final Content content3 = createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
 
@@ -196,13 +208,15 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
     }
 
     @Test
-    public void params_from() throws Exception{
+    public void params_from()
+        throws Exception
+    {
 
-        final Content parentContent = createContent(ContentPath.ROOT);
-        final Content content1 = createContent(parentContent.getPath());
-        final Content content2 = createContent(parentContent.getPath());
-        final Content content3 = createContent(parentContent.getPath());
-        final Content content4 = createContent(parentContent.getPath());
+        final Content parentContent = createContent( ContentPath.ROOT );
+        final Content content1 = createContent( parentContent.getPath() );
+        final Content content2 = createContent( parentContent.getPath() );
+        final Content content3 = createContent( parentContent.getPath() );
+        final Content content4 = createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
 
