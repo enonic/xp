@@ -43,9 +43,13 @@ module api.ui {
             }
         }
 
-        appendChildAction(action: Action) {
-            action.parentAction = this;
-            this.childActions.push(action);
+        setChildActions(actions: Action[]): Action {
+            actions.forEach((action: Action) => {
+                action.parentAction = this;
+            });
+            this.childActions = actions;
+
+            return this;
         }
 
         hasChildActions(): boolean {

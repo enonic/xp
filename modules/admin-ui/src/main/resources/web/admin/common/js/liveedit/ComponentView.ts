@@ -370,6 +370,17 @@ module api.liveedit {
             });
         }
 
+        getNewItemIndex(): number {
+            return this.getParentItemView().getComponentViewIndex(this) + 1;
+        }
+
+        addComponentView(componentView: ComponentView<Component>, index: number) {
+            this.getParentItemView().addComponentView(componentView, index, true);
+        }
+
+        getRegionView(): RegionView {
+            return this.getParentItemView();
+        }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
