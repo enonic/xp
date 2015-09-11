@@ -45,7 +45,7 @@ final class GetPageDescriptorsByApplicationsCommand
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
         for ( final Application application : applications )
         {
-            final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
+            final ResourceKeys resourceKeys = this.resourceService.findFolders( application.getKey(), PATH );
 
             for ( final ResourceKey resourceKey : resourceKeys )
             {
