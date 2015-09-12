@@ -14,10 +14,12 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 
 public class ResolveSyncWorkCommand
@@ -73,9 +75,15 @@ public class ResolveSyncWorkCommand
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
-        for ( final NodeId nodeId : diff.getNodesWithDifferences() )
+        final Nodes nodes = GetNodesByIdsCommand.create( this ).
+            ids( diff.getNodesWithDifferences() ).
+            resolveHasChild( false ).
+            build().
+            execute();
+
+        for ( final Node node : nodes )
         {
-            resolveDiffWithNodeIdAsInput( nodeId, ResolveContext.requested() );
+            resolveDiffWithNodeIdAsInput( node, ResolveContext.requested() );
         }
 
         return resultBuilder.setInitialReasonNodeId( this.publishRootNode.id() ).build();
@@ -113,16 +121,14 @@ public class ResolveSyncWorkCommand
         doResolveDiff( node, resolveContext );
     }
 
-    private void resolveDiffWithNodeIdAsInput( final NodeId nodeId, final ResolveContext resolveContext )
+    private void resolveDiffWithNodeIdAsInput( final Node node, final ResolveContext resolveContext )
     {
-        if ( isProcessed( nodeId ) )
+        if ( isProcessed( node.id() ) )
         {
             return;
         }
 
-        this.processedIds.add( nodeId );
-
-        final Node node = doGetById( nodeId, false );
+        this.processedIds.add( node.id() );
 
         if ( node == null )
         {
@@ -180,16 +186,28 @@ public class ResolveSyncWorkCommand
     {
         final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
 
+        final NodeIds.Builder referredNodeIds = NodeIds.create();
+
         for ( final Property reference : references )
         {
             if ( reference.hasNotNullValue() )
             {
-                final NodeId referredNodeId = reference.getReference().getNodeId();
+                referredNodeIds.add( reference.getReference().getNodeId() );
+            }
+        }
 
-                if ( !this.processedIds.contains( referredNodeId ) )
-                {
-                    resolveDiffWithNodeIdAsInput( referredNodeId, ResolveContext.referredFrom( node.id() ) );
-                }
+        final Nodes referredNodes = GetNodesByIdsCommand.create( this ).
+            resolveHasChild( false ).
+            ids( referredNodeIds.build() ).
+            build().
+            execute();
+
+        for ( final Node referredNode : referredNodes )
+        {
+
+            if ( !this.processedIds.contains( referredNode.id() ) )
+            {
+                resolveDiffWithNodeIdAsInput( referredNode, ResolveContext.referredFrom( node.id() ) );
             }
         }
     }

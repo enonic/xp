@@ -77,8 +77,6 @@ public class PathCacheImpl
     {
         final String id = pathMap.get( path );
 
-        LOG.info( "Cache result for path: '" + path + "', id: " + id );
-
         return id;
     }
 
