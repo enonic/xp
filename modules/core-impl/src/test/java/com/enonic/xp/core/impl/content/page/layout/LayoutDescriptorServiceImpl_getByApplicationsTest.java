@@ -18,8 +18,8 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
         final Application application = createApplication( "fooapplication" );
         createDescriptors( "fooapplication:fooapplication-layout-descr" );
 
-        mockResources( application, "/site/layouts", "*.xml", true,
-                       "site/layouts/fooapplication-layout-descr/fooapplication-layout-descr.xml" );
+        mockResources( application, "/site/layouts",
+                       "site/layouts/fooapplication-layout-descr/" );
 
         final LayoutDescriptors result = this.service.getByApplication( application.getKey() );
 
@@ -34,10 +34,10 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
         final Applications applications = createApplications( "fooapplication", "barapplication" );
         createDescriptors( "fooapplication:fooapplication-layout-descr", "barapplication:barapplication-layout-descr" );
 
-        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/layouts", "*.xml", true,
-                       "site/layouts/fooapplication-layout-descr/fooapplication-layout-descr.xml" );
-        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/layouts", "*.xml", true,
-                       "site/layouts/barapplication-layout-descr/barapplication-layout-descr.xml" );
+        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/layouts",
+                       "site/layouts/fooapplication-layout-descr/" );
+        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/layouts",
+                       "site/layouts/barapplication-layout-descr/" );
 
         final LayoutDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 
