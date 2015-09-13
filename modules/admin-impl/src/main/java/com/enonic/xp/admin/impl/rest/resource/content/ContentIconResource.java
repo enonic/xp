@@ -44,8 +44,6 @@ public final class ContentIconResource
 {
     private ContentService contentService;
 
-    private ContentImageHelper helper;
-
     private MediaInfoService mediaInfoService;
 
     private ImageService imageService;
@@ -184,12 +182,6 @@ public final class ContentIconResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setContentImageHelper( ContentImageHelper contentImageHelper )
-    {
-        this.helper = contentImageHelper;
     }
 
     @Reference

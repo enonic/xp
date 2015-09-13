@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageScaleFunction;
 
 @Beta
@@ -32,32 +33,6 @@ public final class ScaleSquareFunction
     @Override
     public BufferedImage scale( BufferedImage source )
     {
-        int width = source.getWidth();
-        int height = source.getHeight();
-
-        BufferedImage cropped;
-        if ( width < height )
-        {
-            int heightDiff = height - width;
-            int offset = (int) ( height * this.yOffset ) - ( width / 2 ); // center offset
-            offset = inRange( offset, 0, heightDiff ); // adjust to view limits
-
-            cropped = source.getSubimage( 0, offset, width, width );
-        }
-        else
-        {
-            int widthDiff = width - height;
-            int offset = (int) ( width * this.xOffset ) - ( height / 2 ); // center offset
-            offset = inRange( offset, 0, widthDiff ); // adjust to view limits
-
-            cropped = source.getSubimage( offset, 0, height, height );
-        }
-
-        return getScaledInstance( cropped, this.size, this.size );
-    }
-
-    private int inRange( final int value, final int min, final int max )
-    {
-        return Math.max( Math.min( value, max ), min );
+        return ImageHelper.scaleSquare( source, this.size, this.xOffset, this.yOffset );
     }
 }
