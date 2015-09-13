@@ -1,8 +1,13 @@
 .image-editor {
   .notSelectable();
   display: block;
-  position: relative;
   padding-top: 58px; // equals to the height of sticky toolbar;
+
+  &.standout {
+    position: absolute; // need to have a position other than static for z-index to have effect
+    z-index: @z-index-mask + 1; // to be above image input type mask
+    width: 640px;
+  }
 
   &.edit-mode {
     .image-frame {
@@ -295,7 +300,7 @@
       .zoom-line {
         .opacity(0.5);
         height: 2px;
-        margin: 9px 0 9px 100px;
+        margin: 9px 10px 9px 100px;
         background-color: #444;
         position: relative;
         overflow: visible;
