@@ -35,6 +35,7 @@ public class AccessControlTest
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
+        this.nodeService.setStorageService( storageService );
 
         this.createDefaultRootNode();
     }
@@ -115,6 +116,7 @@ public class AccessControlTest
             queryService( this.queryService ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             nodeDao( this.nodeDao ).
             build().
             execute();

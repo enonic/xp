@@ -41,6 +41,7 @@ public class RenameNodeCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -70,6 +71,7 @@ public class RenameNodeCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -125,6 +127,7 @@ public class RenameNodeCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 

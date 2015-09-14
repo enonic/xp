@@ -54,6 +54,7 @@ public class StoreNodeCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
         refresh();

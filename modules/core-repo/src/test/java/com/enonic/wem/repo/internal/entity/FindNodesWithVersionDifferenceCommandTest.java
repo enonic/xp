@@ -320,6 +320,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -365,6 +366,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -379,6 +381,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }

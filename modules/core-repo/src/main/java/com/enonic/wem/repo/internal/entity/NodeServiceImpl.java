@@ -17,6 +17,7 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.snapshot.SnapshotService;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
@@ -86,6 +87,8 @@ public class NodeServiceImpl
 
     private SnapshotService snapshotService;
 
+    private StorageService storageService;
+
     @Activate
     public void initialize()
     {
@@ -118,6 +121,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -138,6 +142,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -153,6 +158,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -168,6 +174,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -182,6 +189,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -197,6 +205,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -217,6 +226,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -232,6 +242,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -246,6 +257,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -260,6 +272,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -274,6 +287,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -287,6 +301,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             ids( ids ).
             target( target ).
             build().
@@ -304,6 +319,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -319,6 +335,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -379,6 +396,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -414,6 +432,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -427,6 +446,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().
@@ -443,6 +463,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -496,6 +517,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -512,6 +534,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             branchService( this.branchService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -527,6 +550,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -541,6 +565,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -555,6 +580,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -586,6 +612,7 @@ public class NodeServiceImpl
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -636,5 +663,11 @@ public class NodeServiceImpl
     public void setSnapshotService( final SnapshotService snapshotService )
     {
         this.snapshotService = snapshotService;
+    }
+
+    @Reference
+    public void setStorageService( final StorageService storageService )
+    {
+        this.storageService = storageService;
     }
 }

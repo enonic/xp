@@ -188,6 +188,7 @@ public class PushNodesCommandTest
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -309,6 +310,7 @@ public class PushNodesCommandTest
             queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
     }

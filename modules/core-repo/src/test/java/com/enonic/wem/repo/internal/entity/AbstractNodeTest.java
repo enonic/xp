@@ -18,6 +18,7 @@ import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
 import com.enonic.wem.repo.internal.storage.branch.BranchServiceImpl;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
@@ -98,6 +99,8 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchSnapshotService snapshotService;
 
+    protected StorageServiceImpl storageService;
+
     @Before
     public void setUp()
         throws Exception
@@ -134,6 +137,12 @@ public abstract class AbstractNodeTest
         this.nodeDao = new NodeDaoImpl();
         this.nodeDao.setBranchService( this.branchService );
 
+        this.storageService = new StorageServiceImpl();
+        this.storageService.setBranchService( this.branchService );
+        this.storageService.setIndexServiceInternal( this.indexServiceInternal );
+        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setVersionService( this.versionService );
+
         createContentRepository();
         waitForClusterHealth();
     }
@@ -147,6 +156,7 @@ public abstract class AbstractNodeTest
         nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
+        nodeService.setStorageService( this.storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
         repositoryInitializer.initializeRepository( repository.getId() );
@@ -168,6 +178,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -182,6 +193,7 @@ public abstract class AbstractNodeTest
             branchService( this.branchService ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -207,6 +219,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             params( createParamsWithAnalyzer ).
             build().
             execute();
@@ -225,6 +238,7 @@ public abstract class AbstractNodeTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             id( nodeId ).
             resolveHasChild( false ).
             build().
@@ -240,6 +254,7 @@ public abstract class AbstractNodeTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             nodePath( nodePath ).
             resolveHasChild( false ).
             build().
@@ -256,6 +271,7 @@ public abstract class AbstractNodeTest
             indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -269,6 +285,7 @@ public abstract class AbstractNodeTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -308,6 +325,7 @@ public abstract class AbstractNodeTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -321,6 +339,7 @@ public abstract class AbstractNodeTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }

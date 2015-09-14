@@ -50,6 +50,7 @@ public class DuplicateNodeCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -81,6 +82,7 @@ public class DuplicateNodeCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -275,6 +277,7 @@ public class DuplicateNodeCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -320,6 +323,7 @@ public class DuplicateNodeCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -352,6 +356,7 @@ public class DuplicateNodeCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
         refresh();
@@ -367,6 +372,7 @@ public class DuplicateNodeCommandTest
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -389,6 +395,7 @@ public class DuplicateNodeCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }

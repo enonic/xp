@@ -136,6 +136,7 @@ public class IndexServiceImplTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -177,6 +178,7 @@ public class IndexServiceImplTest
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).
             build().
             execute();

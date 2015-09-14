@@ -161,6 +161,7 @@ public class FindNodesByParentCommandTest
             indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -216,6 +217,7 @@ public class FindNodesByParentCommandTest
             indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -238,6 +240,7 @@ public class FindNodesByParentCommandTest
             indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -274,6 +277,7 @@ public class FindNodesByParentCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 

@@ -175,6 +175,7 @@ public class ImportNodeCommandTest
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
     }

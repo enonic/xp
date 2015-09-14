@@ -45,6 +45,7 @@ public class ReorderChildNodesCommand
                 branchService( this.branchService ).
                 versionService( this.versionService ).
                 indexServiceInternal( this.indexServiceInternal ).
+                storageService( this.storageService ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).
                 nodeToMoveBefore( nodeToMoveBefore ).

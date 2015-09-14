@@ -28,6 +28,7 @@ import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
 import com.enonic.wem.repo.internal.storage.branch.BranchServiceImpl;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -124,6 +125,8 @@ public class AbstractContentServiceTest
 
     private ElasticsearchQueryService queryService;
 
+    private StorageServiceImpl storageService;
+
     @Before
     public void setUp()
         throws Exception
@@ -159,12 +162,19 @@ public class AbstractContentServiceTest
 
         this.contentService = new ContentServiceImpl();
 
+        this.storageService = new StorageServiceImpl();
+        this.storageService.setBranchService( this.branchService );
+        this.storageService.setVersionService( this.versionService );
+        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setIndexServiceInternal( this.indexService );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
+        this.nodeService.setStorageService( storageService );
 
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );

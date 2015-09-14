@@ -55,6 +55,7 @@ public class ReorderChildNodeCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
         refresh();
@@ -97,6 +98,7 @@ public class ReorderChildNodeCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
         refresh();
@@ -138,6 +140,7 @@ public class ReorderChildNodeCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
         refresh();
@@ -176,6 +179,7 @@ public class ReorderChildNodeCommandTest
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 

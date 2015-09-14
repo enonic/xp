@@ -43,6 +43,7 @@ public class GetNodeByIdCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             id( createdNode.id() ).
             resolveHasChild( false ).
             build().
@@ -81,6 +82,7 @@ public class GetNodeByIdCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             id( createdNode.id() ).
             resolveHasChild( false ).
             build().
@@ -112,6 +114,7 @@ public class GetNodeByIdCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             id( createdNode.id() ).
             resolveHasChild( true ).
             build().
@@ -126,6 +129,7 @@ public class GetNodeByIdCommandTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             id( createdNode.id() ).
             resolveHasChild( false ).
             build().

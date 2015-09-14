@@ -61,6 +61,7 @@ public class SetNodeStateCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
 
             execute();

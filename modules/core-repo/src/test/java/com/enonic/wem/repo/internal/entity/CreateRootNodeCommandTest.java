@@ -30,6 +30,7 @@ public class CreateRootNodeCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
 

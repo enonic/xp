@@ -50,6 +50,7 @@ public class GetBinaryCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -81,6 +82,7 @@ public class GetBinaryCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 

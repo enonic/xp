@@ -100,6 +100,7 @@ public class GetNodeVersionsCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }

@@ -78,6 +78,7 @@ public class CompareNodeCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -177,6 +178,7 @@ public class CompareNodeCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute() );
 
@@ -212,6 +214,7 @@ public class CompareNodeCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -226,6 +229,7 @@ public class CompareNodeCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             build().
             execute();
     }

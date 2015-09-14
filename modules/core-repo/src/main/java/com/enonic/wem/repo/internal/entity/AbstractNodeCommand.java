@@ -6,6 +6,7 @@ import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -38,6 +39,8 @@ abstract class AbstractNodeCommand
 
     final QueryService queryService;
 
+    final StorageService storageService;
+
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
@@ -45,6 +48,7 @@ abstract class AbstractNodeCommand
         this.branchService = builder.branchService;
         this.versionService = builder.versionService;
         this.queryService = builder.queryService;
+        this.storageService = builder.storageService;
     }
 
     Node doGetById( final NodeId id, final boolean resolveHasChild )
@@ -118,6 +122,8 @@ abstract class AbstractNodeCommand
 
         QueryService queryService;
 
+        StorageService storageService;
+
         Builder()
         {
         }
@@ -129,6 +135,7 @@ abstract class AbstractNodeCommand
             this.branchService = source.branchService;
             this.queryService = source.queryService;
             this.versionService = source.versionService;
+            this.storageService = source.storageService;
         }
 
         @SuppressWarnings("unchecked")
@@ -159,6 +166,12 @@ abstract class AbstractNodeCommand
             return (B) this;
         }
 
+        public B storageService( final StorageService storageService )
+        {
+            this.storageService = storageService;
+            return (B) this;
+        }
+
         @SuppressWarnings("unchecked")
         public B nodeDao( final NodeDao nodeDao )
         {
@@ -173,6 +186,7 @@ abstract class AbstractNodeCommand
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( branchService, "branchService not set" );
             Preconditions.checkNotNull( queryService, "queryService not set" );
+            Preconditions.checkNotNull( storageService, "storageService not set" );
         }
     }
 }

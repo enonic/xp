@@ -3,15 +3,10 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
-import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeVersionId;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
@@ -20,11 +15,14 @@ public class StoreNodeCommand
 
     private final boolean updateMetadataOnly;
 
+    private final StorageService storageService;
+
     private StoreNodeCommand( final Builder builder )
     {
         super( builder );
         this.node = builder.node;
         this.updateMetadataOnly = builder.updateMetadataOnly;
+        this.storageService = builder.storageService;
     }
 
     public static Builder create()
@@ -41,39 +39,12 @@ public class StoreNodeCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId nodeVersionId;
-
-        if ( !updateMetadataOnly )
+        if ( updateMetadataOnly )
         {
-            nodeVersionId = nodeDao.store( node );
-
-            this.versionService.store( NodeVersionDocument.create().
-                nodeId( node.id() ).
-                nodeVersionId( nodeVersionId ).
-                nodePath( node.path() ).
-                timestamp( node.getTimestamp() ).
-                build(), InternalContext.from( context ) );
-        }
-        else
-        {
-            final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), InternalContext.from( context ) );
-
-            if ( nodeBranchVersion == null )
-            {
-                throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
-            }
-
-            nodeVersionId = nodeBranchVersion.getVersionId();
+            return this.storageService.updateMetadata( this.node, InternalContext.from( context ) );
         }
 
-        this.branchService.store( StoreBranchDocument.create().
-            node( node ).
-            nodeVersionId( nodeVersionId ).
-            build(), InternalContext.from( context ) );
-
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.from( context ) );
-
-        return this.nodeDao.getByVersionId( nodeVersionId );
+        return this.storageService.store( this.node, InternalContext.from( context ) );
     }
 
     public static final class Builder
@@ -105,6 +76,12 @@ public class StoreNodeCommand
             return this;
         }
 
+        public Builder storageService( final StorageService storageService )
+        {
+            this.storageService = storageService;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -118,4 +95,6 @@ public class StoreNodeCommand
             return new StoreNodeCommand( this );
         }
     }
+
+
 }

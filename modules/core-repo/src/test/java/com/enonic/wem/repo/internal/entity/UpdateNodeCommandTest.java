@@ -99,6 +99,7 @@ public class UpdateNodeCommandTest
             queryService( this.queryService ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
 

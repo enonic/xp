@@ -54,6 +54,7 @@ public class NodeChildOrderResolverTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -64,6 +65,7 @@ public class NodeChildOrderResolverTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             resolve();
 
@@ -89,6 +91,7 @@ public class NodeChildOrderResolverTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             resolve();
 

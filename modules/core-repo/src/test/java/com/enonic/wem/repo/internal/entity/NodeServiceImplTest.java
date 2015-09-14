@@ -56,6 +56,7 @@ public class NodeServiceImplTest
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
         this.nodeService.setSnapshotService( this.snapshotService );
+        this.nodeService.setStorageService( this.storageService );
 
         this.createDefaultRootNode();
     }

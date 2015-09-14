@@ -69,6 +69,7 @@ public class ApplyNodePermissionsCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -125,6 +126,7 @@ public class ApplyNodePermissionsCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -231,6 +233,7 @@ public class ApplyNodePermissionsCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 

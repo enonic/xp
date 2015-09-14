@@ -49,6 +49,7 @@ public class FindNodesByIdsCommandTest
             versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -84,6 +85,7 @@ public class FindNodesByIdsCommandTest
             versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 

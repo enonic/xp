@@ -1,18 +1,29 @@
 package com.enonic.wem.repo.internal.storage;
 
 
-import com.enonic.wem.repo.internal.storage.result.GetResult;
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.Nodes;
 
 public interface StorageService
 {
-    String store( final StoreRequest request );
+    Node store( final Node node, final InternalContext context );
 
-    boolean delete( final DeleteRequest request );
+    Node updateMetadata( final Node node, final InternalContext context );
 
-    GetResult getById( final GetByIdRequest request );
+    boolean delete( final NodeId nodeId, final InternalContext context );
 
-    GetResult getByPath( final GetByPathRequest request );
+    Node getById( final NodeId nodeId, final InternalContext context );
 
-    GetResult getByParent( final GetByParentRequest request );
+    Node getByPath( final NodePath nodePath, final InternalContext context );
+
+    Nodes getByIds( final NodeIds nodeIds, final InternalContext context );
+
+    Nodes getByPaths( final NodePaths nodePaths, final InternalContext context );
+
 
 }

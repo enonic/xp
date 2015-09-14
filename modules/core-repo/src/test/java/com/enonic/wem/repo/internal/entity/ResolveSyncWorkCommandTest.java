@@ -87,6 +87,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -153,6 +154,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -216,6 +218,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -418,6 +421,7 @@ public class ResolveSyncWorkCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( moveMe.id() ).
             newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
             newParent( to ).
@@ -530,6 +534,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -583,6 +588,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -1061,6 +1067,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -1216,6 +1223,7 @@ public class ResolveSyncWorkCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -1228,6 +1236,7 @@ public class ResolveSyncWorkCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
@@ -1245,6 +1254,7 @@ public class ResolveSyncWorkCommandTest
             queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -1260,6 +1270,7 @@ public class ResolveSyncWorkCommandTest
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -1299,6 +1310,7 @@ public class ResolveSyncWorkCommandTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
             includeChildren( includeChildren ).
             build().
             execute();

@@ -48,6 +48,7 @@ public class GetActiveNodeVersionsCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             nodeId( node.id() ).
             branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
@@ -65,6 +66,7 @@ public class GetActiveNodeVersionsCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            storageService( this.storageService ).
             nodeId( node.id() ).
             branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
@@ -92,6 +94,7 @@ public class GetActiveNodeVersionsCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
             build().
             execute() );
     }

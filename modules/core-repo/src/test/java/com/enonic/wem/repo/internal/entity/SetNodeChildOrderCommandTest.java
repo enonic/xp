@@ -151,6 +151,7 @@ public class SetNodeChildOrderCommandTest
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -171,6 +172,7 @@ public class SetNodeChildOrderCommandTest
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
+            storageService( this.storageService ).
             build().
             execute();
 

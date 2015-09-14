@@ -46,6 +46,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -73,6 +74,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -102,6 +104,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
@@ -131,6 +134,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( child.path() ).
@@ -166,6 +170,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode" ) ).
             newParent( newParent.path() ).
@@ -195,6 +200,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( node.id() ).
             newParent( newParent.path() ).
             build().
@@ -260,6 +266,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( child1.id() ).
             newParent( newParent.path() ).
             build().

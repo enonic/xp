@@ -48,6 +48,7 @@ public class GetNodesByPathsCommandTest
             versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -66,6 +67,7 @@ public class GetNodesByPathsCommandTest
             versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
             build().
             execute();
 

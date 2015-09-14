@@ -56,6 +56,7 @@ public class DeleteNodeByPathCommandTest
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
 
