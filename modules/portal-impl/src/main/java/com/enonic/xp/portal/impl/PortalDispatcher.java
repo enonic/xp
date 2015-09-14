@@ -24,6 +24,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.exception.ExceptionMapper;
 import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
+import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -69,6 +70,7 @@ public final class PortalDispatcher
     }
 
     private PortalRequest newPortalRequest( final HttpServletRequest req )
+        throws Exception
     {
         final PortalRequest result = new PortalRequest();
         result.setMethod( req.getMethod() );
@@ -80,6 +82,8 @@ public final class PortalDispatcher
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setContentPath( findContentPath( rawPath ) );
         result.setRawRequest( req );
+        result.setContentType( req.getContentType() );
+        result.setBody( RequestBodyReader.readBody( req ) );
 
         result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
         result.setHost( ServletRequestUrlHelper.getHost( req ) );

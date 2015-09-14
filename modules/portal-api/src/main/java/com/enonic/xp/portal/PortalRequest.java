@@ -66,6 +66,10 @@ public final class PortalRequest
 
     private String endpointPath;
 
+    private String contentType;
+
+    private Object body;
+
     private HttpServletRequest rawRequest;
 
     public PortalRequest()
@@ -271,7 +275,27 @@ public final class PortalRequest
 
     public String getContentType()
     {
-        return this.rawRequest.getContentType();
+        return this.contentType;
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
+    }
+
+    public Object getBody()
+    {
+        return this.body;
+    }
+
+    public void setBody( final Object body )
+    {
+        this.body = body;
+    }
+
+    public String getBodyAsString()
+    {
+        return this.body != null ? this.body.toString() : null;
     }
 
     public HttpServletRequest getRawRequest()

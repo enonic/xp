@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
@@ -39,7 +38,6 @@ public class PortalDispatcherTest
     }
 
     @Test
-    @Ignore("need exception mapper")
     public void testNoBranch()
         throws Exception
     {
@@ -211,8 +209,7 @@ public class PortalDispatcherTest
         this.handler.verifier = req -> {
             assertEquals( "POST", req.getMethod() );
             assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
-
-            // TODO: Should check body for request...
+            assertEquals( "Hello World", req.getBodyAsString() );
         };
 
         final Response response = callRequest( request );
@@ -232,8 +229,7 @@ public class PortalDispatcherTest
         this.handler.verifier = req -> {
             assertEquals( "POST", req.getMethod() );
             assertEquals( "application/json; charset=utf-8", req.getContentType() );
-
-            // TODO: Should check body for request...
+            assertEquals( "{}", req.getBodyAsString() );
         };
 
         final Response response = callRequest( request );
