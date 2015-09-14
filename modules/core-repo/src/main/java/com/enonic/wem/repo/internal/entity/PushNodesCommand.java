@@ -3,8 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -160,19 +158,9 @@ public class PushNodesCommand
 
     private void doPushNode( final Context context, final Node node, final NodeVersionId nodeVersionId )
     {
-        this.branchService.store( StoreBranchDocument.create().
-            nodeVersionId( nodeVersionId ).
-            node( node ).
-            build(), InternalContext.create( context ).
+        this.storageService.updateVersion( node, nodeVersionId, InternalContext.create( context ).
             branch( this.target ).
             build() );
-
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
-            branch( this.target ).
-            repositoryId( context.getRepositoryId() ).
-            authInfo( context.getAuthInfo() ).
-            build() );
-
     }
 
     boolean targetParentExists( final Node node, final Context currentContext )
