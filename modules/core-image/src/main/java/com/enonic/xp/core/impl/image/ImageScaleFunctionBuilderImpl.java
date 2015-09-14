@@ -5,8 +5,6 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.core.impl.image.command.ScaleCommand;
 import com.enonic.xp.core.impl.image.command.ScaleCommandRegistry;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.image.scale.ScaleParams;
 
 @Component(immediate = true)

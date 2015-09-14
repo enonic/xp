@@ -26,8 +26,6 @@ import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.filter.ScaleMaxFunction;

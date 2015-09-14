@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.image.command;
 
+import com.enonic.xp.core.impl.image.ImageScaleFunction;
 import com.enonic.xp.core.impl.image.effect.ScaleBlockFunction;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageScaleFunction;
 
 public class ScaleBlockFunctionCommand
     extends ScaleCommand
