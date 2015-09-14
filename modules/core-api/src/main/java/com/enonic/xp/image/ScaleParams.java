@@ -1,4 +1,4 @@
-package com.enonic.xp.image.scale;
+package com.enonic.xp.image;
 
 import java.util.stream.Stream;
 
