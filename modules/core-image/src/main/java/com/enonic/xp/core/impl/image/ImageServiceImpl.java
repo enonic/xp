@@ -51,21 +51,23 @@ public class ImageServiceImpl
         throws IOException
     {
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        ByteSource serializedImage = FilesHelper.readAllBytes( cachedImagePath );
-        if ( serializedImage == null )
+        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
+        return imageByteSource;
+    }
+
+    private ByteSource createImage( final ReadImageParams readImageParams )
+        throws IOException
+    {
+        final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        if ( blob != null )
         {
-            final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
-            if ( blob != null )
+            final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
+            if ( bufferedImage != null )
             {
-                final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
-                if ( bufferedImage != null )
-                {
-                    serializedImage = serializeImage( readImageParams, bufferedImage );
-                    FilesHelper.write( cachedImagePath, serializedImage );
-                }
+                return serializeImage( readImageParams, bufferedImage );
             }
         }
-        return serializedImage;
+        return null;
     }
 
     @Override
@@ -127,8 +129,8 @@ public class ImageServiceImpl
         //Source binary key
         final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 
-        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format,
-                          background, orientation, quality, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
+        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format, background, orientation, quality,
+                          readImageParams.getBinaryReference().toString() ).toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )

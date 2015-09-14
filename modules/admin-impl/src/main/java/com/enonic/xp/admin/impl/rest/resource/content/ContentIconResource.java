@@ -116,7 +116,7 @@ public final class ContentIconResource
                         build();
 
                     final ByteSource thumbnailImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
+                    return new ResolvedImage( thumbnailImage.read(), contentThumbnail.getMimeType() );
                 }
                 catch ( IOException e )
                 {
