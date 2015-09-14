@@ -45,6 +45,8 @@ module app.wizard.page {
 
         private loadMask: api.ui.mask.LoadMask;
 
+        private loadMaskCanBeShown: boolean = false; //can't be shown correctly until iFrame has height and width
+
         private liveEditWindow: any;
 
         private livejq: JQueryStatic;
@@ -99,6 +101,13 @@ module app.wizard.page {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+            this.liveEditIFrame.onShown(() => {
+               if(!this.loadMaskCanBeShown) {
+                   this.loadMask.show();
+               }
+                this.loadMaskCanBeShown = true;
+            });
+
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
@@ -167,7 +176,10 @@ module app.wizard.page {
         }
 
         public load() {
-            this.loadMask.show();
+            if(this.loadMaskCanBeShown) {
+                this.loadMask.show();
+            }
+
             var contentId = this.liveEditModel.getContent().getContentId().toString();
             var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
             if (LiveEditPageProxy.debug) {
