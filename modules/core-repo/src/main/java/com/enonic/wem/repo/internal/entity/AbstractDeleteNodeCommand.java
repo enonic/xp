@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.GetNodesByParentParams;
 import com.enonic.xp.node.Node;
@@ -57,9 +56,7 @@ abstract class AbstractDeleteNodeCommand
 
     private void doDelete( final Context context, final Node node )
     {
-        branchService.delete( node.id(), InternalContext.from( context ) );
-
-        indexServiceInternal.delete( node.id(), IndexContext.from( context ) );
+        this.storageService.delete( node.id(), InternalContext.from( context ) );
     }
 
     public static class Builder<B extends Builder>

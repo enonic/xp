@@ -6,7 +6,6 @@ import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
@@ -49,6 +48,14 @@ public class StorageServiceImpl
     }
 
     @Override
+    public void delete( final NodeId nodeId, final InternalContext context )
+    {
+        branchService.delete( nodeId, context );
+
+        indexServiceInternal.delete( nodeId, context );
+    }
+
+    @Override
     public Node updateMetadata( final Node node, final InternalContext context )
     {
         final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), context );
@@ -71,18 +78,7 @@ public class StorageServiceImpl
             node( node ).
             build(), context );
 
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() ).
-            principalsKeys( context.getPrincipalsKeys() ).
-            build() );
-    }
-
-
-    @Override
-    public boolean delete( final NodeId nodeId, final InternalContext context )
-    {
-        return false;
+        this.indexServiceInternal.store( node, nodeVersionId, context );
     }
 
     @Override
@@ -117,11 +113,7 @@ public class StorageServiceImpl
             nodeVersionId( nodeVersionId ).
             build(), context );
 
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() ).
-            principalsKeys( context.getPrincipalsKeys() ).
-            build() );
+        this.indexServiceInternal.store( node, nodeVersionId, context );
 
         return this.nodeDao.getByVersionId( nodeVersionId );
     }

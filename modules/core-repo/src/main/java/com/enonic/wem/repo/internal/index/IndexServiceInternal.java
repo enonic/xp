@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.elasticsearch.common.unit.TimeValue;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
@@ -19,9 +20,9 @@ public interface IndexServiceInternal
 
     public boolean indicesExists( final String... indices );
 
-    public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context );
+    public void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    public void delete( final NodeId nodeId, final IndexContext context );
+    public void delete( final NodeId nodeId, final InternalContext context );
 
     public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId );
 

@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.IndexSettings;
@@ -208,7 +208,7 @@ public class ElasticsearchIndexServiceInternal
     }
 
     @Override
-    public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
+    public void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
         final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
@@ -222,7 +222,7 @@ public class ElasticsearchIndexServiceInternal
     }
 
     @Override
-    public void delete( final NodeId nodeId, final IndexContext context )
+    public void delete( final NodeId nodeId, final InternalContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getBranch().getName();
