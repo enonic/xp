@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -167,7 +168,12 @@ public final class AccessControlEntry
 
         public Builder allow( final Permission... permissions )
         {
-            for ( Permission permission : permissions )
+            return allow( Lists.newArrayList( permissions ) );
+        }
+
+        public Builder allow( final Iterable<Permission> permissions )
+        {
+            for ( final Permission permission : permissions )
             {
                 this.deniedPermissions.remove( permission );
                 this.allowedPermissions.add( permission );
@@ -176,6 +182,11 @@ public final class AccessControlEntry
         }
 
         public Builder deny( final Permission... permissions )
+        {
+            return deny( Lists.newArrayList( permissions ) );
+        }
+
+        public Builder deny( final Iterable<Permission> permissions )
         {
             for ( Permission permission : permissions )
             {
