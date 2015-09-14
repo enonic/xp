@@ -1,7 +1,9 @@
 package com.enonic.xp.portal;
 
+import com.google.common.annotations.Beta;
 
-public class PortalAttributes
+@Beta
+public final class PortalAttributes
 {
     private String baseUri;
 
