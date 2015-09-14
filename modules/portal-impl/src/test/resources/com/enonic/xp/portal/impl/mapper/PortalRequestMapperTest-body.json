@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "scheme": "http",
   "host": "localhost",
   "port": 80,
@@ -7,6 +7,8 @@
   "url": "http://localhost/portal/live/master/a/b?param1=value1",
   "mode": "live",
   "branch": "draft",
+  "contentType": "text/plain",
+  "body": "Hello World",
   "params": {
     "param3": [
       "value3-B",
@@ -20,9 +22,5 @@
     "header2": "value2",
     "header1": "value1"
   },
-  "cookies": {},
-  "body": {
-    "type": "text/plain",
-    "text": "Hello World"
-  }
+  "cookies": {}
 }

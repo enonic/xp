@@ -95,6 +95,7 @@ public class PortalRequestMapperTest
     public void testBody()
         throws Exception
     {
+        this.portalRequest.setMethod( "POST" );
         this.portalRequest.setContentType( "text/plain" );
         this.portalRequest.setBody( "Hello World" );
 
