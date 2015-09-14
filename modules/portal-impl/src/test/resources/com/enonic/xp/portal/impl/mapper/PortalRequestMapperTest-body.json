@@ -1,0 +1,28 @@
+{
+  "method": "GET",
+  "scheme": "http",
+  "host": "localhost",
+  "port": 80,
+  "path": "/portal/live/master/a/b",
+  "url": "http://localhost/portal/live/master/a/b?param1=value1",
+  "mode": "live",
+  "branch": "draft",
+  "params": {
+    "param3": [
+      "value3-B",
+      "value3-A"
+    ],
+    "param1": "value1",
+    "param2": "value2"
+  },
+  "headers": {
+    "header3": "value3",
+    "header2": "value2",
+    "header1": "value1"
+  },
+  "cookies": {},
+  "body": {
+    "type": "text/plain",
+    "text": "Hello World"
+  }
+}

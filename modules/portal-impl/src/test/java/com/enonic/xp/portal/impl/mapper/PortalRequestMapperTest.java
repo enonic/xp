@@ -90,4 +90,14 @@ public class PortalRequestMapperTest
 
         assertJson( "cookies", new PortalRequestMapper( this.portalRequest ) );
     }
+
+    @Test
+    public void testBody()
+        throws Exception
+    {
+        this.portalRequest.setContentType( "text/plain" );
+        this.portalRequest.setBody( "Hello World" );
+
+        assertJson( "body", new PortalRequestMapper( this.portalRequest ) );
+    }
 }
