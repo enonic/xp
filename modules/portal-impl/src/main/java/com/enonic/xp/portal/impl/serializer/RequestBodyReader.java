@@ -2,11 +2,14 @@ package com.enonic.xp.portal.impl.serializer;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 
 public final class RequestBodyReader
 {
+    private final static ObjectMapper MAPPER = new ObjectMapper();
+
     private final static MediaType JSON = MediaType.JSON_UTF_8.withoutParameters();
 
     public static Object readBody( final HttpServletRequest req )
@@ -23,6 +26,11 @@ public final class RequestBodyReader
 
     public static boolean isText( final MediaType type )
     {
-        return type.is( MediaType.ANY_TEXT_TYPE ) || type.is( JSON );
+        return type.type().equals( "text" ) || isJson( type );
+    }
+
+    public static boolean isJson( final MediaType type )
+    {
+        return type.is( JSON );
     }
 }

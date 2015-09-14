@@ -30,6 +30,8 @@ public class RequestBodyReaderTest
         assertTrue( RequestBodyReader.isText( MediaType.parse( "text/xml;charset=UTF-8" ) ) );
         assertTrue( RequestBodyReader.isText( MediaType.parse( "application/json" ) ) );
         assertTrue( RequestBodyReader.isText( MediaType.parse( "application/json;charset=UTF-8" ) ) );
+
+        assertFalse( RequestBodyReader.isText( MediaType.parse( "application/x-www-form-urlencoded" ) ) );
     }
 
     private void setText( final String type, final String text )
