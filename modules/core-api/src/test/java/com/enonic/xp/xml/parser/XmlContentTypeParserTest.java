@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.xml.parser;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +10,6 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.xml.parser.XmlModelParserTest;
 
 import static org.junit.Assert.*;
 

@@ -20,6 +20,7 @@ import com.enonic.xp.core.impl.schema.IconLoader;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.xml.parser.XmlMixinParser;
 
 final class MixinLoader
 {

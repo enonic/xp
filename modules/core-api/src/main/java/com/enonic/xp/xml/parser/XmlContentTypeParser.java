@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.xml.parser;
 
 import java.util.List;
 
@@ -10,8 +10,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.parser.XmlFormMapper;
-import com.enonic.xp.xml.parser.XmlModelParser;
 
 @Beta
 public final class XmlContentTypeParser

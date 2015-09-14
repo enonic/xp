@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.site;
+package com.enonic.xp.xml.parser;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class XmlSiteParserTest
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         this.parser.source( xml ).
-            applicationKey( applicationKey ).
+            currentApplication( applicationKey ).
             siteDescriptorBuilder( siteDescriptorBuilder ).
             parse();
 
@@ -52,7 +52,7 @@ public class XmlSiteParserTest
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         this.parser.source( xml ).
-            applicationKey( applicationKey ).
+            currentApplication( applicationKey ).
             siteDescriptorBuilder( siteDescriptorBuilder ).
             parse();
 

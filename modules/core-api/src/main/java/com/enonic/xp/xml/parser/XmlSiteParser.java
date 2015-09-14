@@ -1,19 +1,16 @@
-package com.enonic.xp.core.impl.site;
+package com.enonic.xp.xml.parser;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.parser.XmlFormMapper;
-import com.enonic.xp.xml.parser.XmlObjectParser;
 
-final class XmlSiteParser
-    extends XmlObjectParser<XmlSiteParser>
+public final class XmlSiteParser
+    extends XmlModelParser<XmlSiteParser>
 {
     private static final String ROOT_TAG_NAME = "site";
 
@@ -23,15 +20,7 @@ final class XmlSiteParser
 
     private static final String MIXIN_ATTRIBUTE_NAME = "mixin";
 
-    private ApplicationKey applicationKey;
-
     private SiteDescriptor.Builder siteDescriptorBuilder;
-
-    public XmlSiteParser applicationKey( final ApplicationKey applicationKey )
-    {
-        this.applicationKey = applicationKey;
-        return this;
-    }
 
     public XmlSiteParser siteDescriptorBuilder( final SiteDescriptor.Builder siteDescriptorBuilder )
     {
@@ -45,7 +34,7 @@ final class XmlSiteParser
     {
         assertTagName( root, ROOT_TAG_NAME );
 
-        final XmlFormMapper formMapper = new XmlFormMapper( applicationKey );
+        final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
         this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) ) );
         this.siteDescriptorBuilder.metaSteps( MixinNames.from( parseMetaSteps( root ) ) );
     }
@@ -57,7 +46,7 @@ final class XmlSiteParser
 
     private MixinName toMixinName( final DomElement metaStep )
     {
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( applicationKey );
+        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
         final String name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         return resolver.toMixinName( name );
     }

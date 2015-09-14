@@ -1,12 +1,10 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.parser.XmlFormMapper;
-import com.enonic.xp.xml.parser.XmlModelParser;
 
 @Beta
 public final class XmlMixinParser

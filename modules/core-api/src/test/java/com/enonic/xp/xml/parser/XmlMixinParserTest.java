@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.xml.parser;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.xml.parser.XmlModelParserTest;
 
 import static org.junit.Assert.*;
 

@@ -9,6 +9,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.xml.parser.XmlSiteParser;
 
 final class SiteDescriptorBuilder
 {
@@ -29,7 +30,7 @@ final class SiteDescriptorBuilder
 
         SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         final XmlSiteParser parser = new XmlSiteParser().
-            applicationKey( ApplicationKey.from( bundle ) ).
+            currentApplication( ApplicationKey.from( bundle ) ).
             siteDescriptorBuilder( siteDescriptorBuilder ).
             source( xml );
         parser.parse();
