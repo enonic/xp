@@ -73,6 +73,7 @@ module api.content.site.inputtype.siteconfigurator {
                     var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: SiteConfiguratorSelectedOptionView = <SiteConfiguratorSelectedOptionView>selectedOption.getOptionView();
                     var siteConfig = selectedOptionView.getSiteConfig();
+                    selectedOptionView.initAndOpenConfigureDialog();
 
                     this.validate(false);
                 });
