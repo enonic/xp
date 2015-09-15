@@ -19,6 +19,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
@@ -26,7 +27,7 @@ public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
-    private String method;
+    private HttpMethod method;
 
     private final Multimap<String, String> params;
 
@@ -83,7 +84,7 @@ public final class PortalRequest
         this.cookies = Maps.newHashMap();
     }
 
-    public String getMethod()
+    public HttpMethod getMethod()
     {
         return this.method;
     }
@@ -128,7 +129,7 @@ public final class PortalRequest
         return this.mode;
     }
 
-    public void setMethod( final String method )
+    public void setMethod( final HttpMethod method )
     {
         this.method = method;
     }

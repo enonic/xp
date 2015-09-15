@@ -14,6 +14,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ public class PageHandlerTest
         this.handler.setRendererFactory( this.rendererFactory );
         this.handler.setPortalUrlService( this.portalUrlService );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( null );
     }
@@ -57,7 +58,7 @@ public class PageHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );

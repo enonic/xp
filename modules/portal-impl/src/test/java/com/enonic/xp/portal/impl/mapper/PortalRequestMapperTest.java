@@ -15,6 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.web.HttpMethod;
 
 public class PortalRequestMapperTest
 {
@@ -53,7 +54,7 @@ public class PortalRequestMapperTest
     public void setup()
     {
         this.portalRequest = new PortalRequest();
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "localhost" );
         this.portalRequest.setPort( 80 );
@@ -95,7 +96,7 @@ public class PortalRequestMapperTest
     public void testBody()
         throws Exception
     {
-        this.portalRequest.setMethod( "POST" );
+        this.portalRequest.setMethod( HttpMethod.POST );
         this.portalRequest.setContentType( "text/plain" );
         this.portalRequest.setBody( "Hello World" );
 

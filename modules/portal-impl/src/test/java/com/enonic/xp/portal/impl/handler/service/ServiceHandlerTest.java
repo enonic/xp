@@ -22,6 +22,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -52,7 +53,7 @@ public class ServiceHandlerTest
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
     }
@@ -83,7 +84,7 @@ public class ServiceHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
