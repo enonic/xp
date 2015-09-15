@@ -167,7 +167,11 @@ module app.wizard {
                     // do nothing if expand toggle is clicked
                     return;
                 }
-
+                var treeNode = this.tree.getGrid().getDataView().getItem(data.row);
+                if (treeNode) {
+                    // do it on click only, not on selection change
+                    treeNode.getData().scrollComponentIntoView();
+                }
                 this.tree.getGrid().selectRow(data.row);
 
                 if (this.isModal()) {
@@ -178,7 +182,6 @@ module app.wizard {
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
                     nodes[0].getData().select(null, api.liveedit.ItemViewContextMenuPosition.TOP);
-                    nodes[0].getData().scrollComponentIntoView();
 
                     if (this.isModal()) {
                         this.hide();
