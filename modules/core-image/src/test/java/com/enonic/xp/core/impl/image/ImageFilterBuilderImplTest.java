@@ -12,8 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.image.ImageFilter;
-
 import static org.junit.Assert.*;
 
 public final class ImageFilterBuilderImplTest

@@ -10,8 +10,7 @@ import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.filter.BaseImageProcessor;
+import com.enonic.xp.core.impl.image.ImageFilter;
 
 public final class RoundedFilter
     extends BaseImageProcessor implements ImageFilter

@@ -13,7 +13,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.util.MediaTypes;
 

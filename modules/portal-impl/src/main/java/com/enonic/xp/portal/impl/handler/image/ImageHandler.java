@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.scale.ScaleParamsParser;
+import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalHandler;
 import com.enonic.xp.portal.impl.handler.EndpointHandler;

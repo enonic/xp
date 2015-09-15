@@ -1,10 +1,10 @@
-package com.enonic.xp.image.filter;
+package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.ImageScaleFunction;
-
 import com.google.common.annotations.Beta;
+
+import com.enonic.xp.core.impl.image.ImageScaleFunction;
 
 @Beta
 public final class ScaleMaxFunction

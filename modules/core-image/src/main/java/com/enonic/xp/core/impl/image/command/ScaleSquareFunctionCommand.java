@@ -4,9 +4,9 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
+import com.enonic.xp.core.impl.image.ImageScaleFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleSquareFunction;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.filter.ScaleSquareFunction;
 
 public final class ScaleSquareFunctionCommand
     extends ScaleCommand
