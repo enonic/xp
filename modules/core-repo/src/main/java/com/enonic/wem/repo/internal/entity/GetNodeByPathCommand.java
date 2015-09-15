@@ -14,13 +14,10 @@ public class GetNodeByPathCommand
 {
     private final NodePath path;
 
-    private final boolean resolveHasChild;
-
     private GetNodeByPathCommand( final Builder builder )
     {
         super( builder );
         path = builder.path;
-        resolveHasChild = builder.resolveHasChild;
     }
 
     public Node execute()
@@ -41,10 +38,7 @@ public class GetNodeByPathCommand
             return null;
         }
 
-        return resolveHasChild ? NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( node ) : node;
+        return node;
     }
 
     public static Builder create()
@@ -63,8 +57,6 @@ public class GetNodeByPathCommand
     {
         private NodePath path;
 
-        private boolean resolveHasChild = true;
-
         private Builder()
         {
             super();
@@ -78,12 +70,6 @@ public class GetNodeByPathCommand
         public Builder nodePath( NodePath path )
         {
             this.path = path;
-            return this;
-        }
-
-        public Builder resolveHasChild( boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

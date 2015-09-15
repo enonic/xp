@@ -15,13 +15,10 @@ public class GetNodesByPathsCommand
 {
     private final NodePaths paths;
 
-    private final boolean resolveHasChild;
-
     private GetNodesByPathsCommand( Builder builder )
     {
         super( builder );
         this.paths = builder.paths;
-        this.resolveHasChild = builder.resolveHasChild;
     }
 
     public Nodes execute()
@@ -32,10 +29,7 @@ public class GetNodesByPathsCommand
 
         final NodeVersionIds nodeVersionIds = builder.build();
 
-        return resolveHasChild ? NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( nodeDao.getByVersionIds( nodeVersionIds ) ) : nodeDao.getByVersionIds( nodeVersionIds );
+        return nodeDao.getByVersionIds( nodeVersionIds );
     }
 
     public static Builder create()
@@ -48,8 +42,6 @@ public class GetNodesByPathsCommand
     {
         private NodePaths paths;
 
-        private boolean resolveHasChild = true;
-
         private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
 
         private Builder()
@@ -59,12 +51,6 @@ public class GetNodesByPathsCommand
         public Builder paths( NodePaths paths )
         {
             this.paths = paths;
-            return this;
-        }
-
-        public Builder resolveHasChild( boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

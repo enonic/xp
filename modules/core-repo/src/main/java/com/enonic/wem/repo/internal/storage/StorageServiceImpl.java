@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.InternalContext;
@@ -19,6 +20,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
+@Component
 public class StorageServiceImpl
     implements StorageService
 {

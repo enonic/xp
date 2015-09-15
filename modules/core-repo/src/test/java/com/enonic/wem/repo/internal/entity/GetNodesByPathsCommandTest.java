@@ -42,7 +42,6 @@ public class GetNodesByPathsCommandTest
                 addNodePath( createdNode1.path() ).
                 addNodePath( createdNode2.path() ).
                 build() ).
-            resolveHasChild( true ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
@@ -61,7 +60,6 @@ public class GetNodesByPathsCommandTest
     {
         final Nodes result = GetNodesByPathsCommand.create().
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).
-            resolveHasChild( true ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).

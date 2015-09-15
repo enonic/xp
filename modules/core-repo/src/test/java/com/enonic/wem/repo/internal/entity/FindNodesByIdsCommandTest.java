@@ -43,7 +43,6 @@ public class FindNodesByIdsCommandTest
 
         final Nodes result = FindNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
-            resolveHasChild( true ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
@@ -56,41 +55,4 @@ public class FindNodesByIdsCommandTest
         assertEquals( 2, result.getSize() );
     }
 
-    @Test
-    public void get_by_ids_resolve_hasChild()
-        throws Exception
-    {
-        final Node createdNode1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "node-1" ).
-            build() );
-
-        createNode( CreateNodeParams.create().
-            parent( createdNode1.path() ).
-            name( "child-1" ).
-            build() );
-
-        final Node createdNode2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "node-2" ).
-            build() );
-
-        refresh();
-
-        final Nodes result = FindNodesByIdsCommand.create().
-            ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
-            resolveHasChild( true ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
-            storageService( this.storageService ).
-            build().
-            execute();
-
-        assertEquals( 2, result.getSize() );
-        assertTrue( result.getNodeById( createdNode1.id() ).getHasChildren() );
-        assertFalse( result.getNodeById( createdNode2.id() ).getHasChildren() );
-    }
 }

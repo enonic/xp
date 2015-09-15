@@ -39,7 +39,6 @@ public class ImportNodeCommand
     {
         final Node existingNode = GetNodeByPathCommand.create( this ).
             nodePath( this.importNode.path() ).
-            resolveHasChild( false ).
             build().
             execute();
 

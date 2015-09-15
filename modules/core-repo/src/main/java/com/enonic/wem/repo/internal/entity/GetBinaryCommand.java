@@ -33,7 +33,7 @@ public class GetBinaryCommand
 
     public ByteSource execute()
     {
-        final Node node = doGetById( this.nodeId, false );
+        final Node node = doGetById( this.nodeId );
 
         if ( binaryReference != null )
         {

@@ -160,14 +160,12 @@ public final class CreateNodeCommand
         {
             return GetNodeByPathCommand.create( this ).
                 nodePath( NodePath.ROOT ).
-                resolveHasChild( false ).
                 build().
                 execute();
         }
 
         final Node parentNode = GetNodeByPathCommand.create( this ).
             nodePath( params.getParent() ).
-            resolveHasChild( false ).
             build().
             execute();
 
@@ -266,7 +264,7 @@ public final class CreateNodeCommand
     {
         if ( this.params.getNodeId() != null )
         {
-            final Node existingNode = doGetById( this.params.getNodeId(), false );
+            final Node existingNode = doGetById( this.params.getNodeId() );
 
             if ( existingNode != null )
             {
@@ -278,7 +276,6 @@ public final class CreateNodeCommand
 
         final Node existingNode = GetNodeByPathCommand.create( this ).
             nodePath( nodePath ).
-            resolveHasChild( false ).
             build().
             execute();
 

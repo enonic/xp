@@ -46,7 +46,7 @@ public final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Node persistedNode = doGetById( params.getId(), false );
+        final Node persistedNode = doGetById( params.getId() );
 
         if ( persistedNode == null )
         {
@@ -90,10 +90,7 @@ public final class UpdateNodeCommand
                 build().
                 execute();
 
-            return NodeHasChildResolver.create().
-                branchService( this.branchService ).
-                build().
-                resolve( updatedNode );
+            return updatedNode;
         }
         else
         {

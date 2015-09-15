@@ -7,6 +7,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodesHasChildResult;
 
 import static org.junit.Assert.*;
 
@@ -36,12 +37,10 @@ public class NodeHasChildResolverTest
             name( "my-child-node" ).
             build() );
 
-        final Node resolvedNode = NodeHasChildResolver.create().
-            branchService( this.branchService ).
+        assertTrue( NodeHasChildResolver.create().
+            queryService( this.queryService ).
             build().
-            resolve( parentNode );
-
-        assertTrue( resolvedNode.getHasChildren() );
+            resolve( parentNode ) );
     }
 
     @Test
@@ -73,14 +72,14 @@ public class NodeHasChildResolverTest
             name( "my-child-node-2" ).
             build() );
 
-        final Nodes resolvedNodes = NodeHasChildResolver.create().
-            branchService( this.branchService ).
+        final NodesHasChildResult result = NodeHasChildResolver.create().
+            queryService( this.queryService ).
             build().
             resolve( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
 
-        assertTrue( resolvedNodes.getNodeById( parentNode1.id() ).getHasChildren() );
-        assertTrue( resolvedNodes.getNodeById( parentNode2.id() ).getHasChildren() );
-        assertFalse( resolvedNodes.getNodeById( parentNode3.id() ).getHasChildren() );
+        assertTrue( result.hasChild( parentNode1.id() ) );
+        assertTrue( result.hasChild( parentNode2.id() ) );
+        assertFalse( result.hasChild( parentNode3.id() ) );
     }
 
     @Test
@@ -93,13 +92,10 @@ public class NodeHasChildResolverTest
             name( "my-node" ).
             build() );
 
-        final Node resolvedNode = NodeHasChildResolver.create().
-            branchService( this.branchService ).
+        assertFalse( NodeHasChildResolver.create().
+            queryService( this.queryService ).
             build().
-            resolve( parentNode );
-
-        assertFalse( resolvedNode.getHasChildren() );
+            resolve( parentNode ) );
     }
-
 
 }

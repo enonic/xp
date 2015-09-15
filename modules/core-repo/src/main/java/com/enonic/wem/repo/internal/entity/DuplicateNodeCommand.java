@@ -37,7 +37,7 @@ public final class DuplicateNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = doGetById( nodeId, false );
+        final Node existingNode = doGetById( nodeId );
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
@@ -169,7 +169,6 @@ public final class DuplicateNodeCommand
 
             final Node foundNode = GetNodeByPathCommand.create( this ).
                 nodePath( checkIfExistsPath ).
-                resolveHasChild( false ).
                 build().
                 execute();
 

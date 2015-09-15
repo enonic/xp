@@ -51,11 +51,10 @@ abstract class AbstractNodeCommand
         this.storageService = builder.storageService;
     }
 
-    Node doGetById( final NodeId id, final boolean resolveHasChild )
+    Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create( this ).
             id( id ).
-            resolveHasChild( resolveHasChild ).
             build().
             execute();
     }
@@ -86,7 +85,6 @@ abstract class AbstractNodeCommand
         {
             final Node node = NodeHelper.runAsAdmin( () -> GetNodeByPathCommand.create( this ).
                 nodePath( parentPath ).
-                resolveHasChild( false ).
                 build().
                 execute() );
 

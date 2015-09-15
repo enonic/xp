@@ -64,7 +64,6 @@ public class FindNodesByParentCommand
         final Nodes nodes = FindNodesByIdsCommand.create( this ).
             ids( nodeQueryResult.getNodeIds() ).
             orderExpressions( order.getOrderExpressions() ).
-            resolveHasChild( true ).
             build().
             execute();
 

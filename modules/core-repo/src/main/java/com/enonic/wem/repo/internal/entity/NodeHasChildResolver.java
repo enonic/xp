@@ -1,43 +1,49 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodesHasChildResult;
 
 public class NodeHasChildResolver
 {
-
-    private final BranchService branchService;
+    private final QueryService queryService;
 
     private NodeHasChildResolver( Builder builder )
     {
-        this.branchService = builder.branchService;
+        this.queryService = builder.queryService;
     }
 
-    public Nodes resolve( final Nodes nodes )
+    public NodesHasChildResult resolve( final Nodes nodes )
     {
-        final Nodes.Builder populatedNodes = Nodes.create();
+
+        final NodesHasChildResult.Builder builder = NodesHasChildResult.create();
 
         for ( final Node node : nodes )
         {
-            populatedNodes.add( doResolve( node ) );
+            builder.add( node.id(), doResolve( node ) );
         }
 
-        return populatedNodes.build();
+        return builder.build();
     }
 
-    public Node resolve( final Node node )
+    public boolean resolve( final Node node )
     {
         return doResolve( node );
     }
 
-    private Node doResolve( final Node node )
+    private boolean doResolve( final Node node )
     {
-        final boolean hasChildren = this.branchService.hasChildren( node.id(), InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = this.queryService.find( NodeQuery.create().
+            parent( node.path() ).
+            countOnly( true ).
+            build(), IndexContext.from( ContextAccessor.current() ) );
 
-        return Node.create( node ).hasChildren( hasChildren ).build();
+        return nodeQueryResult.getTotalHits() > 0;
     }
 
     public static Builder create()
@@ -48,15 +54,15 @@ public class NodeHasChildResolver
 
     public static final class Builder
     {
-        private BranchService branchService;
+        private QueryService queryService;
 
         private Builder()
         {
         }
 
-        public Builder branchService( final BranchService branchService )
+        public Builder queryService( final QueryService queryService )
         {
-            this.branchService = branchService;
+            this.queryService = queryService;
             return this;
         }
 

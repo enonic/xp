@@ -240,7 +240,6 @@ public abstract class AbstractNodeTest
             queryService( this.queryService ).
             storageService( this.storageService ).
             id( nodeId ).
-            resolveHasChild( false ).
             build().
             execute();
     }
@@ -256,7 +255,6 @@ public abstract class AbstractNodeTest
             queryService( this.queryService ).
             storageService( this.storageService ).
             nodePath( nodePath ).
-            resolveHasChild( false ).
             build().
             execute();
     }

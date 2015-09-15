@@ -48,6 +48,7 @@ import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodesHasChildResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
@@ -100,7 +101,7 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
-        final Node node = doGetById( id, true );
+        final Node node = doGetById( id );
 
         if ( node == null )
         {
@@ -111,11 +112,10 @@ public class NodeServiceImpl
         return node;
     }
 
-    private Node doGetById( final NodeId id, final boolean resolveHasChild )
+    private Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create().
             id( id ).
-            resolveHasChild( resolveHasChild ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
@@ -136,7 +136,6 @@ public class NodeServiceImpl
     {
         return GetNodeByPathCommand.create().
             nodePath( path ).
-            resolveHasChild( resolveHasChild ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
@@ -152,7 +151,6 @@ public class NodeServiceImpl
     {
         return GetNodesByIdsCommand.create().
             ids( ids ).
-            resolveHasChild( true ).
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
@@ -168,7 +166,6 @@ public class NodeServiceImpl
     {
         return GetNodesByPathsCommand.create().
             paths( paths ).
-            resolveHasChild( true ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
@@ -414,10 +411,7 @@ public class NodeServiceImpl
     @Override
     public Node getByVersionId( final NodeVersionId blobKey )
     {
-        return NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( nodeDao.getByVersionId( blobKey ) );
+        return nodeDao.getByVersionId( blobKey );
     }
 
     @Override
@@ -620,13 +614,31 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodeId nodeId )
     {
-        return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId, false ) ) != null;
+        return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;
     }
 
     @Override
     public boolean nodeExists( final NodePath nodePath )
     {
         return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath, false ) ) != null;
+    }
+
+    @Override
+    public NodesHasChildResult hasChild( final Nodes nodes )
+    {
+        return NodeHasChildResolver.create().
+            queryService( this.queryService ).
+            build().
+            resolve( nodes );
+    }
+
+    @Override
+    public boolean hasChild( final Node node )
+    {
+        return NodeHasChildResolver.create().
+            queryService( this.queryService ).
+            build().
+            resolve( node );
     }
 
     @Reference

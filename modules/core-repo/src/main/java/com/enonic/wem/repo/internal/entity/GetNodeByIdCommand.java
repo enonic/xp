@@ -15,13 +15,10 @@ public class GetNodeByIdCommand
 {
     private final NodeId id;
 
-    private final boolean resolveHasChild;
-
     private GetNodeByIdCommand( final Builder builder )
     {
         super( builder );
         id = builder.id;
-        resolveHasChild = builder.resolveHasChild;
     }
 
     public Node execute()
@@ -49,10 +46,7 @@ public class GetNodeByIdCommand
             return null;
         }
 
-        return !resolveHasChild ? node : NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( node );
+        return node;
     }
 
     public static Builder create()
@@ -70,8 +64,6 @@ public class GetNodeByIdCommand
     {
         private NodeId id;
 
-        private boolean resolveHasChild = true;
-
         private Builder()
         {
             super();
@@ -85,12 +77,6 @@ public class GetNodeByIdCommand
         public Builder id( NodeId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder resolveHasChild( final boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

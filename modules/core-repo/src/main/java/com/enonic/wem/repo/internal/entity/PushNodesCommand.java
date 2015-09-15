@@ -55,7 +55,6 @@ public class PushNodesCommand
         final Nodes nodes = FindNodesByIdsCommand.create( this ).
             ids( ids ).
             orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
-            resolveHasChild( false ).
             build().
             execute();
 
@@ -137,7 +136,6 @@ public class PushNodesCommand
         {
             final Node nodeInTarget = targetContext.callWith( () -> GetNodeByIdCommand.create( this ).
                 id( child.id() ).
-                resolveHasChild( false ).
                 build().
                 execute() );
 
@@ -174,7 +172,6 @@ public class PushNodesCommand
 
         final Node targetParent = targetContext.callWith( () -> GetNodeByPathCommand.create( this ).
             nodePath( node.parentPath() ).
-            resolveHasChild( false ).
             build().
             execute() );
 

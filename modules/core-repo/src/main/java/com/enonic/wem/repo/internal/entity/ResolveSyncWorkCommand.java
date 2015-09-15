@@ -51,7 +51,7 @@ public class ResolveSyncWorkCommand
         this.processedIds = Sets.newHashSet();
         this.allPossibleNodesAreIncluded = false;
 
-        final Node publishRootNode = doGetById( builder.nodeId, false );
+        final Node publishRootNode = doGetById( builder.nodeId );
 
         if ( publishRootNode == null )
         {
@@ -77,7 +77,6 @@ public class ResolveSyncWorkCommand
 
         final Nodes nodes = GetNodesByIdsCommand.create( this ).
             ids( diff.getNodesWithDifferences() ).
-            resolveHasChild( false ).
             build().
             execute();
 
@@ -169,7 +168,6 @@ public class ResolveSyncWorkCommand
         {
             final Node thisParentNode = GetNodeByPathCommand.create( this ).
                 nodePath( node.parentPath() ).
-                resolveHasChild( false ).
                 build().
                 execute();
 
@@ -197,7 +195,6 @@ public class ResolveSyncWorkCommand
         }
 
         final Nodes referredNodes = GetNodesByIdsCommand.create( this ).
-            resolveHasChild( false ).
             ids( referredNodeIds.build() ).
             build().
             execute();
@@ -290,13 +287,12 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            final Node node = doGetById( nodeId, false );
+            final Node node = doGetById( nodeId );
 
             final NodePath parentPath = node.parentPath();
 
             final Node parentNode = GetNodeByPathCommand.create( this ).
                 nodePath( parentPath ).
-                resolveHasChild( false ).
                 build().
                 execute();
 

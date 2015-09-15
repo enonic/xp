@@ -14,13 +14,10 @@ public class GetNodesByIdsCommand
 {
     private final NodeIds ids;
 
-    private final boolean resolveHasChild;
-
     private GetNodesByIdsCommand( final Builder builder )
     {
         super( builder );
         this.ids = builder.ids;
-        this.resolveHasChild = builder.resolveHasChild;
     }
 
     public Nodes execute()
@@ -29,12 +26,7 @@ public class GetNodesByIdsCommand
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
         nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
-        final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
-
-        return resolveHasChild ? NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( nodes ) : nodes;
+        return nodeDao.getByVersionIds( builder.build() );
     }
 
     public static Builder create()
@@ -52,8 +44,6 @@ public class GetNodesByIdsCommand
     {
         private NodeIds ids;
 
-        private boolean resolveHasChild = true;
-
         private Builder()
         {
             super();
@@ -67,12 +57,6 @@ public class GetNodesByIdsCommand
         public Builder ids( NodeIds ids )
         {
             this.ids = ids;
-            return this;
-        }
-
-        public Builder resolveHasChild( boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

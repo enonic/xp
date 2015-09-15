@@ -35,7 +35,7 @@ public class SetNodeChildOrderCommand
 
     public Node execute()
     {
-        final Node parentNode = doGetById( nodeId, false );
+        final Node parentNode = doGetById( nodeId );
 
         final boolean newOrderingIsManual = childOrder.isManualOrder();
         final boolean childrenAreUnordered = !parentNode.getChildOrder().isManualOrder();
@@ -53,7 +53,7 @@ public class SetNodeChildOrderCommand
             build().
             execute();
 
-        return doGetById( editedNode.id(), false );
+        return doGetById( editedNode.id() );
     }
 
     private void orderChildNodes( final Node parentNode )
@@ -73,7 +73,7 @@ public class SetNodeChildOrderCommand
         {
             // TODO: Bulk?
 
-            final Node node = doGetById( nodeIdOrderValue.getNodeId(), false );
+            final Node node = doGetById( nodeIdOrderValue.getNodeId() );
 
             final Node editedNode = Node.create( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
 

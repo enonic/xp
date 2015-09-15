@@ -24,7 +24,6 @@ final class DeleteNodeByPathCommand
 
         final Node node = GetNodeByPathCommand.create( this ).
             nodePath( nodePath ).
-            resolveHasChild( false ).
             build().
             execute();
 

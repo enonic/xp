@@ -67,7 +67,7 @@ public class IndexServiceImpl
             {
                 final Node node = this.nodeDao.getByVersionId( result.getNodeVersionId() );
 
-                this.indexServiceInternal.store( node, result.getNodeVersionId(), IndexContext.create().
+                this.indexServiceInternal.store( node, result.getNodeVersionId(), InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).
                     branch( branch ).
                     build() );

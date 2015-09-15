@@ -39,7 +39,7 @@ public class MoveNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = doGetById( nodeId, false );
+        final Node existingNode = doGetById( nodeId );
 
         final NodeName newNodeName = resulveNodeName( existingNode );
 
@@ -107,7 +107,7 @@ public class MoveNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
-        final Node persistedNode = doGetById( id, false );
+        final Node persistedNode = doGetById( id );
 
         final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
@@ -178,7 +178,6 @@ public class MoveNodeCommand
 
         return GetNodeByPathCommand.create( this ).
             nodePath( newNodePath ).
-            resolveHasChild( false ).
             build().
             execute();
     }

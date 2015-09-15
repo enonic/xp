@@ -34,7 +34,7 @@ final class ApplyNodePermissionsCommand
 
     public int execute()
     {
-        final Node node = doGetById( params.getNodeId(), false );
+        final Node node = doGetById( params.getNodeId() );
         if ( node == null )
         {
             return 0;

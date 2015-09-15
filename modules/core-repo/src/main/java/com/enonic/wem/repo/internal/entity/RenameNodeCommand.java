@@ -24,7 +24,7 @@ public final class RenameNodeCommand
     {
         final NodeId nodeId = params.getNodeId();
 
-        final Node nodeToBeRenamed = doGetById( nodeId, true );
+        final Node nodeToBeRenamed = doGetById( nodeId );
 
         final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 
@@ -35,10 +35,7 @@ public final class RenameNodeCommand
             build().
             execute();
 
-        return NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( renamedNode );
+        return renamedNode;
     }
 
     private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
@@ -47,7 +44,6 @@ public final class RenameNodeCommand
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
         final Node existingNodeAtTargetPath = GetNodeByPathCommand.create( this ).
             nodePath( targetPath ).
-            resolveHasChild( false ).
             build().
             execute();
 

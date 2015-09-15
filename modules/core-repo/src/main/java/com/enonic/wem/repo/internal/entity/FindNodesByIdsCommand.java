@@ -14,15 +14,12 @@ public class FindNodesByIdsCommand
 {
     private final NodeIds ids;
 
-    private final boolean resolveHasChild;
-
     private final OrderExpressions orderExpressions;
 
     private FindNodesByIdsCommand( final Builder builder )
     {
         super( builder );
         this.ids = builder.ids;
-        this.resolveHasChild = builder.resolveHasChild;
         this.orderExpressions = builder.orderExpressions;
     }
 
@@ -31,12 +28,7 @@ public class FindNodesByIdsCommand
         final NodeVersionIds versionIds =
             this.queryService.find( this.ids, this.orderExpressions, IndexContext.from( ContextAccessor.current() ) );
 
-        final Nodes nodes = nodeDao.getByVersionIds( versionIds );
-
-        return resolveHasChild ? NodeHasChildResolver.create().
-            branchService( this.branchService ).
-            build().
-            resolve( nodes ) : nodes;
+        return nodeDao.getByVersionIds( versionIds );
     }
 
     public static Builder create()
@@ -54,8 +46,6 @@ public class FindNodesByIdsCommand
     {
         private NodeIds ids;
 
-        private boolean resolveHasChild = true;
-
         private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
 
         private Builder()
@@ -71,12 +61,6 @@ public class FindNodesByIdsCommand
         public Builder ids( NodeIds ids )
         {
             this.ids = ids;
-            return this;
-        }
-
-        public Builder resolveHasChild( boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

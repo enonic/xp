@@ -22,7 +22,7 @@ public class SetNodeStateCommand
 
     public SetNodeStateResult execute()
     {
-        final Node node = doGetById( this.params.getNodeId(), false );
+        final Node node = doGetById( this.params.getNodeId() );
 
         final SetNodeStateResult.Builder setNodeStateResultBuilder = SetNodeStateResult.create();
 

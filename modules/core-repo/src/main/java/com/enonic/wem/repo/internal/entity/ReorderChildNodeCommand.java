@@ -129,7 +129,7 @@ public class ReorderChildNodeCommand
     private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
     {
         final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
-        final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId, false );
+        final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId );
 
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
     }
@@ -142,7 +142,7 @@ public class ReorderChildNodeCommand
     private Long resolveInsertLastOrderValue( final NodeQueryResult result )
     {
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
-        final Node lastNode = doGetById( lastNodeId, false );
+        final Node lastNode = doGetById( lastNodeId );
 
         return lastNode.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }

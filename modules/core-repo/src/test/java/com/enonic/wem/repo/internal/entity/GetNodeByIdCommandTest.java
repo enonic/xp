@@ -45,7 +45,6 @@ public class GetNodeByIdCommandTest
             queryService( this.queryService ).
             storageService( this.storageService ).
             id( createdNode.id() ).
-            resolveHasChild( false ).
             build().
             execute();
 
@@ -84,58 +83,9 @@ public class GetNodeByIdCommandTest
             queryService( this.queryService ).
             storageService( this.storageService ).
             id( createdNode.id() ).
-            resolveHasChild( false ).
             build().
             execute();
 
         assertNull( fetchedNode );
     }
-
-    @Test
-    public void get_by_id_resolve_hasChild()
-        throws Exception
-    {
-        final CreateNodeParams createNodeParams = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node createdNode = createNode( createNodeParams );
-
-        createNode( CreateNodeParams.create().
-            parent( createdNode.path() ).
-            name( "child-1" ).
-            build() );
-
-        final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            storageService( this.storageService ).
-            id( createdNode.id() ).
-            resolveHasChild( true ).
-            build().
-            execute();
-
-        assertTrue( fetchedNode.getHasChildren() );
-
-        final Node fetchedNodeSkipResolve = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            storageService( this.storageService ).
-            id( createdNode.id() ).
-            resolveHasChild( false ).
-            build().
-            execute();
-
-        assertFalse( fetchedNodeSkipResolve.getHasChildren() );
-    }
-
 }

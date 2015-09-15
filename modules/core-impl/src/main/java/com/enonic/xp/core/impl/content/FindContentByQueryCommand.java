@@ -7,6 +7,7 @@ import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.Nodes;
 
 final class FindContentByQueryCommand
     extends AbstractContentCommand
@@ -30,7 +31,16 @@ final class FindContentByQueryCommand
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
-        Contents contents = this.translator.fromNodes( result.getNodes() );
+        final Nodes foundNodes = result.getNodes();
+
+        if ( this.params.isPopulateChildren() )
+        {
+            final Nodes.Builder withChildren = Nodes.create();
+
+
+        }
+
+        Contents contents = this.translator.fromNodes( foundNodes );
 
         return FindContentByQueryResult.create().
             contents( contents ).

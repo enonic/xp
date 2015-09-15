@@ -90,6 +90,10 @@ public interface NodeService
 
     Node importNode( final ImportNodeParams params );
 
+    NodesHasChildResult hasChild( final Nodes nodes );
+
+    boolean hasChild( final Node node );
+
     boolean nodeExists( final NodeId nodeId );
 
     boolean nodeExists( final NodePath nodePath );

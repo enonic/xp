@@ -29,13 +29,12 @@ public class ReorderChildNodesCommand
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : params )
         {
-            final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId(), false );
+            final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
             final Node nodeToMoveBefore =
-                reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore(), false );
+                reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore() );
 
             final Node parentNode = GetNodeByPathCommand.create( this ).
                 nodePath( nodeToMove.parentPath() ).
-                resolveHasChild( false ).
                 build().
                 execute();
 
