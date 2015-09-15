@@ -4,9 +4,9 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
+import com.enonic.xp.core.impl.image.ImageScaleFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleWidthFunction;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.filter.ScaleWidthFunction;
 
 public final class ScaleWidthFunctionCommand
     extends ScaleCommand
