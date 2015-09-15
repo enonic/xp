@@ -162,6 +162,7 @@ module api.liveedit {
 
         private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
             var actions = actions || [];
+            actions.push(this.createInsertAction());
             actions.push(new api.ui.Action("Select parent").onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
@@ -369,6 +370,17 @@ module api.liveedit {
             });
         }
 
+        getNewItemIndex(): number {
+            return this.getParentItemView().getComponentViewIndex(this) + 1;
+        }
+
+        addComponentView(componentView: ComponentView<Component>, index: number) {
+            this.getParentItemView().addComponentView(componentView, index, true);
+        }
+
+        getRegionView(): RegionView {
+            return this.getParentItemView();
+        }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
