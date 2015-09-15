@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import com.enonic.xp.image.filter.ScaleSquareFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleSquareFunction;
 
 public abstract class BaseImageHelper
 {

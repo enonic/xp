@@ -20,6 +20,9 @@ import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.impl.image.effect.ScaleMaxFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleSquareFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleWidthFunction;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
@@ -27,9 +30,6 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
-import com.enonic.xp.image.filter.ScaleMaxFunction;
-import com.enonic.xp.image.filter.ScaleSquareFunction;
-import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.media.ImageOrientation;
 
 @Component

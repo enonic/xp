@@ -1,4 +1,4 @@
-package com.enonic.xp.image.filter;
+package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

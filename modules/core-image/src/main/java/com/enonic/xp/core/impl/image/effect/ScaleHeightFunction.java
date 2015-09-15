@@ -7,7 +7,6 @@ package com.enonic.xp.core.impl.image.effect;
 import java.awt.image.BufferedImage;
 
 import com.enonic.xp.core.impl.image.ImageScaleFunction;
-import com.enonic.xp.image.filter.BaseImageProcessor;
 
 public final class ScaleHeightFunction
     extends BaseImageProcessor implements ImageScaleFunction
