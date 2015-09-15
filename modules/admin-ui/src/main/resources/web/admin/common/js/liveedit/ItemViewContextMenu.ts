@@ -80,6 +80,10 @@ module api.liveedit {
             this.menu.moveBy.call(this, dx, dy);
         }
 
+        setActions(actions: api.ui.Action[]) {
+            this.menu.setActions(actions);
+        }
+
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
             api.dom.Body.get().onMouseMove(dragListener);
             api.dom.Body.get().onMouseUp(upListener);

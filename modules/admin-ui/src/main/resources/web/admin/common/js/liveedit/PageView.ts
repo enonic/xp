@@ -252,6 +252,12 @@ module api.liveedit {
             new PageSelectedEvent(this).fire();
         }
 
+        selectWithoutMenu(isNew: boolean = false) {
+            super.selectWithoutMenu(isNew);
+
+            new PageSelectedEvent(this).fire();
+        }
+
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             if (!this.isLocked()) {
                 super.showContextMenu(clickPosition, menuPosition);

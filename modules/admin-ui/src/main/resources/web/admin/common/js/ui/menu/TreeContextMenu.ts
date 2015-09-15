@@ -57,6 +57,12 @@ module api.ui.menu {
             return this;
         }
 
+        setActions(actions: api.ui.Action[]): TreeContextMenu {
+            this.removeChildren();
+            this.addActions(actions);
+            return this;
+        }
+
         onItemClicked(listener: () => void) {
             this.itemClickListeners.push(listener);
         }

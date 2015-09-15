@@ -241,6 +241,12 @@ module api.liveedit {
             new RegionSelectedEvent(this).fire();
         }
 
+        selectWithoutMenu(isNew: boolean = false) {
+            super.selectWithoutMenu(isNew);
+
+            new RegionSelectedEvent(this).fire();
+        }
+
         toString() {
             var extra = "";
             if (this.getRegionPath()) {
