@@ -102,10 +102,11 @@ module app.wizard.page {
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.liveEditIFrame.onShown(() => {
-               if(!this.loadMaskCanBeShown) {
+               if(!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
                    this.loadMask.show();
+                   this.loadMaskCanBeShown = true;
                }
-                this.loadMaskCanBeShown = true;
+
             });
 
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
@@ -215,6 +216,8 @@ module app.wizard.page {
             } else if (!liveEditWindow.document.body || (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID)) {
                 this.loadMask.hide();
             }
+
+            this.loadMaskCanBeShown = true;
 
             // Notify loaded no matter the result
             this.notifyLoaded();
@@ -604,6 +607,10 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        private liveEditFrameIsVisible(): boolean {
+            return this.liveEditIFrame.getEl().getWidthWithBorder() > 0 && this.liveEditIFrame.getEl().getHeightWithBorder() > 0;
         }
 
     }
