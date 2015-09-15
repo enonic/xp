@@ -37,11 +37,51 @@
       height: initial !important;
 
       .slick-viewport {
-        .slick-row:not(:hover) {
-          &, &.odd {
-            background-color: transparent;
+
+        .slick-row {
+          &:not(:hover) {
+            &, &.odd {
+              background-color: transparent;
+            }
+          }
+
+          &:hover {
+            .slick-cell {
+              &.menu-icon {
+                display:inherit;
+              }
+            }
+          }
+
+          .slick-cell {
+            &.menu-icon {
+              display: none;
+
+              .menu-icon {
+                padding-left: 10px;
+                padding-top: 10px;
+              }
+
+              &.selected {
+                display:inherit;
+              }
+
+              &:hover {
+                .menu-icon {
+                  color: @admin-font-gray1;
+                }
+              }
+
+              &.menu-open {
+                .menu-icon {
+                  color: @admin-font-gray1;
+                }
+              }
+            }
           }
         }
+
+
       }
     }
   }

@@ -361,6 +361,10 @@ module api.ui.grid {
             this.slickGrid.setCellCssStyles(key, hash);
         }
 
+        removeCellCssStyles(key: string) {
+            this.slickGrid.removeCellCssStyles(key);
+        }
+
         getCellCssStyles(key: string): Slick.CellCssStylesHash {
             return this.slickGrid.getCellCssStyles(key);
         }
