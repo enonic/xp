@@ -652,6 +652,11 @@ module api.liveedit {
             }
         }
 
+        isDraggableView(): boolean {
+            return !(api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
+                     api.ObjectHelper.iFrameSafeInstanceOf(this, PageView));
+        }
+
         private stopTextEditMode() {
             var pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
