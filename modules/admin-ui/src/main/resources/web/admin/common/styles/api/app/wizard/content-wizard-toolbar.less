@@ -1,0 +1,33 @@
+.content-wizard-toolbar {
+  padding-right: 3px;
+
+  .toolbar-publish-controls {
+    margin-right: 4px;
+    display: none;
+  }
+
+  .cycle-button {
+    .button(@admin-font-gray2, transparent, @admin-button-blue1, transparent);
+  }
+
+  .toggle-button, .cycle-button {
+    height: 100%;
+    float: right;
+    padding: 6px 10px 6px 10px;
+
+    &:before {
+      position: relative;
+      top: 0px;
+    }
+
+    &.icon-medium {
+      &:before {
+        font-size: 24px;
+        line-height: 29px;
+      }
+    }
+
+  }
+
+}
+

@@ -8,8 +8,8 @@ module api.ui.toolbar {
 
         private actions: api.ui.Action[] = [];
 
-        constructor() {
-            super("toolbar");
+        constructor(className?: string) {
+            super(!className ? "toolbar" : className + " toolbar");
 
             this.fold = new FoldButton();
             this.fold.hide();
