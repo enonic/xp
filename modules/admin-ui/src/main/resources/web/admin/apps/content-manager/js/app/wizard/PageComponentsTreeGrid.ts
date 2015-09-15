@@ -23,6 +23,8 @@ module app.wizard {
         private pageView: PageView;
         private content: Content;
 
+        private gridDragHandler: PageComponentsGridDragHandler;
+
         constructor(content: Content, pageView: PageView) {
             this.content = content;
             this.pageView = pageView;
@@ -35,6 +37,7 @@ module app.wizard {
                         setField("displayName").
                         setFormatter(this.nameFormatter.bind(this)).
                         setMinWidth(250).
+                        setBehavior("selectAndMove").
                         build(),
                     new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                         setName("Menu").
@@ -58,16 +61,19 @@ module app.wizard {
                     // the conflicts with Mousetrap, which leads to skipping the key events
                     // Do not set to true, if you are not fully aware of the result
                     setEnableCellNavigation(false).
-
+                    setSelectedCellCssClass("selected draggables").
                     setCheckableRows(false).
                     disableMultipleSelection(true).
                     setMultiSelect(false).
                     setRowHeight(45).
+                    setDragAndDrop(true).
                     build()).
                 setShowToolbar(false).
                 setAutoLoad(true).
                 setExpandAll(true).
                 prependClasses("components-grid"));
+
+            this.gridDragHandler = new PageComponentsGridDragHandler(this);
         }
 
         queryScrollable(): api.dom.Element {

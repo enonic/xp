@@ -133,7 +133,9 @@ module api.ui.treegrid {
                         this.active = true;
                         if (elem.getAttribute("type") === "checkbox") {
                             this.grid.toggleRow(data.row);
-
+                        } else if (!this.getOptions().isCheckableRows()) {
+                            this.root.clearStashedSelection();
+                            this.grid.selectRow(data.row);
                         }
                     } else {
                         this.active = true;
@@ -903,7 +905,7 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>) {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -912,12 +914,22 @@ module api.ui.treegrid {
                 if (node.hasChildren()) {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
+                    if (expandAll) {
+                        node.getChildren().forEach((child: TreeNode<DATA>) => {
+                            this.expandNode(child);
+                        });
+                    }
                 } else {
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));
                             this.initData(this.root.getCurrentRoot().treeToList());
                             this.updateExpanded();
+                            if (expandAll) {
+                                node.getChildren().forEach((child: TreeNode<DATA>) => {
+                                    this.expandNode(child);
+                                });
+                            }
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
