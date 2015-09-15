@@ -11,4 +11,6 @@ public @interface MailConfig
     String smtpUser() default "";
 
     String smtpPassword() default "";
+
+    boolean smtpTLS() default false;
 }

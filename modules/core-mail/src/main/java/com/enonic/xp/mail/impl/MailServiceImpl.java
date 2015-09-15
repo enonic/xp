@@ -32,6 +32,7 @@ public final class MailServiceImpl
         properties.put( "mail.transport.protocol", "smtp" );
         properties.put( "mail.smtp.host", config.smtpHost() );
         properties.put( "mail.smtp.port", config.smtpPort() );
+        properties.put( "mail.smtp.starttls.enable", config.smtpTLS() );
 
         final boolean auth = config.smtpAuth();
         properties.put( "mail.smtp.auth", Boolean.toString( auth ) );
