@@ -4,16 +4,14 @@ module api.ui.image {
 
         private phantomImage: api.dom.ImgEl;
 
-        constructor(src?: string, className: string = "") {
-            super("lazy-image" + className);
+        constructor(src?: string) {
+            super("lazy-image");
 
-            src = src || api.dom.ImgEl.PLACEHOLDER;
             this.addClass("empty");
 
             this.phantomImage = new api.dom.ImgEl(null, "phantom-image");
 
             this.phantomImage.onLoaded(() => {
-                console.log("loaded: " + this.phantomImage.getSrc());
                 this.getEl().setBackgroundImage("url(" + this.phantomImage.getSrc() + ")");
                 this.removeClass("empty");
             });
