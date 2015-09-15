@@ -28,8 +28,6 @@ public class Node
 
     private final Instant timestamp;
 
-    private final boolean hasChildren;
-
     private final PropertyTree data;
 
     private final IndexConfigDocument indexConfigDocument;
@@ -55,7 +53,6 @@ public class Node
         this.name = builder.name;
         this.parentPath = builder.parentPath;
         this.nodeType = builder.nodeType;
-        this.hasChildren = builder.hasChildren;
         this.data = builder.data;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
@@ -97,11 +94,6 @@ public class Node
     public NodePath path()
     {
         return path;
-    }
-
-    public boolean getHasChildren()
-    {
-        return hasChildren;
     }
 
     public NodeId id()
@@ -200,8 +192,6 @@ public class Node
 
         private Instant timestamp;
 
-        boolean hasChildren = false;
-
         private ChildOrder childOrder;
 
         private Long manualOrderValue;
@@ -232,7 +222,6 @@ public class Node
             this.name = node.name;
             this.parentPath = node.parentPath;
             this.nodeType = node.nodeType;
-            this.hasChildren = node.hasChildren;
             this.data = node.data;
             this.indexConfigDocument = node.indexConfigDocument;
             this.childOrder = node.childOrder;
@@ -271,12 +260,6 @@ public class Node
         public Builder parentPath( final NodePath value )
         {
             this.parentPath = value;
-            return this;
-        }
-
-        public Builder hasChildren( final boolean hasChildren )
-        {
-            this.hasChildren = hasChildren;
             return this;
         }
 
@@ -370,7 +353,6 @@ public class Node
             Objects.equals( name, node.name ) &&
             Objects.equals( nodeType, node.nodeType ) &&
             Objects.equals( parentPath, node.parentPath ) &&
-            Objects.equals( hasChildren, node.hasChildren ) &&
             Objects.equals( inheritPermissions, node.inheritPermissions ) &&
             Objects.equals( manualOrderValue, node.manualOrderValue ) &&
             Objects.equals( childOrder, node.childOrder ) &&
@@ -383,7 +365,7 @@ public class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, hasChildren, inheritPermissions, manualOrderValue, childOrder, permissions,
-                             data, indexConfigDocument, attachedBinaries );
+        return Objects.hash( id, name, parentPath, nodeType, inheritPermissions, manualOrderValue, childOrder, permissions, data,
+                             indexConfigDocument, attachedBinaries );
     }
 }

@@ -92,7 +92,6 @@ public final class CreateNodeCommand
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
-            hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
             permissions( permissions ).

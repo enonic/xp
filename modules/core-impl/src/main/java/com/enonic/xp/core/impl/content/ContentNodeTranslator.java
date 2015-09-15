@@ -116,7 +116,6 @@ public class ContentNodeTranslator
             id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
             name( node.name().toString() ).
-            hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).

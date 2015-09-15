@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.common.Strings;
@@ -10,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.InternalContext;
@@ -18,7 +16,6 @@ import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.cache.BranchPath;
-import com.enonic.wem.repo.internal.cache.CachePath;
 import com.enonic.wem.repo.internal.cache.PathCache;
 import com.enonic.wem.repo.internal.cache.PathCacheImpl;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
@@ -252,35 +249,6 @@ public class BranchServiceImpl
         }
 
         return NodeBranchQueryResultFactory.create( searchResult );
-    }
-
-    // TODO: If not in cache
-    @Override
-    public boolean hasChildren( final NodeId nodeId, final InternalContext context )
-    {
-        final CachePath cachePath = this.pathCache.get( new BranchDocumentId( nodeId, context.getBranch() ).toString() );
-
-        final Collection<String> childrenIds = this.pathCache.getChildren( cachePath );
-
-        return !childrenIds.isEmpty();
-    }
-
-    // TODO: If not in cache
-    public NodeBranchVersions getChildren( final NodeId nodeId, final InternalContext context )
-    {
-        final CachePath cachePath = this.pathCache.get( new BranchDocumentId( nodeId, context.getBranch() ).toString() );
-
-        final ImmutableSet<String> children = this.pathCache.getChildren( cachePath );
-
-        final NodeBranchVersions.Builder builder = NodeBranchVersions.create();
-
-        for ( final String id : children )
-        {
-            final NodeId childId = createNodeId( id );
-            builder.add( doGetById( childId, context ) );
-        }
-
-        return builder.build();
     }
 
     @Reference

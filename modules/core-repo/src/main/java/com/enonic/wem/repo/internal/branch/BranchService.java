@@ -25,8 +25,4 @@ public interface BranchService
     NodeBranchVersions get( final NodePaths nodePath, final InternalContext context );
 
     NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final InternalContext context );
-
-    boolean hasChildren( final NodeId nodeId, final InternalContext context );
-
-    NodeBranchVersions getChildren( final NodeId nodeId, final InternalContext context );
 }

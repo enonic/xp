@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.node.GetNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
@@ -39,14 +39,14 @@ abstract class AbstractDeleteNodeCommand
 
     void resolveNodesToDelete( final Node node, final List<Node> nodes )
     {
-        final Nodes children = GetNodesByParentCommand.create( this ).
-            params( GetNodesByParentParams.create().
+        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
+            params( FindNodesByParentParams.create().
                 parentId( node.id() ).
                 build() ).
             build().
             execute();
 
-        for ( final Node child : children )
+        for ( final Node child : result.getNodes() )
         {
             resolveNodesToDelete( child, nodes );
         }

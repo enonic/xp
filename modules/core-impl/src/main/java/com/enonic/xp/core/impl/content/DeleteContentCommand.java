@@ -91,10 +91,9 @@ final class DeleteContentCommand
 
             this.nodeService.refresh();
 
-            final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
+            final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
                 parentPath( nodeToDelete.path() ).
-                build();
-            final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( findNodesByParentParams );
+                build() );
 
             for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
             {

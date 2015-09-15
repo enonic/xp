@@ -97,19 +97,20 @@ public class ContentServiceImplTest_delete
 
         final Content subChildContent = this.contentService.create( createSubChildContentParams );
 
-        //Deletes the content
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
+        refresh();
 
-        final Contents deletedContents = this.contentService.delete( deleteContentParams );
+        //Deletes the content
+        final Contents deletedContents =
+            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
         assertEquals( Contents.from( content ), deletedContents );
 
         //Checks that the content and the children are deleted
-        final ContentIds contentIds =
-            ContentIds.from( content.getId(), child1Content.getId(), child2Content.getId(), subChildContent.getId() );
-        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( contentIds );
+        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams(
+            ContentIds.from( content.getId(), child1Content.getId(), child2Content.getId(), subChildContent.getId() ) );
 
         final Contents foundContents = this.contentService.getByIds( getContentByIdsParams );
+
         assertEquals( 0, foundContents.getSize() );
     }
 
