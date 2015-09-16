@@ -296,7 +296,7 @@ module api.liveedit {
         }
 
         getNewItemIndex(): number {
-            return Math.max(1, this.getChildren().length) - 1;
+            return 0;
         }
 
         addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
