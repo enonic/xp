@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.provider;
+package com.enonic.xp.web.jaxrs.impl.rest.provider;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,8 +15,8 @@ import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.admin.impl.json.JsonSerializable;
-import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
+import com.enonic.xp.web.jaxrs.impl.json.JsonSerializable;
+import com.enonic.xp.web.jaxrs.impl.json.ObjectMapperHelper;
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)

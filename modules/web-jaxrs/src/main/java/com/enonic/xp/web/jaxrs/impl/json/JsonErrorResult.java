@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.json;
+package com.enonic.xp.web.jaxrs.impl.json;
 
 import java.text.MessageFormat;
 

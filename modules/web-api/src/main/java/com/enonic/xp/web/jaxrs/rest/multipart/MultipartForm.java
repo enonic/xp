@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.multipart;
+package com.enonic.xp.web.jaxrs.rest.multipart;
 
 import org.apache.commons.fileupload.FileItem;
 

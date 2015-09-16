@@ -16,13 +16,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
-import com.enonic.xp.admin.impl.rest.multipart.MultipartFormReader;
-import com.enonic.xp.admin.impl.rest.provider.JsonObjectProvider;
-import com.enonic.xp.admin.impl.rest.provider.JsonSerializableProvider;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.web.jaxrs.impl.json.ObjectMapperHelper;
+import com.enonic.xp.web.jaxrs.impl.rest.multipart.MultipartFormReader;
+import com.enonic.xp.web.jaxrs.impl.rest.provider.JsonObjectProvider;
+import com.enonic.xp.web.jaxrs.impl.rest.provider.JsonSerializableProvider;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class AbstractResourceTest

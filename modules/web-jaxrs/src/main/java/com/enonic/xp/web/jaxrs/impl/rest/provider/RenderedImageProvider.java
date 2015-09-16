@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.provider;
+package com.enonic.xp.web.jaxrs.impl.rest.provider;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;

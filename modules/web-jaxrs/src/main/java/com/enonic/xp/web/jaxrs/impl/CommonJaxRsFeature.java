@@ -1,15 +1,15 @@
-package com.enonic.xp.admin.impl;
+package com.enonic.xp.web.jaxrs.impl;
 
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
-import com.enonic.xp.admin.impl.rest.exception.JsonExceptionMapper;
-import com.enonic.xp.admin.impl.rest.multipart.MultipartFormReader;
-import com.enonic.xp.admin.impl.rest.provider.JsonObjectProvider;
-import com.enonic.xp.admin.impl.rest.provider.JsonSerializableProvider;
-import com.enonic.xp.admin.impl.rest.provider.RenderedImageProvider;
+import com.enonic.xp.web.jaxrs.impl.rest.exception.JsonExceptionMapper;
+import com.enonic.xp.web.jaxrs.impl.rest.multipart.MultipartFormReader;
+import com.enonic.xp.web.jaxrs.impl.rest.provider.JsonObjectProvider;
+import com.enonic.xp.web.jaxrs.impl.rest.provider.JsonSerializableProvider;
+import com.enonic.xp.web.jaxrs.impl.rest.provider.RenderedImageProvider;
 
-final class AdminJaxRsFeature
+final class CommonJaxRsFeature
     implements Feature
 {
     @Override

@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.multipart;
+package com.enonic.xp.web.jaxrs.impl.rest.multipart;
 
 import java.io.IOException;
 import java.io.InputStream;
