@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;

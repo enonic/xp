@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs;
+package com.enonic.xp.web.jaxrs.impl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

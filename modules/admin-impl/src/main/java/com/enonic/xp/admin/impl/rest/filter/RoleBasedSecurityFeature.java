@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 
 @Component(immediate = true)
 @Provider

@@ -1,4 +1,4 @@
-package com.enonic.xp.admin;
+package com.enonic.xp.web.jaxrs;
 
 public interface JaxRsResource
 {

@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;

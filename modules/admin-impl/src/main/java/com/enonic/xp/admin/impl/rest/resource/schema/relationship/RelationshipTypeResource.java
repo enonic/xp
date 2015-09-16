@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;

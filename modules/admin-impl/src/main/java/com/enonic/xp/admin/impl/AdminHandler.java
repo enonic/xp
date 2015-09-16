@@ -5,9 +5,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.jaxrs.JaxRsHandler;
+import com.enonic.xp.web.jaxrs.impl.JaxRsHandler;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class AdminHandler

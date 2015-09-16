@@ -14,7 +14,7 @@ import org.jboss.resteasy.annotations.GZIP;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsResource;
 
 @Path("/")
 @Component(immediate = true)

@@ -10,5 +10,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Web - JaxRs'
-    instruction 'Export-Package', 'com.enonic.xp.web.jaxrs'
+    instruction 'Export-Package', 'com.enonic.xp.web.jaxrs.impl'
 }
