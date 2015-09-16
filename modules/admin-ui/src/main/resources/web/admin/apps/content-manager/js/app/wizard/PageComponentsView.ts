@@ -175,7 +175,11 @@ module app.wizard {
                     // do nothing if expand toggle is clicked
                     return;
                 }
-
+                var treeNode = this.tree.getGrid().getDataView().getItem(data.row);
+                if (treeNode) {
+                    // do it on click only, not on selection change
+                    treeNode.getData().selectWithoutMenu();
+                }
                 this.tree.getGrid().selectRow(data.row);
 
                 if(this.isMenuIconClicked(data.cell)) {
@@ -189,7 +193,6 @@ module app.wizard {
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
-                    nodes[0].getData().selectWithoutMenu();
 
                     if (this.isModal()) {
                         this.hide();
