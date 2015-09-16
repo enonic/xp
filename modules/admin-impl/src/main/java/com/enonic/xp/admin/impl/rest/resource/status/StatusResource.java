@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -23,7 +23,7 @@ import com.enonic.xp.server.ServerInfo;
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true)
 public final class StatusResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private ServerInfo serverInfo;
 

@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryId;
@@ -32,7 +32,7 @@ import com.enonic.xp.snapshot.SnapshotResults;
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class SnapshotResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private NodeService nodeService;
 

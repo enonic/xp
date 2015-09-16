@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.jaxrs.JaxRsHandler;
 
@@ -21,12 +21,12 @@ public final class AdminHandler
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addResource( final AdminResource resource )
+    public void addResource( final JaxRsResource resource )
     {
         addSingleton( resource );
     }
 
-    public void removeResource( final AdminResource resource )
+    public void removeResource( final JaxRsResource resource )
     {
         removeSingleton( resource );
     }

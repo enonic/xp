@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
@@ -38,7 +38,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentMediaResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private ContentService contentService;
 

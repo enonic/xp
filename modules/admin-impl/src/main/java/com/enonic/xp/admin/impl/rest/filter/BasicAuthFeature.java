@@ -9,13 +9,13 @@ import javax.ws.rs.ext.Provider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.security.SecurityService;
 
 @Component(immediate = true)
 @Provider
 public final class BasicAuthFeature
-    implements DynamicFeature, AdminResource
+    implements DynamicFeature, JaxRsResource
 {
     private SecurityService securityService;
 

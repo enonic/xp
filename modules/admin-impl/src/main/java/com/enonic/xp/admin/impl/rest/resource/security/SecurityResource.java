@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
@@ -73,7 +73,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class SecurityResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private SecurityService securityService;
 

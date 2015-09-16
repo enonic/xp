@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -40,7 +40,7 @@ import com.enonic.xp.security.SecurityService;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class PageTemplateResource
-    implements AdminResource
+    implements JaxRsResource
 {
     protected PageTemplateService pageTemplateService;
 

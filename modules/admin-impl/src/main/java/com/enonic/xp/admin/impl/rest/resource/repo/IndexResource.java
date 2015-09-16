@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
@@ -21,7 +21,7 @@ import com.enonic.xp.security.RoleKeys;
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class IndexResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private IndexService indexService;
 

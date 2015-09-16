@@ -14,12 +14,12 @@ import org.jboss.resteasy.annotations.GZIP;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 
 @Path("/")
 @Component(immediate = true)
 public final class MainResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private final AppHtmlHandler appHtmlHandler;
 

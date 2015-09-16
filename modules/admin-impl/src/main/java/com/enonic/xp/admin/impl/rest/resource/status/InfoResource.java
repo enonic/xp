@@ -19,13 +19,13 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.server.ServerInfo;
 
 @Path("status")
 @Component(immediate = true)
 public final class InfoResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private ServerInfo serverInfo;
 

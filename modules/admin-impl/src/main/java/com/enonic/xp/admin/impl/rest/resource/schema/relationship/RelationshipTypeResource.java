@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -36,7 +36,7 @@ import com.enonic.xp.security.RoleKeys;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class RelationshipTypeResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private static final String DEFAULT_MIME_TYPE = "image/png";
 

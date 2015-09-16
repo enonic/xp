@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.admin.JaxRsResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -30,7 +30,7 @@ import com.enonic.xp.vfs.VirtualFiles;
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class ExportResource
-    implements AdminResource
+    implements JaxRsResource
 {
     private ExportService exportService;
 
