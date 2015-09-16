@@ -13,6 +13,7 @@ import com.squareup.okhttp.Response;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.impl.WebHandlerTestSupport;
 
 import static org.junit.Assert.*;
@@ -71,7 +72,7 @@ public class PortalDispatcherTest
             assertEquals( "/portal/master/a/b", req.getPath() );
             assertEquals( "http", req.getScheme() );
             assertEquals( "http://localhost:" + this.server.getPort() + "/portal/master/a/b", req.getUrl() );
-            assertEquals( "GET", req.getMethod() );
+            assertEquals( HttpMethod.GET, req.getMethod() );
             assertEquals( "/a/b", req.getContentPath().toString() );
             assertEquals( "/portal", req.getBaseUri() );
         };
@@ -186,7 +187,7 @@ public class PortalDispatcherTest
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "POST", req.getMethod() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
             assertEquals( "application/x-www-form-urlencoded", req.getContentType() );
             assertEquals( "Jurassic Park", Joiner.on( "," ).join( req.getParams().get( "search" ) ) );
             assertEquals( "true", Joiner.on( "," ).join( req.getParams().get( "expand" ) ) );
@@ -207,7 +208,7 @@ public class PortalDispatcherTest
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "POST", req.getMethod() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
             assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
             assertEquals( "Hello World", req.getBodyAsString() );
         };
@@ -227,7 +228,7 @@ public class PortalDispatcherTest
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "POST", req.getMethod() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
             assertEquals( "application/json; charset=utf-8", req.getContentType() );
             assertEquals( "{}", req.getBodyAsString() );
         };

@@ -42,7 +42,7 @@ public class AttachmentHandlerTest
         this.handler = new AttachmentHandler();
         this.handler.setContentService( this.contentService );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 
@@ -123,7 +123,7 @@ public class AttachmentHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );

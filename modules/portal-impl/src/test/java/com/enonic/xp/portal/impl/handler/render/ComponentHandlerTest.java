@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -26,7 +27,7 @@ public class ComponentHandlerTest
         this.handler.setPageTemplateService( this.pageTemplateService );
         this.handler.setRendererFactory( this.rendererFactory );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/component/main" );
     }
@@ -57,7 +58,7 @@ public class ComponentHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );

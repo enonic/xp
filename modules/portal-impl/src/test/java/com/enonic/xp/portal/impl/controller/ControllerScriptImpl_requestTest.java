@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -15,7 +16,7 @@ public class ControllerScriptImpl_requestTest
     public void testSimple()
         throws Exception
     {
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setPort( 80 );
 
         execute( "myapplication:/controller/request.js" );
@@ -28,7 +29,7 @@ public class ControllerScriptImpl_requestTest
     public void testAll()
         throws Exception
     {
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "enonic.com" );
         this.portalRequest.setPort( 80 );
@@ -52,7 +53,7 @@ public class ControllerScriptImpl_requestTest
     public void testCookiesParsedFromResponse()
         throws Exception
     {
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "enonic.com" );
         this.portalRequest.setPort( 80 );
@@ -82,7 +83,7 @@ public class ControllerScriptImpl_requestTest
     public void testHead()
         throws Exception
     {
-        this.portalRequest.setMethod( "HEAD" );
+        this.portalRequest.setMethod( HttpMethod.HEAD );
         execute( "myapplication:/controller/request.js" );
         assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
     }

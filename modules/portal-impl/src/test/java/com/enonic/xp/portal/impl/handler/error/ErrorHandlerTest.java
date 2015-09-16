@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
 import com.enonic.xp.portal.impl.handler.BaseHandlerTest;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ public class ErrorHandlerTest
     {
         this.handler = new ErrorHandler();
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/asset/error/401" );
     }
 
@@ -50,7 +51,7 @@ public class ErrorHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
