@@ -144,6 +144,54 @@ module api.ui.uploader {
             }
 
             this.onRemoved((event) => this.destroyHandler.call(this, event));
+
+            this.listenToDragEvents();
+        }
+
+        private listenToDragEvents() {
+            var dragOverEl;
+            // make use of the fact that when dragging
+            // first drag enter occurs on the child element and after that
+            // drag leave occurs on the parent element that we came from
+            // meaning that to know when we left some element
+            // we need to compare it to the one currently dragged over
+            this.onDragEnter((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    var targetEl = <HTMLElement> event.target;
+
+                    if (!dragOverEl) {
+
+                        if (Uploader.debug) {
+                            console.log('drag entered, adding class');
+                        }
+                        this.addClass('dragover');
+                    }
+                    dragOverEl = targetEl;
+                }
+            });
+
+            this.onDragLeave((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    var targetEl = <HTMLElement> event.target;
+
+                    if (dragOverEl == targetEl) {
+                        if (Uploader.debug) {
+                            console.log('drag left, removing class');
+                        }
+                        this.removeClass('dragover');
+                        dragOverEl = undefined;
+                    }
+                }
+            });
+
+            this.onDrop((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    if (Uploader.debug) {
+                        console.log('drag drop removing class');
+                    }
+                    this.removeClass('dragover');
+                }
+            });
         }
 
         public setResetVisible(visible: boolean) {

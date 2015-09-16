@@ -36,6 +36,9 @@ module api.content {
             if (config.dropAlwaysAllowed == undefined) {
                 config.dropAlwaysAllowed = true;
             }
+            if (config.dropzoneAlwaysVisible == undefined) {
+                config.dropzoneAlwaysVisible = true;
+            }
 
             super(config);
 
@@ -168,19 +171,6 @@ module api.content {
 
             imageEditor.getLastButtonInContainer().onBlur(() => {
                 this.toggleSelected(imageEditor);
-            });
-
-            var wasSelected;
-            imageEditor.getImage().onDragEnter((event) => {
-                wasSelected = this.hasClass(ImageUploader.SELECTED_CLASS);
-                if (!wasSelected) {
-                    imageEditor.addClass(ImageUploader.SELECTED_CLASS);
-                }
-            });
-            imageEditor.getImage().onDragLeave((event) => {
-                if (!wasSelected) {
-                    imageEditor.removeClass(ImageUploader.SELECTED_CLASS);
-                }
             });
 
             var index = -1;
