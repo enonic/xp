@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.web.HttpStatus;
@@ -20,7 +21,7 @@ public final class PortalResponse
 {
     private final int status;
 
-    private final String contentType;
+    private final MediaType contentType;
 
     private final Object body;
 
@@ -48,7 +49,7 @@ public final class PortalResponse
         return this.status;
     }
 
-    public String getContentType()
+    public MediaType getContentType()
     {
         return this.contentType;
     }
@@ -104,7 +105,7 @@ public final class PortalResponse
 
         private ImmutableMap.Builder<String, String> headers;
 
-        private String contentType = "text/plain; charset=utf-8";
+        private MediaType contentType = MediaType.PLAIN_TEXT_UTF_8;
 
         private boolean postProcess = true;
 
@@ -190,15 +191,8 @@ public final class PortalResponse
             return this;
         }
 
-        public Builder contentType( String contentType )
+        public Builder contentType( MediaType contentType )
         {
-            if ( contentType != null )
-            {
-                if ( contentType.indexOf( "charset" ) < 1 && contentType.startsWith( "text/html" ) )
-                {
-                    contentType += "; charset=utf-8";
-                }
-            }
             this.contentType = contentType;
             return this;
         }
