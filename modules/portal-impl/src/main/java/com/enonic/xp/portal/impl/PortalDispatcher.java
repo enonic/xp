@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -156,6 +157,8 @@ public final class PortalDispatcher
             }
 
             final PortalHandler handler = this.registry.find( req );
+
+            ContextAccessor.current().getLocalScope().setAttribute( req.getBranch() );
             return filterResponse( handler.handle( req ) );
         }
         catch ( final Exception e )
