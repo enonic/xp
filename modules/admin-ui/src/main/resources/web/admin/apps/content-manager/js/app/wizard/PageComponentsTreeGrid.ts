@@ -42,7 +42,7 @@ module app.wizard {
                         setMinWidth(45).
                         setMaxWidth(45).
                         setField("menu").
-                        setCssClass("menu-icon").
+                        setCssClass("menu-cell").
                         setFormatter(this.menuFormatter).
                         build()
                 ]).

@@ -45,38 +45,34 @@
             }
           }
 
-          &:hover {
-            .slick-cell {
-              &.menu-icon {
-                display:inherit;
-              }
-            }
-          }
-
           .slick-cell {
-            &.menu-icon {
-              display: none;
+            &.menu-cell {
 
               .menu-icon {
                 padding-left: 10px;
                 padding-top: 10px;
+
+                color: @admin-font-gray1;
               }
 
               &.selected {
-                display:inherit;
-              }
-
-              &:hover {
                 .menu-icon {
-                  color: @admin-font-gray1;
+                  color: #ffffff;
                 }
               }
 
-              &.menu-open {
+              &:hover, &.menu-open {
                 .menu-icon {
-                  color: @admin-font-gray1;
+                  color: @admin-dark-gray;
+                }
+
+                &.selected {
+                  .menu-icon {
+                    color: @admin-dark-gray;
+                  }
                 }
               }
+
             }
           }
         }
