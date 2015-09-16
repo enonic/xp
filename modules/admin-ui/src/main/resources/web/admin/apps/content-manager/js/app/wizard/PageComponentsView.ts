@@ -171,6 +171,11 @@ module app.wizard {
 
             this.clickListener = (event, data) => {
                 var elem = new api.dom.ElementHelper(event.target);
+
+                if(this.sameRowClicked(data.row)) {
+                    this.hideContextMenu();
+                }
+
                 if (elem.hasClass('toggle')) {
                     // do nothing if expand toggle is clicked
                     return;
@@ -399,6 +404,11 @@ module app.wizard {
                 this.contextMenu.hide();
                 this.removeMenuOpenStyleFromMenuIcon();
             }
+        }
+
+        private sameRowClicked(clickedRow: number): boolean {
+            var currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
+            return clickedRow == currentlySelectedRow;
         }
 
     }
