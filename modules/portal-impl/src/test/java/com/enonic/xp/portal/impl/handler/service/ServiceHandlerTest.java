@@ -88,7 +88,7 @@ public class ServiceHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
     }
 
@@ -117,7 +117,7 @@ public class ServiceHandlerTest
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final PortalResponse response = this.handler.handle( this.request );
-        assertEquals( 200, response.getStatus() );
+        assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
 
@@ -135,7 +135,7 @@ public class ServiceHandlerTest
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final PortalResponse response = this.handler.handle( this.request );
-        assertEquals( 200, response.getStatus() );
+        assertEquals( HttpStatus.OK, response.getStatus() );
 
         Mockito.verify( this.controllerScript ).execute( this.request );
 

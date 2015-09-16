@@ -107,7 +107,7 @@ public class AssetHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
     }
 
@@ -119,7 +119,7 @@ public class AssetHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "text/css", res.getContentType() );
         assertSame( resource, res.getBody() );
     }
@@ -166,7 +166,7 @@ public class AssetHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "no-transform, max-age=600", res.getHeaders().get( "Cache-Control" ) );
     }
 
@@ -180,7 +180,7 @@ public class AssetHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertNull( res.getHeaders().get( "Cache-Control" ) );
     }
 }
