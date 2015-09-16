@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.controller;
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -91,7 +93,7 @@ final class ControllerScriptImpl
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final String type = ( value != null ) ? value.getValue( String.class ) : null;
-        builder.contentType( type != null ? type : "text/html" );
+        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.create( "text", "html" ) );
     }
 
     private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )

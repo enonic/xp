@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -168,7 +169,7 @@ public class ImageHandlerTest
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( 200, res.getStatus() );
-        assertEquals( "image/png", res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
     }
 
@@ -186,7 +187,7 @@ public class ImageHandlerTest
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( 200, res.getStatus() );
-        assertEquals( "image/png", res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
     }
 
