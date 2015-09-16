@@ -65,6 +65,11 @@ module api.dom {
             return next ? new ElementHelper(<HTMLElement> next) : null;
         }
 
+        getParent() {
+            var parent = this.el.parentElement;
+            return parent ? new ElementHelper(<HTMLElement> parent) : null;
+        }
+
         setDisabled(value: boolean): ElementHelper {
             this.el.disabled = value;
             return this;

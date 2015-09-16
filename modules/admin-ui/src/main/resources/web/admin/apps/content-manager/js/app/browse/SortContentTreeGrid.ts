@@ -31,22 +31,13 @@ module app.browse {
         static MAX_FETCH_SIZE: number = 30;
 
         constructor() {
-            var dragColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                setName("Drag").
-                setId("drag").
-                setMinWidth(50).
-                setMaxWidth(50).
-                setField("contentSummary.order").
-                setCssClass("drag-icon").
-                setFormatter(this.dragFormatter).
-                setBehavior("selectAndMove").
-                build();
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("Name").
                 setId("displayName").
                 setField("contentSummary.displayName").
                 setMinWidth(130).
                 setFormatter(this.nameFormatter).
+                setBehavior("selectAndMove").
                 build();
             var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("ModifiedTime").
@@ -56,11 +47,11 @@ module app.browse {
                 setMinWidth(150).
                 setMaxWidth(170).
                 setFormatter(DateTimeFormatter.format).
+                setBehavior("selectAndMove").
                 build();
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
-                        dragColumn,
                         nameColumn,
                         modifiedTimeColumn
                     ]).

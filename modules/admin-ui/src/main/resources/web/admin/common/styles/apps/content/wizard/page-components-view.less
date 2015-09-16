@@ -39,6 +39,25 @@
       .slick-viewport {
 
         .slick-row {
+
+          &.draggable {
+            border: 2px dashed @admin-dark-gray-border;
+            background-color: @admin-bg-light-blue !important;
+            box-sizing: border-box;
+            cursor: move;
+          }
+          #drag-helper {
+            position: relative;
+            margin: 1px 3px 0px;
+            height: 40px !important;
+            width: 40px !important;
+            .border-radius(30px);
+
+            &:before {
+              line-height: 42px;
+            }
+          }
+          
           &:not(:hover) {
             &, &.odd {
               background-color: transparent;
@@ -81,6 +100,13 @@
           }
         }
 
+        .slick-reorder-proxy {
+          opacity: 0;
+        }
+
+        .slick-reorder-guide {
+          display: none;
+        }
 
       }
     }

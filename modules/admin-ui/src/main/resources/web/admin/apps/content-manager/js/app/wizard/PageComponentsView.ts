@@ -120,6 +120,11 @@ module app.wizard {
                                 this.tree.selectNode(this.tree.getDataId(event.getComponentView()));
                             }
 
+                            if (this.tree.hasChildren(event.getComponentView())) {
+                                var componentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getComponentView()));
+                                this.tree.expandNode(componentNode, true);
+                            }
+
                             this.constrainToParent();
                         });
                     }
