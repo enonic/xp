@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -83,7 +84,7 @@ final class ImageHandlerWorker
 
         this.response.status( 200 );
         this.response.body( source );
-        this.response.contentType( mimeType );
+        this.response.contentType( MediaType.parse( mimeType ) );
     }
 
     private String getFormat( final String fileName, final String mimeType )

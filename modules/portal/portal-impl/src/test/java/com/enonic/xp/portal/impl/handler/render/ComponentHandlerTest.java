@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.handler.render;
 
 import org.junit.Test;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalException;
@@ -86,7 +88,7 @@ public class ComponentHandlerTest
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( 200, res.getStatus() );
-        assertEquals( "text/plain; charset=utf-8", res.getContentType() );
+        assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
     }

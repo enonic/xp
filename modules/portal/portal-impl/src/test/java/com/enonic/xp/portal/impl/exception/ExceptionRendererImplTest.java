@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -30,7 +31,7 @@ public class ExceptionRendererImplTest
     {
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( 404, res.getStatus() );
-        assertEquals( "application/json", res.getContentType() );
+        assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
 
         final String body = res.getBody().toString();
         assertEquals( "{\"status\":404,\"message\":\"Custom message\"}", body );
@@ -43,7 +44,7 @@ public class ExceptionRendererImplTest
 
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( 404, res.getStatus() );
-        assertEquals( "text/html; charset=utf-8", res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "404 Not Found" ) );
@@ -59,8 +60,8 @@ public class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( 400, res.getStatus() );
-        assertEquals( "application/json", res.getContentType() );
-
+        assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
+        MediaType.create( "","" );
         final String body = res.getBody().toString();
         assertEquals( "{\"status\":400,\"message\":\"Custom message (java.lang.RuntimeException)\"}", body );
     }
@@ -73,7 +74,7 @@ public class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( 400, res.getStatus() );
-        assertEquals( "text/html; charset=utf-8", res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "400 Bad Request" ) );

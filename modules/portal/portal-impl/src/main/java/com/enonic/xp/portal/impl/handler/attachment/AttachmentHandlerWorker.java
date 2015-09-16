@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -29,7 +30,7 @@ final class AttachmentHandlerWorker
         final ByteSource binary = resolveBinary( this.id, attachment );
 
         this.response.status( 200 );
-        this.response.contentType( attachment.getMimeType() );
+        this.response.contentType( MediaType.parse( attachment.getMimeType() ) );
         this.response.body( binary );
 
         if ( this.download )

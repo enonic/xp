@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.rendering;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.PortalRequest;
@@ -64,7 +66,7 @@ public final class PageRenderer
         html += "</html>";
 
         PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
-            contentType( "text/html" ).
+            contentType( MediaType.create( "text", "html" ) ).
             status( 200 ).
             body( html ).
             postProcess( true );
