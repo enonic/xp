@@ -79,9 +79,5 @@ module api.liveedit {
             super.setParentItemView(partView);
             this.parentPartComponentView = partView;
         }
-
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            super.select(clickPosition, menuPosition);
-        }
     }
 }

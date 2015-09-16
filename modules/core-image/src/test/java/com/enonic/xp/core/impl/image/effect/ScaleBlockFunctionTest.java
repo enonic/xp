@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
-import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.core.impl.image.ImageScaleFunction;
 
 import static org.junit.Assert.*;
 

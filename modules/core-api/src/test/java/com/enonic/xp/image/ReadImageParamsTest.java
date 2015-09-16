@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 

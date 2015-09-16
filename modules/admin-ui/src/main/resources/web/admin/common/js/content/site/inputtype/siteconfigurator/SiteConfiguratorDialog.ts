@@ -60,6 +60,10 @@ module api.content.site.inputtype.siteconfigurator {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
+            setTimeout(() => {
+                this.addClass("animated");
+                this.centerMyself();
+            }, 100);
         }
 
         close() {

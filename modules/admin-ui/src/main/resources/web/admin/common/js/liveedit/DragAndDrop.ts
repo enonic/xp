@@ -270,7 +270,7 @@ module api.liveedit {
                     // Create component and view if we drag from context window
                     var componentType: ComponentItemType = <ComponentItemType> this._newItemItemType;
 
-                    var newComponent = this.createComponent(componentType.toComponentType());
+                    var newComponent = regionView.createComponent(componentType.toComponentType());
 
                     this._draggedComponentView = componentType.createView(new CreateItemViewConfig<RegionView,Component>().
                         setParentView(regionView).
@@ -584,21 +584,6 @@ module api.liveedit {
             var region = this.pageView.getRegionViewByElement(jq.get(0));
             api.util.assertState(!!region, "RegionView is not expected to be null");
             return region;
-        }
-
-        private createComponent(type: ComponentType): Component {
-
-            var shortName = api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName()));
-            var componentName = new ComponentName(shortName);
-
-            var builder = type.newComponentBuilder().setName(componentName);
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
-                var descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;
-                descriptorBuilder.setConfig(new PropertyTree());
-            }
-
-            return builder.build();
         }
 
         private createSortableItemsSelector(): string {

@@ -1,17 +1,16 @@
 module api.ui.button {
 
 
-    export class CycleButton extends api.dom.DivEl {
+    export class CycleButton extends api.ui.button.Button {
 
         private actionList: Action[];
 
         private active: number;
 
-        constructor(actions: Action[], label: string = "") {
-            super("button cycle-button");
+        constructor(actions: Action[]) {
+            super();
+            this.addClass("cycle-button icon-screen icon-medium");
             this.actionList = actions;
-
-            this.setHtml(label);
 
             if (this.actionList.length > 0) {
                 this.active = -1;

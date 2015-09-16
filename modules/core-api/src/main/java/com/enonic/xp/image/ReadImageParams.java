@@ -3,7 +3,6 @@ package com.enonic.xp.image;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 

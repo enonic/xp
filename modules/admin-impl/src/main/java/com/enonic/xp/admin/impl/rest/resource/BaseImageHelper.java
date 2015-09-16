@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import com.enonic.xp.image.filter.ScaleSquareFunction;
+import com.enonic.xp.image.ImageHelper;
 
 public abstract class BaseImageHelper
 {
@@ -24,7 +24,7 @@ public abstract class BaseImageHelper
 
     protected final BufferedImage resizeImage( final BufferedImage image, final int size )
     {
-        return new ScaleSquareFunction( size ).scale( image );
+        return ImageHelper.scaleSquare( image, size );
     }
 
     protected final BufferedImage loadDefaultImage( final String imageName )

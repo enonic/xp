@@ -13,8 +13,7 @@ import org.junit.Test;
 
 import com.enonic.xp.core.impl.image.command.ScaleWidthFunctionCommand;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.image.ScaleParams;
 
 import static org.junit.Assert.*;
 

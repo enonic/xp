@@ -5,8 +5,6 @@ import java.awt.image.BufferedImage;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.image.ImageFilter;
-
 import static org.junit.Assert.*;
 
 public class ImageFilterSetTest
