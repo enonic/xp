@@ -55,7 +55,7 @@ public class ErrorHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
     }
 

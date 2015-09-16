@@ -66,7 +66,7 @@ final class ControllerScriptImpl
     private PortalResponse createResponse( final ScriptValue result )
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
+        builder.status( HttpStatus.METHOD_NOT_ALLOWED );
 
         if ( ( result == null ) || !result.isObject() )
         {
@@ -87,7 +87,7 @@ final class ControllerScriptImpl
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? status : HttpStatus.OK.value() );
+        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
@@ -104,7 +104,7 @@ final class ControllerScriptImpl
             return;
         }
 
-        builder.status( Response.Status.SEE_OTHER.getStatusCode() );
+        builder.status( HttpStatus.from( Response.Status.SEE_OTHER.getStatusCode() ) );
         builder.header( "Location", redirect );
     }
 
