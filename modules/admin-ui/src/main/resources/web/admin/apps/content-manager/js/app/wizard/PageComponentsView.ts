@@ -178,7 +178,7 @@ module app.wizard {
                 var treeNode = this.tree.getGrid().getDataView().getItem(data.row);
                 if (treeNode) {
                     // do it on click only, not on selection change
-                    treeNode.getData().scrollComponentIntoView();
+                    treeNode.getData().selectWithoutMenu();
                 }
                 this.tree.getGrid().selectRow(data.row);
 
@@ -193,7 +193,6 @@ module app.wizard {
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
-                    nodes[0].getData().selectWithoutMenu();
 
                     if (this.isModal()) {
                         this.hide();
