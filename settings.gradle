@@ -26,14 +26,13 @@ include 'admin:admin-ui'
 
 include 'itest:itest-core'
 
-include 'upgrade'
-include 'toolbox'
+include 'tools:upgrade'
+include 'tools:toolbox'
+include 'tools:testing'
+include 'tools:gradle-plugin'
 
 include 'launcher'
 include 'distro'
-
-include 'testing'
-include 'gradle-plugin'
 
 include 'lib:lib-content'
 include 'lib:lib-i18n'

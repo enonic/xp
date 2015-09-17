@@ -9,7 +9,7 @@ configurations {
 
 dependencies {
     lib project( ':launcher' )
-    toolbox project( ':toolbox' )
+    toolbox project( ':tools:toolbox' )
 }
 
 ext {
