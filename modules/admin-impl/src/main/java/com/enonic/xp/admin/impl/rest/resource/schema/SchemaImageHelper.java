@@ -2,10 +2,10 @@ package com.enonic.xp.admin.impl.rest.resource.schema;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
+import com.enonic.xp.admin.impl.rest.resource.BaseImageHelper;
 
 public final class SchemaImageHelper
-    extends BaseImageHelperImpl
+    extends BaseImageHelper
 {
     private final BufferedImage defaultMixinImage;
 
@@ -26,5 +26,4 @@ public final class SchemaImageHelper
     {
         return resizeImage( defaultRelationshipTypeImage, size );
     }
-
 }

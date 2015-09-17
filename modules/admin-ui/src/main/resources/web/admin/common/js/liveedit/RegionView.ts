@@ -4,6 +4,11 @@ module api.liveedit {
     import RegionPath = api.content.page.region.RegionPath;
     import Component = api.content.page.region.Component;
     import ComponentPath = api.content.page.region.ComponentPath;
+    import PropertyTree = api.data.PropertyTree;
+    import ComponentName = api.content.page.region.ComponentName;
+    import ComponentType = api.content.page.region.ComponentType;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
 
     export class RegionViewBuilder {
 
@@ -140,6 +145,8 @@ module api.liveedit {
 
         private createRegionContextMenuActions() {
             var actions: api.ui.Action[] = [];
+
+            actions.push(this.createInsertAction());
             actions.push(new api.ui.Action('Select parent').onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
@@ -234,6 +241,12 @@ module api.liveedit {
             new RegionSelectedEvent(this).fire();
         }
 
+        selectWithoutMenu(isNew: boolean = false) {
+            super.selectWithoutMenu(isNew);
+
+            new RegionSelectedEvent(this).fire();
+        }
+
         toString() {
             var extra = "";
             if (this.getRegionPath()) {
@@ -280,6 +293,10 @@ module api.liveedit {
 
                 throw new Error("Did not find ComponentView to remove: " + componentView.getItemId().toString());
             }
+        }
+
+        getNewItemIndex(): number {
+            return 0;
         }
 
         addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
@@ -419,6 +436,24 @@ module api.liveedit {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
                 return curr != listener;
             })
+        }
+
+        getRegionView(): RegionView {
+            return this;
+        }
+
+        public createComponent(componentType: ComponentType): Component {
+            var shortName = api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(componentType.getShortName()));
+            var componentName = new ComponentName(shortName);
+
+            var builder = componentType.newComponentBuilder().setName(componentName);
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
+                var descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;
+                descriptorBuilder.setConfig(new PropertyTree());
+            }
+
+            return builder.build();
         }
 
         private notifyItemViewRemovedForAll(itemViews: ItemView[]) {

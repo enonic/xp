@@ -18,7 +18,7 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
         final Application application = createApplication( "fooapplication" );
         createDescriptors( "fooapplication:fooapplication-part-descr" );
 
-        mockResources( application, "/site/parts", "*", false, "site/parts/fooapplication-part-descr" );
+        mockResources( application, "/site/parts", "site/parts/fooapplication-part-descr/" );
 
         final PartDescriptors result = this.service.getByApplication( application.getKey() );
 
@@ -33,10 +33,10 @@ public class PartDescriptorServiceImpl_getByApplicationsTest
         final Applications applications = createApplications( "fooapplication", "barapplication" );
         createDescriptors( "fooapplication:fooapplication-part-descr", "barapplication:barapplication-part-descr" );
 
-        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/parts", "*", false,
-                       "site/parts/fooapplication-part-descr" );
-        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/parts", "*", false,
-                       "site/parts/barapplication-part-descr" );
+        mockResources( applications.getApplication( ApplicationKey.from( "fooapplication" ) ), "/site/parts",
+                       "site/parts/fooapplication-part-descr/" );
+        mockResources( applications.getApplication( ApplicationKey.from( "barapplication" ) ), "/site/parts",
+                       "site/parts/barapplication-part-descr/" );
 
         final PartDescriptors result = this.service.getByApplications( applications.getApplicationKeys() );
 

@@ -1,0 +1,13 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile( 'org.jparsec:jparsec:2.1' ) {
+        transitive = false
+    }
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP - JParsec Repack'
+    instruction 'Export-Package', 'org.codehaus.jparsec.*;version=2.1'
+    instruction 'Import-Package', '*;resolution:=optional'
+}

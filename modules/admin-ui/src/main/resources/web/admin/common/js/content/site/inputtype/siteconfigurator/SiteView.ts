@@ -11,6 +11,7 @@ module api.content.site.inputtype.siteconfigurator {
     import SiteConfig = api.content.site.SiteConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import ContentFormContext = api.content.form.ContentFormContext;
 
     export class SiteView extends api.dom.DivEl {
 
@@ -26,7 +27,9 @@ module api.content.site.inputtype.siteconfigurator {
 
         private siteConfigFormDisplayedListeners: {(applicationKey: ApplicationKey) : void}[] = [];
 
-        constructor(application: Application, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
+        private formContext: ContentFormContext;
+
+        constructor(application: Application, siteConfig: SiteConfig, formContext: ContentFormContext) {
             super("site-view");
 
             this.removeClickedListeners = [];
@@ -34,6 +37,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.application = application;
             this.siteConfig = siteConfig;
+            this.formContext = formContext;
 
             var header = new api.dom.DivEl('header');
 
@@ -53,36 +57,69 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(header);
 
-            this.formView = this.createFormView(formContext);
+            this.formView = this.createFormView(formContext, this.siteConfig);
 
-            if (!this.siteConfig.getConfig().isEmpty()) {
-
+            if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createCollapseButton());
-
-                this.appendChild(this.formView);
             }
-
         }
 
         private createCollapseButton(): api.dom.AEl {
             var collapseButton = new api.dom.AEl('collapse-button');
-            collapseButton.setHtml('Collapse');
 
             collapseButton.onClicked((event: MouseEvent) => {
-                var isFormVisible = this.formView.isVisible();
-
-                collapseButton.setHtml(isFormVisible ? 'Expand' : 'Collapse');
-                this.toggleClass('collapsed', isFormVisible);
-                this.formView.setVisible(!isFormVisible);
-
                 this.notifyCollapseClicked(event);
+                this.initAndOpenConfigureDialog();
             });
 
             return collapseButton;
         }
 
-        private createFormView(formContext: api.content.form.ContentFormContext): FormView {
-            var formView = new FormView(formContext, this.application.getForm(), this.siteConfig.getConfig());
+        initAndOpenConfigureDialog() {
+
+            if (this.application.getForm().getFormItems().length > 0) {
+
+                var tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
+
+                this.formView = this.createFormView(this.formContext, tempSiteConfig);
+
+                var okCallback = () => {
+                    this.applyTemporaryConfig(tempSiteConfig);
+                };
+
+                var cancelCallback = () => {
+                    this.formView = this.createFormView(this.formContext, this.siteConfig);
+                };
+
+                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application.getDisplayName(),
+                    this.application.getName() + "-" + this.application.getVersion(),
+                    this.formView,
+                    okCallback,
+                    cancelCallback);
+                siteConfiguratorDialog.open();
+            }
+        }
+
+        private applyTemporaryConfig(tempSiteConfig: SiteConfig) {
+            tempSiteConfig.getConfig().forEach((property) => {
+                this.siteConfig.getConfig().setProperty(property.getName(), property.getIndex(), property.getValue());
+            });
+            this.siteConfig.getConfig().forEach((property) => {
+                var prop = tempSiteConfig.getConfig().getProperty(property.getName(), property.getIndex());
+                if (!prop) {
+                    this.siteConfig.getConfig().removeProperty(property.getName(), property.getIndex());
+                }
+            });
+        }
+
+        private makeTemporarySiteConfig(): SiteConfig {
+            var propSet = (new PropertyTree(this.siteConfig.getConfig())).getRoot();
+            propSet.setContainerProperty(this.siteConfig.getConfig().getProperty());
+            return SiteConfig.create().setConfig(propSet).setApplicationKey(this.siteConfig.getApplicationKey()).build();
+        }
+
+        private createFormView(formContext: api.content.form.ContentFormContext, siteConfig: SiteConfig): FormView {
+            var formView = new FormView(formContext, this.application.getForm(), siteConfig.getConfig());
             formView.addClass("site-form");
             formView.layout().then(() => {
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());

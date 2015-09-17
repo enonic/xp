@@ -89,7 +89,6 @@ module api.content {
                        contentTypeAllowsChild[content.getType().toString()] &&
                        createContentFilter.isCreateContentAllowed(content, this.filterSourceContentType);
             });
-            return [];
         }
 
         sendRequest(): wemQ.Promise<ContentSummary[]> {

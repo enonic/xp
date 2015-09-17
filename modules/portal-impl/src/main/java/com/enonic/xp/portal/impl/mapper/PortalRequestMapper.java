@@ -30,14 +30,15 @@ public final class PortalRequestMapper
         gen.value( "path", this.request.getPath() );
         gen.value( "url", this.request.getUrl() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
+
         if ( this.request.getBranch() != null )
         {
             gen.value( "branch", this.request.getBranch().getName() );
         }
 
+        serializeBody( gen );
         serializeMultimap( "params", gen, this.request.getParams() );
-        serializeMultimap( "formParams", gen, this.request.getFormParams() );
-        serializeMultimap( "headers", gen, this.request.getHeaders() );
+        serializeMap( "headers", gen, this.request.getHeaders() );
         serializeMap( "cookies", gen, this.request.getCookies() );
     }
 
@@ -69,5 +70,16 @@ public final class PortalRequestMapper
             gen.value( entry.getKey(), entry.getValue() );
         }
         gen.end();
+    }
+
+    private void serializeBody( final MapGenerator gen )
+    {
+        if ( this.request.getContentType() == null )
+        {
+            return;
+        }
+
+        gen.value( "contentType", this.request.getContentType() );
+        gen.value( "body", this.request.getBodyAsString() );
     }
 }

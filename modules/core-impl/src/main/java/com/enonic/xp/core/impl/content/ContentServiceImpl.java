@@ -21,6 +21,7 @@ import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentChangeEvent;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -62,6 +63,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -457,6 +459,10 @@ public class ContentServiceImpl
         {
             throw new MoveContentException( "Content already exists at path: " + e.getNode().toString() );
         }
+        catch ( NodeAccessException e )
+        {
+            throw new ContentAccessException( e );
+        }
     }
 
     @Override
@@ -543,23 +549,31 @@ public class ContentServiceImpl
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
-        final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
-            nodeId( NodeId.from( params.getContentId() ) ).
-            childOrder( params.getChildOrder() ).
-            build() );
+        try
+        {
+            final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
+                nodeId( NodeId.from( params.getContentId() ) ).
+                childOrder( params.getChildOrder() ).
+                build() );
 
+            final Content content = contentNodeTranslator.fromNode( node );
         final Content content = oldContentNodeTranslator.fromNode( node );
 
-        if ( !params.isSilent() )
-        {
-            final ContentChangeEvent event = ContentChangeEvent.create().
-                change( ContentChangeEvent.ContentChangeType.SORT, content.getPath() ).
-                build();
+            if ( !params.isSilent() )
+            {
+                final ContentChangeEvent event = ContentChangeEvent.create().
+                    change( ContentChangeEvent.ContentChangeType.SORT, content.getPath() ).
+                    build();
 
-            eventPublisher.publish( event );
+                eventPublisher.publish( event );
+            }
+            return content;
+        }
+        catch ( NodeAccessException e )
+        {
+            throw new ContentAccessException( e );
         }
 
-        return content;
     }
 
     @Override

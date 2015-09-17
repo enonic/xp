@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,12 +8,14 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -296,6 +299,100 @@ public class MoveNodeCommandTest
 
         assertEquals( false, movedNode.inheritsPermissions() );
         assertEquals( child1.getPermissions(), movedNode.getPermissions() );
+    }
+
+    @Test
+    public void move_without_permissions()
+        throws Exception
+    {
+        final Node deleteUngrantedNode = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "mynode" ) ).
+            permissions( AccessControlList.of(
+                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() ) ).
+            build() );
+
+        final Node deleteGrantedNode = createNode( CreateNodeParams.create().
+            name( "mynode2" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "mynode2" ) ).
+            permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
+            build() );
+
+        final Node createUngrantedNewParent = createNode( CreateNodeParams.create().
+            name( "new-parent" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "newparent" ) ).
+            permissions( AccessControlList.of(
+                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.CREATE ).build() ) ).
+            build() );
+
+        final Node createGrantedNewParent = createNode( CreateNodeParams.create().
+            name( "new-parent2" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "newparent2" ) ).
+            permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
+            build() );
+
+        // Tests the check of the DELETE right on the moved node
+        boolean deleteRightChecked = false;
+        try
+        {
+            MoveNodeCommand.create().
+                queryService( this.queryService ).
+                indexServiceInternal( this.indexServiceInternal ).
+                branchService( this.branchService ).
+                nodeDao( this.nodeDao ).
+                versionService( this.versionService ).
+                id( deleteUngrantedNode.id() ).
+                newParent( createGrantedNewParent.path() ).
+                build().
+                execute();
+        }
+        catch ( NodeAccessException e )
+        {
+            deleteRightChecked = true;
+        }
+        Assert.assertTrue( deleteRightChecked );
+
+        // Tests the check of the CREATE right on the new parent
+        boolean createRightChecked = false;
+        try
+        {
+            MoveNodeCommand.create().
+                queryService( this.queryService ).
+                indexServiceInternal( this.indexServiceInternal ).
+                branchService( this.branchService ).
+                nodeDao( this.nodeDao ).
+                versionService( this.versionService ).
+                id( deleteGrantedNode.id() ).
+                newParent( createUngrantedNewParent.path() ).
+                build().
+                execute();
+        }
+        catch ( NodeAccessException e )
+        {
+            createRightChecked = true;
+        }
+        Assert.assertTrue( createRightChecked );
+
+        // Tests the correct behaviour if both rights are granted
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            branchService( this.branchService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( deleteGrantedNode.id() ).
+            newParent( createGrantedNewParent.path() ).
+            build().
+            execute();
+
+        final Node movedNode = getNodeById( deleteGrantedNode.id() );
+
+        assertEquals( createGrantedNewParent.path(), movedNode.parentPath() );
+        assertEquals( "mynode2", movedNode.name().toString() );
     }
 
     private FindNodeVersionsResult getVersions( final Node node )

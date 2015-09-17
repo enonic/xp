@@ -44,8 +44,6 @@ public final class ContentIconResource
 {
     private ContentService contentService;
 
-    private ContentImageHelper helper;
-
     private MediaInfoService mediaInfoService;
 
     private ImageService imageService;
@@ -117,8 +115,8 @@ public final class ContentIconResource
                         orientation( imageOrientation ).
                         build();
 
-                    final byte[] thumbnailImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
+                    final ByteSource thumbnailImage = imageService.readImage( readImageParams );
+                    return new ResolvedImage( thumbnailImage.read(), contentThumbnail.getMimeType() );
                 }
                 catch ( IOException e )
                 {
@@ -148,8 +146,8 @@ public final class ContentIconResource
                     orientation( getSourceAttachmentOrientation( media ) ).
                     build();
 
-                final byte[] contentImage = imageService.readImage( readImageParams );
-                return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
+                final ByteSource contentImage = imageService.readImage( readImageParams );
+                return new ResolvedImage( contentImage.read(), imageAttachment.getMimeType() );
             }
             catch ( IOException e )
             {
@@ -184,12 +182,6 @@ public final class ContentIconResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setContentImageHelper( ContentImageHelper contentImageHelper )
-    {
-        this.helper = contentImageHelper;
     }
 
     @Reference

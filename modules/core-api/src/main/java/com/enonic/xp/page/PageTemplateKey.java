@@ -1,43 +1,45 @@
 package com.enonic.xp.page;
 
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.ContentId;
 
 @Beta
 public final class PageTemplateKey
-    extends ContentId
 {
-    private PageTemplateKey( final String id )
-    {
-        super( id );
-    }
+    private final ContentId id;
 
     private PageTemplateKey( final ContentId id )
     {
-        super( id.toString() );
+        this.id = id;
+    }
+
+    public ContentId getContentId()
+    {
+        return this.id;
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
+        return ( o instanceof PageTemplateKey ) && ( (PageTemplateKey) o ).id.equals( this.id );
+    }
 
-        final PageTemplateKey that = (PageTemplateKey) o;
-        return super.equals( that );
+    @Override
+    public int hashCode()
+    {
+        return this.id.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.id.toString();
     }
 
     public static PageTemplateKey from( final String value )
     {
-        return new PageTemplateKey( value );
+        return from( ContentId.from( value ) );
     }
 
     public static PageTemplateKey from( final ContentId value )

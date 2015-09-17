@@ -20,6 +20,8 @@ public class ImportNodeCommand
 
     private final boolean dryRun;
 
+    private final boolean importPermissions;
+
     private ImportNodeCommand( Builder builder )
     {
         super( builder );
@@ -28,6 +30,8 @@ public class ImportNodeCommand
         this.importNode = builder.importNode;
         this.binaryBlobStore = builder.binaryBlobStore;
         this.dryRun = builder.dryRun;
+        this.importPermissions = builder.importPermissions;
+
     }
 
     public static Builder create()
@@ -84,7 +88,14 @@ public class ImportNodeCommand
             dryRun( this.dryRun ).
             id( existingNode.id() ).
             setBinaryAttachments( this.binaryAttachments ).
-            editor( editableNode -> editableNode.data = this.importNode.data() ).build();
+            editor( editableNode -> {
+                editableNode.data = this.importNode.data();
+                if ( this.importPermissions )
+                {
+                    editableNode.inheritPermissions = this.importNode.inheritsPermissions();
+                    editableNode.permissions = this.importNode.getPermissions();
+                }
+            } ).build();
 
         return UpdateNodeCommand.create( this ).
             params( updateNodeParams ).
@@ -105,6 +116,9 @@ public class ImportNodeCommand
         private BlobStore binaryBlobStore;
 
         private boolean dryRun;
+
+        private boolean importPermissions;
+
 
         private Builder()
         {
@@ -137,6 +151,12 @@ public class ImportNodeCommand
         public Builder dryRun( boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder importPermissions( boolean importPermissions )
+        {
+            this.importPermissions = importPermissions;
             return this;
         }
 

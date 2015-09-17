@@ -73,6 +73,39 @@ public class ResourceServiceImpl
         return resourceKeys;
     }
 
+    @Override
+    public ResourceKeys findFolders( final ApplicationKey applicationKey, final String path )
+    {
+        ResourceKeys resourceKeys = null;
+        final Application application = getActiveApplication( applicationKey );
+
+        if ( application != null )
+        {
+            Bundle bundle = application.getBundle();
+
+            final Enumeration<String> entryPaths = bundle.getEntryPaths( path );
+
+            if ( entryPaths != null )
+            {
+                final List<ResourceKey> resourceKeyList = Collections.list( entryPaths ).
+                    stream().
+                    filter( entryPath -> entryPath.endsWith( "/" ) ).
+                    map( entryPath -> ResourceKey.from( applicationKey, entryPath ) ).
+                    collect( Collectors.toList() );
+
+                resourceKeys = ResourceKeys.from( resourceKeyList );
+            }
+
+        }
+
+        if ( resourceKeys == null )
+        {
+            resourceKeys = ResourceKeys.empty();
+        }
+
+        return resourceKeys;
+    }
+
     private Application getActiveApplication( final ApplicationKey applicationKey )
     {
         Application activeApplication = null;

@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.page.region;
 
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.ComponentDataSerializer;
 import com.enonic.xp.region.TextComponent;
 
 public class TextComponentDataSerializer

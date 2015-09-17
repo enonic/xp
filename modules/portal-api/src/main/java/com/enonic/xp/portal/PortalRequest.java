@@ -2,7 +2,10 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -16,6 +19,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Beta
@@ -23,13 +27,11 @@ public final class PortalRequest
 {
     public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
-    private String method;
+    private HttpMethod method;
 
     private final Multimap<String, String> params;
 
-    private final Multimap<String, String> formParams;
-
-    private final Multimap<String, String> headers;
+    private final Map<String, String> headers;
 
     private final Map<String, String> cookies;
 
@@ -37,7 +39,7 @@ public final class PortalRequest
 
     private String host;
 
-    private String port;
+    private int port;
 
     private String path;
 
@@ -63,6 +65,14 @@ public final class PortalRequest
 
     private PageDescriptor pageDescriptor;
 
+    private String endpointPath;
+
+    private String contentType;
+
+    private Object body;
+
+    private HttpServletRequest rawRequest;
+
     public PortalRequest()
     {
         this.baseUri = "";
@@ -70,12 +80,11 @@ public final class PortalRequest
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
-        this.formParams = HashMultimap.create();
-        this.headers = HashMultimap.create();
+        this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
 
-    public String getMethod()
+    public HttpMethod getMethod()
     {
         return this.method;
     }
@@ -90,11 +99,6 @@ public final class PortalRequest
         return this.params;
     }
 
-    public Multimap<String, String> getFormParams()
-    {
-        return this.formParams;
-    }
-
     public String getScheme()
     {
         return scheme;
@@ -105,7 +109,7 @@ public final class PortalRequest
         return host;
     }
 
-    public String getPort()
+    public int getPort()
     {
         return port;
     }
@@ -125,7 +129,7 @@ public final class PortalRequest
         return this.mode;
     }
 
-    public void setMethod( final String method )
+    public void setMethod( final HttpMethod method )
     {
         this.method = method;
     }
@@ -140,7 +144,7 @@ public final class PortalRequest
         this.host = host;
     }
 
-    public void setPort( final String port )
+    public void setPort( final int port )
     {
         this.port = port;
     }
@@ -165,7 +169,7 @@ public final class PortalRequest
         this.branch = branch;
     }
 
-    public Multimap<String, String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         return this.headers;
     }
@@ -258,5 +262,50 @@ public final class PortalRequest
     public Map<String, String> getCookies()
     {
         return this.cookies;
+    }
+
+    public String getEndpointPath()
+    {
+        return this.endpointPath;
+    }
+
+    public void setEndpointPath( final String endpointPath )
+    {
+        this.endpointPath = Strings.emptyToNull( endpointPath );
+    }
+
+    public String getContentType()
+    {
+        return this.contentType;
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
+    }
+
+    public Object getBody()
+    {
+        return this.body;
+    }
+
+    public void setBody( final Object body )
+    {
+        this.body = body;
+    }
+
+    public String getBodyAsString()
+    {
+        return this.body != null ? this.body.toString() : null;
+    }
+
+    public HttpServletRequest getRawRequest()
+    {
+        return rawRequest;
+    }
+
+    public void setRawRequest( final HttpServletRequest rawRequest )
+    {
+        this.rawRequest = rawRequest;
     }
 }

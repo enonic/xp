@@ -138,6 +138,11 @@ module app.wizard.page {
 
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
+                if (!this.pageView) {
+                    this.saveAndReloadPage();
+                    return;
+                }
+
                 var itemView = this.pageView.getSelectedView();
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                     this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);

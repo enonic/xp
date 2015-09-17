@@ -21,14 +21,14 @@ module app.wizard {
         private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
 
         constructor(params: ContentWizardToolbarParams) {
-            super();
+            super("content-wizard-toolbar");
             super.addAction(params.saveAction);
             super.addAction(params.deleteAction);
             super.addAction(params.duplicateAction);
             super.addAction(params.previewAction);
             super.addGreedySpacer();
 
-            this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction], "Live");
+            this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
             this.contextWindowToggler = new ContextWindowToggler();
             this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
 

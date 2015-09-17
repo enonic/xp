@@ -5,6 +5,7 @@ include 'core-repo'
 include 'core-security'
 include 'core-image'
 include 'core-export'
+include 'core-mail'
 include 'core-impl'
 include 'core-itest'
 
@@ -41,6 +42,14 @@ include 'lib-portal'
 include 'lib-mustache'
 include 'lib-xslt'
 include 'lib-thymeleaf'
+include 'lib-mail'
+include 'lib-auth'
+
+include 'repack-jparsec'
+include 'repack-attoparser'
+include 'repack-resteasy'
+include 'repack-jhlabs-filters'
+include 'repack-elasticsearch'
 
 rootProject.name = 'xp'
 

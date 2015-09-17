@@ -1,10 +1,10 @@
 import com.enonic.gradle.BuildInfoHelper
 
 dependencies {
-    compile 'org.osgi:org.osgi.core:5.0.0'
-    compile 'org.osgi:org.osgi.compendium:5.0.0'
-    compile 'org.apache.felix:org.apache.felix.framework:4.4.1'
-    compile 'org.apache.felix:org.apache.felix.utils:1.6.0'
+    compile 'org.osgi:osgi.core:6.0.0'
+    compile 'org.osgi:osgi.cmpn:6.0.0'
+    compile 'org.apache.felix:org.apache.felix.framework:5.2.0'
+    compile 'org.apache.felix:org.apache.felix.utils:1.8.0'
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
     compile 'ch.qos.logback:logback-classic:1.1.2'
@@ -12,6 +12,7 @@ dependencies {
     compile 'org.slf4j:jcl-over-slf4j:1.7.10'
     compile 'org.slf4j:log4j-over-slf4j:1.7.10'
     compile 'org.fusesource.jansi:jansi:1.11'
+    compile 'javax.mail:mail:1.4.7'
 }
 
 ext {
@@ -28,9 +29,4 @@ jar {
     manifest {
         attributes( ['Implementation-Version': project.version] )
     }
-}
-
-checkstyle {
-    ignoreFailures = false
-    showViolations = true
 }

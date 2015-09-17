@@ -174,4 +174,40 @@ public final class ImageHelper
     {
         return format.equals( "png" );
     }
+
+    public static BufferedImage scaleSquare( final BufferedImage source, final int size )
+    {
+        return scaleSquare( source, size, 0.5, 0.5 );
+    }
+    
+    public static BufferedImage scaleSquare( final BufferedImage source, final int size, final double xOffset, final double yOffset )
+    {
+        int width = source.getWidth();
+        int height = source.getHeight();
+
+        BufferedImage cropped;
+        if ( width < height )
+        {
+            int heightDiff = height - width;
+            int offset = (int) ( height * yOffset ) - ( width / 2 ); // center offset
+            offset = inRange( offset, 0, heightDiff ); // adjust to view limits
+
+            cropped = source.getSubimage( 0, offset, width, width );
+        }
+        else
+        {
+            int widthDiff = width - height;
+            int offset = (int) ( width * xOffset ) - ( height / 2 ); // center offset
+            offset = inRange( offset, 0, widthDiff ); // adjust to view limits
+
+            cropped = source.getSubimage( offset, 0, height, height );
+        }
+
+        return getScaledInstance( cropped, size, size );
+    }
+
+    private static int inRange( final int value, final int min, final int max )
+    {
+        return Math.max( Math.min( value, max ), min );
+    }
 }

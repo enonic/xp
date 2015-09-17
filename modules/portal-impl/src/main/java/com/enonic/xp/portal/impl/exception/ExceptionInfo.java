@@ -1,13 +1,18 @@
 package com.enonic.xp.portal.impl.exception;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.web.HttpStatus;
 
 final class ExceptionInfo
 {
-    private final int status;
+    private final HttpStatus status;
 
     private String message;
 
@@ -15,34 +20,24 @@ final class ExceptionInfo
 
     private ResourceService resourceService;
 
-    private ExceptionInfo( final int status )
+    private ExceptionInfo( final HttpStatus status )
     {
         this.status = status;
     }
 
-    public int getStatus()
+    public HttpStatus getStatus()
     {
         return this.status;
     }
 
     public boolean shouldLogAsError()
     {
-        if ( ( this.status >= 500 ) && ( this.status < 600 ) )
-        {
-            return true;
-        }
-
-        if ( this.status == 400 )
-        {
-            return true;
-        }
-
-        return false;
+        return this.status.is5xxServerError() || this.status == HttpStatus.BAD_REQUEST;
     }
 
     public String getReasonPhrase()
     {
-        return Response.Status.fromStatusCode( this.status ).getReasonPhrase();
+        return this.status.getReasonPhrase();
     }
 
     public String getMessage()
@@ -53,7 +48,7 @@ final class ExceptionInfo
         }
 
         final String str = this.cause != null ? this.cause.getMessage() : null;
-        return str != null ? str : "No message";
+        return str != null ? str : getReasonPhrase();
     }
 
     public ExceptionInfo message( final String message )
@@ -79,37 +74,57 @@ final class ExceptionInfo
         return this;
     }
 
-    public Response toResponse()
+    public PortalResponse toResponse( final PortalRequest req )
+    {
+        final String accept = Strings.nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) );
+        final boolean isHtml = accept.contains( "text/html" );
+        return isHtml ? toHtmlResponse() : toJsonResponse();
+    }
+
+    private PortalResponse toJsonResponse()
+    {
+        final ObjectNode node = JsonNodeFactory.instance.objectNode();
+        node.put( "status", this.status.value() );
+        node.put( "message", getDescription() );
+
+        return PortalResponse.create().
+            status( this.status.value() ).
+            body( node.toString() ).
+            contentType( "application/json" ).
+            build();
+    }
+
+    public PortalResponse toHtmlResponse()
     {
         final ErrorPageBuilder builder = new ErrorPageBuilder().
             cause( this.cause ).
             description( getDescription() ).
             resourceService( this.resourceService ).
-            status( this.status ).
+            status( this.status.value() ).
             title( getReasonPhrase() );
 
         final String html = builder.build();
-        return Response.status( this.status ).entity( html ).type( MediaType.TEXT_HTML_TYPE ).build();
+        return PortalResponse.create().
+            status( this.status.value() ).
+            body( html ).
+            contentType( "text/html" ).
+            build();
     }
 
     private String getDescription()
     {
         String str = getMessage();
-        if ( this.cause != null )
+        final Throwable cause = this.cause != null ? this.cause.getCause() : null;
+        if ( cause != null )
         {
-            str += " (" + this.cause.getClass().getName() + ")";
+            str += " (" + cause.getClass().getName() + ")";
         }
 
         return str;
     }
 
-    public static ExceptionInfo create( final int status )
+    public static ExceptionInfo create( final HttpStatus status )
     {
         return new ExceptionInfo( status );
-    }
-
-    public static ExceptionInfo create( final Response.Status status )
-    {
-        return new ExceptionInfo( status.getStatusCode() );
     }
 }

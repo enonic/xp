@@ -54,7 +54,10 @@ module app.browse {
             });
 
             var showMask = () => {
-                this.contentTreeGridMask.show();
+                if (this.isVisible()) {
+                    this.contentTreeGridMask.show();
+                }
+
             };
             this.contentTreeGridMask.show();
             this.contentFilterPanel.onSearch(showMask);

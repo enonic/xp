@@ -3,6 +3,7 @@ package com.enonic.xp.portal;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.web.HttpMethod;
 
 import static org.junit.Assert.*;
 
@@ -14,8 +15,8 @@ public class PortalRequestTest
         final PortalRequest request = new PortalRequest();
         assertNull( request.getMethod() );
 
-        request.setMethod( "GET" );
-        assertEquals( "GET", request.getMethod() );
+        request.setMethod( HttpMethod.GET );
+        assertEquals( HttpMethod.GET, request.getMethod() );
     }
 
     @Test
@@ -42,10 +43,9 @@ public class PortalRequestTest
     public void setPort()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getPort() );
 
-        request.setPort( "8080" );
-        assertEquals( "8080", request.getPort() );
+        request.setPort( 8080 );
+        assertEquals( 8080, request.getPort() );
     }
 
     @Test

@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.image.ImageFilter;
-
 public final class ImageFilterSet
     implements ImageFilter
 {

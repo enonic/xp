@@ -20,6 +20,7 @@ import com.enonic.xp.core.impl.schema.IconLoader;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.xml.parser.XmlContentTypeParser;
 
 final class ContentTypeLoader
 {

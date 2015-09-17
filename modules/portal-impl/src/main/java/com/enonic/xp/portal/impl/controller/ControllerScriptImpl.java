@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -10,6 +11,8 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -42,9 +45,9 @@ final class ControllerScriptImpl
 
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
-        final String method = portalRequest.getMethod().toLowerCase();
-        final boolean isHead = "head".equals( method );
-        final String runMethod = isHead ? "get" : method;
+        final HttpMethod method = portalRequest.getMethod();
+        final boolean isHead = method.equals( HttpMethod.HEAD );
+        final String runMethod = isHead ? "get" : method.toString().toLowerCase();
 
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
@@ -61,7 +64,7 @@ final class ControllerScriptImpl
     private PortalResponse createResponse( final ScriptValue result )
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
+        builder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
 
         if ( ( result == null ) || !result.isObject() )
         {
@@ -73,6 +76,7 @@ final class ControllerScriptImpl
         populateBody( builder, result.getMember( "body" ) );
         populateHeaders( builder, result.getMember( "headers" ) );
         populateContributions( builder, result.getMember( "pageContributions" ) );
+        populateCookies( builder, result.getMember( "cookies" ) );
         setRedirect( builder, result.getMember( "redirect" ) );
 
         return builder.build();
@@ -81,7 +85,7 @@ final class ControllerScriptImpl
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? status : PortalResponse.STATUS_OK );
+        builder.status( status != null ? status : HttpStatus.OK.value() );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
@@ -142,6 +146,81 @@ final class ControllerScriptImpl
         }
     }
 
+    private void populateCookies( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            return;
+        }
+
+        for ( final String key : value.getKeys() )
+        {
+            addCookie( builder, value.getMember( key ), key );
+        }
+    }
+
+    private void addCookie( final PortalResponse.Builder builder, final ScriptValue value, final String key )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value.isObject() )
+        {
+            Cookie cookie = new Cookie( key, "" );
+
+            for ( final String subKey : value.getKeys() )
+            {
+                if ( "value".equals( subKey ) )
+                {
+                    cookie.setValue( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "path".equals( subKey ) )
+                {
+                    cookie.setPath( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "domain".equals( subKey ) )
+                {
+                    cookie.setDomain( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "comment".equals( subKey ) )
+                {
+                    cookie.setComment( value.getMember( subKey ).getValue( String.class ) );
+                }
+                else if ( "maxAge".equals( subKey ) )
+                {
+                    cookie.setMaxAge( value.getMember( subKey ).getValue( Integer.class ) );
+                }
+                else if ( "secure".equals( subKey ) )
+                {
+                    cookie.setSecure( value.getMember( subKey ).getValue( Boolean.class ) );
+                }
+                else if ( "httpOnly".equals( subKey ) )
+                {
+                    cookie.setHttpOnly( value.getMember( subKey ).getValue( Boolean.class ) );
+                }
+            }
+            builder.cookie( cookie );
+        }
+        else
+        {
+            final String strValue = value.getValue( String.class );
+            if ( strValue != null )
+            {
+                builder.cookie( new Cookie( key, strValue ) );
+            }
+            else
+            {
+                builder.cookie( new Cookie( key, "" ) );
+            }
+        }
+    }
 
     private void populateContributions( final PortalResponse.Builder builder, final ScriptValue value )
     {

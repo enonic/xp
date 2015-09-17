@@ -46,11 +46,11 @@ import com.enonic.xp.util.Exceptions;
 public final class ContentImageResource
     implements AdminResource
 {
+    private static final ContentImageHelper HELPER = new ContentImageHelper();
+
     private ContentTypeService contentTypeService;
 
     private ContentService contentService;
-
-    private ContentImageHelper helper;
 
     private MediaInfoService mediaInfoService;
 
@@ -125,8 +125,8 @@ public final class ContentImageResource
                         orientation( imageOrientation ).
                         build();
 
-                    final byte[] contentImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( contentImage, attachment.getMimeType() );
+                    final ByteSource contentImage = imageService.readImage( readImageParams );
+                    return new ResolvedImage( contentImage.read(), attachment.getMimeType() );
                 }
                 catch ( IOException e )
                 {
@@ -145,7 +145,7 @@ public final class ContentImageResource
             return ResolvedImage.unresolved();
         }
 
-        final BufferedImage contentImage = helper.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
+        final BufferedImage contentImage = HELPER.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
         final String mimeType = superContentTypeWithIcon.getIcon().getMimeType();
 
         return new ResolvedImage( contentImage, mimeType );
@@ -180,12 +180,6 @@ public final class ContentImageResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setContentImageHelper( ContentImageHelper contentImageHelper )
-    {
-        this.helper = contentImageHelper;
     }
 
     @Reference

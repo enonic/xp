@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Objects;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,10 +13,14 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -139,6 +144,41 @@ public class SetNodeChildOrderCommandTest
 
             previousName = n.name().toString();
         }
+    }
+
+    @Test
+    public void order_without_permission()
+        throws Exception
+    {
+        final Node createUngrantedNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            permissions( AccessControlList.of(
+                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.CREATE ).build() ) ).
+            build() );
+
+        final Node createGrantedNode = createNode( CreateNodeParams.create().
+            name( "my-node2" ).
+            parent( NodePath.ROOT ).
+            permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
+            build() );
+
+        // Tests the check of the DELETE right on the moved node
+        boolean createRightChecked = false;
+        try
+        {
+            setChildOrder( createUngrantedNode, ChildOrder.create().add(
+                FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+        }
+        catch ( NodeAccessException e )
+        {
+            createRightChecked = true;
+        }
+        Assert.assertTrue( createRightChecked );
+
+        // Tests the correct behaviour if the right is granted
+        setChildOrder( createGrantedNode, ChildOrder.create().add(
+            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
     }
 
     private void setChildOrder( final Node node, final ChildOrder childOrder )

@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @Beta
-public class Branches
+public final class Branches
     extends AbstractImmutableEntitySet<Branch>
 {
     private Branches( final ImmutableSet<Branch> set )
@@ -26,11 +26,8 @@ public class Branches
         return new Branches( ImmutableSet.copyOf( branches ) );
     }
 
-
     public static Branches empty()
     {
-        ImmutableSet<Branch> empty = ImmutableSet.of();
-        return new Branches( empty );
+        return new Branches( ImmutableSet.of() );
     }
-
 }

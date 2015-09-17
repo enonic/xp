@@ -1,6 +1,9 @@
 package com.enonic.xp.portal;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.Cookie;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -10,14 +13,11 @@ import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.web.HttpStatus;
 
 @Beta
 public final class PortalResponse
 {
-    public final static int STATUS_OK = 200;
-
-    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
-
     private final int status;
 
     private final String contentType;
@@ -26,11 +26,11 @@ public final class PortalResponse
 
     private final ImmutableMap<String, String> headers;
 
-    private final ImmutableMap<String, Object> options;
-
     private final boolean postProcess;
 
     private final ImmutableListMultimap<HtmlTag, String> contributions;
+
+    private final ImmutableList<Cookie> cookies;
 
     public PortalResponse( final Builder builder )
     {
@@ -40,7 +40,7 @@ public final class PortalResponse
         this.headers = builder.headers.build();
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
-        this.options = builder.options.build();
+        this.cookies = builder.cookies.build();
     }
 
     public int getStatus()
@@ -78,11 +78,6 @@ public final class PortalResponse
         return !this.contributions.isEmpty();
     }
 
-    public ImmutableMap<String, Object> getOptions()
-    {
-        return options;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -91,6 +86,11 @@ public final class PortalResponse
     public String getAsString()
     {
         return ( this.body != null ) ? this.body.toString() : null;
+    }
+
+    public ImmutableList<Cookie> getCookies()
+    {
+        return cookies;
     }
 
     public static Builder create( final PortalResponse source )
@@ -104,32 +104,32 @@ public final class PortalResponse
 
         private ImmutableMap.Builder<String, String> headers;
 
-        private ImmutableMap.Builder<String, Object> options;
-
         private String contentType = "text/plain; charset=utf-8";
 
         private boolean postProcess = true;
 
         private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
 
-        private int status = STATUS_OK;
+        private int status = HttpStatus.OK.value();
+
+        private ImmutableList.Builder<Cookie> cookies;
 
         private Builder()
         {
             clearHeaders();
-            clearOptions();
             clearContributions();
+            clearCookies();
         }
 
         private Builder( final PortalResponse source )
         {
             this.body = source.body;
             headers( source.headers );
-            options( source.options );
             this.contentType = source.contentType;
             this.postProcess = source.postProcess;
             contributions( source.contributions );
             this.status = source.status;
+            cookies( source.cookies );
         }
 
         public Builder body( final Object body )
@@ -164,29 +164,29 @@ public final class PortalResponse
             return this;
         }
 
-        public Builder options( final Map<String, Object> options )
+        public Builder cookies( final List<Cookie> cookies )
         {
-            if ( this.options == null )
+            if ( this.cookies == null )
             {
-                clearOptions();
+                clearCookies();
             }
-            this.options.putAll( options );
+            this.cookies.addAll( cookies );
             return this;
         }
 
-        public Builder option( final String key, final Object value )
+        public Builder cookie( final Cookie cookie )
         {
-            if ( this.options == null )
+            if ( this.cookies == null )
             {
-                clearOptions();
+                clearCookies();
             }
-            this.options.put( key, value );
+            this.cookies.add( cookie );
             return this;
         }
 
-        public Builder clearOptions()
+        public Builder clearCookies()
         {
-            options = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
+            this.cookies = ImmutableList.builder();
             return this;
         }
 

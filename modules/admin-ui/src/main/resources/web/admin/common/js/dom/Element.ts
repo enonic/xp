@@ -458,7 +458,7 @@ module api.dom {
 
             this.unregisterChildElement(child);
 
-            child.notifyRemoved();
+            child.notifyRemoved(this);
             return this;
         }
 
@@ -500,7 +500,7 @@ module api.dom {
                 this.parentElement.removeChild(this);
             } else {
                 this.getEl().remove();
-                this.notifyRemoved();
+                this.notifyRemoved(null);
             }
             return this;
         }
@@ -524,7 +524,7 @@ module api.dom {
 
             // Remove this from DOM completely
             this.getEl().remove();
-            this.notifyRemoved(this);
+            this.notifyRemoved(parent, this);
         }
 
         wrapWithElement(wrapperElement: Element) {
@@ -698,13 +698,13 @@ module api.dom {
             })
         }
 
-        private notifyRemoved(target?: Element) {
-            var removedEvent = new ElementRemovedEvent(this, target);
+        private notifyRemoved(parent: Element, target?: Element) {
+            var removedEvent = new ElementRemovedEvent(this, parent, target);
             this.removedListeners.forEach((listener) => {
                 listener(removedEvent);
             });
             this.children.forEach((child: Element) => {
-                child.notifyRemoved(removedEvent.getTarget());
+                child.notifyRemoved(removedEvent.getParent(), removedEvent.getTarget());
             })
         }
 

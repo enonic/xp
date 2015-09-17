@@ -16,6 +16,7 @@ module app.wizard {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import Content = api.content.Content;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
@@ -34,6 +35,15 @@ module app.wizard {
                         setField("displayName").
                         setFormatter(this.nameFormatter.bind(this)).
                         setMinWidth(250).
+                        build(),
+                    new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                        setName("Menu").
+                        setId("menu").
+                        setMinWidth(45).
+                        setMaxWidth(45).
+                        setField("menu").
+                        setCssClass("menu-cell").
+                        setFormatter(this.menuFormatter).
                         build()
                 ]).
                 setOptions(
@@ -43,14 +53,25 @@ module app.wizard {
                     setHideColumnHeaders(true).
                     setForceFitColumns(true).
                     setFullWidthRows(true).
-                    setRowHeight(45).
+
+                    // It is necessary to turn off the library key handling. It may cause
+                    // the conflicts with Mousetrap, which leads to skipping the key events
+                    // Do not set to true, if you are not fully aware of the result
+                    setEnableCellNavigation(false).
+
                     setCheckableRows(false).
+                    disableMultipleSelection(true).
                     setMultiSelect(false).
+                    setRowHeight(45).
                     build()).
                 setShowToolbar(false).
                 setAutoLoad(true).
                 setExpandAll(true).
                 prependClasses("components-grid"));
+        }
+
+        queryScrollable(): api.dom.Element {
+            return this;
         }
 
         setPageView(pageView: PageView) {
@@ -109,6 +130,14 @@ module app.wizard {
                 children = layoutView.getRegions();
             }
             return children;
+        }
+
+        private menuFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var wrapper = new api.dom.SpanEl();
+
+            var icon = new api.dom.DivEl("icon-menu3 menu-icon");
+            wrapper.getEl().setInnerHtml(icon.toString());
+            return wrapper.toString();
         }
 
     }

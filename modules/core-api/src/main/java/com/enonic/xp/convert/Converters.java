@@ -34,6 +34,24 @@ public final class Converters
         return (T) INSTANCE.doConvert( source, toType );
     }
 
+    public static <S, T> T convertOrNull( final S source, final Class<T> toType )
+    {
+        try
+        {
+            return convert( source, toType );
+        }
+        catch ( final ConvertException e )
+        {
+            return null;
+        }
+    }
+
+    public static <S, T> T convertOrDefault( final S source, final Class<T> toType, final T defValue )
+    {
+        final T value = convertOrNull( source, toType );
+        return value != null ? value : defValue;
+    }
+
     private Object doConvert( final Object source, final Class type )
     {
         if ( source == null )

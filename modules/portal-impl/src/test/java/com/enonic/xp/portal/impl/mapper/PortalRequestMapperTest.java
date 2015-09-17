@@ -15,6 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.web.HttpMethod;
 
 public class PortalRequestMapperTest
 {
@@ -53,10 +54,10 @@ public class PortalRequestMapperTest
     public void setup()
     {
         this.portalRequest = new PortalRequest();
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "localhost" );
-        this.portalRequest.setPort( "80" );
+        this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/portal/live/master/a/b" );
         this.portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
         this.portalRequest.getParams().put( "param1", "value1" );
@@ -66,8 +67,7 @@ public class PortalRequestMapperTest
 
         this.portalRequest.getHeaders().put( "header1", "value1" );
         this.portalRequest.getHeaders().put( "header2", "value2" );
-        this.portalRequest.getHeaders().put( "header3", "value3-A" );
-        this.portalRequest.getHeaders().put( "header3", "value3-B" );
+        this.portalRequest.getHeaders().put( "header3", "value3" );
 
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         this.portalRequest.setContent( ContentFixtures.newContent() );
@@ -90,5 +90,16 @@ public class PortalRequestMapperTest
         this.portalRequest.getCookies().put( "b", "2" );
 
         assertJson( "cookies", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    public void testBody()
+        throws Exception
+    {
+        this.portalRequest.setMethod( HttpMethod.POST );
+        this.portalRequest.setContentType( "text/plain" );
+        this.portalRequest.setBody( "Hello World" );
+
+        assertJson( "body", new PortalRequestMapper( this.portalRequest ) );
     }
 }

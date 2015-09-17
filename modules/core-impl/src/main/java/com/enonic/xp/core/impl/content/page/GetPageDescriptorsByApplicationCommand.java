@@ -42,7 +42,7 @@ final class GetPageDescriptorsByApplicationCommand
     private PageDescriptors getDescriptorsFromApplication( final Application application )
     {
         final List<PageDescriptor> pageDescriptors = new ArrayList<>();
-        final ResourceKeys resourceKeys = this.resourceService.findResourceKeys( application.getKey(), PATH, "*", false );
+        final ResourceKeys resourceKeys = this.resourceService.findFolders( application.getKey(), PATH );
 
         for ( final ResourceKey resourceKey : resourceKeys )
         {

@@ -34,15 +34,50 @@
     .flex(1 100%);
 
     .grid {
+      height: initial !important;
 
       .slick-viewport {
-        height: auto !important; // for FF to show scroll
 
-        .slick-row:not(:hover) {
-          &, &.odd {
-            background-color: transparent;
+        .slick-row {
+          &:not(:hover) {
+            &, &.odd {
+              background-color: transparent;
+            }
+          }
+
+          .slick-cell {
+            &.menu-cell {
+
+              .menu-icon {
+                padding-left: 10px;
+                padding-top: 10px;
+
+                color: @admin-font-gray1;
+              }
+
+              &.selected {
+                .menu-icon {
+                  color: #ffffff;
+                }
+              }
+
+              &:hover, &.menu-open {
+                .menu-icon {
+                  color: @admin-dark-gray;
+                }
+
+                &.selected {
+                  .menu-icon {
+                    color: @admin-dark-gray;
+                  }
+                }
+              }
+
+            }
           }
         }
+
+
       }
     }
   }

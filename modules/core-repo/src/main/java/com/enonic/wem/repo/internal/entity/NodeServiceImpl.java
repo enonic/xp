@@ -600,6 +600,7 @@ public class NodeServiceImpl
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
+            importPermissions( params.isImportPermissions() ).
             binaryBlobStore( this.binaryBlobStore ).
             versionService( this.versionService ).
             queryService( this.queryService ).

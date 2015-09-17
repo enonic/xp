@@ -4,7 +4,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.support.serializer.AbstractDataSetSerializer;
+import com.enonic.xp.core.impl.content.page.AbstractDataSetSerializer;
 
 public class RegionDataSerializer
     extends AbstractDataSetSerializer<Region, Region>

@@ -1,0 +1,277 @@
+<node>
+  <id>528fb39f-27ec-439c-b08a-b1e81afee4b6</id>
+  <childOrder>_manualordervalue DESC</childOrder>
+  <nodeType>content</nodeType>
+  <inheritPermissions>true</inheritPermissions>
+  <timestamp>2015-06-18T13:49:37.776Z</timestamp>
+  <permissions>
+    <principal key="role:system.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:cms.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data>
+    <boolean name="valid">true</boolean>
+    <string name="displayName">Fru Haugans</string>
+    <string name="type">portal:site</string>
+    <string name="owner">user:system:su</string>
+    <string name="language">no</string>
+    <dateTime name="modifiedTime">2015-06-18T13:49:37.776Z</dateTime>
+    <string name="modifier">user:system:su</string>
+    <string name="creator">user:system:su</string>
+    <dateTime name="createdTime">2015-04-24T11:47:09.734Z</dateTime>
+    <property-set name="data">
+      <string name="description">The sequel to Fru Haugans, the smash hit of yesteryear.</string>
+      <property-set name="siteConfig">
+        <string name="applicationKey">no.fruhaugans.web</string>
+        <property-set name="config">
+          <string name="title">Epic Title</string>
+          <string name="description">Epic Description</string>
+          <string name="phone">+47 75 11 41 00</string>
+          <string name="mail">res@fruhaugans.no</string>
+          <string name="copyright">No</string>
+          <string name="address">Fru Haugans Hotel
+            Strandgatan 39
+            0656 Mosjøen
+            Norway
+          </string>
+          <string name="fax">+47 75 11 41 01</string>
+          <property-set name="social">
+            <string name="title">Facebook</string>
+            <string name="url">https://nn-no.facebook.com/pages/Fru-Haugans-Hotel/316722293041</string>
+          </property-set>
+          <property-set name="social">
+            <string name="title">Tripadvisor</string>
+            <string name="url">
+              http://www.tripadvisor.com/Hotel_Review-g262053-d262265-Reviews-Fru_Haugans_Hotel-Mosjoen_Vefsn_Municipality_Nordland_Northern_Norway.html
+            </string>
+          </property-set>
+          <property-set name="social">
+            <string name="title">instagram</string>
+            <string name="url">https://instagram.com/fruhauganshotel/</string>
+          </property-set>
+          <string name="organization-name">Fru Haugans Hotel</string>
+          <string name="street-address">Strandgatan 39</string>
+          <string name="postal-code">0656</string>
+          <string name="locality">Mosjøen</string>
+          <string name="country-name">Norway</string>
+          <reference name="english">8e603695-d074-43b8-98ed-61cf3ed9479b</reference>
+        </property-set>
+      </property-set>
+    </property-set>
+    <property-set name="x">
+      <property-set name="no-fruhaugans-web">
+        <property-set name="menu-item">
+          <boolean name="menuItem">false</boolean>
+          <string name="menuName"/>
+        </property-set>
+        <property-set name="metadata">
+          <string name="seo-title"/>
+          <string name="seo-preface"/>
+        </property-set>
+      </property-set>
+    </property-set>
+    <property-set name="page">
+      <string isNull="true" name="controller"/>
+      <reference name="template">405eb5b0-5c3d-40c4-bde8-f7564b100a8c</reference>
+      <property-set name="region">
+        <string name="name">main</string>
+        <property-set name="component">
+          <string name="type">PartComponent</string>
+          <property-set name="PartComponent">
+            <string name="name">Carousel</string>
+            <string name="template">no.fruhaugans.web:carousel</string>
+            <property-set name="config">
+              <string name="heading"/>
+              <string name="text"/>
+              <reference name="image">8253d6d5-a8ba-451a-83b4-3d7b8bf24847</reference>
+              <string name="display">frontpage</string>
+            </property-set>
+          </property-set>
+        </property-set>
+        <property-set name="component">
+          <string name="type">PartComponent</string>
+          <property-set name="PartComponent">
+            <string name="name">Menu, main</string>
+            <string name="template">no.fruhaugans.web:menu-main</string>
+            <property-set name="config"/>
+          </property-set>
+        </property-set>
+        <property-set name="component">
+          <string name="type">LayoutComponent</string>
+          <property-set name="LayoutComponent">
+            <string name="name">2 columns</string>
+            <string name="template">no.fruhaugans.web:layout-2-col</string>
+            <property-set name="config"/>
+            <property-set name="region">
+              <string name="name">left</string>
+              <property-set name="component">
+                <string name="type">TextComponent</string>
+                <property-set name="TextComponent">
+                  <string name="name">Text</string>
+                  <string name="text">&lt;h2&gt;Text&lt;/h2&gt;&lt;p&gt;&lt;b&gt;Text lorem ipsum doler sit amet. Text in bold is here to
+                    stay!&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Text om latest fashion inom text. Text är bra, det vill vi ha. Lorem ipsum doler sit
+                    amet consecutor apelium fardin.&lt;/p&gt;</string>
+                </property-set>
+              </property-set>
+            </property-set>
+            <property-set name="region">
+              <string name="name">right</string>
+              <property-set name="component">
+                <string name="type">PartComponent</string>
+                <property-set name="PartComponent">
+                  <string name="name">Booking</string>
+                  <string name="template">no.fruhaugans.web:booking</string>
+                  <property-set name="config"/>
+                </property-set>
+              </property-set>
+            </property-set>
+          </property-set>
+        </property-set>
+        <property-set name="component">
+          <string name="type">PartComponent</string>
+          <property-set name="PartComponent">
+            <string name="name">News list</string>
+            <string name="template">no.fruhaugans.web:news-list</string>
+            <property-set name="config">
+              <reference name="contentFolder">4a68cf12-6133-467a-8adc-bbb89017a66f</reference>
+              <string name="header">Aktuellt</string>
+            </property-set>
+          </property-set>
+        </property-set>
+      </property-set>
+    </property-set>
+  </data>
+  <indexConfigs>
+    <analyzer>document_index_default</analyzer>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page.regions</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>attachment</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>x</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>data</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>page</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>site</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>type</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>creator</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>owner</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>false</nGram>
+          <fulltext>false</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>modifier</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
+</node>

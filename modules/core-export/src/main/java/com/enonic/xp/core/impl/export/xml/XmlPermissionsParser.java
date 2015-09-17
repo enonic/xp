@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.export.xml;
 
 import java.util.List;
-
-import com.google.common.collect.Lists;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -10,7 +9,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.xml.DomElement;
 
-public class XmlPermissionsParser
+public final class XmlPermissionsParser
 {
     public static AccessControlList parse( final DomElement root )
     {
@@ -37,17 +36,9 @@ public class XmlPermissionsParser
         return builder.build();
     }
 
-    private static Permission[] parsePermissions( final DomElement element )
+    private static Iterable<Permission> parsePermissions( final DomElement element )
     {
-        final List<Permission> permissions = Lists.newArrayList();
-
         final List<DomElement> values = element.getChildren( "value" );
-
-        for ( final DomElement value : values )
-        {
-            permissions.add( Permission.valueOf( value.getValue() ) );
-        }
-
-        return permissions.toArray( new Permission[permissions.size()] );
+        return values.stream().map( value -> Permission.valueOf( value.getValue() ) ).collect( Collectors.toList() );
     }
 }

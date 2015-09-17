@@ -45,6 +45,8 @@ module app.wizard.page {
 
         private loadMask: api.ui.mask.LoadMask;
 
+        private loadMaskCanBeShown: boolean = false; //can't be shown correctly until iFrame has height and width
+
         private liveEditWindow: any;
 
         private livejq: JQueryStatic;
@@ -99,6 +101,14 @@ module app.wizard.page {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
+            this.liveEditIFrame.onShown(() => {
+               if(!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
+                   this.loadMask.show();
+                   this.loadMaskCanBeShown = true;
+               }
+
+            });
+
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
@@ -167,7 +177,10 @@ module app.wizard.page {
         }
 
         public load() {
-            this.loadMask.show();
+            if(this.loadMaskCanBeShown) {
+                this.loadMask.show();
+            }
+
             var contentId = this.liveEditModel.getContent().getContentId().toString();
             var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
             if (LiveEditPageProxy.debug) {
@@ -200,9 +213,11 @@ module app.wizard.page {
                 this.loadMask.hide();
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
 
-            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+            } else if (!liveEditWindow.document.body || (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID)) {
                 this.loadMask.hide();
             }
+
+            this.loadMaskCanBeShown = true;
 
             // Notify loaded no matter the result
             this.notifyLoaded();
@@ -592,6 +607,10 @@ module app.wizard.page {
 
         private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
             this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
+        }
+
+        private liveEditFrameIsVisible(): boolean {
+            return this.liveEditIFrame.getEl().getWidthWithBorder() > 0 && this.liveEditIFrame.getEl().getHeightWithBorder() > 0;
         }
 
     }

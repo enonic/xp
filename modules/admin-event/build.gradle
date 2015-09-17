@@ -10,8 +10,3 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin - Event'
 }
-
-checkstyle {
-    ignoreFailures = false
-    showViolations = true
-}

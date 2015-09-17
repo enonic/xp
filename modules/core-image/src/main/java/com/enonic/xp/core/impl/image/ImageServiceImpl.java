@@ -20,22 +20,17 @@ import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.impl.image.effect.ScaleMaxFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleSquareFunction;
+import com.enonic.xp.core.impl.image.effect.ScaleWidthFunction;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.ImageScaleFunction;
-import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.image.filter.ScaleMaxFunction;
-import com.enonic.xp.image.filter.ScaleSquareFunction;
-import com.enonic.xp.image.filter.ScaleWidthFunction;
-import com.enonic.xp.image.scale.ScaleParams;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.util.FilesHelper;
 
 @Component
 public class ImageServiceImpl
@@ -48,25 +43,27 @@ public class ImageServiceImpl
     private ImageFilterBuilder imageFilterBuilder;
 
     @Override
-    public byte[] readImage( final ReadImageParams readImageParams )
+    public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        byte[] serializedImage = FilesHelper.readAllBytes( cachedImagePath );
-        if ( serializedImage == null )
+        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
+        return imageByteSource;
+    }
+
+    private ByteSource createImage( final ReadImageParams readImageParams )
+        throws IOException
+    {
+        final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        if ( blob != null )
         {
-            final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
-            if ( blob != null )
+            final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
+            if ( bufferedImage != null )
             {
-                final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
-                if ( bufferedImage != null )
-                {
-                    serializedImage = serializeImage( readImageParams, bufferedImage );
-                    FilesHelper.write( cachedImagePath, serializedImage );
-                }
+                return serializeImage( readImageParams, bufferedImage );
             }
         }
-        return serializedImage;
+        return null;
     }
 
     @Override
@@ -128,8 +125,8 @@ public class ImageServiceImpl
         //Source binary key
         final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 
-        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format,
-                          background, orientation, quality, readImageParams.getBinaryReference().toString() ).toAbsolutePath();
+        return Paths.get( homeDir, "work", "cache", "img", binaryKey, cropping, scale, filter, format, background, orientation, quality,
+                          readImageParams.getBinaryReference().toString() ).toAbsolutePath();
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
@@ -280,10 +277,10 @@ public class ImageServiceImpl
         return op.filter( bufferedImage, destinationImage );
     }
 
-    private byte[] serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
+    private ByteSource serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
         throws IOException
     {
-        final byte[] serializedImage;
+        final ByteSource serializedImage;
         //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
         if ( readImageParams.getQuality() != 0 )
         {
@@ -296,18 +293,19 @@ public class ImageServiceImpl
         return serializedImage;
     }
 
-    private byte[] serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
+    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
         throws IOException
     {
-        return ImageHelper.writeImage( bufferedImage, format, quality );
+        final byte[] bytes = ImageHelper.writeImage( bufferedImage, format, quality );
+        return ByteSource.wrap( bytes );
     }
 
-    private byte[] serializeImage( final BufferedImage bufferedImage, final String format )
+    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format )
         throws IOException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write( bufferedImage, format, out );
-        return out.toByteArray();
+        return ByteSource.wrap( out.toByteArray() );
     }
 
     @Reference

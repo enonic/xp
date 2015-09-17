@@ -12,7 +12,7 @@ final class GetPageTemplateByKeyCommand
 
     public PageTemplate execute()
     {
-        return (PageTemplate) this.contentService.getById( pageTemplateKey );
+        return (PageTemplate) this.contentService.getById( pageTemplateKey.getContentId() );
     }
 
     public GetPageTemplateByKeyCommand pageTemplateKey( final PageTemplateKey pageTemplateKey )

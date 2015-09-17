@@ -1,4 +1,5 @@
 module api.liveedit {
+    import Component = api.content.page.region.Component;
 
     export interface ElementDimensions {
         top: number;
@@ -546,7 +547,7 @@ module api.liveedit {
                 x = dimensions.left + dimensions.width / 2;
                 y = dimensions.top + (ItemViewContextMenuPosition.TOP == menuPosition ? 0 : dimensions.height);
             }
-            this.contextMenu.showAt(x, y);
+            this.contextMenu.showAt(x, y, !clickPosition);
         }
 
         hideContextMenu() {
@@ -599,7 +600,17 @@ module api.liveedit {
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false) {
+            this.selectItem();
+            this.showContextMenu(clickPosition, menuPosition);
+            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
+        }
 
+        selectWithoutMenu(isNew: boolean = false) {
+            this.selectItem();
+            new ItemViewSelectedEvent(this, null, isNew).fire();
+        }
+
+        private selectItem() {
             var selectedView = this.getPageView().getSelectedView();
             if (selectedView == this) {
                 // view is already selected
@@ -611,7 +622,6 @@ module api.liveedit {
 
             this.getEl().setData("live-edit-selected", "true");
 
-            this.showContextMenu(clickPosition, menuPosition);
             this.hideTooltip();
             this.highlight();
             this.shade();
@@ -624,7 +634,6 @@ module api.liveedit {
                 this.selectPlaceholder();
             }
 
-            new ItemViewSelectedEvent(this, clickPosition, isNew).fire();
         }
 
         deselect(silent?: boolean) {
@@ -699,6 +708,10 @@ module api.liveedit {
             };
         }
 
+        getContextMenuActions(): api.ui.Action[] {
+            return this.contextMenuActions;
+        }
+
         toItemViewArray(): ItemView[] {
 
             return [this];
@@ -754,12 +767,64 @@ module api.liveedit {
             return this.contextMenuTitle;
         }
 
-        private  visibleInViewport(): boolean {
+        private visibleInViewport(): boolean {
             var dimensions = this.getElementDimensions();
             var screenTopPosition: number = document.body.scrollTop != 0 ? document.body.scrollTop : document.documentElement.scrollTop;
 
             return !(dimensions.top != undefined && ((dimensions.top - 10 < screenTopPosition) || (dimensions.top + dimensions.height > screenTopPosition + window.innerHeight)));
 
+        }
+
+        protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        protected getNewItemIndex(): number {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        private createComponentView(typeAsString: string): ItemView {
+            var componentItemType = ItemType.byShortName(typeAsString),
+                regionView = this.getRegionView(),
+                newComponent = regionView.createComponent(componentItemType.toComponentType());
+
+            return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
+                setParentView(regionView).
+                setParentElement(regionView).
+                setData(newComponent));
+        }
+
+        getInsertActions(): api.ui.Action[] {
+            var actions = [this.createInsertSubAction("image", "Image", "live-edit-font-icon-image icon"),
+                this.createInsertSubAction("part", "Part", "live-edit-font-icon-part icon")];
+
+            if (!this.getRegionView().hasParentLayoutComponentView()) {
+                actions.push(this.createInsertSubAction("layout", "Layout", "live-edit-font-icon-layout icon"));
+            }
+
+            actions.push(this.createInsertSubAction("text", "Text", "live-edit-font-icon-text icon"));
+
+            return actions;
+        }
+
+        protected getRegionView(): RegionView {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        protected createInsertAction(): api.ui.Action {
+            return new api.ui.Action('Insert').setChildActions(this.getInsertActions());
+        }
+
+
+        protected createInsertSubAction(typeAsString: string, label: string, cls: string): api.ui.Action {
+            var action = new api.ui.Action(label).onExecuted(() => {
+                var componentView = this.createComponentView(typeAsString);
+                this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
+            });
+
+            action.setIconClass(cls);
+
+            return action;
         }
     }
 }
