@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
@@ -88,7 +89,23 @@ public final class PortalResponse
 
     public String getAsString()
     {
+        if ( this.body instanceof Map )
+        {
+            return convertToJson( this.body );
+        }
         return ( this.body != null ) ? this.body.toString() : null;
+    }
+
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     public ImmutableList<Cookie> getCookies()
