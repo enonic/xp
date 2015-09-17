@@ -3,7 +3,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':admin-api' )
     testCompile project( ':web:web-jaxrs' )
-    testCompile project( path: ':portal-api', configuration: 'testOutput' )
+    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jaxrs', configuration: 'testOutput' )
 }
 

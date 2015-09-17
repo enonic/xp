@@ -1,6 +1,6 @@
 dependencies {
     provided project( ':core-api' )
-    provided project( ':portal-api' )
+    provided project( ':portal:portal-api' )
     compile( 'org.thymeleaf:thymeleaf:2.1.4.RELEASE' )
     testCompile project( ':testing' )
 }

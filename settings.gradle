@@ -17,8 +17,8 @@ include 'web:web-impl'
 include 'web:web-jaxrs'
 include 'web:web-vhost'
 
-include 'portal-api'
-include 'portal-impl'
+include 'portal:portal-api'
+include 'portal:portal-impl'
 
 include 'admin-api'
 include 'admin-impl'

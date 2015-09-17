@@ -1,6 +1,6 @@
 dependencies {
     provided project( ':core-api' )
-    provided project( ':portal-api' )
+    provided project( ':portal:portal-api' )
     compile project( ':lib:lib-content' )
     testCompile project( ':testing' )
 }
