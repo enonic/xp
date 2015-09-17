@@ -2,19 +2,15 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.QueryExpr;
 
@@ -42,13 +38,20 @@ public class FindNodesByParentCommand
     public FindNodesByParentResult execute()
     {
         NodePath parentPath = params.getParentPath();
+
         if ( parentPath == null )
         {
-            parentPath = getPathFromId( params.getParentId() );
-            if ( parentPath == null )
+            Node parent = GetNodeByIdCommand.create( this ).
+                id( params.getParentId() ).
+                build().
+                execute();
+
+            if ( parent == null )
             {
                 return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0L ).hits( 0L ).build();
             }
+
+            parentPath = parent.path();
         }
 
         final ChildOrder order = NodeChildOrderResolver.create( this ).
@@ -83,26 +86,6 @@ public class FindNodesByParentCommand
             size( params.getSize() ).
             countOnly( params.isCountOnly() ).
             build();
-    }
-
-    private NodePath getPathFromId( final NodeId nodeId )
-    {
-        final Context context = ContextAccessor.current();
-        final NodeVersionId currentVersion = this.branchService.get( nodeId, InternalContext.from( context ) ).getVersionId();
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node currentNode = nodeDao.getByVersionId( currentVersion );
-
-        if ( currentNode == null || !canRead( currentNode ) )
-        {
-            return null;
-        }
-
-        return currentNode.path();
     }
 
     public static class Builder

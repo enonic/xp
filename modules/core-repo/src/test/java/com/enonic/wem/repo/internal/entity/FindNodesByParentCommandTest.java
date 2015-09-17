@@ -205,8 +205,6 @@ public class FindNodesByParentCommandTest
 
         refresh();
 
-        printContentRepoIndex();
-
         // Use default parent ordering; name
         FindNodesByParentResult result = FindNodesByParentCommand.create().
             params( FindNodesByParentParams.create().

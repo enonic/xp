@@ -84,25 +84,39 @@ public class StorageServiceImpl
     }
 
     @Override
-    public Node getById( final NodeId nodeId, final InternalContext context )
+    public Node get( final NodeId nodeId, final InternalContext context )
+    {
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( nodeId, context );
+
+        if ( nodeBranchVersion == null )
+        {
+            return null;
+        }
+
+        final NodeVersionId currentVersion = nodeBranchVersion.getVersionId();
+
+        if ( currentVersion == null )
+        {
+            return null;
+        }
+
+        return nodeDao.getByVersionId( currentVersion );
+    }
+
+    @Override
+    public Node get( final NodePath nodePath, final InternalContext context )
     {
         return null;
     }
 
     @Override
-    public Node getByPath( final NodePath nodePath, final InternalContext context )
+    public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
         return null;
     }
 
     @Override
-    public Nodes getByIds( final NodeIds nodeIds, final InternalContext context )
-    {
-        return null;
-    }
-
-    @Override
-    public Nodes getByPaths( final NodePaths nodePaths, final InternalContext context )
+    public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
         return null;
     }

@@ -3,12 +3,10 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionId;
 
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
@@ -25,21 +23,7 @@ public class GetNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeBranchVersion nodeBranchVersion = this.branchService.get( id, InternalContext.from( context ) );
-
-        if ( nodeBranchVersion == null )
-        {
-            return null;
-        }
-
-        final NodeVersionId currentVersion = nodeBranchVersion.getVersionId();
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
+        final Node node = this.storageService.get( id, InternalContext.from( context ) );
 
         if ( node == null || !canRead( node ) )
         {

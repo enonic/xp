@@ -20,13 +20,13 @@ public interface StorageService
 
     void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    Node getById( final NodeId nodeId, final InternalContext context );
+    Node get( final NodeId nodeId, final InternalContext context );
 
-    Node getByPath( final NodePath nodePath, final InternalContext context );
+    Node get( final NodePath nodePath, final InternalContext context );
 
-    Nodes getByIds( final NodeIds nodeIds, final InternalContext context );
+    Nodes get( final NodeIds nodeIds, final InternalContext context );
 
-    Nodes getByPaths( final NodePaths nodePaths, final InternalContext context );
+    Nodes get( final NodePaths nodePaths, final InternalContext context );
 
 
 }

@@ -121,9 +121,14 @@ public class FindNodesByParentParams
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkArgument( parentId != null || parentPath != null, "Either parent-path or parent-id must be set" );
+        }
 
         public FindNodesByParentParams build()
         {
+            validate();
             return new FindNodesByParentParams( this );
         }
     }
