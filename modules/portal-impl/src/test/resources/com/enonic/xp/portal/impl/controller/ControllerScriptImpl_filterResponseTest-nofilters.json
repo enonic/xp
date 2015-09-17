@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "postProcess": true,
+  "headers": {
+  },
+  "filters": [],
+  "pageContributions": {},
+  "body": "<html>\n<head></head>\n<body>\n<h1>Title</h1>\n\n<p>Some text</p></body>\n</html>"
+}

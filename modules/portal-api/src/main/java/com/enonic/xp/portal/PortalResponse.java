@@ -32,6 +32,8 @@ public final class PortalResponse
 
     private final ImmutableList<Cookie> cookies;
 
+    private final ImmutableList<String> filters;
+
     public PortalResponse( final Builder builder )
     {
         this.status = builder.status;
@@ -41,6 +43,7 @@ public final class PortalResponse
         this.postProcess = builder.postProcess;
         this.contributions = builder.contributions.build();
         this.cookies = builder.cookies.build();
+        this.filters = builder.filters.build();
     }
 
     public int getStatus()
@@ -93,6 +96,11 @@ public final class PortalResponse
         return cookies;
     }
 
+    public ImmutableList<String> getFilters()
+    {
+        return filters;
+    }
+
     public static Builder create( final PortalResponse source )
     {
         return new Builder( source );
@@ -114,11 +122,14 @@ public final class PortalResponse
 
         private ImmutableList.Builder<Cookie> cookies;
 
+        private ImmutableList.Builder<String> filters;
+
         private Builder()
         {
             clearHeaders();
             clearContributions();
             clearCookies();
+            clearFilters();
         }
 
         private Builder( final PortalResponse source )
@@ -130,6 +141,7 @@ public final class PortalResponse
             contributions( source.contributions );
             this.status = source.status;
             cookies( source.cookies );
+            filters( source.filters );
         }
 
         public Builder body( final Object body )
@@ -248,6 +260,32 @@ public final class PortalResponse
         public Builder status( final int status )
         {
             this.status = status;
+            return this;
+        }
+
+        public Builder filters( final Iterable<String> filters )
+        {
+            if ( this.filters == null )
+            {
+                clearFilters();
+            }
+            this.filters.addAll( filters );
+            return this;
+        }
+
+        public Builder filter( final String filter )
+        {
+            if ( this.filters == null )
+            {
+                clearFilters();
+            }
+            this.filters.add( filter );
+            return this;
+        }
+
+        public Builder clearFilters()
+        {
+            filters = ImmutableList.builder();
             return this;
         }
 

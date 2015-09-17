@@ -5,8 +5,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
-import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 
 @Component
 public final class ControllerScriptFactoryImpl
@@ -26,7 +26,7 @@ public final class ControllerScriptFactoryImpl
     public ControllerScript fromScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );
-        return new ControllerScriptImpl( exports, this.postProcessor );
+        return new ControllerScriptImpl( exports, this.postProcessor, this.scriptService );
     }
 
     @Reference

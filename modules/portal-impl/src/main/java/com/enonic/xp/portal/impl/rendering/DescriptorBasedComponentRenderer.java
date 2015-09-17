@@ -11,7 +11,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Descriptor;
@@ -68,7 +67,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
             final PortalResponse injectedResponse =
                 LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
-            return new PortalResponseSerializer( injectedResponse ).serialize();
+            return injectedResponse;
         }
         finally
         {

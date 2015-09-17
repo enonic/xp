@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
@@ -59,9 +60,33 @@ public final class ResponseSerializer
             return;
         }
 
+        if ( body instanceof Map )
+        {
+            serializeBody( response, convertToJson( body ) );
+            return;
+        }
+
+        if ( body instanceof byte[] )
+        {
+            serializeBody( response, (byte[]) body );
+            return;
+        }
+
         if ( body != null )
         {
             serializeBody( response, body.toString() );
+        }
+    }
+
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
         }
     }
 
@@ -69,6 +94,12 @@ public final class ResponseSerializer
         throws Exception
     {
         writeToStream( response, body.read() );
+    }
+
+    private void serializeBody( final HttpServletResponse response, final byte[] body )
+        throws Exception
+    {
+        writeToStream( response, body );
     }
 
     private void serializeBody( final HttpServletResponse response, final String body )

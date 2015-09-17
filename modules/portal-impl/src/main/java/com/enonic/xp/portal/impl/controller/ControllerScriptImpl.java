@@ -1,17 +1,19 @@
 package com.enonic.xp.portal.impl.controller;
 
-import javax.servlet.http.Cookie;
-import javax.ws.rs.core.Response;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
-import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.web.HttpStatus;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -20,10 +22,14 @@ final class ControllerScriptImpl
 
     private final PostProcessor postProcessor;
 
-    public ControllerScriptImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
+    private final FilterExecutor filterExecutor;
+
+    public ControllerScriptImpl( final ScriptExports scriptExports, final PostProcessor postProcessor,
+                                 final PortalScriptService scriptService )
     {
         this.scriptExports = scriptExports;
         this.postProcessor = postProcessor;
+        this.filterExecutor = new FilterExecutor( scriptService );
     }
 
     @Override
@@ -33,8 +39,7 @@ final class ControllerScriptImpl
 
         try
         {
-            return this.postProcessor.
-                processResponse( portalRequest, doExecute( portalRequest ) );
+            return this.postProcessor.processResponse( portalRequest, doExecute( portalRequest ) );
         }
         finally
         {
@@ -51,235 +56,44 @@ final class ControllerScriptImpl
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            return createResponse( null );
+            return new PortalResponseSerializer( null ).serialize();
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
         final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
 
-        return createResponse( result );
+        final PortalResponse response = new PortalResponseSerializer( result ).serialize();
+
+        return applyResponseFilters( portalRequest, response );
     }
 
-    private PortalResponse createResponse( final ScriptValue result )
+    public PortalResponse applyResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
-
-        if ( ( result == null ) || !result.isObject() )
+        ImmutableList<String> filterNames = portalResponse.getFilters();
+        if ( filterNames.isEmpty() )
         {
-            return builder.build();
+            return portalResponse;
         }
 
-        populateStatus( builder, result.getMember( "status" ) );
-        populateContentType( builder, result.getMember( "contentType" ) );
-        populateBody( builder, result.getMember( "body" ) );
-        populateHeaders( builder, result.getMember( "headers" ) );
-        populateContributions( builder, result.getMember( "pageContributions" ) );
-        populateCookies( builder, result.getMember( "cookies" ) );
-        setRedirect( builder, result.getMember( "redirect" ) );
+        PortalResponse filterResponse = portalResponse;
+        final Set<String> executedFilters = new HashSet<>();
 
-        return builder.build();
-    }
-
-    private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? status : HttpStatus.OK.value() );
-    }
-
-    private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        final String type = ( value != null ) ? value.getValue( String.class ) : null;
-        builder.contentType( type != null ? type : "text/html" );
-    }
-
-    private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        final String redirect = ( value != null ) ? value.getValue( String.class ) : null;
-        if ( redirect == null )
+        while ( !filterNames.isEmpty() )
         {
-            return;
-        }
-
-        builder.status( Response.Status.SEE_OTHER.getStatusCode() );
-        builder.header( "Location", redirect );
-    }
-
-    private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        if ( ( value == null ) || value.isFunction() )
-        {
-            return;
-        }
-
-        if ( value.isArray() )
-        {
-            builder.body( value.getValue( String.class ) );
-            return;
-        }
-
-        if ( value.isObject() )
-        {
-            builder.body( value.getMap() );
-            return;
-        }
-
-        builder.body( value.getValue() );
-    }
-
-    private void populateHeaders( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( !value.isObject() )
-        {
-            return;
-        }
-
-        for ( final String key : value.getKeys() )
-        {
-            builder.header( key, value.getMember( key ).getValue( String.class ) );
-        }
-    }
-
-    private void populateCookies( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( !value.isObject() )
-        {
-            return;
-        }
-
-        for ( final String key : value.getKeys() )
-        {
-            addCookie( builder, value.getMember( key ), key );
-        }
-    }
-
-    private void addCookie( final PortalResponse.Builder builder, final ScriptValue value, final String key )
-    {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( value.isObject() )
-        {
-            Cookie cookie = new Cookie( key, "" );
-
-            for ( final String subKey : value.getKeys() )
+            final String filterName = filterNames.get( 0 );
+            filterNames = filterNames.subList( 1, filterNames.size() );
+            if ( executedFilters.contains( filterName ) )
             {
-                if ( "value".equals( subKey ) )
-                {
-                    cookie.setValue( value.getMember( subKey ).getValue( String.class ) );
-                }
-                else if ( "path".equals( subKey ) )
-                {
-                    cookie.setPath( value.getMember( subKey ).getValue( String.class ) );
-                }
-                else if ( "domain".equals( subKey ) )
-                {
-                    cookie.setDomain( value.getMember( subKey ).getValue( String.class ) );
-                }
-                else if ( "comment".equals( subKey ) )
-                {
-                    cookie.setComment( value.getMember( subKey ).getValue( String.class ) );
-                }
-                else if ( "maxAge".equals( subKey ) )
-                {
-                    cookie.setMaxAge( value.getMember( subKey ).getValue( Integer.class ) );
-                }
-                else if ( "secure".equals( subKey ) )
-                {
-                    cookie.setSecure( value.getMember( subKey ).getValue( Boolean.class ) );
-                }
-                else if ( "httpOnly".equals( subKey ) )
-                {
-                    cookie.setHttpOnly( value.getMember( subKey ).getValue( Boolean.class ) );
-                }
+                // skip filter already executed
+                continue;
             }
-            builder.cookie( cookie );
+
+            filterResponse = PortalResponse.create( filterResponse ).clearFilters().filters( filterNames ).build();
+
+            filterResponse = this.filterExecutor.executeResponseFilter( filterName, portalRequest, filterResponse );
+            executedFilters.add( filterName );
         }
-        else
-        {
-            final String strValue = value.getValue( String.class );
-            if ( strValue != null )
-            {
-                builder.cookie( new Cookie( key, strValue ) );
-            }
-            else
-            {
-                builder.cookie( new Cookie( key, "" ) );
-            }
-        }
+
+        return filterResponse;
     }
-
-    private void populateContributions( final PortalResponse.Builder builder, final ScriptValue value )
-    {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( !value.isObject() )
-        {
-            return;
-        }
-
-        for ( final String key : value.getKeys() )
-        {
-            if ( "headBegin".equals( key ) )
-            {
-                addContribution( builder, HtmlTag.HEAD_BEGIN, value.getMember( key ) );
-            }
-            else if ( "headEnd".equals( key ) )
-            {
-                addContribution( builder, HtmlTag.HEAD_END, value.getMember( key ) );
-            }
-            else if ( "bodyBegin".equals( key ) )
-            {
-                addContribution( builder, HtmlTag.BODY_BEGIN, value.getMember( key ) );
-            }
-            else if ( "bodyEnd".equals( key ) )
-            {
-                addContribution( builder, HtmlTag.BODY_END, value.getMember( key ) );
-            }
-        }
-    }
-
-    private void addContribution( final PortalResponse.Builder builder, final HtmlTag htmlTag, final ScriptValue value )
-    {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( value.isArray() )
-        {
-            for ( ScriptValue arrayValue : value.getArray() )
-            {
-                final String strValue = arrayValue.getValue( String.class );
-                if ( strValue != null )
-                {
-                    builder.contribution( htmlTag, strValue );
-                }
-            }
-        }
-        else
-        {
-            final String strValue = value.getValue( String.class );
-            if ( strValue != null )
-            {
-                builder.contribution( htmlTag, strValue );
-            }
-        }
-    }
-
 }

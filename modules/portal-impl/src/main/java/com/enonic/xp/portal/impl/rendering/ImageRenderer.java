@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -57,7 +56,7 @@ public final class ImageRenderer
         }
 
         portalResponseBuilder.body( html.toString() ).contentType( "text/html" ).postProcess( false );
-        return new PortalResponseSerializer( portalResponseBuilder.build() ).serialize();
+        return portalResponseBuilder.build();
     }
 
     private String buildUrl( final PortalRequest portalRequest, final ContentId id )

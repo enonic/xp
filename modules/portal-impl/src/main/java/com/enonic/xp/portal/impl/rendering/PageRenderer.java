@@ -10,7 +10,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
 
@@ -43,7 +42,7 @@ public final class PageRenderer
             portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
 
-        return new PortalResponseSerializer( portalResponse ).serialize();
+        return portalResponse;
     }
 
     private PortalResponse renderForNoPageDescriptor( final PortalRequest portalRequest, final Content content )
