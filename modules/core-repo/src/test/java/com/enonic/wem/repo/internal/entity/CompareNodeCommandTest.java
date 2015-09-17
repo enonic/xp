@@ -192,7 +192,7 @@ public class CompareNodeCommandTest
     {
         return CompareNodeCommand.create().
             versionService( this.versionService ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             nodeId( createdNode.id() ).
             target( branch ).
             build().

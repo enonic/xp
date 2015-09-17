@@ -50,7 +50,7 @@ public class CompareNodesCommandTest
 
         final NodeComparisons result = CompareNodesCommand.create().
             nodeIds( NodeIds.from( node.id(), node2.id(), node3.id() ) ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             versionService( this.versionService ).
             target( WS_OTHER ).
             build().

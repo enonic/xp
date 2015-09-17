@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
@@ -12,9 +12,9 @@ import com.enonic.xp.repository.RepositoryId;
 
 class CompareStatusResolver
 {
-    private final NodeBranchVersion source;
+    private final BranchNodeVersion source;
 
-    private final NodeBranchVersion target;
+    private final BranchNodeVersion target;
 
     private final VersionService versionService;
 
@@ -109,9 +109,9 @@ class CompareStatusResolver
 
     public static final class Builder
     {
-        private NodeBranchVersion source;
+        private BranchNodeVersion source;
 
-        private NodeBranchVersion target;
+        private BranchNodeVersion target;
 
         private VersionService versionService;
 
@@ -121,13 +121,13 @@ class CompareStatusResolver
         {
         }
 
-        public Builder source( NodeBranchVersion source )
+        public Builder source( BranchNodeVersion source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( NodeBranchVersion target )
+        public Builder target( BranchNodeVersion target )
         {
             this.target = target;
             return this;

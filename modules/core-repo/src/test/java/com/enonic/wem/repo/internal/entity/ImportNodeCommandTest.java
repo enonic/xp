@@ -69,7 +69,7 @@ public class ImportNodeCommandTest
         final NodeComparison comparison = CompareNodeCommand.create().
             nodeId( NodeId.from( "abc" ) ).
             target( CTX_OTHER.getBranch() ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             versionService( this.versionService ).
             build().
             execute();

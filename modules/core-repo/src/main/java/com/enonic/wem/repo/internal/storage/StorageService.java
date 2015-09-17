@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.storage;
 
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -28,5 +29,5 @@ public interface StorageService
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
-
+    BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 }

@@ -224,7 +224,7 @@ public class ResolveSyncWorkCommand
     {
         return CompareNodeCommand.create().
             target( this.target ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             versionService( this.versionService ).
             nodeId( nodeId ).
             build().

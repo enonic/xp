@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 
-public class NodeBranchVersion
+public class BranchNodeVersion
 {
     private final NodeVersionId nodeVersionId;
 
@@ -16,7 +16,7 @@ public class NodeBranchVersion
 
     private final Instant timestamp;
 
-    private NodeBranchVersion( Builder builder )
+    private BranchNodeVersion( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeState = builder.state;
@@ -62,7 +62,7 @@ public class NodeBranchVersion
             return false;
         }
 
-        final NodeBranchVersion that = (NodeBranchVersion) o;
+        final BranchNodeVersion that = (BranchNodeVersion) o;
 
         if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
         {
@@ -130,9 +130,9 @@ public class NodeBranchVersion
             return this;
         }
 
-        public NodeBranchVersion build()
+        public BranchNodeVersion build()
         {
-            return new NodeBranchVersion( this );
+            return new BranchNodeVersion( this );
         }
     }
 }

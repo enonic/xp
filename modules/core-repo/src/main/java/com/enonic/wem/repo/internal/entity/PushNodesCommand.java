@@ -65,7 +65,7 @@ public class PushNodesCommand
             final NodeComparison nodeComparison = CompareNodeCommand.create().
                 nodeId( node.id() ).
                 versionService( this.versionService ).
-                branchService( this.branchService ).
+                storageService( this.storageService ).
                 target( this.target ).
                 build().
                 execute();
@@ -82,7 +82,8 @@ public class PushNodesCommand
                 continue;
             }
 
-            final NodeVersionId nodeVersionId = this.branchService.get( node.id(), InternalContext.from( context ) ).getVersionId();
+            final NodeVersionId nodeVersionId =
+                this.storageService.getBranchNodeVersion( node.id(), InternalContext.from( context ) ).getVersionId();
 
             if ( nodeVersionId == null )
             {

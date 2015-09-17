@@ -47,7 +47,7 @@ public class GetActiveNodeVersionsCommand
         {
             final Context context = ContextAccessor.current();
 
-            final NodeVersionId nodeVersionId = this.branchService.get( this.nodeId, InternalContext.create( context ).
+            final NodeVersionId nodeVersionId = this.storageService.getBranchNodeVersion( this.nodeId, InternalContext.create( context ).
                 branch( branch ).
                 build() ).getVersionId();
 

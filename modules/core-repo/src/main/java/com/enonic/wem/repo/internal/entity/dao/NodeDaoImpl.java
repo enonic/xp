@@ -18,7 +18,7 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -128,23 +128,23 @@ public class NodeDaoImpl
             return node;
         }
 
-        final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), InternalContext.from( ContextAccessor.current() ) );
+        final BranchNodeVersion branchNodeVersion = this.branchService.get( node.id(), InternalContext.from( ContextAccessor.current() ) );
 
-        if ( nodeBranchVersion == null )
+        if ( branchNodeVersion == null )
         {
             throw new NodeNotFoundException(
                 "Cannot find node with id '" + node.id() + "' in branch: '" + ContextAccessor.current().getBranch().getName() + "'" );
         }
 
-        final NodePath nodePath = nodeBranchVersion.getNodePath();
+        final NodePath nodePath = branchNodeVersion.getNodePath();
         final NodePath parentPath = nodePath.getParentPath();
         final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
 
         return Node.create( node ).
             parentPath( parentPath ).
             name( nodeName ).
-            nodeState( nodeBranchVersion.getNodeState() ).
-            timestamp( nodeBranchVersion.getTimestamp() ).
+            nodeState( branchNodeVersion.getNodeState() ).
+            timestamp( branchNodeVersion.getTimestamp() ).
             build();
     }
 

@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.StorageService;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -18,19 +18,19 @@ public class AbstractCompareNodeCommand
 
     private final VersionService versionService;
 
-    private final BranchService branchService;
+    private final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
         target = builder.target;
         versionService = builder.versionService;
-        this.branchService = builder.branchService;
+        this.storageService = builder.storageService;
     }
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final NodeBranchVersion sourceWsVersion = this.branchService.get( nodeId, InternalContext.from( context ) );
-        final NodeBranchVersion targetWsVersion = this.branchService.get( nodeId, InternalContext.create( context ).
+        final BranchNodeVersion sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
+        final BranchNodeVersion targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
             branch( this.target ).
             build() );
 
@@ -52,7 +52,7 @@ public class AbstractCompareNodeCommand
 
         private VersionService versionService;
 
-        private BranchService branchService;
+        private StorageService storageService;
 
         Builder()
         {
@@ -73,9 +73,9 @@ public class AbstractCompareNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B branchService( final BranchService branchService )
+        public B storageService( final StorageService storageService )
         {
-            this.branchService = branchService;
+            this.storageService = storageService;
             return (B) this;
         }
 
@@ -83,6 +83,7 @@ public class AbstractCompareNodeCommand
         {
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( versionService );
+            Preconditions.checkNotNull( storageService );
         }
 
         public AbstractCompareNodeCommand build()

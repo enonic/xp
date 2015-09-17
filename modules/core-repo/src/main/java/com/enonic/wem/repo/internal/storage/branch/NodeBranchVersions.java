@@ -9,21 +9,21 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class NodeBranchVersions
-    extends AbstractImmutableEntitySet<NodeBranchVersion>
+    extends AbstractImmutableEntitySet<BranchNodeVersion>
 {
-    private NodeBranchVersions( final ImmutableSet<NodeBranchVersion> set )
+    private NodeBranchVersions( final ImmutableSet<BranchNodeVersion> set )
     {
         super( set );
     }
 
-    public static NodeBranchVersions from( final NodeBranchVersion... nodeBranchVersions )
+    public static NodeBranchVersions from( final BranchNodeVersion... branchNodeVersions )
     {
-        return new NodeBranchVersions( ImmutableSet.copyOf( nodeBranchVersions ) );
+        return new NodeBranchVersions( ImmutableSet.copyOf( branchNodeVersions ) );
     }
 
-    public static NodeBranchVersions from( final Collection<NodeBranchVersion> nodeBranchVersions )
+    public static NodeBranchVersions from( final Collection<BranchNodeVersion> branchNodeVersions )
     {
-        return new NodeBranchVersions( ImmutableSet.copyOf( nodeBranchVersions ) );
+        return new NodeBranchVersions( ImmutableSet.copyOf( branchNodeVersions ) );
     }
 
     private NodeBranchVersions( final Builder builder )
@@ -33,7 +33,7 @@ public class NodeBranchVersions
 
     public static NodeBranchVersions empty()
     {
-        ImmutableSet<NodeBranchVersion> empty = ImmutableSet.of();
+        ImmutableSet<BranchNodeVersion> empty = ImmutableSet.of();
         return new NodeBranchVersions( empty );
     }
 
@@ -45,11 +45,11 @@ public class NodeBranchVersions
 
     public static class Builder
     {
-        private final LinkedHashSet<NodeBranchVersion> branchVersions = Sets.newLinkedHashSet();
+        private final LinkedHashSet<BranchNodeVersion> branchVersions = Sets.newLinkedHashSet();
 
-        public Builder add( final NodeBranchVersion nodeBranchVersion )
+        public Builder add( final BranchNodeVersion branchNodeVersion )
         {
-            this.branchVersions.add( nodeBranchVersion );
+            this.branchVersions.add( branchNodeVersion );
             return this;
         }
 

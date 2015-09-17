@@ -72,12 +72,12 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchVersion get( final NodeId nodeId, final InternalContext context )
+    public BranchNodeVersion get( final NodeId nodeId, final InternalContext context )
     {
         return doGetById( nodeId, context );
     }
 
-    private NodeBranchVersion doGetById( final NodeId nodeId, final InternalContext context )
+    private BranchNodeVersion doGetById( final NodeId nodeId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
         final GetResult getResult = this.storageDao.getById( getByIdRequest );
@@ -87,33 +87,33 @@ public class BranchServiceImpl
             return null;
         }
 
-        final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
+        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchVersion.getNodePath() ), getResult.getId() );
+        pathCache.cache( new BranchPath( context.getBranch(), branchNodeVersion.getNodePath() ), getResult.getId() );
 
-        return nodeBranchVersion;
+        return branchNodeVersion;
     }
 
     @Override
     public NodeBranchVersions get( final NodeIds nodeIds, final InternalContext context )
     {
-        Set<NodeBranchVersion> nodeBranchVersions = Sets.newHashSet();
+        Set<BranchNodeVersion> branchNodeVersions = Sets.newHashSet();
 
         for ( final NodeId nodeId : nodeIds )
         {
-            final NodeBranchVersion branchVersion = doGetById( nodeId, context );
+            final BranchNodeVersion branchVersion = doGetById( nodeId, context );
 
             if ( branchVersion != null )
             {
-                nodeBranchVersions.add( branchVersion );
+                branchNodeVersions.add( branchVersion );
             }
         }
 
-        return NodeBranchVersions.from( nodeBranchVersions );
+        return NodeBranchVersions.from( branchNodeVersions );
     }
 
     @Override
-    public NodeBranchVersion get( final NodePath nodePath, final InternalContext context )
+    public BranchNodeVersion get( final NodePath nodePath, final InternalContext context )
     {
         return doGetByPath( nodePath, context );
     }
@@ -121,19 +121,19 @@ public class BranchServiceImpl
     @Override
     public NodeBranchVersions get( final NodePaths nodePaths, final InternalContext context )
     {
-        Set<NodeBranchVersion> nodeBranchVersions = Sets.newHashSet();
+        Set<BranchNodeVersion> branchNodeVersions = Sets.newHashSet();
 
         for ( final NodePath nodePath : nodePaths )
         {
-            final NodeBranchVersion branchVersion = doGetByPath( nodePath, context );
+            final BranchNodeVersion branchVersion = doGetByPath( nodePath, context );
 
             if ( branchVersion != null )
             {
-                nodeBranchVersions.add( branchVersion );
+                branchNodeVersions.add( branchVersion );
             }
         }
 
-        return NodeBranchVersions.from( nodeBranchVersions );
+        return NodeBranchVersions.from( branchNodeVersions );
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
@@ -141,7 +141,7 @@ public class BranchServiceImpl
         return new BranchPath( context.getBranch(), nodePath );
     }
 
-    private NodeBranchVersion doGetByPath( final NodePath nodePath, final InternalContext context )
+    private BranchNodeVersion doGetByPath( final NodePath nodePath, final InternalContext context )
     {
         final String id = this.pathCache.get( new BranchPath( context.getBranch(), nodePath ) );
 
@@ -183,9 +183,9 @@ public class BranchServiceImpl
 
     private void doCacheResult( final InternalContext context, final GetResult getResult )
     {
-        final NodeBranchVersion nodeBranchVersion = NodeBranchVersionFactory.create( getResult );
+        final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult );
 
-        pathCache.cache( new BranchPath( context.getBranch(), nodeBranchVersion.getNodePath() ), getResult.getId() );
+        pathCache.cache( new BranchPath( context.getBranch(), branchNodeVersion.getNodePath() ), getResult.getId() );
 
     }
 

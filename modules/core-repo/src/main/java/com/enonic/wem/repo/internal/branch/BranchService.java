@@ -1,9 +1,9 @@
 package com.enonic.wem.repo.internal.branch;
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -16,11 +16,11 @@ public interface BranchService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
-    NodeBranchVersion get( final NodeId nodeId, final InternalContext context );
+    BranchNodeVersion get( final NodeId nodeId, final InternalContext context );
 
     NodeBranchVersions get( final NodeIds nodeIds, final InternalContext context );
 
-    NodeBranchVersion get( final NodePath nodePath, final InternalContext context );
+    BranchNodeVersion get( final NodePath nodePath, final InternalContext context );
 
     NodeBranchVersions get( final NodePaths nodePath, final InternalContext context );
 

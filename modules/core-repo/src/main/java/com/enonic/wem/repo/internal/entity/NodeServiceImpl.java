@@ -353,7 +353,7 @@ public class NodeServiceImpl
             nodeId( nodeId ).
             target( target ).
             versionService( this.versionService ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
@@ -365,7 +365,7 @@ public class NodeServiceImpl
             nodeIds( nodeIds ).
             target( target ).
             versionService( this.versionService ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
             build().
             execute();
     }
