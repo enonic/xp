@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.jaxrs.JaxRsResourceFactory;
 
-public final class JaxRsDispatcher
+final class JaxRsDispatcher
     extends ServletContainerDispatcher
 {
     static

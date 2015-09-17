@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.DeleteSnapshotParams;
@@ -22,7 +22,7 @@ import com.enonic.xp.snapshot.SnapshotResults;
 import static org.mockito.Matchers.isA;
 
 public class SnapshotResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private NodeService nodeService;
 

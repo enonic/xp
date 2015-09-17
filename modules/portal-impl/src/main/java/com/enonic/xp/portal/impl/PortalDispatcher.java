@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -26,6 +27,7 @@ import com.enonic.xp.portal.impl.exception.ExceptionMapper;
 import com.enonic.xp.portal.impl.exception.ExceptionRenderer;
 import com.enonic.xp.portal.impl.serializer.RequestBodyReader;
 import com.enonic.xp.portal.impl.serializer.ResponseSerializer;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -73,7 +75,7 @@ public final class PortalDispatcher
         throws Exception
     {
         final PortalRequest result = new PortalRequest();
-        result.setMethod( req.getMethod() );
+        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
         setBaseUri( req, result );
         setRenderMode( req, result );
 
@@ -155,6 +157,8 @@ public final class PortalDispatcher
             }
 
             final PortalHandler handler = this.registry.find( req );
+
+            ContextAccessor.current().getLocalScope().setAttribute( req.getBranch() );
             return filterResponse( handler.handle( req ) );
         }
         catch ( final Exception e )

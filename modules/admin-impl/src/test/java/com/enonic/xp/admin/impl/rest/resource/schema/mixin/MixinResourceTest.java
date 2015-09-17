@@ -13,20 +13,20 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Resources;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.web.jaxrs.impl.MockRestResponse;
 
 import static org.junit.Assert.*;
 
 public class MixinResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "myapplication:input_text_1" );
 

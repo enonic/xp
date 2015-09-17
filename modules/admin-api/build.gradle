@@ -6,5 +6,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin - Api'
-    instruction 'Export-Package', 'com.enonic.xp.admin.*;-split-package:=first'
+    // instruction 'Export-Package', 'com.enonic.xp.admin.*;-split-package:=first'
 }

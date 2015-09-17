@@ -14,6 +14,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.web.HttpMethod;
 
 @Component
 public final class PostProcessorImpl
@@ -32,7 +33,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || !"GET".equals( portalRequest.getMethod() ) )
+        if ( !portalResponse.isPostProcess() ||  portalRequest.getMethod() != HttpMethod.GET )
         {
             return portalResponse;
         }

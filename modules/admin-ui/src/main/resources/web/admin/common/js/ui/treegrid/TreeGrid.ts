@@ -361,6 +361,10 @@ module api.ui.treegrid {
         }
 
         scrollToRow(row: number) {
+            if (!this.scrollable) {
+                // not present until shown
+                return;
+            }
             var scrollEl = this.scrollable.getEl();
 
             if (row > -1 && this.grid.getSelectedRows().length > 0) {

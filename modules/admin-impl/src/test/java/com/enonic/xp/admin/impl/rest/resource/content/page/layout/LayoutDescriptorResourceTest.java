@@ -5,7 +5,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
@@ -18,7 +18,7 @@ import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
 public class LayoutDescriptorResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private LayoutDescriptorService layoutDescriptorService;
 

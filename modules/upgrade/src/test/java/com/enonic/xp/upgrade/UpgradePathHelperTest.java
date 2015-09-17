@@ -16,7 +16,7 @@ public class UpgradePathHelperTest
     {
         final Path targetPath = UpgradePathHelper.generateUpgradeTargetPath( Paths.get( "my", "test", "path" ), "myDump" );
 
-        assertEquals( "my/test/path/myDump_upgraded_6.0.0", targetPath.toString() );
+        assertEquals( Paths.get( "my", "test", "path", "myDump_upgraded_6.0.0" ).toString(), targetPath.toString() );
 
     }
 }

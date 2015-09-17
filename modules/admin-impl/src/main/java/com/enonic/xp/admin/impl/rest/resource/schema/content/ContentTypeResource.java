@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -37,7 +37,7 @@ import com.enonic.xp.security.RoleKeys;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentTypeResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 

@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -20,7 +20,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 public class ApplicationResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private ApplicationService applicationService;
 

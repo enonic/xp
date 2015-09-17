@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.app.AdminApplicationsRegistry;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.auth.json.LoginResultJson;
@@ -24,7 +24,7 @@ import com.enonic.xp.session.Session;
 @Produces(MediaType.APPLICATION_JSON)
 @Component(immediate = true)
 public final class AuthResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private final AdminApplicationsRegistry appRegistry;
 

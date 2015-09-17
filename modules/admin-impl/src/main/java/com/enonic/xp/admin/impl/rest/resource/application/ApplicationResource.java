@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
@@ -36,7 +36,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ApplicationResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private ApplicationService applicationService;
 

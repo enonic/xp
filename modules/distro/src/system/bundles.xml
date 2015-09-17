@@ -58,7 +58,6 @@
   <bundle level="30">${group}:web-jaxrs:${version}</bundle>
 
   <!-- Portal app dependencies -->
-  <bundle level="30">${group}:repack-jmustache:${version}</bundle>
   <bundle level="30">${group}:repack-attoparser:${version}</bundle>
 
   <!-- Portal app -->

@@ -10,6 +10,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.web.HttpMethod;
 
 import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.*;
@@ -28,7 +29,7 @@ public class PostProcessorImplTest
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( "GET" );
+        portalRequest.setMethod( HttpMethod.GET );
 
         final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
 
@@ -50,7 +51,7 @@ public class PostProcessorImplTest
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( "GET" );
+        portalRequest.setMethod( HttpMethod.GET );
 
         final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
 

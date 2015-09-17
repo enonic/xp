@@ -13,8 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -78,11 +77,12 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.web.jaxrs.impl.MockRestResponse;
 
 import static com.enonic.xp.security.acl.Permission.READ;
 
 public class ContentResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
 
@@ -190,7 +190,6 @@ public class ContentResourceTest
         final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
 
         assertEquals( response.getStatus(), 404 );
-        assertEquals( response.getAsString(), "Content [/my_a_content] was not found" );
     }
 
     @Test
@@ -224,7 +223,6 @@ public class ContentResourceTest
 
         final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
         assertEquals( response.getStatus(), 404 );
-        assertEquals( response.getAsString(), "Content [/my_a_content] was not found" );
     }
 
     @Test
@@ -341,8 +339,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
         final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
-        assertEquals( response.getStatus(), 404 );
-        assertEquals( response.getAsString(), "Content [aaa] was not found" );
+        assertEquals( 404, response.getStatus() );
     }
 
     @Test
@@ -374,7 +371,6 @@ public class ContentResourceTest
 
         final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
         assertEquals( response.getStatus(), 404 );
-        assertEquals( response.getAsString(), "Content [aaa] was not found" );
     }
 
     @Test

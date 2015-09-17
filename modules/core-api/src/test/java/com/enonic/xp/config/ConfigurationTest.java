@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import static org.junit.Assert.*;
@@ -13,7 +14,8 @@ public class ConfigurationTest
     @Test
     public void testEmpty()
     {
-        final Configuration config = Configuration.create().build();
+        final Map<String, String> source = Maps.newHashMap();
+        final Configuration config = ConfigurationImpl.create( source );
 
         assertNotNull( config );
         assertEquals( false, config.exists( "key1" ) );
@@ -29,10 +31,8 @@ public class ConfigurationTest
     @Test
     public void testConfig()
     {
-        final Configuration config = Configuration.create().
-            add( "key1", "value1" ).
-            add( "key2", "33" ).
-            build();
+        final Map<String, String> source = ImmutableMap.of( "key1", "value1", "key2", "33" );
+        final Configuration config = ConfigurationImpl.create( source );
 
         assertNotNull( config );
         assertEquals( true, config.exists( "key1" ) );
@@ -49,66 +49,37 @@ public class ConfigurationTest
     }
 
     @Test
-    public void testAddAll()
-    {
-        final Map<String, String> source = Maps.newHashMap();
-        source.put( "key1", "value1" );
-        source.put( "key2", "value2" );
-
-        final Configuration config = Configuration.create().
-            addAll( source ).
-            add( "key3", "value3" ).
-            build();
-
-        assertNotNull( config );
-        assertEquals( true, config.exists( "key1" ) );
-        assertEquals( true, config.exists( "key2" ) );
-        assertEquals( true, config.exists( "key3" ) );
-
-        final Map<String, String> map = config.asMap();
-        assertEquals( 3, map.size() );
-    }
-
-    @Test
-    public void testAddConfig()
-    {
-        final Configuration config1 = Configuration.create().
-            add( "key1", "value1" ).
-            add( "key2", "value2" ).
-            build();
-
-        final Configuration config2 = Configuration.create().
-            addAll( config1 ).
-            add( "key3", "value3" ).
-            build();
-
-        assertNotNull( config2 );
-        assertEquals( true, config2.exists( "key1" ) );
-        assertEquals( true, config2.exists( "key2" ) );
-        assertEquals( true, config2.exists( "key3" ) );
-
-        final Map<String, String> map = config2.asMap();
-        assertEquals( 3, map.size() );
-    }
-
-    @Test
     public void testSubConfig()
     {
-        final Configuration config1 = Configuration.create().
-            add( "key1", "value1" ).
-            add( "key2", "value2" ).
-            add( "my.key3", "value3" ).
-            build();
+        final Map<String, String> source = ImmutableMap.of( "key1", "value1", "my.key2", "value2" );
+        final Configuration config1 = ConfigurationImpl.create( source );
 
         final Configuration config2 = config1.subConfig( "my." );
 
         assertNotNull( config2 );
         assertNotSame( config1, config2 );
         assertEquals( false, config2.exists( "key1" ) );
-        assertEquals( false, config2.exists( "key2" ) );
-        assertEquals( true, config2.exists( "key3" ) );
+        assertEquals( true, config2.exists( "key2" ) );
 
         final Map<String, String> map = config2.asMap();
         assertEquals( 1, map.size() );
+    }
+
+    @Test
+    public void testEquals()
+    {
+        final Map<String, String> source1 = ImmutableMap.of( "key1", "value1", "key2", "value2" );
+        final Configuration config1 = ConfigurationImpl.create( source1 );
+
+        final Map<String, String> source2 = ImmutableMap.of( "key2", "value2", "key1", "value1" );
+        final Configuration config2 = ConfigurationImpl.create( source2 );
+
+        final Map<String, String> source3 = ImmutableMap.of( "key1", "value1" );
+        final Configuration config3 = ConfigurationImpl.create( source3 );
+
+        assertTrue( config1.equals( config2 ) );
+        assertTrue( config2.equals( config1 ) );
+        assertFalse( config3.equals( config1 ) );
+        assertFalse( config3.equals( config2 ) );
     }
 }
