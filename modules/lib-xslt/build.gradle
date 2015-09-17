@@ -1,7 +1,0 @@
-dependencies {
-    provided project( ':core-api' )
-    provided project( ':web-api' )
-    provided project( ':portal-api' )
-    testCompile project( ':testing' )
-    compile 'net.sf.saxon:Saxon-HE:9.5.1-8'
-}

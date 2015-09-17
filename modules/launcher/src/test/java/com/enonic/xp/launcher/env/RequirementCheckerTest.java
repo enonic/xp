@@ -17,6 +17,15 @@ public class RequirementCheckerTest
         new RequirementChecker( props ).check();
     }
 
+    @Test
+    public void rightJavaVersion_withClassifier()
+    {
+        final SystemProperties props = new SystemProperties();
+        props.put( JAVA_VERSION.key(), "1.8.0_45-internal" );
+
+        new RequirementChecker( props ).check();
+    }
+
     @Test(expected = LauncherException.class)
     public void rightJavaVersion_wrongUpdate()
     {

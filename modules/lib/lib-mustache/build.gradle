@@ -1,0 +1,6 @@
+dependencies {
+    provided project( ':core:core-api' )
+    provided project( ':portal:portal-api' )
+    testCompile project( ':tools:testing' )
+    compile 'com.samskivert:jmustache:1.10'
+}

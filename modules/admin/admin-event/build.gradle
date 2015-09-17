@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':web:web-api' )
+    compile 'org.eclipse.jetty.websocket:websocket-servlet:9.0.7.v20131107'
+    compile 'org.eclipse.jetty.websocket:websocket-server:9.0.7.v20131107'
+    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Admin - Event'
+}

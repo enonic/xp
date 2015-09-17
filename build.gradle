@@ -3,7 +3,13 @@ apply from: "$rootDir/gradle/check.gradle"
 apply from: "$rootDir/gradle/sonar.gradle"
 apply plugin: 'build-dashboard'
 
-allprojects {
+ext {
+    leafProjects = subprojects.findAll { p -> p.subprojects.empty }
+    javaProjects = leafProjects - project( ':distro' )
+    mavenProjects = leafProjects
+}
+
+configure( leafProjects ) {
     group = 'com.enonic.xp'
 
     repositories {
@@ -15,12 +21,6 @@ allprojects {
     }
 
     buildDir = 'target'
-}
-
-
-ext {
-    javaProjects = subprojects - project( ':distro' )
-    mavenProjects = subprojects
 }
 
 configure( javaProjects ) {
