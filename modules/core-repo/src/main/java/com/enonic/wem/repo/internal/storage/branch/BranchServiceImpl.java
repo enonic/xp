@@ -6,8 +6,6 @@ import org.elasticsearch.common.Strings;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -54,8 +52,6 @@ public class BranchServiceImpl
     protected StorageCache cache = StorageCacheProvider.provide();
 
     private final PathCache pathCache = new PathCacheImpl();
-
-    private static final Logger LOG = LoggerFactory.getLogger( BranchServiceImpl.class );
 
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )

@@ -1,9 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -34,17 +31,12 @@ public class NodeChildOrderResolver
             return this.childOrder;
         }
 
-        final NodeBranchVersion parentVersion =
-            this.branchService.get( this.parentPath, InternalContext.from( ContextAccessor.current() ) );
+        final Node parent = GetNodeByPathCommand.create( this ).
+            nodePath( this.parentPath ).
+            build().
+            execute();
 
-        if ( parentVersion == null )
-        {
-            return ChildOrder.defaultOrder();
-        }
-
-        final Node parentNode = this.nodeDao.getByVersionId( parentVersion.getVersionId() );
-
-        return parentNode.getChildOrder();
+        return parent == null ? ChildOrder.defaultOrder() : parent.getChildOrder();
     }
 
     public static Builder create()

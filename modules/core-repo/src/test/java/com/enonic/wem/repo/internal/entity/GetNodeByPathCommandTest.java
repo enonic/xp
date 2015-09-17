@@ -6,6 +6,10 @@ import org.junit.Test;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +37,30 @@ public class GetNodeByPathCommandTest
         final Node fetchedNode = doGetNodeByPath( createdNode.path() );
 
         assertEquals( createdNode, fetchedNode );
+    }
+
+    @Test
+    public void get_by_path_no_access()
+        throws Exception
+    {
+        final String nodeName = "my-node";
+
+        final Node createdNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( nodeName ).
+            permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    deny( Permission.READ ).
+                    principal( PrincipalKey.ofAnonymous() ).
+                    build() ).
+                add( AccessControlEntry.create().
+                    allow( Permission.READ ).
+                    principal( PrincipalKey.from( "user:system:rmy" ) ).
+                    build() ).
+                build() ).
+            build() );
+
+        assertNull( doGetNodeByPath( createdNode.path() ) );
     }
 
     @Test

@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -24,21 +23,7 @@ public class GetNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeBranchVersion nodeBranchVersion = this.branchService.get( path, InternalContext.from( context ) );
-
-        if ( nodeBranchVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( nodeBranchVersion.getVersionId() );
-
-        if ( !canRead( node ) )
-        {
-            return null;
-        }
-
-        return node;
+        return this.storageService.get( path, InternalContext.from( context ) );
     }
 
     public static Builder create()

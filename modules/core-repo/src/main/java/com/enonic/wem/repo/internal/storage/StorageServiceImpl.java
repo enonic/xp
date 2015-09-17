@@ -94,33 +94,48 @@ public class StorageServiceImpl
     {
         final NodeBranchVersion nodeBranchVersion = this.branchService.get( nodeId, context );
 
-        if ( nodeBranchVersion == null )
-        {
-            return null;
-        }
-
-        final NodeVersionId currentVersion = nodeBranchVersion.getVersionId();
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
-
-        return canRead( context, node ) ? node : null;
+        return doGetNode( nodeBranchVersion );
     }
 
     @Override
     public Node get( final NodePath nodePath, final InternalContext context )
     {
-        return null;
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( nodePath, context );
+
+        return doGetNode( nodeBranchVersion );
     }
 
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
         final NodeBranchVersions nodeBranchVersions = this.branchService.get( nodeIds, InternalContext.from( ContextAccessor.current() ) );
+
+        return doReturnNodes( nodeBranchVersions );
+    }
+
+    @Override
+    public Nodes get( final NodePaths nodePaths, final InternalContext context )
+    {
+        final NodeBranchVersions nodeBranchVersions =
+            this.branchService.get( nodePaths, InternalContext.from( ContextAccessor.current() ) );
+
+        return doReturnNodes( nodeBranchVersions );
+    }
+
+    private Node doGetNode( final NodeBranchVersion nodeBranchVersion )
+    {
+        if ( nodeBranchVersion == null )
+        {
+            return null;
+        }
+
+        final Node node = nodeDao.getByVersionId( nodeBranchVersion.getVersionId() );
+
+        return canRead( node ) ? node : null;
+    }
+
+    private Nodes doReturnNodes( final NodeBranchVersions nodeBranchVersions )
+    {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
         nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
@@ -128,17 +143,10 @@ public class StorageServiceImpl
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodes.stream().filter( node -> canRead( context, node ) ).forEach( filteredNodes::add );
+        nodes.stream().filter( this::canRead ).forEach( filteredNodes::add );
 
         return filteredNodes.build();
     }
-
-    @Override
-    public Nodes get( final NodePaths nodePaths, final InternalContext context )
-    {
-        return null;
-    }
-
 
     private Node storeBranchAndIndex( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
     {
@@ -152,8 +160,7 @@ public class StorageServiceImpl
         return this.nodeDao.getByVersionId( nodeVersionId );
     }
 
-
-    protected boolean canRead( final InternalContext context, final Node node )
+    protected boolean canRead( final Node node )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
@@ -188,6 +195,4 @@ public class StorageServiceImpl
     {
         this.indexServiceInternal = indexServiceInternal;
     }
-
-
 }
