@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.impl.postprocess.injection.ContributionInjection;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
@@ -18,7 +19,7 @@ public class ControllerScriptImpl_filterResponseTest
     {
         this.postProcessor.addInjection( new ContributionInjection() );
 
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setPort( 80 );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
 
@@ -35,7 +36,7 @@ public class ControllerScriptImpl_filterResponseTest
     {
         this.postProcessor.addInjection( new ContributionInjection() );
 
-        this.portalRequest.setMethod( "GET" );
+        this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setPort( 80 );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
 
