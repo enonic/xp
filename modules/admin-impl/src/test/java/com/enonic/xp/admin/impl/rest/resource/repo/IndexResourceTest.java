@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
@@ -19,7 +19,7 @@ import com.enonic.xp.repository.RepositoryId;
 import static org.mockito.Matchers.isA;
 
 public class IndexResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private IndexService indexService;
 

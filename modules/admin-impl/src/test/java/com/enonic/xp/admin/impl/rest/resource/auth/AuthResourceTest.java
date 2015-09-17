@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.security.PrincipalKey;
@@ -25,9 +25,8 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
 public class AuthResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
-
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 
     private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );

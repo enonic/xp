@@ -1,10 +1,8 @@
-package com.enonic.xp.admin.impl.rest.provider;
+package com.enonic.xp.web.jaxrs.impl.json;
 
 import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
-import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
 
 @Provider
 public final class JsonObjectProvider

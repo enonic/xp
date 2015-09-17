@@ -1,17 +1,23 @@
-package com.enonic.xp.web.jaxrs;
+package com.enonic.xp.web.jaxrs.impl;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.spi.UnhandledException;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.web.handler.BaseWebHandler;
+import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.jaxrs.impl.JaxRsDispatcher;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
-public abstract class JaxRsHandler
+@Component(immediate = true, service = WebHandler.class)
+public final class JaxRsHandler
     extends BaseWebHandler
 {
     private final JaxRsDispatcher dispatcher;
@@ -24,6 +30,8 @@ public abstract class JaxRsHandler
     {
         this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;
+        setOrder( MAX_ORDER - 20 );
+        setPath( "/" );
     }
 
     protected final void setPath( final String path )
@@ -91,5 +99,16 @@ public abstract class JaxRsHandler
     {
         this.dispatcher.removeSingleton( instance );
         this.needsRefresh = true;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addResource( final JaxRsComponent resource )
+    {
+        addSingleton( resource );
+    }
+
+    public void removeResource( final JaxRsComponent resource )
+    {
+        removeSingleton( resource );
     }
 }

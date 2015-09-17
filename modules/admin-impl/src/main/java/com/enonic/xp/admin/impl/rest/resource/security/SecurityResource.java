@@ -18,8 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.AdminResource;
-import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
@@ -62,6 +60,8 @@ import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsExceptions;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -73,7 +73,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class SecurityResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private SecurityService securityService;
 
@@ -98,7 +98,7 @@ public final class SecurityResource
         final UserStore userStore = securityService.getUserStore( userStoreKey );
         if ( userStore == null )
         {
-            throw new NotFoundWebException( String.format( "User Store [%s] not found", keyParam ) );
+            throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
         }
 
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
@@ -202,7 +202,7 @@ public final class SecurityResource
 
         if ( !principalResult.isPresent() )
         {
-            throw new NotFoundWebException( String.format( "Principal [%s] was not found", keyParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
         }
 
         final Principal principal = principalResult.get();
@@ -229,7 +229,7 @@ public final class SecurityResource
                 return new RoleJson( (Role) principal, roleMembers );
         }
 
-        throw new NotFoundWebException( String.format( "Principal [%s] was not found", keyParam ) );
+        throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
     }
 
     @GET

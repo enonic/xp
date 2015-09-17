@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.multipart;
+package com.enonic.xp.web.jaxrs.impl.multipart;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.util.UnicodeFormNormalizer;
+import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
 
 final class MultipartFormImpl
     implements MultipartForm

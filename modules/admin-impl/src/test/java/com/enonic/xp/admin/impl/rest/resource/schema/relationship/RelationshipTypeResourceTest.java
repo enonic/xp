@@ -11,19 +11,19 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Resources;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
+import com.enonic.xp.web.jaxrs.impl.MockRestResponse;
 
 import static org.junit.Assert.*;
 
 public class RelationshipTypeResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private RelationshipTypeService relationshipTypeService;
 

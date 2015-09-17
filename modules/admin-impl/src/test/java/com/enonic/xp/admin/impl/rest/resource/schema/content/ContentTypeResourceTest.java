@@ -15,13 +15,13 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -31,9 +31,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.junit.Assert.*;
 
-
 public class ContentTypeResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private static final Instant SOME_DATE = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 

@@ -1,7 +1,6 @@
-package com.enonic.xp.admin.impl.rest.resource;
+package com.enonic.xp.web.jaxrs.impl;
 
 import java.net.URL;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,17 +15,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
-import com.enonic.xp.admin.impl.rest.multipart.MultipartFormReader;
-import com.enonic.xp.admin.impl.rest.provider.JsonObjectProvider;
-import com.enonic.xp.admin.impl.rest.provider.JsonSerializableProvider;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.web.jaxrs.impl.json.JsonObjectProvider;
+import com.enonic.xp.web.jaxrs.impl.json.ObjectMapperHelper;
+import com.enonic.xp.web.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-public abstract class AbstractResourceTest
+public abstract class JaxRsResourceTestSupport
 {
+    private String basePath = "/";
+
     private Dispatcher dispatcher;
 
     @Before
@@ -35,7 +35,6 @@ public abstract class AbstractResourceTest
     {
         this.dispatcher = MockDispatcherFactory.createDispatcher();
         this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
-        this.dispatcher.getProviderFactory().register( JsonSerializableProvider.class );
         this.dispatcher.getProviderFactory().register( MultipartFormReader.class );
         this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
@@ -96,16 +95,6 @@ public abstract class AbstractResourceTest
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
     }
 
-    protected final void assertUnorderedListEquals( Object[] a1, List a2 )
-    {
-        assertArrayEquals( a1, a2.toArray() );
-    }
-
-    protected final void assertListEquals( Object[] a1, List a2 )
-    {
-        assertArrayEquals( a1, a2.toArray() );
-    }
-
     protected final void assertArrayEquals( Object[] a1, Object[] a2 )
     {
         Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
@@ -134,8 +123,13 @@ public abstract class AbstractResourceTest
         return result.toString();
     }
 
+    protected final void setBasePath( final String basePath )
+    {
+        this.basePath = basePath;
+    }
+
     protected final RestRequestBuilder request()
     {
-        return new RestRequestBuilder( this.dispatcher );
+        return new RestRequestBuilder( this.dispatcher ).path( this.basePath );
     }
 }

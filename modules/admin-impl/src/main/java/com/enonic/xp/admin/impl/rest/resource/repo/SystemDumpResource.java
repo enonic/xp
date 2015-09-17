@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.admin.AdminResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.export.NodeExportResultsJson;
 import com.enonic.xp.admin.impl.rest.resource.export.NodeImportResultsJson;
@@ -38,7 +38,7 @@ import com.enonic.xp.vfs.VirtualFiles;
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true)
 public class SystemDumpResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private ExportService exportService;
 

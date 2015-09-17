@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource;
+package com.enonic.xp.web.jaxrs.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,7 @@ public final class RestRequestBuilder
             return path( path.substring( 1 ) );
         }
 
-        this.uri.append( ResourceConstants.REST_ROOT ).append( path );
+        this.uri.append( path );
         return this;
     }
 

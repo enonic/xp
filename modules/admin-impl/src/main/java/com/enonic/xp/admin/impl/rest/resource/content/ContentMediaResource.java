@@ -17,8 +17,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.admin.AdminResource;
-import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -29,6 +27,8 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsExceptions;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -38,7 +38,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentMediaResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     private ContentService contentService;
 
@@ -71,18 +71,18 @@ public final class ContentMediaResource
 
         if ( content == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] was not found", contentId ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
         if ( !( content instanceof Media ) )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] is not a media", contentId ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] is not a media", contentId ) );
         }
 
         final Attachment attachment = resolveAttachment( identifier, (Media) content );
         if ( attachment == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] has no attachments", contentId ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
         }
         else
         {

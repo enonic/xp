@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
-import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -40,9 +39,6 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
-import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
-import com.enonic.xp.admin.impl.rest.exception.ReorderNotAllowedException;
-import com.enonic.xp.admin.impl.rest.multipart.MultipartForm;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -78,7 +74,6 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -113,7 +108,6 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -130,6 +124,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsExceptions;
+import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -140,7 +137,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentResource
-    implements AdminResource
+    implements JaxRsComponent
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
@@ -316,7 +313,6 @@ public final class ContentResource
         return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
-
     @POST
     @Path("delete")
     public DeleteContentResultJson delete( final DeleteContentJson json )
@@ -352,7 +348,7 @@ public final class ContentResource
                 } );
 
             }
-            catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
+            catch ( final Exception e )
             {
                 try
                 {
@@ -362,9 +358,9 @@ public final class ContentResource
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), e.getMessage() );
                     }
                 }
-                catch ( ContentNotFoundException | ContentAccessException ex )
+                catch ( final Exception e2 )
                 {
-                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e.getMessage() );
+                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e2.getMessage() );
                 }
 
             }
@@ -507,7 +503,7 @@ public final class ContentResource
             if ( params.isManualOrder() )
             {
 
-                content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+                this.contentService.setChildOrder( SetContentChildOrderParams.create().
                     childOrder( ChildOrder.manualOrder() ).
                     contentId( ContentId.from( params.getContentId() ) ).
                     silent( true ).
@@ -515,9 +511,8 @@ public final class ContentResource
             }
             else
             {
-                throw new ReorderNotAllowedException(
-                    String.format( "Not allowed to reorder children manually, current parentOrder = [%s].",
-                                   content.getChildOrder().toString() ) );
+                throw JaxRsExceptions.badRequest( "Not allowed to reorder children manually, current parentOrder = [%s].",
+                                                  content.getChildOrder().toString() );
             }
         }
 
@@ -549,7 +544,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] was not found", idParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", idParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -574,7 +569,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] was not found", pathParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", pathParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -854,9 +849,7 @@ public final class ContentResource
 
     private long countContentsAndTheirChildren( ContentPaths contentsPaths )
     {
-        long total = contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
-
-        return total;
+        return contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
     }
 
     private long countChildren( ContentPaths contentsPaths )
