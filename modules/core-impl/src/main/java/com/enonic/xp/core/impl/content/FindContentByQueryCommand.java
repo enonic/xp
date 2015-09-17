@@ -40,7 +40,7 @@ final class FindContentByQueryCommand
 
         }
 
-        Contents contents = this.translator.fromNodes( foundNodes );
+        Contents contents = this.oldTranslator.fromNodes( foundNodes );
 
         return FindContentByQueryResult.create().
             contents( contents ).

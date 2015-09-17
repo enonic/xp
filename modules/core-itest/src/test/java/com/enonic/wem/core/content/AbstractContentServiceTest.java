@@ -40,8 +40,9 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslator;
+import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.OldContentNodeTranslator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeRegistryImpl;
@@ -113,7 +114,9 @@ public class AbstractContentServiceTest
 
     protected ContentTypeRegistry contentTypeRegistry;
 
-    protected ContentNodeTranslator contentNodeTranslator;
+    protected OldContentNodeTranslator oldContentNodeTranslator;
+
+    protected ContentNodeTranslatorImpl translator;
 
     private NodeDaoImpl nodeDao;
 
@@ -179,7 +182,7 @@ public class AbstractContentServiceTest
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
 
-        this.contentNodeTranslator = new ContentNodeTranslator();
+        this.oldContentNodeTranslator = new OldContentNodeTranslator();
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
@@ -195,13 +198,17 @@ public class AbstractContentServiceTest
         contentTypeService.setMixinService( mixinService );
         contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
+        this.translator = new ContentNodeTranslatorImpl();
+        this.translator.setNodeService( this.nodeService );
+
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
         this.contentService.setSiteService( siteService );
-        this.contentService.setContentNodeTranslator( this.contentNodeTranslator );
+        this.contentService.setOldContentNodeTranslator( this.oldContentNodeTranslator );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
+        this.contentService.setTranslator( this.translator );
 
         createContentRepository();
         waitForClusterHealth();

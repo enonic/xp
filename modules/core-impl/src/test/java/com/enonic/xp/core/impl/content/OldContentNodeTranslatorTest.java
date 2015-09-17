@@ -32,16 +32,16 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
-public class ContentNodeTranslatorTest
+public class OldContentNodeTranslatorTest
 {
     private static final String CONTENT_DATA_PREFIX = ContentPropertyNames.DATA;
 
-    private ContentNodeTranslator translator;
+    private OldContentNodeTranslator translator;
 
     @Before
     public void before()
     {
-        translator = new ContentNodeTranslator();
+        translator = new OldContentNodeTranslator();
     }
 
     @Test

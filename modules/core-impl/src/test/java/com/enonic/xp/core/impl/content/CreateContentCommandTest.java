@@ -32,6 +32,8 @@ public class CreateContentCommandTest
 
     private NodeService nodeService;
 
+    private OldContentNodeTranslator oldTranslator = Mockito.mock( OldContentNodeTranslator.class );
+
     private ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
     private EventPublisher eventPublisher;
@@ -151,13 +153,13 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
+        Mockito.when( this.oldTranslator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
             ( invocation ) -> {
                 {
                     Object[] args = invocation.getArguments();
                     CreateContentTranslatorParams passedParam = (CreateContentTranslatorParams) args[0];
                     assertEquals( NamePrettyfier.create( params.getDisplayName() ), passedParam.getName().toString() );
-                    return new ContentNodeTranslator().toCreateNodeParams( passedParam );
+                    return new OldContentNodeTranslator().toCreateNodeParams( passedParam );
                 }
             } );
 
@@ -181,13 +183,13 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        Mockito.when( this.translator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
+        Mockito.when( this.oldTranslator.toCreateNodeParams( Mockito.any( CreateContentTranslatorParams.class ) ) ).thenAnswer(
             ( invocation ) -> {
                 {
                     Object[] args = invocation.getArguments();
                     CreateContentTranslatorParams passedParam = (CreateContentTranslatorParams) args[0];
                     assertEquals( "myname", passedParam.getName().toString() );
-                    return new ContentNodeTranslator().toCreateNodeParams( passedParam );
+                    return new OldContentNodeTranslator().toCreateNodeParams( passedParam );
                 }
             } );
 
@@ -210,6 +212,7 @@ public class CreateContentCommandTest
             params( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
+            oldTranslator( this.oldTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).

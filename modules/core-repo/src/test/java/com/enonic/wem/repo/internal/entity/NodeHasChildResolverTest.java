@@ -7,7 +7,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildResult;
+import com.enonic.xp.node.NodesHasChildrenResult;
 
 import static org.junit.Assert.*;
 
@@ -72,7 +72,7 @@ public class NodeHasChildResolverTest
             name( "my-child-node-2" ).
             build() );
 
-        final NodesHasChildResult result = NodeHasChildResolver.create().
+        final NodesHasChildrenResult result = NodeHasChildResolver.create().
             queryService( this.queryService ).
             build().
             resolve( Nodes.from( parentNode1, parentNode2, parentNode3 ) );

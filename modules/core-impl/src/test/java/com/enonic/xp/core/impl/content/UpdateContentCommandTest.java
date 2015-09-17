@@ -37,6 +37,8 @@ public class UpdateContentCommandTest
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
+    private final OldContentNodeTranslator oldTranslator = Mockito.mock( OldContentNodeTranslator.class );
+
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
@@ -61,6 +63,7 @@ public class UpdateContentCommandTest
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
+            oldTranslator( this.oldTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
@@ -93,6 +96,7 @@ public class UpdateContentCommandTest
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
+            oldTranslator( this.oldTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
@@ -102,7 +106,7 @@ public class UpdateContentCommandTest
 
         final Node mockNode = Node.create().build();
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
+        Mockito.when( oldTranslator.fromNode( mockNode ) ).thenReturn( existingContent );
 
         // exercise
         command.execute();

@@ -231,6 +231,31 @@ public class ContentServiceImplTest_findByParent
         assertEquals( 2, result.getHits() );
         assertEquals( 4, result.getTotalHits() );
         assertEquals( 2, result.getContents().getSize() );
-
     }
+
+
+    @Test
+    public void hasChildResolved()
+        throws Exception
+    {
+        final Content parentContent = createContent( ContentPath.ROOT );
+        final Content content1 = createContent( parentContent.getPath() );
+        final Content content1_1 = createContent( content1.getPath() );
+
+        final ContentPath parentContentPath = parentContent.getPath();
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( 0 ).
+            size( 30 ).
+            parentPath( parentContentPath ).
+            build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 1, result.getTotalHits() );
+        final Content content1Result = result.getContents().getContentById( content1.getId() );
+        assertTrue( content1Result.hasChildren() );
+    }
+
 }

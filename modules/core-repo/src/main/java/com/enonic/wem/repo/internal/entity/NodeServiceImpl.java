@@ -48,7 +48,7 @@ import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildResult;
+import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
@@ -624,7 +624,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodesHasChildResult hasChild( final Nodes nodes )
+    public NodesHasChildrenResult hasChildren( final Nodes nodes )
     {
         return NodeHasChildResolver.create().
             queryService( this.queryService ).
@@ -633,7 +633,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean hasChild( final Node node )
+    public boolean hasChildren( final Node node )
     {
         return NodeHasChildResolver.create().
             queryService( this.queryService ).

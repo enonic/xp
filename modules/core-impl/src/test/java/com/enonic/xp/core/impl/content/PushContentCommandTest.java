@@ -31,9 +31,11 @@ public class PushContentCommandTest
 
     private ContentTypeService contentTypeService;
 
-    private ContentNodeTranslator contentNodeTranslator;
+    private OldContentNodeTranslator oldContentNodeTranslator;
 
     private EventPublisher eventPublisher;
+
+    private ContentNodeTranslator translator;
 
     @Before
     public void setUp()
@@ -41,8 +43,9 @@ public class PushContentCommandTest
     {
         this.nodeService = Mockito.mock( NodeService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.contentNodeTranslator = Mockito.mock( ContentNodeTranslator.class );
+        this.oldContentNodeTranslator = Mockito.mock( OldContentNodeTranslator.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.translator = Mockito.mock( ContentNodeTranslator.class );
     }
 
     @Test
@@ -59,7 +62,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -75,7 +78,8 @@ public class PushContentCommandTest
             target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            oldTranslator( this.oldContentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -97,7 +101,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -113,7 +117,8 @@ public class PushContentCommandTest
             target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            oldTranslator( this.oldContentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -137,7 +142,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -153,7 +158,8 @@ public class PushContentCommandTest
             target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            oldTranslator( this.oldContentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -177,7 +183,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -193,7 +199,8 @@ public class PushContentCommandTest
             target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            oldTranslator( this.oldContentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -223,7 +230,7 @@ public class PushContentCommandTest
         final Content invalidContent = createContent( "s2", "s2Name", ContentPath.ROOT, false );
         final Contents contents = Contents.from( validContent, invalidContent );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
             thenReturn( contents );
 
         final PushContentsResult result = PushContentCommand.create().
@@ -233,7 +240,8 @@ public class PushContentCommandTest
             target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            oldTranslator( this.oldContentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();

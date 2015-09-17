@@ -5,13 +5,23 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-public class NodesHasChildResult
+public class NodesHasChildrenResult
 {
     private final ImmutableMap<NodeId, Boolean> valueMap;
 
-    public NodesHasChildResult( final Builder builder )
+    public NodesHasChildrenResult( final Builder builder )
     {
         this.valueMap = ImmutableMap.copyOf( builder.valueMap );
+    }
+
+    private NodesHasChildrenResult()
+    {
+        this.valueMap = ImmutableMap.of();
+    }
+
+    public static NodesHasChildrenResult empty()
+    {
+        return new NodesHasChildrenResult();
     }
 
     public boolean hasChild( final NodeId nodeId )
@@ -34,9 +44,9 @@ public class NodesHasChildResult
             return this;
         }
 
-        public NodesHasChildResult build()
+        public NodesHasChildrenResult build()
         {
-            return new NodesHasChildResult( this );
+            return new NodesHasChildrenResult( this );
         }
     }
 

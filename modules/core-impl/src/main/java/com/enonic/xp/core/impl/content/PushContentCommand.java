@@ -279,13 +279,13 @@ public class PushContentCommand
 
     private void appendPushNodesResult( final PushNodesResult pushNodesResult )
     {
-        this.resultBuilder.addPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+        this.resultBuilder.addPushedContent( oldTranslator.fromNodes( pushNodesResult.getSuccessfull() ) );
 
-        this.resultBuilder.addChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
+        this.resultBuilder.addChildrenPushedContent( oldTranslator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
 
         for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
         {
-            final Content content = translator.fromNode( failedNode.getNode() );
+            final Content content = oldTranslator.fromNode( failedNode.getNode() );
 
             final PushContentsResult.FailedReason failedReason;
 
@@ -337,6 +337,7 @@ public class PushContentCommand
     {
         return GetContentByIdsCommand.create( getContentParams ).
             nodeService( this.nodeService ).
+            oldTranslator( this.oldTranslator ).
             translator( this.translator ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).

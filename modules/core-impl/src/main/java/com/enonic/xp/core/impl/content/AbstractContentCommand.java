@@ -11,7 +11,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
 {
-    final ContentNodeTranslator translator;
+    final OldContentNodeTranslator oldTranslator;
 
     final NodeService nodeService;
 
@@ -19,12 +19,15 @@ abstract class AbstractContentCommand
 
     final EventPublisher eventPublisher;
 
+    final ContentNodeTranslator translator;
+
     AbstractContentCommand( final Builder builder )
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
-        this.translator = builder.translator;
+        this.oldTranslator = builder.oldTranslator;
         this.eventPublisher = builder.eventPublisher;
+        this.translator = builder.translator;
     }
 
     Content getContent( final ContentId contentId )
@@ -47,9 +50,11 @@ abstract class AbstractContentCommand
 
         private ContentTypeService contentTypeService;
 
-        private ContentNodeTranslator translator;
+        private OldContentNodeTranslator oldTranslator;
 
         private EventPublisher eventPublisher;
+
+        private ContentNodeTranslator translator;
 
         Builder()
         {
@@ -58,16 +63,24 @@ abstract class AbstractContentCommand
 
         Builder( final AbstractContentCommand source )
         {
-            this.translator = source.translator;
+            this.oldTranslator = source.oldTranslator;
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
+            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B oldTranslator( final OldContentNodeTranslator translator )
+        {
+            this.oldTranslator = translator;
             return (B) this;
         }
 
@@ -96,8 +109,8 @@ abstract class AbstractContentCommand
         {
             Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
             Preconditions.checkNotNull( contentTypeService, "contentTypesService cannot be null" );
-            Preconditions.checkNotNull( translator, "translator cannot be null" );
             Preconditions.checkNotNull( eventPublisher, "eventPublisher cannot be null" );
+            Preconditions.checkNotNull( translator, "translator cannot be null" );
         }
     }
 

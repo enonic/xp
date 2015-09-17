@@ -1,10 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -65,13 +62,13 @@ final class DeleteContentCommand
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
-        final Set<Node> nodesToDelete = Sets.newLinkedHashSet();
+        final Nodes.Builder nodesToDelete = Nodes.create();
         recursiveDelete( nodeToDelete, nodesToDelete );
 
-        return translator.fromNodes( Nodes.from( nodesToDelete ) );
+        return this.translator.fromNodes( nodesToDelete.build(), false );
     }
 
-    private void recursiveDelete( Node nodeToDelete, Set<Node> deletedNodes )
+    private void recursiveDelete( Node nodeToDelete, Nodes.Builder deletedNodes )
     {
         final CompareStatus status = getCompareStatus( nodeToDelete );
 
@@ -87,7 +84,7 @@ final class DeleteContentCommand
                 nodeState( NodeState.PENDING_DELETE ).
                 build() );
 
-            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes().getSet() );
+            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
 
             this.nodeService.refresh();
 

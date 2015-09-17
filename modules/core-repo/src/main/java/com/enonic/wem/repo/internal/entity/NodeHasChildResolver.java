@@ -7,7 +7,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildResult;
+import com.enonic.xp.node.NodesHasChildrenResult;
 
 public class NodeHasChildResolver
 {
@@ -18,10 +18,10 @@ public class NodeHasChildResolver
         this.queryService = builder.queryService;
     }
 
-    public NodesHasChildResult resolve( final Nodes nodes )
+    public NodesHasChildrenResult resolve( final Nodes nodes )
     {
 
-        final NodesHasChildResult.Builder builder = NodesHasChildResult.create();
+        final NodesHasChildrenResult.Builder builder = NodesHasChildrenResult.create();
 
         for ( final Node node : nodes )
         {

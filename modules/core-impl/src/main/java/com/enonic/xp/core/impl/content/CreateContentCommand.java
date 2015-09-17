@@ -24,6 +24,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.validate.DataValidationError;
+import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
@@ -33,9 +36,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.core.impl.content.validate.DataValidationError;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -69,12 +69,12 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = translator.toCreateNodeParams( createContentTranslatorParams );
+        final CreateNodeParams createNodeParams = oldTranslator.toCreateNodeParams( createContentTranslatorParams );
 
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
-            final Content createdContent = translator.fromNode( createdNode );
+            final Content createdContent = oldTranslator.fromNode( createdNode );
             eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
             eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
 
@@ -115,11 +115,7 @@ final class CreateContentCommand
     {
         try
         {
-            final Content parent = GetContentByPathCommand.create( params.getParent() ).
-                nodeService( this.nodeService ).
-                contentTypeService( this.contentTypeService ).
-                translator( this.translator ).
-                eventPublisher( this.eventPublisher ).
+            final Content parent = GetContentByPathCommand.create( params.getParent(), this ).
                 build().
                 execute();
 
@@ -144,7 +140,7 @@ final class CreateContentCommand
             final Content parent = GetContentByPathCommand.create( params.getParent() ).
                 nodeService( this.nodeService ).
                 contentTypeService( this.contentTypeService ).
-                translator( this.translator ).
+                oldTranslator( this.oldTranslator ).
                 eventPublisher( this.eventPublisher ).
                 build().
                 execute();
