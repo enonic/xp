@@ -1,8 +1,8 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile project( ':script-api' )
-    testCompile project( path: ':script-api', configuration: 'testOutput' )
+    compile project( ':script:script-api' )
+    testCompile project( path: ':script:script-api', configuration: 'testOutput' )
 }
 
 bundle {

@@ -9,8 +9,8 @@ include 'core-mail'
 include 'core-impl'
 include 'core-itest'
 
-include 'script-api'
-include 'script-impl'
+include 'script:script-api'
+include 'script:script-impl'
 
 include 'web:web-api'
 include 'web:web-impl'
