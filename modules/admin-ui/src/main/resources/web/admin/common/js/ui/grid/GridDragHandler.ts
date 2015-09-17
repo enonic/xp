@@ -39,6 +39,13 @@ module api.ui.grid {
             draggableClass = (" " + draggableClass).replace(/\s/g, ".");
             var row = Element.fromString(draggableClass).getParentElement();
 
+            var nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
+                draggedNode = nodes[row.getSiblingIndex()];
+            draggedNode.setExpanded(false);
+            this.contentGrid.refreshNode(draggedNode);
+
+            row = Element.fromString(draggableClass).getParentElement();
+
             this.draggableTop = row.getEl().getTopPx();
             this.draggableItem = Element.fromString(row.toString());
 
@@ -55,7 +62,7 @@ module api.ui.grid {
         }
 
 
-        handleDrag(event: Event, data: DragEventData) {
+        protected handleDrag(event: Event, data: DragEventData) {
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
@@ -73,11 +80,6 @@ module api.ui.grid {
         private prev = 0;
 
         protected handleBeforeMoveRows(event: Event, data: DragEventData): boolean {
-            // no point in moving before or after itself
-            if (data.rows[0] == data.insertBefore || data.rows[0] == data.insertBefore - 1) {
-                event.stopPropagation();
-                return false;
-            }
 
             if (!this.draggableItem) {
                 this.handleDragStart();
@@ -90,14 +92,17 @@ module api.ui.grid {
 
             for (var key in children) {
                 var currentRowTop = children[key].getEl().getTopPx();
-                if (data.rows[0] < data.insertBefore) {//move item down
+                if (data.rows[0] <= data.insertBefore) {//move item down
                     if (this.draggableTop < currentRowTop && currentRowTop - this.rowHeight / 2 <= draggableTop) { //items between draggable and insert before
+                        debugger;
                         children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
                     }
-                } else if (data.rows[0] > data.insertBefore) {//move item up
+                }
+                if (data.rows[0] >= data.insertBefore) {//move item up
                     if (this.draggableTop > currentRowTop && currentRowTop + this.rowHeight / 2 >= draggableTop) {//items between draggable and insert before
+                        debugger;
                         children[key].getEl().setMarginTop(this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
@@ -114,7 +119,7 @@ module api.ui.grid {
             var draggableRow = args.rows[0];
 
             var rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
-            var insertBefore = this.getCorrectedInsertBefore(args, draggableRow);//args.insertBefore; //dssssssssssssssssssssssssssssssss
+            var insertBefore = this.getCorrectedInsertBefore(args, draggableRow);
             var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
                 ? null
                 : this.getModelId(dataView.getItem(insertBefore).getData());
