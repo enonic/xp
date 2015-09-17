@@ -39,8 +39,6 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
-import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
-import com.enonic.xp.admin.impl.rest.exception.ReorderNotAllowedException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -126,8 +124,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.web.jaxrs.JaxRsResource;
-import com.enonic.xp.web.jaxrs.rest.multipart.MultipartForm;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsExceptions;
+import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -138,7 +137,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentResource
-    implements JaxRsResource
+    implements JaxRsComponent
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
@@ -512,9 +511,8 @@ public final class ContentResource
             }
             else
             {
-                throw new ReorderNotAllowedException(
-                    String.format( "Not allowed to reorder children manually, current parentOrder = [%s].",
-                                   content.getChildOrder().toString() ) );
+                throw JaxRsExceptions.badRequest( "Not allowed to reorder children manually, current parentOrder = [%s].",
+                                                  content.getChildOrder().toString() );
             }
         }
 
@@ -546,7 +544,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] was not found", idParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", idParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -571,7 +569,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw new NotFoundWebException( String.format( "Content [%s] was not found", pathParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", pathParam ) );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {

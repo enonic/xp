@@ -10,10 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 public final class ObjectMapperHelper
 {
-    private ObjectMapperHelper()
-    {
-    }
-
     public static ObjectMapper create()
     {
         final ObjectMapper mapper = new ObjectMapper();

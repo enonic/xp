@@ -2,7 +2,7 @@ package com.enonic.xp.web.jaxrs;
 
 public interface JaxRsResourceFactory<T>
 {
-    public Class<T> getType();
+    Class<T> getType();
 
-    public T newResource();
+    T newResource();
 }

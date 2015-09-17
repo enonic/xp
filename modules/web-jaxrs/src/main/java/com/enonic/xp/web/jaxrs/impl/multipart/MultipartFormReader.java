@@ -1,4 +1,4 @@
-package com.enonic.xp.web.jaxrs.impl.rest.multipart;
+package com.enonic.xp.web.jaxrs.impl.multipart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
-import com.enonic.xp.web.jaxrs.rest.multipart.MultipartForm;
+import com.enonic.xp.web.jaxrs.multipart.MultipartForm;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)

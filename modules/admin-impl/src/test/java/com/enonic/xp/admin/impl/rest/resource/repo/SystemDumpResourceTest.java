@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
@@ -20,7 +20,7 @@ import com.enonic.xp.node.NodePath;
 import static org.mockito.Matchers.isA;
 
 public class SystemDumpResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private ExportService exportService;
 

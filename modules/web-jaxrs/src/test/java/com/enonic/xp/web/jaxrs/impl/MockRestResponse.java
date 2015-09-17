@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource;
+package com.enonic.xp.web.jaxrs.impl;
 
 import com.google.common.base.Charsets;
 

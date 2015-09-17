@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Iterables;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.security.CreateGroupParams;
@@ -55,7 +55,7 @@ import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 public class SecurityResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 

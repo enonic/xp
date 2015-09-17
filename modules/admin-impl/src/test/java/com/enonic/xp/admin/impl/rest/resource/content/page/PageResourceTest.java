@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -30,7 +30,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 
 public class PageResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private PageService pageService;
 

@@ -19,7 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.web.jaxrs.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -40,7 +40,7 @@ import com.enonic.xp.util.Exceptions;
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public final class ContentIconResource
-    implements JaxRsResource
+    implements JaxRsComponent
 {
     private ContentService contentService;
 

@@ -13,12 +13,12 @@ import javax.ws.rs.ext.Provider;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.web.jaxrs.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Component(immediate = true)
 @Provider
 public final class RoleBasedSecurityFeature
-    implements DynamicFeature, JaxRsResource
+    implements DynamicFeature, JaxRsComponent
 {
     @Override
     public void configure( final ResourceInfo resourceInfo, final FeatureContext configurable )

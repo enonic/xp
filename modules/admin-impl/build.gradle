@@ -4,6 +4,7 @@ dependencies {
     compile project( ':admin-api' )
     testCompile project( ':web-jaxrs' )
     testCompile project( path: ':portal-api', configuration: 'testOutput' )
+    testCompile project( path: ':web-jaxrs', configuration: 'testOutput' )
 }
 
 bundle {

@@ -13,12 +13,12 @@ import javax.ws.rs.core.Response;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.web.jaxrs.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path("/")
 @Component(immediate = true)
 public final class MainResource
-    implements JaxRsResource
+    implements JaxRsComponent
 {
     private final AppHtmlHandler appHtmlHandler;
 

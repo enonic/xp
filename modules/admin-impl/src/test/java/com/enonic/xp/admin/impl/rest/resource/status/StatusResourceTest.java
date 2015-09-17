@@ -3,13 +3,13 @@ package com.enonic.xp.admin.impl.rest.resource.status;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
 public class StatusResourceTest
-    extends AbstractResourceTest
+    extends AdminResourceTestSupport
 {
     private ServerInfo serverInfo;
 

@@ -14,10 +14,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.jaxrs.JaxRsResource;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Component(immediate = true, service = WebHandler.class)
-public class JaxRsHandler
+public final class JaxRsHandler
     extends BaseWebHandler
 {
     private final JaxRsDispatcher dispatcher;
@@ -32,7 +32,6 @@ public class JaxRsHandler
         this.needsRefresh = true;
         setOrder( MAX_ORDER - 20 );
         setPath( "/" );
-        addSingleton( new CommonJaxRsFeature() );
     }
 
     protected final void setPath( final String path )
@@ -103,12 +102,12 @@ public class JaxRsHandler
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addResource( final JaxRsResource resource )
+    public void addResource( final JaxRsComponent resource )
     {
         addSingleton( resource );
     }
 
-    public void removeResource( final JaxRsResource resource )
+    public void removeResource( final JaxRsComponent resource )
     {
         removeSingleton( resource );
     }
