@@ -53,9 +53,20 @@ include 'repack-elasticsearch'
 
 rootProject.name = 'xp'
 
-rootProject.children.each { project ->
-    String projectDirName = "modules/${project.name}"
-    project.projectDir = new File( (File) settingsDir, projectDirName )
-    assert project.projectDir.isDirectory()
-    assert project.buildFile.isFile()
+configureProjects( rootProject )
+
+def configureProjects( root )
+{
+    root.children.each { p ->
+        configureProject( p )
+        configureProjects( p )
+    }
+}
+
+def configureProject( p )
+{
+    String dirName = p.path.substring( 1 ).replace( ':', '/' )
+    p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
+    assert p.projectDir.isDirectory()
+    assert p.buildFile.isFile()
 }
