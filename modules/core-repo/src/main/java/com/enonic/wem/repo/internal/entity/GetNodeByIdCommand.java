@@ -25,11 +25,6 @@ public class GetNodeByIdCommand
 
         final Node node = this.storageService.get( id, InternalContext.from( context ) );
 
-        if ( node == null || !canRead( node ) )
-        {
-            return null;
-        }
-
         return node;
     }
 

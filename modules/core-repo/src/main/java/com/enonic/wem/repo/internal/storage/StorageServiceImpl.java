@@ -9,8 +9,10 @@ import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -18,7 +20,11 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public class StorageServiceImpl
@@ -100,7 +106,9 @@ public class StorageServiceImpl
             return null;
         }
 
-        return nodeDao.getByVersionId( currentVersion );
+        final Node node = nodeDao.getByVersionId( currentVersion );
+
+        return canRead( context, node ) ? node : null;
     }
 
     @Override
@@ -112,7 +120,17 @@ public class StorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        return null;
+        final NodeBranchVersions nodeBranchVersions = this.branchService.get( nodeIds, InternalContext.from( ContextAccessor.current() ) );
+        final NodeVersionIds.Builder builder = NodeVersionIds.create();
+        nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
+
+        final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
+
+        final Nodes.Builder filteredNodes = Nodes.create();
+
+        nodes.stream().filter( node -> canRead( context, node ) ).forEach( filteredNodes::add );
+
+        return filteredNodes.build();
     }
 
     @Override
@@ -132,6 +150,19 @@ public class StorageServiceImpl
         this.indexServiceInternal.store( node, nodeVersionId, context );
 
         return this.nodeDao.getByVersionId( nodeVersionId );
+    }
+
+
+    protected boolean canRead( final InternalContext context, final Node node )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
+        {
+            return true;
+        }
+
+        return node.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.READ );
     }
 
     @Reference

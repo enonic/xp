@@ -3,10 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 
 public class GetNodesByIdsCommand
@@ -22,11 +20,7 @@ public class GetNodesByIdsCommand
 
     public Nodes execute()
     {
-        final NodeBranchVersions nodeBranchVersions = this.branchService.get( ids, InternalContext.from( ContextAccessor.current() ) );
-        final NodeVersionIds.Builder builder = NodeVersionIds.create();
-        nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
-
-        return nodeDao.getByVersionIds( builder.build() );
+        return this.storageService.get( ids, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()
