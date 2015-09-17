@@ -1,6 +1,6 @@
 dependencies {
     compile project( ':core-api' )
-    compile project( ':web-api' )
+    compile project( ':web:web-api' )
     compile project( ':portal-api' )
     compile project( ':script-impl' )
     compile 'junit:junit:4.10'

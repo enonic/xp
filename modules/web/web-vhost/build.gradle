@@ -1,8 +1,8 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile project( ':web-api' )
-    testCompile project( path: ':web-api', configuration: 'testOutput' )
+    compile project( ':web:web-api' )
+    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 
 bundle {

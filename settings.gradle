@@ -12,10 +12,10 @@ include 'core-itest'
 include 'script-api'
 include 'script-impl'
 
-include 'web-api'
-include 'web-impl'
-include 'web-jaxrs'
-include 'web-vhost'
+include 'web:web-api'
+include 'web:web-impl'
+include 'web:web-jaxrs'
+include 'web:web-vhost'
 
 include 'portal-api'
 include 'portal-impl'
@@ -24,8 +24,6 @@ include 'admin-api'
 include 'admin-impl'
 include 'admin-event'
 include 'admin-ui'
-
-include 'itest-core'
 
 include 'upgrade'
 include 'toolbox'
