@@ -17,7 +17,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.jaxrs.JaxRsResource;
 
 @Component(immediate = true, service = WebHandler.class)
-public abstract class JaxRsHandler
+public class JaxRsHandler
     extends BaseWebHandler
 {
     private final JaxRsDispatcher dispatcher;
