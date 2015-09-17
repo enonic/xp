@@ -337,7 +337,6 @@ public class PushContentCommand
     {
         return GetContentByIdsCommand.create( getContentParams ).
             nodeService( this.nodeService ).
-            oldTranslator( this.oldTranslator ).
             translator( this.translator ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).

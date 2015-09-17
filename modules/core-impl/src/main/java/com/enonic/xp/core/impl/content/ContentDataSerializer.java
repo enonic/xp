@@ -45,7 +45,6 @@ public final class ContentDataSerializer
 {
     private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
-
     public PropertyTree toNodeData( final UpdateContentTranslatorParams params )
     {
         final PropertyTree newPropertyTree = new PropertyTree();

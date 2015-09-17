@@ -11,8 +11,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
 {
-    final OldContentNodeTranslator oldTranslator;
-
     final NodeService nodeService;
 
     final ContentTypeService contentTypeService;
@@ -25,7 +23,6 @@ abstract class AbstractContentCommand
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
-        this.oldTranslator = builder.oldTranslator;
         this.eventPublisher = builder.eventPublisher;
         this.translator = builder.translator;
     }
@@ -50,20 +47,16 @@ abstract class AbstractContentCommand
 
         private ContentTypeService contentTypeService;
 
-        private OldContentNodeTranslator oldTranslator;
-
         private EventPublisher eventPublisher;
 
         private ContentNodeTranslator translator;
 
         Builder()
         {
-
         }
 
         Builder( final AbstractContentCommand source )
         {
-            this.oldTranslator = source.oldTranslator;
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
@@ -74,13 +67,6 @@ abstract class AbstractContentCommand
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B oldTranslator( final OldContentNodeTranslator translator )
-        {
-            this.oldTranslator = translator;
             return (B) this;
         }
 

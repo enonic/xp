@@ -99,7 +99,7 @@ final class UpdateContentCommand
             modifier( getCurrentUser().getKey() ).
             build();
 
-        final UpdateNodeParams updateNodeParams = oldTranslator.toUpdateNodeParams( updateContentTranslatorParams );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams );
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
         eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );

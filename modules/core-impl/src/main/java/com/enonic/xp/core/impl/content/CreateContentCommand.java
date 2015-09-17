@@ -69,7 +69,7 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = oldTranslator.toCreateNodeParams( createContentTranslatorParams );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams );
 
         try
         {
@@ -141,8 +141,8 @@ final class CreateContentCommand
             final Content parent = GetContentByPathCommand.create( params.getParent() ).
                 nodeService( this.nodeService ).
                 contentTypeService( this.contentTypeService ).
-                oldTranslator( this.oldTranslator ).
                 eventPublisher( this.eventPublisher ).
+                translator( this.translator ).
                 build().
                 execute();
 

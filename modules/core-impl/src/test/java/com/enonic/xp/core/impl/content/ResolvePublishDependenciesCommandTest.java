@@ -31,8 +31,6 @@ public class ResolvePublishDependenciesCommandTest
 
     private ContentTypeService contentTypeService;
 
-    private OldContentNodeTranslator oldContentNodeTranslator;
-
     private EventPublisher eventPublisher;
 
     private ContentNodeTranslator translator;
@@ -43,7 +41,6 @@ public class ResolvePublishDependenciesCommandTest
     {
         this.nodeService = Mockito.mock( NodeService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.oldContentNodeTranslator = Mockito.mock( OldContentNodeTranslator.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.translator = Mockito.mock( ContentNodeTranslator.class );
     }
@@ -73,7 +70,6 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            oldTranslator( this.oldContentNodeTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ), ContentId.from( "s2" ) ) ).
@@ -110,7 +106,6 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            oldTranslator( this.oldContentNodeTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
@@ -151,7 +146,6 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            oldTranslator( this.oldContentNodeTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
@@ -192,7 +186,6 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            oldTranslator( this.oldContentNodeTranslator ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
