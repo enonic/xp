@@ -11,11 +11,11 @@ import com.google.common.collect.Maps;
 
 import static org.junit.Assert.*;
 
-public class InterpolatorTest
+public class ConfigInterpolatorTest
 {
     private Configuration newConfig()
     {
-        return Configuration.create().
+        return ConfigBuilder.create().
             add( "key1", "value1" ).
             add( "key2", "other ${key1}" ).
             add( "key3", "unknown ${other}" ).
@@ -50,7 +50,7 @@ public class InterpolatorTest
     @Test
     public void empty()
     {
-        final Interpolator interpolator = new Interpolator();
+        final ConfigInterpolator interpolator = new ConfigInterpolator();
         final Configuration config = interpolator.interpolate( newConfig() );
 
         assertNotNull( config );
@@ -66,7 +66,7 @@ public class InterpolatorTest
     @Test
     public void environment()
     {
-        final Interpolator interpolator = new Interpolator();
+        final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.environment( newEnvironment() );
         final Configuration config = interpolator.interpolate( newConfig() );
 
@@ -83,7 +83,7 @@ public class InterpolatorTest
     @Test
     public void systemProperties()
     {
-        final Interpolator interpolator = new Interpolator();
+        final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.systemProperties( newSystemProperties() );
         final Configuration config = interpolator.interpolate( newConfig() );
 
@@ -100,7 +100,7 @@ public class InterpolatorTest
     @Test
     public void bundleContext()
     {
-        final Interpolator interpolator = new Interpolator();
+        final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.bundleContext( newBundleContext() );
         final Configuration config = interpolator.interpolate( newConfig() );
 

@@ -45,7 +45,6 @@ include 'lib-thymeleaf'
 include 'lib-mail'
 include 'lib-auth'
 
-include 'repack-jmustache'
 include 'repack-jparsec'
 include 'repack-attoparser'
 include 'repack-resteasy'

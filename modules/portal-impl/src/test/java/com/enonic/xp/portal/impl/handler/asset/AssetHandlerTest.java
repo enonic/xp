@@ -44,7 +44,7 @@ public class AssetHandlerTest
         this.nullResource = Mockito.mock( Resource.class );
         Mockito.when( this.nullResource.exists() ).thenReturn( false );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/asset/demo/css/main.css" );
     }
 
@@ -103,7 +103,7 @@ public class AssetHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );

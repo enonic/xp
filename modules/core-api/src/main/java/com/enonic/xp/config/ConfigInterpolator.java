@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Maps;
 
-public final class Interpolator
+public final class ConfigInterpolator
 {
     private final static String ENV_PREFIX = "env.";
 
@@ -20,19 +20,25 @@ public final class Interpolator
 
     private BundleContext bundleContext;
 
-    public Interpolator environment( final Map<String, String> map )
+    public ConfigInterpolator()
+    {
+        this.environment = System.getenv();
+        this.systemProperties = System.getProperties();
+    }
+
+    public ConfigInterpolator environment( final Map<String, String> map )
     {
         this.environment = map;
         return this;
     }
 
-    public Interpolator systemProperties( final Properties properties )
+    public ConfigInterpolator systemProperties( final Properties properties )
     {
         this.systemProperties = properties;
         return this;
     }
 
-    public Interpolator bundleContext( final BundleContext bundleContext )
+    public ConfigInterpolator bundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
         return this;
@@ -45,9 +51,7 @@ public final class Interpolator
 
         doInterpolate( target );
 
-        return Configuration.create().
-            addAll( target ).
-            build();
+        return ConfigurationImpl.create( target );
     }
 
     private String lookupValue( final String key, final Map<String, String> map )

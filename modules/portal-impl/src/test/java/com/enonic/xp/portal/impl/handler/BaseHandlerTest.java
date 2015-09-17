@@ -32,7 +32,7 @@ public abstract class BaseHandlerTest
     {
         try
         {
-            this.request.setMethod( method.toString() );
+            this.request.setMethod( method );
             handler.handle( this.request );
         }
         catch ( final PortalException e )

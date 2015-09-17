@@ -14,6 +14,8 @@ import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -49,9 +51,9 @@ final class ControllerScriptImpl
 
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
-        final String method = portalRequest.getMethod().toLowerCase();
-        final boolean isHead = "head".equals( method );
-        final String runMethod = isHead ? "get" : method;
+        final HttpMethod method = portalRequest.getMethod();
+        final boolean isHead = method.equals( HttpMethod.HEAD );
+        final String runMethod = isHead ? "get" : method.toString().toLowerCase();
 
         boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )

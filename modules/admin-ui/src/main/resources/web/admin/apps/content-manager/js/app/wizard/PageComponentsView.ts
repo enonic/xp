@@ -171,11 +171,20 @@ module app.wizard {
 
             this.clickListener = (event, data) => {
                 var elem = new api.dom.ElementHelper(event.target);
+
+                if(this.sameRowClicked(data.row)) {
+                    this.hideContextMenu();
+                }
+
                 if (elem.hasClass('toggle')) {
                     // do nothing if expand toggle is clicked
                     return;
                 }
-
+                var treeNode = this.tree.getGrid().getDataView().getItem(data.row);
+                if (treeNode) {
+                    // do it on click only, not on selection change
+                    treeNode.getData().selectWithoutMenu();
+                }
                 this.tree.getGrid().selectRow(data.row);
 
                 if(this.isMenuIconClicked(data.cell)) {
@@ -189,7 +198,6 @@ module app.wizard {
             this.tree.getGrid().subscribeOnClick(this.clickListener);
             this.tree.onSelectionChanged((data, nodes) => {
                 if (nodes.length > 0) {
-                    nodes[0].getData().selectWithoutMenu();
 
                     if (this.isModal()) {
                         this.hide();
@@ -396,6 +404,11 @@ module app.wizard {
                 this.contextMenu.hide();
                 this.removeMenuOpenStyleFromMenuIcon();
             }
+        }
+
+        private sameRowClicked(clickedRow: number): boolean {
+            var currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
+            return clickedRow == currentlySelectedRow;
         }
 
     }

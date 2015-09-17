@@ -48,7 +48,7 @@ public class ImageHandlerTest
         this.handler.setContentService( this.contentService );
         this.handler.setImageService( this.imageService );
 
-        this.request.setMethod( "GET" );
+        this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
     }
@@ -131,7 +131,7 @@ public class ImageHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setMethod( "OPTIONS" );
+        this.request.setMethod( HttpMethod.OPTIONS );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );

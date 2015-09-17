@@ -13,6 +13,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.web.HttpMethod;
 
 public final class ResponseSerializer
 {
@@ -135,6 +136,6 @@ public final class ResponseSerializer
 
     private boolean isHeadRequest()
     {
-        return this.portalRequest.getMethod().equals( "HEAD" );
+        return this.portalRequest.getMethod() == HttpMethod.HEAD;
     }
 }

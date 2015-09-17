@@ -60,7 +60,10 @@ public class LiveEditInjectionTest
     {
         this.portalRequest.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.portalRequest, this.portalResponse, HtmlTag.HEAD_END ).get( 0 );
+        final List<String> list = this.injection.inject( this.portalRequest, this.portalResponse, HtmlTag.HEAD_END );
+        assertNotNull( list );
+
+        final String result = list.get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionHeadEnd.html" ).trim() + "\n", result );
     }
@@ -71,7 +74,10 @@ public class LiveEditInjectionTest
     {
         this.portalRequest.setMode( RenderMode.EDIT );
 
-        final String result = this.injection.inject( this.portalRequest, this.portalResponse, HtmlTag.BODY_END ).get( 0 );
+        final List<String> list = this.injection.inject( this.portalRequest, this.portalResponse, HtmlTag.BODY_END );
+        assertNotNull( list );
+        
+        final String result = list.get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );
     }

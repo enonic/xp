@@ -1,7 +1,7 @@
 .toolbar {
   @toolbar-height: 41px;
 
-  background-color: transparent;
+  background-color: @admin-white;
   height: @toolbar-height;
   overflow: visible; // for the button glow
   .box-sizing(border-box);
@@ -52,7 +52,7 @@
       left: 0;
       z-index: @z-index-toolbar-element;
       padding: 0 10px;
-      background-color: @admin-bg-light-gray;
+      background-color: @admin-white;
       .box-shadow(-1px 1px 2px 0px rgba(0, 0, 0, 0.3));
 
       & > * {

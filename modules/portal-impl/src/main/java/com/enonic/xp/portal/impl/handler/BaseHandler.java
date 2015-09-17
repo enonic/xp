@@ -55,7 +55,7 @@ public abstract class BaseHandler
     public final PortalResponse handle( final PortalRequest req )
         throws Exception
     {
-        final HttpMethod method = HttpMethod.valueOf( req.getMethod() );
+        final HttpMethod method = req.getMethod();
         checkMethodAllowed( method );
 
         if ( this.handleOptions && ( method == HttpMethod.OPTIONS ) )
