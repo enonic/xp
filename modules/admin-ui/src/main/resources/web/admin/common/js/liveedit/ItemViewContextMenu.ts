@@ -112,7 +112,7 @@ module api.liveedit {
             }
         }
 
-        private getYPosition(y:number, notClicked?: boolean): number {
+        private getYPosition(y: number, notClicked?: boolean): number {
             if (this.overflowsBottom(y, notClicked)) {
                 this.arrow.toggleVerticalPosition(false);
                 return y - this.getEl().getHeight() - this.arrow.getHeight();
@@ -123,18 +123,20 @@ module api.liveedit {
 
         }
 
-        private overflowsLeftFrameBorder(x:number): boolean {
+        private overflowsLeftFrameBorder(x: number): boolean {
             return (x - this.getEl().getWidth() / 2) < 0;
         }
 
-        private overflowsRightFrameBorder(x:number): boolean {
+        private overflowsRightFrameBorder(x: number): boolean {
             return (x + this.getEl().getWidth() / 2) > window.innerWidth;
         }
 
-        private overflowsBottom(y:number, notClicked?: boolean): boolean {
+        private overflowsBottom(y: number, notClicked?: boolean): boolean {
             var yPos = y + this.getEl().getHeight() + this.arrow.getHeight() + 1;
 
-            return yPos > (notClicked ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) : (wemjq(window).scrollTop() + window.innerHeight));
+            return yPos >
+                   (notClicked ? Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) : (wemjq(window).scrollTop() +
+                                                                                                                window.innerHeight));
         }
     }
 

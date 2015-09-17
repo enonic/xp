@@ -16,7 +16,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.acl.Permission;
 
 public class MoveNodeCommand
     extends AbstractNodeCommand
@@ -41,7 +43,7 @@ public class MoveNodeCommand
     {
         final Node existingNode = doGetById( nodeId );
 
-        final NodeName newNodeName = resulveNodeName( existingNode );
+        final NodeName newNodeName = resolveNodeName( existingNode );
 
         final NodePath newParentPath = resolvePath( existingNode );
 
@@ -52,11 +54,30 @@ public class MoveNodeCommand
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath );
 
+        checkContextUserPermissionOrAdmin( existingNode, newParentPath );
+
         final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
 
         indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
         return movedNode;
+    }
+
+    private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
+    {
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.DELETE, existingSourceNode );
+
+        final Node newParentNode = GetNodeByPathCommand.create( this ).
+            nodePath( newParentPath ).
+            build().
+            execute();
+
+        if ( newParentNode == null )
+        {
+            throw new NodeNotFoundException( "Cannot move node to parent with path '" + newParentPath + "', does not exist" );
+        }
+
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
     }
 
     private NodePath resolvePath( final Node existingNode )
@@ -73,7 +94,7 @@ public class MoveNodeCommand
         return newParentPath;
     }
 
-    private NodeName resulveNodeName( final Node existingNode )
+    private NodeName resolveNodeName( final Node existingNode )
     {
         final NodeName newNodeName;
         if ( this.newNodeName == null )

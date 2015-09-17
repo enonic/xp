@@ -556,7 +556,6 @@ public class ContentServiceImpl
                 childOrder( params.getChildOrder() ).
                 build() );
 
-            final Content content = contentNodeTranslator.fromNode( node );
         final Content content = oldContentNodeTranslator.fromNode( node );
 
             if ( !params.isSilent() )

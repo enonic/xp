@@ -26,7 +26,7 @@ public class ImageUrlBuilderTest
     private ImageUrlParams imageUrlParams;
 
     private Content content;
-    
+
     @Before
     public void init()
     {
