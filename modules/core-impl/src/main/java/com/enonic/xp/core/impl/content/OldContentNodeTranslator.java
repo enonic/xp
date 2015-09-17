@@ -12,7 +12,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentState;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.data.PropertyTree;
@@ -23,7 +22,6 @@ import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
 
 @Component(immediate = true, service = OldContentNodeTranslator.class)
@@ -77,25 +75,6 @@ public class OldContentNodeTranslator
             }
         }
         return builder.build();
-    }
-
-    public Contents fromNodes( final Nodes nodes )
-    {
-        final Contents.Builder contents = Contents.create();
-
-        for ( final Node node : nodes )
-        {
-            try
-            {
-                contents.add( doGetFromNode( node ) );
-            }
-            catch ( final Exception e )
-            {
-                LOG.error( "Failed to translate node '" + node.path() + "' [" + node.id().toString() + "] to content", e );
-            }
-        }
-
-        return contents.build();
     }
 
     public Content fromNode( final Node node )

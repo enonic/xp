@@ -106,7 +106,7 @@ public class UpdateContentCommandTest
 
         final Node mockNode = Node.create().build();
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        Mockito.when( oldTranslator.fromNode( mockNode ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
 
         // exercise
         command.execute();

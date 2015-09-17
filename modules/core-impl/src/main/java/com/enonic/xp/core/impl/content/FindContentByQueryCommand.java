@@ -33,14 +33,7 @@ final class FindContentByQueryCommand
 
         final Nodes foundNodes = result.getNodes();
 
-        if ( this.params.isPopulateChildren() )
-        {
-            final Nodes.Builder withChildren = Nodes.create();
-
-
-        }
-
-        Contents contents = this.oldTranslator.fromNodes( foundNodes );
+        Contents contents = this.translator.fromNodes( foundNodes, true );
 
         return FindContentByQueryResult.create().
             contents( contents ).

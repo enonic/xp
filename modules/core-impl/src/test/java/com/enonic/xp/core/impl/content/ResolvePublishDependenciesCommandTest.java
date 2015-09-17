@@ -62,7 +62,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -99,7 +99,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -137,7 +137,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ),
                                        createContent( "s3", "s3Name", ContentPath.ROOT, true ) ) );
@@ -179,7 +179,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ),
                                        createContent( "s3", "s3Name", ContentPath.ROOT, true ) ) );

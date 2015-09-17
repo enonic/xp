@@ -48,7 +48,7 @@ final class GetContentByPathsCommand
         final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
         final Nodes nodes = nodeService.getByPaths( paths );
 
-        return oldTranslator.fromNodes( nodes );
+        return this.translator.fromNodes( nodes, true );
     }
 
     public static Builder create( final ContentPaths contentPaths )

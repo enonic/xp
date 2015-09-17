@@ -45,7 +45,7 @@ public class ContentNodeTranslatorImpl
     @Override
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
-        return null;
+        return doTranslate( node, resolveHasChildren );
     }
 
     private Contents doTranslate( final Nodes nodes, final NodesHasChildrenResult nodeHasChildren )

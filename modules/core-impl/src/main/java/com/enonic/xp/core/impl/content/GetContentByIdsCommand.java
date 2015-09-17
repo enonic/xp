@@ -51,7 +51,7 @@ final class GetContentByIdsCommand
         final NodeIds nodeIds = getAsNodeIds( this.params.getIds() );
         final Nodes nodes = nodeService.getByIds( nodeIds );
 
-        return oldTranslator.fromNodes( nodes );
+        return this.translator.fromNodes( nodes, true );
     }
 
     private NodeIds getAsNodeIds( final ContentIds contentIds )

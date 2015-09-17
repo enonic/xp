@@ -40,7 +40,7 @@ public class GetActiveContentVersionsCommand
             branches( this.branches ).
             build() );
 
-        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.oldTranslator, this.nodeService );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 

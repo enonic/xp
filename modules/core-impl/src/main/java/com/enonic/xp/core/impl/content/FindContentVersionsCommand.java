@@ -50,7 +50,7 @@ public class FindContentVersionsCommand
         findContentVersionsResultBuilder.from( findNodeVersionsResult.getFrom() );
         findContentVersionsResultBuilder.size( findNodeVersionsResult.getSize() );
 
-        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.oldTranslator, this.nodeService );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final ContentVersions contentVersions = contentVersionFactory.create( nodeId, findNodeVersionsResult.getNodeVersions() );
 

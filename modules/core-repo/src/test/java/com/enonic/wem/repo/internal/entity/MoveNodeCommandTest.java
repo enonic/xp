@@ -262,7 +262,6 @@ public class MoveNodeCommandTest
         assertEquals( 1, getVersions( child1_2 ).getHits() );
         assertNotNull( getNodeByPath( NodePath.create( child1.path(), child1_1.name().toString() ).build() ) );
 
-
         final Node movedNode = MoveNodeCommand.create().
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -345,6 +344,7 @@ public class MoveNodeCommandTest
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
                 versionService( this.versionService ).
+                storageService( this.storageService ).
                 id( deleteUngrantedNode.id() ).
                 newParent( createGrantedNewParent.path() ).
                 build().
@@ -366,6 +366,7 @@ public class MoveNodeCommandTest
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
                 versionService( this.versionService ).
+                storageService( this.storageService ).
                 id( deleteGrantedNode.id() ).
                 newParent( createUngrantedNewParent.path() ).
                 build().
@@ -384,6 +385,7 @@ public class MoveNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
+            storageService( this.storageService ).
             id( deleteGrantedNode.id() ).
             newParent( createGrantedNewParent.path() ).
             build().

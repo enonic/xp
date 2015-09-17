@@ -106,7 +106,7 @@ final class UpdateContentCommand
 
         eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.UPDATE, editedContent.getPath() ) );
 
-        return oldTranslator.fromNode( editedNode );
+        return translator.fromNode( editedNode, true );
     }
 
     private Content processContent( final Content contentBeforeChange, Content editedContent )

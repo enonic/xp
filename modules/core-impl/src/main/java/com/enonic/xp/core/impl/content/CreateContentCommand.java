@@ -74,7 +74,8 @@ final class CreateContentCommand
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
-            final Content createdContent = oldTranslator.fromNode( createdNode );
+            final Content createdContent = translator.fromNode( createdNode, false );
+
             eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
             eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
 

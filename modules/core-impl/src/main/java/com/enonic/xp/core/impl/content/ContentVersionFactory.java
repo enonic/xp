@@ -13,11 +13,11 @@ import com.enonic.xp.node.NodeVersions;
 
 class ContentVersionFactory
 {
-    private final OldContentNodeTranslator translator;
+    private final ContentNodeTranslator translator;
 
     private final NodeService nodeService;
 
-    public ContentVersionFactory( final OldContentNodeTranslator translator, final NodeService nodeService )
+    public ContentVersionFactory( final ContentNodeTranslator translator, final NodeService nodeService )
     {
         this.translator = translator;
         this.nodeService = nodeService;
@@ -43,7 +43,7 @@ class ContentVersionFactory
 
     private ContentVersion doCreateContentVersion( final NodeVersion nodeVersion, final Node node )
     {
-        final Content content = translator.fromNode( node );
+        final Content content = translator.fromNode( node, false );
 
         return ContentVersion.create().
             comment( "No comments" ).

@@ -62,7 +62,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.anyBoolean() ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -101,7 +101,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -142,7 +142,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.anyBoolean() ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -183,7 +183,7 @@ public class PushContentCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.anyBoolean() ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -230,7 +230,7 @@ public class PushContentCommandTest
         final Content invalidContent = createContent( "s2", "s2Name", ContentPath.ROOT, false );
         final Contents contents = Contents.from( validContent, invalidContent );
 
-        Mockito.when( oldContentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.anyBoolean() ) ).
             thenReturn( contents );
 
         final PushContentsResult result = PushContentCommand.create().

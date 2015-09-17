@@ -406,7 +406,7 @@ public class ContentServiceImpl
         final ContentPath targetPath = translateNodePathToContentPath( createdNode.path() );
         eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DUPLICATE, targetPath ) );
 
-        return oldContentNodeTranslator.fromNode( createdNode );
+        return translator.fromNode( createdNode, true );
     }
 
     @Override
@@ -449,7 +449,7 @@ public class ContentServiceImpl
 
             eventPublisher.publish( builder.build() );
 
-            return oldContentNodeTranslator.fromNode( movedNode );
+            return translator.fromNode( movedNode, true );
         }
         catch ( MoveNodeException e )
         {
@@ -556,7 +556,7 @@ public class ContentServiceImpl
                 childOrder( params.getChildOrder() ).
                 build() );
 
-        final Content content = oldContentNodeTranslator.fromNode( node );
+            final Content content = translator.fromNode( node, true );
 
             if ( !params.isSilent() )
             {
