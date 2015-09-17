@@ -1,0 +1,7 @@
+dependencies {
+    compile project( ':core:core-impl' )
+    compile project( ':core:core-repo' )
+    compile project( ':core:core-schema' )
+    compile project( ':core:core-event' )
+    testCompile project( path: ':core:core-repo', configuration: 'testOutput' )
+}
