@@ -76,7 +76,6 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -111,7 +110,6 @@ import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -316,7 +314,6 @@ public final class ContentResource
         return new ContentJson( renamedContent, newContentIconUrlResolver(), principalsResolver );
     }
 
-
     @POST
     @Path("delete")
     public DeleteContentResultJson delete( final DeleteContentJson json )
@@ -352,7 +349,7 @@ public final class ContentResource
                 } );
 
             }
-            catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
+            catch ( final Exception e )
             {
                 try
                 {
@@ -362,9 +359,9 @@ public final class ContentResource
                         jsonResult.addFailure( content.getId().toString(), content.getDisplayName(), e.getMessage() );
                     }
                 }
-                catch ( ContentNotFoundException | ContentAccessException ex )
+                catch ( final Exception e2 )
                 {
-                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e.getMessage() );
+                    jsonResult.addFailure( null, deleteContent.getContentPath().toString(), e2.getMessage() );
                 }
 
             }
@@ -507,7 +504,7 @@ public final class ContentResource
             if ( params.isManualOrder() )
             {
 
-                content = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+                this.contentService.setChildOrder( SetContentChildOrderParams.create().
                     childOrder( ChildOrder.manualOrder() ).
                     contentId( ContentId.from( params.getContentId() ) ).
                     silent( true ).
@@ -854,9 +851,7 @@ public final class ContentResource
 
     private long countContentsAndTheirChildren( ContentPaths contentsPaths )
     {
-        long total = contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
-
-        return total;
+        return contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
     }
 
     private long countChildren( ContentPaths contentsPaths )

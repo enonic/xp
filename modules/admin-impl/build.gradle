@@ -2,12 +2,10 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':admin-api' )
-    compile project( ':web-api' )
     testCompile project( ':web-jaxrs' )
     testCompile project( path: ':portal-api', configuration: 'testOutput' )
 }
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin - Impl'
-    instruction 'DynamicImport-Package', "com.enonic.xp.*"
 }
