@@ -40,7 +40,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslator;
+import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.OldContentNodeTranslator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -116,7 +116,7 @@ public class AbstractContentServiceTest
 
     protected OldContentNodeTranslator oldContentNodeTranslator;
 
-    protected ContentNodeTranslator translator;
+    protected ContentNodeTranslatorImpl translator;
 
     private NodeDaoImpl nodeDao;
 
@@ -198,7 +198,7 @@ public class AbstractContentServiceTest
         contentTypeService.setMixinService( mixinService );
         contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
-        this.translator = new ContentNodeTranslator();
+        this.translator = new ContentNodeTranslatorImpl();
         this.translator.setNodeService( this.nodeService );
 
         this.contentService.setNodeService( this.nodeService );
