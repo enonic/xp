@@ -36,6 +36,8 @@ module app.browse {
 
     import CompareStatus = api.content.CompareStatus;
 
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         static MAX_FETCH_SIZE: number = 10;
@@ -59,23 +61,23 @@ module app.browse {
                 setMinWidth(75).
                 setMaxWidth(75).
                 build();
-            var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                setName("ModifiedTime").
-                setId("modifiedTime").
-                setField("contentSummary.modifiedTime").
-                setCssClass("modified").
-                setMinWidth(150).
-                setMaxWidth(170).
-                setFormatter(DateTimeFormatter.format).
-                build();
             var orderColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("Order").
                 setId("order").
                 setField("contentSummary.order").
                 setCssClass("order").
-                setMinWidth(80).
-                setMaxWidth(80).
+                setMinWidth(25).
+                setMaxWidth(40).
                 setFormatter(this.orderFormatter).
+                build();
+            var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("ModifiedTime").
+                setId("modifiedTime").
+                setField("contentSummary.modifiedTime").
+                setCssClass("modified").
+                setMinWidth(90).
+                setMaxWidth(135).
+                setFormatter(DateTimeFormatter.format).
                 build();
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
@@ -93,16 +95,17 @@ module app.browse {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isRangeSizeChanged()) {
-                    if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
+
+                    if (item.isInRangeOrSmaller(ResponsiveRanges._240_360)) {
                         this.getGrid().setColumns([nameColumn, orderColumn]);
-                    } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
-                        this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
+                    } else if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                        this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn]);
                     } else {
-                        if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
-                            modifiedTimeColumn.setMaxWidth(100);
+                        if (item.isInRangeOrSmaller(ResponsiveRanges._540_720)) {
+                            modifiedTimeColumn.setMaxWidth(90);
                             modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
                         } else {
-                            modifiedTimeColumn.setMaxWidth(170);
+                            modifiedTimeColumn.setMaxWidth(135);
                             modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
                         }
                         this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
