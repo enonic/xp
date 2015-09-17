@@ -45,11 +45,11 @@ include 'lib-thymeleaf'
 include 'lib-mail'
 include 'lib-auth'
 
-include 'repack-jparsec'
-include 'repack-attoparser'
-include 'repack-resteasy'
-include 'repack-jhlabs-filters'
-include 'repack-elasticsearch'
+include 'repack:repack-jparsec'
+include 'repack:repack-attoparser'
+include 'repack:repack-resteasy'
+include 'repack:repack-jhlabs-filters'
+include 'repack:repack-elasticsearch'
 
 rootProject.name = 'xp'
 
@@ -68,5 +68,4 @@ def configureProject( p )
     String dirName = p.path.substring( 1 ).replace( ':', '/' )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
-    assert p.buildFile.isFile()
 }
