@@ -2,7 +2,8 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':admin-api' )
-    compile project( ':web-jaxrs' )
+    compile project( ':web-api' )
+    testCompile project( ':web-jaxrs' )
     testCompile project( path: ':portal-api', configuration: 'testOutput' )
 }
 
