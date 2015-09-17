@@ -19,10 +19,10 @@ include 'web:web-vhost'
 include 'portal:portal-api'
 include 'portal:portal-impl'
 
-include 'admin-api'
-include 'admin-impl'
-include 'admin-event'
-include 'admin-ui'
+include 'admin:admin-api'
+include 'admin:admin-impl'
+include 'admin:admin-event'
+include 'admin:admin-ui'
 
 include 'itest:itest-core'
 
