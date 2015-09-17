@@ -88,7 +88,7 @@ final class ExceptionInfo
         node.put( "message", getDescription() );
 
         return PortalResponse.create().
-            status( this.status.value() ).
+            status( this.status ).
             body( node.toString() ).
             contentType( "application/json" ).
             build();
@@ -105,7 +105,7 @@ final class ExceptionInfo
 
         final String html = builder.build();
         return PortalResponse.create().
-            status( this.status.value() ).
+            status( this.status ).
             body( html ).
             contentType( "text/html" ).
             build();

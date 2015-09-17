@@ -13,6 +13,7 @@ import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
@@ -65,7 +66,7 @@ public final class PageRenderer
 
         PortalResponse.Builder portalResponseBuilder = PortalResponse.create().
             contentType( "text/html" ).
-            status( 200 ).
+            status( HttpStatus.OK ).
             body( html ).
             postProcess( true );
 

@@ -15,7 +15,7 @@ public class ControllerScriptImpl_simpleTest
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         execute( "myapplication:/controller/simple.js" );
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
     }
 
 
@@ -24,7 +24,7 @@ public class ControllerScriptImpl_simpleTest
     {
         this.portalRequest.setMethod( HttpMethod.POST );
         execute( "myapplication:/controller/simple.js" );
-        assertEquals( HttpStatus.METHOD_NOT_ALLOWED.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, this.portalResponse.getStatus() );
     }
 
 }

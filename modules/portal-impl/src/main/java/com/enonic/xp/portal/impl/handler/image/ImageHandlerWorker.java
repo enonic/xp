@@ -16,6 +16,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
@@ -81,7 +82,7 @@ final class ImageHandlerWorker
 
         final ByteSource source = this.imageService.readImage( readImageParams );
 
-        this.response.status( 200 );
+        this.response.status( HttpStatus.OK );
         this.response.body( source );
         this.response.contentType( mimeType );
     }

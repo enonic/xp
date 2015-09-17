@@ -18,7 +18,7 @@ import com.enonic.xp.web.HttpStatus;
 @Beta
 public final class PortalResponse
 {
-    private final int status;
+    private final HttpStatus status;
 
     private final String contentType;
 
@@ -43,7 +43,7 @@ public final class PortalResponse
         this.cookies = builder.cookies.build();
     }
 
-    public int getStatus()
+    public HttpStatus getStatus()
     {
         return this.status;
     }
@@ -110,7 +110,7 @@ public final class PortalResponse
 
         private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
 
-        private int status = HttpStatus.OK.value();
+        private HttpStatus status = HttpStatus.OK;
 
         private ImmutableList.Builder<Cookie> cookies;
 
@@ -245,7 +245,7 @@ public final class PortalResponse
             return this;
         }
 
-        public Builder status( final int status )
+        public Builder status( final HttpStatus status )
         {
             this.status = status;
             return this;
