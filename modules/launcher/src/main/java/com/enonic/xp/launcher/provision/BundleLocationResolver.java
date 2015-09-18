@@ -88,9 +88,21 @@ final class BundleLocationResolver
         }
 
         final File modulesDir = new File( this.projectDir, "modules" );
-        final File subProjectDir = new File( modulesDir, parts[1] );
+        final File subProjectDir = getSubProjectDir( modulesDir, parts[1] );
         final File targetDir = new File( subProjectDir, "target" );
         final File libDir = new File( targetDir, "libs" );
         return new File( libDir, getFileName( parts ) );
+    }
+
+    private File getSubProjectDir( final File modulesDir, final String projectName )
+    {
+        final int index = projectName.indexOf( '-' );
+        if ( index <= 0 )
+        {
+            return new File( modulesDir, projectName );
+        }
+
+        final File groupDir = new File( modulesDir, projectName.substring( 0, index ) );
+        return new File( groupDir, projectName );
     }
 }

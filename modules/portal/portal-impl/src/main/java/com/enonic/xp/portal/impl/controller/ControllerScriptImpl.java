@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.controller;
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -121,7 +123,7 @@ final class ControllerScriptImpl
 
         if ( value.isObject() )
         {
-            builder.body( value.getMap() );
+            builder.body( convertToJson( value.getMap() ) );
             return;
         }
 
@@ -283,4 +285,15 @@ final class ControllerScriptImpl
         }
     }
 
+    private String convertToJson( final Object value )
+    {
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 }
