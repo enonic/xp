@@ -190,27 +190,20 @@ module api.content {
                 if (edit) {
                     index = imageEditor.getSiblingIndex();
                     api.dom.Body.get().appendChild(imageEditor.addClass(ImageUploader.STANDOUT_CLASS));
-                    this.centerImageEditor(imageEditor);
+                    this.positionImageEditor(imageEditor);
                 } else {
                     this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploader.STANDOUT_CLASS), index);
-                }
-            });
-
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item) => {
-                if (imageEditor.isEditMode()) {
-                    this.centerImageEditor(imageEditor);
                 }
             });
 
             return imageEditor;
         }
 
-        private centerImageEditor(imageEditor: ImageEditor) {
-            var imageEl = imageEditor.getEl(),
-                win = api.dom.WindowDOM.get();
+        private positionImageEditor(imageEditor: ImageEditor) {
+            var resultOffset = this.getResultContainer().getEl().getOffset();
 
-            imageEditor.getEl().setTopPx((win.getHeight() - imageEl.getHeight()) / 2).
-                setLeftPx((win.getWidth() - imageEl.getWidth()) / 2);
+            imageEditor.getEl().setTopPx(resultOffset.top).
+                setLeftPx(resultOffset.left);
         }
 
         createResultItem(value: string): api.dom.DivEl {

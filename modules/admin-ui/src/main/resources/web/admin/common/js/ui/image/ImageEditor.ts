@@ -490,16 +490,32 @@ module api.ui.image {
 
                 if (!this.maskWheelListener) {
                     this.maskWheelListener = (event: WheelEvent) => {
-                        var el = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
-                        el.scrollTop(el.scrollTop() + this.normalizeWheel(event).pixelY);
+                        var el = this.getEl(),
+                            win = api.dom.WindowDOM.get(),
+                            myHeight = el.getHeight(),
+                            myTop = el.getTopPx(),
+                            winHeight = win.getHeight(),
+                            biggerThanWin = myHeight > winHeight;
+
+                        var newTop = myTop - this.normalizeWheel(event).pixelY;
+
+                        if (biggerThanWin) {
+                            newTop = Math.min(0, Math.max(winHeight - myHeight, newTop));
+                        } else {
+                            newTop = Math.max(0, Math.min(winHeight - myHeight, newTop));
+                        }
+                        if (newTop != myTop) {
+                            el.setTopPx(newTop);
+                            this.updateStickyToolbar();
+                        }
                     };
                 }
-                bodyMask.onMouseWheel(this.maskWheelListener);
+                api.dom.Body.get().onMouseWheel(this.maskWheelListener);
 
                 if (!this.maskHideListener) {
                     this.maskHideListener = (event: api.dom.ElementHiddenEvent) => {
                         api.dom.Body.get().unClicked(this.maskClickListener);
-                        bodyMask.unMouseWheel(this.maskWheelListener);
+                        api.dom.Body.get().unMouseWheel(this.maskWheelListener);
                         bodyMask.unHidden(this.maskHideListener);
                     }
                 }
