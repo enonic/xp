@@ -94,7 +94,6 @@ module api.ui.grid {
                 var currentRowTop = children[key].getEl().getTopPx();
                 if (data.rows[0] <= data.insertBefore) {//move item down
                     if (this.draggableTop < currentRowTop && currentRowTop - this.rowHeight / 2 <= draggableTop) { //items between draggable and insert before
-                        debugger;
                         children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
@@ -102,7 +101,6 @@ module api.ui.grid {
                 }
                 if (data.rows[0] >= data.insertBefore) {//move item up
                     if (this.draggableTop > currentRowTop && currentRowTop + this.rowHeight / 2 >= draggableTop) {//items between draggable and insert before
-                        debugger;
                         children[key].getEl().setMarginTop(this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
