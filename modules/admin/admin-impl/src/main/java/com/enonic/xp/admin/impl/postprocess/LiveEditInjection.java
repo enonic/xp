@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.postprocess.injection;
+package com.enonic.xp.admin.impl.postprocess;
 
 import java.util.Collections;
 import java.util.List;
