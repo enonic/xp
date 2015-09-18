@@ -25,6 +25,8 @@ module api.ui.treegrid {
      */
     export class TreeGrid<DATA> extends api.ui.panel.Panel {
 
+        public static LEVEL_STEP_INDENT: number = 16;
+
         private columns: GridColumn<DATA>[] = [];
 
         private gridOptions: GridOptions<DATA>;
@@ -293,7 +295,7 @@ module api.ui.treegrid {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
-                    toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
+                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + "px");
 
                     return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
                 };

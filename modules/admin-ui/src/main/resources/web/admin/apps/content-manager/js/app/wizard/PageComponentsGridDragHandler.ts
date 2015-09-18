@@ -12,6 +12,7 @@ module app.wizard {
 
     import DragHelper = api.ui.DragHelper;
     import ElementHelper = api.dom.ElementHelper;
+    import Element = api.dom.Element;
 
     export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
@@ -110,6 +111,12 @@ module app.wizard {
                 parentComponentView = parentComponentNode.getData(),
                 draggableComponentView = data[draggableRow].getData();
 
+            var draggableItem = this.getDraggableItem();
+
+            if (draggableItem) {
+                this.updateDraggableItemPosition(draggableItem, parentComponentNode.calcLevel());
+            }
+
             if (parentComponentView) {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(draggableComponentView, LayoutComponentView)) {
@@ -125,6 +132,15 @@ module app.wizard {
                 }
             }
             DragHelper.get().setDropAllowed(false);
+        }
+
+        private updateDraggableItemPosition(draggableItem: Element, parentLevel: number) {
+            var margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
+            var nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
+
+            if (nodes.length == 1) {
+                nodes[0].setMarginLeft(margin + "px");
+            }
         }
 
 
