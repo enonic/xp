@@ -11,16 +11,16 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.snapshot.DeleteSnapshotParams;
-import com.enonic.xp.snapshot.DeleteSnapshotsResult;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.entity.NodeHelper;
 import com.enonic.wem.repo.internal.snapshot.SnapshotService;
+import com.enonic.xp.node.DeleteSnapshotParams;
+import com.enonic.xp.node.DeleteSnapshotsResult;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SnapshotParams;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
 
 @Component
 public class ElasticsearchSnapshotService

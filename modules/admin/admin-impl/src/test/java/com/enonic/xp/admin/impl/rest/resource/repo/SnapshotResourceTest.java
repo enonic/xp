@@ -9,15 +9,15 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.node.DeleteSnapshotParams;
+import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SnapshotParams;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.snapshot.DeleteSnapshotParams;
-import com.enonic.xp.snapshot.DeleteSnapshotsResult;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 
 import static org.mockito.Matchers.isA;
 

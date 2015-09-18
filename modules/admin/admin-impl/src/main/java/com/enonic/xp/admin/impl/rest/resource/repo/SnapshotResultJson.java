@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 import java.time.Instant;
 import java.util.Set;
 
-import com.enonic.xp.snapshot.SnapshotResult;
+import com.enonic.xp.node.SnapshotResult;
 
 public class SnapshotResultJson
 {
