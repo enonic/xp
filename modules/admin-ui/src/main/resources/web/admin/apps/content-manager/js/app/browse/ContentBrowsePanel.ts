@@ -106,7 +106,6 @@ module app.browse {
             });
         }
 
-
         protected initSplitPanelWithDetailsForLargeScreen() {
 
             var contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridAndDetailSplitPanel(),
@@ -126,6 +125,9 @@ module app.browse {
                     if (contentPanelsAndDetailPanel.isSecondPanelHidden()) {
                         contentPanelsAndDetailPanel.showSecondPanel();
                     }
+                    setTimeout(() => {
+                        this.detailsPanelForLargeScreens.notifyPanelSizeChanged();
+                    }, 800);
                 } else {
                     if (!contentPanelsAndDetailPanel.isSecondPanelHidden()) {
                         contentPanelsAndDetailPanel.hideSecondPanel();
@@ -133,13 +135,16 @@ module app.browse {
                 }
             });
 
+            this.detailsPanelForLargeScreens.makeLookEmpty();
+
             this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
                 if (browseItems.length == 1) {
                     var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                    this.detailsPanelForLargeScreens.unMakeLookEmpty();
                     this.detailsPanelForLargeScreens.setItem(item);
                 } else {
-                    this.detailsPanelForLargeScreens.reset();
+                    this.detailsPanelForLargeScreens.makeLookEmpty();
                 }
             });
         }

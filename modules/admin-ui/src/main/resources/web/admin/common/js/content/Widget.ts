@@ -16,7 +16,6 @@ module api.content {
             this.widgetDescriptorKey = new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
         }
 
-
         public getName(): string {
             return this.name;
         }

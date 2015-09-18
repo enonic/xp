@@ -32,8 +32,7 @@
     overflow: hidden;
     display: block;
     line-height: 20px !important;
-    color: @admin-white !important;
-    background-color: @admin-blue;
+    background-color: @admin-bg-almost-white;
     text-align: center;
   }
 
@@ -53,13 +52,13 @@
     overflow: hidden;
     display: block;
     cursor: pointer;
-    color: @admin-white !important;
 
     .icon-menu();
 
     &.expanded {
       font-size: 25px;
       padding-top: 5px;
+      color: @admin-blue;
       .icon-close2();
     }
   }
@@ -79,7 +78,6 @@
     overflow: hidden;
     display: block;
     cursor: pointer;
-    color: @admin-white !important;
 
     .icon-trending_neutral();
   }
@@ -87,13 +85,18 @@
   .details-panel {
 
     position: absolute;
-    background-color: @admin-white;
+    background-color: @admin-bg-almost-white;
     display: inherit;
     width: 100%;
     right: 0px;
 
     > .details-container {
-      top: 0px;
+      top: 37px;
+      left: 0px;
+    }
+
+    .widgets-selection-row .widget-selector {
+      width: calc(~'100% - 40px');
     }
 
     .transition(all 0.5s ease-in-out);
@@ -163,6 +166,8 @@
     bottom: 0px;
     width: 100%;
     border-top: 1px solid @admin-bg-light-gray;
+    background-color: @admin-white;
+    opacity: 0.99;
 
     .fold-button {
       border: 0px;

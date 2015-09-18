@@ -14,24 +14,24 @@ module app.view.detail {
         private detailsPanel: DetailsPanel;
         private normalHeightOfContent: number;
 
-        constructor(name: string, detailsPanel: DetailsPanel) {
+        constructor(name: string, detailsPanel: DetailsPanel, useToggleButton: boolean = true) {
             super("widget");
             this.detailsPanel = detailsPanel;
 
             this.widgetName = name;
-            this.initWidgetToggleButton();
-            this.onRendered((event) => {
-                this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
-                this.slideOut();
-            });
+            if (useToggleButton) {
+                this.initWidgetToggleButton();
+            }
+
+            this.slideOut();
             this.appendChild(this.widgetContents);
         }
 
-        static fromWidget(widget: Widget, detailsPanel: DetailsPanel): WidgetView {
+        static fromWidget(widget: Widget, detailsPanel: DetailsPanel, useToggleButton: boolean = true): WidgetView {
 
             var item: ViewItem<ContentSummary> = detailsPanel.getItem();
 
-            var widgetView = new WidgetView(widget.getDisplayName(), detailsPanel),
+            var widgetView = new WidgetView(widget.getDisplayName(), detailsPanel, useToggleButton),
                 widgetViewContent: api.dom.Element = item ? new api.dom.IFrameEl() : new api.dom.DivEl();
 
             if (item) {
@@ -59,6 +59,25 @@ module app.view.detail {
             this.appendChild(this.widgetToggleButton);
         }
 
+        updateNormalHeightSilently() {
+            this.widgetContents.setVisible(false);
+            var currentHeight = this.widgetContents.getEl().getHeight();
+            this.widgetContents.getEl().setHeight("auto");
+            this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
+            this.widgetContents.getEl().setHeightPx(currentHeight);
+            this.widgetContents.setVisible(true);
+        }
+
+        updateNormalHeight() {
+            this.widgetContents.getEl().setHeight("auto");
+            this.normalHeightOfContent = this.widgetContents.getEl().getHeightWithBorder();
+            this.widgetContents.getEl().setHeightPx(this.normalHeightOfContent);
+        }
+
+        getWidgetName(): string {
+            return this.widgetName;
+        }
+
         setWidgetContents(value: api.dom.Element) {
             this.widgetContents.appendChild(value);
         }
@@ -77,7 +96,7 @@ module app.view.detail {
         }
 
         setInactive() {
-            this.detailsPanel.deactivateActiveWidget();
+            this.detailsPanel.resetActiveWidget();
             this.deactivate();
         }
 

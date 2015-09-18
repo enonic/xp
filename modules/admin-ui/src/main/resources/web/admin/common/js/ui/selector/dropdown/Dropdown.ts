@@ -101,6 +101,10 @@ module api.ui.selector.dropdown {
             });
         }
 
+        getInput(): DropdownOptionFilterInput {
+            return this.input;
+        }
+
         reset() {
             this.input.show();
             this.selectedOptionView.hide();

@@ -43,7 +43,7 @@
 
       &.expanded {
         &:before {
-          color: @admin-white;
+          color: @admin-blue;
         }
       }
     }
@@ -55,12 +55,12 @@
   position: absolute;
   float: right;
   z-index: 2;
-  width: 280px;
+  width: 360px;
   top: 0px;
-  right: -280px;
+  right: -360px;
   box-shadow: 0 4px 20px -8px #000000, 0 0 0 0 rgba(0, 0, 0, 0.3);
-  opacity: 0.95;
-  background-color: @admin-white;
+  opacity: 0.99;
+  background-color: @admin-bg-almost-white;
   .transition(all 0.5s ease-in-out);
 
   @media screen and (max-width: 540px) {
@@ -75,7 +75,7 @@
     position: absolute;
     overflow-y: scroll;
     right: -15px;
-    top: 40px;
+    top: 91px;
     left: 5px;
     bottom: 0px;
 
@@ -95,17 +95,77 @@
   }
 
   .details-panel-label {
-    background-color: @admin-blue;
-    color: @admin-white;
+    background-color: @admin-bg-almost-white;
     line-height: 20px;
     padding: 10px 0px 10px 15px;
     display: block;
     font-size: 14px;
     border-bottom: 1px transparent;
+
+    .sub-name {
+      padding-right: 45px;
+    }
   }
 
   .label {
     font-family: @admin-font-family;
+  }
+
+  .widgets-selection-row {
+
+    background-color: @admin-white;
+
+    .info-widget-toggle-button {
+      cursor: pointer;
+      display: inline-block;
+      font-size: 26px;
+      float: left;
+      padding: 5px 7px 6px 7px;
+
+      .icon-grid5();
+
+      &.active {
+        background-color: @admin-blue;
+        &:before {
+          color: @admin-white;
+        }
+      }
+    }
+
+    .widget-selector {
+      width: calc(~'100% - 47px');
+
+      &.non-default-selected {
+        .selected-option {
+          background-color: @admin-blue;
+          color: @admin-white;
+        }
+
+        .dropdown-handle {
+          background-color: @admin-white;
+        }
+      }
+
+      .dropdown-handle {
+        border-left: 1px solid #cccccc;
+
+        &.down {
+          background-color: @admin-blue;
+          &:after {
+            border-bottom: 10px solid @admin-white;
+          }
+        }
+      }
+
+      .selected-option {
+        background: none;
+      }
+
+      .viewer {
+        font-size: 14px;
+        text-align: center;
+      }
+    }
   }
 }
 
@@ -217,6 +277,10 @@
 
       .details-panel-label {
         padding-left: 10px;
+      }
+
+      .widgets-selection-row .widget-selector {
+        width: calc(~'100% - 40px');
       }
     }
   }
