@@ -29,7 +29,7 @@ public class ExceptionRendererImplTest
     public void render_json()
     {
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
-        assertEquals( 404, res.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( "application/json", res.getContentType() );
 
         final String body = res.getBody().toString();
@@ -42,7 +42,7 @@ public class ExceptionRendererImplTest
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.NOT_FOUND, "Custom message" ) );
-        assertEquals( 404, res.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
         assertEquals( "text/html; charset=utf-8", res.getContentType() );
 
         final String body = res.getBody().toString();
@@ -58,7 +58,7 @@ public class ExceptionRendererImplTest
     {
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
-        assertEquals( 400, res.getStatus() );
+        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( "application/json", res.getContentType() );
 
         final String body = res.getBody().toString();
@@ -72,7 +72,7 @@ public class ExceptionRendererImplTest
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new PortalException( HttpStatus.BAD_REQUEST, cause ) );
-        assertEquals( 400, res.getStatus() );
+        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( "text/html; charset=utf-8", res.getContentType() );
 
         final String body = res.getBody().toString();

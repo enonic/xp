@@ -62,7 +62,7 @@ public class ComponentHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
     }
 
@@ -76,7 +76,7 @@ public class ComponentHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().
             body( "component rendered" ).
             header( "some-header", "some-value" ).
-            status( 200 ).
+            status( HttpStatus.OK ).
             build();
 
         setRendererResult( portalResponse );
@@ -85,7 +85,7 @@ public class ComponentHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "text/plain; charset=utf-8", res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
