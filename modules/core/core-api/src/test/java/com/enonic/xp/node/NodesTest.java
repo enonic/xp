@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.xp.node;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -6,10 +6,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
-
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 
