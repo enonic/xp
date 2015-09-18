@@ -9,7 +9,7 @@ ext {
     mavenProjects = leafProjects
 }
 
-configure( leafProjects ) {
+allprojects {
     group = 'com.enonic.xp'
 
     repositories {
