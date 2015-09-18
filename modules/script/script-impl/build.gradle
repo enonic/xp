@@ -1,0 +1,10 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':script:script-api' )
+    testCompile project( path: ':script:script-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Script - Impl'
+}

@@ -1,0 +1,10 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':web:web-api' )
+    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Web - VHost'
+}

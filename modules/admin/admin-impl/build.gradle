@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':admin:admin-api' )
+    testCompile project( ':web:web-jaxrs' )
+    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
+    testCompile project( path: ':web:web-jaxrs', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Admin - Impl'
+}

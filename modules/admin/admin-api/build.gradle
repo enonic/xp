@@ -1,0 +1,10 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':portal:portal-api' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Admin - Api'
+    // instruction 'Export-Package', 'com.enonic.xp.admin.*;-split-package:=first'
+}
