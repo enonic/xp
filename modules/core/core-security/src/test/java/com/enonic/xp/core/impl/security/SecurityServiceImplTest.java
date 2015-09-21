@@ -97,7 +97,6 @@ public class SecurityServiceImplTest
         storageDao.setClient( this.client );
 
         this.branchService = new BranchServiceImpl();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
         this.branchService.setStorageDao( storageDao );
 
         this.versionService = new VersionServiceImpl();
@@ -126,7 +125,6 @@ public class SecurityServiceImplTest
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setSearchService( searchService );
         this.nodeService.setStorageService( storageService );
-        this.nodeService.setBranchService( branchService );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );

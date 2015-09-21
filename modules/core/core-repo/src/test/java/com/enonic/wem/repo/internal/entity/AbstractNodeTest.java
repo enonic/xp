@@ -129,7 +129,6 @@ public abstract class AbstractNodeTest
         // Branch and version-services
 
         this.branchService = new BranchServiceImpl();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
         this.branchService.setStorageDao( storageDao );
 
         this.versionService = new VersionServiceImpl();
@@ -166,7 +165,6 @@ public abstract class AbstractNodeTest
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setNodeDao( nodeDao );
-        nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
         nodeService.setStorageService( this.storageService );
 

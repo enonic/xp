@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.search.SearchService;
@@ -93,8 +92,6 @@ abstract class AbstractNodeCommand
         IndexServiceInternal indexServiceInternal;
 
         NodeDao nodeDao;
-
-        BranchService branchService;
 
         StorageService storageService;
 

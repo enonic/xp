@@ -10,7 +10,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
@@ -78,8 +77,6 @@ public class NodeServiceImpl
     private IndexServiceInternal indexServiceInternal;
 
     private NodeDao nodeDao;
-
-    private BranchService branchService;
 
     private SnapshotService snapshotService;
 
@@ -598,12 +595,6 @@ public class NodeServiceImpl
     public void setNodeDao( final NodeDao nodeDao )
     {
         this.nodeDao = nodeDao;
-    }
-
-    @Reference
-    public void setBranchService( final BranchService branchService )
-    {
-        this.branchService = branchService;
     }
 
     @Reference

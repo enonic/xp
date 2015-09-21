@@ -15,7 +15,6 @@ import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.cache.BranchPath;
 import com.enonic.wem.repo.internal.cache.PathCache;
 import com.enonic.wem.repo.internal.cache.PathCacheImpl;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
@@ -41,8 +40,6 @@ public class BranchServiceImpl
     public static final ReturnFields BRANCH_RETURN_FIELDS =
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP );
-
-    private ElasticsearchDao elasticsearchDao;
 
     private StorageDao storageDao;
 
@@ -208,12 +205,6 @@ public class BranchServiceImpl
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.BRANCH ).
             build();
-    }
-
-    @Reference
-    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
-    {
-        this.elasticsearchDao = elasticsearchDao;
     }
 
     @Reference

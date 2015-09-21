@@ -32,7 +32,6 @@ public class AccessControlTest
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setBranchService( branchService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
 

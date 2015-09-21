@@ -143,7 +143,6 @@ public class AbstractContentServiceTest
         storageDao.setClient( this.client );
 
         this.branchService = new BranchServiceImpl();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
         this.branchService.setStorageDao( storageDao );
 
         this.versionService = new VersionServiceImpl();
@@ -172,7 +171,6 @@ public class AbstractContentServiceTest
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setBranchService( branchService );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
 
@@ -221,7 +219,6 @@ public class AbstractContentServiceTest
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexService );
         nodeService.setNodeDao( nodeDao );
-        nodeService.setBranchService( branchService );
         nodeService.setSearchService( searchService );
         nodeService.setStorageService( storageService );
 
