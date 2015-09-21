@@ -131,9 +131,11 @@ public final class InitAppCommand
             gradlePropertiesFile.createNewFile();
         }
 
+        //Adapt the content of the Gradle Properties file
         final String adaptedGradlePropertiesContent =
             com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8, new GradlePropertiesProcessor( name, version ) );
 
+        //Write the adapted content into the  Gradle Properties file
         com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).write( adaptedGradlePropertiesContent );
 
         LOGGER.info( "Gradle properties file adapted." );

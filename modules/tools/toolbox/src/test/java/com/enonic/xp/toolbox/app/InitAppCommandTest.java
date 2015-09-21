@@ -30,7 +30,7 @@ public class InitAppCommandTest
     }
 
     @Test
-    public void minimal()
+    public void initApp()
         throws IOException, URISyntaxException
     {
         final InitAppCommand command = new InitAppCommand();
