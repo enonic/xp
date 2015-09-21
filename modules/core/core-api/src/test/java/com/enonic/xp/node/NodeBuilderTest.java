@@ -1,7 +1,5 @@
 package com.enonic.xp.node;
 
-import java.time.LocalDateTime;
-
 import org.junit.Test;
 
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -49,9 +47,6 @@ public class NodeBuilderTest
     public void build_given_all_builder_properties()
         throws Exception
     {
-
-        LocalDateTime localDateTime = LocalDateTime.of( 2013, 10, 25, 10, 43 );
-
         final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
             parentPath( NodePath.ROOT ).
