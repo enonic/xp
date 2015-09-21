@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.storage.branch;
 
 import java.time.Instant;
 
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -16,12 +17,15 @@ public class BranchNodeVersion
 
     private final Instant timestamp;
 
+    private final NodeId nodeId;
+
     private BranchNodeVersion( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeState = builder.state;
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
+        this.nodeId = builder.nodeId;
     }
 
     public static Builder create()
@@ -49,6 +53,10 @@ public class BranchNodeVersion
         return timestamp;
     }
 
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
 
     @Override
     public boolean equals( final Object o )
@@ -64,7 +72,7 @@ public class BranchNodeVersion
 
         final BranchNodeVersion that = (BranchNodeVersion) o;
 
-        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
+        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
         {
             return false;
         }
@@ -72,7 +80,7 @@ public class BranchNodeVersion
         {
             return false;
         }
-        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
+        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
         {
             return false;
         }
@@ -80,8 +88,8 @@ public class BranchNodeVersion
         {
             return false;
         }
+        return !( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null );
 
-        return true;
     }
 
     @Override
@@ -89,6 +97,9 @@ public class BranchNodeVersion
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
+        result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
+        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
+        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         return result;
     }
 
@@ -101,6 +112,8 @@ public class BranchNodeVersion
         private NodePath nodePath;
 
         private Instant timestamp;
+
+        private NodeId nodeId;
 
         private Builder()
         {
@@ -127,6 +140,12 @@ public class BranchNodeVersion
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder nodeId( final NodeId nodeId )
+        {
+            this.nodeId = nodeId;
             return this;
         }
 

@@ -32,7 +32,7 @@ public class BranchStorageRequestFactory
         final StorageData data = StorageData.create().
             add( BranchIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() ).
             add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
-            add( BranchIndexPath.NODE_ID.getPath(), node.getNodeState().value() ).
+            add( BranchIndexPath.NODE_ID.getPath(), node.id().toString() ).
             add( BranchIndexPath.STATE.getPath(), node.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), node.path().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(), node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).

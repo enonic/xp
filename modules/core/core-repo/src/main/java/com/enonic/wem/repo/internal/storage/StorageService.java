@@ -3,11 +3,13 @@ package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
+import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
@@ -30,4 +32,6 @@ public interface StorageService
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
     BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
+
+    NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 }

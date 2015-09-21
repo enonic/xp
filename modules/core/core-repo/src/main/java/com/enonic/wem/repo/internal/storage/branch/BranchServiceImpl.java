@@ -45,6 +45,10 @@ import com.enonic.xp.query.filter.ValueFilter;
 public class BranchServiceImpl
     implements BranchService
 {
+    public static final ReturnFields BRANCH_RETURN_FIELDS =
+        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
+                           BranchIndexPath.TIMESTAMP );
+
     private ElasticsearchDao elasticsearchDao;
 
     private StorageDao storageDao;
@@ -95,7 +99,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchVersions get( final NodeIds nodeIds, final InternalContext context )
+    public BranchNodeVersions get( final NodeIds nodeIds, final InternalContext context )
     {
         Set<BranchNodeVersion> branchNodeVersions = Sets.newHashSet();
 
@@ -109,7 +113,7 @@ public class BranchServiceImpl
             }
         }
 
-        return NodeBranchVersions.from( branchNodeVersions );
+        return BranchNodeVersions.from( branchNodeVersions );
     }
 
     @Override
@@ -119,7 +123,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchVersions get( final NodePaths nodePaths, final InternalContext context )
+    public BranchNodeVersions get( final NodePaths nodePaths, final InternalContext context )
     {
         Set<BranchNodeVersion> branchNodeVersions = Sets.newHashSet();
 
@@ -133,7 +137,7 @@ public class BranchServiceImpl
             }
         }
 
-        return NodeBranchVersions.from( branchNodeVersions );
+        return BranchNodeVersions.from( branchNodeVersions );
     }
 
     private BranchPath createPath( final NodePath nodePath, final InternalContext context )
@@ -155,9 +159,7 @@ public class BranchServiceImpl
             storageSettings( createStorageSettings( context ) ).
             addValue( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getName() ).
             addValue( BranchIndexPath.PATH.getPath(), nodePath.toString() ).
-            returnFields(
-                ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
-                                   BranchIndexPath.TIMESTAMP ) ).
+            returnFields( BRANCH_RETURN_FIELDS ).
             expectSingleValue( true ).
             build() );
 
@@ -202,8 +204,7 @@ public class BranchServiceImpl
         return GetByIdRequest.create().
             id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
             storageSettings( createStorageSettings( context ) ).
-            returnFields(
-                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
+            returnFields( BRANCH_RETURN_FIELDS ).
             routing( nodeId.toString() ).
             build();
     }

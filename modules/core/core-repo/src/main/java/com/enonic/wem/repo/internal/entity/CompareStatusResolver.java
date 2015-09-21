@@ -1,14 +1,16 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
-import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 
 class CompareStatusResolver
 {
@@ -16,16 +18,13 @@ class CompareStatusResolver
 
     private final BranchNodeVersion target;
 
-    private final VersionService versionService;
-
-    private final RepositoryId repositoryId;
+    private final StorageService storageService;
 
     private CompareStatusResolver( Builder builder )
     {
         this.source = builder.source;
         this.target = builder.target;
-        this.versionService = builder.versionService;
-        this.repositoryId = builder.repositoryId;
+        this.storageService = builder.storageService;
     }
 
     public static Builder create()
@@ -76,11 +75,8 @@ class CompareStatusResolver
 
     private CompareStatus resolveFromVersion()
     {
-        final NodeVersionId sourceVersionId = this.source.getVersionId();
-        final NodeVersionId targetVersionId = this.target.getVersionId();
-
-        final NodeVersion sourceVersion = getVersion( sourceVersionId );
-        final NodeVersion targetVersion = getVersion( targetVersionId );
+        final NodeVersion sourceVersion = getVersion( this.source );
+        final NodeVersion targetVersion = getVersion( this.target );
 
         if ( sourceVersion.getTimestamp().isAfter( targetVersion.getTimestamp() ) )
         {
@@ -96,16 +92,26 @@ class CompareStatusResolver
     }
 
 
-    private NodeVersion getVersion( final NodeVersionId nodeVersionId )
+    private NodeVersion getVersion( final BranchNodeVersion branchNodeVersion )
     {
-        if ( nodeVersionId == null )
+        if ( branchNodeVersion == null )
         {
-            return null;
+            throw new IllegalArgumentException( "Expected branchNodeVersion to be != null when trying to fetch NodeVersion" );
         }
 
-        return versionService.getVersion( nodeVersionId, InternalContext.from( ContextAccessor.current() ) );
-    }
+        final NodeVersion version =
+            storageService.getVersion( new NodeVersionDocumentId( branchNodeVersion.getNodeId(), branchNodeVersion.getVersionId() ),
+                                       InternalContext.from( ContextAccessor.current() ) );
 
+        if ( version == null )
+        {
+            throw new NodeNotFoundException(
+                "Didn't find versionId '" + branchNodeVersion.getVersionId() + "' of Node with id '" + branchNodeVersion.getNodeId() +
+                    "'" );
+        }
+
+        return version;
+    }
 
     public static final class Builder
     {
@@ -113,9 +119,7 @@ class CompareStatusResolver
 
         private BranchNodeVersion target;
 
-        private VersionService versionService;
-
-        private RepositoryId repositoryId;
+        private StorageService storageService;
 
         private Builder()
         {
@@ -133,20 +137,20 @@ class CompareStatusResolver
             return this;
         }
 
-        public Builder versionService( VersionService versionService )
+        public Builder storageService( StorageService storageService )
         {
-            this.versionService = versionService;
+            this.storageService = storageService;
             return this;
         }
 
-        public Builder repositoryId( RepositoryId repositoryId )
+        private void validate()
         {
-            this.repositoryId = repositoryId;
-            return this;
+            Preconditions.checkNotNull( this.storageService, "StorageService must be set" );
         }
 
         public CompareStatusResolver build()
         {
+            this.validate();
             return new CompareStatusResolver( this );
         }
     }

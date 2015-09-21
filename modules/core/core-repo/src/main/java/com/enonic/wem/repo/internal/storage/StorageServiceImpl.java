@@ -9,8 +9,9 @@ import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchVersions;
+import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersions;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -19,6 +20,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
@@ -108,24 +110,31 @@ public class StorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final NodeBranchVersions nodeBranchVersions = this.branchService.get( nodeIds, InternalContext.from( ContextAccessor.current() ) );
+        final BranchNodeVersions branchNodeVersions = this.branchService.get( nodeIds, InternalContext.from( ContextAccessor.current() ) );
 
-        return doReturnNodes( nodeBranchVersions );
+        return doReturnNodes( branchNodeVersions );
     }
 
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final NodeBranchVersions nodeBranchVersions =
+        final BranchNodeVersions branchNodeVersions =
             this.branchService.get( nodePaths, InternalContext.from( ContextAccessor.current() ) );
 
-        return doReturnNodes( nodeBranchVersions );
+        return doReturnNodes( branchNodeVersions );
     }
+
 
     @Override
     public BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );
+    }
+
+    @Override
+    public NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
+    {
+        return this.versionService.getVersion( versionId, context );
     }
 
     private Node doGetNode( final BranchNodeVersion branchNodeVersion )
@@ -140,10 +149,10 @@ public class StorageServiceImpl
         return canRead( node ) ? node : null;
     }
 
-    private Nodes doReturnNodes( final NodeBranchVersions nodeBranchVersions )
+    private Nodes doReturnNodes( final BranchNodeVersions branchNodeVersions )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
-        nodeBranchVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
+        branchNodeVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
         final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
 

@@ -35,10 +35,9 @@ public class AbstractCompareNodeCommand
             build() );
 
         final CompareStatus compareStatus = CompareStatusResolver.create().
-            repositoryId( context.getRepositoryId() ).
             source( sourceWsVersion ).
             target( targetWsVersion ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             resolve();
 
