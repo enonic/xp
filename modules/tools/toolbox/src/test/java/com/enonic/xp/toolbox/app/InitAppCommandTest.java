@@ -1,38 +1,46 @@
 package com.enonic.xp.toolbox.app;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class InitAppCommandTest
 {
-    @Rule
-    public TemporaryFolder targetRoot = new TemporaryFolder();
+
+    private static File targetDirectory;
+
+    @ClassRule
+    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @BeforeClass
+    public static void before()
+        throws IOException
+    {
+        targetDirectory = temporaryFolder.newFolder();
+    }
 
     @Test
-    public void test()
-        throws IOException
+    public void minimal()
+        throws IOException, URISyntaxException
     {
         final InitAppCommand command = new InitAppCommand();
         command.name = "myapp";
-        command.destination = targetRoot.getRoot().getAbsolutePath();
-        command.version = "X.Y.Z";
+        command.repository = getClass().getResource( "/starter-empty/.git-directory" ).toURI().toString();
+        command.destination = targetDirectory.getAbsolutePath();
 
         command.run();
 
-        Assert.assertEquals( 5, targetRoot.getRoot().list().length );
-        Assert.assertTrue( Files.exists( Paths.get( targetRoot.getRoot().getPath(), "src", "main", "resources", "site", "site.xml" ) ) );
-
-        final Path buildGradlePath = Paths.get( targetRoot.getRoot().getPath(), "build.gradle" );
-        final String buildGraphContent = new String( Files.readAllBytes( buildGradlePath ), StandardCharsets.UTF_8 );
-        Assert.assertTrue( buildGraphContent.contains( "name = 'myapp'" ) );
-        Assert.assertTrue( buildGraphContent.contains( "version = 'X.Y.Z'" ) );
+        Assert.assertEquals( 6, targetDirectory.list().length );
+        Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), ".git" ) ) );
+        Assert.assertTrue( Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "site", "assets" ) ) );
+        Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "assets", ".gitkeep" ) ) );
     }
 }
