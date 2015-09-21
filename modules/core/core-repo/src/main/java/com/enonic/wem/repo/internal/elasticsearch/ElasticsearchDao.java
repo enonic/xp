@@ -6,16 +6,16 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SnapshotParams;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
 
 public interface ElasticsearchDao
 {

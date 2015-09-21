@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 
 import java.util.Set;
 
-import com.enonic.xp.snapshot.DeleteSnapshotsResult;
+import com.enonic.xp.node.DeleteSnapshotsResult;
 
 public class DeleteSnapshotsResultJson
 {

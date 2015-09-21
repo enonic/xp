@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
 
 public class SnapshotResultsJson
 {

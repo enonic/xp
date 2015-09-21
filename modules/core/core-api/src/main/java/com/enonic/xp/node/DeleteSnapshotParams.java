@@ -1,4 +1,4 @@
-package com.enonic.xp.snapshot;
+package com.enonic.xp.node;
 
 import java.time.Instant;
 import java.util.Collection;
