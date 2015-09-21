@@ -56,7 +56,7 @@ public class PortalDispatcherTest
     {
         this.handler.response = PortalResponse.create().
             status( 200 ).
-            contentType( "text/plain" ).
+            contentType( com.google.common.net.MediaType.create( "text", "plain"  ) ).
             body( "Hello World" ).
             build();
 

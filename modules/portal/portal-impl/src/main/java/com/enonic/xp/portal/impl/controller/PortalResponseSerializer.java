@@ -19,7 +19,7 @@ public final class PortalResponseSerializer
     public PortalResponse serialize()
     {
         return PortalResponse.create( from ).
-            header( HttpHeaders.CONTENT_TYPE, this.from.getContentType() ).
+            header( HttpHeaders.CONTENT_TYPE, this.from.getContentType().toString() ).
             body( serializeBody() ).
             build();
     }

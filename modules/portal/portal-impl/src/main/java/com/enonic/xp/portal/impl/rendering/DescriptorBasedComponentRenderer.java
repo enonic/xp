@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -56,8 +58,8 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
-            final String contentType = portalResponse.getContentType();
-            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.startsWith( "text/html" ) )
+            final MediaType contentType = portalResponse.getContentType();
+            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().equals( MediaType.create( "text", "html" ) ) )
             {
                 final Object bodyObj = portalResponse.getBody();
                 if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )
@@ -101,7 +103,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, component.getType().toString() );
 
         return PortalResponse.create().
-            contentType( "text/html" ).
+            contentType( MediaType.create( "text", "html" ) ).
             body( html ).
             build();
     }
@@ -111,7 +113,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = EMPTY_COMPONENT_PREVIEW_MODE_HTML;
 
         return PortalResponse.create().
-            contentType( "text/html" ).
+            contentType( MediaType.create( "text", "html" ) ).
             body( html ).
             build();
     }
@@ -127,7 +129,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_HTML, component.getType().toString() );
 
         return PortalResponse.create().
-            contentType( "text/html" ).
+            contentType( MediaType.create( "text", "html" ) ).
             body( html ).
             build();
     }

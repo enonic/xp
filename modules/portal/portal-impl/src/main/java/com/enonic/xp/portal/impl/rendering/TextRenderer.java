@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -39,7 +41,7 @@ public final class TextRenderer
         final RenderMode renderMode = getRenderingMode( portalRequest );
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
 
-        portalResponseBuilder.contentType( "text/html" ).postProcess( false );
+        portalResponseBuilder.contentType( MediaType.create( "text", "html" ) ).postProcess( false );
 
         if ( textComponent.getText() == null )
         {
