@@ -84,7 +84,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -151,7 +150,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -215,7 +213,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -416,7 +413,6 @@ public class ResolveSyncWorkCommandTest
     private void moveNode( Node moveMe, NodePath to )
     {
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -531,7 +527,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -585,7 +580,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -1064,7 +1058,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -1219,7 +1212,6 @@ public class ResolveSyncWorkCommandTest
         SetNodeStateCommand.create().
             params( setNodeStateParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
@@ -1231,7 +1223,6 @@ public class ResolveSyncWorkCommandTest
     void moveNode( final String nodeId, final NodePath newParent, final String newName )
     {
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -1250,7 +1241,6 @@ public class ResolveSyncWorkCommandTest
             id( node.id() ).
             newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
@@ -1266,7 +1256,6 @@ public class ResolveSyncWorkCommandTest
             id( node1.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -1307,7 +1296,6 @@ public class ResolveSyncWorkCommandTest
             target( WS_OTHER ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

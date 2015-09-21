@@ -6,7 +6,7 @@ import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
 public class QueryResultFactory
 {
-    public NodeQueryResult create( final SearchResult searchResult )
+    public static NodeQueryResult create( final SearchResult searchResult )
     {
         final SearchHits results = searchResult.getResults();
 

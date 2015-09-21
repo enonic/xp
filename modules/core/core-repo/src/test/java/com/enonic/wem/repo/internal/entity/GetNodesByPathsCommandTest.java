@@ -43,7 +43,6 @@ public class GetNodesByPathsCommandTest
                 addNodePath( createdNode2.path() ).
                 build() ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
@@ -61,7 +60,6 @@ public class GetNodesByPathsCommandTest
         final Nodes result = GetNodesByPathsCommand.create().
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).

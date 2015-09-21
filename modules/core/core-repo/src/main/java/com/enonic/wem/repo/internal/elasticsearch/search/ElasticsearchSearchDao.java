@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch;
+package com.enonic.wem.repo.internal.elasticsearch.search;
 
 import java.util.Collection;
 import java.util.Set;
@@ -7,38 +7,42 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchDao;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.version.FindVersionsQuery;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionDiffQuery;
+import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
-public class ElasticsearchQueryService
-    implements QueryService
+public class ElasticsearchSearchDao
+    implements SearchDao
 {
-    private final QueryResultFactory queryResultFactory = new QueryResultFactory();
-
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public NodeQueryResult find( final NodeQuery query, final IndexContext context )
+    public NodeQueryResult find( final NodeQuery query, InternalContext context )
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
@@ -56,6 +60,29 @@ public class ElasticsearchQueryService
         return doFind( esQuery );
     }
 
+    @Override
+    public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final InternalContext context )
+    {
+        return doFindByIds( nodeIds, orderExprs, context );
+    }
+
+    public NodeBranchQueryResult find( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
+    {
+        return null;
+    }
+
+    @Override
+    public SearchResult find( final FindVersionsQuery query, final InternalContext context )
+    {
+        return null;
+    }
+
+    @Override
+    public NodeVersionDiffResult versionDiff( final NodeVersionDiffQuery query, final InternalContext context )
+    {
+        return null;
+    }
+
     private NodeQueryResult doFind( final ElasticsearchQuery query )
     {
         final SearchResult searchResult = elasticsearchDao.find( query );
@@ -63,23 +90,22 @@ public class ElasticsearchQueryService
         return translateResult( searchResult );
     }
 
-    @Override
-    public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    private NodeQueryResult translateResult( final SearchResult searchResult )
     {
-        return doFindByIds( nodeIds, orderExprs, indexContext );
+        return QueryResultFactory.create( searchResult );
     }
 
-    private NodeVersionIds doFindByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    private NodeVersionIds doFindByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final InternalContext context )
     {
         if ( nodeIds.isEmpty() )
         {
             return NodeVersionIds.empty();
         }
 
-        final Branch branch = indexContext.getBranch();
+        final Branch branch = context.getBranch();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
+            addQueryFilter( AclFilterBuilderFactory.create( context.getPrincipalsKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
                 addValues( nodeIds.getAsStrings() ).
@@ -87,7 +113,7 @@ public class ElasticsearchQueryService
             build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            index( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
             indexType( branch.getName() ).
             query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
@@ -121,12 +147,6 @@ public class ElasticsearchQueryService
             builder.add( NodeVersionId.from( returnValue.getSingleValue().toString() ) );
         }
         return builder.build();
-    }
-
-
-    private NodeQueryResult translateResult( final SearchResult searchResult )
-    {
-        return queryResultFactory.create( searchResult );
     }
 
     @Reference

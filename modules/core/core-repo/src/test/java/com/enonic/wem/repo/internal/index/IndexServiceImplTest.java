@@ -134,7 +134,6 @@ public class IndexServiceImplTest
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -176,7 +175,6 @@ public class IndexServiceImplTest
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).

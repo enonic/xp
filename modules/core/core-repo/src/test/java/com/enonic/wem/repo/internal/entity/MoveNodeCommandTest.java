@@ -44,7 +44,6 @@ public class MoveNodeCommandTest
         final Node beforeMove = getNodeById( node.id() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -72,7 +71,6 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -102,7 +100,6 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -132,7 +129,6 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -168,7 +164,6 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -198,7 +193,6 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -263,7 +257,6 @@ public class MoveNodeCommandTest
         assertNotNull( getNodeByPath( NodePath.create( child1.path(), child1_1.name().toString() ).build() ) );
 
         final Node movedNode = MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -339,7 +332,6 @@ public class MoveNodeCommandTest
         try
         {
             MoveNodeCommand.create().
-                queryService( this.queryService ).
                 indexServiceInternal( this.indexServiceInternal ).
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
@@ -361,7 +353,6 @@ public class MoveNodeCommandTest
         try
         {
             MoveNodeCommand.create().
-                queryService( this.queryService ).
                 indexServiceInternal( this.indexServiceInternal ).
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
@@ -380,7 +371,6 @@ public class MoveNodeCommandTest
 
         // Tests the correct behaviour if both rights are granted
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).

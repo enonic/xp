@@ -22,7 +22,6 @@ import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
@@ -124,8 +123,6 @@ public class AbstractContentServiceTest
 
     private ElasticsearchIndexServiceInternal indexService;
 
-    private ElasticsearchQueryService queryService;
-
     private StorageServiceImpl storageService;
 
     private SearchServiceImpl searchService;
@@ -141,9 +138,6 @@ public class AbstractContentServiceTest
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         this.binaryBlobStore = new FileBlobStore( "test" );
-
-        this.queryService = new ElasticsearchQueryService();
-        this.queryService.setElasticsearchDao( elasticsearchDao );
 
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
@@ -177,7 +171,6 @@ public class AbstractContentServiceTest
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
-        this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setBranchService( branchService );
         this.nodeService.setStorageService( storageService );
@@ -227,7 +220,6 @@ public class AbstractContentServiceTest
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexService );
-        nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setBranchService( branchService );
         nodeService.setSearchService( searchService );

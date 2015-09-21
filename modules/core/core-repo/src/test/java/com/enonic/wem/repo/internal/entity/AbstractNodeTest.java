@@ -11,7 +11,7 @@ import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
@@ -96,13 +96,13 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchIndexServiceInternal indexServiceInternal;
 
-    protected ElasticsearchQueryService queryService;
-
     protected ElasticsearchSnapshotService snapshotService;
 
     protected StorageServiceImpl storageService;
 
     protected SearchServiceImpl searchService;
+
+    protected ElasticsearchSearchDao searchDao;
 
     @Before
     public void setUp()
@@ -116,11 +116,11 @@ public abstract class AbstractNodeTest
 
         this.binaryBlobStore = new FileBlobStore( "test" );
 
-        this.queryService = new ElasticsearchQueryService();
-        this.queryService.setElasticsearchDao( elasticsearchDao );
-
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
+
+        this.searchDao = new ElasticsearchSearchDao();
+        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
 
         this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
         this.indexServiceInternal.setClient( client );
@@ -152,6 +152,7 @@ public abstract class AbstractNodeTest
         this.searchService = new SearchServiceImpl();
         this.searchService.setBranchService( this.branchService );
         this.searchService.setVersionService( this.versionService );
+        this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
@@ -164,7 +165,6 @@ public abstract class AbstractNodeTest
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
-        nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
@@ -185,7 +185,6 @@ public abstract class AbstractNodeTest
 
         return CreateRootNodeCommand.create().
             params( createRootParams ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -199,7 +198,6 @@ public abstract class AbstractNodeTest
     {
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -228,7 +226,6 @@ public abstract class AbstractNodeTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -247,7 +244,6 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             id( nodeId ).
@@ -261,7 +257,6 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodePath( nodePath ).
@@ -274,7 +269,6 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByParentCommand.create().
             params( params ).
-            queryService( queryService ).
             branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
@@ -288,7 +282,6 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByQueryCommand.create().
             query( query ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -328,7 +321,6 @@ public abstract class AbstractNodeTest
         return PushNodesCommand.create().
             ids( nodeIds ).
             target( target ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -342,7 +334,6 @@ public abstract class AbstractNodeTest
     {
         return DeleteNodeByIdCommand.create().
             nodeId( nodeId ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).

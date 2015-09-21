@@ -13,7 +13,6 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.search.SearchService;
@@ -82,8 +81,6 @@ public class NodeServiceImpl
 
     private BranchService branchService;
 
-    private QueryService queryService;
-
     private SnapshotService snapshotService;
 
     private StorageService storageService;
@@ -119,7 +116,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -139,7 +135,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -152,7 +147,6 @@ public class NodeServiceImpl
         return GetNodesByIdsCommand.create().
             ids( ids ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             storageService( this.storageService ).
@@ -169,7 +163,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -181,7 +174,6 @@ public class NodeServiceImpl
     {
         return FindNodesByParentCommand.create().
             params( params ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -198,9 +190,7 @@ public class NodeServiceImpl
             query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -220,7 +210,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -236,7 +225,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -252,7 +240,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -267,7 +254,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -282,7 +268,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -296,7 +281,6 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             ids( ids ).
@@ -310,7 +294,6 @@ public class NodeServiceImpl
     {
         return DuplicateNodeCommand.create().
             id( nodeId ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -327,7 +310,6 @@ public class NodeServiceImpl
         return MoveNodeCommand.create().
             id( nodeId ).
             newParent( parentNodePath ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -387,7 +369,6 @@ public class NodeServiceImpl
             branches( params.getBranches() ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -420,7 +401,6 @@ public class NodeServiceImpl
             includeChildren( params.isIncludeChildren() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -432,7 +412,6 @@ public class NodeServiceImpl
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
         return SetNodeChildOrderCommand.create().
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -451,7 +430,6 @@ public class NodeServiceImpl
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -505,7 +483,6 @@ public class NodeServiceImpl
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             searchService( this.searchService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
@@ -522,7 +499,6 @@ public class NodeServiceImpl
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -539,7 +515,6 @@ public class NodeServiceImpl
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -552,7 +527,6 @@ public class NodeServiceImpl
     {
         return CreateRootNodeCommand.create().
             params( params ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -567,7 +541,6 @@ public class NodeServiceImpl
     {
         return SetNodeStateCommand.create().
             params( params ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -600,7 +573,6 @@ public class NodeServiceImpl
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
             binaryBlobStore( this.binaryBlobStore ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
@@ -626,7 +598,7 @@ public class NodeServiceImpl
     public NodesHasChildrenResult hasChildren( final Nodes nodes )
     {
         return NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            searchService( this.searchService ).
             build().
             resolve( nodes );
     }
@@ -635,7 +607,7 @@ public class NodeServiceImpl
     public boolean hasChildren( final Node node )
     {
         return NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            searchService( this.searchService ).
             build().
             resolve( node );
     }
@@ -656,12 +628,6 @@ public class NodeServiceImpl
     public void setBranchService( final BranchService branchService )
     {
         this.branchService = branchService;
-    }
-
-    @Reference
-    public void setQueryService( final QueryService queryService )
-    {
-        this.queryService = queryService;
     }
 
     @Reference

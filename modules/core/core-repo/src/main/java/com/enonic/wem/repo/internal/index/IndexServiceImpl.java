@@ -10,10 +10,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 import com.enonic.wem.repo.internal.repository.RepositorySearchIndexSettingsProvider;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultEntry;
@@ -58,7 +58,7 @@ public class IndexServiceImpl
         {
             final NodeBranchQueryResult results = this.branchService.findAll( NodeBranchQuery.create().
                 from( 0 ).
-                size( QueryService.GET_ALL_SIZE_FLAG ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.create( ContextAccessor.current() ).
                 branch( branch ).
                 build() );

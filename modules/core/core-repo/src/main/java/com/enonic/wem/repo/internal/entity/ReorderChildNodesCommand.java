@@ -39,7 +39,6 @@ public class ReorderChildNodesCommand
                 execute();
 
             final Node reorderedNode = ReorderChildNodeCommand.create().
-                queryService( this.queryService ).
                 nodeDao( this.nodeDao ).
                 branchService( this.branchService ).
                 indexServiceInternal( this.indexServiceInternal ).

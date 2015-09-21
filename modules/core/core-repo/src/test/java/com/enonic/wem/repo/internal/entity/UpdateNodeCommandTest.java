@@ -96,7 +96,6 @@ public class UpdateNodeCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).

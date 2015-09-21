@@ -43,6 +43,7 @@ abstract class AbstractDeleteNodeCommand
             params( FindNodesByParentParams.create().
                 parentId( node.id() ).
                 build() ).
+            searchService( this.searchService ).
             build().
             execute();
 

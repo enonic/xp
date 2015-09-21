@@ -46,7 +46,6 @@ public class GetActiveNodeVersionsCommandTest
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
@@ -64,7 +63,6 @@ public class GetActiveNodeVersionsCommandTest
         final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
@@ -89,7 +87,6 @@ public class GetActiveNodeVersionsCommandTest
         context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).

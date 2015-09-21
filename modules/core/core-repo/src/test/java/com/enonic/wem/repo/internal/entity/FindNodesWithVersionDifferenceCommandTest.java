@@ -315,7 +315,6 @@ public class FindNodesWithVersionDifferenceCommandTest
         MoveNodeCommand.create().
             newParent( newParent.path() ).
             id( node.id() ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
@@ -360,7 +359,6 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -379,7 +377,6 @@ public class FindNodesWithVersionDifferenceCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

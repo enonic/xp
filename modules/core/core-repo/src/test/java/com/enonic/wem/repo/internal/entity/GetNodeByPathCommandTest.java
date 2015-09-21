@@ -96,7 +96,6 @@ public class GetNodeByPathCommandTest
     {
         return GetNodeByPathCommand.create().
             nodePath( nodePath ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).

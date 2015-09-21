@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
@@ -57,7 +57,7 @@ final class ApplyNodePermissionsCommand
 
         final FindNodesByParentParams findByParentParams = FindNodesByParentParams.create().
             parentPath( parent.path() ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build();
         final Nodes children = doFindNodesByParent( findByParentParams ).getNodes();
 

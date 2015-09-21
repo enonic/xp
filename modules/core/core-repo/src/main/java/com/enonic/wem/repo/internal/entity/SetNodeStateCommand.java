@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -62,7 +62,7 @@ public class SetNodeStateCommand
 
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node child : result.getNodes() )

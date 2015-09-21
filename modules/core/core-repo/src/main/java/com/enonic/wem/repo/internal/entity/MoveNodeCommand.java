@@ -134,6 +134,7 @@ public class MoveNodeCommand
             params( FindNodesByParentParams.create().
                 parentId( persistedNode.id() ).
                 build() ).
+            searchService( this.searchService ).
             build().
             execute();
 

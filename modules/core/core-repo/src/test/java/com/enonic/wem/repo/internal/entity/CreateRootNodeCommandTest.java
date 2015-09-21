@@ -26,7 +26,6 @@ public class CreateRootNodeCommandTest
                 childOrder( ChildOrder.defaultOrder() ).
                 build() ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             storageService( this.storageService ).

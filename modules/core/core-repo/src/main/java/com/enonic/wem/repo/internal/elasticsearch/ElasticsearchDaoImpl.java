@@ -46,8 +46,8 @@ import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.repository.RepositoryId;
@@ -137,7 +137,7 @@ public class ElasticsearchDaoImpl
         final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
             client( this.client ).
-            resolvedSize( query.getSize() == QueryService.GET_ALL_SIZE_FLAG ? resolveSize( query ) : query.getSize() ).
+            resolvedSize( query.getSize() == SearchService.GET_ALL_SIZE_FLAG ? resolveSize( query ) : query.getSize() ).
             build().
             create();
 
@@ -390,7 +390,7 @@ public class ElasticsearchDaoImpl
 
     private int resolveSize( final ElasticsearchQuery query )
     {
-        if ( query.getSize() == QueryService.GET_ALL_SIZE_FLAG )
+        if ( query.getSize() == SearchService.GET_ALL_SIZE_FLAG )
         {
             return safeLongToInt( this.count( query ) );
         }

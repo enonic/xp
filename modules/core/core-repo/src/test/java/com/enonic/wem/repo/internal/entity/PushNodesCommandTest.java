@@ -183,7 +183,6 @@ public class PushNodesCommandTest
         final Node movedNode = MoveNodeCommand.create().
             id( node1.id() ).
             newParent( node2.path() ).
-            queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -306,7 +305,6 @@ public class PushNodesCommandTest
             id( node.id() ).
             newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).

@@ -38,7 +38,7 @@ public class NodeHasChildResolverTest
             build() );
 
         assertTrue( NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            searchService( this.searchService ).
             build().
             resolve( parentNode ) );
     }
@@ -73,7 +73,7 @@ public class NodeHasChildResolverTest
             build() );
 
         final NodesHasChildrenResult result = NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            searchService( this.searchService ).
             build().
             resolve( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
 
@@ -93,7 +93,7 @@ public class NodeHasChildResolverTest
             build() );
 
         assertFalse( NodeHasChildResolver.create().
-            queryService( this.queryService ).
+            searchService( this.searchService ).
             build().
             resolve( parentNode ) );
     }

@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
@@ -71,7 +71,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
             from( 0 ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node node : findNodesByParentResult.getNodes() )
@@ -118,7 +118,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( duplicatedParent.path() ).
             from( 0 ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node node : findNodesByParentResult.getNodes() )

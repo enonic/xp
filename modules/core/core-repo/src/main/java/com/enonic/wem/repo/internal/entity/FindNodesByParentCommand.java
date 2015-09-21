@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
@@ -62,11 +62,12 @@ public class FindNodesByParentCommand
 
         final NodeQuery query = createByPathQuery( order, parentPath );
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = this.searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
 
         final Nodes nodes = FindNodesByIdsCommand.create( this ).
             ids( nodeQueryResult.getNodeIds() ).
             orderExpressions( order.getOrderExpressions() ).
+            searchService( this.searchService ).
             build().
             execute();
 

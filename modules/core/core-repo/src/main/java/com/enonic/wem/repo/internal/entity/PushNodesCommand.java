@@ -55,6 +55,7 @@ public class PushNodesCommand
         final Nodes nodes = FindNodesByIdsCommand.create( this ).
             ids( ids ).
             orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
+            searchService( this.searchService ).
             build().
             execute();
 

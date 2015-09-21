@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionIds;
@@ -26,7 +26,7 @@ public class FindNodesByIdsCommand
     public Nodes execute()
     {
         final NodeVersionIds versionIds =
-            this.queryService.find( this.ids, this.orderExpressions, IndexContext.from( ContextAccessor.current() ) );
+            this.searchService.search( this.ids, this.orderExpressions, InternalContext.from( ContextAccessor.current() ) );
 
         return nodeDao.getByVersionIds( versionIds );
     }

@@ -5,8 +5,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.version.FindVersionsQuery;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.node.FindNodeVersionsResult;
@@ -25,14 +26,22 @@ public class SearchServiceImpl
 
     private BranchService branchService;
 
+    private SearchDao searchDao;
+
     @Override
-    public NodeQueryResult find( final NodeQuery query, final IndexContext context )
+    public NodeQueryResult search( final NodeQuery query, final InternalContext context )
     {
-        return null;
+        return searchDao.find( query, context );
     }
 
     @Override
-    public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    public NodeVersionIds search( final NodeIds nodeIds, final OrderExpressions orderExprs, final InternalContext context )
+    {
+        return searchDao.find( nodeIds, orderExprs, context );
+    }
+
+    @Override
+    public NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
         return null;
     }
@@ -59,5 +68,11 @@ public class SearchServiceImpl
     public void setBranchService( final BranchService branchService )
     {
         this.branchService = branchService;
+    }
+
+    @Reference
+    public void setSearchDao( final SearchDao searchDao )
+    {
+        this.searchDao = searchDao;
     }
 }

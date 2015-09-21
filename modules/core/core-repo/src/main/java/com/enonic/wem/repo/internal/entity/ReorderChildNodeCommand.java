@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -94,7 +94,7 @@ public class ReorderChildNodeCommand
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+        return searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
