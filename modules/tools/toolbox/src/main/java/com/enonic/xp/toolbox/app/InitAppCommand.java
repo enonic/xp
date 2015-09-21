@@ -13,6 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import com.google.common.base.Charsets;
+
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
@@ -46,6 +48,7 @@ public final class InitAppCommand
     {
         String gitRepositoryUri = resolveGitRepositoryUri();
         cloneGitRepository( gitRepositoryUri );
+        adaptGradleProperties();
     }
 
     private String resolveGitRepositoryUri()
@@ -95,5 +98,21 @@ public final class InitAppCommand
                 return FileVisitResult.CONTINUE;
             }
         } );
+    }
+
+    private void adaptGradleProperties()
+        throws IOException
+    {
+        //Creates the Gradle Properties file if it does not exist
+        final File gradlePropertiesFile = new File( destination, "gradle.properties" );
+        if ( !gradlePropertiesFile.exists() )
+        {
+            gradlePropertiesFile.createNewFile();
+        }
+
+        final String adaptedGradlePropertiesContent =
+            com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8, new GradlePropertiesProcessor( name, version ) );
+
+        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).write( adaptedGradlePropertiesContent );
     }
 }

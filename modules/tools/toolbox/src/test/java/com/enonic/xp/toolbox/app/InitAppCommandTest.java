@@ -12,6 +12,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.base.Charsets;
+
 public class InitAppCommandTest
 {
 
@@ -32,9 +34,10 @@ public class InitAppCommandTest
         throws IOException, URISyntaxException
     {
         final InitAppCommand command = new InitAppCommand();
-        command.name = "myapp";
+        command.name = "com.enonic.xp.toolbox.app.initCommandTest";
         command.repository = getClass().getResource( "/starter-empty/.git-directory" ).toURI().toString();
         command.destination = targetDirectory.getAbsolutePath();
+        command.version = "1.0.1";
 
         command.run();
 
@@ -42,5 +45,15 @@ public class InitAppCommandTest
         Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), ".git" ) ) );
         Assert.assertTrue( Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "site", "assets" ) ) );
         Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "assets", ".gitkeep" ) ) );
+
+        final String gradlePropertiesContent =
+            com.google.common.io.Files.asCharSource( new File( targetDirectory, "gradle.properties" ), Charsets.UTF_8 ).read();
+
+        Assert.assertTrue( gradlePropertiesContent.contains( "group = com.enonic.xp.toolbox.app" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "version = 1.0.1" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "projectName = initCommandTest" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "appName = com.enonic.xp.toolbox.app.initCommandTest" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "displayName = InitCommandTest App" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "xpVersion = 6.1.0-SNAPSHOT" ) );
     }
 }
