@@ -317,7 +317,6 @@ public class FindNodesWithVersionDifferenceCommandTest
             id( node.id() ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -360,7 +359,6 @@ public class FindNodesWithVersionDifferenceCommandTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -375,7 +373,6 @@ public class FindNodesWithVersionDifferenceCommandTest
             ids( NodeIds.from( createdNode.id() ) ).
             target( target ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).

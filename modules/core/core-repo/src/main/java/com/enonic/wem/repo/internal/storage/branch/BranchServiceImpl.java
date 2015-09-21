@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.storage.branch;
 import java.util.Set;
 
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -17,9 +16,6 @@ import com.enonic.wem.repo.internal.cache.BranchPath;
 import com.enonic.wem.repo.internal.cache.PathCache;
 import com.enonic.wem.repo.internal.cache.PathCacheImpl;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
@@ -33,13 +29,10 @@ import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.query.filter.ValueFilter;
 
 @Component
 public class BranchServiceImpl
@@ -215,37 +208,6 @@ public class BranchServiceImpl
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.BRANCH ).
             build();
-    }
-
-
-    // TODO: Move to search service
-    @Override
-    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
-    {
-        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( ValueFilter.create().
-                fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
-                addValue( ValueFactory.newString( context.getBranch().getName() ) ).
-                build() ).
-            build();
-
-        final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) ).
-            indexType( IndexType.BRANCH.getName() ).
-            query( queryBuilder ).
-            size( nodeBranchQuery.getSize() ).
-            from( nodeBranchQuery.getFrom() ).
-            setReturnFields( ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID ) ).
-            build();
-
-        final SearchResult searchResult = this.elasticsearchDao.find( query );
-
-        if ( searchResult.isEmpty() )
-        {
-            return NodeBranchQueryResult.empty();
-        }
-
-        return NodeBranchQueryResultFactory.create( searchResult );
     }
 
     @Reference

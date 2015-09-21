@@ -46,7 +46,6 @@ public class DuplicateNodeCommandTest
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -77,7 +76,6 @@ public class DuplicateNodeCommandTest
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -271,7 +269,6 @@ public class DuplicateNodeCommandTest
             id( createdNode.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -316,7 +313,6 @@ public class DuplicateNodeCommandTest
             id( parentNode.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -349,7 +345,6 @@ public class DuplicateNodeCommandTest
             nodeToMoveBefore( getNodeById( childNode1.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -363,7 +358,6 @@ public class DuplicateNodeCommandTest
             nodeId( parentNode.id() ).
             childOrder( ChildOrder.manualOrder() ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -385,7 +379,6 @@ public class DuplicateNodeCommandTest
             id( node1.id() ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
-            branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).

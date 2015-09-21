@@ -34,7 +34,7 @@ public class IndexServiceImplTest
     {
         super.setUp();
         this.indexService = new IndexServiceImpl();
-        this.indexService.setBranchService( this.branchService );
+        this.indexService.setSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
         this.indexService.setNodeDao( this.nodeDao );
 
@@ -133,7 +133,6 @@ public class IndexServiceImplTest
             target( CTX_OTHER.getBranch() ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -173,7 +172,6 @@ public class IndexServiceImplTest
     {
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

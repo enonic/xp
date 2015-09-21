@@ -185,7 +185,6 @@ public abstract class AbstractNodeTest
 
         return CreateRootNodeCommand.create().
             params( createRootParams ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -200,7 +199,6 @@ public abstract class AbstractNodeTest
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -223,7 +221,6 @@ public abstract class AbstractNodeTest
             build();
 
         final Node createdNode = CreateNodeCommand.create().
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -243,7 +240,6 @@ public abstract class AbstractNodeTest
         return GetNodeByIdCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             id( nodeId ).
@@ -256,7 +252,6 @@ public abstract class AbstractNodeTest
         return GetNodeByPathCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodePath( nodePath ).
@@ -269,7 +264,6 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByParentCommand.create().
             params( params ).
-            branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             storageService( this.storageService ).
@@ -282,7 +276,6 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByQueryCommand.create().
             query( query ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -322,7 +315,6 @@ public abstract class AbstractNodeTest
             ids( nodeIds ).
             target( target ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -336,7 +328,6 @@ public abstract class AbstractNodeTest
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

@@ -44,7 +44,6 @@ public class GetBinaryCommandTest
         final ByteSource myImage = GetBinaryCommand.create().
             nodeId( node.id() ).
             binaryReference( imageRef ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -75,7 +74,6 @@ public class GetBinaryCommandTest
         final ByteSource myImage = GetBinaryCommand.create().
             nodeId( node.id() ).
             propertyPath( PropertyPath.from( "myBinary" ) ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).

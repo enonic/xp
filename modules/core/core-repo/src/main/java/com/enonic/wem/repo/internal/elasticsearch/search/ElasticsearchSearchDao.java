@@ -19,12 +19,16 @@ import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchDao;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
+import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultFactory;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.FindVersionsQuery;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
@@ -57,7 +61,9 @@ public class ElasticsearchSearchDao
 
         //System.out.println( esQuery );
 
-        return doFind( esQuery );
+        final SearchResult searchResult = elasticsearchDao.find( esQuery );
+
+        return translateResult( searchResult );
     }
 
     @Override
@@ -68,7 +74,32 @@ public class ElasticsearchSearchDao
 
     public NodeBranchQueryResult find( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
-        return null;
+
+        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                addValue( ValueFactory.newString( context.getBranch().getName() ) ).
+                build() ).
+            build();
+
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) ).
+            indexType( IndexType.BRANCH.getName() ).
+            query( queryBuilder ).
+            size( nodeBranchQuery.getSize() ).
+            from( nodeBranchQuery.getFrom() ).
+            setReturnFields( ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID ) ).
+            build();
+
+        final SearchResult searchResult = this.elasticsearchDao.find( query );
+
+        if ( searchResult.isEmpty() )
+        {
+            return NodeBranchQueryResult.empty();
+        }
+
+        return NodeBranchQueryResultFactory.create( searchResult );
+
     }
 
     @Override
@@ -81,13 +112,6 @@ public class ElasticsearchSearchDao
     public NodeVersionDiffResult versionDiff( final NodeVersionDiffQuery query, final InternalContext context )
     {
         return null;
-    }
-
-    private NodeQueryResult doFind( final ElasticsearchQuery query )
-    {
-        final SearchResult searchResult = elasticsearchDao.find( query );
-
-        return translateResult( searchResult );
     }
 
     private NodeQueryResult translateResult( final SearchResult searchResult )

@@ -18,9 +18,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractNodeCommand
@@ -32,8 +30,6 @@ abstract class AbstractNodeCommand
 
     final NodeDao nodeDao;
 
-    final BranchService branchService;
-
     final StorageService storageService;
 
     final SearchService searchService;
@@ -42,7 +38,6 @@ abstract class AbstractNodeCommand
     {
         this.indexServiceInternal = builder.indexServiceInternal;
         this.nodeDao = builder.nodeDao;
-        this.branchService = builder.branchService;
         this.storageService = builder.storageService;
         this.searchService = builder.searchService;
     }
@@ -93,18 +88,6 @@ abstract class AbstractNodeCommand
         }
     }
 
-    protected boolean canRead( final Node node )
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
-        {
-            return true;
-        }
-
-        return node.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.READ );
-    }
-
     public static abstract class Builder<B extends Builder>
     {
         IndexServiceInternal indexServiceInternal;
@@ -125,7 +108,6 @@ abstract class AbstractNodeCommand
         {
             this.indexServiceInternal = source.indexServiceInternal;
             this.nodeDao = source.nodeDao;
-            this.branchService = source.branchService;
             this.storageService = source.storageService;
             this.searchService = source.searchService;
         }
@@ -134,13 +116,6 @@ abstract class AbstractNodeCommand
         public B indexServiceInternal( final IndexServiceInternal indexServiceInternal )
         {
             this.indexServiceInternal = indexServiceInternal;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B branchService( final BranchService branchService )
-        {
-            this.branchService = branchService;
             return (B) this;
         }
 
@@ -167,8 +142,8 @@ abstract class AbstractNodeCommand
         {
             Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
-            Preconditions.checkNotNull( branchService, "branchService not set" );
             Preconditions.checkNotNull( storageService, "storageService not set" );
+            Preconditions.checkNotNull( searchService, "searchService not set" );
         }
     }
 }

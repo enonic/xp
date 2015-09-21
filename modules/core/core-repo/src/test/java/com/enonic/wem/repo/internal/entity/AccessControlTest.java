@@ -110,7 +110,6 @@ public class AccessControlTest
     {
         return GetNodeByIdCommand.create().
             id( nodeId ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

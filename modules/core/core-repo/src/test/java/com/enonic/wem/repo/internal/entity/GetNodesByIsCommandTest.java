@@ -38,7 +38,6 @@ public class GetNodesByIsCommandTest
             ids( NodeIds.from( "1", "2" ) ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -59,7 +58,6 @@ public class GetNodesByIsCommandTest
             ids( NodeIds.from( "1", "2", "3" ) ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -93,7 +91,6 @@ public class GetNodesByIsCommandTest
             params( params.build() ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

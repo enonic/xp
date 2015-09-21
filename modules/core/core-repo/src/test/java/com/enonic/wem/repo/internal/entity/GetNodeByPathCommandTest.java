@@ -98,7 +98,6 @@ public class GetNodeByPathCommandTest
             nodePath( nodePath ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

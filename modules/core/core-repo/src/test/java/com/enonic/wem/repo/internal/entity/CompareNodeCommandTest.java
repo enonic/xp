@@ -73,7 +73,6 @@ public class CompareNodeCommandTest
 
         DeleteNodeByIdCommand.create().
             nodeId( createdNode.id() ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -176,7 +175,6 @@ public class CompareNodeCommandTest
             id( createdNode.id() ).
             newParent( mySecondNode.path() ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -209,7 +207,6 @@ public class CompareNodeCommandTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -224,7 +221,6 @@ public class CompareNodeCommandTest
             ids( NodeIds.from( createdNode.id() ) ).
             target( branch ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).

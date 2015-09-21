@@ -34,7 +34,6 @@ public class CreateRootNodeCommand
 
         StoreNodeCommand.create().
             node( rootNode ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).

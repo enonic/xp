@@ -39,7 +39,6 @@ public class GetNodeByIdCommandTest
         final Node fetchedNode = GetNodeByIdCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             id( createdNode.id() ).
@@ -75,7 +74,6 @@ public class GetNodeByIdCommandTest
         final Node fetchedNode = GetNodeByIdCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             id( createdNode.id() ).

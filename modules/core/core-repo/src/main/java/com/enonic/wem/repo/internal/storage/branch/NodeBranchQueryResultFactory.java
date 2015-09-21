@@ -3,10 +3,10 @@ package com.enonic.wem.repo.internal.storage.branch;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
-class NodeBranchQueryResultFactory
+public class NodeBranchQueryResultFactory
 {
 
-    static NodeBranchQueryResult create( final SearchResult searchResult )
+    public static NodeBranchQueryResult create( final SearchResult searchResult )
     {
         final NodeBranchQueryResult.Builder builder = NodeBranchQueryResult.create();
 

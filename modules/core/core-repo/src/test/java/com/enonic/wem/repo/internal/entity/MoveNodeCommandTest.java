@@ -45,7 +45,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -72,7 +71,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -101,7 +99,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -130,7 +127,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -165,7 +161,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -194,7 +189,6 @@ public class MoveNodeCommandTest
 
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -258,7 +252,6 @@ public class MoveNodeCommandTest
 
         final Node movedNode = MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -333,7 +326,6 @@ public class MoveNodeCommandTest
         {
             MoveNodeCommand.create().
                 indexServiceInternal( this.indexServiceInternal ).
-                branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
                 storageService( this.storageService ).
                 searchService( this.searchService ).
@@ -354,7 +346,6 @@ public class MoveNodeCommandTest
         {
             MoveNodeCommand.create().
                 indexServiceInternal( this.indexServiceInternal ).
-                branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
                 storageService( this.storageService ).
                 searchService( this.searchService ).
@@ -372,7 +363,6 @@ public class MoveNodeCommandTest
         // Tests the correct behaviour if both rights are granted
         MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).

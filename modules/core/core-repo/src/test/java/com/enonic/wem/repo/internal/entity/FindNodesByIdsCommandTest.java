@@ -43,7 +43,6 @@ public class FindNodesByIdsCommandTest
 
         final Nodes result = FindNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).

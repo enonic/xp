@@ -169,7 +169,6 @@ public class ImportNodeCommandTest
         return ImportNodeCommand.create().
             importNode( importNode ).
             binaryBlobStore( this.binaryBlobStore ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).

@@ -49,7 +49,6 @@ public class StoreNodeCommandTest
 
         StoreNodeCommand.create().
             node( updatedNode ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).

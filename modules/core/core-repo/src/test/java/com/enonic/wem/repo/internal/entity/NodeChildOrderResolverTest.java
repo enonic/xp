@@ -48,7 +48,6 @@ public class NodeChildOrderResolverTest
             params( CreateRootNodeParams.create().
                 childOrder( childOrder ).
                 build() ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -58,7 +57,6 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( NodePath.ROOT ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -83,7 +81,6 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( parent.path() ).
-            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
