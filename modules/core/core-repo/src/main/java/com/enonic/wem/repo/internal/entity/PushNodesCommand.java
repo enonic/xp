@@ -64,7 +64,6 @@ public class PushNodesCommand
         {
             final NodeComparison nodeComparison = CompareNodeCommand.create().
                 nodeId( node.id() ).
-                versionService( this.versionService ).
                 storageService( this.storageService ).
                 target( this.target ).
                 build().

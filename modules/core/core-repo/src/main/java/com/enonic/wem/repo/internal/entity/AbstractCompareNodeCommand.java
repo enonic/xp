@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
-import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
@@ -16,14 +15,11 @@ public class AbstractCompareNodeCommand
 {
     private final Branch target;
 
-    private final VersionService versionService;
-
     private final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
         target = builder.target;
-        versionService = builder.versionService;
         this.storageService = builder.storageService;
     }
 
@@ -49,8 +45,6 @@ public class AbstractCompareNodeCommand
     {
         private Branch target;
 
-        private VersionService versionService;
-
         private StorageService storageService;
 
         Builder()
@@ -65,13 +59,6 @@ public class AbstractCompareNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B versionService( final VersionService versionService )
-        {
-            this.versionService = versionService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
         public B storageService( final StorageService storageService )
         {
             this.storageService = storageService;
@@ -81,7 +68,6 @@ public class AbstractCompareNodeCommand
         void validate()
         {
             Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( versionService );
             Preconditions.checkNotNull( storageService );
         }
 

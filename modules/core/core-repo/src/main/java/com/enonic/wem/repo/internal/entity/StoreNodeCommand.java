@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -15,14 +14,11 @@ public class StoreNodeCommand
 
     private final boolean updateMetadataOnly;
 
-    private final StorageService storageService;
-
     private StoreNodeCommand( final Builder builder )
     {
         super( builder );
         this.node = builder.node;
         this.updateMetadataOnly = builder.updateMetadataOnly;
-        this.storageService = builder.storageService;
     }
 
     public static Builder create()
@@ -73,12 +69,6 @@ public class StoreNodeCommand
         public Builder updateMetadataOnly( final boolean updateMetadataOnly )
         {
             this.updateMetadataOnly = updateMetadataOnly;
-            return this;
-        }
-
-        public Builder storageService( final StorageService storageService )
-        {
-            this.storageService = storageService;
             return this;
         }
 

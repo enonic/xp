@@ -18,6 +18,7 @@ import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.search.SearchServiceImpl;
 import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
 import com.enonic.wem.repo.internal.storage.branch.BranchServiceImpl;
 import com.enonic.xp.branch.Branch;
@@ -101,6 +102,8 @@ public abstract class AbstractNodeTest
 
     protected StorageServiceImpl storageService;
 
+    protected SearchServiceImpl searchService;
+
     @Before
     public void setUp()
         throws Exception
@@ -119,6 +122,12 @@ public abstract class AbstractNodeTest
         final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
         storageDao.setClient( this.client );
 
+        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
+        this.indexServiceInternal.setClient( client );
+        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
+
+        // Branch and version-services
+
         this.branchService = new BranchServiceImpl();
         this.branchService.setElasticsearchDao( elasticsearchDao );
         this.branchService.setStorageDao( storageDao );
@@ -127,21 +136,25 @@ public abstract class AbstractNodeTest
         this.versionService.setElasticsearchDao( elasticsearchDao );
         this.versionService.setStorageDao( storageDao );
 
-        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
-        this.indexServiceInternal.setClient( client );
-        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
-
-        this.snapshotService = new ElasticsearchSnapshotService();
-        this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
+        // Storage-service
 
         this.nodeDao = new NodeDaoImpl();
         this.nodeDao.setBranchService( this.branchService );
 
         this.storageService = new StorageServiceImpl();
+        this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
         this.storageService.setIndexServiceInternal( this.indexServiceInternal );
         this.storageService.setNodeDao( this.nodeDao );
-        this.storageService.setVersionService( this.versionService );
+
+        // Search-service
+
+        this.searchService = new SearchServiceImpl();
+        this.searchService.setBranchService( this.branchService );
+        this.searchService.setVersionService( this.versionService );
+
+        this.snapshotService = new ElasticsearchSnapshotService();
+        this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
 
         createContentRepository();
         waitForClusterHealth();
@@ -153,7 +166,6 @@ public abstract class AbstractNodeTest
         nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
-        nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
         nodeService.setStorageService( this.storageService );
@@ -175,10 +187,10 @@ public abstract class AbstractNodeTest
             params( createRootParams ).
             queryService( this.queryService ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -191,9 +203,9 @@ public abstract class AbstractNodeTest
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -216,10 +228,10 @@ public abstract class AbstractNodeTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             params( createParamsWithAnalyzer ).
             build().
             execute();
@@ -232,13 +244,12 @@ public abstract class AbstractNodeTest
     Node getNodeById( final NodeId nodeId )
     {
         return GetNodeByIdCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( nodeId ).
             build().
             execute();
@@ -247,13 +258,12 @@ public abstract class AbstractNodeTest
     Node getNodeByPath( final NodePath nodePath )
     {
         return GetNodeByPathCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             nodePath( nodePath ).
             build().
             execute();
@@ -267,9 +277,9 @@ public abstract class AbstractNodeTest
             queryService( queryService ).
             branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
             nodeDao( nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -279,11 +289,11 @@ public abstract class AbstractNodeTest
         return FindNodesByQueryCommand.create().
             query( query ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -319,11 +329,11 @@ public abstract class AbstractNodeTest
             ids( nodeIds ).
             target( target ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -335,9 +345,9 @@ public abstract class AbstractNodeTest
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

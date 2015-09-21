@@ -28,9 +28,9 @@ public class CreateRootNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

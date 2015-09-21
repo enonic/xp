@@ -45,10 +45,10 @@ public class FindNodesByIdsCommandTest
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

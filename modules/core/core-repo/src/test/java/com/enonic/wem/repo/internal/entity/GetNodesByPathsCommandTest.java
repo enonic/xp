@@ -44,10 +44,10 @@ public class GetNodesByPathsCommandTest
                 build() ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -62,10 +62,10 @@ public class GetNodesByPathsCommandTest
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

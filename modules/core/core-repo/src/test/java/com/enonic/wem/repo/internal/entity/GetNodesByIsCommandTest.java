@@ -36,13 +36,12 @@ public class GetNodesByIsCommandTest
 
         final Nodes nodes = GetNodesByIdsCommand.create().
             ids( NodeIds.from( "1", "2" ) ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -59,13 +58,12 @@ public class GetNodesByIsCommandTest
 
         final Nodes nodes = GetNodesByIdsCommand.create().
             ids( NodeIds.from( "1", "2", "3" ) ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -95,13 +93,12 @@ public class GetNodesByIsCommandTest
 
         return CreateNodeCommand.create().
             params( params.build() ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

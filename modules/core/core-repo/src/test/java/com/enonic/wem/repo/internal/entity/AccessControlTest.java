@@ -33,9 +33,9 @@ public class AccessControlTest
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
         this.nodeService.setStorageService( storageService );
+        this.nodeService.setSearchService( searchService );
 
         this.createDefaultRootNode();
     }
@@ -112,11 +112,11 @@ public class AccessControlTest
         return GetNodeByIdCommand.create().
             id( nodeId ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             queryService( this.queryService ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             nodeDao( this.nodeDao ).
             build().
             execute();

@@ -51,10 +51,10 @@ public class NodeChildOrderResolverTest
                 build() ).
             queryService( this.queryService ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -62,10 +62,10 @@ public class NodeChildOrderResolverTest
             nodePath( NodePath.ROOT ).
             queryService( this.queryService ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             resolve();
 
@@ -88,10 +88,10 @@ public class NodeChildOrderResolverTest
             nodePath( parent.path() ).
             queryService( this.queryService ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             resolve();
 

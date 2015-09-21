@@ -13,7 +13,7 @@ import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
+import com.enonic.wem.repo.internal.version.FindVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
@@ -62,7 +62,7 @@ public class VersionServiceImpl
     }
 
     @Override
-    public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final InternalContext context )
+    public FindNodeVersionsResult findVersions( final FindVersionsQuery query, final InternalContext context )
     {
         return FindVersionsCommand.create().
             elasticsearchDao( this.elasticsearchDao ).

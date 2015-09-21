@@ -59,9 +59,9 @@ public class SetNodeStateCommandTest
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
 
             execute();

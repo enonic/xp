@@ -70,7 +70,6 @@ public class ImportNodeCommandTest
             nodeId( NodeId.from( "abc" ) ).
             target( CTX_OTHER.getBranch() ).
             storageService( this.storageService ).
-            versionService( this.versionService ).
             build().
             execute();
 
@@ -170,12 +169,12 @@ public class ImportNodeCommandTest
         return ImportNodeCommand.create().
             importNode( importNode ).
             binaryBlobStore( this.binaryBlobStore ).
-            versionService( this.versionService ).
             queryService( this.queryService ).
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

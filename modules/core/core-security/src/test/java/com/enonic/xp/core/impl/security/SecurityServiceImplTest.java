@@ -15,6 +15,8 @@ import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.search.SearchServiceImpl;
+import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
 import com.enonic.wem.repo.internal.storage.branch.BranchServiceImpl;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -81,6 +83,10 @@ public class SecurityServiceImplTest
 
     private ElasticsearchQueryService queryService;
 
+    private SearchServiceImpl searchService;
+
+    private StorageServiceImpl storageService;
+
     @Override
     @Before
     public void setUp()
@@ -97,16 +103,12 @@ public class SecurityServiceImplTest
         this.branchService.setElasticsearchDao( elasticsearchDao );
         this.branchService.setStorageDao( storageDao );
 
-        this.branchService = new BranchServiceImpl();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
-        this.branchService.setStorageDao( storageDao );
-
-        this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
-
         this.versionService = new VersionServiceImpl();
         this.versionService.setElasticsearchDao( elasticsearchDao );
         this.versionService.setStorageDao( storageDao );
+
+        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao.setBranchService( this.branchService );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
@@ -115,11 +117,22 @@ public class SecurityServiceImplTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
+        this.searchService = new SearchServiceImpl();
+        this.searchService.setBranchService( this.branchService );
+        this.searchService.setVersionService( this.versionService );
+
+        this.storageService = new StorageServiceImpl();
+        this.storageService.setBranchService( this.branchService );
+        this.storageService.setVersionService( this.versionService );
+        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setIndexServiceInternal( this.indexService );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
+        this.nodeService.setSearchService( searchService );
+        this.nodeService.setStorageService( storageService );
         this.nodeService.setBranchService( branchService );
 
         securityService = new SecurityServiceImpl();

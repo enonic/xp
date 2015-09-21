@@ -44,13 +44,13 @@ public class DuplicateNodeCommandTest
 
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -76,13 +76,13 @@ public class DuplicateNodeCommandTest
 
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -271,13 +271,13 @@ public class DuplicateNodeCommandTest
 
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -317,13 +317,13 @@ public class DuplicateNodeCommandTest
 
         final Node duplicateParent = DuplicateNodeCommand.create().
             id( parentNode.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -355,8 +355,8 @@ public class DuplicateNodeCommandTest
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
         refresh();
@@ -368,11 +368,11 @@ public class DuplicateNodeCommandTest
             nodeId( parentNode.id() ).
             childOrder( ChildOrder.manualOrder() ).
             nodeDao( nodeDao ).
-            versionService( versionService ).
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -389,13 +389,13 @@ public class DuplicateNodeCommandTest
     {
         return DuplicateNodeCommand.create().
             id( node1.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

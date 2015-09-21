@@ -6,8 +6,8 @@ import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.storage.StorageService;
-import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -35,20 +35,20 @@ abstract class AbstractNodeCommand
 
     final BranchService branchService;
 
-    final VersionService versionService;
-
     final QueryService queryService;
 
     final StorageService storageService;
+
+    final SearchService searchService;
 
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
         this.nodeDao = builder.nodeDao;
         this.branchService = builder.branchService;
-        this.versionService = builder.versionService;
         this.queryService = builder.queryService;
         this.storageService = builder.storageService;
+        this.searchService = builder.searchService;
     }
 
     Node doGetById( final NodeId id )
@@ -116,11 +116,11 @@ abstract class AbstractNodeCommand
 
         BranchService branchService;
 
-        VersionService versionService;
-
         QueryService queryService;
 
         StorageService storageService;
+
+        SearchService searchService;
 
         Builder()
         {
@@ -132,7 +132,6 @@ abstract class AbstractNodeCommand
             this.nodeDao = source.nodeDao;
             this.branchService = source.branchService;
             this.queryService = source.queryService;
-            this.versionService = source.versionService;
             this.storageService = source.storageService;
         }
 
@@ -151,13 +150,6 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B versionService( final VersionService versionService )
-        {
-            this.versionService = versionService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
         public B queryService( final QueryService queryService )
         {
             this.queryService = queryService;
@@ -167,6 +159,12 @@ abstract class AbstractNodeCommand
         public B storageService( final StorageService storageService )
         {
             this.storageService = storageService;
+            return (B) this;
+        }
+
+        public B searchService( final SearchService searchService )
+        {
+            this.searchService = searchService;
             return (B) this;
         }
 
@@ -180,7 +178,6 @@ abstract class AbstractNodeCommand
         void validate()
         {
             Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
-            Preconditions.checkNotNull( versionService, "versionService not set" );
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( branchService, "branchService not set" );
             Preconditions.checkNotNull( queryService, "queryService not set" );

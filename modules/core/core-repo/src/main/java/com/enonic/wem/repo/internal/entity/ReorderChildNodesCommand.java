@@ -42,8 +42,8 @@ public class ReorderChildNodesCommand
                 queryService( this.queryService ).
                 nodeDao( this.nodeDao ).
                 branchService( this.branchService ).
-                versionService( this.versionService ).
                 indexServiceInternal( this.indexServiceInternal ).
+                searchService( this.searchService ).
                 storageService( this.storageService ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).

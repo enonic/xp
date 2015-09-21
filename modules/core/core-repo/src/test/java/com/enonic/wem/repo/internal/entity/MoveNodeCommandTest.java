@@ -48,8 +48,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -76,8 +76,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -106,8 +106,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
@@ -136,8 +136,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( child.path() ).
@@ -172,8 +172,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode" ) ).
             newParent( newParent.path() ).
@@ -202,8 +202,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newParent( newParent.path() ).
             build().
@@ -267,8 +267,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( child1.id() ).
             newParent( newParent.path() ).
             build().
@@ -343,8 +343,8 @@ public class MoveNodeCommandTest
                 indexServiceInternal( this.indexServiceInternal ).
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
-                versionService( this.versionService ).
                 storageService( this.storageService ).
+                searchService( this.searchService ).
                 id( deleteUngrantedNode.id() ).
                 newParent( createGrantedNewParent.path() ).
                 build().
@@ -365,8 +365,8 @@ public class MoveNodeCommandTest
                 indexServiceInternal( this.indexServiceInternal ).
                 branchService( this.branchService ).
                 nodeDao( this.nodeDao ).
-                versionService( this.versionService ).
                 storageService( this.storageService ).
+                searchService( this.searchService ).
                 id( deleteGrantedNode.id() ).
                 newParent( createUngrantedNewParent.path() ).
                 build().
@@ -384,8 +384,8 @@ public class MoveNodeCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( deleteGrantedNode.id() ).
             newParent( createGrantedNewParent.path() ).
             build().
@@ -401,7 +401,7 @@ public class MoveNodeCommandTest
     {
         return GetNodeVersionsCommand.create().
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

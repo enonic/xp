@@ -28,6 +28,7 @@ import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.search.SearchServiceImpl;
 import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
 import com.enonic.wem.repo.internal.storage.branch.BranchServiceImpl;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -127,6 +128,8 @@ public class AbstractContentServiceTest
 
     private StorageServiceImpl storageService;
 
+    private SearchServiceImpl searchService;
+
     @Before
     public void setUp()
         throws Exception
@@ -168,13 +171,17 @@ public class AbstractContentServiceTest
         this.storageService.setNodeDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
 
+        this.searchService = new SearchServiceImpl();
+        this.searchService.setBranchService( this.branchService );
+        this.searchService.setVersionService( this.versionService );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
         this.nodeService.setStorageService( storageService );
+        this.nodeService.setSearchService( searchService );
 
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
@@ -222,8 +229,9 @@ public class AbstractContentServiceTest
         nodeService.setIndexServiceInternal( indexService );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
-        nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
+        nodeService.setSearchService( searchService );
+        nodeService.setStorageService( storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
         repositoryInitializer.initializeRepository( repository.getId() );

@@ -77,6 +77,7 @@ public class ResolveSyncWorkCommand
 
         final Nodes nodes = GetNodesByIdsCommand.create( this ).
             ids( diff.getNodesWithDifferences() ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -98,12 +99,12 @@ public class ResolveSyncWorkCommand
         }
 
         return FindNodesWithVersionDifferenceCommand.create().
-            versionService( this.versionService ).
             query( NodeVersionDiffQuery.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
                 nodePath( this.publishRootNode.path() ).
                 build() ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -225,7 +226,6 @@ public class ResolveSyncWorkCommand
         return CompareNodeCommand.create().
             target( this.target ).
             storageService( this.storageService ).
-            versionService( this.versionService ).
             nodeId( nodeId ).
             build().
             execute();

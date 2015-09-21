@@ -37,13 +37,12 @@ public class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( createdNode.id() ).
             build().
             execute();
@@ -75,13 +74,12 @@ public class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             id( createdNode.id() ).
             build().
             execute();

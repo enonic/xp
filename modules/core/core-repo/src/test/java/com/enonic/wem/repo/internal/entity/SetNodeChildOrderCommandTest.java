@@ -187,11 +187,11 @@ public class SetNodeChildOrderCommandTest
             nodeId( node.id() ).
             childOrder( childOrder ).
             nodeDao( nodeDao ).
-            versionService( versionService ).
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -208,11 +208,11 @@ public class SetNodeChildOrderCommandTest
             nodeId( node.id() ).
             childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() ).
             nodeDao( nodeDao ).
-            versionService( versionService ).
             branchService( branchService ).
             queryService( queryService ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

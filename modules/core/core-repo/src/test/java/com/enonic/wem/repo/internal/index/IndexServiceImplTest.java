@@ -133,10 +133,10 @@ public class IndexServiceImplTest
             target( CTX_OTHER.getBranch() ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -177,8 +177,8 @@ public class IndexServiceImplTest
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).
             build().
             execute();

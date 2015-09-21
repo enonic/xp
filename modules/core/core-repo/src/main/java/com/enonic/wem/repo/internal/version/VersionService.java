@@ -12,7 +12,7 @@ public interface VersionService
 
     NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
 
-    FindNodeVersionsResult findVersions( final GetVersionsQuery query, final InternalContext context );
+    FindNodeVersionsResult findVersions( final FindVersionsQuery query, final InternalContext context );
 
     NodeVersionDiffResult diff( final NodeVersionDiffQuery query, final InternalContext context );
 }

@@ -37,11 +37,11 @@ public class RenameNodeCommandTest
                 nodeName( NodeName.from( "my-node-edited" ) ).
                 build() ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -67,11 +67,11 @@ public class RenameNodeCommandTest
                 nodeName( NodeName.from( "my-node-edited" ) ).
                 build() ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -123,11 +123,11 @@ public class RenameNodeCommandTest
                 nodeName( NodeName.from( "my-node-edited" ) ).
                 build() ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

@@ -75,10 +75,10 @@ public class CompareNodeCommandTest
             nodeId( createdNode.id() ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -178,10 +178,10 @@ public class CompareNodeCommandTest
             newParent( mySecondNode.path() ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute() );
 
@@ -194,7 +194,6 @@ public class CompareNodeCommandTest
     private NodeComparison doCompare( final Branch branch, final Node createdNode )
     {
         return CompareNodeCommand.create().
-            versionService( this.versionService ).
             storageService( this.storageService ).
             nodeId( createdNode.id() ).
             target( branch ).
@@ -214,10 +213,10 @@ public class CompareNodeCommandTest
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -229,10 +228,10 @@ public class CompareNodeCommandTest
             target( branch ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

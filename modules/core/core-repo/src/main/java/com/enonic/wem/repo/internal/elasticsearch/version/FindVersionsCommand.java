@@ -1,15 +1,27 @@
 package com.enonic.wem.repo.internal.elasticsearch.version;
 
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
+
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
+import com.enonic.wem.repo.internal.version.FindVersionsQuery;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.FindNodeVersionsResult;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.repository.RepositoryId;
 
 class FindVersionsCommand
     extends AbstractVersionsCommand
 {
-    private final GetVersionsQuery query;
+    private final FindVersionsQuery query;
 
     private FindVersionsCommand( final Builder builder )
     {
@@ -21,21 +33,44 @@ class FindVersionsCommand
     {
         final SearchResult searchResults = doGetFromNodeId( query.getNodeId(), query.getFrom(), query.getSize(), repositoryId );
 
-        final FindNodeVersionsResult.Builder findEntityVersionResultBuilder = FindNodeVersionsResult.create();
+        final FindNodeVersionsResult.Builder findNodeVersionsResult = FindNodeVersionsResult.create();
 
-        findEntityVersionResultBuilder.hits( searchResults.getResults().getSize() );
-        findEntityVersionResultBuilder.totalHits( searchResults.getResults().getTotalHits() );
-        findEntityVersionResultBuilder.from( query.getFrom() );
-        findEntityVersionResultBuilder.to( query.getSize() );
+        findNodeVersionsResult.hits( searchResults.getResults().getSize() );
+        findNodeVersionsResult.totalHits( searchResults.getResults().getTotalHits() );
+        findNodeVersionsResult.from( query.getFrom() );
+        findNodeVersionsResult.to( query.getSize() );
 
         final NodeVersions nodeVersions = buildEntityVersions( query, searchResults );
 
-        findEntityVersionResultBuilder.entityVersions( nodeVersions );
+        findNodeVersionsResult.entityVersions( nodeVersions );
 
-        return findEntityVersionResultBuilder.build();
+        return findNodeVersionsResult.build();
     }
 
-    private NodeVersions buildEntityVersions( final GetVersionsQuery query, final SearchResult searchResults )
+    private SearchResult doGetFromNodeId( final NodeId id, final int from, final int size, final RepositoryId repositoryId )
+    {
+        final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( VersionIndexPath.NODE_ID.getPath(), id.toString() );
+
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
+            indexType( IndexType.VERSION.getName() ).
+            query( nodeIdQuery ).
+            from( from ).
+            size( size ).
+            addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( VersionIndexPath.TIMESTAMP, VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_ID ) ).
+            build();
+
+        final SearchResult searchResults = elasticsearchDao.find( query );
+
+        if ( searchResults.isEmpty() )
+        {
+            throw new NodeNotFoundException( "Did not find version entry with id: " + id );
+        }
+        return searchResults;
+    }
+
+    private NodeVersions buildEntityVersions( final FindVersionsQuery query, final SearchResult searchResults )
     {
         final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getNodeId() );
 
@@ -55,14 +90,14 @@ class FindVersionsCommand
     static class Builder
         extends AbstractVersionsCommand.Builder<Builder>
     {
-        private GetVersionsQuery query;
+        private FindVersionsQuery query;
 
         Builder()
         {
             super();
         }
 
-        Builder query( final GetVersionsQuery query )
+        Builder query( final FindVersionsQuery query )
         {
             this.query = query;
             return this;

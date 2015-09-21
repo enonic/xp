@@ -99,9 +99,9 @@ public class GetNodeByPathCommandTest
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             branchService( this.branchService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

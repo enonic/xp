@@ -52,9 +52,9 @@ public class StoreNodeCommandTest
             branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             queryService( this.queryService ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
         refresh();

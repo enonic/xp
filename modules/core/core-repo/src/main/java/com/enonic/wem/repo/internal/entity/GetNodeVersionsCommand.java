@@ -1,8 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
-import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.version.FindVersionsQuery;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
@@ -17,25 +19,25 @@ public class GetNodeVersionsCommand
 
     private final int size;
 
-    private final VersionService versionService;
+    private final SearchService searchService;
 
     private GetNodeVersionsCommand( Builder builder )
     {
         nodeId = builder.nodeId;
         from = builder.from;
         size = builder.size;
-        versionService = builder.versionService;
+        searchService = builder.searchService;
     }
 
     public FindNodeVersionsResult execute()
     {
-        final GetVersionsQuery query = GetVersionsQuery.create().
+        final FindVersionsQuery query = FindVersionsQuery.create().
             nodeId( this.nodeId ).
             from( this.from ).
             size( this.size ).
             build();
 
-        return this.versionService.findVersions( query, InternalContext.from( ContextAccessor.current() ) );
+        return this.searchService.findVersions( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()
@@ -47,11 +49,11 @@ public class GetNodeVersionsCommand
     {
         private NodeId nodeId;
 
-        private int from;
+        private int from = 0;
 
         private int size = DEFAULT_SIZE;
 
-        private VersionService versionService;
+        private SearchService searchService;
 
         private Builder()
         {
@@ -75,10 +77,16 @@ public class GetNodeVersionsCommand
             return this;
         }
 
-        public Builder versionService( VersionService versionService )
+        public Builder searchService( final SearchService searchService )
         {
-            this.versionService = versionService;
+            this.searchService = searchService;
             return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.searchService, "SearchService must be set" );
+            Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
         }
 
         public GetNodeVersionsCommand build()

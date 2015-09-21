@@ -159,9 +159,9 @@ public class FindNodesByParentCommandTest
                 build() ).queryService( queryService ).
             branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
             nodeDao( nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -213,9 +213,9 @@ public class FindNodesByParentCommandTest
             queryService( queryService ).
             branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
             nodeDao( nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -236,9 +236,9 @@ public class FindNodesByParentCommandTest
             queryService( queryService ).
             branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
             nodeDao( nodeDao ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -272,10 +272,10 @@ public class FindNodesByParentCommandTest
                 build() ).
             queryService( this.queryService ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

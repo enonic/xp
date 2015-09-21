@@ -43,7 +43,7 @@ public class GetNodeVersionsCommandTest
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -70,7 +70,7 @@ public class GetNodeVersionsCommandTest
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -97,10 +97,10 @@ public class GetNodeVersionsCommandTest
             queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
-            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

@@ -53,10 +53,10 @@ public class NodeServiceImplTest
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
         this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setStorageService( this.storageService );
+        this.nodeService.setSearchService( this.searchService );
 
         this.createDefaultRootNode();
     }

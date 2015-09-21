@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
@@ -10,12 +10,12 @@ public class FindNodesWithVersionDifferenceCommand
 {
     private final NodeVersionDiffQuery query;
 
-    private final VersionService versionService;
+    private final SearchService searchService;
 
     private FindNodesWithVersionDifferenceCommand( Builder builder )
     {
         query = builder.query;
-        versionService = builder.versionService;
+        searchService = builder.searchService;
     }
 
     public static Builder create()
@@ -25,14 +25,14 @@ public class FindNodesWithVersionDifferenceCommand
 
     public NodeVersionDiffResult execute()
     {
-        return this.versionService.diff( query, InternalContext.from( ContextAccessor.current() ) );
+        return this.searchService.diffNodeVersions( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static final class Builder
     {
         private NodeVersionDiffQuery query;
 
-        private VersionService versionService;
+        private SearchService searchService;
 
         private Builder()
         {
@@ -44,9 +44,9 @@ public class FindNodesWithVersionDifferenceCommand
             return this;
         }
 
-        public Builder versionService( VersionService versionService )
+        public Builder searchService( final SearchService searchService )
         {
-            this.versionService = versionService;
+            this.searchService = searchService;
             return this;
         }
 
