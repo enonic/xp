@@ -494,16 +494,26 @@ module api.ui.image {
                             win = api.dom.WindowDOM.get(),
                             myHeight = el.getHeight(),
                             myTop = el.getTopPx(),
-                            winHeight = win.getHeight(),
-                            biggerThanWin = myHeight > winHeight;
+                            winHeight = win.getHeight();
 
                         var newTop = myTop - this.normalizeWheel(event).pixelY;
 
-                        if (biggerThanWin) {
-                            newTop = Math.min(0, Math.max(winHeight - myHeight, newTop));
+                        var newTopLimited;
+                        var heightLimit = this.stickyToolbar.getEl().getHeight() + 100;
+                        newTopLimited = Math.min(winHeight - heightLimit, Math.max(heightLimit - myHeight, newTop));
+                        var isInsideLimit = newTop == newTopLimited;
+                        if (!isInsideLimit && (Math.abs(newTop - newTopLimited) > Math.abs(myTop - newTopLimited))) {
+                            // we are outside limit and trying to move away from it
+                            // so keep my current position to prevent it
+                            newTop = myTop
+                        } else if (isInsideLimit) {
+                            // we are inside limit where limits apply
+                            newTop = newTopLimited
                         } else {
-                            newTop = Math.max(0, Math.min(winHeight - myHeight, newTop));
+                            // we are outside the limit but moving towards the limit
+                            // leave newTop untouched to allow it
                         }
+
                         if (newTop != myTop) {
                             el.setTopPx(newTop);
                             this.updateStickyToolbar();
