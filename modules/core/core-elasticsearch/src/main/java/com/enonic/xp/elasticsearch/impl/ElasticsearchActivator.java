@@ -1,6 +1,7 @@
-package com.enonic.wem.repo.internal;
+package com.enonic.xp.elasticsearch.impl;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -10,29 +11,32 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
 {
     private Node node;
 
     private ServiceRegistration<Client> clientReg;
 
-    @Activate
-    public void activate( final ComponentContext context )
+    public ElasticsearchActivator()
     {
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
-        final Settings settings = new NodeSettingsBuilderImpl().buildSettings();
+    }
+
+    @Activate
+    public void activate( final BundleContext context, final Map<String, String> map )
+    {
+        final Settings settings = new NodeSettingsBuilder( context ).
+            buildSettings( map );
 
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
         this.node.start();
 
-        final BundleContext bundleContext = context.getBundleContext();
-        this.clientReg = bundleContext.registerService( Client.class, this.node.client(), new Hashtable<>() );
+        this.clientReg = context.registerService( Client.class, this.node.client(), new Hashtable<>() );
     }
 
     @Deactivate
