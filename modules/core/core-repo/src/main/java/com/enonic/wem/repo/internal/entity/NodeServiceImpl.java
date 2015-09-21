@@ -111,7 +111,6 @@ public class NodeServiceImpl
         return GetNodeByIdCommand.create().
             id( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -129,7 +128,6 @@ public class NodeServiceImpl
         return GetNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -142,7 +140,6 @@ public class NodeServiceImpl
         return GetNodesByIdsCommand.create().
             ids( ids ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -155,7 +152,6 @@ public class NodeServiceImpl
         return GetNodesByPathsCommand.create().
             paths( paths ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -167,7 +163,6 @@ public class NodeServiceImpl
     {
         return FindNodesByParentCommand.create().
             params( params ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -181,7 +176,6 @@ public class NodeServiceImpl
         return FindNodesByQueryCommand.create().
             query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -199,7 +193,6 @@ public class NodeServiceImpl
         return CreateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -213,7 +206,6 @@ public class NodeServiceImpl
         return UpdateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -227,7 +219,6 @@ public class NodeServiceImpl
         return RenameNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -240,7 +231,6 @@ public class NodeServiceImpl
         return DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -253,7 +243,6 @@ public class NodeServiceImpl
         return DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -265,7 +254,6 @@ public class NodeServiceImpl
     {
         return PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             ids( ids ).
@@ -279,7 +267,6 @@ public class NodeServiceImpl
     {
         return DuplicateNodeCommand.create().
             id( nodeId ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -294,7 +281,6 @@ public class NodeServiceImpl
         return MoveNodeCommand.create().
             id( nodeId ).
             newParent( parentNodePath ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -350,7 +336,6 @@ public class NodeServiceImpl
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
             branches( params.getBranches() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -371,7 +356,7 @@ public class NodeServiceImpl
     @Override
     public Node getByVersionId( final NodeVersionId blobKey )
     {
-        return nodeDao.getByVersionId( blobKey );
+        return this.storageService.get( blobKey );
     }
 
     @Override
@@ -382,7 +367,6 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             includeChildren( params.isIncludeChildren() ).
             indexServiceInternal( indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -393,7 +377,6 @@ public class NodeServiceImpl
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
         return SetNodeChildOrderCommand.create().
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -409,7 +392,6 @@ public class NodeServiceImpl
         return ReorderChildNodesCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -461,7 +443,6 @@ public class NodeServiceImpl
         return ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -476,7 +457,6 @@ public class NodeServiceImpl
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -491,7 +471,6 @@ public class NodeServiceImpl
             binaryReference( reference ).
             nodeId( nodeId ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -503,7 +482,6 @@ public class NodeServiceImpl
     {
         return CreateRootNodeCommand.create().
             params( params ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -516,7 +494,6 @@ public class NodeServiceImpl
     {
         return SetNodeStateCommand.create().
             params( params ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -548,7 +525,6 @@ public class NodeServiceImpl
             importPermissions( params.isImportPermissions() ).
             binaryBlobStore( this.binaryBlobStore ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

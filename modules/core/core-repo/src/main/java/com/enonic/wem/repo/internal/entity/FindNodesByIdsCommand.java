@@ -28,7 +28,7 @@ public class FindNodesByIdsCommand
         final NodeVersionIds versionIds =
             this.searchService.search( this.ids, this.orderExpressions, InternalContext.from( ContextAccessor.current() ) );
 
-        return nodeDao.getByVersionIds( versionIds );
+        return storageService.get( versionIds );
     }
 
     public static Builder create()

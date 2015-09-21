@@ -92,7 +92,6 @@ public class GetActiveNodeVersionsCommand
         {
             Preconditions.checkNotNull( this.nodeId );
             Preconditions.checkNotNull( this.branches );
-            Preconditions.checkNotNull( this.nodeDao );
         }
 
         public GetActiveNodeVersionsCommand build()

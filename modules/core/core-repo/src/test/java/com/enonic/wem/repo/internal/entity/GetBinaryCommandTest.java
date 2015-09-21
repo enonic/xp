@@ -44,7 +44,6 @@ public class GetBinaryCommandTest
         final ByteSource myImage = GetBinaryCommand.create().
             nodeId( node.id() ).
             binaryReference( imageRef ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
@@ -74,7 +73,6 @@ public class GetBinaryCommandTest
         final ByteSource myImage = GetBinaryCommand.create().
             nodeId( node.id() ).
             propertyPath( PropertyPath.from( "myBinary" ) ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).

@@ -56,7 +56,6 @@ public class SetNodeStateCommandTest
                 nodeState( NodeState.PENDING_DELETE ).
                 recursive( true ).
                 build() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

@@ -29,7 +29,6 @@ public class NodeChildOrderResolverTest
         final ChildOrder childOrder = ChildOrder.from( "myField DESC" );
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
-            nodeDao( this.nodeDao ).
             nodePath( NodePath.create( "myPath" ).build() ).
             childOrder( childOrder ).
             build().
@@ -48,7 +47,6 @@ public class NodeChildOrderResolverTest
             params( CreateRootNodeParams.create().
                 childOrder( childOrder ).
                 build() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -57,7 +55,6 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( NodePath.ROOT ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -81,7 +78,6 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( parent.path() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

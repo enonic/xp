@@ -132,7 +132,6 @@ public class IndexServiceImplTest
             ids( NodeIds.from( node.id() ) ).
             target( CTX_OTHER.getBranch() ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -171,7 +170,6 @@ public class IndexServiceImplTest
     private Node queryForNode( final NodeId nodeId )
     {
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

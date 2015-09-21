@@ -64,7 +64,7 @@ public class IndexServiceImpl
 
             for ( final NodeBranchQueryResultEntry result : results )
             {
-                final Node node = this.nodeDao.getByVersionId( result.getNodeVersionId() );
+                final Node node = this.nodeDao.get( result.getNodeVersionId() );
 
                 this.indexServiceInternal.store( node, result.getNodeVersionId(), InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).

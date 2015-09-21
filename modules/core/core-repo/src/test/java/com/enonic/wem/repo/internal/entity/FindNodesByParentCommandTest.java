@@ -158,7 +158,6 @@ public class FindNodesByParentCommandTest
                 parentPath( createdNode.path() ).
                 build() ).
             indexServiceInternal( indexServiceInternal ).
-            nodeDao( nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -210,7 +209,6 @@ public class FindNodesByParentCommandTest
                 parentPath( createdNode.path() ).
                 build() ).
             indexServiceInternal( indexServiceInternal ).
-            nodeDao( nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -231,7 +229,6 @@ public class FindNodesByParentCommandTest
                 childOrder( ChildOrder.from( "order ASC" ) ).
                 build() ).
             indexServiceInternal( indexServiceInternal ).
-            nodeDao( nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -265,7 +262,6 @@ public class FindNodesByParentCommandTest
                     principal( TEST_DEFAULT_USER.getKey() ).
                     build() ) ).
                 build() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

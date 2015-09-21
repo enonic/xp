@@ -64,7 +64,6 @@ public class ApplyNodePermissionsCommandTest
                     AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ).
                     build() ).
                 build() ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -119,7 +118,6 @@ public class ApplyNodePermissionsCommandTest
 
         final int appliedNodeCount = ApplyNodePermissionsCommand.create().
             params( params ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -224,7 +222,6 @@ public class ApplyNodePermissionsCommandTest
             build();
         final int appliedNodeCount = ApplyNodePermissionsCommand.create().
             params( params ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

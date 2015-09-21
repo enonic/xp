@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -63,13 +62,6 @@ public class NodeChildOrderResolver
         private Builder( final AbstractNodeCommand source )
         {
             super( source );
-        }
-
-        @Override
-        public Builder nodeDao( final NodeDao nodeDao )
-        {
-            this.nodeDao = nodeDao;
-            return this;
         }
 
         public Builder nodePath( final NodePath nodePath )

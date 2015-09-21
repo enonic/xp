@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.storage.StorageService;
@@ -27,8 +26,6 @@ abstract class AbstractNodeCommand
 
     final IndexServiceInternal indexServiceInternal;
 
-    final NodeDao nodeDao;
-
     final StorageService storageService;
 
     final SearchService searchService;
@@ -36,7 +33,6 @@ abstract class AbstractNodeCommand
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
-        this.nodeDao = builder.nodeDao;
         this.storageService = builder.storageService;
         this.searchService = builder.searchService;
     }
@@ -91,8 +87,6 @@ abstract class AbstractNodeCommand
     {
         IndexServiceInternal indexServiceInternal;
 
-        NodeDao nodeDao;
-
         StorageService storageService;
 
         SearchService searchService;
@@ -104,7 +98,6 @@ abstract class AbstractNodeCommand
         Builder( final AbstractNodeCommand source )
         {
             this.indexServiceInternal = source.indexServiceInternal;
-            this.nodeDao = source.nodeDao;
             this.storageService = source.storageService;
             this.searchService = source.searchService;
         }
@@ -128,17 +121,9 @@ abstract class AbstractNodeCommand
             return (B) this;
         }
 
-        @SuppressWarnings("unchecked")
-        public B nodeDao( final NodeDao nodeDao )
-        {
-            this.nodeDao = nodeDao;
-            return (B) this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
-            Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( storageService, "storageService not set" );
             Preconditions.checkNotNull( searchService, "searchService not set" );
         }

@@ -170,7 +170,6 @@ public class ImportNodeCommandTest
             importNode( importNode ).
             binaryBlobStore( this.binaryBlobStore ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

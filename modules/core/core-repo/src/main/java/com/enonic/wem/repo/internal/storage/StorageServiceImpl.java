@@ -124,6 +124,17 @@ public class StorageServiceImpl
         return doReturnNodes( branchNodeVersions );
     }
 
+    @Override
+    public Node get( final NodeVersionId nodeVersionId )
+    {
+        return this.nodeDao.get( nodeVersionId );
+    }
+
+    @Override
+    public Nodes get( final NodeVersionIds nodeVersionIds )
+    {
+        return this.nodeDao.get( nodeVersionIds );
+    }
 
     @Override
     public BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
@@ -144,7 +155,7 @@ public class StorageServiceImpl
             return null;
         }
 
-        final Node node = nodeDao.getByVersionId( branchNodeVersion.getVersionId() );
+        final Node node = nodeDao.get( branchNodeVersion.getVersionId() );
 
         return canRead( node ) ? node : null;
     }
@@ -154,7 +165,7 @@ public class StorageServiceImpl
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
         branchNodeVersions.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
 
-        final Nodes nodes = nodeDao.getByVersionIds( builder.build() );
+        final Nodes nodes = nodeDao.get( builder.build() );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
@@ -172,7 +183,7 @@ public class StorageServiceImpl
 
         this.indexServiceInternal.store( node, nodeVersionId, context );
 
-        return this.nodeDao.getByVersionId( nodeVersionId );
+        return this.nodeDao.get( nodeVersionId );
     }
 
     protected boolean canRead( final Node node )

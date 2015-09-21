@@ -112,7 +112,6 @@ public class AccessControlTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            nodeDao( this.nodeDao ).
             build().
             execute();
     }

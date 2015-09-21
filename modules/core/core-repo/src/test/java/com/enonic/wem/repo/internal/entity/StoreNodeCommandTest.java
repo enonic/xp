@@ -50,7 +50,6 @@ public class StoreNodeCommandTest
         StoreNodeCommand.create().
             node( updatedNode ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

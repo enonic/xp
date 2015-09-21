@@ -63,13 +63,13 @@ public class NodeDaoImpl
     }
 
     @Override
-    public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds )
+    public Nodes get( final NodeVersionIds nodeVersionIds )
     {
         return doGetFromVersionIds( nodeVersionIds );
     }
 
     @Override
-    public Node getByVersionId( final NodeVersionId nodeVersionId )
+    public Node get( final NodeVersionId nodeVersionId )
     {
         return doGetByVersionId( nodeVersionId );
     }

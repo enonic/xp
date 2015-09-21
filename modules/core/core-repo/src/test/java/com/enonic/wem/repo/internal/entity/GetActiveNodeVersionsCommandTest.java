@@ -44,7 +44,6 @@ public class GetActiveNodeVersionsCommandTest
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
@@ -60,7 +59,6 @@ public class GetActiveNodeVersionsCommandTest
         updateNode( node, CTX_DEFAULT );
 
         final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             nodeId( node.id() ).
@@ -85,7 +83,6 @@ public class GetActiveNodeVersionsCommandTest
         context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
             storageService( this.storageService ).
             searchService( this.searchService ).

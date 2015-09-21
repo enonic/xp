@@ -11,6 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 
 public interface StorageService
@@ -30,6 +31,10 @@ public interface StorageService
     Nodes get( final NodeIds nodeIds, final InternalContext context );
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
+
+    Node get( final NodeVersionId nodeVersionId );
+
+    Nodes get( final NodeVersionIds nodeVersionIds );
 
     BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 

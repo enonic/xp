@@ -51,7 +51,6 @@ public class ReorderChildNodeCommandTest
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNodeById( NodeId.from( "a" ) ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -92,7 +91,6 @@ public class ReorderChildNodeCommandTest
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNodeById( NodeId.from( "b" ) ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -132,7 +130,6 @@ public class ReorderChildNodeCommandTest
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -168,7 +165,6 @@ public class ReorderChildNodeCommandTest
         SetNodeChildOrderCommand.create().
             nodeId( parentNode.id() ).
             childOrder( ChildOrder.create().add( FieldOrderExpr.create( indexPath, direction ) ).build() ).
-            nodeDao( nodeDao ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
