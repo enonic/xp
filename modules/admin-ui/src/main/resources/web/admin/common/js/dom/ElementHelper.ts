@@ -65,7 +65,7 @@ module api.dom {
             return next ? new ElementHelper(<HTMLElement> next) : null;
         }
 
-        getParent() {
+        getParent(): ElementHelper {
             var parent = this.el.parentElement;
             return parent ? new ElementHelper(<HTMLElement> parent) : null;
         }
@@ -562,6 +562,17 @@ module api.dom {
 
         getCursor(): string {
             return this.el.style.cursor;
+        }
+
+        getElementsByClassName(className: string): ElementHelper[] {
+            var items: ElementHelper[] = [];
+            if (className) {
+                var nodeList = this.el.getElementsByClassName(className);
+                for (var i = 0; i < nodeList.length; i++) {
+                    items.push(new ElementHelper(<HTMLElement>nodeList.item(i)));
+                }
+            }
+            return items;
         }
 
         remove() {
