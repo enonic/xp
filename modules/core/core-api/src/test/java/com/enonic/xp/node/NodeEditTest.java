@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.xp.node;
 
 import java.time.LocalDate;
 
@@ -8,10 +8,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 

@@ -1,9 +1,8 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.xp.node;
 
 
 import org.junit.Test;
 
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;
