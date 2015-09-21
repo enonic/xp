@@ -94,6 +94,20 @@ public class SendMailScriptTest
         Assert.assertNull( this.actualMessage );
     }
 
+    @Test
+    public void testMailWithContentType()
+        throws Exception
+    {
+        runTestFunction( "test/send-test.js", "sendMailWithContentType" );
+
+        final MimeMessage message = mockCompose( this.actualMessage );
+
+        Assert.assertEquals( "test subject", message.getSubject() );
+        Assert.assertEquals( "test body", message.getContent() );
+        assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
+        assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
+        Assert.assertEquals( "text/html", message.getHeader( "Content-Type" )[0] );
+    }
 
     private InternetAddress[] toAddresses( final String... addresses )
     {

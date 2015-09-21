@@ -38,6 +38,8 @@ public final class SendMailHandler
 
     private String subject;
 
+    private String contentType;
+
     private String body;
 
     private Supplier<MailService> mailService;
@@ -67,6 +69,11 @@ public final class SendMailHandler
     public void setReplyTo( final String[] replyTo )
     {
         this.replyTo = replyTo;
+    }
+
+    public void setContentType( final String contentType )
+    {
+        this.contentType = contentType;
     }
 
     public void setBody( final String body )
@@ -110,6 +117,10 @@ public final class SendMailHandler
         message.addRecipients( Message.RecipientType.CC, toAddresses( this.cc ) );
         message.addRecipients( Message.RecipientType.BCC, toAddresses( this.bcc ) );
         message.setReplyTo( toAddresses( this.replyTo ) );
+
+        if ( this.contentType != null ) {
+            message.addHeader( "Content-Type", this.contentType );
+        }
 
         if ( this.headers != null )
         {
