@@ -149,7 +149,6 @@ public abstract class AbstractNodeTest
         // Search-service
 
         this.searchService = new SearchServiceImpl();
-        this.searchService.setBranchService( this.branchService );
         this.searchService.setVersionService( this.versionService );
         this.searchService.setSearchDao( this.searchDao );
 

@@ -111,7 +111,6 @@ public class SecurityServiceImplTest
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.searchService = new SearchServiceImpl();
-        this.searchService.setBranchService( this.branchService );
         this.searchService.setVersionService( this.versionService );
 
         this.storageService = new StorageServiceImpl();

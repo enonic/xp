@@ -165,7 +165,6 @@ public class AbstractContentServiceTest
         this.storageService.setIndexServiceInternal( this.indexService );
 
         this.searchService = new SearchServiceImpl();
-        this.searchService.setBranchService( this.branchService );
         this.searchService.setVersionService( this.versionService );
 
         this.nodeService = new NodeServiceImpl();
