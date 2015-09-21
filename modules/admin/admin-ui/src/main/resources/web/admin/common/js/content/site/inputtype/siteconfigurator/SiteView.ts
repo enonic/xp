@@ -12,6 +12,7 @@ module api.content.site.inputtype.siteconfigurator {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import ContentFormContext = api.content.form.ContentFormContext;
+    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
 
     export class SiteView extends api.dom.DivEl {
 
@@ -60,22 +61,22 @@ module api.content.site.inputtype.siteconfigurator {
             this.formView = this.createFormView(formContext, this.siteConfig);
 
             if (this.application.getForm().getFormItems().length > 0) {
-                header.appendChild(this.createCollapseButton());
+                header.appendChild(this.createEditButton());
             }
         }
 
-        private createCollapseButton(): api.dom.AEl {
-            var collapseButton = new api.dom.AEl('collapse-button');
+        private createEditButton(): api.dom.AEl {
+            var editButton = new api.dom.AEl('edit-button');
 
-            collapseButton.onClicked((event: MouseEvent) => {
+            editButton.onClicked((event: MouseEvent) => {
                 this.notifyCollapseClicked(event);
                 this.initAndOpenConfigureDialog();
             });
 
-            return collapseButton;
+            return editButton;
         }
 
-        initAndOpenConfigureDialog() {
+        initAndOpenConfigureDialog(comboBoxToUndoSelectionOnCancel?: SiteConfiguratorComboBox) {
 
             if (this.application.getForm().getFormItems().length > 0) {
 
@@ -84,11 +85,17 @@ module api.content.site.inputtype.siteconfigurator {
                 this.formView = this.createFormView(this.formContext, tempSiteConfig);
 
                 var okCallback = () => {
-                    this.applyTemporaryConfig(tempSiteConfig);
+                    if (!tempSiteConfig.equals(this.siteConfig)) {
+                        this.applyTemporaryConfig(tempSiteConfig);
+                        new SiteConfigRequiresSaveEvent(this.formContext.getPersistedContent()).fire();
+                    }
                 };
 
                 var cancelCallback = () => {
                     this.formView = this.createFormView(this.formContext, this.siteConfig);
+                    if (comboBoxToUndoSelectionOnCancel) {
+                        this.undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel);
+                    }
                 };
 
                 var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application.getDisplayName(),
@@ -98,6 +105,10 @@ module api.content.site.inputtype.siteconfigurator {
                     cancelCallback);
                 siteConfiguratorDialog.open();
             }
+        }
+
+        private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: SiteConfiguratorComboBox) {
+            comboBoxToUndoSelectionOnCancel.deselect(this.application);
         }
 
         private applyTemporaryConfig(tempSiteConfig: SiteConfig) {
