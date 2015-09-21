@@ -531,9 +531,9 @@ module api.ui.image {
                 }
                 bodyMask.onHidden(this.maskHideListener);
 
-                bodyMask.show();
+                bodyMask.addClass('opaque').show();
             } else {
-                bodyMask.hide();
+                bodyMask.removeClass('opaque').hide();
             }
 
             this.notifyShaderVisibilityChanged(visible);
