@@ -31,12 +31,12 @@ public class PortalResponseSerializerTest
     @Test
     public void testError()
     {
-        this.responseBuilder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
+        this.responseBuilder.status( HttpStatus.METHOD_NOT_ALLOWED );
         this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.METHOD_NOT_ALLOWED.value(), result.getStatus() );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, result.getStatus() );
         assertNull( result.getBody() );
     }
 
@@ -48,7 +48,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( JSON_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "content-type" ) ) ) );
         assertEquals( "{\"key\":\"value\"}", result.getBody() );
     }
@@ -61,7 +61,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Hello world!", result.getBody() );
     }
@@ -75,7 +75,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( OCTET_STREAM.equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertSame( bytes, result.getBody() );
     }
@@ -88,7 +88,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "11", result.getBody() );
     }
@@ -101,7 +101,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Value", result.getHeaders().get( "X-MyHeader" ) );
         assertEquals( "With headers", result.getBody() );
@@ -115,7 +115,7 @@ public class PortalResponseSerializerTest
         final PortalResponse result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( HttpStatus.OK.value(), result.getStatus() );
+        assertEquals( HttpStatus.OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertNotNull( result.getCookies().get( 0 ) );
         assertEquals( "test-cookie", result.getCookies().get( 0 ).getName() );

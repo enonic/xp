@@ -10,6 +10,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
 
 final class AssetHandlerWorker
     extends PortalHandlerWorker
@@ -28,7 +29,7 @@ final class AssetHandlerWorker
     {
         resolveResource();
 
-        this.response.status( 200 );
+        this.response.status( HttpStatus.OK );
         this.response.body( resource );
 
         final String type = MediaTypes.instance().fromFile( this.resource.getKey().getName() ).toString();
