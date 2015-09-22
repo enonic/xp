@@ -57,5 +57,7 @@ public class NodeSettingsBuilderTest
         assertEquals( 15, settings.getAsMap().size() );
 
         // TODO: Check if settings is OK
+
+        assertEquals( "/to/some/other/path", settings.get( "path" ) );
     }
 }
