@@ -25,7 +25,7 @@ import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultFactory;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.FindVersionsQuery;
+import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexType;
@@ -36,6 +36,7 @@ import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.ValueFilter;
 
@@ -50,7 +51,7 @@ public class ElasticsearchSearchDao
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
-        if ( query.isCountOnly() )
+        if ( query.getSearchMode().equals( SearchMode.COUNT ) )
         {
             final long count = elasticsearchDao.count( esQuery );
 
@@ -59,7 +60,7 @@ public class ElasticsearchSearchDao
                 build();
         }
 
-        //System.out.println( esQuery );
+        System.out.println( esQuery );
 
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
@@ -103,7 +104,7 @@ public class ElasticsearchSearchDao
     }
 
     @Override
-    public SearchResult find( final FindVersionsQuery query, final InternalContext context )
+    public SearchResult find( final NodeVersionQuery query, final InternalContext context )
     {
         return null;
     }

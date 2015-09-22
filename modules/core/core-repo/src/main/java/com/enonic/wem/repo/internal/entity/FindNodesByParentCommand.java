@@ -12,6 +12,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
 
 public class FindNodesByParentCommand
@@ -85,7 +86,7 @@ public class FindNodesByParentCommand
             query( new QueryExpr( order.getOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            countOnly( params.isCountOnly() ).
+            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
             build();
     }
 

@@ -25,8 +25,9 @@ public class FindNodesByIdsCommand
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds =
-            this.searchService.search( this.ids, this.orderExpressions, InternalContext.from( ContextAccessor.current() ) );
+        final NodeVersionIds versionIds = this.searchService.toBeRewrittenToNodeVersionQuery( this.ids, this.orderExpressions,
+                                                                                              InternalContext.from(
+                                                                                                  ContextAccessor.current() ) );
 
         return storageService.get( versionIds );
     }

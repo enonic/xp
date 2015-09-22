@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.UpdateNodeParams;
 
@@ -39,7 +39,7 @@ public class GetNodeVersionsCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
+        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).
@@ -66,7 +66,7 @@ public class GetNodeVersionsCommandTest
 
         refresh();
 
-        final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
+        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).

@@ -8,6 +8,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.SearchMode;
 
 public class NodeHasChildResolver
 {
@@ -40,7 +41,7 @@ public class NodeHasChildResolver
     {
         final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
             parent( node.path() ).
-            countOnly( true ).
+            searchMode( SearchMode.COUNT ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         return nodeQueryResult.getTotalHits() > 0;

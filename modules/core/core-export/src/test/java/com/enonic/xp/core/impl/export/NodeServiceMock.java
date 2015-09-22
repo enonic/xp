@@ -18,7 +18,6 @@ import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.EditableNode;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -39,6 +38,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PushNodesResult;
@@ -273,7 +273,7 @@ class NodeServiceMock
     }
 
     @Override
-    public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params )
+    public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

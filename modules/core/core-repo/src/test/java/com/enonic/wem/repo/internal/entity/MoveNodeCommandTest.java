@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -13,6 +12,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -367,7 +367,7 @@ public class MoveNodeCommandTest
         assertEquals( "mynode2", movedNode.name().toString() );
     }
 
-    private FindNodeVersionsResult getVersions( final Node node )
+    private NodeVersionQueryResult getVersions( final Node node )
     {
         return GetNodeVersionsCommand.create().
             nodeId( node.id() ).

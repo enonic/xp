@@ -5,7 +5,7 @@ import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.FindVersionsQuery;
+import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionDiffQuery;
@@ -21,7 +21,7 @@ public interface SearchDao
 
     NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final InternalContext context );
 
-    SearchResult find( final FindVersionsQuery query, final InternalContext context );
+    SearchResult find( final NodeVersionQuery query, final InternalContext context );
 
     NodeVersionDiffResult versionDiff( final NodeVersionDiffQuery query, final InternalContext context );
 

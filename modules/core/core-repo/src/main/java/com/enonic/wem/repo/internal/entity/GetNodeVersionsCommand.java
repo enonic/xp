@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.search.SearchService;
-import com.enonic.wem.repo.internal.version.FindVersionsQuery;
+import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionQueryResult;
 
 public class GetNodeVersionsCommand
 {
@@ -29,15 +29,15 @@ public class GetNodeVersionsCommand
         searchService = builder.searchService;
     }
 
-    public FindNodeVersionsResult execute()
+    public NodeVersionQueryResult execute()
     {
-        final FindVersionsQuery query = FindVersionsQuery.create().
+        final NodeVersionQuery query = NodeVersionQuery.create().
             nodeId( this.nodeId ).
             from( this.from ).
             size( this.size ).
             build();
 
-        return this.searchService.findVersions( query, InternalContext.from( ContextAccessor.current() ) );
+        return this.searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

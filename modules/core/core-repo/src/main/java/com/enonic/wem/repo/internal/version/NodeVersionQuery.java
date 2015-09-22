@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.version;
 
 import com.enonic.xp.node.NodeId;
 
-public class FindVersionsQuery
+public class NodeVersionQuery
 {
     private final Integer from;
 
@@ -10,7 +10,7 @@ public class FindVersionsQuery
 
     private final NodeId nodeId;
 
-    private FindVersionsQuery( Builder builder )
+    private NodeVersionQuery( Builder builder )
     {
         from = builder.from;
         size = builder.size;
@@ -68,9 +68,9 @@ public class FindVersionsQuery
             return this;
         }
 
-        public FindVersionsQuery build()
+        public NodeVersionQuery build()
         {
-            return new FindVersionsQuery( this );
+            return new NodeVersionQuery( this );
         }
     }
 }

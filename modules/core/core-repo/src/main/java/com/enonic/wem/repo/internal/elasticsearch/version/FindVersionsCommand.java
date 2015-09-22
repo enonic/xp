@@ -9,19 +9,19 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.FindVersionsQuery;
+import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repository.RepositoryId;
 
 class FindVersionsCommand
     extends AbstractVersionsCommand
 {
-    private final FindVersionsQuery query;
+    private final NodeVersionQuery query;
 
     private FindVersionsCommand( final Builder builder )
     {
@@ -29,11 +29,11 @@ class FindVersionsCommand
         this.query = builder.query;
     }
 
-    FindNodeVersionsResult execute()
+    NodeVersionQueryResult execute()
     {
         final SearchResult searchResults = doGetFromNodeId( query.getNodeId(), query.getFrom(), query.getSize(), repositoryId );
 
-        final FindNodeVersionsResult.Builder findNodeVersionsResult = FindNodeVersionsResult.create();
+        final NodeVersionQueryResult.Builder findNodeVersionsResult = NodeVersionQueryResult.create();
 
         findNodeVersionsResult.hits( searchResults.getResults().getSize() );
         findNodeVersionsResult.totalHits( searchResults.getResults().getTotalHits() );
@@ -70,7 +70,7 @@ class FindVersionsCommand
         return searchResults;
     }
 
-    private NodeVersions buildEntityVersions( final FindVersionsQuery query, final SearchResult searchResults )
+    private NodeVersions buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResults )
     {
         final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getNodeId() );
 
@@ -90,14 +90,14 @@ class FindVersionsCommand
     static class Builder
         extends AbstractVersionsCommand.Builder<Builder>
     {
-        private FindVersionsQuery query;
+        private NodeVersionQuery query;
 
         Builder()
         {
             super();
         }
 
-        Builder query( final FindVersionsQuery query )
+        Builder query( final NodeVersionQuery query )
         {
             this.query = query;
             return this;

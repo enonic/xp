@@ -109,12 +109,14 @@ abstract class AbstractNodeCommand
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
         public B storageService( final StorageService storageService )
         {
             this.storageService = storageService;
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
         public B searchService( final SearchService searchService )
         {
             this.searchService = searchService;

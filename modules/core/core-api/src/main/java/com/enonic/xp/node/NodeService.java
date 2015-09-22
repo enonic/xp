@@ -50,7 +50,7 @@ public interface NodeService
 
     NodeComparisons compare( NodeIds ids, Branch target );
 
-    FindNodeVersionsResult findVersions( GetNodeVersionsParams params );
+    NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 

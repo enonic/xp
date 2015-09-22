@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class FindNodeVersionsResult
+public class NodeVersionQueryResult
 {
     final NodeVersions nodeVersions;
 
@@ -15,7 +15,7 @@ public class FindNodeVersionsResult
 
     private final long hits;
 
-    private FindNodeVersionsResult( Builder builder )
+    private NodeVersionQueryResult( Builder builder )
     {
         nodeVersions = builder.nodeVersions;
         from = builder.from;
@@ -100,9 +100,9 @@ public class FindNodeVersionsResult
             return this;
         }
 
-        public FindNodeVersionsResult build()
+        public NodeVersionQueryResult build()
         {
-            return new FindNodeVersionsResult( this );
+            return new NodeVersionQueryResult( this );
         }
     }
 }
