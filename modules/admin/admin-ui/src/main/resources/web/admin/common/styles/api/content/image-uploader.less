@@ -2,6 +2,15 @@
   .reset();
   display: inline-block;
 
+  &.dragover {
+    &:after {
+      .dropcircle(140px);
+      margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image
+      font-size: 25px;
+      text-align: center;
+    }
+  }
+
   .result-container {
 
     &.placeholder {
@@ -10,23 +19,26 @@
 
     .image-editor {
 
-      .image-canvas {
+      .image-frame {
+        min-height: 300px; // for the 280px drag circle defined above
 
-        img {
-          background-color: @admin-bg-light-gray;
-          background-image: linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1),
-          linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1);
-          background-size: 20px 20px;
-          background-position: 0 0, 10px 10px;
-          image-rendering: -moz-crisp-edges;
-          image-rendering: -o-crisp-edges;
-          image-rendering: -webkit-optimize-contrast;
-          -ms-interpolation-mode: nearest-neighbor;
-          image-rendering: pixelated;
+        .image-canvas {
+
+          img {
+            background-color: @admin-bg-light-gray;
+            background-image: linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1),
+            linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -o-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            -ms-interpolation-mode: nearest-neighbor;
+            image-rendering: pixelated;
+          }
         }
       }
     }
-
   }
 
 }

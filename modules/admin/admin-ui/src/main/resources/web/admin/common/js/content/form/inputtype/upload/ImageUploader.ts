@@ -100,7 +100,6 @@ module api.content.form.inputtype.upload {
 
             this.imageUploader.onEditModeChanged((edit: boolean, crop: Rect, zoom: Rect, focus: Point) => {
                 this.validate(false);
-                this.toggleClass('standout', edit);
 
                 if (!edit && crop) {
                     this.saveToProperty(crop, zoom, focus);
