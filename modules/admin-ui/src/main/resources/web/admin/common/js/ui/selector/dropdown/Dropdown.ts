@@ -228,10 +228,10 @@ module api.ui.selector.dropdown {
             return this;
         }
 
-        selectRow(index: number) {
+        selectRow(index: number, silent: boolean = false) {
             var option = this.getOptionByRow(index);
             if (option != null) {
-                this.selectOption(option);
+                this.selectOption(option, silent);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
             }
         }

@@ -1,10 +1,11 @@
 .grid-and-detail-split-panel {
   .browse-toolbar {
     .details-panel-toggle-button {
+      // toggle button for medium screen sizes
       z-index: 3;
       float: right;
       top: 0px;
-      right: 5px;
+      right: 13px;
       padding-top: 13px;
 
       overflow: hidden;
@@ -51,6 +52,7 @@
 }
 
 .details-panel {
+  // common details panel styles
   height: 100%;
   position: absolute;
   float: right;
@@ -115,12 +117,23 @@
 
     background-color: @admin-white;
 
+    @media screen and (min-width: 540px) and (max-width: 1920px) {
+      padding: 0 7px 0 16px;
+    }
+
+    @media screen and (min-width: 1920px) {
+      padding: 0 7px 0 7px;
+    }
+
     .info-widget-toggle-button {
       cursor: pointer;
       display: inline-block;
       font-size: 26px;
       float: left;
-      padding: 5px 7px 6px 7px;
+      padding: 4px 6px 5px 6px;
+      border: 1px solid #cccccc;
+      border-right: 0px;
+      box-sizing: border-box;
 
       .icon-grid5();
 
@@ -134,6 +147,10 @@
 
     .widget-selector {
       width: calc(~'100% - 47px');
+
+      input {
+        cursor: pointer;
+      }
 
       &.non-default-selected {
         .selected-option {
@@ -164,6 +181,7 @@
       .viewer {
         font-size: 14px;
         text-align: center;
+        cursor: pointer;
       }
     }
   }
@@ -248,6 +266,7 @@
 }
 
 .split-panel {
+  // styles for large screens
 
   &.grid-and-detail-split-panel {
     &.vertical {
