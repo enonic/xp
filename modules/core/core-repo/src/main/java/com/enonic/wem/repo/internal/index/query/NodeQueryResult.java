@@ -1,16 +1,16 @@
 package com.enonic.wem.repo.internal.index.query;
 
-import java.util.Set;
+import java.util.List;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.node.NodeIds;
 
 public final class NodeQueryResult
 {
-    private final ImmutableSet<NodeQueryResultEntry> entries;
+    private final ImmutableList<NodeQueryResultEntry> entries;
 
     private final long totalHits;
 
@@ -24,7 +24,7 @@ public final class NodeQueryResult
 
     private NodeQueryResult( final Builder builder )
     {
-        this.entries = ImmutableSet.copyOf( builder.entries );
+        this.entries = ImmutableList.copyOf( builder.entries );
 
         this.totalHits = builder.totalHits;
 
@@ -72,14 +72,14 @@ public final class NodeQueryResult
         return nodeQueryResultSet;
     }
 
-    public ImmutableSet<NodeQueryResultEntry> getEntries()
+    public ImmutableList<NodeQueryResultEntry> getEntries()
     {
         return entries;
     }
 
     public static final class Builder
     {
-        private final Set<NodeQueryResultEntry> entries = Sets.newLinkedHashSet();
+        private final List<NodeQueryResultEntry> entries = Lists.newLinkedList();
 
         private long totalHits;
 

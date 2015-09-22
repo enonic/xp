@@ -134,7 +134,7 @@ public class QueryBuilderFactory
 
         public Builder addQueryFilters( final Filters filters )
         {
-            filterBuilder.addAll( filters.getSet() );
+            filterBuilder.addAll( filters.getList() );
             return this;
         }
 

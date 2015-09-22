@@ -3,11 +3,17 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.OrderExpressions;
+import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.filter.ValueFilter;
 
 public class FindNodesByIdsCommand
     extends AbstractNodeCommand
@@ -25,11 +31,22 @@ public class FindNodesByIdsCommand
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds = this.searchService.toBeRewrittenToNodeVersionQuery( this.ids, this.orderExpressions,
-                                                                                              InternalContext.from(
-                                                                                                  ContextAccessor.current() ) );
+        final Context context = ContextAccessor.current();
 
-        return storageService.get( versionIds );
+        final NodeQueryResult result = this.searchService.search( NodeQuery.create().
+            addQueryFilters( Filters.create().
+                add( ValueFilter.create().
+                    fieldName( NodeIndexPath.ID.getPath() ).
+                    addValues( this.ids.getAsStrings() ).
+                    build() ).
+                build() ).
+            addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
+            setOrderExpressions( this.orderExpressions ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
+
+        final NodeIds nodeIds = result.getNodeIds();
+
+        return this.storageService.get( nodeIds, InternalContext.from( context ) );
     }
 
     public static Builder create()

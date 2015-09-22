@@ -13,6 +13,7 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 import com.enonic.wem.repo.internal.repository.RepositorySearchIndexSettingsProvider;
 import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultEntry;
@@ -24,6 +25,10 @@ import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repository.RepositoryId;
 
 @Component
@@ -55,8 +60,12 @@ public class IndexServiceImpl
 
         for ( final Branch branch : params.getBranches() )
         {
+            final CompareExpr compareExpr =
+                CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
+                                    ValueExpr.string( branch.getName() ) );
+
             final NodeBranchQueryResult results = this.searchService.search( NodeBranchQuery.create().
-                from( 0 ).
+                query( QueryExpr.from( compareExpr ) ).
                 size( SearchService.GET_ALL_SIZE_FLAG ).
                 build(), InternalContext.create( ContextAccessor.current() ).
                 branch( branch ).

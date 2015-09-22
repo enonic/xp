@@ -12,6 +12,7 @@ import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
@@ -45,9 +46,23 @@ public class AbstractQuery
         this.size = builder.size;
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
-        this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
+        this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
+    }
+
+    private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
+    {
+        final List<OrderExpr> orderBys = Lists.newLinkedList();
+
+        if ( query != null )
+        {
+            orderBys.addAll( query.getOrderList() );
+        }
+
+        orderBys.addAll( builder.orderBys );
+
+        return ImmutableList.copyOf( orderBys );
     }
 
     public ImmutableList<OrderExpr> getOrderBys()
@@ -129,7 +144,7 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addQueryFilters( final Filters queryFilters )
         {
-            this.queryFilters.addAll( queryFilters.getSet() );
+            this.queryFilters.addAll( queryFilters.getList() );
             return (B) this;
         }
 
@@ -180,6 +195,13 @@ public class AbstractQuery
         public B setOrderBys( final List<OrderExpr> orderExpr )
         {
             this.orderBys = orderExpr;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B setOrderExpressions( final OrderExpressions orderExpressions )
+        {
+            orderExpressions.forEach( this.orderBys::add );
             return (B) this;
         }
 

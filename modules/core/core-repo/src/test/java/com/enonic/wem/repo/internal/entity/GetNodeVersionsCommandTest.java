@@ -78,6 +78,7 @@ public class GetNodeVersionsCommandTest
 
         final NodeVersions nodeVersions = result.getNodeVersions();
         Instant previousTimestamp = null;
+
         for ( final NodeVersion nodeVersion : nodeVersions )
         {
             assertTrue( previousTimestamp == null || nodeVersion.getTimestamp().isBefore( previousTimestamp ) );

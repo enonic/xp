@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
 
@@ -17,14 +17,14 @@ public class NodeManualOrderValueResolverTest
     public void resolve()
         throws Exception
     {
-        LinkedHashSet<NodeId> nodeIds = Sets.newLinkedHashSet();
+        LinkedList<NodeId> nodeIds = Lists.newLinkedList();
 
         for ( int i = 0; i <= 10; i++ )
         {
             nodeIds.add( NodeId.from( i ) );
         }
 
-        final LinkedHashSet<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
+        final LinkedList<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
 
         double previousValue = NodeManualOrderValueResolver.START_ORDER_VALUE + 1;
 

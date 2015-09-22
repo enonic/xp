@@ -1,11 +1,13 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
+import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.InternalContext;
@@ -91,7 +93,7 @@ public class BranchServiceImpl
     @Override
     public BranchNodeVersions get( final NodeIds nodeIds, final InternalContext context )
     {
-        Set<BranchNodeVersion> branchNodeVersions = Sets.newHashSet();
+        List<BranchNodeVersion> branchNodeVersions = Lists.newLinkedList();
 
         for ( final NodeId nodeId : nodeIds )
         {

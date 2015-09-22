@@ -1,15 +1,13 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
+import com.enonic.xp.node.AbstractQuery;
+
 public class NodeBranchQuery
+    extends AbstractQuery
 {
-    private final int size;
-
-    private final int from;
-
-    private NodeBranchQuery( Builder builder )
+    private NodeBranchQuery( final Builder builder )
     {
-        this.size = builder.size;
-        this.from = builder.from;
+        super( builder );
     }
 
     public static Builder create()
@@ -17,36 +15,12 @@ public class NodeBranchQuery
         return new Builder();
     }
 
-    public int getSize()
-    {
-        return size;
-    }
-
-    public int getFrom()
-    {
-        return from;
-    }
-
     public static final class Builder
+        extends AbstractQuery.Builder<Builder>
     {
-        private int size;
-
-        private int from;
-
         private Builder()
         {
-        }
-
-        public Builder size( int size )
-        {
-            this.size = size;
-            return this;
-        }
-
-        public Builder from( int from )
-        {
-            this.from = from;
-            return this;
+            super();
         }
 
         public NodeBranchQuery build()

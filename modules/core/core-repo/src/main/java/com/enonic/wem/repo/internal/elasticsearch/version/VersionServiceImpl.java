@@ -15,13 +15,11 @@ import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.result.GetResult;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.xp.node.NodeVersionQueryResult;
 
 @Component
 public class VersionServiceImpl
@@ -59,17 +57,6 @@ public class VersionServiceImpl
         }
 
         return NodeVersionFactory.create( getResult );
-    }
-
-    @Override
-    public NodeVersionQueryResult findVersions( final NodeVersionQuery query, final InternalContext context )
-    {
-        return FindVersionsCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            repositoryId( context.getRepositoryId() ).
-            query( query ).
-            build().
-            execute();
     }
 
     @Override

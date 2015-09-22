@@ -1,39 +1,39 @@
 package com.enonic.wem.repo.internal.storage.branch;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public class BranchNodeVersions
-    extends AbstractImmutableEntitySet<BranchNodeVersion>
+    extends AbstractImmutableEntityList<BranchNodeVersion>
 {
-    private BranchNodeVersions( final ImmutableSet<BranchNodeVersion> set )
+    private BranchNodeVersions( final ImmutableList<BranchNodeVersion> list )
     {
-        super( set );
+        super( list );
     }
 
     public static BranchNodeVersions from( final BranchNodeVersion... branchNodeVersions )
     {
-        return new BranchNodeVersions( ImmutableSet.copyOf( branchNodeVersions ) );
+        return new BranchNodeVersions( ImmutableList.copyOf( branchNodeVersions ) );
     }
 
     public static BranchNodeVersions from( final Collection<BranchNodeVersion> branchNodeVersions )
     {
-        return new BranchNodeVersions( ImmutableSet.copyOf( branchNodeVersions ) );
+        return new BranchNodeVersions( ImmutableList.copyOf( branchNodeVersions ) );
     }
 
     private BranchNodeVersions( final Builder builder )
     {
-        super( ImmutableSet.copyOf( builder.branchVersions ) );
+        super( ImmutableList.copyOf( builder.branchVersions ) );
     }
 
     public static BranchNodeVersions empty()
     {
-        ImmutableSet<BranchNodeVersion> empty = ImmutableSet.of();
+        ImmutableList<BranchNodeVersion> empty = ImmutableList.of();
         return new BranchNodeVersions( empty );
     }
 
@@ -45,7 +45,7 @@ public class BranchNodeVersions
 
     public static class Builder
     {
-        private final LinkedHashSet<BranchNodeVersion> branchVersions = Sets.newLinkedHashSet();
+        private final LinkedList<BranchNodeVersion> branchVersions = Lists.newLinkedList();
 
         public Builder add( final BranchNodeVersion branchNodeVersion )
         {

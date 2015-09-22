@@ -49,7 +49,7 @@ public class SearchRequestBuilderFactory
             searchRequestBuilder.addAggregation( aggregationBuilder );
         }
 
-        if ( query.getReturnFields().isNotEmpty() )
+        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
             searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
         }

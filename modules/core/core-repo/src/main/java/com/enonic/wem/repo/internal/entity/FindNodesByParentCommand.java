@@ -49,7 +49,7 @@ public class FindNodesByParentCommand
 
             if ( parent == null )
             {
-                return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0L ).hits( 0L ).build();
+                return FindNodesByParentResult.empty();
             }
 
             parentPath = parent.path();
@@ -61,16 +61,21 @@ public class FindNodesByParentCommand
             build().
             resolve();
 
-        final NodeQuery query = createByPathQuery( order, parentPath );
+        final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
+            parent( parentPath ).
+            query( new QueryExpr( order.getOrderExpressions() ) ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
+            setOrderExpressions( order.getOrderExpressions() ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodeQueryResult nodeQueryResult = this.searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
+        if ( nodeQueryResult.getHits() == 0 )
+        {
+            return FindNodesByParentResult.empty();
+        }
 
-        final Nodes nodes = FindNodesByIdsCommand.create( this ).
-            ids( nodeQueryResult.getNodeIds() ).
-            orderExpressions( order.getOrderExpressions() ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final Nodes nodes = this.storageService.get( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).
@@ -79,16 +84,6 @@ public class FindNodesByParentCommand
             build();
     }
 
-    private NodeQuery createByPathQuery( final ChildOrder order, final NodePath parentPath )
-    {
-        return NodeQuery.create().
-            parent( parentPath ).
-            query( new QueryExpr( order.getOrderExpressions() ) ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
-            build();
-    }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>

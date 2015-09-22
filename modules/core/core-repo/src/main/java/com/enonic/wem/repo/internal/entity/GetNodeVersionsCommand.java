@@ -5,9 +5,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.version.NodeVersionQuery;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 
 public class GetNodeVersionsCommand
 {
@@ -35,6 +38,7 @@ public class GetNodeVersionsCommand
             nodeId( this.nodeId ).
             from( this.from ).
             size( this.size ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             build();
 
         return this.searchService.search( query, InternalContext.from( ContextAccessor.current() ) );

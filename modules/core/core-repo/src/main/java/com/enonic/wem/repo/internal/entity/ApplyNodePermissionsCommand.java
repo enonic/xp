@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,20 +34,13 @@ final class ApplyNodePermissionsCommand
     public int execute()
     {
         final Node node = doGetById( params.getNodeId() );
+
         if ( node == null )
         {
             return 0;
         }
 
-        final StopWatch stopWatch = new StopWatch();
-
-        LOG.info( "Applying permissions to descendants of node [" + node.id() + "] " + node.path() );
-        stopWatch.start();
-        final int appliedNodeCount = applyPermissionsToChildren( node );
-        stopWatch.stop();
-        LOG.info( "Permissions applied to " + appliedNodeCount + " nodes. Total time: " + stopWatch.toString() );
-
-        return appliedNodeCount;
+        return applyPermissionsToChildren( node );
     }
 
     private int applyPermissionsToChildren( final Node parent )
@@ -59,6 +51,7 @@ final class ApplyNodePermissionsCommand
             parentPath( parent.path() ).
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build();
+
         final Nodes children = doFindNodesByParent( findByParentParams ).getNodes();
 
         int appliedNodeCount = 0;

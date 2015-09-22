@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import com.google.common.base.Preconditions;
 
@@ -72,9 +72,9 @@ public class SetNodeChildOrderCommand
             size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
+        final LinkedList<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 
-        final LinkedHashSet<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
+        final LinkedList<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
             NodeManualOrderValueResolver.resolve( childNodeIds );
 
         for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )

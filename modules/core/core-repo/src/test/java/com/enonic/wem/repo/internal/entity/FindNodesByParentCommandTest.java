@@ -132,6 +132,7 @@ public class FindNodesByParentCommandTest
             createNode( CreateNodeParams.create().
                 parent( createdNode.path() ).
                 name( "my-child-" + i ).
+                setNodeId( NodeId.from( "my-child-" + i ) ).
                 data( data ).
                 build() );
         }
