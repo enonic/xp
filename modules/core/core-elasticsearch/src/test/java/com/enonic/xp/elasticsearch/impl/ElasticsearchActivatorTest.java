@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.ClusterService;
+import org.elasticsearch.transport.TransportService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +27,10 @@ public class ElasticsearchActivatorTest
 
     private ServiceRegistration<Client> clientReg;
 
+    private ServiceRegistration<ClusterService> clusterServiceReg;
+
+    private ServiceRegistration<TransportService> transportServiceReg;
+
     @Before
     public void setup()
         throws Exception
@@ -36,6 +42,9 @@ public class ElasticsearchActivatorTest
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
         this.clientReg = mockRegisterService( Client.class );
+        this.clusterServiceReg = mockRegisterService( ClusterService.class );
+        this.transportServiceReg = mockRegisterService( TransportService.class );
+
     }
 
     @Test
@@ -46,9 +55,13 @@ public class ElasticsearchActivatorTest
 
         this.activator.activate( this.context, map );
         verifyRegisterService( Client.class );
+        verifyRegisterService( ClusterService.class );
+        verifyRegisterService( TransportService.class );
 
         this.activator.deactivate();
         verifyUnregisterService( this.clientReg );
+        verifyUnregisterService( this.clusterServiceReg );
+        verifyUnregisterService( this.transportServiceReg );
     }
 
     private <T> void verifyRegisterService( final Class<T> type )
