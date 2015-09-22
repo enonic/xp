@@ -42,6 +42,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
+    import SiteConfigRequiresSaveEvent = api.content.site.inputtype.siteconfigurator.SiteConfigRequiresSaveEvent;
 
     import Application = api.application.Application;
     import ApplicationKey = api.application.ApplicationKey;
@@ -287,11 +288,25 @@ module app.wizard {
             }, onError);
 
             this.initPublishButtonForMobile();
+            this.handleSiteConfigApply();
 
             api.app.wizard.MaskContentWizardPanelEvent.on(event => {
                 if (this.getPersistedItem().getContentId().equals(event.getContentId())) {
                     this.actions.suspendActions(event.isMask());
                 }
+            });
+        }
+
+        private handleSiteConfigApply() {
+            var siteConfigApplyHandler = (event: SiteConfigRequiresSaveEvent) => {
+                if (this.getPersistedItem().getId() == event.getContent().getId()) {
+                    this.saveChanges()
+                }
+            };
+
+            SiteConfigRequiresSaveEvent.on(siteConfigApplyHandler);
+            this.onClosed(() => {
+                SiteConfigRequiresSaveEvent.un(siteConfigApplyHandler);
             });
         }
 

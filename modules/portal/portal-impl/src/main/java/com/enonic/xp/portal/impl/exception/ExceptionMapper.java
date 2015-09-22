@@ -30,7 +30,7 @@ public final class ExceptionMapper
     public void throwIfNeeded( final PortalResponse res )
         throws PortalException
     {
-        final HttpStatus status = HttpStatus.from( res.getStatus() );
+        final HttpStatus status = res.getStatus();
         if ( isError( status ) )
         {
             throw new PortalException( status, status.getReasonPhrase() );

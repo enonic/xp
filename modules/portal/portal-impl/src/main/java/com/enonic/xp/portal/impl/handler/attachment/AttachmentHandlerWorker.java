@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
+import com.enonic.xp.web.HttpStatus;
 
 final class AttachmentHandlerWorker
     extends PortalHandlerWorker
@@ -29,7 +30,7 @@ final class AttachmentHandlerWorker
         final Attachment attachment = resolveAttachment( content, this.name );
         final ByteSource binary = resolveBinary( this.id, attachment );
 
-        this.response.status( 200 );
+        this.response.status( HttpStatus.OK );
         this.response.contentType( MediaType.parse( attachment.getMimeType() ) );
         this.response.body( binary );
 

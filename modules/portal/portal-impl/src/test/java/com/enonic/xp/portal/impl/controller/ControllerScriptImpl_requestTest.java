@@ -21,7 +21,7 @@ public class ControllerScriptImpl_requestTest
 
         execute( "myapplication:/controller/request.js" );
 
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsString() );
     }
 
@@ -45,7 +45,7 @@ public class ControllerScriptImpl_requestTest
 
         execute( "myapplication:/controller/request.js" );
 
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertJson( "all", getResponseAsString() );
     }
 
@@ -66,7 +66,7 @@ public class ControllerScriptImpl_requestTest
 
         execute( "myapplication:/controller/requestWithCookies.js" );
 
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertNotNull( this.portalResponse.getCookies() );
         assertEquals( 4, this.portalResponse.getCookies().size() );
         assertEquals( "plain1", this.portalResponse.getCookies().get( 0 ).getName() );
@@ -85,7 +85,7 @@ public class ControllerScriptImpl_requestTest
     {
         this.portalRequest.setMethod( HttpMethod.HEAD );
         execute( "myapplication:/controller/request.js" );
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
     }
 }
 

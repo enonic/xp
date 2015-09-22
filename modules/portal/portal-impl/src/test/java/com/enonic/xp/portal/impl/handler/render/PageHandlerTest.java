@@ -64,7 +64,7 @@ public class PageHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
     }
 
@@ -79,7 +79,7 @@ public class PageHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().
             body( "component rendered" ).
             header( "some-header", "some-value" ).
-            status( 200 ).
+            status( HttpStatus.OK ).
             build();
 
         setRendererResult( portalResponse );
@@ -88,7 +88,7 @@ public class PageHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
@@ -143,7 +143,7 @@ public class PageHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().
             body( "content rendered" ).
             header( "some-header", "some-value" ).
-            status( 200 ).
+            status( HttpStatus.OK ).
             build();
 
         setRendererResult( portalResponse );
@@ -153,7 +153,7 @@ public class PageHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "content rendered", res.getBody() );
@@ -204,7 +204,7 @@ public class PageHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 307, res.getStatus() );
+        assertEquals( HttpStatus.TEMPORARY_REDIRECT, res.getStatus() );
         assertEquals( "/master/site/otherpath", res.getHeaders().get( "Location" ) );
     }
 
@@ -218,7 +218,7 @@ public class PageHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().
             body( "content rendered" ).
             header( "some-header", "some-value" ).
-            status( 200 ).
+            status( HttpStatus.OK ).
             build();
 
         setRendererResult( portalResponse );
@@ -228,7 +228,7 @@ public class PageHandlerTest
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
-        assertEquals( 200, res.getStatus() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "content rendered", res.getBody() );

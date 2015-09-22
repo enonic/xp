@@ -97,7 +97,7 @@ public abstract class BaseHandler
     private PortalResponse handleOptions()
     {
         return PortalResponse.create().
-            status( 200 ).
+            status( HttpStatus.OK ).
             header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
             build();
     }
