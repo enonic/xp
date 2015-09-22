@@ -19,9 +19,9 @@ public interface SearchService
 
     NodeQueryResult search( final NodeQuery query, final InternalContext context );
 
-    NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context );
-
     NodeVersionQueryResult search( final NodeVersionQuery query, final InternalContext context );
+
+    NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context );
 
     NodeVersionIds toBeRewrittenToNodeVersionQuery( final NodeIds nodeIds, final OrderExpressions orderExprs,
                                                     final InternalContext indexContext );

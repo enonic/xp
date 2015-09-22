@@ -5,8 +5,13 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResultFactory;
+import com.enonic.wem.repo.internal.storage.SearchStorageName;
+import com.enonic.wem.repo.internal.storage.SearchStorageType;
+import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.node.NodeIds;
@@ -28,7 +33,19 @@ public class SearchServiceImpl
     @Override
     public NodeQueryResult search( final NodeQuery query, final InternalContext context )
     {
-        return searchDao.find( query, context );
+        final SearchRequest searchRequest = SearchRequest.create().
+            settings( StorageSettings.create().
+                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                storageType( SearchStorageType.from( context.getBranch() ) ).
+                acl( context.getPrincipalsKeys() ).
+                build() ).
+            query( query ).
+            build();
+
+        final SearchResult result = searchDao.search( searchRequest );
+
+        return NodeQueryResultFactory.create( result );
+
     }
 
     @Override

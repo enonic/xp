@@ -2,29 +2,29 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.security.PrincipalKeys;
 
-public class NodeQueryTranslator
-    extends AbstractElasticsearchQueryTranslator
+public class OldNodeQueryTranslator
 {
-    static ElasticsearchQuery translate( final NodeQuery nodeQuery, final StorageSettings settings )
+
+    public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final InternalContext internalContext )
     {
-        final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery, settings.getAcl() );
+        final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery, internalContext );
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.create().
-            index( settings.getStorageName().getName() ).
-            indexType( settings.getStorageType().getName() ).
+            index( IndexNameResolver.resolveSearchIndexName( internalContext.getRepositoryId() ) ).
+            indexType( internalContext.getBranch().getName() ).
             query( queryWithQueryFilters ).
             setAggregations( AggregationQueryBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
             sortBuilders( SortQueryBuilderFactory.create( nodeQuery.getOrderBys() ) ).
@@ -35,13 +35,13 @@ public class NodeQueryTranslator
         return queryBuilder.build();
     }
 
-    private static QueryBuilder createQueryWithQueryFilters( final NodeQuery nodeQuery, final PrincipalKeys acl )
+    private static QueryBuilder createQueryWithQueryFilters( final NodeQuery nodeQuery, final InternalContext context )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.create().
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
 
-        final Filter aclFilter = AclFilterBuilderFactory.create( acl );
+        final Filter aclFilter = AclFilterBuilderFactory.create( context.getPrincipalsKeys() );
 
         if ( aclFilter != null )
         {
@@ -75,4 +75,6 @@ public class NodeQueryTranslator
                 build() );
         }
     }
+
+
 }

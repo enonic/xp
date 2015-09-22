@@ -1,15 +1,20 @@
 package com.enonic.wem.repo.internal.storage;
 
+import com.enonic.xp.security.PrincipalKeys;
+
 public class StorageSettings
 {
     private final StorageName storageName;
 
     private final StorageType storageType;
 
-    private StorageSettings( Builder builder )
+    private final PrincipalKeys acl;
+
+    private StorageSettings( final Builder builder )
     {
-        storageName = builder.storageName;
-        storageType = builder.storageType;
+        this.storageName = builder.storageName;
+        this.storageType = builder.storageType;
+        this.acl = builder.acl;
     }
 
     public static Builder create()
@@ -27,12 +32,18 @@ public class StorageSettings
         return storageType;
     }
 
+    public PrincipalKeys getAcl()
+    {
+        return acl;
+    }
 
     public static final class Builder
     {
         private StorageName storageName;
 
         private StorageType storageType;
+
+        private PrincipalKeys acl;
 
         private Builder()
         {
@@ -47,6 +58,12 @@ public class StorageSettings
         public Builder storageType( StorageType storageType )
         {
             this.storageType = storageType;
+            return this;
+        }
+
+        public Builder acl( final PrincipalKeys principalKeys )
+        {
+            this.acl = principalKeys;
             return this;
         }
 
@@ -68,13 +85,17 @@ public class StorageSettings
             return false;
         }
 
-        final StorageSettings that = (StorageSettings) o;
+        final StorageSettings settings = (StorageSettings) o;
 
-        if ( storageName != null ? !storageName.equals( that.storageName ) : that.storageName != null )
+        if ( storageName != null ? !storageName.equals( settings.storageName ) : settings.storageName != null )
         {
             return false;
         }
-        return !( storageType != null ? !storageType.equals( that.storageType ) : that.storageType != null );
+        if ( storageType != null ? !storageType.equals( settings.storageType ) : settings.storageType != null )
+        {
+            return false;
+        }
+        return !( acl != null ? !acl.equals( settings.acl ) : settings.acl != null );
 
     }
 
@@ -83,6 +104,7 @@ public class StorageSettings
     {
         int result = storageName != null ? storageName.hashCode() : 0;
         result = 31 * result + ( storageType != null ? storageType.hashCode() : 0 );
+        result = 31 * result + ( acl != null ? acl.hashCode() : 0 );
         return result;
     }
 }

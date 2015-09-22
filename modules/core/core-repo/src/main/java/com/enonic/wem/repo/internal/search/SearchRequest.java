@@ -1,28 +1,61 @@
 package com.enonic.wem.repo.internal.search;
 
 import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.xp.query.Query;
 
 public class SearchRequest
 {
     private StorageSettings settings;
 
-    private int from;
+    private Query query;
 
-    private int size;
-
-
-    public int getFrom()
+    private SearchRequest( Builder builder )
     {
-        return from;
+        settings = builder.settings;
+        query = builder.query;
     }
 
-    public int getSize()
+    public static Builder create()
     {
-        return size;
+        return new Builder();
     }
 
     public StorageSettings getSettings()
     {
         return settings;
+    }
+
+    public Query getQuery()
+    {
+        return query;
+    }
+
+
+    public static final class Builder
+    {
+        private StorageSettings settings;
+
+        private Query query;
+
+        private Builder()
+        {
+        }
+
+        public Builder settings( StorageSettings settings )
+        {
+            this.settings = settings;
+            return this;
+        }
+
+        public Builder query( Query query )
+        {
+            this.query = query;
+            return this;
+        }
+
+        public SearchRequest build()
+        {
+            return new SearchRequest( this );
+        }
     }
 }

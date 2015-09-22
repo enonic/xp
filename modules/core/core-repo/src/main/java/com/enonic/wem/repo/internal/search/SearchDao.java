@@ -23,6 +23,8 @@ public interface SearchDao
 
     SearchResult find( final NodeVersionQuery query, final InternalContext context );
 
+    SearchResult search( final SearchRequest searchRequest );
+
     NodeVersionDiffResult versionDiff( final NodeVersionDiffQuery query, final InternalContext context );
 
 }

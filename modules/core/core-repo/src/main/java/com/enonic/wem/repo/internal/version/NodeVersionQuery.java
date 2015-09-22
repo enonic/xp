@@ -1,30 +1,17 @@
 package com.enonic.wem.repo.internal.version;
 
+import com.enonic.xp.node.AbstractQuery;
 import com.enonic.xp.node.NodeId;
 
 public class NodeVersionQuery
+    extends AbstractQuery
 {
-    private final Integer from;
-
-    private final Integer size;
-
     private final NodeId nodeId;
 
-    private NodeVersionQuery( Builder builder )
+    private NodeVersionQuery( final Builder builder )
     {
-        from = builder.from;
-        size = builder.size;
+        super( builder );
         nodeId = builder.nodeId;
-    }
-
-    public Integer getFrom()
-    {
-        return from;
-    }
-
-    public Integer getSize()
-    {
-        return size;
     }
 
     public NodeId getNodeId()
@@ -37,29 +24,14 @@ public class NodeVersionQuery
         return new Builder();
     }
 
-
     public static final class Builder
+        extends AbstractQuery.Builder<Builder>
     {
-        private Integer from = 0;
-
-        private Integer size = 10;
 
         private NodeId nodeId;
 
         private Builder()
         {
-        }
-
-        public Builder from( Integer from )
-        {
-            this.from = from;
-            return this;
-        }
-
-        public Builder size( Integer size )
-        {
-            this.size = size;
-            return this;
         }
 
         public Builder nodeId( NodeId nodeId )

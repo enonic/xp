@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -16,6 +17,7 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 
 public class AbstractQuery
+    implements Query
 {
     protected final static int DEFAULT_QUERY_SIZE = 10;
 

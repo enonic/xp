@@ -10,20 +10,23 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.query.NodeQueryTranslator;
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQueryTranslator;
+import com.enonic.wem.repo.internal.elasticsearch.query.OldNodeQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResultFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchDao;
+import com.enonic.wem.repo.internal.search.SearchRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultFactory;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
+import com.enonic.wem.repo.internal.storage.result.SearchHits;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.branch.Branch;
@@ -49,7 +52,7 @@ public class ElasticsearchSearchDao
     @Override
     public NodeQueryResult find( final NodeQuery query, InternalContext context )
     {
-        final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
+        final ElasticsearchQuery esQuery = OldNodeQueryTranslator.translate( query, context );
 
         if ( query.getSearchMode().equals( SearchMode.COUNT ) )
         {
@@ -60,7 +63,7 @@ public class ElasticsearchSearchDao
                 build();
         }
 
-        System.out.println( esQuery );
+        //System.out.println( esQuery );
 
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
@@ -109,6 +112,28 @@ public class ElasticsearchSearchDao
         return null;
     }
 
+
+    @Override
+    public SearchResult search( final SearchRequest searchRequest )
+    {
+        final ElasticsearchQuery esQuery = ElasticsearchQueryTranslator.translate( searchRequest );
+
+        if ( searchRequest.getQuery().getSearchMode().equals( SearchMode.COUNT ) )
+        {
+            final long count = elasticsearchDao.count( esQuery );
+
+            return SearchResult.create().
+                hits( SearchHits.create().
+                    totalHits( count ).
+                    build() ).
+                build();
+        }
+
+        //System.out.println( esQuery );
+
+        return this.elasticsearchDao.find( esQuery );
+    }
+
     @Override
     public NodeVersionDiffResult versionDiff( final NodeVersionDiffQuery query, final InternalContext context )
     {
@@ -117,7 +142,7 @@ public class ElasticsearchSearchDao
 
     private NodeQueryResult translateResult( final SearchResult searchResult )
     {
-        return QueryResultFactory.create( searchResult );
+        return NodeQueryResultFactory.create( searchResult );
     }
 
     private NodeVersionIds doFindByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final InternalContext context )

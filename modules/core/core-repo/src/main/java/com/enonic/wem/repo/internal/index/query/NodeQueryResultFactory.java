@@ -4,7 +4,7 @@ import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchHits;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
-public class QueryResultFactory
+public class NodeQueryResultFactory
 {
     public static NodeQueryResult create( final SearchResult searchResult )
     {
