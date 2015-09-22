@@ -34,6 +34,7 @@
     line-height: 20px !important;
     background-color: @admin-bg-almost-white;
     text-align: center;
+    font-size: 14px;
   }
 
   .mobile-details-panel-toggle-button {
@@ -56,10 +57,7 @@
     .icon-menu();
 
     &.expanded {
-      font-size: 25px;
-      padding-top: 5px;
       color: @admin-blue;
-      .icon-close2();
     }
   }
 
@@ -97,6 +95,10 @@
 
     .widgets-selection-row .widget-selector {
       width: calc(~'100% - 40px');
+
+      .viewer {
+        font-size: 12px;
+      }
     }
 
     .transition(all 0.5s ease-in-out);

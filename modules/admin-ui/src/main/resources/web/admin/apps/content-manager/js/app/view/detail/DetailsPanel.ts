@@ -83,7 +83,7 @@ module app.view.detail {
         private initWidgetsSelectionRow() {
             this.widgetsSelectionRow = new WidgetsSelectionRow(this);
             this.appendChild(this.widgetsSelectionRow);
-            this.updateWidgetsDropdownForSelectedItem();
+            this.initWidgetsDropdownForSelectedItem();
         }
 
         setActiveWidget(widgetView: WidgetView) {
@@ -208,7 +208,7 @@ module app.view.detail {
         private updateCustomWidgets() {
         }
 
-        private updateWidgetsDropdownForSelectedItem() {
+        private initWidgetsDropdownForSelectedItem() {
             this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
             this.activateDefaultWidget();
         }
@@ -537,12 +537,13 @@ module app.view.detail {
             this.detailsPanel = detailsPanel;
 
             this.onClicked((event) => {
-                this.toggleClass("active");
-                if (this.hasClass("active")) {
+                this.addClass("active");
+                detailsPanel.activateDefaultWidget();
+                /*if (this.hasClass("active")) {
                     detailsPanel.activateDefaultWidget();
                 } else {
                     detailsPanel.activatePreviousWidget();
-                }
+                 }*/
             });
         }
 
@@ -632,6 +633,10 @@ module app.view.detail {
 
                 this.widgetSelectorDropdown.addOption(option);
             });
+
+            this.setVisible(false);
+            this.widgetSelectorDropdown.selectRow(0, true);
+            this.setVisible(true);
         }
     }
 
