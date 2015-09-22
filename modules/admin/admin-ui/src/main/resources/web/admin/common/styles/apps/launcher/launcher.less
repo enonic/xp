@@ -1,0 +1,459 @@
+@mobile-threshold: 540px;
+@tablet-threshold: 1380px;
+
+html, body {
+  height: 100%
+}
+
+.applications-frame {
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.home-main-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  .lazy-image {
+    content: "/admin/common/images/background-1920.jpg";
+  }
+
+  a {
+    color: @admin-white;
+    text-decoration: none;
+  }
+
+  h3,
+  .installation-info {
+    font-size: 24px;
+    color: @admin-white;
+  }
+
+  &.show-home {
+    animation: animation-show-home 100ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: animation-show-home 100ms ease both;
+    -webkit-animation-play-state: running;
+  }
+
+  &.hide-home {
+    animation: animation-hide-home 100ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: animation-hide-home 100ms ease both;
+    -webkit-animation-play-state: running;
+  }
+
+  .header-panel {
+    position: absolute;
+    width: 100%;
+    height: 44px;
+    padding: 6px 10px;
+    background-size: cover;
+    text-align: center;
+    overflow-y: visible;
+    z-index: 1;
+    .box-sizing(border-box);
+
+    .installation-header {
+      float: left;
+      line-height: 20px;
+      padding: 5px 0 0 0;
+      color: @admin-font-gray;
+      font-size: 18px;
+      line-height: 24px;
+      text-transform: uppercase;
+    }
+    .user-name {
+      float: right;
+      line-height: 20px;
+      padding: 6px 10px;
+      color: @admin-font-gray;
+      font-size: 14px;
+    }
+
+    .logout {
+      float: right;
+      padding: 8px 10px 8px 0;
+      &:hover {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .return-button {
+      margin: 4px 3px 0 0;
+      padding: 2px 0px;
+      width: 24px;
+      height: 24px;
+      float: right;
+      box-sizing: border-box;
+      border: 2px solid @admin-white;
+      color: @admin-white;
+      font-size: 16px;
+      cursor: pointer;
+      .border-radius(24px);
+      &:hover {
+        color: rgba(255, 255, 255, 0.5);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .icon-close2();
+    }
+
+    .tab-menu-logon {
+      float: right;
+      margin-right: 10px;
+      margin-top: 0px;
+
+      .tab-menu-button {
+        background-color: transparent;
+      }
+
+      &.expanded {
+        .tab-menu-button {
+          background-color: @admin-bg-dark-gray;
+        }
+      }
+
+    }
+
+  }
+
+  /** Branding */
+
+  .branding {
+    .flexbox();
+    align-items: center;
+    -webkit-align-items: center;
+    width: 200px;
+    height: 100%;
+    left: calc(~"50% - 100px");
+    margin-top: -120px;
+    position: absolute;
+    text-align: center;
+    z-index: 0;
+
+    h1 {
+      color: white;
+      font-size: 24px;
+      background: transparent url("../images/enonic-experience-platform.png") 0 0 no-repeat;
+      background-size: 100%;
+      height: 61px;
+      line-height: 61px;
+      text-indent: 100%;
+      overflow: hidden;
+    }
+
+    .installation-info {
+      font-size: 12px;
+      text-align: right;
+    }
+  }
+
+  /** Center */
+
+  .center-panel {
+    width: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+
+    .login-panel, .app-selector-panel {
+      .flexbox();
+      .align-items(center);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .login-licensed-to {
+    text-align: center;
+    padding-top: 35px;
+  }
+
+  .links-container {
+    position: absolute;
+    width: 100%;
+    bottom: 15px;
+    left: 0;
+    text-align: center;
+    span {
+      color: @admin-white;
+    }
+  }
+
+  /** Common */
+
+  .login-form,
+  .app-selector-container,
+  .app-info {
+    position: absolute;
+    top: 30%;
+  }
+
+  /** Login Form **/
+  .login-form {
+    position: static;
+    margin: -4px auto 0;
+
+    .message-container {
+      position: absolute;
+      width: 200px;
+      height: 28px;
+      line-height: 28px;
+      margin-top: 10px;
+      color: white;
+      text-align: center;
+
+      .ellipsis();
+    }
+
+    .input-view {
+      font-family: @admin-font-family;
+      font-size: 12px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      border: 1px solid @admin-bg-light-gray;
+      vertical-align: top;
+      padding: 4px 9px;
+      background: none @admin-white !important;
+      width: 200px;
+
+      &.invalid {
+        &[type=password] {
+          color: @admin-red;
+        }
+        .animation(shake, .5s, 0s, linear, 1);
+      }
+    }
+
+    .password-input {
+      padding-right: 35px;
+    }
+
+    .text-input {
+      min-height: initial;
+      margin-bottom: 13px;
+    }
+
+    .login-button {
+      .icon-arrow-right3;
+      background-color: transparent;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      padding: 3px;
+      font-size: 20px;
+      color: @form-button-bg;
+
+      &.invalid {
+        .animation(shake, .5s, 0s, linear, 1);
+      }
+
+      &:hover:not(:disabled) {
+
+        &:before, span {
+          color: inherit;
+        }
+      }
+
+      &:focus:not(:disabled) {
+        box-shadow: none;
+        border: 1px solid transparent;
+      }
+
+      &:before {
+        color: inherit; // updates icons color
+      }
+
+      span {
+        display: none;
+      }
+    }
+
+    .password-container {
+      position: relative;
+    }
+  }
+
+  /** App selector */
+
+  .app-selector-container {
+    width: 100%;
+    position: static;
+  }
+
+  .app-selector {
+    color: @admin-white;
+
+    opacity: 0;
+    .transition(all 300ms ease-out);
+    .scale(.25);
+
+    &.fade-in-and-scale-up {
+      opacity: 1 !important;
+
+      .scale(1) !important;
+    }
+
+    .search-input-container {
+      margin-bottom: 10px;
+      width: 470px;
+
+      input {
+        vertical-align: top;
+        height: 26px;
+        padding: 4px 9px;
+        border: 1px solid;
+        border-color: #aaaaaa;
+        width: 100%;
+      }
+    }
+
+  }
+
+  .app-info {
+    .app-info-name {
+      color: #ebebeb;
+    }
+
+    .app-info-description {
+      color: #ebebeb;
+    }
+  }
+
+  .app-tiles-placeholder {
+    width: (125*3)-10px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-content: center;
+    align-content: center;
+    margin: 0 auto;
+    @media only screen and (max-width: @mobile-threshold) {
+      width: (90*3)+20px;
+    }
+    @media only screen and (max-width: @tablet-threshold) {
+      width: (110*3)-10px;
+    }
+    .notSelectable();
+
+    .app-tile {
+      cursor: pointer;
+      position: relative;
+      float: left;
+      width: 115px;
+      height: 100px;
+      margin: 0 10px 10px 0;
+      padding: 15px 0 0;
+      border-bottom: 4px solid transparent;
+      &:nth-child(3n+3) {
+        margin: 0 0 10px 0;
+      }
+      @media only screen and (max-width: @tablet-threshold) {
+        width: 100px;
+        height: 85px;
+      }
+
+      a {
+        > .icon-container {
+          position: absolute;
+          width: 100%;
+          text-align: center;
+          & > img {
+            width: 40px;
+            height: 40px;
+          }
+
+          & > i {
+            font-size: 56px;
+            color: white;
+            @media only screen and (max-width: @tablet-threshold) {
+              font-size: 48px;
+            }
+          }
+        }
+
+        > .name-container {
+          position: absolute;
+          bottom: 10px;
+          width: 100%;
+          text-align: center;
+        }
+
+        > .tab-count-container {
+          background-color: #DC143C;
+          color: @admin-white;
+          font-size: 13px;
+          padding: 2px 8px;
+          position: absolute;
+          right: 10px;
+          text-align: center;
+          top: 10px;
+          .border-radius(50%);
+        }
+      }
+      &.app-tile-over {
+        border-bottom: 4px solid @admin-red;
+        &.fullsize {
+          > .img-container {
+
+          }
+        }
+      }
+      &.fullsize {
+        a {
+          > .icon-container {
+            margin-top: 0px;
+            & > img {
+              width: 65px;
+              height: 65px;
+              margin: 10px auto;
+              display: block;
+              border-radius: 50%;
+              @media only screen and (max-width: @mobile-threshold) {
+                width: 40px;
+                height: 40px;
+              }
+              @media only screen and (max-width: @tablet-threshold) {
+                width: 55px;
+                height: 55px;
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+}
+
+._0-240, ._240-360, ._360-540, ._540-720 {
+  .home-main-container {
+    .user-name {
+      display: none;
+    }
+  }
+}
+
+

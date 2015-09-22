@@ -1,0 +1,115 @@
+.time-picker {
+
+  .button {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    line-height: 0px;
+    &:before {
+      color: @admin-dark-gray;
+      vertical-align: middle;
+    }
+    &:hover, &:active {
+      background: transparent;
+      &:before {
+        color: @admin-dark-gray;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+
+    .text-input {
+      width: 100%;
+      padding: 4px 32px 4px 5px;
+      line-height: 27px;
+    }
+
+    .time-picker-dialog-content();
+
+  }
+
+}
+
+.time-picker-dialog-content() {
+  .time-picker-dialog {
+    position: absolute;
+    display: none;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    right: auto;
+    height: auto;
+    width: auto;
+    z-index: 100;
+    padding: 5px;
+    background-color: #fff;
+
+    .material-layer-shadow();
+
+    li {
+      display: inline-block;
+      font-size: 30px;
+      line-height: 40px;
+      padding: 5px;
+
+      &.colon {
+        vertical-align: top;
+        padding: 0;
+        margin-top: 19px;
+
+        &:before {
+          content: ':';
+        }
+      }
+
+      a, span {
+        display: block;
+      }
+
+      .prev, .next {
+        cursor: pointer;
+        overflow: hidden;
+        height: 16px;
+
+        width: 34px;
+        text-align: center;
+
+        span {
+          position: absolute;
+          width: inherit;
+          margin-top: -3px;
+          font-size: 0.8em;
+          color: @admin-button-blue2;
+        }
+      }
+
+      .prev {
+        span {
+          .icon-arrow-down4();
+        }
+      }
+
+      .next {
+        span {
+          .icon-arrow-up2();
+        }
+      }
+
+    }
+
+    .timezone {
+      color: @admin-button-blue2;
+      font-size: 15px;
+      display: block;
+      line-height: 25px;
+    }
+
+  }
+}

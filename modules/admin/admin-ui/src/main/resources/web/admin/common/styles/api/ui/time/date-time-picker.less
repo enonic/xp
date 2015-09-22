@@ -1,0 +1,87 @@
+.date-time-picker {
+
+  .button {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    line-height: 0px;
+    &:before {
+      color: @admin-dark-gray;
+      vertical-align: middle;
+    }
+    &:hover, &:active {
+      background: transparent;
+      &:before {
+        color: @admin-dark-gray;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+
+    .text-input {
+      width: 100%;
+      padding: 4px 32px 4px 5px;
+      line-height: 27px;
+    }
+
+    .date-time-dialog {
+
+      display: none;
+      position: absolute;
+      box-sizing: border-box;
+      width: 100%;
+      z-index: 100;
+      padding: 10px 0px;
+      background-color: #fff;
+      text-align: center;
+
+      .notSelectable();
+
+      .material-layer-shadow();
+
+      .date-picker-dialog-content();
+
+      .date-picker-dialog {
+        width: auto;
+        padding: 10px;
+        display: inline-block;
+        position: static;
+        vertical-align: middle;
+        .box-shadow(none);
+      }
+
+      .time-picker-dialog-content();
+
+      .time-picker-dialog {
+        display: inline-block;
+        position: static;
+        vertical-align: middle;
+        .box-shadow(none);
+      }
+    }
+
+  }
+
+}
+@media screen and (max-width: 479px) {
+  .date-time-dialog {
+    .date-picker-dialog {
+      padding: 10px 0px !important;;
+      display: block !important;
+    }
+    .time-picker-dialog {
+      display: block !important;
+      text-align: center !important;
+      width: 50% !important;
+      margin: 0 auto !important;
+    }
+  }
+
+}

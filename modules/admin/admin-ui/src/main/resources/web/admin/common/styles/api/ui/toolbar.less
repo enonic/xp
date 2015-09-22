@@ -1,0 +1,91 @@
+.toolbar {
+  @toolbar-height: 41px;
+
+  background-color: @admin-white;
+  height: @toolbar-height;
+  overflow: visible; // for the button glow
+  .box-sizing(border-box);
+  border-bottom: 1px solid @admin-bg-light-gray;
+
+  .button {
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);
+
+    display: inline-block;
+    padding: 7px 14px;
+
+    &.icon-search {
+      font-size: 16px;
+      padding: 10px 14px 8px 14px;
+    }
+  }
+
+  .toggle-slide {
+    margin: 11px 7px;
+  }
+
+  .fold-button {
+    height: @toolbar-height;
+    line-height: @toolbar-height;
+    margin-right: 18px;
+    padding: 0 27px 0 17px;
+    text-align: center;
+    overflow: visible;
+    display: inline-block;
+    position: relative; // for the dropdown to position itself
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      width: 0;
+      height: 0;
+      margin: -2px 0 0 -4px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid @admin-dark-gray;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      margin: -1px 0px 0px 8px;
+      left: 0;
+      z-index: @z-index-toolbar-element;
+      padding: 4px;
+      background-color: @admin-white;
+      .material-layer-shadow();
+
+      .button {
+        width: 100%;
+        padding: 5px;
+        &:hover {
+          background-color: @admin-bg-light-gray;
+        }
+
+        span {
+          line-height: 1em;
+        }
+      }
+
+      & > * {
+        display: block;
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    &:hover .dropdown,
+    &:focus .dropdown,
+    .dropdown:hover,
+    .dropdown:focus {
+      display: block;
+    }
+  }
+
+  &.content-browse-toolbar, &.user-browse-toolbar {
+    button {
+      vertical-align: top;
+    }
+  }
+}

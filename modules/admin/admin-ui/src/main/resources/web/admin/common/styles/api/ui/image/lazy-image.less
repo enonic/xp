@@ -1,0 +1,17 @@
+.lazy-image {
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  transition: opacity 1s;
+  &.empty {
+    opacity: 0;
+  }
+}

@@ -1,52 +1,69 @@
-include 'core-api'
-include 'core-event'
-include 'core-schema'
-include 'core-repo'
-include 'core-security'
-include 'core-image'
-include 'core-export'
-include 'core-impl'
-include 'core-itest'
+include 'core:core-api'
+include 'core:core-event'
+include 'core:core-schema'
+include 'core:core-repo'
+include 'core:core-security'
+include 'core:core-image'
+include 'core:core-export'
+include 'core:core-mail'
+include 'core:core-impl'
 
-include 'script-api'
-include 'script-impl'
+include 'script:script-api'
+include 'script:script-impl'
 
-include 'web-api'
-include 'web-impl'
-include 'web-jaxrs'
-include 'web-vhost'
+include 'web:web-api'
+include 'web:web-impl'
+include 'web:web-jaxrs'
+include 'web:web-vhost'
 
-include 'portal-api'
-include 'portal-impl'
+include 'portal:portal-api'
+include 'portal:portal-impl'
 
-include 'admin-api'
-include 'admin-impl'
-include 'admin-event'
-include 'admin-ui'
+include 'admin:admin-api'
+include 'admin:admin-impl'
+include 'admin:admin-event'
+include 'admin:admin-ui'
 
-include 'itest-core'
+include 'itest:itest-core'
 
-include 'upgrade'
-include 'toolbox'
+include 'tools:upgrade'
+include 'tools:toolbox'
+include 'tools:testing'
+include 'tools:gradle-plugin'
 
 include 'launcher'
 include 'distro'
 
-include 'testing'
-include 'gradle-plugin'
+include 'lib:lib-content'
+include 'lib:lib-i18n'
+include 'lib:lib-portal'
+include 'lib:lib-mustache'
+include 'lib:lib-xslt'
+include 'lib:lib-thymeleaf'
+include 'lib:lib-mail'
+include 'lib:lib-auth'
 
-include 'lib-content'
-include 'lib-i18n'
-include 'lib-portal'
-include 'lib-mustache'
-include 'lib-xslt'
-include 'lib-thymeleaf'
+include 'repack:repack-jparsec'
+include 'repack:repack-attoparser'
+include 'repack:repack-resteasy'
+include 'repack:repack-jhlabs-filters'
+include 'repack:repack-elasticsearch'
 
 rootProject.name = 'xp'
 
-rootProject.children.each { project ->
-    String projectDirName = "modules/${project.name}"
-    project.projectDir = new File( (File) settingsDir, projectDirName )
-    assert project.projectDir.isDirectory()
-    assert project.buildFile.isFile()
+configureProjects( rootProject )
+
+def configureProjects( root )
+{
+    root.children.each { p ->
+        configureProject( p )
+        configureProjects( p )
+    }
+}
+
+def configureProject( p )
+{
+    String dirName = p.path.substring( 1 ).replace( ':', '/' )
+    p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
+    assert p.projectDir.isDirectory()
 }

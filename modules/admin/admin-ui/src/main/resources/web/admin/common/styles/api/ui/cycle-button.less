@@ -1,0 +1,11 @@
+.cycle-button {
+  position: relative;
+  color: @admin-font-gray2;
+  font-size: 24px;
+
+  .notSelectable();
+
+  &:not(.live):before {
+    color: @admin-button-blue1 !important;
+  }
+}
