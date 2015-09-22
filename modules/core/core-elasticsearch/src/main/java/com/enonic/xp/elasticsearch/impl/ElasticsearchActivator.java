@@ -12,16 +12,22 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.node.internal.InternalNode;
+import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
 {
+    private static final String ACTION_PROPERTY_KEY = "action";
+
     private Node node;
 
     private ServiceRegistration<Client> clientReg;
@@ -29,6 +35,9 @@ public final class ElasticsearchActivator
     private ServiceRegistration<ClusterService> clusterServiceReg;
 
     private ServiceRegistration<TransportService> transportServiceReg;
+
+    private TransportService transportService;
+
 
     public ElasticsearchActivator()
     {
@@ -46,11 +55,11 @@ public final class ElasticsearchActivator
 
         final Injector injector = ( (InternalNode) this.node ).injector();
         final ClusterService clusterService = injector.getInstance( ClusterService.class );
-        final TransportService transportService = injector.getInstance( TransportService.class );
+        this.transportService = injector.getInstance( TransportService.class );
 
         this.clientReg = context.registerService( Client.class, this.node.client(), new Hashtable<>() );
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
-        this.transportServiceReg = context.registerService( TransportService.class, transportService, new Hashtable<>() );
+        this.transportServiceReg = context.registerService( TransportService.class, this.transportService, new Hashtable<>() );
 
 
     }
@@ -63,4 +72,18 @@ public final class ElasticsearchActivator
         this.clientReg.unregister();
         this.node.stop();
     }
+
+    @Reference(target = "(" + ACTION_PROPERTY_KEY + "=*)", cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
+    {
+        final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
+        this.transportService.registerHandler( actionPropertyValue, transportRequestHandler );
+    }
+
+    public void removeTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
+    {
+        final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
+        this.transportService.removeHandler( actionPropertyValue );
+    }
+
 }
