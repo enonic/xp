@@ -7,10 +7,13 @@ module api.ui.menu {
             super("context-menu");
 
             if (actions) {
-                for (var i = 0; i < actions.length; i++) {
-                    this.addAction(actions[i]);
-                }
+                actions.sort(function (action1: api.ui.Action, action2: api.ui.Action) {
+                    return action1.getSortOrder() - action2.getSortOrder();
+                }).forEach((action: api.ui.Action) => {
+                    this.addAction(action);
+                });
             }
+
             if (appendToBody) {
                 api.dom.Body.get().appendChild(this);
                 api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));

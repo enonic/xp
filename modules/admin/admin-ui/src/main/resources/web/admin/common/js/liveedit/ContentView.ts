@@ -48,13 +48,8 @@ module api.liveedit {
 
         private createContentContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Select parent').onExecuted(() => {
-                var parentView: ItemView = this.getParentItemView();
-                if (parentView) {
-                    this.deselect();
-                    parentView.select(null, ItemViewContextMenuPosition.TOP);
-                }
-            }));
+
+            actions.push(this.createSelectParentAction());
             actions.push(new api.ui.Action('Insert').onExecuted(() => {
                 // TODO
             }));
