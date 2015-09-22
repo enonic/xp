@@ -18,7 +18,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.acl.Permission;
 
-public class BranchStorageRequestFactory
+class BranchStorageRequestFactory
 {
     public static StoreRequest create( final StoreBranchDocument doc, final InternalContext context )
     {

@@ -5,10 +5,10 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 
-public abstract class AbstractXContentBuilderFactory
+abstract class AbstractXContentBuilderFactory
 {
 
-    public static XContentBuilder startBuilder()
+    static XContentBuilder startBuilder()
         throws Exception
     {
         final XContentBuilder result = XContentFactory.jsonBuilder();
@@ -17,7 +17,7 @@ public abstract class AbstractXContentBuilderFactory
         return result;
     }
 
-    public static void addField( XContentBuilder result, String name, Object value )
+    static void addField( XContentBuilder result, String name, Object value )
         throws Exception
     {
         if ( value == null )
@@ -34,7 +34,7 @@ public abstract class AbstractXContentBuilderFactory
     }
 
 
-    public static void endBuilder( final XContentBuilder contentBuilder )
+    static void endBuilder( final XContentBuilder contentBuilder )
         throws Exception
     {
         contentBuilder.endObject();

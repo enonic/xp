@@ -8,7 +8,7 @@ import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.xp.node.NodeId;
 
-public class BranchDeleteRequestFactory
+class BranchDeleteRequestFactory
 {
     public static DeleteRequest create( final NodeId nodeId, final InternalContext context )
     {

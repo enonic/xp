@@ -25,7 +25,7 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 public class VersionServiceImpl
     implements VersionService
 {
-    public static final ReturnFields VERSION_RETURN_FIELDS =
+    private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
 
     private ElasticsearchDao elasticsearchDao;

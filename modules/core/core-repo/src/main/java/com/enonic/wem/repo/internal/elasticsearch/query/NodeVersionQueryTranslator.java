@@ -9,7 +9,7 @@ import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.ValueFilter;
 
-public class NodeVersionQueryTranslator
+class NodeVersionQueryTranslator
     extends AbstractElasticsearchQueryTranslator
 {
     static ElasticsearchQuery translate( final SearchRequest searchRequest )
@@ -21,7 +21,7 @@ public class NodeVersionQueryTranslator
         return doCreateEsQuery( nodeVersionQuery, searchRequest, queryBuilder );
     }
 
-    static QueryBuilder createQueryBuilder( final NodeVersionQuery nodeVersionQuery )
+    private static QueryBuilder createQueryBuilder( final NodeVersionQuery nodeVersionQuery )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = createQuery( nodeVersionQuery );
 

@@ -180,7 +180,7 @@ public class StorageServiceImpl
         return this.nodeDao.get( nodeVersionId );
     }
 
-    protected boolean canRead( final Node node )
+    private boolean canRead( final Node node )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 

@@ -98,7 +98,7 @@ public abstract class AbstractSimpleQueryStringFunction
         this.analyzer = expr.getValue().asString();
     }
 
-    public ValueExpr getValueAt( final List<ValueExpr> arguments, final int pos )
+    private ValueExpr getValueAt( final List<ValueExpr> arguments, final int pos )
     {
         if ( arguments.size() >= pos + 1 && arguments.get( pos ) != null )
         {

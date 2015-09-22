@@ -2,17 +2,17 @@ package com.enonic.wem.repo.internal.storage;
 
 public abstract class AbstractGetRequest
 {
-    protected final StorageSettings storageSettings;
+    private final StorageSettings storageSettings;
 
-    protected final SearchPreference searchPreference;
+    private final SearchPreference searchPreference;
 
-    protected final ReturnFields returnFields;
+    private final ReturnFields returnFields;
 
-    protected final String routing;
+    private final String routing;
 
-    protected final int timeout;
+    private final int timeout;
 
-    protected AbstractGetRequest( final Builder builder )
+    AbstractGetRequest( final Builder builder )
     {
         this.searchPreference = builder.searchPreference;
         this.storageSettings = builder.storageSettings;

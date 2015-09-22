@@ -162,7 +162,7 @@ public class PushNodesCommand
             build() );
     }
 
-    boolean targetParentExists( final Node node, final Context currentContext )
+    private boolean targetParentExists( final Node node, final Context currentContext )
     {
         if ( node.isRoot() || node.parentPath().equals( NodePath.ROOT ) )
         {

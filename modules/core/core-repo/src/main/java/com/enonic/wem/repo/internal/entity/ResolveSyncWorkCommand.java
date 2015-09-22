@@ -272,7 +272,7 @@ public class ResolveSyncWorkCommand
     }
 
 
-    public void addRequestedOrChild( final NodeId nodeId, boolean isDelete )
+    private void addRequestedOrChild( final NodeId nodeId, boolean isDelete )
     {
         if ( nodeId.equals( this.publishRootNode.id() ) )
         {
@@ -391,7 +391,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId, "nodeId must be provided" );

@@ -54,7 +54,7 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    protected PrincipalKey getCurrentPrincipalKey()
+    PrincipalKey getCurrentPrincipalKey()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 

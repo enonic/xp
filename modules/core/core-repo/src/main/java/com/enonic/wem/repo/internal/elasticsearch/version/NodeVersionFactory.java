@@ -10,9 +10,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 
-public class NodeVersionFactory
+class NodeVersionFactory
 {
-
     public static NodeVersion create( final GetResult getResult )
     {
         final ReturnValues values = getResult.getReturnValues();

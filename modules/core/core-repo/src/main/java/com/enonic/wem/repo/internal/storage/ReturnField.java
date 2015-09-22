@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.storage;
 
 import com.enonic.xp.index.IndexPath;
 
-public class ReturnField
+class ReturnField
 {
     private final IndexPath indexPath;
 

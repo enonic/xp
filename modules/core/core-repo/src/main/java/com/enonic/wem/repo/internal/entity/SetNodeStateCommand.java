@@ -105,7 +105,7 @@ public class SetNodeStateCommand
         }
 
         @Override
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );

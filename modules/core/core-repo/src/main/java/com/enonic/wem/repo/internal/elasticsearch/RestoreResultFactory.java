@@ -6,7 +6,7 @@ import org.elasticsearch.snapshots.RestoreInfo;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.RestoreResult;
 
-public class RestoreResultFactory
+class RestoreResultFactory
 {
     static RestoreResult create( final RestoreSnapshotResponse response, final RepositoryId respositoryId )
     {

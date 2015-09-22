@@ -20,11 +20,6 @@ public class StorageData
         return new Builder();
     }
 
-    public Collection<Object> get( final String key )
-    {
-        return this.values.get( key );
-    }
-
     public Multimap<String, Object> getValues()
     {
         return values;

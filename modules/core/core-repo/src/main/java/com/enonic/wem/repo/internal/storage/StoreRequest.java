@@ -60,7 +60,7 @@ public class StoreRequest
         return settings;
     }
 
-    public StorageData getData()
+    private StorageData getData()
     {
         return data;
     }
@@ -80,7 +80,7 @@ public class StoreRequest
         return id;
     }
 
-    public NodePath getPath()
+    private NodePath getPath()
     {
         return path;
     }

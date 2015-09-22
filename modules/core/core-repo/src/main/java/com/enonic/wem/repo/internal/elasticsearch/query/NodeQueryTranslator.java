@@ -16,7 +16,7 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class NodeQueryTranslator
+class NodeQueryTranslator
     extends AbstractElasticsearchQueryTranslator
 {
     static ElasticsearchQuery translate( final SearchRequest request )

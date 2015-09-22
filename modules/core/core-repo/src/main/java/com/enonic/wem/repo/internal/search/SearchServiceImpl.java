@@ -34,10 +34,10 @@ public class SearchServiceImpl
 
     private SearchDao searchDao;
 
-    public static final ReturnFields VERSION_RETURN_FIELDS =
+    private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
 
-    public static final ReturnFields BRANCH_RETURN_FIELDS =
+    private static final ReturnFields BRANCH_RETURN_FIELDS =
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP );
 
