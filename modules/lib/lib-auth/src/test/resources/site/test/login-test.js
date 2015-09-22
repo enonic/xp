@@ -25,6 +25,55 @@ exports.loginSuccess = function () {
 
 };
 
+exports.loginNoUserStore = function () {
+
+    var result = auth.login({
+        user: 'user1@enonic.com',
+        password: 'pwd123'
+    });
+
+    var expectedJson = {
+        authenticated: true,
+        user: {
+            disabled: false,
+            displayName: 'User 1',
+            email: 'user1@enonic.com',
+            key: 'user:enonic:user1',
+            login: 'user1',
+            userStore: "enonic",
+            modifiedTime: '1970-01-01T00:00:00Z'
+        }
+    };
+
+    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+
+};
+
+exports.loginMultipleUserStore = function () {
+
+    var result = auth.login({
+        user: 'user1@enonic.com',
+        password: 'pwd123',
+        userStore: ['enonic', 'system']
+    });
+
+    var expectedJson = {
+        authenticated: true,
+        user: {
+            disabled: false,
+            displayName: 'User 1',
+            email: 'user1@enonic.com',
+            key: 'user:enonic:user1',
+            login: 'user1',
+            userStore: "enonic",
+            modifiedTime: '1970-01-01T00:00:00Z'
+        }
+    };
+
+    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+
+};
+
 exports.invalidLogin = function () {
 
     var result = auth.login({
