@@ -1,10 +1,12 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.ClusterService;
+import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,6 +33,10 @@ public class ElasticsearchActivatorTest
 
     private ServiceRegistration<TransportService> transportServiceReg;
 
+    private TransportRequestHandler transportRequestHandler;
+
+    private Map<String, String> transportRequestHandlerProperties;
+
     @Before
     public void setup()
         throws Exception
@@ -44,11 +50,13 @@ public class ElasticsearchActivatorTest
         this.clientReg = mockRegisterService( Client.class );
         this.clusterServiceReg = mockRegisterService( ClusterService.class );
         this.transportServiceReg = mockRegisterService( TransportService.class );
-
+        this.transportRequestHandler = Mockito.mock( TransportRequestHandler.class );
+        this.transportRequestHandlerProperties = new HashMap<>();
+        this.transportRequestHandlerProperties.put( "action", "cms/cluster/send" );
     }
 
     @Test
-    public void testActivate()
+    public void testLifeCycle()
         throws Exception
     {
         final Map<String, String> map = Maps.newHashMap();
@@ -57,6 +65,9 @@ public class ElasticsearchActivatorTest
         verifyRegisterService( Client.class );
         verifyRegisterService( ClusterService.class );
         verifyRegisterService( TransportService.class );
+
+        this.activator.addTransportRequestHandler( this.transportRequestHandler, this.transportRequestHandlerProperties );
+        this.activator.removeTransportRequestHandler( this.transportRequestHandler, this.transportRequestHandlerProperties );
 
         this.activator.deactivate();
         verifyUnregisterService( this.clientReg );
@@ -81,4 +92,6 @@ public class ElasticsearchActivatorTest
         Mockito.when( this.context.registerService( Mockito.eq( type ), Mockito.any( type ), Mockito.any() ) ).thenReturn( reg );
         return reg;
     }
+
+
 }
