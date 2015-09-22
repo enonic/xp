@@ -6,7 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.query.expr.OrderExpr;
 
 @Beta
-public class NodeVersionDiffQuery
+public class FindNodesWithVersionDifferenceParams
 {
     private final NodeId nodeId;
 
@@ -22,7 +22,7 @@ public class NodeVersionDiffQuery
 
     private final int from;
 
-    private NodeVersionDiffQuery( Builder builder )
+    private FindNodesWithVersionDifferenceParams( Builder builder )
     {
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
@@ -130,9 +130,9 @@ public class NodeVersionDiffQuery
             return this;
         }
 
-        public NodeVersionDiffQuery build()
+        public FindNodesWithVersionDifferenceParams build()
         {
-            return new NodeVersionDiffQuery( this );
+            return new FindNodesWithVersionDifferenceParams( this );
         }
     }
 }

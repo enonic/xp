@@ -5,11 +5,11 @@ import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -37,6 +37,8 @@ public class FindNodesWithVersionDifferenceCommandTest
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() );
+
+        refresh();
 
         assertEquals( 2, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
@@ -332,7 +334,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     {
         refresh();
 
-        final NodeVersionDiffQuery.Builder queryBuilder = NodeVersionDiffQuery.create().
+        final FindNodesWithVersionDifferenceParams.Builder queryBuilder = FindNodesWithVersionDifferenceParams.create().
             target( target ).
             source( source );
 

@@ -22,6 +22,7 @@ import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
+import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
@@ -127,6 +128,8 @@ public class AbstractContentServiceTest
 
     private SearchServiceImpl searchService;
 
+    private ElasticsearchSearchDao searchDao;
+
     @Before
     public void setUp()
         throws Exception
@@ -164,8 +167,11 @@ public class AbstractContentServiceTest
         this.storageService.setNodeDao( this.nodeDao );
         this.storageService.setIndexServiceInternal( this.indexService );
 
+        this.searchDao = new ElasticsearchSearchDao();
+        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+
         this.searchService = new SearchServiceImpl();
-        this.searchService.setVersionService( this.versionService );
+        this.searchService.setSearchDao( this.searchDao );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );

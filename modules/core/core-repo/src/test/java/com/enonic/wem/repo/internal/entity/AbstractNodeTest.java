@@ -149,7 +149,6 @@ public abstract class AbstractNodeTest
         // Search-service
 
         this.searchService = new SearchServiceImpl();
-        this.searchService.setVersionService( this.versionService );
         this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new ElasticsearchSnapshotService();

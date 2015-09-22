@@ -10,19 +10,22 @@ import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.SearchStorageName;
 import com.enonic.wem.repo.internal.storage.SearchStorageType;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
+import com.enonic.wem.repo.internal.storage.StorageName;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.storage.StorageType;
 import com.enonic.wem.repo.internal.storage.StoreStorageName;
 import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResultFactory;
+import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionQueryResultFactory;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
-import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionQueryResult;
 
@@ -30,8 +33,6 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 public class SearchServiceImpl
     implements SearchService
 {
-    private VersionService versionService;
-
     private SearchDao searchDao;
 
     private static final ReturnFields VERSION_RETURN_FIELDS =
@@ -44,11 +45,12 @@ public class SearchServiceImpl
     @Override
     public NodeQueryResult search( final NodeQuery query, final InternalContext context )
     {
+        final StorageType storageType = SearchStorageType.from( context.getBranch() );
+
+        final StorageName storageName = SearchStorageName.from( context.getRepositoryId() );
+
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( StorageSettings.create().
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                build() ).
+            settings( createSettings( storageType, storageName ) ).
             acl( context.getPrincipalsKeys() ).
             query( query ).
             build();
@@ -61,11 +63,11 @@ public class SearchServiceImpl
     @Override
     public NodeBranchQueryResult search( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
+        final StorageType storageType = StaticStorageType.BRANCH;
+        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
+
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( StorageSettings.create().
-                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
-                storageType( StaticStorageType.BRANCH ).
-                build() ).
+            settings( createSettings( storageType, storageName ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
             query( nodeBranchQuery ).
@@ -84,11 +86,11 @@ public class SearchServiceImpl
     @Override
     public NodeVersionQueryResult search( final NodeVersionQuery query, final InternalContext context )
     {
+        final StorageType storageType = StaticStorageType.VERSION;
+        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
+
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( StorageSettings.create().
-                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
-                storageType( StaticStorageType.VERSION ).
-                build() ).
+            settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             acl( context.getPrincipalsKeys() ).
             query( query ).
@@ -105,15 +107,41 @@ public class SearchServiceImpl
     }
 
     @Override
-    public NodeVersionDiffResult diffNodeVersions( final NodeVersionDiffQuery query, final InternalContext context )
+    public NodeVersionDiffResult search( final NodeVersionDiffQuery query, final InternalContext context )
     {
-        return this.versionService.diff( query, context );
+        final StorageType storageType = StaticStorageType.VERSION;
+        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
+
+        final SearchRequest searchRequest = SearchRequest.create().
+            settings( createSettings( storageType, storageName ) ).
+            returnFields( VERSION_RETURN_FIELDS ).
+            acl( context.getPrincipalsKeys() ).
+            query( query ).
+            build();
+
+        final SearchResult result = searchDao.search( searchRequest );
+
+        if ( result.isEmpty() )
+        {
+            return NodeVersionDiffResult.empty();
+        }
+
+        final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
+
+        for ( final SearchHit hit : result.getResults() )
+        {
+            builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue().toString() ) );
+        }
+
+        return builder.build();
     }
 
-    @Reference
-    public void setVersionService( final VersionService versionService )
+    private StorageSettings createSettings( final StorageType storageType, final StorageName storageName )
     {
-        this.versionService = versionService;
+        return StorageSettings.create().
+            storageName( storageName ).
+            storageType( storageType ).
+            build();
     }
 
     @Reference

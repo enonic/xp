@@ -11,13 +11,13 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -99,7 +99,7 @@ public class ResolveSyncWorkCommand
         }
 
         return FindNodesWithVersionDifferenceCommand.create().
-            query( NodeVersionDiffQuery.create().
+            query( FindNodesWithVersionDifferenceParams.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
                 nodePath( this.publishRootNode.path() ).

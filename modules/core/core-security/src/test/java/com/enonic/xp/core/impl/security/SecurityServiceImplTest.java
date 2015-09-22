@@ -9,6 +9,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
+import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.elasticsearch.version.VersionServiceImpl;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
@@ -84,6 +85,8 @@ public class SecurityServiceImplTest
 
     private StorageServiceImpl storageService;
 
+    private ElasticsearchSearchDao searchDao;
+
     @Override
     @Before
     public void setUp()
@@ -110,8 +113,11 @@ public class SecurityServiceImplTest
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
+        this.searchDao = new ElasticsearchSearchDao();
+        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+
         this.searchService = new SearchServiceImpl();
-        this.searchService.setVersionService( this.versionService );
+        this.searchService.setSearchDao( this.searchDao );
 
         this.storageService = new StorageServiceImpl();
         this.storageService.setBranchService( this.branchService );

@@ -16,15 +16,15 @@ import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 
 class NodeVersionDiffCommand
     extends AbstractVersionsCommand
 {
-    private final NodeVersionDiffQuery query;
+    private final FindNodesWithVersionDifferenceParams query;
 
     private NodeVersionDiffCommand( final Builder builder )
     {
@@ -41,21 +41,7 @@ class NodeVersionDiffCommand
     {
         final String indexType = IndexType.BRANCH.getName();
 
-        final Branch sourceWs = this.query.getSource();
-        final Branch targetWs = this.query.getTarget();
-
-        final BoolQueryBuilder inSourceOnly = onlyInQuery( indexType, sourceWs, targetWs );
-
-        final BoolQueryBuilder inTargetOnly = onlyInQuery( indexType, targetWs, sourceWs );
-
-        final BoolQueryBuilder deletedInSourceOnly = deletedOnlyQuery( indexType, sourceWs, targetWs );
-
-        final BoolQueryBuilder deletedInTargetOnly = deletedOnlyQuery( indexType, targetWs, sourceWs );
-
-        final BoolQueryBuilder sourceTargetCompares =
-            joinOnlyInQueries( inSourceOnly, inTargetOnly, deletedInSourceOnly, deletedInTargetOnly );
-
-        final BoolQueryBuilder query = wrapInPathQueryIfNecessary( indexType, sourceTargetCompares );
+        final BoolQueryBuilder query = createQuery( indexType );
 
         final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveStorageIndexName( this.repositoryId ) ).
@@ -77,6 +63,25 @@ class NodeVersionDiffCommand
         }
 
         return builder.build();
+    }
+
+    private BoolQueryBuilder createQuery( final String indexType )
+    {
+        final Branch sourceWs = this.query.getSource();
+        final Branch targetWs = this.query.getTarget();
+
+        final BoolQueryBuilder inSourceOnly = onlyInQuery( indexType, sourceWs, targetWs );
+
+        final BoolQueryBuilder inTargetOnly = onlyInQuery( indexType, targetWs, sourceWs );
+
+        final BoolQueryBuilder deletedInSourceOnly = deletedOnlyQuery( indexType, sourceWs, targetWs );
+
+        final BoolQueryBuilder deletedInTargetOnly = deletedOnlyQuery( indexType, targetWs, sourceWs );
+
+        final BoolQueryBuilder sourceTargetCompares =
+            joinOnlyInQueries( inSourceOnly, inTargetOnly, deletedInSourceOnly, deletedInTargetOnly );
+
+        return wrapInPathQueryIfNecessary( indexType, sourceTargetCompares );
     }
 
     private BoolQueryBuilder deletedOnlyQuery( final String indexType, final Branch sourceBranch, final Branch targetBranch )
@@ -151,13 +156,13 @@ class NodeVersionDiffCommand
     static final class Builder
         extends AbstractVersionsCommand.Builder<Builder>
     {
-        private NodeVersionDiffQuery query;
+        private FindNodesWithVersionDifferenceParams query;
 
         private Builder()
         {
         }
 
-        Builder query( NodeVersionDiffQuery query )
+        Builder query( FindNodesWithVersionDifferenceParams query )
         {
             this.query = query;
             return this;

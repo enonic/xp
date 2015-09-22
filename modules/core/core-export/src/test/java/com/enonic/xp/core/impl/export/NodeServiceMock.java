@@ -35,8 +35,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionDiffQuery;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -246,12 +244,6 @@ class NodeServiceMock
             nodes( nodes ).
             totalHits( nodes.getSize() ).
             build();
-    }
-
-    @Override
-    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override

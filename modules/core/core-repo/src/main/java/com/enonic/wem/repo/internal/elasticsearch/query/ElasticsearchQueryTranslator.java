@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import com.enonic.wem.repo.internal.search.SearchRequest;
+import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.Query;
@@ -19,6 +20,11 @@ public class ElasticsearchQueryTranslator
         if ( query instanceof NodeVersionQuery )
         {
             return NodeVersionQueryTranslator.translate( searchRequest );
+        }
+
+        if ( query instanceof NodeVersionDiffQuery )
+        {
+            return NodeVersionDiffQueryTranslator.translate( searchRequest );
         }
 
         throw new UnsupportedOperationException( "Queries of type " + query.getClass() + " not implemented yes" );
