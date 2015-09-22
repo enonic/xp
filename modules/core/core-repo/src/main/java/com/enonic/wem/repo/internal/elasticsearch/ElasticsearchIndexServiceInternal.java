@@ -1,9 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -16,9 +13,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
-import org.elasticsearch.action.admin.indices.stats.IndexStats;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
@@ -27,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
@@ -40,7 +33,6 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 
 
 @Component
@@ -125,31 +117,6 @@ public class ElasticsearchIndexServiceInternal
         {
             throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
         }
-    }
-
-    @Override
-    public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId )
-    {
-        IndicesStatsRequest indicesStatsRequest = new IndicesStatsRequest();
-        indicesStatsRequest.listenerThreaded( false );
-        indicesStatsRequest.clear();
-
-        final String storageName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-
-        final IndicesStatsResponse response =
-            this.client.admin().indices().stats( indicesStatsRequest ).actionGet( INDICES_RESPONSE_TIMEOUT );
-
-        final Map<String, IndexStats> indicesMap = response.getIndices();
-
-        final Set<String> indexNames = Sets.newHashSet();
-
-        // TODO as filter
-        indexNames.addAll( indicesMap.keySet().stream().filter(
-            indexName -> indexName.startsWith( storageName ) || ( indexName.startsWith( searchIndexName ) ) ).collect(
-            Collectors.toList() ) );
-
-        return indexNames;
     }
 
     @Override

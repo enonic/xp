@@ -1,7 +1,5 @@
 package com.enonic.wem.repo.internal.index;
 
-import java.util.Set;
-
 import org.elasticsearch.common.unit.TimeValue;
 
 import com.enonic.wem.repo.internal.InternalContext;
@@ -10,27 +8,24 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
 {
-    public void createIndex( final String indexName, final IndexSettings settings );
+    void createIndex( final String indexName, final IndexSettings settings );
 
-    public void deleteIndices( final String... indexNames );
+    void deleteIndices( final String... indexNames );
 
-    public boolean indicesExists( final String... indices );
+    boolean indicesExists( final String... indices );
 
-    public void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
+    void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    public void delete( final NodeId nodeId, final InternalContext context );
+    void delete( final NodeId nodeId, final InternalContext context );
 
-    public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId );
+    void applyMapping( final String indexName, final IndexType indexType, final String mapping );
 
-    public void applyMapping( final String indexName, final IndexType indexType, final String mapping );
+    ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames );
 
-    public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames );
-
-    public void refresh( final String... indexNames );
+    void refresh( final String... indexNames );
 
 }
 

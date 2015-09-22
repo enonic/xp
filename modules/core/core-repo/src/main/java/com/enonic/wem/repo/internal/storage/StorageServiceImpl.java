@@ -131,12 +131,6 @@ public class StorageServiceImpl
     }
 
     @Override
-    public Nodes get( final NodeVersionIds nodeVersionIds )
-    {
-        return this.nodeDao.get( nodeVersionIds );
-    }
-
-    @Override
     public BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );

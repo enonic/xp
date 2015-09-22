@@ -11,11 +11,6 @@ public class ReturnField
         this.indexPath = indexPath;
     }
 
-    public static ReturnField from( final String fieldName )
-    {
-        return new ReturnField( IndexPath.from( fieldName ) );
-    }
-
     public String getPath()
     {
         return indexPath.getPath();

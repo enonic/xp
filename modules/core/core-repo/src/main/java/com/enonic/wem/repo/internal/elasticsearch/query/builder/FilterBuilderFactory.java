@@ -35,16 +35,6 @@ public class FilterBuilderFactory
         return doCreate( ImmutableSet.copyOf( filters ) );
     }
 
-    public static FilterBuilder create( final ImmutableSet<Filter> queryFilters )
-    {
-        if ( queryFilters == null || queryFilters.isEmpty() )
-        {
-            return null;
-        }
-
-        return doCreate( queryFilters );
-    }
-
     private static FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();

@@ -10,19 +10,18 @@ import com.enonic.wem.repo.internal.search.SearchRequest;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.xp.query.Query;
 
-public abstract class AbstractElasticsearchQueryTranslator
+abstract class AbstractElasticsearchQueryTranslator
 {
 
 
-    protected static QueryBuilderFactory.Builder createQuery( final Query nodeQuery )
+    static QueryBuilderFactory.Builder createQuery( final Query nodeQuery )
     {
         return QueryBuilderFactory.create().
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
     }
 
-    protected static ElasticsearchQuery doCreateEsQuery( final Query query, final SearchRequest searchRequest,
-                                                         final QueryBuilder queryWithFilters )
+    static ElasticsearchQuery doCreateEsQuery( final Query query, final SearchRequest searchRequest, final QueryBuilder queryWithFilters )
     {
         final StorageSettings settings = searchRequest.getSettings();
 

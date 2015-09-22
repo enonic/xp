@@ -20,16 +20,10 @@ public class NodeBranchQueryResultEntry
         return new Builder();
     }
 
-    public NodeId getNodeId()
-    {
-        return nodeId;
-    }
-
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
     }
-
 
     public static final class Builder
     {

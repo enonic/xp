@@ -52,11 +52,6 @@ public final class NodeQueryResult
         return hits;
     }
 
-    public float getMaxScore()
-    {
-        return maxScore;
-    }
-
     public Aggregations getAggregations()
     {
         return aggregations;

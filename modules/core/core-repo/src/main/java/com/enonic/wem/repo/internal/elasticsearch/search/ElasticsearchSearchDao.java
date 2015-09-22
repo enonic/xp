@@ -21,7 +21,6 @@ import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchHits;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
@@ -38,12 +37,6 @@ public class ElasticsearchSearchDao
     implements SearchDao
 {
     private ElasticsearchDao elasticsearchDao;
-
-    @Override
-    public SearchResult find( final NodeVersionQuery query, final InternalContext context )
-    {
-        return null;
-    }
 
     @Override
     public SearchResult search( final SearchRequest searchRequest )

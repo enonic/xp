@@ -12,7 +12,6 @@ public interface PathCache
 
     String get( final CachePath path );
 
-    CachePath get( final String id );
 
     ImmutableSet<String> getChildren( final CachePath path );
 }

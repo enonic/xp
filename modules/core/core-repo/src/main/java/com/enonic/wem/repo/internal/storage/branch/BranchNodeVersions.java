@@ -16,11 +16,6 @@ public class BranchNodeVersions
         super( list );
     }
 
-    public static BranchNodeVersions from( final BranchNodeVersion... branchNodeVersions )
-    {
-        return new BranchNodeVersions( ImmutableList.copyOf( branchNodeVersions ) );
-    }
-
     public static BranchNodeVersions from( final Collection<BranchNodeVersion> branchNodeVersions )
     {
         return new BranchNodeVersions( ImmutableList.copyOf( branchNodeVersions ) );
@@ -31,11 +26,6 @@ public class BranchNodeVersions
         super( ImmutableList.copyOf( builder.branchVersions ) );
     }
 
-    public static BranchNodeVersions empty()
-    {
-        ImmutableList<BranchNodeVersion> empty = ImmutableList.of();
-        return new BranchNodeVersions( empty );
-    }
 
     public static Builder create()
     {

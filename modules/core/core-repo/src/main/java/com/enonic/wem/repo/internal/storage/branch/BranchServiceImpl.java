@@ -21,8 +21,6 @@ import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
-import com.enonic.wem.repo.internal.storage.StorageCache;
-import com.enonic.wem.repo.internal.storage.StorageCacheProvider;
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
@@ -44,8 +42,6 @@ public class BranchServiceImpl
                            BranchIndexPath.TIMESTAMP );
 
     private StorageDao storageDao;
-
-    protected StorageCache cache = StorageCacheProvider.provide();
 
     private final PathCache pathCache = new PathCacheImpl();
 
@@ -180,7 +176,6 @@ public class BranchServiceImpl
         final BranchNodeVersion branchNodeVersion = NodeBranchVersionFactory.create( getResult );
 
         pathCache.cache( new BranchPath( context.getBranch(), branchNodeVersion.getNodePath() ), getResult.getId() );
-
     }
 
     private GetResult createGetResult( final SearchHit searchHit )

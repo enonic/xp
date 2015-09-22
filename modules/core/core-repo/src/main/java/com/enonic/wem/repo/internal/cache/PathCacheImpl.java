@@ -2,9 +2,6 @@ package com.enonic.wem.repo.internal.cache;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -18,8 +15,6 @@ public class PathCacheImpl
     private final Map<CachePath, String> pathMap = Maps.newHashMap();
 
     private final Map<String, CachePath> idMap = Maps.newHashMap();
-
-    private final Logger LOG = LoggerFactory.getLogger( PathCacheImpl.class );
 
     @Override
     public void cache( final CachePath path, final String id )
@@ -78,12 +73,6 @@ public class PathCacheImpl
         final String id = pathMap.get( path );
 
         return id;
-    }
-
-    @Override
-    public CachePath get( final String id )
-    {
-        return idMap.get( id );
     }
 
     @Override

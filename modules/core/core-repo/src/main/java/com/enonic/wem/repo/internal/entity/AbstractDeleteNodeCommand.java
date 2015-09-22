@@ -15,7 +15,7 @@ import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requir
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
 {
-    protected AbstractDeleteNodeCommand( final Builder builder )
+    AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
     }
@@ -37,7 +37,7 @@ abstract class AbstractDeleteNodeCommand
         }
     }
 
-    void resolveNodesToDelete( final Node node, final List<Node> nodes )
+    private void resolveNodesToDelete( final Node node, final List<Node> nodes )
     {
         final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
