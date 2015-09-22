@@ -19,14 +19,19 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.collect.Maps;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
 {
     private static final String ACTION_PROPERTY_KEY = "action";
+
+    private BundleContext context;
 
     private Node node;
 
@@ -38,6 +43,8 @@ public final class ElasticsearchActivator
 
     private TransportService transportService;
 
+    private Map<String, TransportRequestHandler> transportRequestHandlerMap = Maps.newConcurrentMap();
+
 
     public ElasticsearchActivator()
     {
@@ -47,6 +54,8 @@ public final class ElasticsearchActivator
     @Activate
     public void activate( final BundleContext context, final Map<String, String> map )
     {
+        this.context = context;
+
         final Settings settings = new NodeSettingsBuilder( context ).
             buildSettings( map );
 
@@ -60,8 +69,18 @@ public final class ElasticsearchActivator
         this.clientReg = context.registerService( Client.class, this.node.client(), new Hashtable<>() );
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
         this.transportServiceReg = context.registerService( TransportService.class, this.transportService, new Hashtable<>() );
+    }
 
+    @Modified
+    public void modified( final Map<String, String> map )
+    {
+        deactivate();
+        activate( context, map );
 
+        for ( Map.Entry<String, TransportRequestHandler> transportRequestHandlerEntry : transportRequestHandlerMap.entrySet() )
+        {
+            addTransportRequestHandler( transportRequestHandlerEntry.getValue(), transportRequestHandlerEntry.getKey() );
+        }
     }
 
     @Deactivate
@@ -77,12 +96,19 @@ public final class ElasticsearchActivator
     public void addTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
     {
         final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
-        this.transportService.registerHandler( actionPropertyValue, transportRequestHandler );
+        addTransportRequestHandler( transportRequestHandler, actionPropertyValue );
+    }
+
+    private void addTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final String action )
+    {
+        transportRequestHandlerMap.put( action, transportRequestHandler );
+        this.transportService.registerHandler( action, transportRequestHandler );
     }
 
     public void removeTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
     {
         final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
+        transportRequestHandlerMap.remove( actionPropertyValue );
         this.transportService.removeHandler( actionPropertyValue );
     }
 
