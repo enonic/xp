@@ -1,11 +1,11 @@
 .grid-and-detail-split-panel {
   .browse-toolbar {
-    .details-panel-toggle-button {
+    .details-panel-toggle-button, .large-details-panel-toggle-button {
       // toggle button for medium screen sizes
       z-index: 3;
       float: right;
       top: 0px;
-      right: 15px;
+      right: 2px;
       padding-top: 13px;
 
       overflow: hidden;
@@ -23,6 +23,15 @@
 
       @media screen and (min-width: 1921px) {
         display: none !important;
+      }
+
+      &.large-details-panel-toggle-button {
+        @media screen and (max-width: 1920px) {
+          display: none;
+        }
+        @media screen and (min-width: 1921px) {
+          display: inherit !important;
+        }
       }
 
       .transition(all 0.5s ease-in-out);
@@ -99,7 +108,7 @@
   .details-panel-label {
     background-color: @admin-bg-almost-white;
     line-height: 20px;
-    padding: 10px 0px 10px 15px;
+    padding: 10px 0px 10px 4px;
     display: block;
     font-size: 14px;
     border-bottom: 1px transparent;
@@ -116,14 +125,6 @@
   .widgets-selection-row {
 
     background-color: @admin-white;
-
-    @media screen and (min-width: 540px) and (max-width: 1921px) {
-      padding: 0 9px 0 16px;
-    }
-
-    @media screen and (min-width: 1921px) {
-      padding: 0 7px 0 7px;
-    }
 
     .info-widget-toggle-button {
       cursor: pointer;
@@ -269,6 +270,7 @@
   // styles for large screens
 
   &.grid-and-detail-split-panel {
+
     &.vertical {
       > .panel, .splitter {
         top: 41px;
@@ -277,14 +279,21 @@
   }
 
   &.split-panel-with-details {
+
     > .split-panel {
       right: initial;
+      .transition(all 0.5s ease-in-out);
     }
 
     > .details-panel {
       box-shadow: none;
       z-index: auto;
       display: inherit;
+
+      &.left-bordered {
+        border-left: 5px #eeeeee solid;
+        box-sizing: content-box;
+      }
 
       > .details-container {
         left: 0px;
@@ -295,7 +304,7 @@
       }
 
       .details-panel-label {
-        padding-left: 10px;
+        padding-left: 4px;
       }
 
       .widgets-selection-row .widget-selector {
