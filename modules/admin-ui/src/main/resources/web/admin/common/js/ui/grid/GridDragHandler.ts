@@ -67,7 +67,7 @@ module api.ui.grid {
                 this.handleDragStart();
             }
             var top = Element.fromString(".slick-reorder-proxy").getEl().getTopPx();
-            this.draggableItem.getEl().setTopPx(top - this.rowHeight / 2).setZindex(2);
+            this.draggableItem.getEl().setTopPx(top /*- this.rowHeight*//* / 2*/).setZindex(2);
         }
 
 
@@ -77,8 +77,6 @@ module api.ui.grid {
             this.contentGrid.refresh();
         }
 
-        private prev = 0;
-
         protected handleBeforeMoveRows(event: Event, data: DragEventData): boolean {
 
             if (!this.draggableItem) {
@@ -87,20 +85,17 @@ module api.ui.grid {
             var gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, "."),
                 children = Element.fromSelector(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
 
-            //gets top of draggable item
-            var draggableTop = !!this.draggableItem ? this.draggableItem.getEl().getTopPx() : 0;
-
             for (var key in children) {
-                var currentRowTop = children[key].getEl().getTopPx();
                 if (data.rows[0] <= data.insertBefore) {//move item down
-                    if (this.draggableTop < currentRowTop && currentRowTop - this.rowHeight / 2 <= draggableTop) { //items between draggable and insert before
+                    if (key > data.rows[0] && key <= data.insertBefore) {
                         children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
                     }
+                    continue;
                 }
                 if (data.rows[0] >= data.insertBefore) {//move item up
-                    if (this.draggableTop > currentRowTop && currentRowTop + this.rowHeight / 2 >= draggableTop) {//items between draggable and insert before
+                    if (key < data.rows[0] && key >= data.insertBefore) {
                         children[key].getEl().setMarginTop(this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
@@ -117,7 +112,7 @@ module api.ui.grid {
             var draggableRow = args.rows[0];
 
             var rowDataId = this.getModelId(dataView.getItem(draggableRow).getData());
-            var insertBefore = this.getCorrectedInsertBefore(args, draggableRow);
+            var insertBefore = args.insertBefore;
             var moveBeforeRowDataId = (dataView.getLength() <= insertBefore)
                 ? null
                 : this.getModelId(dataView.getItem(insertBefore).getData());
@@ -134,18 +129,6 @@ module api.ui.grid {
         }
 
 
-        private getCorrectedInsertBefore(args: DragEventData, draggableRow: number) {
-
-            // method fixes half of cases and crashes another one TODO: Should be improved
-
-            /* var insertBefore = <number>args.insertBefore;
-             if (insertBefore != 0 && draggableRow > insertBefore) {
-             insertBefore = insertBefore - 1;
-             }
-             return insertBefore;*/
-            return <number>args.insertBefore;
-        }
-
         protected makeMovementInNodes(draggableRow: number, insertBefore: number): number {
 
             var root = this.contentGrid.getRoot().getCurrentRoot();
@@ -153,8 +136,7 @@ module api.ui.grid {
 
             var item = rootChildren.slice(draggableRow, draggableRow + 1)[0];
             rootChildren.splice(rootChildren.indexOf(item), 1);
-            var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore - 1;
-            rootChildren.splice(insertPosition, 0, item);
+            rootChildren.splice(insertBefore, 0, item);
 
             this.contentGrid.initData(rootChildren);
             root.setChildren(rootChildren);
