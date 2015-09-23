@@ -479,13 +479,15 @@ module api.ui.panel {
             this.distribute();
         }
 
-        showSecondPanel() {
+        showSecondPanel(showSplitter: boolean = true) {
             if (!this.secondPanelIsHidden) {
                 return;
             }
 
             this.splitterIsHidden = false;
-            this.splitter.show();
+            if (showSplitter) {
+                this.splitter.show();
+            }
 
             this.secondPanelSize = this.hiddenSecondPanelPreviousSize;
             this.secondPanel.show();
@@ -518,12 +520,17 @@ module api.ui.panel {
                 return;
             }
 
+            this.secondPanel.hide();
+            this.foldSecondPanel();
+        }
+
+        foldSecondPanel() {
+
             this.splitterIsHidden = true;
             this.splitter.hide();
 
             this.hiddenSecondPanelPreviousSize = this.secondPanelSize;
             this.secondPanelSize = 0;
-            this.secondPanel.hide();
 
             this.secondPanelIsHidden = true;
             this.distribute();

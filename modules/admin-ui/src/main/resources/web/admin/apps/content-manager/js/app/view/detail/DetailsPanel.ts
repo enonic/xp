@@ -527,6 +527,40 @@ module app.view.detail {
         }
     }
 
+    export class LargeDetailsPanelToggleButton extends api.dom.DivEl {
+
+        private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
+        private detailsPanel: DetailsPanel;
+
+        constructor(splitPanel: api.ui.panel.SplitPanel, detailsPanel: DetailsPanel) {
+            super("button expanded large-details-panel-toggle-button");
+
+            this.splitPanelWithGridAndDetails = splitPanel;
+            this.detailsPanel = detailsPanel;
+
+            this.onClicked((event) => {
+                this.detailsPanel.addClass("left-bordered");
+                if (this.toggleClass("expanded").hasClass("expanded")) {
+                    this.splitPanelWithGridAndDetails.showSecondPanel(false);
+                } else {
+                    this.splitPanelWithGridAndDetails.foldSecondPanel();
+                }
+
+                setTimeout(() => {
+                    this.detailsPanel.removeClass("left-bordered");
+                    if (this.hasClass("expanded")) {
+                        this.splitPanelWithGridAndDetails.showSplitter();
+                    }
+                    this.splitPanelWithGridAndDetails.distribute();
+                }, 500);
+            });
+        }
+
+        isExpanded(): boolean {
+            return this.hasClass("expanded");
+        }
+    }
+
     export class InfoWidgetToggleButton extends api.dom.DivEl {
 
         private detailsPanel: DetailsPanel;
