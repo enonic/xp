@@ -25,7 +25,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.ToolCommand;
 
-@Command(name = "init-project", description = "Initiates an Enonic XP project.")
+@Command(name = "init-project", description = "Initiates an Enonic XP application project.")
 public final class InitAppCommand
     extends ToolCommand
 {
