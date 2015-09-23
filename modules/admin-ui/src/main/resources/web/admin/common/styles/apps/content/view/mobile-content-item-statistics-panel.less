@@ -57,6 +57,9 @@
     .icon-menu();
 
     &.expanded {
+      font-size: 25px;
+      padding-top: 5px;
+      .icon-close2();
       color: @admin-blue;
     }
   }
@@ -94,11 +97,22 @@
       left: 0px;
     }
 
-    .widgets-selection-row .widget-selector {
-      width: calc(~'100% - 40px');
+    .widgets-selection-row {
 
-      .viewer {
-        font-size: 12px;
+      .info-widget-toggle-button {
+
+        font-size: 26px;
+        padding: 4px 6px 5px 6px;
+
+        .icon-grid5();
+      }
+
+      .widget-selector {
+        width: calc(~'100% - 40px');
+
+        .viewer {
+          font-size: 12px;
+        }
       }
     }
 
