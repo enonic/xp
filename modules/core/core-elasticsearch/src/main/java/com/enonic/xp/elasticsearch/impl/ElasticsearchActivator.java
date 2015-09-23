@@ -19,7 +19,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -31,8 +30,6 @@ public final class ElasticsearchActivator
 {
     private static final String ACTION_PROPERTY_KEY = "action";
 
-    private BundleContext context;
-
     private Node node;
 
     private ServiceRegistration<Client> clientReg;
@@ -43,7 +40,7 @@ public final class ElasticsearchActivator
 
     private TransportService transportService;
 
-    private Map<String, TransportRequestHandler> transportRequestHandlerMap = Maps.newConcurrentMap();
+    private Map<String, TransportRequestHandler> preActivationTransportRequestHandlerMap = Maps.newConcurrentMap();
 
 
     public ElasticsearchActivator()
@@ -54,8 +51,6 @@ public final class ElasticsearchActivator
     @Activate
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        this.context = context;
-
         final Settings settings = new NodeSettingsBuilder( context ).
             buildSettings( map );
 
@@ -64,23 +59,17 @@ public final class ElasticsearchActivator
 
         final Injector injector = ( (InternalNode) this.node ).injector();
         final ClusterService clusterService = injector.getInstance( ClusterService.class );
+
         this.transportService = injector.getInstance( TransportService.class );
+        for ( Map.Entry<String, TransportRequestHandler> transportRequestHandlerEntry : this.preActivationTransportRequestHandlerMap.entrySet() )
+        {
+            transportService.registerHandler( transportRequestHandlerEntry.getKey(), transportRequestHandlerEntry.getValue() );
+        }
+        this.preActivationTransportRequestHandlerMap = null;
 
         this.clientReg = context.registerService( Client.class, this.node.client(), new Hashtable<>() );
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
         this.transportServiceReg = context.registerService( TransportService.class, this.transportService, new Hashtable<>() );
-    }
-
-    @Modified
-    public void modified( final Map<String, String> map )
-    {
-        deactivate();
-        activate( context, map );
-
-        for ( Map.Entry<String, TransportRequestHandler> transportRequestHandlerEntry : transportRequestHandlerMap.entrySet() )
-        {
-            addTransportRequestHandler( transportRequestHandlerEntry.getValue(), transportRequestHandlerEntry.getKey() );
-        }
     }
 
     @Deactivate
@@ -89,6 +78,7 @@ public final class ElasticsearchActivator
         this.transportServiceReg.unregister();
         this.clusterServiceReg.unregister();
         this.clientReg.unregister();
+        this.transportService = null;
         this.node.stop();
     }
 
@@ -96,20 +86,25 @@ public final class ElasticsearchActivator
     public void addTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
     {
         final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
-        addTransportRequestHandler( transportRequestHandler, actionPropertyValue );
-    }
 
-    private void addTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final String action )
-    {
-        transportRequestHandlerMap.put( action, transportRequestHandler );
-        this.transportService.registerHandler( action, transportRequestHandler );
+        if ( this.transportService != null )
+        {
+            this.transportService.registerHandler( actionPropertyValue, transportRequestHandler );
+        }
+        else
+        {
+            this.preActivationTransportRequestHandlerMap.put( actionPropertyValue, transportRequestHandler );
+        }
     }
 
     public void removeTransportRequestHandler( final TransportRequestHandler transportRequestHandler, final Map<String, String> map )
     {
         final String actionPropertyValue = map.get( ACTION_PROPERTY_KEY );
-        transportRequestHandlerMap.remove( actionPropertyValue );
-        this.transportService.removeHandler( actionPropertyValue );
+
+        if ( this.transportService != null )
+        {
+            this.transportService.removeHandler( actionPropertyValue );
+        }
     }
 
 }
