@@ -47,5 +47,5 @@ if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 IF "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
 
 :execute
-"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" %XP_OPTS% -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -Dfile.encoding=UTF8 %XP_OPTS% -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
 endlocal
