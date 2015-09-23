@@ -17,10 +17,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.application.ApplicationJson;
+import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
-import com.enonic.xp.admin.rest.resource.ResourceConstants;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;

@@ -14,8 +14,6 @@ import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.spi.UnhandledException;
 
-import com.enonic.xp.admin.rest.resource.ResourceConstants;
-
 public final class RestRequestBuilder
 {
     private final Dispatcher dispatcher;

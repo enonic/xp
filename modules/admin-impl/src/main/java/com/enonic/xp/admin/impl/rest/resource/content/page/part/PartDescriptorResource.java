@@ -15,7 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
-import com.enonic.xp.admin.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
