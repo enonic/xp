@@ -1,38 +1,59 @@
 package com.enonic.xp.toolbox.app;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.base.Charsets;
+
 public class InitAppCommandTest
 {
-    @Rule
-    public TemporaryFolder targetRoot = new TemporaryFolder();
 
-    @Test
-    public void test()
+    private static File targetDirectory;
+
+    @ClassRule
+    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @BeforeClass
+    public static void before()
         throws IOException
     {
+        targetDirectory = temporaryFolder.newFolder();
+    }
+
+    @Test
+    public void initApp()
+        throws IOException, URISyntaxException
+    {
         final InitAppCommand command = new InitAppCommand();
-        command.name = "myapp";
-        command.destination = targetRoot.getRoot().getAbsolutePath();
-        command.version = "X.Y.Z";
+        command.name = "com.enonic.xp.toolbox.app.initCommandTest";
+        command.repository = getClass().getResource( "/starter-empty/.git-directory" ).toURI().toString();
+        command.destination = targetDirectory.getAbsolutePath();
+        command.version = "1.0.1";
 
         command.run();
 
-        Assert.assertEquals( 5, targetRoot.getRoot().list().length );
-        Assert.assertTrue( Files.exists( Paths.get( targetRoot.getRoot().getPath(), "src", "main", "resources", "site", "site.xml" ) ) );
+        Assert.assertEquals( 6, targetDirectory.list().length );
+        Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), ".git" ) ) );
+        Assert.assertTrue( Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "site", "assets" ) ) );
+        Assert.assertTrue( !Files.exists( Paths.get( targetDirectory.getPath(), "src", "main", "resources", "assets", ".gitkeep" ) ) );
 
-        final Path buildGradlePath = Paths.get( targetRoot.getRoot().getPath(), "build.gradle" );
-        final String buildGraphContent = new String( Files.readAllBytes( buildGradlePath ), StandardCharsets.UTF_8 );
-        Assert.assertTrue( buildGraphContent.contains( "name = 'myapp'" ) );
-        Assert.assertTrue( buildGraphContent.contains( "version = 'X.Y.Z'" ) );
+        final String gradlePropertiesContent =
+            com.google.common.io.Files.asCharSource( new File( targetDirectory, "gradle.properties" ), Charsets.UTF_8 ).read();
+
+        Assert.assertTrue( gradlePropertiesContent.contains( "group = com.enonic.xp.toolbox.app" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "version = 1.0.1" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "projectName = initCommandTest" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "appName = com.enonic.xp.toolbox.app.initCommandTest" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "displayName = InitCommandTest App" ) );
+        Assert.assertTrue( gradlePropertiesContent.contains( "xpVersion = 6.1.0-SNAPSHOT" ) );
     }
 }
