@@ -527,6 +527,44 @@ module app.view.detail {
         }
     }
 
+    export class LargeDetailsPanelToggleButton extends api.dom.DivEl {
+
+        private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
+        private detailsPanel: DetailsPanel;
+
+        constructor(splitPanel: api.ui.panel.SplitPanel, detailsPanel: DetailsPanel) {
+            super("button expanded large-details-panel-toggle-button");
+
+            this.splitPanelWithGridAndDetails = splitPanel;
+            this.detailsPanel = detailsPanel;
+
+            this.onClicked((event) => {
+                this.toggleClass("expanded");
+                if (this.hasClass("expanded")) {
+                    this.detailsPanel.addClass("left-bordered");
+                    this.splitPanelWithGridAndDetails.showSecondPanel();
+                    this.splitPanelWithGridAndDetails.hideSplitter();
+                    setTimeout(() => {
+                        this.detailsPanel.removeClass("left-bordered");
+                        this.splitPanelWithGridAndDetails.showSplitter();
+                        this.splitPanelWithGridAndDetails.distribute();
+                    }, 500);
+                } else {
+                    this.detailsPanel.addClass("left-bordered");
+                    this.splitPanelWithGridAndDetails.foldSecondPanel();
+                    setTimeout(() => {
+                        this.detailsPanel.removeClass("left-bordered");
+                        this.splitPanelWithGridAndDetails.distribute();
+                    }, 500);
+                }
+            });
+        }
+
+        isExpanded(): boolean {
+            return this.hasClass("expanded");
+        }
+    }
+
     export class InfoWidgetToggleButton extends api.dom.DivEl {
 
         private detailsPanel: DetailsPanel;

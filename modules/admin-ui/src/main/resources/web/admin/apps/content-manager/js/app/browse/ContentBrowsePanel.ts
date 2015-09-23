@@ -20,6 +20,7 @@ module app.browse {
     import ContentId = api.content.ContentId;
     import DetailsPanel = app.view.detail.DetailsPanel;
     import DetailsPanelToggleButton = app.view.detail.DetailsPanelToggleButton;
+    import LargeDetailsPanelToggleButton = app.view.detail.LargeDetailsPanelToggleButton;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
@@ -114,6 +115,9 @@ module app.browse {
                 setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL).
                 build();
 
+            var largeDetailsControlButton = new LargeDetailsPanelToggleButton(contentPanelsAndDetailPanel,
+                this.detailsPanelForLargeScreens);
+
             contentPanelsAndDetailPanel.addClass("split-panel-with-details");
             contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
             contentPanelsAndDetailPanel.hideSecondPanel();
@@ -121,7 +125,7 @@ module app.browse {
             this.appendChild(contentPanelsAndDetailPanel);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (item.isInRangeOrBigger(ResponsiveRanges._1920_UP)) {
+                if (item.isInRangeOrBigger(ResponsiveRanges._1920_UP) && largeDetailsControlButton.isExpanded()) {
                     if (contentPanelsAndDetailPanel.isSecondPanelHidden()) {
                         contentPanelsAndDetailPanel.showSecondPanel();
                     }
@@ -147,6 +151,8 @@ module app.browse {
                     this.detailsPanelForLargeScreens.makeLookEmpty();
                 }
             });
+
+            this.toolbar.appendChild(largeDetailsControlButton);
         }
 
         private initDetailsPanel() {

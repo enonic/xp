@@ -529,6 +529,18 @@ module api.ui.panel {
             this.distribute();
         }
 
+        foldSecondPanel() {
+
+            this.splitterIsHidden = true;
+            this.splitter.hide();
+
+            this.hiddenSecondPanelPreviousSize = this.secondPanelSize;
+            this.secondPanelSize = 0;
+
+            this.secondPanelIsHidden = true;
+            this.distribute();
+        }
+
         isFirstPanelHidden() {
             return this.firstPanelIsHidden;
         }
