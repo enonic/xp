@@ -52,7 +52,7 @@ public class LocaleServiceImplTest
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
 
         assertNotNull( bundle );
-        assertEquals( 3, bundle.getKeys().size() );
+        assertEquals( 8, bundle.getKeys().size() );
         assertEquals( "en", bundle.localize( "msg" ) );
     }
 
@@ -63,7 +63,7 @@ public class LocaleServiceImplTest
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.US );
 
         assertNotNull( bundle );
-        assertEquals( 4, bundle.getKeys().size() );
+        assertEquals( 9, bundle.getKeys().size() );
         assertEquals( "en_US", bundle.localize( "msg" ) );
     }
 
@@ -75,7 +75,20 @@ public class LocaleServiceImplTest
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), locale );
 
         assertNotNull( bundle );
-        assertEquals( 5, bundle.getKeys().size() );
+        assertEquals( 10, bundle.getKeys().size() );
         assertEquals( "en_US_1", bundle.localize( "msg" ) );
+    }
+
+    @Test
+    public void get_UTF8_chars()
+    {
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
+
+        assertNotNull( bundle );
+        assertEquals( "æøå", bundle.localize( "norwegian" ) );
+        assertEquals( "ÄäÜüß", bundle.localize( "german" ) );
+        assertEquals( "ŁĄŻĘĆŃŚŹ", bundle.localize( "polish" ) );
+        assertEquals( "ЯБГДЖЙ", bundle.localize( "russian" ) );
+        assertEquals( "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ", bundle.localize( "japanese" ) );
     }
 }
