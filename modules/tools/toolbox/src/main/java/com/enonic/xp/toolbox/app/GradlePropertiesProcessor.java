@@ -47,7 +47,7 @@ final class GradlePropertiesProcessor
     public List<String> process( final List<String> lines )
     {
         return lines.stream().
-            map( line -> process( line ) ).
+            map( this::process ).
             collect( Collectors.toList() );
     }
 
