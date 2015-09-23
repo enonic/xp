@@ -141,7 +141,7 @@ module app.wizard {
         private menuFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
 
-            var icon = new api.dom.DivEl("icon-menu3 menu-icon");
+            var icon = new api.dom.DivEl("menu-icon");
             wrapper.getEl().setInnerHtml(icon.toString());
             return wrapper.toString();
         }

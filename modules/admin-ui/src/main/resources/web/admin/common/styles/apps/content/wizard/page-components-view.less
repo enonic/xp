@@ -48,16 +48,17 @@
           }
           #drag-helper {
             position: relative;
-            margin: 1px 3px 0px;
-            height: 40px !important;
-            width: 40px !important;
+            margin: 5px 3px 0px;
+            height: 30px !important;
+            width: 30px !important;
             .border-radius(30px);
 
             &:before {
-              line-height: 42px;
+              line-height: 30px;
+              font-size: 20px;
             }
           }
-          
+
           &:not(:hover) {
             &, &.odd {
               background-color: transparent;
@@ -69,25 +70,60 @@
 
               .menu-icon {
                 padding-left: 10px;
-                padding-top: 10px;
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 37px;
+                height: 100%;
+                cursor: pointer;
 
-                color: @admin-font-gray1;
+                &:after {
+                  content: "";
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: 0;
+                  height: 0;
+                  margin: -5px 0 0 -7px;
+                  border-left: 6px solid transparent;
+                  border-right: 6px solid transparent;
+                  border-top: 10px solid @admin-font-gray1;
+                  color: @admin-font-gray1;
+                }
+              }
+
+              &:hover {
+                .menu-icon {
+                  &:after {
+                    border-top: 10px solid @admin-dark-gray;
+                    color: @admin-dark-gray;
+                  }
+                }
+              }
+
+              &.menu-open {
+                .menu-icon {
+                  &:after {
+                    border-top: 0px solid transparent;
+                    border-bottom: 10px solid @admin-dark-gray;
+                  }
+                }
               }
 
               &.selected {
-                .menu-icon {
-                  color: #ffffff;
-                }
-              }
-
-              &:hover, &.menu-open {
-                .menu-icon {
-                  color: @admin-dark-gray;
-                }
-
-                &.selected {
+                &.menu-open {
                   .menu-icon {
-                    color: @admin-dark-gray;
+                    &:after {
+                      border-top: 0px solid transparent;
+                      border-bottom: 10px solid #ffffff;
+                    }
+                  }
+                }
+
+                .menu-icon {
+                  &:after {
+                    border-top: 10px solid #ffffff;
+                    color: #ffffff;
                   }
                 }
               }

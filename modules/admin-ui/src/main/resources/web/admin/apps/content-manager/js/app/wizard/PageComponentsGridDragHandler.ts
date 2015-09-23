@@ -38,14 +38,19 @@ module app.wizard {
         }
 
         protected handleBeforeMoveRows(event: Event, data): boolean {
-            super.handleBeforeMoveRows(event, data);
 
             var dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
 
             var draggableRow = data.rows[0],
                 insertBefore = data.insertBefore;
 
-            this.updateDragHelperStatus(draggableRow, insertBefore, dataList);
+            var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
+
+            this.updateDragHelperStatus(draggableRow, insertPosition, dataList);
+
+            if (DragHelper.get().isDropAllowed()) {
+                super.handleBeforeMoveRows(event, data);
+            }
             return true;
         }
 
@@ -61,12 +66,12 @@ module app.wizard {
             var dataList = root.treeToList();
 
             var item = dataList.slice(draggableRow, draggableRow + 1)[0];
-            var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore - 1;
+            var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
-            this.moveIntoNewParent(item, insertBefore, dataList);
+            this.moveIntoNewParent(item, insertPosition, dataList);
 
             dataList.splice(dataList.indexOf(item), 1);
-            dataList.splice(insertPosition, 0, item);
+            dataList.splice(insertBefore, 0, item);
 
             return dataList.indexOf(item);
         }
@@ -111,11 +116,6 @@ module app.wizard {
                 parentComponentView = parentComponentNode.getData(),
                 draggableComponentView = data[draggableRow].getData();
 
-            var draggableItem = this.getDraggableItem();
-
-            if (draggableItem) {
-                this.updateDraggableItemPosition(draggableItem, parentComponentNode.calcLevel());
-            }
 
             if (parentComponentView) {
 
@@ -128,6 +128,11 @@ module app.wizard {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, RegionView)) {
                     DragHelper.get().setDropAllowed(true);
+
+                    var draggableItem = this.getDraggableItem();
+                    if (draggableItem) {
+                        this.updateDraggableItemPosition(draggableItem, parentComponentNode.calcLevel());
+                    }
                     return;
                 }
             }
@@ -147,11 +152,12 @@ module app.wizard {
         private getParentPosition(insertBeforePos: number, data: TreeNode<ItemView>[]): InsertData {
             var parentPosition = insertBeforePos,
                 insertIndex = 0,
-                calcLevel = data[parentPosition - 1].calcLevel();
+                calcLevel = parentPosition > 0 ? data[parentPosition - 1].calcLevel() : 1;
 
-            var isFirstChildPosition = data[insertBeforePos]
-                ? data[insertBeforePos - 1].calcLevel() < data[insertBeforePos].calcLevel()
-                : false;
+            if (!data[insertBeforePos - 1]) {
+                return {parentPosition: 0, insertIndex: 0};
+            }
+            var isFirstChildPosition = data[insertBeforePos - 1].calcLevel() < data[insertBeforePos].calcLevel();
 
             do {
 
