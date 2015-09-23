@@ -32,4 +32,5 @@ public interface PortalServices
     ResourceService getResourceService();
 
     ImageService getImageService();
+
 }
