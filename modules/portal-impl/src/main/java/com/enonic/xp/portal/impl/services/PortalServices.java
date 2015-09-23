@@ -6,7 +6,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.rest.PortalRestServiceRegistry;
 import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceService;
@@ -33,7 +32,4 @@ public interface PortalServices
     ResourceService getResourceService();
 
     ImageService getImageService();
-
-
-    PortalRestServiceRegistry getPortalRestServiceRegistry();
 }

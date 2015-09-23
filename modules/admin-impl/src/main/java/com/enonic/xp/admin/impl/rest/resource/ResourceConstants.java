@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.rest.resource;
+package com.enonic.xp.admin.impl.rest.resource;
 
 public interface ResourceConstants
 {

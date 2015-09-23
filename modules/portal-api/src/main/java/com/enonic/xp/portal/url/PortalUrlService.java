@@ -9,8 +9,6 @@ public interface PortalUrlService
 
     String serviceUrl( ServiceUrlParams params );
 
-    String restServiceUrl( RestServiceUrlParams params );
-
     String pageUrl( PageUrlParams params );
 
     String componentUrl( ComponentUrlParams params );

@@ -28,11 +28,6 @@ exports.serviceUrl = function (params) {
     return bean.createUrl(__.toScriptValue(params));
 };
 
-exports.restServiceUrl = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.portal.url.RestServiceUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
-};
-
 exports.processHtml = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.portal.url.ProcessHtmlHandler');
     return bean.createUrl(__.toScriptValue(params));
