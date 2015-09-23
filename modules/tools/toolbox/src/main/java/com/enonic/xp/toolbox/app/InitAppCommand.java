@@ -8,14 +8,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 
@@ -24,11 +25,11 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.ToolCommand;
 
-@Command(name = "init", description = "Initiates an Enonic XP application.")
+@Command(name = "init-project", description = "Initiates an Enonic XP project.")
 public final class InitAppCommand
     extends ToolCommand
 {
-    private static final Logger LOGGER = LogManager.getLogger( InitAppCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( InitAppCommand.class );
 
     private static final String GITHUB_URL = "https://github.com/";
 
@@ -57,7 +58,7 @@ public final class InitAppCommand
     {
         String gitRepositoryUri = resolveGitRepositoryUri();
         cloneGitRepository( gitRepositoryUri );
-        adaptGradleProperties();
+        processGradleProperties();
     }
 
     private String resolveGitRepositoryUri()
@@ -119,7 +120,7 @@ public final class InitAppCommand
         LOGGER.info( "Git repository retrieved." );
     }
 
-    private void adaptGradleProperties()
+    private void processGradleProperties()
         throws IOException
     {
         LOGGER.info( "Adapting Gradle properties file ..." );
@@ -131,12 +132,13 @@ public final class InitAppCommand
             gradlePropertiesFile.createNewFile();
         }
 
-        //Adapt the content of the Gradle Properties file
-        final String adaptedGradlePropertiesContent =
-            com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8, new GradlePropertiesProcessor( name, version ) );
+        //Process the content of the Gradle Properties file
+        final List<String> originalGradlePropertiesContent = com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
+        final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
+        final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
 
-        //Write the adapted content into the  Gradle Properties file
-        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).write( adaptedGradlePropertiesContent );
+        //Write the processed content into the  Gradle Properties file
+        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
 
         LOGGER.info( "Gradle properties file adapted." );
     }
