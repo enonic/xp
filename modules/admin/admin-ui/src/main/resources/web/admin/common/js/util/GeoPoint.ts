@@ -59,7 +59,14 @@ module api.util {
             var latitude = Number(coordinates[0]);
             var longitude = Number(coordinates[1]);
 
-            return typeof latitude === 'number' && !isNaN(latitude) && typeof longitude === 'number' && !isNaN(longitude);
+            var isNumber = typeof latitude === 'number' && !isNaN(latitude) &&
+                           typeof longitude === 'number' && !isNaN(longitude);
+
+            if (!isNumber) {
+                return false;
+            }
+
+            return (-90 <= latitude && latitude <= 90) && (-180 <= longitude && longitude <= 180);
         }
 
         static fromString(s: string): GeoPoint {
