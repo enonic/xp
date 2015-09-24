@@ -83,7 +83,7 @@ public class PortalResponseSerializerTest
     @Test
     public void testObjectResult()
     {
-        this.responseBuilder.contentType( MediaType.create("text", "plain" ) ).body( 11 );
+        this.responseBuilder.contentType( MediaType.create( "text", "plain" ) ).body( 11 );
         this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final PortalResponse result = this.serializer.serialize();
 
@@ -96,7 +96,7 @@ public class PortalResponseSerializerTest
     @Test
     public void testHeadersWithResult()
     {
-        this.responseBuilder.contentType( MediaType.create("text", "plain" ) ).body( "With headers" ).header( "X-myheader", "Value" );
+        this.responseBuilder.contentType( MediaType.create( "text", "plain" ) ).body( "With headers" ).header( "X-myheader", "Value" );
         this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final PortalResponse result = this.serializer.serialize();
 
@@ -110,7 +110,7 @@ public class PortalResponseSerializerTest
     @Test
     public void testCookiesWithResult()
     {
-        this.responseBuilder.contentType( MediaType.create("text", "plain" ) ).cookie( new Cookie( "test-cookie", "cookie-value" ) );
+        this.responseBuilder.contentType( MediaType.create( "text", "plain" ) ).cookie( new Cookie( "test-cookie", "cookie-value" ) );
         this.serializer = new PortalResponseSerializer( responseBuilder.build() );
         final PortalResponse result = this.serializer.serialize();
 

@@ -3,9 +3,8 @@ package com.enonic.xp.portal.impl.controller;
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
-import com.google.common.net.MediaType;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -89,7 +88,7 @@ final class ControllerScriptImpl
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
+        builder.status( status != null ? HttpStatus.from( status ) : HttpStatus.OK );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )

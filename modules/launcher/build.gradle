@@ -4,7 +4,7 @@ dependencies {
     compile 'org.osgi:osgi.core:6.0.0'
     compile 'org.osgi:osgi.cmpn:6.0.0'
     compile 'org.apache.felix:org.apache.felix.framework:5.2.0'
-    compile('org.apache.felix:org.apache.felix.utils:1.8.0') {
+    compile( 'org.apache.felix:org.apache.felix.utils:1.8.0' ) {
         transitive = false
     }
     compile 'com.google.guava:guava:18.0'

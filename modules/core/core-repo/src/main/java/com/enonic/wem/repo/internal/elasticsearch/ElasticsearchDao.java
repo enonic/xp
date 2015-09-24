@@ -8,11 +8,12 @@ import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SnapshotParams;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
+
 
 public interface ElasticsearchDao
 {
