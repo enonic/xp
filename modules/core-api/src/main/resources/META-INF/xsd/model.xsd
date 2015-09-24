@@ -10,7 +10,6 @@
   <xs:element name="site" type="site"/>
   <xs:element name="page" type="pageDescriptor"/>
   <xs:element name="part" type="partDescriptor"/>
-  <xs:element name="widget" type="widgetDescriptor"/>
   <xs:element name="relationship-type" type="relationshipType"/>
 
   <xs:complexType name="site">
@@ -173,19 +172,6 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="xs:string"/>
       <xs:element minOccurs="0" name="config" type="form"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="widgetDescriptor">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
-      <xs:element minOccurs="0" name="interfaces">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="interface" type="xs:string"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

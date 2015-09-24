@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<widget xmlns="urn:enonic:xp:model:1.0">
+<widget>
   <display-name>My widget</display-name>
   <interfaces>
     <interface>com.enonic.xp.my-interface</interface>
