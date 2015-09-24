@@ -65,12 +65,10 @@
           }
         }
 
-        &:not(.large-details-panel-toggle-button) {
-          animation-name: slide;
-          animation-duration: 0.5s;
-          animation-timing-function: linear;
-          animation-delay: 0s;
-        }
+        animation-name: slide;
+        animation-duration: 0.5s;
+        animation-timing-function: linear;
+        animation-delay: 0s;
 
         z-index: 3;
         padding-top: 13px;
@@ -82,7 +80,9 @@
 
         &.large-details-panel-toggle-button {
           padding-top: 7px;
-          .icon-grid5();
+          position: fixed;
+          top: 50px;
+          padding-right: 5px;
         }
       }
 
