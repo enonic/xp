@@ -151,13 +151,18 @@ module app.wizard {
 
         private getParentPosition(insertBeforePos: number, data: TreeNode<ItemView>[]): InsertData {
             var parentPosition = insertBeforePos,
-                insertIndex = 0,
-                calcLevel = parentPosition > 0 ? data[parentPosition - 1].calcLevel() : 1;
+                insertIndex = 0;
 
             if (!data[insertBeforePos - 1]) {
                 return {parentPosition: 0, insertIndex: 0};
             }
-            var isFirstChildPosition = data[insertBeforePos - 1].calcLevel() < data[insertBeforePos].calcLevel();
+
+            var calcLevel = data[parentPosition - 1].calcLevel();
+
+            var isFirstChildPosition = ( data[insertBeforePos]
+                    ? data[insertBeforePos - 1].calcLevel() < data[insertBeforePos].calcLevel()
+                    : false) ||
+                                       (api.ObjectHelper.iFrameSafeInstanceOf(data[insertBeforePos - 1].getData(), RegionView));
 
             do {
 
