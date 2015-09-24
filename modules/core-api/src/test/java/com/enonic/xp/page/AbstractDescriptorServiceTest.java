@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content.page;
+package com.enonic.xp.page;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -20,7 +20,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.FileResource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
