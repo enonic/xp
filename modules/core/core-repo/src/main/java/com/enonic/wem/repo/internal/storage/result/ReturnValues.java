@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.storage.result;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 
@@ -46,11 +45,6 @@ public class ReturnValues
         }
 
         public Builder add( final String key, final String value )
-        {
-            return doAdd( key, value );
-        }
-
-        public Builder add( final String key, final Instant value )
         {
             return doAdd( key, value );
         }

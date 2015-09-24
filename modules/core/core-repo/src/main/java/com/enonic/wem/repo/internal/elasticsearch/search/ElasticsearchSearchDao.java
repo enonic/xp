@@ -34,7 +34,7 @@ public class ElasticsearchSearchDao
                 build();
         }
 
-        return this.elasticsearchDao.find( esQuery );
+        return this.elasticsearchDao.search( esQuery );
     }
 
     @Reference

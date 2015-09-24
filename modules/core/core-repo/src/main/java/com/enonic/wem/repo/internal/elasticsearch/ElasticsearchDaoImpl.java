@@ -107,12 +107,6 @@ public class ElasticsearchDaoImpl
     }
 
     @Override
-    public boolean delete( final DeleteRequest deleteRequest )
-    {
-        return doDelete( deleteRequest );
-    }
-
-    @Override
     public boolean delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest = new DeleteRequest( deleteDocument.getIndexName() ).
@@ -132,7 +126,7 @@ public class ElasticsearchDaoImpl
     }
 
     @Override
-    public SearchResult find( final ElasticsearchQuery query )
+    public SearchResult search( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
@@ -164,21 +158,6 @@ public class ElasticsearchDaoImpl
             throw new IndexException( "Search request failed", e );
         }
     }
-
-    /*
-    private void printExplain( final SearchResponse searchResponse )
-    {
-        final SearchHits hits = searchResponse.getHits();
-
-        for ( final SearchHit hit : hits )
-        {
-            System.out.println( "-----------------" );
-            System.out.println( "Hit: " + hit.getId() );
-            System.out.println( hit.getExplanation().toString() );
-            System.out.println( "==================" );
-        }
-    }
-    */
 
     @Override
     public long count( final ElasticsearchQuery query )

@@ -20,11 +20,6 @@ public class SearchResult
         this.aggregations = aggregations;
     }
 
-    public static SearchResult empty()
-    {
-        return new SearchResult( SearchHits.create().build(), Aggregations.empty() );
-    }
-
     public boolean isEmpty()
     {
         return results.getSize() == 0;

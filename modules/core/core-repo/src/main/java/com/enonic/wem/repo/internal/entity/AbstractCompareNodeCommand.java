@@ -47,10 +47,6 @@ public class AbstractCompareNodeCommand
 
         private StorageService storageService;
 
-        Builder()
-        {
-        }
-
         @SuppressWarnings("unchecked")
         public B target( final Branch target )
         {

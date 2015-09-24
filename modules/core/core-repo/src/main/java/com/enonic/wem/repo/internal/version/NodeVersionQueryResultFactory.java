@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.version;
 
 import java.time.Instant;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.repo.internal.storage.result.ReturnValue;
 import com.enonic.wem.repo.internal.storage.result.SearchHit;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
@@ -49,7 +51,7 @@ public class NodeVersionQueryResultFactory
 
         return NodeVersion.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
-            timestamp( Instant.parse( timestamp ) ).
+            timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             build();
     }
 

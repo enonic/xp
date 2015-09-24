@@ -31,7 +31,6 @@ public class AccessControlTest
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setStorageService( storageService );
         this.nodeService.setSearchService( searchService );
 
@@ -59,7 +58,7 @@ public class AccessControlTest
             permissions( aclList ).
             build();
 
-        final Node node = this.nodeService.create( params );
+        this.nodeService.create( params );
         refresh();
     }
 

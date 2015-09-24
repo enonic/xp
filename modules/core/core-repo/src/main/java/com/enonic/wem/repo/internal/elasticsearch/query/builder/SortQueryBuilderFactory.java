@@ -15,17 +15,11 @@ import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.OrderExpressions;
 
 public class SortQueryBuilderFactory
     extends AbstractQueryBuilderFactory
 {
     private static final boolean IGNORE_UNMAPPED = true;
-
-    public static List<SortBuilder> create( final OrderExpressions orderExpressions )
-    {
-        return doCreate( orderExpressions.getSet() );
-    }
 
     public static List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {

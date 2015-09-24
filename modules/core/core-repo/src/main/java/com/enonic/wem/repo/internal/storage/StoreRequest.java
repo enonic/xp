@@ -35,16 +35,6 @@ public class StoreRequest
 
     }
 
-    public static Builder from( final StoreRequest source )
-    {
-        return create().
-            settings( source.getSettings() ).
-            nodePath( source.getPath() ).
-            id( source.getId() ).
-            data( source.getData() ).
-            forceRefresh( source.forceRefresh );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -58,11 +48,6 @@ public class StoreRequest
     public StorageSettings getSettings()
     {
         return settings;
-    }
-
-    private StorageData getData()
-    {
-        return data;
     }
 
     public String getTimeout()

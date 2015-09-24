@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.Collection;
 
-import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
@@ -19,11 +18,9 @@ public interface ElasticsearchDao
 {
     void store( Collection<IndexDocument> indexDocuments );
 
-    boolean delete( DeleteRequest deleteRequest );
-
     boolean delete( DeleteDocument deleteDocument );
 
-    SearchResult find( ElasticsearchQuery query );
+    SearchResult search( ElasticsearchQuery query );
 
     long count( ElasticsearchQuery query );
 

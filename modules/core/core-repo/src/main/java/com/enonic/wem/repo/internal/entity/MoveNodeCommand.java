@@ -2,9 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
@@ -28,8 +25,6 @@ public class MoveNodeCommand
     private final NodePath newParentPath;
 
     private final NodeName newNodeName;
-
-    private final static Logger LOG = LoggerFactory.getLogger( MoveNodeCommand.class );
 
     private MoveNodeCommand( final Builder builder )
     {

@@ -2,12 +2,9 @@ package com.enonic.wem.repo.internal.storage.result;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class SearchHits
     implements Iterable<SearchHit>
@@ -45,23 +42,9 @@ public class SearchHits
         return totalHits;
     }
 
-    public SearchHit get( final String id )
-    {
-        return this.hits.get( id );
-    }
-
     public SearchHit getFirstHit()
     {
         return this.hits.values().iterator().next();
-    }
-
-    public Set<ReturnValue> getFields( final String fieldName )
-    {
-        final Set<ReturnValue> returnValues = Sets.newLinkedHashSet();
-
-        returnValues.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
-
-        return returnValues;
     }
 
     @Override

@@ -35,11 +35,6 @@ public class SearchHit
         return id;
     }
 
-    public long getVersion()
-    {
-        return version;
-    }
-
     public ReturnValue getField( final String fieldName )
     {
         return doGetField( fieldName, false );

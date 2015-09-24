@@ -4,7 +4,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.ReturnFields;
 import com.enonic.wem.repo.internal.storage.StaticStorageType;
@@ -25,8 +24,6 @@ public class VersionServiceImpl
 {
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
-
-    private ElasticsearchDao elasticsearchDao;
 
     private StorageDao storageDao;
 
@@ -63,12 +60,6 @@ public class VersionServiceImpl
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.VERSION ).
             build();
-    }
-
-    @Reference
-    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
-    {
-        this.elasticsearchDao = elasticsearchDao;
     }
 
     @Reference

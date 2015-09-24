@@ -10,7 +10,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
@@ -74,8 +73,6 @@ public class NodeServiceImpl
 
     private IndexServiceInternal indexServiceInternal;
 
-    private NodeDao nodeDao;
-
     private SnapshotService snapshotService;
 
     private StorageService storageService;
@@ -118,10 +115,10 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
-        return doGetByPath( path, true );
+        return doGetByPath( path );
     }
 
-    private Node doGetByPath( final NodePath path, final boolean resolveHasChild )
+    private Node doGetByPath( final NodePath path )
     {
         return GetNodeByPathCommand.create().
             nodePath( path ).
@@ -492,7 +489,7 @@ public class NodeServiceImpl
     @Override
     public RootNode getRoot()
     {
-        final Node node = doGetByPath( NodePath.ROOT, false );
+        final Node node = doGetByPath( NodePath.ROOT );
 
         if ( node instanceof RootNode || node == null )
         {
@@ -528,7 +525,7 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodePath nodePath )
     {
-        return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath, false ) ) != null;
+        return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath ) ) != null;
     }
 
     @Override
@@ -553,12 +550,6 @@ public class NodeServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeDao( final NodeDao nodeDao )
-    {
-        this.nodeDao = nodeDao;
     }
 
     @Reference

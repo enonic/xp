@@ -95,6 +95,7 @@ public class GetNodeVersionsCommand
 
         public GetNodeVersionsCommand build()
         {
+            this.validate();
             return new GetNodeVersionsCommand( this );
         }
     }

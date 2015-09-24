@@ -130,14 +130,8 @@ public class ResolveSyncWorkCommand
 
         this.processedIds.add( node.id() );
 
-        if ( node == null )
-        {
-            // does not exist in source workspace, skip
-        }
-        else
-        {
-            doResolveDiff( node, resolveContext );
-        }
+        doResolveDiff( node, resolveContext );
+
     }
 
     private void doResolveDiff( final Node node, final ResolveContext resolveContext )
@@ -202,7 +196,6 @@ public class ResolveSyncWorkCommand
 
         for ( final Node referredNode : referredNodes )
         {
-
             if ( !this.processedIds.contains( referredNode.id() ) )
             {
                 resolveDiffWithNodeIdAsInput( referredNode, ResolveContext.referredFrom( node.id() ) );
