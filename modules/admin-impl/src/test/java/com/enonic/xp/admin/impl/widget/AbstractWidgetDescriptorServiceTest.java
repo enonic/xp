@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.widget;
 
 import org.junit.Before;
 
-import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
+import com.enonic.xp.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
