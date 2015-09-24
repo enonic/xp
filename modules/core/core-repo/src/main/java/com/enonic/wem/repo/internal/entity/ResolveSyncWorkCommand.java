@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
@@ -103,6 +104,7 @@ public class ResolveSyncWorkCommand
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
                 nodePath( this.publishRootNode.path() ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
                 build() ).
             searchService( this.searchService ).
             build().

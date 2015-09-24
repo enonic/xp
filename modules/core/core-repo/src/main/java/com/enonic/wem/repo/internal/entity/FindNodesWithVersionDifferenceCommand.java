@@ -30,6 +30,7 @@ public class FindNodesWithVersionDifferenceCommand
             source( params.getSource() ).
             target( params.getTarget() ).
             nodePath( params.getNodePath() ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
