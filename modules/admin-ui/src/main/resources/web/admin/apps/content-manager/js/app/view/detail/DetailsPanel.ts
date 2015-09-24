@@ -533,7 +533,7 @@ module app.view.detail {
         private detailsPanel: DetailsPanel;
 
         constructor(splitPanel: api.ui.panel.SplitPanel, detailsPanel: DetailsPanel) {
-            super("button expanded large-details-panel-toggle-button");
+            super("button large-details-panel-toggle-button");
 
             this.splitPanelWithGridAndDetails = splitPanel;
             this.detailsPanel = detailsPanel;
@@ -554,6 +554,10 @@ module app.view.detail {
                     this.splitPanelWithGridAndDetails.distribute();
                 }, 500);
             });
+        }
+
+        ensureButtonHasCorrectState() {
+            this.toggleClass("expanded", !this.splitPanelWithGridAndDetails.isSecondPanelHidden());
         }
 
         isExpanded(): boolean {

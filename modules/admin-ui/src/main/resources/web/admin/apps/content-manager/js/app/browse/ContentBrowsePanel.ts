@@ -124,18 +124,27 @@ module app.browse {
 
             this.appendChild(contentPanelsAndDetailPanel);
 
+            var switchedToLarge: boolean = false;
+
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                if (item.isInRangeOrBigger(ResponsiveRanges._1920_UP) && largeDetailsControlButton.isExpanded()) {
+                var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
+                if (item.isInRangeOrBigger(ResponsiveRanges._1920_UP) &&
+                    (largeDetailsControlButton.isExpanded() || (browseItems.length == 1 && !switchedToLarge))) {
                     if (contentPanelsAndDetailPanel.isSecondPanelHidden()) {
                         contentPanelsAndDetailPanel.showSecondPanel();
                     }
                     setTimeout(() => {
                         this.detailsPanelForLargeScreens.notifyPanelSizeChanged();
                     }, 800);
+                    switchedToLarge = true;
                 } else {
                     if (!contentPanelsAndDetailPanel.isSecondPanelHidden()) {
                         contentPanelsAndDetailPanel.hideSecondPanel();
                     }
+                }
+                largeDetailsControlButton.ensureButtonHasCorrectState();
+                if (item.isInRangeOrSmaller(ResponsiveRanges._1620_1920)) {
+                    switchedToLarge = false;
                 }
             });
 
