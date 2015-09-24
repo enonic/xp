@@ -2,11 +2,11 @@
   .browse-toolbar {
     .details-panel-toggle-button, .large-details-panel-toggle-button {
       // toggle button for medium screen sizes
-      z-index: 3;
+      z-index: 2;
       float: right;
       top: 0px;
       right: 2px;
-      padding-top: 13px;
+      padding: 7px 7px 7px 14px;
 
       overflow: hidden;
       display: block;
@@ -34,28 +34,58 @@
         }
       }
 
-      .transition(all 0.5s ease-in-out);
-
       &:focus {
         box-shadow: none;
         border: 0px transparent;
       }
-
-      .icon-menu();
 
       * {
         vertical-align: top;
       }
 
       &:before {
-        font-size: 14px;
+        font-size: 24px;
       }
 
+      .icon-grid5();
+
       &.expanded {
+
+        @keyframes slide {
+          0% {
+            z-index: 2;
+            width: 0px;
+          }
+          50% {
+            z-index: 2;
+          }
+          100% {
+            z-index: 3;
+            width: auto;
+          }
+        }
+
+        &:not(.large-details-panel-toggle-button) {
+          animation-name: slide;
+          animation-duration: 0.5s;
+          animation-timing-function: linear;
+          animation-delay: 0s;
+        }
+
+        z-index: 3;
+        padding-top: 13px;
+        .icon-close2();
+
         &:before {
           color: @admin-blue;
         }
+
+        &.large-details-panel-toggle-button {
+          padding-top: 7px;
+          .icon-grid5();
+        }
       }
+
     }
   }
 }
@@ -129,14 +159,14 @@
     .info-widget-toggle-button {
       cursor: pointer;
       display: inline-block;
-      font-size: 26px;
+      font-size: 16px;
       float: left;
-      padding: 4px 6px 5px 6px;
+      padding: 9px 12px 9px 11px;
       border: 1px solid #cccccc;
       border-right: 0px;
       box-sizing: border-box;
 
-      .icon-grid5();
+      .icon-list();
 
       &.active {
         background-color: @admin-blue;
