@@ -2,30 +2,26 @@ package com.enonic.wem.repo.internal.elasticsearch.query.translator;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
-public class SearchQueryFieldNameResolver
+public class StoreQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
-    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id" );
+    private final List<String> builtInFields = Lists.newArrayList();
 
 
     @Override
     protected List<String> getBuiltInFields()
     {
-        return BUILT_IN_FIELDS;
+        return builtInFields;
     }
 
+    @Override
     protected String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
     {
-        return IndexFieldNameNormalizer.normalize( baseFieldName + ( Strings.isNullOrEmpty( indexValueType.getPostfix() )
-            ? ""
-            : IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + indexValueType.getPostfix() ) );
+        return IndexFieldNameNormalizer.normalize( baseFieldName );
     }
-
 }
-

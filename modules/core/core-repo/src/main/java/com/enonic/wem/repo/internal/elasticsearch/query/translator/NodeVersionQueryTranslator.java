@@ -17,7 +17,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 
 public class NodeVersionQueryTranslator
 {
-    private final QueryFieldNameResolver fieldNameResolver = new SearchQueryFieldNameResolver();
+    private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
 
     private final SortQueryBuilderFactory sortBuilder = new SortQueryBuilderFactory( fieldNameResolver );
 
