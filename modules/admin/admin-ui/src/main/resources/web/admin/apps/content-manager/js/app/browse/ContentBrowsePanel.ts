@@ -25,8 +25,6 @@ module app.browse {
 
         private toolbar: ContentBrowseToolbar;
 
-        private contentTreeGridMask: api.ui.mask.LoadMask;
-
         private contentTreeGrid: app.browse.ContentTreeGrid;
 
         private contentFilterPanel: app.browse.filter.ContentBrowseFilterPanel;
@@ -44,8 +42,6 @@ module app.browse {
 
             this.toolbar = new ContentBrowseToolbar(this.browseActions);
 
-            this.contentTreeGridMask = new api.ui.mask.LoadMask(this.contentTreeGrid);
-
             super({
                 browseToolbar: this.toolbar,
                 treeGrid: this.contentTreeGrid,
@@ -55,18 +51,13 @@ module app.browse {
 
             var showMask = () => {
                 if (this.isVisible()) {
-                    this.contentTreeGridMask.show();
+                    this.contentTreeGrid.mask();
                 }
 
             };
-            this.contentTreeGridMask.show();
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
             this.contentFilterPanel.onRefresh(showMask);
-            this.contentTreeGrid.onRendered(showMask);
-            this.contentTreeGrid.onLoaded(() => {
-                this.contentTreeGridMask.hide();
-            });
 
             this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
                 if (event.getType() === 'updated') {

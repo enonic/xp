@@ -13,10 +13,19 @@
     display: inline-block;
     padding: 7px 14px;
 
-    &.icon-search {
-      font-size: 16px;
-      padding: 10px 14px 8px 14px;
+    &.pull-right {
+      float: right;
     }
+
+    &[class*="icon-"] {
+      font-size: 16px;
+      line-height: 24px;
+
+      span {
+        display: none;
+      }
+    }
+
   }
 
   .toggle-slide {
