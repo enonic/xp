@@ -1,11 +1,12 @@
-package com.enonic.xp.xml.parser;
+package com.enonic.xp.admin.impl.xml.parser;
 
 import java.util.List;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.widget.WidgetDescriptor;
+import com.enonic.xp.admin.impl.widget.WidgetDescriptor;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.parser.XmlModelParser;
 
 @Beta
 public final class XmlWidgetDescriptorParser

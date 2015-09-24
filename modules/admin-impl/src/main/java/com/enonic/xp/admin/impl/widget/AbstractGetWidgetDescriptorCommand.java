@@ -1,8 +1,7 @@
-package com.enonic.xp.core.impl.widget;
+package com.enonic.xp.admin.impl.widget;
 
+import com.enonic.xp.admin.impl.xml.parser.XmlWidgetDescriptorParser;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.widget.WidgetDescriptor;
-import com.enonic.xp.xml.parser.XmlWidgetDescriptorParser;
 
 abstract class AbstractGetWidgetDescriptorCommand<T extends AbstractGetWidgetDescriptorCommand>
 {

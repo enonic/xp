@@ -1,11 +1,10 @@
-package com.enonic.xp.core.impl.widget;
+package com.enonic.xp.admin.impl.widget;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.widget.WidgetDescriptors;
 
 public class WidgetDescriptorServiceImpl_getByInterface
     extends AbstractWidgetDescriptorServiceTest

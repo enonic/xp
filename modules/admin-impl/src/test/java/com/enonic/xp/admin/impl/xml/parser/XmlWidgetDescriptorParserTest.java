@@ -1,13 +1,14 @@
-package com.enonic.xp.xml.parser;
+package com.enonic.xp.admin.impl.xml.parser;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.admin.impl.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.widget.WidgetDescriptor;
+import com.enonic.xp.xml.parser.XmlModelParserTest;
 
 import static org.junit.Assert.*;
 

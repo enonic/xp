@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
+import com.enonic.xp.admin.impl.widget.WidgetDescriptor;
+import com.enonic.xp.admin.impl.widget.WidgetDescriptorService;
+import com.enonic.xp.admin.impl.widget.WidgetDescriptors;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.widget.WidgetDescriptor;
-import com.enonic.xp.widget.WidgetDescriptorService;
-import com.enonic.xp.widget.WidgetDescriptors;
 
 
 public class WidgetDescriptorResourceTest
