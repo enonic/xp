@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;

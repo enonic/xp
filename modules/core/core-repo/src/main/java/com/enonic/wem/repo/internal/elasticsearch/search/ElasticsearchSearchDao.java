@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQueryTranslator;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.ElasticsearchQueryTranslator;
 import com.enonic.wem.repo.internal.search.SearchDao;
 import com.enonic.wem.repo.internal.search.SearchRequest;
 import com.enonic.wem.repo.internal.storage.result.SearchHits;

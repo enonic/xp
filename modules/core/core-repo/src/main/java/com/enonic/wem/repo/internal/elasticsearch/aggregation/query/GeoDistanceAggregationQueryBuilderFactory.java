@@ -6,7 +6,8 @@ import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistanc
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.DistanceRange;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 
@@ -14,7 +15,7 @@ class GeoDistanceAggregationQueryBuilderFactory
 {
     static AggregationBuilder create( final GeoDistanceAggregationQuery query )
     {
-        final String fieldName = IndexQueryFieldNameResolver.resolveGeoPointFieldName( query.getFieldName() );
+        final String fieldName = QueryFieldNameResolver.resolve( query.getFieldName(), IndexValueType.GEO_POINT );
 
         final GeoDistanceBuilder geoDistanceBuilder = new GeoDistanceBuilder( query.getName() ).
             field( fieldName ).

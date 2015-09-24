@@ -4,14 +4,15 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 
 class TermsAggregationQueryBuilderFactory
 {
     static AggregationBuilder create( final TermsAggregationQuery aggregationQuery )
     {
-        final String fieldName = IndexQueryFieldNameResolver.resolveStringFieldName( aggregationQuery.getFieldName() );
+        final String fieldName = QueryFieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.STRING );
 
         final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
             minDocCount( aggregationQuery.getMinDocCount() ).

@@ -4,7 +4,8 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.HistogramBuilder;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 
 class NumericHistogramAggregationQueryBuilderFactory
@@ -14,7 +15,7 @@ class NumericHistogramAggregationQueryBuilderFactory
     {
         final HistogramBuilder builder = new HistogramBuilder( aggregationQuery.getName() ).
             interval( aggregationQuery.getInterval() ).
-            field( IndexQueryFieldNameResolver.resolveNumericFieldName( aggregationQuery.getFieldName() ) );
+            field( QueryFieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
 
         if ( aggregationQuery.getMinDocCount() != null )
         {

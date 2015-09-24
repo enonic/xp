@@ -4,7 +4,8 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramBuilder;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 
 class DateHistogramAggregationQueryFactory
@@ -13,7 +14,7 @@ class DateHistogramAggregationQueryFactory
     {
         final DateHistogramBuilder builder = new DateHistogramBuilder( aggregationQuery.getName() ).
             interval( new DateHistogram.Interval( aggregationQuery.getInterval() ) ).
-            field( IndexQueryFieldNameResolver.resolveDateTimeFieldName( aggregationQuery.getFieldName() ) );
+            field( QueryFieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.DATETIME ) );
 
         if ( aggregationQuery.getFormat() != null )
         {

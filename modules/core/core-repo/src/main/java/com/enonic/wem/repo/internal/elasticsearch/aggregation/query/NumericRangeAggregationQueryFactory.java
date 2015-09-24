@@ -5,7 +5,8 @@ import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 
@@ -14,7 +15,7 @@ class NumericRangeAggregationQueryFactory
 
     static AggregationBuilder create( final NumericRangeAggregationQuery query )
     {
-        final String fieldName = IndexQueryFieldNameResolver.resolveNumericFieldName( query.getFieldName() );
+        final String fieldName = QueryFieldNameResolver.resolve( query.getFieldName(), IndexValueType.NUMBER );
 
         final RangeBuilder rangeBuilder = new RangeBuilder( query.getName() ).
             field( fieldName );

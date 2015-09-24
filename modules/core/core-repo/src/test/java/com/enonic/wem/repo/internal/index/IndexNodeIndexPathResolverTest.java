@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -53,7 +53,7 @@ public class IndexNodeIndexPathResolverTest
     @Test
     public void testResolve()
     {
-        final String result = IndexQueryFieldNameResolver.resolve( CompareExpr.eq( FieldExpr.from( this.field ), this.valueExpr ) );
+        final String result = QueryFieldNameResolver.resolve( CompareExpr.eq( FieldExpr.from( this.field ), this.valueExpr ) );
         Assert.assertEquals( this.resolvedFieldName, result );
     }
 }

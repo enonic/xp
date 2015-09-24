@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.AclFilterBuilderFactory;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.Group;
