@@ -1,4 +1,4 @@
-package com.enonic.xp.widget;
+package com.enonic.xp.admin.impl.widget;
 
 import com.google.common.annotations.Beta;
 

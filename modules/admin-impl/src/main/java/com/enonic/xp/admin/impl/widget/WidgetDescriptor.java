@@ -1,4 +1,4 @@
-package com.enonic.xp.widget;
+package com.enonic.xp.admin.impl.widget;
 
 
 import java.util.LinkedList;
