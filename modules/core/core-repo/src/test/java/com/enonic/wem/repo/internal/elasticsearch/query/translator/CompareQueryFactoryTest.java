@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.CompareQueryBuilderFactory;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -34,7 +35,7 @@ public class CompareQueryFactoryTest
         throws Exception
     {
         final String expected = load( fileName );
-        final String expression = CompareQueryBuilderFactory.create( expr ).toString();
+        final String expression = new CompareQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( expr ).toString();
 
         Assert.assertEquals( cleanString( expected ), cleanString( expression ) );
     }

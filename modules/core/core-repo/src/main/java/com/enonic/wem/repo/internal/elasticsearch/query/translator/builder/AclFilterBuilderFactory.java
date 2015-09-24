@@ -1,5 +1,6 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
@@ -12,7 +13,13 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class AclFilterBuilderFactory
+    extends AbstractBuilderFactory
 {
+    public AclFilterBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
+
     public static Filter create( final PrincipalKeys principalsKeys )
     {
         if ( isSuperUser() )

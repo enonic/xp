@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -6,13 +6,20 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.google.common.base.Strings;
 
+import com.enonic.wem.repo.internal.elasticsearch.function.AbstractSimpleQueryStringFunction;
 import com.enonic.wem.repo.internal.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.NGramFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldName;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.query.expr.FunctionExpr;
 
-class FunctionQueryBuilderFactory
+public class FunctionQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
+    public FunctionQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
 
     public static QueryBuilder create( final FunctionExpr function )
     {

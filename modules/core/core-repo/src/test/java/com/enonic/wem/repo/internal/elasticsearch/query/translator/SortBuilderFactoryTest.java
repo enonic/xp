@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -28,7 +29,7 @@ public class SortBuilderFactoryTest
         final Set<OrderExpr> orderExprs = Sets.newHashSet();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
 
-        final List<SortBuilder> sortBuilders = SortQueryBuilderFactory.create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
 
         Assert.assertEquals( 1, sortBuilders.size() );
         Assert.assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
@@ -41,7 +42,7 @@ public class SortBuilderFactoryTest
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "mySecondField" ), OrderExpr.Direction.DESC ) );
 
-        final List<SortBuilder> sortBuilders = SortQueryBuilderFactory.create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
 
         Assert.assertEquals( 2, sortBuilders.size() );
         Assert.assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
@@ -56,7 +57,7 @@ public class SortBuilderFactoryTest
             new FunctionExpr( "geoDistance", Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ) ) ),
             OrderExpr.Direction.ASC ) );
 
-        final List<SortBuilder> sortBuilders = SortQueryBuilderFactory.create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
 
         Assert.assertEquals( 1, sortBuilders.size() );
         Assert.assertTrue( sortBuilders.iterator().next() instanceof GeoDistanceSortBuilder );

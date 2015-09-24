@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.InQueryBuilderFactory;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -19,10 +20,9 @@ public class InQueryBuilderFactoryTest
     {
         final String expected = load( "compare_in_string.json" );
 
-        final QueryBuilder query = InQueryBuilderFactory.create( CompareExpr.in( FieldExpr.from( "myField" ),
-                                                                                 Lists.newArrayList( ValueExpr.string( "myFirstValue" ),
-                                                                                                     ValueExpr.string(
-                                                                                                         "mySecondValue" ) ) ) );
+        final QueryBuilder query = new InQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create(
+            CompareExpr.in( FieldExpr.from( "myField" ),
+                            Lists.newArrayList( ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" ) ) ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }

@@ -12,10 +12,9 @@ import com.enonic.wem.repo.internal.storage.StaticStorageType;
 import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
-class NodeVersionDiffQueryTranslator
-    extends AbstractElasticsearchQueryTranslator
+public class NodeVersionDiffQueryTranslator
 {
-    public static ElasticsearchQuery translate( final SearchRequest request )
+    public ElasticsearchQuery translate( final SearchRequest request )
     {
         final NodeVersionDiffQuery query = (NodeVersionDiffQuery) request.getQuery();
 

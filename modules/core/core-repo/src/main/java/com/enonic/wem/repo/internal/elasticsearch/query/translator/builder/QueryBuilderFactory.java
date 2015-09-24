@@ -1,10 +1,13 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
@@ -15,16 +18,27 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 
-class QueryBuilderFactory
-    extends AbstractQueryBuilderFactory
+public class QueryBuilderFactory
+    extends AbstractBuilderFactory
 {
-    private static QueryBuilder doCreate( final Builder builder )
+    private final QueryExpr queryExpr;
+
+    private final Filters filters;
+
+    private QueryBuilderFactory( final Builder builder )
+    {
+        super( builder.fieldNameResolver );
+        this.queryExpr = builder.queryExpr;
+        this.filters = builder.filterBuilder.build();
+    }
+
+    public QueryBuilder create()
     {
         final QueryBuilder queryBuilder;
 
-        if ( builder.queryExpr != null )
+        if ( queryExpr != null )
         {
-            final ConstraintExpr constraint = builder.queryExpr.getConstraint();
+            final ConstraintExpr constraint = queryExpr.getConstraint();
 
             queryBuilder = buildConstraint( constraint );
         }
@@ -33,13 +47,11 @@ class QueryBuilderFactory
             queryBuilder = QueryBuilders.matchAllQuery();
         }
 
-        final Filters filters = builder.filterBuilder.build();
-
         final boolean wrapInFilteredQuery = filters != null && !filters.isEmpty();
 
         if ( wrapInFilteredQuery )
         {
-            final FilterBuilder filterBuilder = FilterBuilderFactory.create( filters );
+            final FilterBuilder filterBuilder = new FilterBuilderFactory( fieldNameResolver ).create( filters );
             return new FilteredQueryBuilder( queryBuilder, filterBuilder );
         }
         else
@@ -48,7 +60,7 @@ class QueryBuilderFactory
         }
     }
 
-    private static QueryBuilder buildConstraint( final Expression constraint )
+    private QueryBuilder buildConstraint( final Expression constraint )
     {
         if ( constraint == null )
         {
@@ -64,7 +76,7 @@ class QueryBuilderFactory
         }
         else if ( constraint instanceof CompareExpr )
         {
-            return CompareQueryBuilderFactory.create( (CompareExpr) constraint );
+            return new CompareQueryBuilderFactory( fieldNameResolver ).create( (CompareExpr) constraint );
 
         }
         else if ( constraint instanceof NotExpr )
@@ -77,14 +89,14 @@ class QueryBuilderFactory
         }
     }
 
-    private static QueryBuilder buildNotExpr( final NotExpr expr )
+    private QueryBuilder buildNotExpr( final NotExpr expr )
     {
         final QueryBuilder negated = buildConstraint( expr.getExpression() );
-        return buildNotQuery( negated );
+        return new NotQueryBuilderFactory( fieldNameResolver ).create( negated );
     }
 
 
-    private static QueryBuilder buildLogicalExpression( final LogicalExpr expr )
+    private QueryBuilder buildLogicalExpression( final LogicalExpr expr )
     {
 
         final QueryBuilder left = buildConstraint( expr.getLeft() );
@@ -105,7 +117,7 @@ class QueryBuilderFactory
     }
 
 
-    public static Builder create()
+    public static Builder newBuilder()
     {
         return new Builder();
     }
@@ -115,6 +127,8 @@ class QueryBuilderFactory
         private QueryExpr queryExpr;
 
         private final Filters.Builder filterBuilder = Filters.create();
+
+        private QueryFieldNameResolver fieldNameResolver;
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {
@@ -138,9 +152,21 @@ class QueryBuilderFactory
             return this;
         }
 
-        public QueryBuilder build()
+        public Builder fieldNameResolver( final QueryFieldNameResolver fieldNameResolver )
         {
-            return QueryBuilderFactory.doCreate( this );
+            this.fieldNameResolver = fieldNameResolver;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( fieldNameResolver );
+        }
+
+        public QueryBuilderFactory build()
+        {
+            validate();
+            return new QueryBuilderFactory( this );
         }
 
     }

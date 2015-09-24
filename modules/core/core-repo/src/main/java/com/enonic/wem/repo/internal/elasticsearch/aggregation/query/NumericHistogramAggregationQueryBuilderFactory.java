@@ -5,17 +5,24 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.HistogramBuilder;
 
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.AbstractBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 
 class NumericHistogramAggregationQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
 
-    static AggregationBuilder create( final HistogramAggregationQuery aggregationQuery )
+    public NumericHistogramAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
+
+    AggregationBuilder create( final HistogramAggregationQuery aggregationQuery )
     {
         final HistogramBuilder builder = new HistogramBuilder( aggregationQuery.getName() ).
             interval( aggregationQuery.getInterval() ).
-            field( QueryFieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
+            field( fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
 
         if ( aggregationQuery.getMinDocCount() != null )
         {
@@ -35,7 +42,7 @@ class NumericHistogramAggregationQueryBuilderFactory
         return builder;
     }
 
-    private static Histogram.Order translate( HistogramAggregationQuery.Order order )
+    private Histogram.Order translate( HistogramAggregationQuery.Order order )
     {
         switch ( order )
         {

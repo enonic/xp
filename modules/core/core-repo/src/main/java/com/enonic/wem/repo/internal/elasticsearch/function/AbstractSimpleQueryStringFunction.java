@@ -1,12 +1,9 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.function;
 
 import java.util.List;
 
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
-import com.enonic.wem.repo.internal.elasticsearch.function.AbstractFunctionArguments;
-import com.enonic.wem.repo.internal.elasticsearch.function.FunctionQueryBuilderException;
-import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldNames;
 import com.enonic.xp.query.expr.ValueExpr;
 
 public abstract class AbstractSimpleQueryStringFunction
@@ -39,7 +36,7 @@ public abstract class AbstractSimpleQueryStringFunction
         return analyzer;
     }
 
-    protected AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
+    AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
     {
         verifyNumberOfArguments( arguments );
 

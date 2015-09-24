@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.FunctionQueryBuilderFactory;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 

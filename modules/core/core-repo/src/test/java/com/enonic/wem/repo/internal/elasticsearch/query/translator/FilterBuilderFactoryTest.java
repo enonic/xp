@@ -4,6 +4,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.FilterBuilderFactory;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
@@ -24,7 +25,8 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_values_string.json" );
-        final FilterBuilder filterBuilder = FilterBuilderFactory.create( Filters.from( queryFilter ) );
+        final FilterBuilder filterBuilder =
+            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -40,7 +42,8 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_values_number.json" );
-        final FilterBuilder filterBuilder = FilterBuilderFactory.create( Filters.from( queryFilter ) );
+        final FilterBuilder filterBuilder =
+            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -54,7 +57,8 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_exists.json" );
-        final FilterBuilder filterBuilder = FilterBuilderFactory.create( Filters.from( queryFilter ) );
+        final FilterBuilder filterBuilder =
+            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -73,7 +77,8 @@ public class FilterBuilderFactoryTest
         builder.should( ExistsFilter.create().fieldName( "MyOptional" ).build() );
 
         final String expected = load( "filter_boolean.json" );
-        final FilterBuilder filterBuilder = FilterBuilderFactory.create( Filters.from( builder.build() ) );
+        final FilterBuilder filterBuilder =
+            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( builder.build() ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }

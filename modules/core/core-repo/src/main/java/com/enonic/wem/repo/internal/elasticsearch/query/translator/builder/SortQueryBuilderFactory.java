@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,21 +10,27 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 
-class SortQueryBuilderFactory
-    extends AbstractQueryBuilderFactory
+public class SortQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
+    public SortQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
+
     private static final boolean IGNORE_UNMAPPED = true;
 
-    public static List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
+    public List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
         return doCreate( orderExpressions );
     }
 
-    private static List<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
+    private List<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
     {
         if ( orderExpressions.isEmpty() )
         {
@@ -41,17 +47,17 @@ class SortQueryBuilderFactory
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
-                sortBuilders.add( DynamicSortBuilderFactory.create( (DynamicOrderExpr) orderExpr ) );
+                sortBuilders.add( new DynamicSortBuilderFactory( fieldNameResolver ).create( (DynamicOrderExpr) orderExpr ) );
             }
         }
 
         return sortBuilders;
     }
 
-    private static SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
+    private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
         final FieldSortBuilder fieldSortBuilder =
-            new FieldSortBuilder( QueryFieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
+            new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
         fieldSortBuilder.ignoreUnmapped( IGNORE_UNMAPPED );
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
 import java.util.List;
 import java.util.Set;
@@ -14,6 +14,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.ValueHelper;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -23,10 +25,15 @@ import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-class FilterBuilderFactory
-    extends AbstractQueryBuilderFactory
+public class FilterBuilderFactory
+    extends AbstractBuilderFactory
 {
-    public static FilterBuilder create( final Filters filters )
+    public FilterBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
+
+    public FilterBuilder create( final Filters filters )
     {
         if ( filters == null || filters.isEmpty() )
         {
@@ -36,7 +43,7 @@ class FilterBuilderFactory
         return doCreate( ImmutableSet.copyOf( filters ) );
     }
 
-    private static FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
+    private FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();
 
@@ -54,7 +61,7 @@ class FilterBuilderFactory
         return null;
     }
 
-    private static void appendFilters( final ImmutableSet<Filter> queryFilters, final List<FilterBuilder> filtersToApply )
+    private void appendFilters( final ImmutableSet<Filter> queryFilters, final List<FilterBuilder> filtersToApply )
     {
         for ( final Filter filter : queryFilters )
         {
@@ -78,7 +85,7 @@ class FilterBuilderFactory
     }
 
 
-    private static FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
+    private FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
     {
         final BoolFilterBuilder builder = new BoolFilterBuilder().
             must( createBooleanFilterChildren( booleanFilter.getMust() ) ).
@@ -93,7 +100,7 @@ class FilterBuilderFactory
         return builder;
     }
 
-    private static FilterBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
+    private FilterBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();
 
@@ -103,7 +110,7 @@ class FilterBuilderFactory
     }
 
 
-    private static FilterBuilder createRangeFilter( final RangeFilter filter )
+    private FilterBuilder createRangeFilter( final RangeFilter filter )
     {
         final Value from = filter.getFrom();
         final Value to = filter.getTo();
@@ -113,7 +120,7 @@ class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = QueryFieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
 
         RangeFilterBuilder builder = new RangeFilterBuilder( queryFieldName ).
             from( from ).
@@ -129,13 +136,13 @@ class FilterBuilderFactory
         return builder;
     }
 
-    private static FilterBuilder createTermFilter( final ValueFilter filter )
+    private FilterBuilder createTermFilter( final ValueFilter filter )
     {
-        final String queryFieldName = QueryFieldNameResolver.resolve( filter );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
         final Set<Object> values = Sets.newHashSet();
 
-        values.addAll( filter.getValues().stream().map( AbstractQueryBuilderFactory::getValueAsType ).collect( Collectors.toList() ) );
+        values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 
         final TermsFilterBuilder builder = new TermsFilterBuilder( queryFieldName, values );
 
@@ -147,9 +154,9 @@ class FilterBuilderFactory
         return builder;
     }
 
-    private static FilterBuilder createExistsFilter( final ExistsFilter filter )
+    private FilterBuilder createExistsFilter( final ExistsFilter filter )
     {
-        final String resolvedQueryFieldName = QueryFieldNameResolver.resolve( filter.getFieldName(), IndexValueType.STRING );
+        final String resolvedQueryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), IndexValueType.STRING );
 
         return new ExistsFilterBuilder( resolvedQueryFieldName );
     }

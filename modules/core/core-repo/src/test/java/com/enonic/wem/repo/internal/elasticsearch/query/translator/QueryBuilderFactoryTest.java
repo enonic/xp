@@ -4,6 +4,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.QueryBuilderFactory;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -26,10 +27,11 @@ public class QueryBuilderFactoryTest
     {
         final String expected = load( fileContainingExpectedJson );
 
-        final String expression = QueryBuilderFactory.
-            create().
+        final String expression = QueryBuilderFactory.newBuilder().
             queryExpr( QueryParser.parse( query ) ).
+            fieldNameResolver( new SearchQueryFieldNameResolver() ).
             build().
+            create().
             toString();
 
         final String expectedJson = cleanString( expected );
@@ -52,10 +54,12 @@ public class QueryBuilderFactoryTest
 
         final QueryExpr query = QueryParser.parse( "not( myField > 1) " );
 
-        final QueryBuilder builtQuery = QueryBuilderFactory.create().
+        final QueryBuilder builtQuery = QueryBuilderFactory.newBuilder().
             queryExpr( query ).
             addQueryFilter( queryFilter ).
-            build();
+            fieldNameResolver( new SearchQueryFieldNameResolver() ).
+            build().
+            create();
 
         final String expectedJson = cleanString( expected );
         final String actualJson = cleanString( builtQuery.toString() );

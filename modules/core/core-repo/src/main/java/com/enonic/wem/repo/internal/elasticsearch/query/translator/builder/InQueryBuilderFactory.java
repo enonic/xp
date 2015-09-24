@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.query.translator;
+package com.enonic.wem.repo.internal.elasticsearch.query.translator.builder;
 
 import java.util.List;
 
@@ -6,17 +6,23 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.wem.repo.internal.index.query.IndexQueryBuilderException;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-class InQueryBuilderFactory
+public class InQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
+    public InQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        super( fieldNameResolver );
+    }
 
-    public static QueryBuilder create( final CompareExpr compareExpr )
+    public QueryBuilder create( final CompareExpr compareExpr )
     {
 
-        final String queryFieldName = QueryFieldNameResolver.resolve( compareExpr.getField().getFieldPath() );
+        final String queryFieldName = this.fieldNameResolver.resolve( compareExpr.getField().getFieldPath() );
 
         final List<ValueExpr> values = compareExpr.getValues();
 
@@ -29,7 +35,7 @@ class InQueryBuilderFactory
 
         for ( ValueExpr value : values )
         {
-            boolQuery.should( TermQueryBuilderFactory.create( queryFieldName, value.getValue() ) );
+            boolQuery.should( new TermQueryBuilderFactory( fieldNameResolver ).create( queryFieldName, value.getValue() ) );
         }
 
         return boolQuery;

@@ -1,15 +1,12 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.translator;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.util.GeoPoint;
 
-class AbstractQueryBuilderFactory
+public class ValueHelper
 {
-    static Object getValueAsType( Value value )
+    public static Object getValueAsType( Value value )
     {
         if ( value.isDateType() )
         {
@@ -29,11 +26,4 @@ class AbstractQueryBuilderFactory
 
         return IndexValueNormalizer.normalize( value.toString() );
     }
-
-    static QueryBuilder buildNotQuery( final QueryBuilder negated )
-    {
-        return QueryBuilders.boolQuery().mustNot( negated );
-    }
-
-
 }

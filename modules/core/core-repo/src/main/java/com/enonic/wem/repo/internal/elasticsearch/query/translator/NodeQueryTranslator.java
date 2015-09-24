@@ -4,19 +4,31 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.FilterBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.QueryBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.search.SearchRequest;
 import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.Query;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKeys;
 
-class NodeQueryTranslator
-    extends AbstractElasticsearchQueryTranslator
+public class NodeQueryTranslator
 {
-    static ElasticsearchQuery translate( final SearchRequest request )
+    private final QueryFieldNameResolver fieldNameResolver = new SearchQueryFieldNameResolver();
+
+    private final SortQueryBuilderFactory sortBuilder = new SortQueryBuilderFactory( fieldNameResolver );
+
+    private final FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory( fieldNameResolver );
+
+    private final AggregationQueryBuilderFactory aggregationsBuilder = new AggregationQueryBuilderFactory( fieldNameResolver );
+
+    public ElasticsearchQuery translate( final SearchRequest request )
     {
         final NodeQuery query = (NodeQuery) request.getQuery();
 
@@ -28,9 +40,9 @@ class NodeQueryTranslator
             index( settings.getStorageName().getName() ).
             indexType( settings.getStorageType().getName() ).
             query( queryBuilder ).
-            setAggregations( AggregationQueryBuilderFactory.create( query.getAggregationQueries() ) ).
-            sortBuilders( SortQueryBuilderFactory.create( query.getOrderBys() ) ).
-            filter( FilterBuilderFactory.create( query.getPostFilters() ) ).
+            setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
+            sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
+            filter( filterBuilderFactory.create( query.getPostFilters() ) ).
             setReturnFields( request.getReturnFields() ).
             from( query.getFrom() ).
             size( query.getSize() );
@@ -38,7 +50,7 @@ class NodeQueryTranslator
         return esQuery.build();
     }
 
-    private static QueryBuilder createQueryWithFilters( final NodeQuery nodeQuery, final PrincipalKeys acl )
+    private QueryBuilder createQueryWithFilters( final NodeQuery nodeQuery, final PrincipalKeys acl )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = createQuery( nodeQuery );
 
@@ -52,10 +64,18 @@ class NodeQueryTranslator
         addParentFilter( nodeQuery, queryBuilderBuilder );
         addPathFilter( nodeQuery, queryBuilderBuilder );
 
-        return queryBuilderBuilder.build();
+        return queryBuilderBuilder.build().create();
     }
 
-    private static void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    private QueryBuilderFactory.Builder createQuery( final Query nodeQuery )
+    {
+        return QueryBuilderFactory.newBuilder().
+            queryExpr( nodeQuery.getQuery() ).
+            addQueryFilters( nodeQuery.getQueryFilters() ).
+            fieldNameResolver( this.fieldNameResolver );
+    }
+
+    private void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
     {
         if ( nodeQuery.getPath() != null )
         {
@@ -66,7 +86,7 @@ class NodeQueryTranslator
         }
     }
 
-    private static void addParentFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    private void addParentFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
     {
         if ( nodeQuery.getParent() != null )
         {
