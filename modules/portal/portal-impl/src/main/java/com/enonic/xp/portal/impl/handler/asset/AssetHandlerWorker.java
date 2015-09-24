@@ -2,12 +2,15 @@ package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
 
 final class AssetHandlerWorker
     extends PortalHandlerWorker
@@ -26,11 +29,11 @@ final class AssetHandlerWorker
     {
         resolveResource();
 
-        this.response.status( 200 );
+        this.response.status( HttpStatus.OK );
         this.response.body( resource );
 
         final String type = MediaTypes.instance().fromFile( this.resource.getKey().getName() ).toString();
-        this.response.contentType( type );
+        this.response.contentType( MediaType.parse( type ) );
 
         if ( this.request.getMode() == RenderMode.LIVE )
         {

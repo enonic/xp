@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -88,9 +89,9 @@ final class ExceptionInfo
         node.put( "message", getDescription() );
 
         return PortalResponse.create().
-            status( this.status.value() ).
+            status( this.status ).
             body( node.toString() ).
-            contentType( "application/json" ).
+            contentType( MediaType.create( "application", "json" ) ).
             build();
     }
 
@@ -105,9 +106,9 @@ final class ExceptionInfo
 
         final String html = builder.build();
         return PortalResponse.create().
-            status( this.status.value() ).
+            status( this.status ).
             body( html ).
-            contentType( "text/html" ).
+            contentType( MediaType.create( "text", "html" ) ).
             build();
     }
 

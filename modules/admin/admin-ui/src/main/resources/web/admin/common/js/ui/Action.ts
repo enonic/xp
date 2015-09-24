@@ -24,6 +24,8 @@ module api.ui {
 
         private parentAction: Action;
 
+        private sortOrder: number = 10;
+
         constructor(label: string, shortcut?: string, global?: boolean) {
             this.label = label;
 
@@ -41,6 +43,14 @@ module api.ui {
                     return false;
                 });
             }
+        }
+
+        setSortOrder(sortOrder: number) {
+            this.sortOrder = sortOrder;
+        }
+
+        getSortOrder(): number {
+            return this.sortOrder;
         }
 
         setChildActions(actions: Action[]): Action {

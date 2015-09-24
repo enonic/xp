@@ -15,9 +15,15 @@
     line-height: 37px;
   }
 
-  .slick-cell:not(.selected) {
-    &.status .equal {
-      color: @admin-green;
+  .slick-cell {
+    &:not(.selected) {
+      &.status .equal {
+        color: @admin-green;
+      }
+    }
+
+    &.order .sort-dialog-trigger:before {
+      margin-left: 6px;
     }
   }
 }

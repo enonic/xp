@@ -50,12 +50,12 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
+import com.enonic.xp.node.SnapshotParams;
+import com.enonic.xp.node.SnapshotResult;
+import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 
 @Component
 public class ElasticsearchDaoImpl

@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -16,6 +17,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.portal.impl.handler.PortalHandlerWorker;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
@@ -81,9 +83,9 @@ final class ImageHandlerWorker
 
         final ByteSource source = this.imageService.readImage( readImageParams );
 
-        this.response.status( 200 );
+        this.response.status( HttpStatus.OK );
         this.response.body( source );
-        this.response.contentType( mimeType );
+        this.response.contentType( MediaType.parse( mimeType ) );
     }
 
     private String getFormat( final String fileName, final String mimeType )

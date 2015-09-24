@@ -1,5 +1,4 @@
-///<reference path='ApplicationSelectedEvent.ts' />
-///<reference path='ApplicationDeselectedEvent.ts' />
+///<reference path='SiteConfigRequiresSaveEvent.ts' />
 ///<reference path='SiteView.ts' />
 ///<reference path='SiteConfiguratorDialog.ts' />
 ///<reference path='SiteConfigProvider.ts' />

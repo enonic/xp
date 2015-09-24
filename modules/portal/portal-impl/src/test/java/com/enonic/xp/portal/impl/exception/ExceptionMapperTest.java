@@ -68,7 +68,7 @@ public class ExceptionMapperTest
     private void assertThrowIfNeeded( final HttpStatus status )
     {
         final PortalResponse response = PortalResponse.create().
-            status( status.value() ).
+            status( status ).
             build();
 
         try
@@ -86,7 +86,7 @@ public class ExceptionMapperTest
     public void throwIfNeeded_notNeeded()
     {
         final PortalResponse response = PortalResponse.create().
-            status( HttpStatus.OK.value() ).
+            status( HttpStatus.OK ).
             build();
 
         this.mapper.throwIfNeeded( response );

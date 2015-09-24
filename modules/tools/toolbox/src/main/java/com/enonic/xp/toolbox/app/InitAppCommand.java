@@ -1,126 +1,145 @@
 package com.enonic.xp.toolbox.app;
 
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
 
 import io.airlift.airline.Command;
 import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.ToolCommand;
 
-@Command(name = "init-app", description = "Initiates an Enonic XP application.")
+@Command(name = "init-project", description = "Initiates an Enonic XP application project.")
 public final class InitAppCommand
     extends ToolCommand
 {
+    private final static Logger LOGGER = LoggerFactory.getLogger( InitAppCommand.class );
+
+    private static final String GITHUB_URL = "https://github.com/";
+
+    private static final String ENONIC_REPOSITORY_PREFIX = "enonic/";
+
+    private static final String GIT_REPOSITORY_SUFFIX = ".git";
+
+    @Option(name = "-a", description = "Authentication token for basic authentication (user:password).")
+    public String authentication;
+
+    @Option(name = {"-d", "--destination"}, description = "Destination path.")
+    public String destination = ".";
+
     @Option(name = {"-n", "--name"}, description = "Application name.", required = true)
     public String name;
 
+    @Option(name = {"-r", "--repository"}, description = "Git repository.", required = true)
+    public String repository;
+
     @Option(name = {"-v", "--version"}, description = "Version number.")
     public String version = "1.0.0-SNAPSHOT";
-
-    @Option(name = {"-d", "--destination"}, description = "Project path.")
-    public String destination = ".";
 
     @Override
     protected void execute()
         throws Exception
     {
-        try
-        {
-            initApplication();
-            updateFile( Paths.get( destination, "build.gradle" ), "##NAME##", name );
-            updateFile( Paths.get( destination, "build.gradle" ), "##VERSION##", version );
-        }
-        catch ( Exception e )
-        {
-            System.err.println( e.getMessage() );
-            e.printStackTrace();
-        }
+        String gitRepositoryUri = resolveGitRepositoryUri();
+        cloneGitRepository( gitRepositoryUri );
+        processGradleProperties();
     }
 
-    private void initApplication()
-        throws URISyntaxException, IOException
+    private String resolveGitRepositoryUri()
     {
-        final Path sourceDirectory = getInitAppResourcesPath();
-        final Path targetDirectory = Paths.get( destination );
+        if ( repository.contains( ":/" ) )
+        {
+            return repository;
+        }
+        if ( repository.contains( "/" ) )
+        {
+            return GITHUB_URL + repository + GIT_REPOSITORY_SUFFIX;
+        }
+        return GITHUB_URL + ENONIC_REPOSITORY_PREFIX + repository + GIT_REPOSITORY_SUFFIX;
+    }
 
-        Files.walkFileTree( sourceDirectory, new SimpleFileVisitor<Path>()
+    private void cloneGitRepository( final String gitRepositoryUri )
+        throws GitAPIException, IOException
+    {
+        LOGGER.info( "Retrieving Git repository from \"" + gitRepositoryUri + "\" ..." );
+
+        // Creates the destination directory if it does not exist
+        File destinationDirectory = new File( destination );
+        if ( !destinationDirectory.exists() )
+        {
+            destinationDirectory.mkdirs();
+        }
+
+        // Clones the Git repository
+        final CloneCommand cloneCommand = Git.cloneRepository().
+            setURI( gitRepositoryUri ).
+            setDirectory( destinationDirectory );
+        if ( authentication != null )
+        {
+            final String[] authentificationValues = authentication.split( ":" );
+            cloneCommand.setCredentialsProvider(
+                new UsernamePasswordCredentialsProvider( authentificationValues[0], authentificationValues[1] ) );
+        }
+        cloneCommand.call();
+
+        //Removes the .git folder
+        FileUtils.deleteDirectory( new File( destinationDirectory, ".git" ) );
+
+        //Remove the .gitkeep and .gitignore files
+        Files.walkFileTree( destinationDirectory.toPath(), new SimpleFileVisitor<Path>()
         {
             @Override
-            public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+            public FileVisitResult visitFile( final Path file, final BasicFileAttributes attrs )
                 throws IOException
             {
-                Path target = targetDirectory.resolve( sourceDirectory.relativize( dir ).toString() );
-                try
+                final String fileName = file.getFileName().toString();
+                if ( ".gitkeep".equals( fileName ) || ".gitignore".equals( fileName ) )
                 {
-                    Files.copy( dir, target );
-                }
-                catch ( FileAlreadyExistsException e )
-                {
-                    if ( !Files.isDirectory( target ) )
-                    {
-                        Files.copy( dir, target, StandardCopyOption.REPLACE_EXISTING );
-                    }
-                }
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
-                throws IOException
-            {
-                if ( !".gitkeep".equals( file.getFileName().toString() ) )
-                {
-                    final Path target = targetDirectory.resolve( sourceDirectory.relativize( file ).toString() );
-                    Files.copy( file, target, StandardCopyOption.REPLACE_EXISTING );
+                    Files.delete( file );
                 }
                 return FileVisitResult.CONTINUE;
             }
         } );
 
-        targetDirectory.resolve( "gradlew" ).toFile().setExecutable( true );
+        LOGGER.info( "Git repository retrieved." );
     }
 
-    private Path getInitAppResourcesPath()
-        throws URISyntaxException, IOException
-    {
-        final String uri = getClass().getResource( "/init-app" ).toURI().toString();
-        if ( uri.startsWith( "jar:" ) )
-        {
-            final String[] uriSubStrings = uri.split( "!" );
-            Map<String, String> env = new HashMap<>();
-            env.put( "create", "true" );
-            FileSystem fs = FileSystems.newFileSystem( new URI( uriSubStrings[0] ), env );
-            return fs.getPath( uriSubStrings[1] );
-        }
-        else
-        {
-            return Paths.get( new URI( uri ) );
-        }
-    }
-
-    private void updateFile( Path filePath, String regex, String replacement )
+    private void processGradleProperties()
         throws IOException
     {
-        Charset charset = StandardCharsets.UTF_8;
-        String content = new String( Files.readAllBytes( filePath ), charset );
-        content = content.replaceAll( regex, replacement );
-        Files.write( filePath, content.getBytes( charset ) );
+        LOGGER.info( "Adapting Gradle properties file ..." );
+
+        //Creates the Gradle Properties file if it does not exist
+        final File gradlePropertiesFile = new File( destination, "gradle.properties" );
+        if ( !gradlePropertiesFile.exists() )
+        {
+            gradlePropertiesFile.createNewFile();
+        }
+
+        //Process the content of the Gradle Properties file
+        final List<String> originalGradlePropertiesContent = com.google.common.io.Files.readLines( gradlePropertiesFile, Charsets.UTF_8 );
+        final GradlePropertiesProcessor gradlePropertiesProcessor = new GradlePropertiesProcessor( name, version );
+        final List<String> processedGradlePropertiesContent = gradlePropertiesProcessor.process( originalGradlePropertiesContent );
+
+        //Write the processed content into the  Gradle Properties file
+        com.google.common.io.Files.asCharSink( gradlePropertiesFile, Charsets.UTF_8 ).writeLines( processedGradlePropertiesContent );
+
+        LOGGER.info( "Gradle properties file adapted." );
     }
 }
