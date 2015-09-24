@@ -63,6 +63,7 @@ module api.content.site.inputtype.siteconfigurator {
             setTimeout(() => {
                 this.addClass("animated");
                 this.centerMyself();
+                wemjq(this.getHTMLElement()).find('input[type=text],textarea,select').first().focus();
             }, 100);
         }
 
