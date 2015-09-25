@@ -23,6 +23,8 @@ module api.ui.grid {
 
         private rowManagerPlugin;
 
+        private loadMask: api.ui.mask.LoadMask;
+
         constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
             super("grid");
 
@@ -66,8 +68,18 @@ module api.ui.grid {
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
 
+            this.loadMask = new api.ui.mask.LoadMask(this);
+
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
+        }
+
+        mask() {
+            this.loadMask.show();
+        }
+
+        unmask() {
+            this.loadMask.hide();
         }
 
         private autoRenderGridOnDataChanges(dataView: DataView<T>) {
