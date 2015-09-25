@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
 @Component(immediate = true)
-final class ElasticsearchActivator
+public final class ElasticsearchActivator
 {
     private Node node;
 
