@@ -26,6 +26,10 @@ module api.ui {
 
         private sortOrder: number = 10;
 
+        private beforeExecuteListeners: {(action: Action): void}[] = [];
+
+        private afterExecuteListeners: {(action: Action): void}[] = [];
+
         constructor(label: string, shortcut?: string, global?: boolean) {
             this.label = label;
 
@@ -150,11 +154,13 @@ module api.ui {
 
         execute(forceExecute: boolean = false): void {
             if (this.enabled) {
+                this.notifyBeforeExecute();
                 this.forceExecute = forceExecute;
                 for (var i in this.executionListeners) {
                     this.executionListeners[i](this);
                 }
                 this.forceExecute = false;
+                this.notifyAfterExecute();
             }
         }
 
@@ -172,6 +178,44 @@ module api.ui {
 
         onPropertyChanged(listener: (action: Action) => void) {
             this.propertyChangedListeners.push(listener);
+        }
+
+
+        onBeforeExecute(listener: (action: Action) => void) {
+            this.beforeExecuteListeners.push(listener);
+        }
+
+        unBeforeExecute(listener: () => void) {
+            this.beforeExecuteListeners = this.beforeExecuteListeners.filter((currentListener: () => void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyBeforeExecute() {
+            this.beforeExecuteListeners.forEach((listener: (action: Action) => void) => {
+                listener(this);
+            });
+        }
+
+        onAfterExecute(listener: (action: Action) => void) {
+            this.afterExecuteListeners.push(listener);
+        }
+
+        unAfterExecute(listener: (action: Action) => void) {
+            this.afterExecuteListeners = this.afterExecuteListeners.filter((currentListener: () => void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyAfterExecute() {
+            this.afterExecuteListeners.forEach((listener: (action: Action) => void) => {
+                listener(this);
+            });
+        }
+
+        clearListeners() {
+            this.beforeExecuteListeners = [];
+            this.afterExecuteListeners = [];
         }
 
         getKeyBindings(): KeyBinding[] {

@@ -3,6 +3,8 @@ module api.ui.menu {
     export class TreeContextMenu extends api.dom.DlEl {
         private itemClickListeners: {(item: TreeMenuItem): void}[] = [];
 
+        private actions: api.ui.Action[] = [];
+
         constructor(actions?: api.ui.Action[], appendToBody = true) {
             super("context-menu");
 
@@ -31,6 +33,7 @@ module api.ui.menu {
             var menuItem = this.createMenuItem(action);
             var subItems = [];
             this.appendChild(menuItem);
+            this.actions.push(action);
 
             if (childActions.length > 0) {
                 for (var i = 0; i < childActions.length; i++) {
@@ -43,6 +46,7 @@ module api.ui.menu {
                 });
             }
             else {
+
                 menuItem.onClicked((event: MouseEvent) => {
                     this.notifyItemClicked();
 
@@ -62,8 +66,18 @@ module api.ui.menu {
 
         setActions(actions: api.ui.Action[]): TreeContextMenu {
             this.removeChildren();
+            this.clearActionListeners();
+
+            this.actions = [];
+
             this.addActions(actions);
             return this;
+        }
+
+        clearActionListeners() {
+            this.actions.forEach((action) => {
+                action.clearListeners();
+            });
         }
 
         onItemClicked(listener: () => void) {
@@ -79,6 +93,18 @@ module api.ui.menu {
         private notifyItemClicked() {
             this.itemClickListeners.forEach((listener: ()=>void) => {
                 listener();
+            });
+        }
+
+        onBeforeAction(listener: (action: api.ui.Action) => void) {
+            this.actions.forEach((action: api.ui.Action) => {
+                action.onBeforeExecute(listener);
+            });
+        }
+
+        onAfterAction(listener: (action: api.ui.Action) => void) {
+            this.actions.forEach((action: api.ui.Action) => {
+                action.onAfterExecute(listener);
             });
         }
 
