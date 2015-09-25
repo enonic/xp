@@ -18,7 +18,7 @@ module app.wizard.action {
 
                     this.setEnabled(false);
 
-                    wizard.updatePersistedItem().
+                    wizard.saveChanges().
                         then((content) => {
                             if (content) {
                                 new app.browse.ContentPublishPromptEvent([content]).fire();
