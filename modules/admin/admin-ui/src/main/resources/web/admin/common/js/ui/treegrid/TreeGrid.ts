@@ -642,7 +642,7 @@ module api.ui.treegrid {
                 dataList.forEach((data: DATA) => {
                     var child = this.dataToTreeNode(data, parentNode);
                     var dataId = this.getDataId(data);
-                    child.setExpanded(expandedNodesDataId.indexOf(dataId) > -1);
+                    child.setExpanded(this.expandAll || expandedNodesDataId.indexOf(dataId) > -1);
                     parentNode.addChild(child);
 
                     if (child.isExpanded() && this.hasChildren(data)) {

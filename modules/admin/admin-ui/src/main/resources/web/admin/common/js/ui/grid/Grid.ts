@@ -75,12 +75,10 @@ module api.ui.grid {
         }
 
         mask() {
-            debugger;
             this.loadMask.show();
         }
 
         unmask() {
-            debugger;
             this.loadMask.hide();
         }
 
