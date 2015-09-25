@@ -787,21 +787,28 @@ public final class ContentResource
     @Path("locales")
     public LocaleListJson getLocales( @QueryParam("query") final String query )
     {
+        String trimmedQuery = query.trim();
         Locale[] locales = Locale.getAvailableLocales();
         if ( StringUtils.isNotBlank( query ) )
         {
             locales = Arrays.stream( locales ).
-                filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), query ) ||
-                    containsIgnoreCase( locale.getDisplayName( locale ), query ) ||
-                    containsIgnoreCase( locale.getLanguage(), query ) ||
-                    containsIgnoreCase( locale.getDisplayLanguage( locale ), query ) ||
-                    containsIgnoreCase( locale.getVariant(), query ) ||
-                    containsIgnoreCase( locale.getDisplayVariant( locale ), query ) ||
-                    containsIgnoreCase( locale.getCountry(), query ) ||
-                    containsIgnoreCase( locale.getDisplayCountry( locale ), query ) ).
+                filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getDisplayName( locale ), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getLanguage(), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getDisplayLanguage( locale ), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getVariant(), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getDisplayVariant( locale ), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getCountry(), trimmedQuery ) ||
+                    containsIgnoreCase( locale.getDisplayCountry( locale ), trimmedQuery ) ||
+                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) ).
                 toArray( Locale[]::new );
         }
         return new LocaleListJson( locales );
+    }
+
+    private String getFormattedDisplayName( Locale locale )
+    {
+        return locale.getDisplayName( locale ) + " (" + locale.toLanguageTag() + ")";
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
