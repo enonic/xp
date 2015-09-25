@@ -364,7 +364,7 @@ module api.ui.uploader {
             this.dropzoneContainer.setVisible(visible);
         }
 
-        private setProgressVisible(visible: boolean = true) {
+        setProgressVisible(visible: boolean = true) {
             if (visible) {
                 this.setDropzoneVisible(false);
                 this.setResultVisible(false);

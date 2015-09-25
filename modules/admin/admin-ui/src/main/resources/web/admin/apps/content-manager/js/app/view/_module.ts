@@ -9,3 +9,4 @@
 ///<reference path='ContentItemVersionsPanel.ts' />
 ///<reference path='ContentItemStatisticsPanel.ts' />
 ///<reference path='ContentItemViewPanel.ts' />
+///<reference path='MobileContentItemStatisticsPanel.ts' />
