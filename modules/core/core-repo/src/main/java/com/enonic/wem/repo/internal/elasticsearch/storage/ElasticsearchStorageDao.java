@@ -20,20 +20,20 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.repo.internal.SearchPreference;
+import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.wem.repo.internal.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.wem.repo.internal.storage.DeleteRequest;
 import com.enonic.wem.repo.internal.storage.GetByIdRequest;
 import com.enonic.wem.repo.internal.storage.GetByValuesRequest;
-import com.enonic.wem.repo.internal.storage.SearchPreference;
+import com.enonic.wem.repo.internal.storage.GetResult;
 import com.enonic.wem.repo.internal.storage.StorageDao;
-import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
 
 @Component
 public class ElasticsearchStorageDao

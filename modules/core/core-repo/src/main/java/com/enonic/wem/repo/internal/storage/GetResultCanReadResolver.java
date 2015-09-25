@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
-import com.enonic.wem.repo.internal.storage.result.ReturnValue;
+import com.enonic.wem.repo.internal.ReturnValue;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;

@@ -1,5 +1,9 @@
 package com.enonic.wem.repo.internal.storage;
 
+import com.enonic.wem.repo.internal.ReturnFields;
+import com.enonic.wem.repo.internal.SearchPreference;
+import com.enonic.wem.repo.internal.StorageSettings;
+
 public abstract class AbstractGetRequest
 {
     private final StorageSettings storageSettings;

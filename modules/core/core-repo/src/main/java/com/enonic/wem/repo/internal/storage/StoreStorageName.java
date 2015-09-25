@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
+import com.enonic.wem.repo.internal.StorageName;
 import com.enonic.xp.repository.RepositoryId;
 
 public class StoreStorageName

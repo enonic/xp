@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.search;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeBranchQueryTranslator;
@@ -11,11 +12,10 @@ import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeVersionDi
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeVersionQueryTranslator;
 import com.enonic.wem.repo.internal.search.SearchDao;
 import com.enonic.wem.repo.internal.search.SearchRequest;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.storage.result.SearchHits;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
-import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
+import com.enonic.wem.repo.internal.search.result.SearchHits;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
+import com.enonic.wem.repo.internal.version.search.NodeVersionDiffQuery;
+import com.enonic.wem.repo.internal.version.search.NodeVersionQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.Query;

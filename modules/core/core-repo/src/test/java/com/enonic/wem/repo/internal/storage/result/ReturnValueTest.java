@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.ReturnValue;
+
 import static org.junit.Assert.*;
 
 public class ReturnValueTest

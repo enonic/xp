@@ -48,7 +48,7 @@ import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContent
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchService;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;

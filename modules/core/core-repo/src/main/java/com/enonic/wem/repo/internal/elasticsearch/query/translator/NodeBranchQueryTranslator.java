@@ -2,14 +2,14 @@ package com.enonic.wem.repo.internal.elasticsearch.query.translator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.repo.internal.ReturnFields;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.FilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.search.SearchRequest;
-import com.enonic.wem.repo.internal.storage.ReturnFields;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 public class NodeBranchQueryTranslator

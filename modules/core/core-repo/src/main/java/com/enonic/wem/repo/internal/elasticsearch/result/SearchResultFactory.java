@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.result;
 import org.elasticsearch.action.search.SearchResponse;
 
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.AggregationsFactory;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 
 public class SearchResultFactory
 {

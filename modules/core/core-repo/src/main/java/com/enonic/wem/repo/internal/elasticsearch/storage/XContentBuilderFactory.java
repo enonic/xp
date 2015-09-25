@@ -9,7 +9,7 @@ import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 import com.enonic.wem.repo.internal.storage.StoreRequest;
 
-public class XContentBuilderFactory
+class XContentBuilderFactory
 
 {
     public static XContentBuilder create( final StoreRequest doc )

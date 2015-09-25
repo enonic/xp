@@ -196,7 +196,7 @@ class UpdatedAttachedBinariesResolver
     private class ReferenceResolver
         extends PropertyVisitor
     {
-        private Set<BinaryReference> binaryReferences = new LinkedHashSet<>();
+        private final Set<BinaryReference> binaryReferences = new LinkedHashSet<>();
 
         private ReferenceResolver()
         {

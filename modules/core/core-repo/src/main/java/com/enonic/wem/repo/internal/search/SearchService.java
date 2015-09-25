@@ -1,11 +1,11 @@
 package com.enonic.wem.repo.internal.search;
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQuery;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.storage.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
+import com.enonic.wem.repo.internal.version.search.NodeVersionDiffQuery;
+import com.enonic.wem.repo.internal.version.search.NodeVersionQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionQueryResult;

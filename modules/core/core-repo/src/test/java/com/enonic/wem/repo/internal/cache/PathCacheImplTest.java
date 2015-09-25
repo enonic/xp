@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.cache;
 import java.util.Collection;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
@@ -73,23 +72,6 @@ public class PathCacheImplTest
         cache.cache( a, "1" );
         cache.evict( a );
         assertNull( cache.get( a ) );
-    }
-
-
-    @Ignore
-    @Test
-    public void update_entry()
-        throws Exception
-    {
-        final PathCacheImpl cache = new PathCacheImpl();
-
-        cache.cache( createPath( "a" ), "2" );
-
-        cache.cache( createPath( "a/b" ), "2" );
-
-        cache.cache( createPath( "b" ), "2" );
-
-        assertTrue( cache.getChildren( createPath( "a" ) ).isEmpty() );
     }
 
     private CachePath createPath( final String path )

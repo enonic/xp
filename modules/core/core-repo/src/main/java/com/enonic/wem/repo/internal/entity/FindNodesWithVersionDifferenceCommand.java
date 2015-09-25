@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.search.SearchService;
-import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
+import com.enonic.wem.repo.internal.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.NodeVersionDiffResult;

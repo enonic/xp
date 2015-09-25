@@ -5,8 +5,8 @@ import java.util.Map;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.index.get.GetField;
 
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.ReturnValues;
+import com.enonic.wem.repo.internal.ReturnValues;
+import com.enonic.wem.repo.internal.storage.GetResult;
 
 public class GetResultFactory
 {

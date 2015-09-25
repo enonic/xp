@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.storage;
 
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;

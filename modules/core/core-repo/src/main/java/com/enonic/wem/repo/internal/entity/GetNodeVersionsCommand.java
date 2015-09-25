@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.search.SearchService;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
+import com.enonic.wem.repo.internal.version.search.NodeVersionQuery;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;

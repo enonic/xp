@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
 import com.enonic.wem.repo.internal.storage.StorageService;
-import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;

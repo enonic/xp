@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 
 import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.storage.BranchServiceImpl;
 import com.enonic.wem.repo.internal.storage.StorageDao;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;

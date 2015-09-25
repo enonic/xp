@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.search;
 
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 
 public interface SearchDao
 {

@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.search;
 
-import com.enonic.wem.repo.internal.storage.ReturnFields;
-import com.enonic.wem.repo.internal.storage.StorageSettings;
+import com.enonic.wem.repo.internal.ReturnFields;
+import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.security.PrincipalKeys;
 

@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.branch;
 
 import com.enonic.wem.repo.internal.InternalContext;
-import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersion;
-import com.enonic.wem.repo.internal.storage.branch.BranchNodeVersions;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersions;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;

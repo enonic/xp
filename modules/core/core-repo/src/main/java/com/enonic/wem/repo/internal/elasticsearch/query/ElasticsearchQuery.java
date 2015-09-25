@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.repo.internal.storage.ReturnFields;
+import com.enonic.wem.repo.internal.ReturnFields;
 
 public class ElasticsearchQuery
 {

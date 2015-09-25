@@ -2,15 +2,15 @@ package com.enonic.wem.repo.internal.elasticsearch.query.translator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.FilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.search.SearchRequest;
-import com.enonic.wem.repo.internal.storage.StorageSettings;
-import com.enonic.wem.repo.internal.version.NodeVersionQuery;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
+import com.enonic.wem.repo.internal.version.search.NodeVersionQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.filter.ValueFilter;

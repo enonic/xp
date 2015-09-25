@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.storage;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.xp.node.NodePath;
 
 public class StoreRequest

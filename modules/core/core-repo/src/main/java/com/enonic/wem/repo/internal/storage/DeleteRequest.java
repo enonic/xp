@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.storage;
 
+import com.enonic.wem.repo.internal.StorageSettings;
+
 public class DeleteRequest
 {
     private final String id;

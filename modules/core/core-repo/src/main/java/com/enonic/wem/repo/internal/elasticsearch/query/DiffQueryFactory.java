@@ -8,9 +8,9 @@ import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.storage.StorageType;
-import com.enonic.wem.repo.internal.storage.branch.BranchIndexPath;
-import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
+import com.enonic.wem.repo.internal.StorageType;
+import com.enonic.wem.repo.internal.branch.storage.BranchIndexPath;
+import com.enonic.wem.repo.internal.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;

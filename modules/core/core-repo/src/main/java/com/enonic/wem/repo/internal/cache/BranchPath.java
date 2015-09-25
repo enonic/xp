@@ -6,9 +6,9 @@ import com.enonic.xp.node.NodePath;
 public class BranchPath
     implements CachePath
 {
-    private Branch branch;
+    private final Branch branch;
 
-    private NodePath path;
+    private final NodePath path;
 
     public BranchPath( final Branch branch, final NodePath path )
     {

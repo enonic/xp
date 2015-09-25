@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.query.translator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
@@ -9,7 +10,6 @@ import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.Filte
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.search.SearchRequest;
-import com.enonic.wem.repo.internal.storage.StorageSettings;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;

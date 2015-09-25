@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.query.expr.ValueExpr;
 
-public abstract class AbstractFunctionArguments
+abstract class AbstractFunctionArguments
 {
     protected abstract int getMinArguments();
 
@@ -12,7 +12,7 @@ public abstract class AbstractFunctionArguments
 
     protected abstract String getFunctionName();
 
-    protected void verifyNumberOfArguments( final List<ValueExpr> arguments )
+    void verifyNumberOfArguments( final List<ValueExpr> arguments )
     {
         if ( arguments == null || arguments.size() < getMinArguments() || arguments.size() > getMaxArguments() )
         {

@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.storage;
 
-import com.enonic.wem.repo.internal.storage.result.GetResult;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 
 public interface StorageDao
 {

@@ -30,9 +30,9 @@ public class NodeManualOrderValueResolver
 
     public static class NodeIdOrderValue
     {
-        private Long manualOrderValue;
+        private final Long manualOrderValue;
 
-        private NodeId nodeId;
+        private final NodeId nodeId;
 
         public NodeIdOrderValue( final NodeId nodeId, final Long manualOrderValue )
         {

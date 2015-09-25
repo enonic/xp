@@ -7,7 +7,7 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.storage.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;

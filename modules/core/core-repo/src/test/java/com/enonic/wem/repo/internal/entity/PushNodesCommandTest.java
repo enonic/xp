@@ -264,7 +264,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        assertEquals( 2, result.getSuccessfull().getSize() );
+        assertEquals( 3, result.getSuccessfull().getSize() );
     }
 
 
