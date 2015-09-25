@@ -1022,12 +1022,14 @@ module api.ui.image {
                 console.log('ImageEditor.bindFocusMouseListeners');
             }
 
+            var mouseDownOriginalTarget;
             this.mouseDownListener = (event: MouseEvent) => {
 
                 if (ImageEditor.debug) {
                     console.log('ImageEditor.mouseDownListener');
                 }
 
+                mouseDownOriginalTarget = event['originalTarget'];
                 mouseDown = true;
                 lastPos = {
                     x: this.getOffsetX(event),
@@ -1058,6 +1060,16 @@ module api.ui.image {
                     if (ImageEditor.debug) {
                         console.log('ImageEditor.mouseUpListener');
                     }
+
+                    if (this.isOutside(event) && mouseDownOriginalTarget == event['originalTarget']) {
+                        if (ImageEditor.debug) {
+                            console.log('mouseUpListener, set to skip next click');
+                        }
+
+                        // mouse up will trigger click event that should not be processed
+                        this.skipNextOutsideClick = true;
+                    }
+
                     // allow focus positioning by clicking
                     var restrainedPos = {
                         x: this.restrainFocusX(this.getOffsetX(event)),
@@ -1099,15 +1111,15 @@ module api.ui.image {
         }
 
         private restrainFocusX(x: number) {
-            return Math.max(0, Math.min(this.cropData.w, this.frameW, x));
+            return Math.max(0, Math.min(this.cropData.w, x));
         }
 
         private restrainFocusY(y: number) {
-            return Math.max(0, Math.min(this.cropData.h, this.frameH, y));
+            return Math.max(0, Math.min(this.cropData.h, y));
         }
 
         private restrainFocusRadius(r: number) {
-            return Math.max(0, Math.min(this.frameW, this.frameH, this.cropData.w, this.cropData.h, r));
+            return Math.max(0, Math.min(this.cropData.w, this.cropData.h, r));
         }
 
         private isFocusNotModified(focus: FocusData): boolean {
