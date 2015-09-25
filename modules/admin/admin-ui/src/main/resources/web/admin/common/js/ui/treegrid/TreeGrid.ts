@@ -139,6 +139,9 @@ module api.ui.treegrid {
                         this.active = true;
                         this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
+                        if (!elem.hasClass("sort-dialog-trigger")) {
+                            new api.content.TreeGridItemClickedEvent().fire();
+                        }
                     }
                 }
                 if (this.contextMenu) {
@@ -271,6 +274,8 @@ module api.ui.treegrid {
                 this.notifySelectionChanged(event, rows.rows);
             });
 
+            this.onLoaded(() => this.grid.unmask());
+
             /* if (this.toolbar) {
              this.gridData.onRowCountChanged(() => {
              this.toolbar.refresh();
@@ -320,6 +325,14 @@ module api.ui.treegrid {
 
             return emptyNodesCount;
 
+        }
+
+        mask() {
+            this.grid.mask();
+        }
+
+        unmask() {
+            this.grid.unmask();
         }
 
         getGrid(): Grid<TreeNode<DATA>> {
@@ -594,12 +607,23 @@ module api.ui.treegrid {
         // Hard reset
 
         reload(parentNodeData?: DATA): void {
+            var expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
+                return item.isExpanded();
+            }).map((item) => {
+                return item.getDataId();
+            });
+
+            var selection = this.root.getCurrentSelection();
+
             this.root.resetCurrentRoot(parentNodeData);
             this.initData([]);
 
-            this.reloadNode()
+            this.grid.mask();
+            this.reloadNode(null, expandedNodesDataId)
                 .then(() => {
+                    this.root.setCurrentSelection(selection);
                     this.initData(this.root.getCurrentRoot().treeToList());
+                    this.updateExpanded();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
@@ -607,7 +631,7 @@ module api.ui.treegrid {
                 }).done(() => this.notifyLoaded());
         }
 
-        private reloadNode(parentNode?: TreeNode<DATA>): wemQ.Promise<void> {
+        private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>(),
                 promises = [];
@@ -620,11 +644,13 @@ module api.ui.treegrid {
 
                 dataList.forEach((data: DATA) => {
                     var child = this.dataToTreeNode(data, parentNode);
+                    var dataId = this.getDataId(data);
+                    child.setExpanded(this.expandAll || expandedNodesDataId.indexOf(dataId) > -1);
                     parentNode.addChild(child);
 
-                    if (parentNode.isExpanded() && this.hasChildren(data)) {
+                    if (child.isExpanded() && this.hasChildren(data)) {
                         hasNotEmptyChildren = true;
-                        promises.push(this.reloadNode(child));
+                        promises.push(this.reloadNode(child, expandedNodesDataId));
                     }
                 });
 
@@ -917,6 +943,7 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
                 } else {
+                    this.grid.mask();
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));

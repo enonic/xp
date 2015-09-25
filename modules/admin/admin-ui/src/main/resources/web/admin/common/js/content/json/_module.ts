@@ -22,4 +22,6 @@
 ///<reference path='ResolvedPublishRequestedContentJson.ts' />
 ///<reference path='ResolvePublishDependenciesResultJson.ts' />
 ///<reference path='ResolvePublishRequestedContentsResultJson.ts' />
+///<reference path='WidgetDescriptorJson.ts' />
+///<reference path='GetWidgetsByInterfaceResultJson.ts' />
 
