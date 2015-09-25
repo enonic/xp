@@ -300,7 +300,6 @@ module api.ui.uploader {
             } else {
                 this.setDropzoneVisible();
             }
-
             var results = this.getResultContainer().removeChildren();
 
             this.parseValues(value).forEach((val) => {
