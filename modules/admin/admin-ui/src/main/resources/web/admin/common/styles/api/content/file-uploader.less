@@ -1,0 +1,46 @@
+.file-uploader {
+
+  .uploader-wrapper {
+
+    padding-left: 2px;
+
+    .label-wrapper {
+      display: table-cell;
+      width: 100%;
+    }
+
+    .uploader {
+      display: table-cell;
+      width: 100%;
+      white-space: nowrap;
+
+      .progress-bar {
+        display: none;
+      }
+
+    }
+
+    &.empty {
+      .remove-button {
+        display: none;
+      }
+      .upload-text {
+        display: block;
+      }
+    }
+
+    &:not(.empty) {
+      .remove-button {
+        display: table-cell;
+      }
+      .upload-text {
+        display: none !important;
+      }
+    }
+
+    .media-uploader .result-container a {
+      line-height: inherit;
+    }
+  }
+
+}
