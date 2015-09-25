@@ -79,6 +79,8 @@ final class CreateContentCommand
             eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
             eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
 
+            nodeService.refresh();
+
             return createdContent;
         }
         catch ( NodeAlreadyExistAtPathException e )

@@ -61,7 +61,7 @@ import com.enonic.xp.repository.RepositoryId;
 public class ElasticsearchDaoImpl
     implements ElasticsearchDao
 {
-    private static final boolean DEFAULT_REFRESH = true;
+    private static final boolean DEFAULT_REFRESH = false;
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
@@ -135,7 +135,7 @@ public class ElasticsearchDaoImpl
             build().
             create();
 
-        //System.out.println( searchRequest.toString() );
+        //System.out.println( "######################\n\r" + searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
     }

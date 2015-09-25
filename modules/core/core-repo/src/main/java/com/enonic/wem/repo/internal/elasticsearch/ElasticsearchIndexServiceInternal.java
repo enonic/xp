@@ -12,7 +12,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
@@ -67,9 +66,7 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void refresh( final String... indexNames )
     {
-        this.client.admin().indices().refresh(
-            new RefreshRequestBuilder( this.client.admin().indices() ).setIndices( indexNames ).request() ).
-            actionGet();
+        client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
     }
 
     @Override

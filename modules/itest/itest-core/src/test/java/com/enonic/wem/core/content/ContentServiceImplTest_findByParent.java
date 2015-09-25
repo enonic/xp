@@ -2,10 +2,12 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.context.ContextAccessor;
 
 import static org.junit.Assert.*;
 
@@ -23,17 +25,14 @@ public class ContentServiceImplTest_findByParent
     public void root_content()
         throws Exception
     {
+        createContent( ContentPath.ROOT );
+        createContent( ContentPath.ROOT );
 
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT );
-
-        final FindContentByParentParams params = FindContentByParentParams.create().
+        final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
             parentPath( null ).
-            build();
-
-        final FindContentByParentResult result = contentService.findByParent( params );
+            build() );
 
         assertNotNull( result );
         assertEquals( 2, result.getTotalHits() );
@@ -185,26 +184,24 @@ public class ContentServiceImplTest_findByParent
     public void params_from_beyond()
         throws Exception
     {
-
         final Content parentContent = createContent( ContentPath.ROOT );
-        final Content content1 = createContent( parentContent.getPath() );
-        final Content content2 = createContent( parentContent.getPath() );
-        final Content content3 = createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
 
-        final ContentPath parentContentPath = parentContent.getPath();
+        refresh();
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ), "draft" );
+
+        final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 10 ).
-            parentPath( parentContentPath ).
-            build();
-
-        final FindContentByParentResult result = contentService.findByParent( params );
+            parentPath( parentContent.getPath() ).
+            build() );
 
         assertNotNull( result );
         assertEquals( 0, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertTrue( result.getContents().isEmpty() );
-
     }
 
     @Test

@@ -156,6 +156,11 @@ public class PushContentCommand
         {
             final NodeIds nodesToPush = NodeIds.from( result.getNodePublishRequests().getNodeIds() );
 
+            if ( nodesToPush.isEmpty() )
+            {
+                return;
+            }
+
             final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToPush ) ) );
 
             final boolean validContents = ensureValidContents( contents );

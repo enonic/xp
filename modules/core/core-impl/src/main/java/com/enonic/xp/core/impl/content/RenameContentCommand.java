@@ -60,6 +60,8 @@ final class RenameContentCommand
             build();
         eventPublisher.publish( event );
 
+        this.nodeService.refresh();
+
         return content;
     }
 

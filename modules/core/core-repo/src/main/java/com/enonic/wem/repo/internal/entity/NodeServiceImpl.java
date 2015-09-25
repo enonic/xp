@@ -413,7 +413,6 @@ public class NodeServiceImpl
         final Context context = ContextAccessor.current();
 
         this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) );
-        this.indexServiceInternal.refresh( IndexNameResolver.resolveStorageIndexName( context.getRepositoryId() ) );
     }
 
     @Override

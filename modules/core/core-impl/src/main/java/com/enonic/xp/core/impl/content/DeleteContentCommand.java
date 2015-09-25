@@ -49,6 +49,9 @@ final class DeleteContentCommand
             {
                 publishEvents( deletedContent );
             }
+
+            this.nodeService.refresh();
+
             return deletedContents;
         }
         catch ( NodeAccessException e )

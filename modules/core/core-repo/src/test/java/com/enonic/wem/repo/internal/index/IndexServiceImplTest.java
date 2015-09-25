@@ -113,6 +113,8 @@ public class IndexServiceImplTest
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
+        refresh();
+
         assertNotNull( queryForNode( node.id() ) );
         assertNotNull( queryForNode( rootNode.id() ) );
     }
@@ -154,6 +156,8 @@ public class IndexServiceImplTest
             initialize( false ).
             build() );
 
+        refresh();
+
         assertNotNull( queryForNode( node.id() ) );
         assertNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
 
@@ -162,6 +166,8 @@ public class IndexServiceImplTest
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
             initialize( true ).
             build() );
+
+        refresh();
 
         assertNull( queryForNode( node.id() ) );
         assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );

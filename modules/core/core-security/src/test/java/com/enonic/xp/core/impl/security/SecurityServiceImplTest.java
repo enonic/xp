@@ -773,6 +773,8 @@ public class SecurityServiceImplTest
                 password( "123456" ).
                 build();
 
+            refresh();
+
             final PrincipalQuery query = PrincipalQuery.create().userStore( UserStoreKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
@@ -780,6 +782,8 @@ public class SecurityServiceImplTest
             assertEquals( queryResult.getTotalSize(), 0 );
 
             final User user1 = securityService.createUser( createUser1 );
+
+            refresh();
 
             queryResult = securityService.query( query );
 

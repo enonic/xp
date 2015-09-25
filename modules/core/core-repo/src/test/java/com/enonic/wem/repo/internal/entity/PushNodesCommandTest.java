@@ -233,6 +233,42 @@ public class PushNodesCommandTest
     }
 
     @Test
+    public void push_deleted()
+        throws Exception
+    {
+        final Node parent = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "parent" ).
+            setNodeId( NodeId.from( "parent" ) ).
+            build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().
+            parent( parent.path() ).
+            name( "child1" ).
+            setNodeId( NodeId.from( "child1" ) ).
+            build() );
+
+        final Node child1_1 = createNode( CreateNodeParams.create().
+            parent( child1.path() ).
+            name( "child1_1" ).
+            setNodeId( NodeId.from( "child1_1" ) ).
+            build() );
+
+        refresh();
+
+        pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
+
+        doDeleteNode( parent.id() );
+
+        refresh();
+
+        final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
+
+        assertEquals( 2, result.getSuccessfull().getSize() );
+    }
+
+
+    @Test
     public void push_after_rename()
         throws Exception
     {

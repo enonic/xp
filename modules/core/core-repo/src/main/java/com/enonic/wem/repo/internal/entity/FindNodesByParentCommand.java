@@ -72,7 +72,11 @@ public class FindNodesByParentCommand
 
         if ( nodeQueryResult.getHits() == 0 )
         {
-            return FindNodesByParentResult.empty();
+            return FindNodesByParentResult.create().
+                hits( nodeQueryResult.getHits() ).
+                totalHits( nodeQueryResult.getTotalHits() ).
+                nodes( Nodes.empty() ).
+                build();
         }
 
         final Nodes nodes = this.storageService.get( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );

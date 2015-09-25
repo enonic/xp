@@ -29,9 +29,6 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        // Refresh needed, since we need to ensure that all children are searchable
-        nodeService.refresh();
-
         final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
 
         final Nodes nodes = result.getNodes();

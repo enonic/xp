@@ -5,11 +5,13 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeBranchQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeVersionDiffQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.NodeVersionQueryTranslator;
 import com.enonic.wem.repo.internal.search.SearchDao;
 import com.enonic.wem.repo.internal.search.SearchRequest;
+import com.enonic.wem.repo.internal.storage.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.storage.result.SearchHits;
 import com.enonic.wem.repo.internal.storage.result.SearchResult;
 import com.enonic.wem.repo.internal.version.NodeVersionDiffQuery;
@@ -29,6 +31,8 @@ public class ElasticsearchSearchDao
     private final NodeVersionQueryTranslator nodeVersionQueryTranslator = new NodeVersionQueryTranslator();
 
     private final NodeVersionDiffQueryTranslator nodeVersionDiffQueryTranslator = new NodeVersionDiffQueryTranslator();
+
+    private final NodeBranchQueryTranslator nodeBranchQueryTranslator = new NodeBranchQueryTranslator();
 
     @Override
     public SearchResult search( final SearchRequest searchRequest )
@@ -66,6 +70,11 @@ public class ElasticsearchSearchDao
         if ( query instanceof NodeVersionDiffQuery )
         {
             return nodeVersionDiffQueryTranslator.translate( searchRequest );
+        }
+
+        if ( query instanceof NodeBranchQuery )
+        {
+            return nodeBranchQueryTranslator.translate( searchRequest );
         }
 
         throw new UnsupportedOperationException( "Queries of type " + query.getClass() + " not implemented yes" );
