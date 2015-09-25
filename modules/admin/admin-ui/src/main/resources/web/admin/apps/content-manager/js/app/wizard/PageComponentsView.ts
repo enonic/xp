@@ -97,7 +97,6 @@ module app.wizard {
                     if(!event.getPosition()) {
                         this.scrollToItem(selectedItemId);
                     }
-
                 }
             });
 
@@ -380,6 +379,17 @@ module app.wizard {
                 this.contextMenu.setActions(contextMenuActions);
             }
 
+            this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
+                this.pageView.setDisabledContextMenu(true);
+            });
+
+            this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
+                setTimeout(() => {
+                    this.pageView.setDisabledContextMenu(false);
+                    this.contextMenu.getMenu().clearActionListeners();
+                }, 500);
+            });
+
             // show menu at position
             var x = clickPosition.x;
             var y = clickPosition.y;
@@ -400,7 +410,7 @@ module app.wizard {
         }
 
         private hideContextMenu() {
-            if (this.contextMenu) {
+            if (this.contextMenu && this.contextMenu.isVisible()) {
                 this.contextMenu.hide();
                 this.removeMenuOpenStyleFromMenuIcon();
             }
