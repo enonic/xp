@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.rest.resource.widget.json;
 
 import java.util.List;
 
-import com.enonic.xp.widget.WidgetDescriptor;
-import com.enonic.xp.widget.WidgetDescriptors;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptors;
 
 public final class WidgetDescriptorsJson
 {

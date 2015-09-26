@@ -5,9 +5,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.widget.WidgetDescriptor;
-import com.enonic.xp.widget.WidgetDescriptorService;
-import com.enonic.xp.widget.WidgetDescriptors;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
+import com.enonic.xp.admin.widget.WidgetDescriptors;
 
 
 public class WidgetDescriptorResourceTest

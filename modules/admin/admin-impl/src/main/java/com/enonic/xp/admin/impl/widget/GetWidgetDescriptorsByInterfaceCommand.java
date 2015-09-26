@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.widget;
+package com.enonic.xp.admin.impl.widget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.widget.WidgetDescriptor;
-import com.enonic.xp.widget.WidgetDescriptors;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptors;
 import com.enonic.xp.xml.XmlException;
 
 final class GetWidgetDescriptorsByInterfaceCommand

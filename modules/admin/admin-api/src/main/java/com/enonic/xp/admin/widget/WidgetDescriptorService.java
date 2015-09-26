@@ -1,4 +1,4 @@
-package com.enonic.xp.widget;
+package com.enonic.xp.admin.widget;
 
 import com.google.common.annotations.Beta;
 
@@ -6,5 +6,4 @@ import com.google.common.annotations.Beta;
 public interface WidgetDescriptorService
 {
     WidgetDescriptors getByInterface( final String interfaceName );
-
 }
