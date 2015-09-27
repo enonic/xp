@@ -41,18 +41,21 @@ public class ImportNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = GetNodeByPathCommand.create( this ).
+        final boolean exists = CheckNodeExistsCommand.create( this ).
             nodePath( this.importNode.path() ).
             build().
             execute();
 
-        if ( existingNode == null )
+        if ( !exists )
         {
             return createNode();
         }
         else
         {
-            return updateNode( existingNode );
+            return updateNode( GetNodeByPathCommand.create( this ).
+                nodePath( this.importNode.path() ).
+                build().
+                execute() );
         }
     }
 

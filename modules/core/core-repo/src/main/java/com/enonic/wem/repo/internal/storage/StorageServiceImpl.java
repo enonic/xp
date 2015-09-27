@@ -142,6 +142,14 @@ public class StorageServiceImpl
         return this.versionService.getVersion( versionId, context );
     }
 
+    @Override
+    public boolean exists( final NodePath nodePath, final InternalContext context )
+    {
+        final BranchNodeVersion branchNodeVersion = this.branchService.get( nodePath, context );
+
+        return branchNodeVersion != null;
+    }
+
     private Node doGetNode( final BranchNodeVersion branchNodeVersion )
     {
         if ( branchNodeVersion == null )
@@ -177,7 +185,7 @@ public class StorageServiceImpl
 
         this.indexServiceInternal.store( node, nodeVersionId, context );
 
-        return this.nodeDao.get( nodeVersionId );
+        return node;
     }
 
     private boolean canRead( final Node node )

@@ -11,5 +11,4 @@ public interface StorageDao
     GetResult getById( final GetByIdRequest request );
 
     SearchResult getByValues( final GetByValuesRequest request );
-
 }

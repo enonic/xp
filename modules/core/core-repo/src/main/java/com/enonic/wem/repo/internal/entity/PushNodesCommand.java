@@ -171,17 +171,10 @@ public class PushNodesCommand
 
         final Context targetContext = createTargetContext( currentContext );
 
-        final Node targetParent = targetContext.callWith( () -> GetNodeByPathCommand.create( this ).
+        return targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
             nodePath( node.parentPath() ).
             build().
             execute() );
-
-        if ( targetParent == null )
-        {
-            return false;
-        }
-
-        return true;
     }
 
     private Context createTargetContext( final Context currentContext )

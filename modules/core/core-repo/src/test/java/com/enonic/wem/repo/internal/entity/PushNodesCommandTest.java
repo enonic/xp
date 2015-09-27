@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -232,6 +233,7 @@ public class PushNodesCommandTest
         assertEquals( 2, result.getSuccessfull().getSize() );
     }
 
+    @Ignore
     @Test
     public void push_deleted()
         throws Exception

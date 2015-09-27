@@ -167,12 +167,12 @@ public final class DuplicateNodeCommand
         {
             final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
 
-            final Node foundNode = GetNodeByPathCommand.create( this ).
+            final boolean exists = CheckNodeExistsCommand.create( this ).
                 nodePath( checkIfExistsPath ).
                 build().
                 execute();
 
-            if ( foundNode == null )
+            if ( !exists )
             {
                 resolvedUnique = true;
             }

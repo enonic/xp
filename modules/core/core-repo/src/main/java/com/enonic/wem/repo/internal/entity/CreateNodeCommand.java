@@ -273,12 +273,12 @@ public final class CreateNodeCommand
 
         NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
 
-        final Node existingNode = GetNodeByPathCommand.create( this ).
+        final boolean exists = CheckNodeExistsCommand.create( this ).
             nodePath( nodePath ).
             build().
             execute();
 
-        if ( existingNode != null )
+        if ( exists )
         {
             throw new NodeAlreadyExistAtPathException( nodePath );
         }

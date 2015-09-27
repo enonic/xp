@@ -36,4 +36,6 @@ public interface StorageService
     BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 
     NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
+
+    boolean exists( final NodePath nodePath, final InternalContext context );
 }

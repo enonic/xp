@@ -128,7 +128,6 @@ public class ElasticsearchStorageDao
         return doSearchRequest( searchRequest, request.getTimeout(), request.getSearchPreference() );
     }
 
-
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder, final String timeout,
                                           final SearchPreference searchPreference )
     {
