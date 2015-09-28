@@ -787,10 +787,10 @@ public final class ContentResource
     @Path("locales")
     public LocaleListJson getLocales( @QueryParam("query") final String query )
     {
-        String trimmedQuery = query.trim();
         Locale[] locales = Locale.getAvailableLocales();
         if ( StringUtils.isNotBlank( query ) )
         {
+            String trimmedQuery = query.trim();
             locales = Arrays.stream( locales ).
                 filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), trimmedQuery ) ||
                     containsIgnoreCase( locale.getDisplayName( locale ), trimmedQuery ) ||
