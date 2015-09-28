@@ -34,7 +34,23 @@ module app.wizard {
             });
 
             DragHelper.get().setDropAllowed(true);
-            this.getDraggableItem().appendChild(DragHelper.get());
+
+            api.dom.Body.get().appendChild(DragHelper.get());
+            api.dom.Body.get().onMouseMove(this.handleHelperMove);
+
+            this.contentGrid.onMouseLeave(this.handleMouseLeave);
+            this.contentGrid.onMouseEnter(this.handleMouseEnter);
+        }
+
+
+        protected handleDragEnd(event: Event, data) {
+            api.dom.Body.get().unMouseMove(this.handleHelperMove);
+            api.dom.Body.get().removeChild(DragHelper.get());
+
+            this.contentGrid.unMouseLeave(this.handleMouseLeave);
+            this.contentGrid.unMouseEnter(this.handleMouseEnter);
+
+            super.handleDragEnd(event, data);
         }
 
         protected handleBeforeMoveRows(event: Event, data): boolean {
@@ -192,6 +208,20 @@ module app.wizard {
         private getRowByTarget(el: ElementHelper): ElementHelper {
 
             return (el && el.hasClass("slick-row")) ? el : this.getRowByTarget(el.getParent());
+        }
+
+        private handleMouseLeave() {
+            DragHelper.get().setVisible(false);
+        }
+
+        private handleMouseEnter() {
+            DragHelper.get().setVisible(true);
+        }
+
+
+        private handleHelperMove(event: MouseEvent) {
+            DragHelper.get().getEl().setLeftPx(event.pageX);
+            DragHelper.get().getEl().setTopPx(event.pageY);
         }
 
     }
