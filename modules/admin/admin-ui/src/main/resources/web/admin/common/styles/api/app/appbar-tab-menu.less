@@ -1,0 +1,187 @@
+.appbar-tab-menu {
+  .flexbox();
+  flex-flow: row no-wrap;
+  align-items: stretch;
+  align-content: stretch;
+
+  .flex(1 1 100%);
+  .order(2);
+
+  position: static;
+  margin: 0;
+
+  color: @admin-font-gray3;
+
+  a {
+    padding-left: 10px;
+  }
+
+  .tab-menu-button {
+    .flex(0 0 36px);
+    position: relative; // to position popup menu relative to me
+    display: block;
+    max-width: 360px;
+    padding: 6px;
+    background: @admin-bg-light-gray;
+    font-size: 13px;
+    line-height: 28px;
+    font-family: @admin-font-family;
+    color: @admin-font-gray3;
+    border-left: 1px solid @admin-dark-gray-border;
+    cursor: pointer;
+    overflow: hidden;
+
+    .notSelectable();
+
+    &:before {
+      display: none;
+    }
+
+    .label {
+      max-width: 300px;
+      display: block;
+      margin: 0 30px;
+      .ellipsis();
+    }
+
+    &:hover{
+      background-color: @admin-white;
+    }
+  }
+
+  .tab-menu-button, ul.bar li {
+    margin-top: 8px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  ul.bar, ul.menu {
+    .tab-menu-item {
+      position: relative;
+      overflow: hidden;
+      height: 26px;
+      line-height: 28px;
+      padding: 5px;
+      background: @admin-bg-light-gray;
+      font-size: 13px;
+      color: @admin-font-gray3;
+      cursor: pointer;
+
+      &.invalid .label:before {
+        display: inline-block;
+        content: "!";
+        width: 16px;
+        height: 16px;
+        padding: 2px;
+        margin: -3px 6px 0px 0px;
+        line-height: 16px;
+        border-radius: 10px;
+        background: @admin-red;
+        color: @admin-white;
+        font-size: 14px;
+        z-index: 1;
+        text-align: center;
+      }
+
+      &.invalid .label.unnamed {
+        margin: 0 30px 0 4px;
+      }
+
+      &.active {
+        background-color: @admin-white;
+      }
+
+      &:hover{
+        background-color: @admin-white;
+      }
+
+      * {
+        vertical-align: top;
+      }
+
+      .label {
+        max-width: 290px;
+        margin: 0 30px 0 10px;
+        display: block;
+        .ellipsis();
+      }
+
+      button {
+        position: absolute;
+        top: 7px;
+        right: 5px;
+        height: 20px;
+        width: 20px;
+        padding: 0px;
+        border-radius: 11px;
+        border: 0;
+        cursor: pointer;
+        background-color: transparent;
+        font-size: 20px;
+        .icon-close2();
+
+        span {
+          display: none;
+        }
+
+        &:before {
+          color: @admin-font-gray3;
+        }
+
+        &:hover, &:focus {
+          background-color: @admin-shadow-gray;
+          &:before {
+            color: @admin-bg-almost-white;
+          }
+        }
+      }
+    }
+  }
+
+  ul.bar {
+    .flexbox();
+    flex-flow: row no-wrap;
+    align-items: stretch;
+    align-content: stretch;
+
+    .flex(1 1 100%);
+
+    min-width: 100px; // firefox fix
+
+    background: transparent;
+    position: static;
+    padding: 0;
+    top: 0;
+    left: 0;
+
+    .box-shadow(none);
+
+    .tab-menu-item {
+      .flex(0 1 190px);
+      height: initial;
+      border-bottom: 1px solid @admin-dark-gray-border;
+      &:not(:last-child) {
+        border-right: 1px solid @admin-dark-gray-border;
+      }
+
+      &.active {
+        border-bottom: none;
+      }
+    }
+  }
+
+  ul.menu {
+    position: absolute;
+    top: 44px;
+    right: 64px;
+    left: initial;
+    width: auto;
+    padding: 5px 0;
+    margin: 0px;
+    min-width: 190px;
+    max-width: 360px;
+    background: @admin-bg-light-gray;
+    .material-layer-shadow();
+  }
+
+}

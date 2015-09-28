@@ -1,0 +1,12 @@
+///<reference path='CloseAction.ts' />
+///<reference path='DeleteAction.ts' />
+///<reference path='EditAction.ts' />
+///<reference path='ContentItemViewToolbar.ts' />
+///<reference path='ContentItemPreviewPanel.ts' />
+///<reference path='ContentVersionsTreeGrid.ts' />
+///<reference path='AllContentVersionsTreeGrid.ts' />
+///<reference path='ActiveContentVersionsTreeGrid.ts' />
+///<reference path='ContentItemVersionsPanel.ts' />
+///<reference path='ContentItemStatisticsPanel.ts' />
+///<reference path='ContentItemViewPanel.ts' />
+///<reference path='MobileContentItemStatisticsPanel.ts' />

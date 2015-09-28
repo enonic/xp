@@ -9,7 +9,7 @@ configurations {
 
 dependencies {
     lib project( ':launcher' )
-    toolbox project( ':toolbox' )
+    toolbox project( ':tools:toolbox' )
 }
 
 ext {
@@ -17,12 +17,13 @@ ext {
     bundlesDir = "$installDir/system"
     bundlesFile = "$projectDir/src/system/bundles.xml"
     archiveBase = "enonic-xp-$version"
+    leafProjects = rootProject.subprojects.findAll { p -> p.subprojects.empty }
 }
 
 def getProjectMappings()
 {
     def map = [:]
-    project.rootProject.subprojects.each {
+    leafProjects.each {
         map["${it.group}:${it.name}:${it.version}"] = it
     }
     return map
@@ -116,7 +117,7 @@ task distZip( type: Zip, dependsOn: installDist ) {
     into archiveBase
 }
 
-def javadocProjects = project.parent.subprojects.findAll { project -> project.name.endsWith( '-api' ) }
+def javadocProjects = leafProjects.findAll { project -> project.name.endsWith( '-api' ) }
 
 task javadoc( type: Javadoc ) {
     source javadocProjects.collect { project -> project.sourceSets.main.allJava }

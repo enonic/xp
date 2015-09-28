@@ -1,0 +1,38 @@
+.item-statistics-panel {
+  height: 100%;
+
+  .header {
+    margin: 7px 10px 10px;
+    .clearfix();
+
+    img {
+      float: left;
+      margin-right: 10px;
+      width: 40px;
+      height: 40px;
+    }
+
+    h1 {
+      .ellipsis();
+      margin-right: 150px;
+    }
+
+    img + h1 {
+      margin-left: 50px;
+    }
+  }
+
+  .tab-menu {
+    position: absolute;
+    right: 10px;
+    top: 50px;
+  }
+
+  & > .deck-panel {
+    height: 100%;
+
+    & > .panel {
+      height: 100%
+    }
+  }
+}

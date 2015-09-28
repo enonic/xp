@@ -1,0 +1,29 @@
+.content-tree-grid {
+  .grid .slick-row {
+    .modified, .status {
+      text-align: right;
+      padding-right: 25px;
+      font-size: 0.9em;
+    }
+    .status {
+      text-overflow: clip;
+      padding-left: 0px;
+    }
+  }
+
+  .icon-menu3, .icon-arrow-down4, .icon-arrow-up4 {
+    line-height: 37px;
+  }
+
+  .slick-cell {
+    &:not(.selected) {
+      &.status .equal {
+        color: @admin-green;
+      }
+    }
+
+    &.order .sort-dialog-trigger:before {
+      margin-left: 6px;
+    }
+  }
+}

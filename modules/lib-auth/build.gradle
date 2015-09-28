@@ -1,5 +1,0 @@
-dependencies {
-    provided project( ':core-api' )
-    provided project( ':script-api' )
-    testCompile project( ':testing' )
-}

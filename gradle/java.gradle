@@ -16,7 +16,7 @@ compileTestJava {
 }
 
 configurations {
-    testOutput.extendsFrom( testCompile )
+    testOutput.extendsFrom testRuntime
 }
 
 dependencies {

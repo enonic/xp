@@ -1,0 +1,77 @@
+.mask {
+  .reset(true);
+
+  position: absolute;
+  background-color: black;
+  display: none;
+  z-index: @z-index-mask;
+  .opacity(0.5);
+
+  .mask-splash {
+    position: absolute;
+    padding: 10px;
+    left: 50%;
+    top: 50%;
+    display: none;
+
+    .spinner {
+      position: static;
+      float: left;
+      top: 0;
+      left: 0;
+      font-family: 'live-edit-font-icon';
+      font-size: 48px;
+      line-height: 1em;
+      width: 48px;
+      height: 48px;
+      .animation(rotate360, .5s, 0s, linear);
+
+      &:before {
+        content: "\e007";
+      }
+    }
+
+    .text {
+      margin-left: 10px;
+      color: @admin-black;
+      line-height: 48px; // equal to that of the spinner animation
+    }
+  }
+
+  &.body-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+
+  &.load-mask {
+    background-color: white;
+  }
+
+  &.drag-mask {
+    top: 0;
+    left: 0;
+    background-color: white;
+  }
+
+  &.opaque {
+    .opacity(1);
+  }
+
+  &.small {
+    .mask-splash {
+      .spinner {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      .text {
+        line-height: 24px;
+      }
+
+    }
+  }
+}

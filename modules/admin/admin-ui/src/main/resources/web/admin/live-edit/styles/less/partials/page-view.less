@@ -1,0 +1,80 @@
+.page-view {
+
+  &.empty {
+    // placeholder should occupy whole page when empty
+    & > .page-placeholder {
+      height: 100%;
+      margin: 0;
+
+      .dropdown {
+        top: 50%;
+        margin-top: -18px;
+      }
+
+      .page-placeholder-info {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 35%;
+
+        .page-placeholder-info-line1 {
+          font-size: 22px;
+          color: @admin-dark-gray;
+          margin-bottom: 10px;
+        }
+
+        .page-placeholder-info-line2 {
+          font-size: 14px;
+          color: @admin-font-gray1;
+        }
+      }
+    }
+  }
+
+  &.text-edit-mode {
+
+    .text-edit-toolbar {
+      display: block;
+    }
+  }
+
+  & > .text-edit-toolbar {
+    .reset(true);
+
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: @z-index-shader;
+    text-align: center;
+
+    .wrapper {
+      .opacity(.9);
+      .material-layer-shadow();
+      .border-radius(0 0 13px 13px);
+
+      line-height: 24px;
+      padding: 10px 10px 10px 16px;
+      display: inline-block;
+      color: @admin-almost-white;
+      background: @admin-bg-dark-gray;
+      font-size: 14px;
+
+      .close-button {
+        .button(@admin-font-gray2, transparent, @admin-almost-white, transparent);
+        padding: 0;
+        margin-left: 5px;
+        float: right;
+      }
+    }
+  }
+
+}
+
+.page-placeholder {
+
+  &:before {
+    content: "\e004";
+  }
+}

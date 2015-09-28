@@ -1,7 +1,0 @@
-dependencies {
-    provided project( ':core-api' )
-    provided project( ':web-api' )
-    provided project( ':portal-api' )
-    compile( 'org.thymeleaf:thymeleaf:2.1.4.RELEASE' )
-    testCompile project( ':testing' )
-}
