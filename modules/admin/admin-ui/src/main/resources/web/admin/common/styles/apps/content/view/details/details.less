@@ -108,6 +108,29 @@
     display: none;
   }
 
+  &.no-selection {
+    .no-selection-message {
+      display: block;
+    }
+  }
+
+  .no-selection-message {
+    display: none;
+
+    font-size: 16px;
+    font-family: "Open Sans", sans-serif;
+    color: lightgray;
+    top: 50%;
+    text-align: center;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+  }
+
+
   .details-container {
     position: absolute;
     overflow-y: scroll;
@@ -118,6 +141,10 @@
 
     .content-item-versions-panel .tab-bar .tab-bar-item {
       padding: 10px 15px 7px;
+    }
+
+    .content-item-versions-panel .slick-cell span.icon:empty {
+      display: none;
     }
   }
 
@@ -157,7 +184,7 @@
       display: inline-block;
       font-size: 16px;
       float: left;
-      padding: 9px 12px 9px 11px;
+      padding: 9px 12px 8px 11px;
       border: 1px solid #cccccc;
       border-right: 0px;
       box-sizing: border-box;

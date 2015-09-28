@@ -160,6 +160,7 @@ module app.browse {
         private initDetailsPanel() {
             this.detailsPanel = DetailsPanel.create().build();
 
+            this.detailsPanel.makeLookEmpty();
             var action = new app.view.detail.DetailsPanelToggleAction(this.detailsPanel);
             var actionButton = new DetailsPanelToggleButton(action);
 
@@ -167,11 +168,11 @@ module app.browse {
                 var browseItems: api.app.browse.BrowseItem<ContentSummary>[] = this.getBrowseItemPanel().getItems();
                 if (browseItems.length == 1) {
                     var item: api.app.view.ViewItem<ContentSummary> = browseItems[0].toViewItem();
+                    this.detailsPanel.unMakeLookEmpty();
                     this.detailsPanel.setItem(item);
                     action.setEnabled(true);
                 } else {
-                    this.detailsPanel.slideOut();
-                    actionButton.disable();
+                    this.detailsPanel.makeLookEmpty();
                 }
             });
 
