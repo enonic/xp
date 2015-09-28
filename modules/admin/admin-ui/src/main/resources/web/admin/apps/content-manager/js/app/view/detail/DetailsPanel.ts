@@ -21,6 +21,7 @@ module app.view.detail {
         private splitter: api.dom.DivEl;
         private ghostDragger: api.dom.DivEl;
         private mask: api.ui.mask.DragMask;
+        private divForNoSelection: api.dom.DivEl;
 
         private actualWidth: number;
         private minWidth: number = 280;
@@ -74,10 +75,19 @@ module app.view.detail {
             this.initNameAndIconView(builder.getUseNameAndIconView());
             this.initDefaultWidget();
             this.initCommonWidgetsViews();
+            this.initDivForNoSelection();
+
             this.getAndInitCustomWidgetsViews().done(() => {
                 this.initWidgetsSelectionRow();
             });
             this.appendChild(this.detailsContainer)
+            this.appendChild(this.divForNoSelection);
+        }
+
+        private initDivForNoSelection() {
+            this.divForNoSelection = new api.dom.DivEl("no-selection-message");
+            this.divForNoSelection.getEl().setInnerHtml("You are wasting this space - select something!");
+            this.appendChild(this.divForNoSelection);
         }
 
         private initWidgetsSelectionRow() {
@@ -343,6 +353,7 @@ module app.view.detail {
             }
             this.detailsContainer.setVisible(false);
             this.nameAndIconView.setVisible(false);
+            this.addClass("no-selection");
         }
 
         unMakeLookEmpty() {
@@ -351,6 +362,7 @@ module app.view.detail {
             }
             this.detailsContainer.setVisible(true);
             this.nameAndIconView.setVisible(true);
+            this.removeClass("no-selection");
         }
 
         private slideInRight() {
@@ -487,7 +499,6 @@ module app.view.detail {
 
             this.detailsPanel = detailsPanel;
 
-            this.setEnabled(false);
             this.onExecuted(() => {
                 this.expanded = !this.expanded;
                 if (this.expanded) {
