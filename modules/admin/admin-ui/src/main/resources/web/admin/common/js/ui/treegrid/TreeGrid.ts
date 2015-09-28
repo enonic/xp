@@ -25,6 +25,8 @@ module api.ui.treegrid {
      */
     export class TreeGrid<DATA> extends api.ui.panel.Panel {
 
+        public static LEVEL_STEP_INDENT: number = 16;
+
         private columns: GridColumn<DATA>[] = [];
 
         private gridOptions: GridOptions<DATA>;
@@ -296,7 +298,7 @@ module api.ui.treegrid {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
-                    toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
+                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + "px");
 
                     return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
                 };
@@ -933,7 +935,7 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>) {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false) {
             node = node || this.root.getCurrentRoot();
 
             if (node) {
@@ -942,6 +944,11 @@ module api.ui.treegrid {
                 if (node.hasChildren()) {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
+                    if (expandAll) {
+                        node.getChildren().forEach((child: TreeNode<DATA>) => {
+                            this.expandNode(child);
+                        });
+                    }
                 } else {
                     this.grid.mask();
                     this.fetchData(node)
@@ -949,6 +956,11 @@ module api.ui.treegrid {
                             node.setChildren(this.dataToTreeNodes(dataList, node));
                             this.initData(this.root.getCurrentRoot().treeToList());
                             this.updateExpanded();
+                            if (expandAll) {
+                                node.getChildren().forEach((child: TreeNode<DATA>) => {
+                                    this.expandNode(child);
+                                });
+                            }
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
