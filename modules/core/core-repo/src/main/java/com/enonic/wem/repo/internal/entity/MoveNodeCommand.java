@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -127,7 +128,8 @@ public class MoveNodeCommand
 
         final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
             params( FindNodesByParentParams.create().
-                parentId( persistedNode.id() ).
+                parentPath( persistedNode.path() ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
                 build() ).
             searchService( this.searchService ).
             build().
@@ -181,22 +183,17 @@ public class MoveNodeCommand
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
     {
-        final Node nodeAtNewPath = getNodeAtNewPath( newParentPath, newNodeName );
+        final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
 
-        if ( nodeAtNewPath != null )
-        {
-            throw new NodeAlreadyExistAtPathException( nodeAtNewPath.path() );
-        }
-    }
-
-    private Node getNodeAtNewPath( final NodePath newParentNodePath, final NodeName newNodeName )
-    {
-        final NodePath newNodePath = NodePath.create( newParentNodePath, newNodeName.toString() ).build();
-
-        return GetNodeByPathCommand.create( this ).
+        final boolean exists = CheckNodeExistsCommand.create( this ).
             nodePath( newNodePath ).
             build().
             execute();
+
+        if ( exists )
+        {
+            throw new NodeAlreadyExistAtPathException( newParentPath );
+        }
     }
 
     public static Builder create()
@@ -208,7 +205,6 @@ public class MoveNodeCommand
     {
         return new Builder( source );
     }
-
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
