@@ -73,7 +73,7 @@ public class FindNodesByParentParams
 
         private NodeId parentId;
 
-        private Integer size = 10;
+        private Integer size = -1;
 
         private Integer from = 0;
 
