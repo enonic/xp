@@ -54,8 +54,6 @@ module app.browse {
 
             this.toolbar = new ContentBrowseToolbar(this.browseActions);
 
-            this.contentTreeGridMask = new api.ui.mask.LoadMask(this.contentTreeGrid);
-
             this.detailsPanelForLargeScreens = DetailsPanel.create().setUseSplitter(false).build();
 
             super({
@@ -70,8 +68,6 @@ module app.browse {
                 if (this.isVisible()) {
                     this.contentTreeGrid.mask();
                 }
-
-                this.contentTreeGridMask.show();
             };
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
