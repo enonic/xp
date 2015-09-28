@@ -197,11 +197,13 @@ final class QueryAggregationParams
         final String fieldName = (String) paramsMap.get( "field" );
         final String interval = (String) paramsMap.getOrDefault( "interval", "" );
         final Long mindDocCount = getLong( paramsMap, "minDocCount" );
+        final String format = (String) paramsMap.get( "format" );
 
         return DateHistogramAggregationQuery.create( name ).
             fieldName( fieldName ).
             interval( interval ).
-            minDocCount( mindDocCount );
+            minDocCount( mindDocCount ).
+            format( format );
     }
 
     private NumericRangeAggregationQuery.Builder numericRangeAggregationFromParams( final String name, final Map<String, Object> paramsMap )
@@ -225,6 +227,7 @@ final class QueryAggregationParams
     private DateRangeAggregationQuery.Builder dateRangeAggregationFromParams( final String name, final Map<String, Object> paramsMap )
     {
         final String fieldName = (String) paramsMap.get( "field" );
+        final String format = (String) paramsMap.get( "format" );
         final List<Map<String, Object>> rangeListParams = (List<Map<String, Object>>) paramsMap.getOrDefault( "ranges", emptyList() );
         final List<DateRange> ranges = new ArrayList<>();
         for ( Map<String, Object> rangeParams : rangeListParams )
@@ -237,7 +240,8 @@ final class QueryAggregationParams
 
         return DateRangeAggregationQuery.create( name ).
             fieldName( fieldName ).
-            setRanges( ranges );
+            setRanges( ranges ).
+            format( format );
     }
 
     private GeoDistanceAggregationQuery.Builder geoDistanceAggregationFromParams( final String name, final Map<String, Object> params )
