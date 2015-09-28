@@ -11,17 +11,12 @@ module api.content.form.inputtype.upload {
         extensions: string;
     }
 
-    export interface FileUploaderConfig {
-        hideDropZone: boolean;
-        allowTypes: FileUploaderConfigAllowType[];
-    }
-
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
-        private config: api.content.form.inputtype.ContentInputTypeViewContext<FileUploaderConfig>;
+        private config: api.content.form.inputtype.ContentInputTypeViewContext;
         private uploader: api.content.MediaUploader;
         private uploaderWrapper: api.dom.DivEl;
 
-        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<FileUploaderConfig>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config, "file-uploader");
             this.config = config;
         }
@@ -104,7 +99,7 @@ module api.content.form.inputtype.upload {
                 var fileName = content.getName();
                 this.uploader.setFileName(fileName.toString());
 
-                var fileNameValue = ValueTypes.STRING.newValue(fileName);
+                var fileNameValue = ValueTypes.STRING.newValue(fileName.toString());
                 switch (property.getType()) {
                 case ValueTypes.DATA:
                     property.getPropertySet().setProperty('attachment', 0, fileNameValue);
@@ -191,7 +186,7 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploader(): api.content.MediaUploader {
-            var allowTypes = this.config.inputConfig.allowTypes.map((allowType) => {
+            var allowTypes = (<any>(this.config.inputConfig)).allowTypes.map((allowType: FileUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
             return new api.content.MediaUploader({
@@ -205,7 +200,7 @@ module api.content.form.inputtype.upload {
                 showCancel: false,
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDropZone: !!this.config.inputConfig.hideDropZone,
+                hideDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true
             });
         }
