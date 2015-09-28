@@ -79,7 +79,7 @@ public class ContentServiceImplTest_push
 
         final PushContentsResult pushWithDeleted = this.contentService.push( pushParams );
 
-        assertEquals( 1, pushWithDeleted.getDeleted().getSize() );
+        assertEquals( 1, pushWithDeleted.getPushedContent().getSize() );
     }
 
     @Test
@@ -88,9 +88,7 @@ public class ContentServiceImplTest_push
     {
         final PushContentsResult result = doPushWithDependencies( false );
 
-        assertEquals( 2, result.getPushContentRequests().getPushedBecauseParentOfPusheds().size() );
-        assertEquals( 1, result.getPushContentRequests().getPushBecauseRequested().size() );
-        assertEquals( 1, result.getPushContentRequests().getPushedBecauseReferredTos().size() );
+        assertEquals( 4, result.getPushedContent().getSize() );
     }
 
     @Test

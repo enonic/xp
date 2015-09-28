@@ -11,12 +11,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PushContentRequests;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 
 public class ResolvePublishDependenciesResultJsonFactory
 {
-
     private final ResolvePublishDependenciesResult resolvedPublishDependencies;
 
     private final ContentIconUrlResolver iconUrlResolver;
@@ -27,7 +25,6 @@ public class ResolvePublishDependenciesResultJsonFactory
 
     private ResolvePublishDependenciesResultJsonFactory( final Builder builder )
     {
-
         this.resolvedPublishDependencies = builder.resolvedPublishDependencies;
         this.iconUrlResolver = builder.iconUrlResolver;
         this.resolvedContents = builder.resolvedContents;
@@ -36,33 +33,20 @@ public class ResolvePublishDependenciesResultJsonFactory
 
     public ResolvePublishDependenciesResultJson createJson()
     {
-
-        final PushContentRequests pushContentRequests = resolvedPublishDependencies.getPushContentRequests();
-
-        final ContentIds dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
-
-        final ContentIds childrenContentIds = pushContentRequests.getChildrenContentIds( true, true );
-
-        final List<ResolvedDependencyContent> dependenciesContents = populateResultList( dependantsContentIds, childrenContentIds );
+        final List<ResolvedDependencyContent> dependenciesContents = populateResultList( resolvedPublishDependencies.contentIds() );
 
         sortResults( dependenciesContents );
 
         return new ResolvePublishDependenciesResultJson( dependenciesContents );
     }
 
-    private List<ResolvedDependencyContent> populateResultList( final ContentIds dependantsContentIds, final ContentIds childrenContentIds )
+    private List<ResolvedDependencyContent> populateResultList( final ContentIds contentIds )
     {
-
         final List<ResolvedDependencyContent> resolvedContentList = new ArrayList<>();
 
-        for ( final ContentId dependantContentId : dependantsContentIds )
+        for ( final ContentId dependantContentId : contentIds )
         {
-            resolvedContentList.add( buildResolvedDependencyContent( dependantContentId, false ) );
-        }
-
-        for ( final ContentId childContentId : childrenContentIds )
-        {
-            resolvedContentList.add( buildResolvedDependencyContent( childContentId, true ) );
+            resolvedContentList.add( buildResolvedDependencyContent( dependantContentId, true ) );
         }
 
         return resolvedContentList;
@@ -70,7 +54,6 @@ public class ResolvePublishDependenciesResultJsonFactory
 
     private ResolvedDependencyContent buildResolvedDependencyContent( final ContentId dependencyContentId, final boolean isChild )
     {
-
         final Content resolvedContent = getResolvedContent( dependencyContentId );
 
         return ResolvedDependencyContent.create().

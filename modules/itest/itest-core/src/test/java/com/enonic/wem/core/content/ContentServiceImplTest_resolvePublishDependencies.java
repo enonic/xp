@@ -53,7 +53,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
                 target( WS_OTHER ).
                 build() );
 
-        assertEquals( 1, result.getPushContentRequests().getPushBecauseRequested().size() );
+        assertEquals( 1, result.contentIds().getSize() );
     }
 
 

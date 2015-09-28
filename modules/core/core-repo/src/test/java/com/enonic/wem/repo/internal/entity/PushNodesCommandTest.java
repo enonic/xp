@@ -230,7 +230,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        assertEquals( 2, result.getSuccessfull().getSize() );
+        assertEquals( 2, result.getSuccessful().getSize() );
     }
 
     @Ignore
@@ -266,7 +266,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( parent.id(), child1.id() ), WS_OTHER );
 
-        assertEquals( 3, result.getSuccessfull().getSize() );
+        assertEquals( 3, result.getSuccessful().getSize() );
     }
 
 
@@ -331,7 +331,7 @@ public class PushNodesCommandTest
             pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
                        WS_OTHER );
 
-        assertEquals( 7, result.getSuccessfull().getSize() );
+        assertEquals( 7, result.getSuccessful().getSize() );
     }
 
 

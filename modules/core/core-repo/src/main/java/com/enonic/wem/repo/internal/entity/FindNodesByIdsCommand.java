@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
@@ -42,6 +43,7 @@ public class FindNodesByIdsCommand
                 build() ).
             addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
             setOrderExpressions( this.orderExpressions ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build(), InternalContext.from( ContextAccessor.current() ) );
 
         final NodeIds nodeIds = result.getNodeIds();

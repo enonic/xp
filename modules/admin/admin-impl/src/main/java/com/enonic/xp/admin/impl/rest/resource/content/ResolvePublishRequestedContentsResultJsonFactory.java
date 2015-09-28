@@ -8,25 +8,19 @@ import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PushContentRequests;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 
 public class ResolvePublishRequestedContentsResultJsonFactory
 {
-
     private final Contents resolvedContents;
 
     private final CompareContentResults compareContentResults;
-
-    private final ResolvePublishDependenciesResult resolvedPublishDependencies;
 
     private final ContentIconUrlResolver iconUrlResolver;
 
     private ResolvePublishRequestedContentsResultJsonFactory( final Builder builder )
     {
-        this.resolvedPublishDependencies = builder.resolvedPublishDependencies;
         this.resolvedContents = builder.resolvedContents;
         this.compareContentResults = builder.compareContentResults;
         this.iconUrlResolver = builder.iconUrlResolver;
@@ -45,18 +39,14 @@ public class ResolvePublishRequestedContentsResultJsonFactory
     {
         final List<ResolvedContent.ResolvedRequestedContent> resolvedContentList = new ArrayList<>();
 
-        final PushContentRequests pushContentRequests = resolvedPublishDependencies.getPushContentRequests();
-
-        final ContentIds requestedContentIds = pushContentRequests.getRequestedContentIds( true );
-
-        for ( final ContentId requestedContentId : requestedContentIds )
+        for ( final Content requestedContent : resolvedContents )
         {
-            int numberOfChildren = getNumberOfChildren( pushContentRequests, requestedContentId );
+            int numberOfChildren = this.resolvedContents.getSize();
 
-            int dependants = getNumberOfDependants( pushContentRequests, requestedContentId );
+            int dependants = this.resolvedContents.getSize();
 
-            final Content content = getResolvedContent( requestedContentId );
-
+            // final Content content = getResolvedContent( requestedContentId );
+/*
             resolvedContentList.add( ResolvedContent.ResolvedRequestedContent.create().
                 childrenCount( numberOfChildren ).
                 dependantsCount( dependants ).
@@ -64,6 +54,7 @@ public class ResolvePublishRequestedContentsResultJsonFactory
                 compareStatus( getCompareStatus( requestedContentId ) ).
                 iconUrl( iconUrlResolver.resolve( content ) ).
                 build() );
+  */
         }
 
         return resolvedContentList;
@@ -79,41 +70,6 @@ public class ResolvePublishRequestedContentsResultJsonFactory
         }
 
         return content;
-    }
-
-    private int getNumberOfDependants( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
-    {
-        final ContentIds dependantsContentIds = pushContentRequests.getDependantsContentIds( true, true );
-
-        return countTriggeredContents( resolvedPublishContentId, dependantsContentIds );
-    }
-
-    private int getNumberOfChildren( final PushContentRequests pushContentRequests, final ContentId resolvedPublishContentId )
-    {
-        final ContentIds pushedBecauseChildOfContentIds = pushContentRequests.getChildrenContentIds( true, true );
-
-        return countTriggeredContents( resolvedPublishContentId, pushedBecauseChildOfContentIds );
-    }
-
-    /**
-     * Count number of contents that were resolved due to given initial contentId.
-     *
-     * @param initialContentId
-     * @param resolvedDependantsOrChildren
-     * @return
-     */
-    private int countTriggeredContents( final ContentId initialContentId, final ContentIds resolvedDependantsOrChildren )
-    {
-        int result = 0;
-        for ( final ContentId contentIdWithReason : resolvedDependantsOrChildren )
-        {
-            if ( initialContentId.equals(
-                resolvedPublishDependencies.getPushContentRequests().findContentIdThatInitiallyTriggeredPublish( contentIdWithReason ) ) )
-            {
-                result++;
-            }
-        }
-        return result;
     }
 
     private void sortResults( final List<ResolvedContent.ResolvedRequestedContent> listToSort )

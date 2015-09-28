@@ -1,56 +1,21 @@
 package com.enonic.xp.content;
 
-import java.util.Set;
-
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class PushContentsResult
 {
-    private final Contents pushedContent;
+    private final ContentIds pushedContent;
 
-    private final Contents childrenPushedContent;
+    private final ContentIds deletedContent;
 
-    private final ImmutableSet<Failed> failed;
+    private final ContentIds failedContent;
 
-    private final PushContentRequests pushContentRequests;
-
-    private final Contents deleted;
-
-    private PushContentsResult( final Builder builder )
+    private PushContentsResult( Builder builder )
     {
-        this.pushedContent = Contents.from( builder.pushedContent );
-        this.childrenPushedContent = Contents.from( builder.childrenPushedContent );
-        this.failed = ImmutableSet.copyOf( builder.failed );
-        this.pushContentRequests = builder.pushContentRequests;
-        this.deleted = Contents.from( builder.deleted );
-    }
-
-    public PushContentRequests getPushContentRequests()
-    {
-        return pushContentRequests;
-    }
-
-    public Contents getPushedContent()
-    {
-        return pushedContent;
-    }
-
-    public Contents getChildrenPushedContent()
-    {
-        return childrenPushedContent;
-    }
-
-    public ImmutableSet<Failed> getFailed()
-    {
-        return failed;
-    }
-
-    public Contents getDeleted()
-    {
-        return deleted;
+        this.pushedContent = builder.pushedContent;
+        this.deletedContent = builder.deletedContent;
+        this.failedContent = builder.failedContent;
     }
 
     public static Builder create()
@@ -58,100 +23,55 @@ public class PushContentsResult
         return new Builder();
     }
 
-    public static final class Failed
+    public ContentIds getPushedContent()
     {
-        private final Content content;
-
-        private final FailedReason failedReason;
-
-        public Failed( final Content content, final FailedReason failedReason )
-        {
-            this.content = content;
-            this.failedReason = failedReason;
-        }
-
-        public Content getContent()
-        {
-            return content;
-        }
-
-        public FailedReason getFailedReason()
-        {
-            return failedReason;
-        }
+        return pushedContent;
     }
 
-    public enum FailedReason
+    public ContentIds getDeletedContent()
     {
-        CONTENT_NOT_VALID( "Content not valid" ),
-        PARENT_NOT_EXISTS( "Parent content does not exist" ),
-        ACCESS_DENIED( "Not enough permissions to publish content" ),
-        UNKNOWN( "Unknown" );
+        return deletedContent;
+    }
 
-        private final String message;
-
-        FailedReason( final String message )
-        {
-            this.message = message;
-        }
-
-        public String getMessage()
-        {
-            return message;
-        }
+    public ContentIds getFailedContent()
+    {
+        return failedContent;
     }
 
     public static final class Builder
     {
+        private ContentIds pushedContent = ContentIds.empty();
 
-        private final Set<Content> pushedContent = Sets.newHashSet();
+        private ContentIds deletedContent = ContentIds.empty();
 
-        private final Set<Content> childrenPushedContent = Sets.newHashSet();
-
-        private final Set<Failed> failed = Sets.newHashSet();
-
-        private final Set<Content> deleted = Sets.newHashSet();
-
-        private PushContentRequests pushContentRequests;
+        private ContentIds failedContent = ContentIds.empty();
 
         private Builder()
         {
         }
 
-        public Builder addPushedContent( final Contents pushedContent )
+        public Builder setPushed( final ContentIds pushedContent )
         {
-            this.pushedContent.addAll( pushedContent.getSet() );
+            this.pushedContent = pushedContent;
             return this;
         }
 
-        public Builder addChildrenPushedContent( final Contents childrenPushedContent )
+        public Builder setFailed( final ContentIds failedContent )
         {
-            this.childrenPushedContent.addAll( childrenPushedContent.getSet() );
+            this.failedContent = failedContent;
             return this;
         }
 
-        public Builder addDeleted( final Contents contents )
+        public Builder setDeleted( final ContentIds deletedContent )
         {
-            this.deleted.addAll( contents.getSet() );
+            this.pushedContent = deletedContent;
             return this;
         }
 
-        public Builder addFailed( final Content content, final FailedReason failedReason )
-        {
-            this.failed.add( new Failed( content, failedReason ) );
-            return this;
-        }
-
-        public Builder pushContentRequests( final PushContentRequests pushContentRequests )
-        {
-            this.pushContentRequests = pushContentRequests;
-            return this;
-        }
 
         public PushContentsResult build()
         {
             return new PushContentsResult( this );
         }
     }
-
 }

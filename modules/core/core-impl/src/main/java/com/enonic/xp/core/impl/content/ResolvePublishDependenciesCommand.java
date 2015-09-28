@@ -1,14 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ResolvePublishDependenciesResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.ResolveSyncWorkResults;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
 public class ResolvePublishDependenciesCommand
@@ -33,46 +33,30 @@ public class ResolvePublishDependenciesCommand
 
     ResolvePublishDependenciesResult execute()
     {
+        final Stopwatch timer = Stopwatch.createStarted();
         resolveDependencies();
+        System.out.println( "##### ResolvePublishDependencies: " + timer.stop().toString() );
+
         return resultBuilder.build();
     }
 
     private void resolveDependencies()
     {
-        final ResolveSyncWorkResults syncWorkResults = resolveSyncWorkResults( this.includeChildren );
-
-        populateResults( syncWorkResults );
-    }
-
-    private ResolveSyncWorkResults resolveSyncWorkResults( boolean includeChildren )
-    {
-        final ResolveSyncWorkResults.Builder resultsBuilder = ResolveSyncWorkResults.create();
-
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId, includeChildren );
+            final NodeIds syncWorkResult = getWorkResult( contentId, includeChildren );
 
-            resultsBuilder.add( syncWorkResult );
+            this.resultBuilder.addAll( ContentNodeHelper.toContentIds( syncWorkResult ) );
         }
-        return resultsBuilder.build();
     }
 
-    private ResolveSyncWorkResult getWorkResult( final ContentId contentId, boolean includeChildren )
+    private NodeIds getWorkResult( final ContentId contentId, boolean includeChildren )
     {
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
             nodeId( NodeId.from( contentId.toString() ) ).
             branch( this.target ).
             build() );
-    }
-
-    private void populateResults( final ResolveSyncWorkResults syncWorkResults )
-    {
-        this.resultBuilder.pushContentRequests( PushContentRequestsFactory.create().
-            syncWorkResults( syncWorkResults ).
-            forceInitialReasonInclusion( true ).
-            build().
-            createRequests() );
     }
 
     public static Builder create()

@@ -50,7 +50,6 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
-import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.RootNode;
@@ -345,7 +344,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
+    public NodeIds resolveSyncWork( final SyncWorkResolverParams params )
     {
         return ResolveSyncWorkCommand.create().
             target( params.getBranch() ).

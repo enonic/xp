@@ -383,7 +383,11 @@ public final class ContentResource
             resolveDependencies( true ).
             build() );
 
-        return PublishContentResultJson.from( result );
+        return PublishContentResultJson.create().
+            success( contentService.getByIds( new GetContentByIdsParams( result.getPushedContent() ) ) ).
+            deleted( contentService.getByIds( new GetContentByIdsParams( result.getDeletedContent() ) ) ).
+            failures( contentService.getByIds( new GetContentByIdsParams( result.getFailedContent() ) ) ).
+            build();
     }
 
     @POST
@@ -399,7 +403,7 @@ public final class ContentResource
                 includeChildren( params.includeChildren() ).
                 build() );
 
-        final ContentIds resolvedContentIds = result.getPushContentRequests().getRequestedContentIds( true );
+        final ContentIds resolvedContentIds = result.contentIds();
         final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
@@ -426,7 +430,7 @@ public final class ContentResource
                 includeChildren( params.includeChildren() ).
                 build() );
 
-        final ContentIds resolvedContentIds = result.getPushContentRequests().getDependenciesContentIds( true, true );
+        final ContentIds resolvedContentIds = result.contentIds();
         final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
