@@ -4,11 +4,13 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersions;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -16,6 +18,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.security.acl.Permission;
 
 public class MoveNodeCommand
@@ -126,40 +130,41 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
-            params( FindNodesByParentParams.create().
-                parentPath( persistedNode.path() ).
-                size( SearchService.GET_ALL_SIZE_FLAG ).
-                build() ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
+            parent( persistedNode.path() ).
+            from( 0 ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
+            searchMode( SearchMode.SEARCH ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
+
+        final BranchNodeVersions branchNodeVersions =
+            this.storageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
 
         final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
-        Node nodeToMove = Node.create( persistedNode ).
+        final Node.Builder nodeToMoveBuilder = Node.create( persistedNode ).
             name( nodeName ).
             parentPath( newParentPath ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
-            timestamp( Instant.now() ).
-            build();
+            timestamp( Instant.now() );
 
         final Node movedNode;
 
         // The node that is moved must be updated
-        if ( nodeToMove.id().equals( this.nodeId ) )
+        if ( persistedNode.id().equals( this.nodeId ) )
         {
             final boolean isRenaming = newParentPath.equals( persistedNode.parentPath() );
+
             if ( !isRenaming )
             {
                 // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
-                nodeToMove = Node.create( nodeToMove ).inheritPermissions( false ).build();
+                nodeToMoveBuilder.inheritPermissions( false );
             }
 
             movedNode = StoreNodeCommand.create( this ).
-                node( nodeToMove ).
+                node( nodeToMoveBuilder.build() ).
                 updateMetadataOnly( false ).
                 build().
                 execute();
@@ -168,17 +173,22 @@ public class MoveNodeCommand
         {
             movedNode = StoreNodeCommand.create( this ).
                 updateMetadataOnly( true ).
-                node( nodeToMove ).
+                node( nodeToMoveBuilder.build() ).
                 build().
                 execute();
         }
 
-        for ( final Node child : result.getNodes() )
+        for ( final BranchNodeVersion branchNodeVersion : branchNodeVersions )
         {
-            doMoveNode( nodeToMove.path(), child.name(), child.id() );
+            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( branchNodeVersion ), branchNodeVersion.getNodeId() );
         }
 
         return movedNode;
+    }
+
+    private NodeName getNodeName( final BranchNodeVersion branchNodeVersion )
+    {
+        return NodeName.from( branchNodeVersion.getNodePath().getLastElement().toString() );
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

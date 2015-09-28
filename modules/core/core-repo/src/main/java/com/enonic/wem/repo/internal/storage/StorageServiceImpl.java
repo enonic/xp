@@ -137,6 +137,12 @@ public class StorageServiceImpl
     }
 
     @Override
+    public BranchNodeVersions getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
+    {
+        return this.branchService.get( nodeIds, context );
+    }
+
+    @Override
     public NodeVersion getVersion( final NodeVersionDocumentId versionId, final InternalContext context )
     {
         return this.versionService.getVersion( versionId, context );
