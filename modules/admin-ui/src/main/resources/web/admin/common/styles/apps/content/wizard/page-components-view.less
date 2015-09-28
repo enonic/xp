@@ -46,18 +46,6 @@
             box-sizing: border-box;
             cursor: move;
           }
-          #drag-helper {
-            position: relative;
-            margin: 5px 3px 0px;
-            height: 30px !important;
-            width: 30px !important;
-            .border-radius(30px);
-
-            &:before {
-              line-height: 30px;
-              font-size: 20px;
-            }
-          }
 
           &:not(:hover) {
             &, &.odd {
@@ -157,5 +145,18 @@
   .header {
     line-height: 0.8em;
     padding: 30px 30px 20px;
+  }
+}
+
+#drag-helper {
+  position: absolute;
+  margin: 5px 3px 0px;
+  height: 30px !important;
+  width: 30px !important;
+  .border-radius(30px);
+
+  &:before {
+    line-height: 30px;
+    font-size: 20px;
   }
 }

@@ -71,7 +71,7 @@ module api.ui.grid {
         }
 
 
-        handleDragEnd(event: Event, data) {
+        protected handleDragEnd(event: Event, data) {
             this.draggableItem.remove();
             this.draggableItem = null;
             this.contentGrid.refresh();
