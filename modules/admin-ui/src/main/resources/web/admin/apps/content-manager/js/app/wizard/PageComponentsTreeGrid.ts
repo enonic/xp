@@ -61,7 +61,7 @@ module app.wizard {
                     // the conflicts with Mousetrap, which leads to skipping the key events
                     // Do not set to true, if you are not fully aware of the result
                     setEnableCellNavigation(false).
-                    setSelectedCellCssClass("selected draggables").
+                    setSelectedCellCssClass("selected cell").
                     setCheckableRows(false).
                     disableMultipleSelection(true).
                     setMultiSelect(false).
@@ -89,8 +89,13 @@ module app.wizard {
             var viewer = <PageComponentsItemViewer>node.getViewer("name");
             if (!viewer) {
                 var viewer = new PageComponentsItemViewer(this.content);
-                viewer.setObject(node.getData());
+                var data = node.getData();
+
+                viewer.setObject(data);
                 node.setViewer("name", viewer);
+                if (!(api.ObjectHelper.iFrameSafeInstanceOf(data, RegionView) || api.ObjectHelper.iFrameSafeInstanceOf(data, PageView))) {
+                    viewer.addClass("draggable");
+                }
             }
             return viewer.toString();
         }

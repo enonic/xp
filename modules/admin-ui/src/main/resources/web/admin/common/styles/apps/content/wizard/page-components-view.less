@@ -40,8 +40,23 @@
 
         .slick-row {
 
+          .slick-cell {
+            .toggle {
+              cursor: move;
+              &.expand, &.collapse {
+                cursor: pointer;
+              }
+            }
+          }
+
+          .selected {
+            .icon {
+              color: @admin-white;
+            }
+          }
+
           &.draggable {
-            border: 2px dashed @admin-dark-gray-border;
+            .box-shadow(1px 5px 20px rgba(51, 51, 51, .5));
             background-color: @admin-bg-light-blue !important;
             box-sizing: border-box;
             cursor: move;
@@ -117,6 +132,14 @@
               }
 
             }
+          }
+        }
+
+        .draggable {
+          cursor: move;
+
+          .names-and-icon-view * {
+            cursor: move;
           }
         }
 
