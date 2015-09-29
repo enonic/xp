@@ -1,12 +1,12 @@
-module app.wizard.page.contextwindow {
+module api.ui.button {
 
-    export class ContextWindowToggler extends api.ui.button.Button {
+    export class TogglerButton extends api.ui.button.Button {
 
         private activeListeners: {(isActive: boolean): void}[] = [];
 
-        constructor() {
+        constructor(className?: string) {
             super();
-            this.addClass("toggle-button icon-cog icon-medium");
+            this.addClass("toggle-button icon-medium " + className);
             this.setActive(false);
             this.setEnabled(false);
 

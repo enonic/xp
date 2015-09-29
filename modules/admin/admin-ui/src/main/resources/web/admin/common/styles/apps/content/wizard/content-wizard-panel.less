@@ -1,5 +1,13 @@
 .content-wizard-panel {
 
+  &:not(.rendered) {
+    .content-wizard-toolbar {
+      .cycle-button, .toggle-button {
+        display: none;
+      }
+    }
+  }
+
   .wizard-step-deck-panel {
     .form-view {
       margin-top: 0px;
