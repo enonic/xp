@@ -51,7 +51,7 @@ locateJava() {
 
 setupDefaults() {
     DEFAULT_JAVA_OPTS="-Xms2048M -Xmx4096M"
-    DEFAULT_JAVA_DEBUG_OPTS="-agentpath:/Users/runarmyklebust/Dev/Workspace/xp/home/libyjpagent.jnilib -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
+    DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 }
 
 setupOptions() {
