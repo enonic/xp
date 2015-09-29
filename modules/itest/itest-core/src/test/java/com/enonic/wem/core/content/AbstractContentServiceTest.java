@@ -156,7 +156,6 @@ public class AbstractContentServiceTest
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
 
         this.contentService = new ContentServiceImpl();
 

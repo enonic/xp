@@ -137,7 +137,6 @@ public abstract class AbstractNodeTest
         // Storage-service
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
 
         this.storageService = new StorageServiceImpl();
         this.storageService.setVersionService( this.versionService );

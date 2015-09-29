@@ -17,6 +17,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -24,6 +25,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RootNode;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -165,7 +167,27 @@ public class StorageServiceImpl
 
         final Node node = nodeDao.get( branchNodeVersion.getVersionId() );
 
-        return canRead( node ) ? node : null;
+        return canRead( node ) ? populateWithMetaData( node, branchNodeVersion ) : null;
+    }
+
+
+    private Node populateWithMetaData( final Node node, final BranchNodeVersion branchNodeVersion )
+    {
+        if ( node instanceof RootNode )
+        {
+            return node;
+        }
+
+        final NodePath nodePath = branchNodeVersion.getNodePath();
+        final NodePath parentPath = nodePath.getParentPath();
+        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
+
+        return Node.create( node ).
+            parentPath( parentPath ).
+            name( nodeName ).
+            nodeState( branchNodeVersion.getNodeState() ).
+            timestamp( branchNodeVersion.getTimestamp() ).
+            build();
     }
 
     private Nodes doReturnNodes( final BranchNodeVersions branchNodeVersions )
@@ -177,7 +199,8 @@ public class StorageServiceImpl
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodes.stream().filter( this::canRead ).forEach( filteredNodes::add );
+        nodes.stream().filter( this::canRead ).forEach(
+            ( node ) -> filteredNodes.add( populateWithMetaData( node, branchNodeVersions.get( node.id() ) ) ) );
 
         return filteredNodes.build();
     }
