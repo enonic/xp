@@ -55,6 +55,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJso
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.NewResolvePublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
@@ -389,6 +390,28 @@ public final class ContentResource
             failures( contentService.getByIds( new GetContentByIdsParams( result.getFailedContent() ) ) ).
             build();
     }
+
+    @POST
+    @Path("newResolvePublishContent")
+    public NewResolvePublishContentJson newResolvePublishContent( final ResolvePublishDependenciesJson params )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
+
+        final ResolvePublishDependenciesResult result =
+            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                includeChildren( params.includeChildren() ).
+                build() );
+
+        final ContentIds resolvedContentIds = result.contentIds();
+        final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
+        final CompareContentResults compareResults =
+            contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
+
+
+    }
+
 
     @POST
     @Path("resolvePublishRequestedContents")
