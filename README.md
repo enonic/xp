@@ -1,6 +1,7 @@
-# Enonic XP Community Edition
+# Enonic XP
 
-Welcome to the home of Enonic XP Community Edition. Here you will find all source code for the product.
+Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
+please read our docs here: http://xp.readthedocs.org.
 
 ## Building 
 

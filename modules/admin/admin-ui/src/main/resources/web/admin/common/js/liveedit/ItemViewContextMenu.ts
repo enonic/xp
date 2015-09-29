@@ -84,6 +84,10 @@ module api.liveedit {
             this.menu.setActions(actions);
         }
 
+        getMenu(): api.ui.menu.TreeContextMenu {
+            return this.menu;
+        }
+
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
             api.dom.Body.get().onMouseMove(dragListener);
             api.dom.Body.get().onMouseUp(upListener);

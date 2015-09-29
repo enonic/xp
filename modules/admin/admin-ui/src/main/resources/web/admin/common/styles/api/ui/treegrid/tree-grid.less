@@ -21,10 +21,13 @@
 
       &:not(:first-child) {
         margin-left: 4px;
+      }
+
+      &.icon-loop2 {
+        padding: 8px 14px;
+
         &:before {
-          position: relative;
-          left: -9px;
-          color: @admin-font-gray1;
+          left: 0;
         }
       }
 
@@ -34,7 +37,7 @@
 
       &:hover:not(:disabled) {
 
-        &:before, span {
+        span {
           color: @admin-button-blue3;
         }
       }

@@ -55,6 +55,10 @@ module app.wizard {
             this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus));
         }
 
+        public isOnline(): boolean {
+            return this.contentCompareStatus === CompareStatus.EQUAL;
+        }
+
         public enableActionsForExisting(existing: api.content.Content) {
             new api.security.auth.IsAuthenticatedRequest().
                 sendAndParse().

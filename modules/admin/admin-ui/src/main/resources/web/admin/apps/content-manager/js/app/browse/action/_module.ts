@@ -9,3 +9,4 @@
 ///<reference path='SaveSortedContentAction.ts' />
 ///<reference path='ToggleSearchPanelAction.ts' />
 ///<reference path='ContentTreeGridActions.ts' />
+///<reference path='MobileContentTreeGridActions.ts' />

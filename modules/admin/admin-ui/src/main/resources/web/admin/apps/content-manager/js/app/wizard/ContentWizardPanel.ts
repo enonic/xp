@@ -588,6 +588,12 @@ module app.wizard {
 
                 var contentData = content.getContentData();
 
+                contentData.onChanged(() => {
+                    if (this.isContentFormValid && this.contentWizardToolbarPublishControls.isOnline()) {
+                        this.contentWizardToolbarPublishControls.setCompareStatus(CompareStatus.NEWER);
+                    }
+                });
+
                 var formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting

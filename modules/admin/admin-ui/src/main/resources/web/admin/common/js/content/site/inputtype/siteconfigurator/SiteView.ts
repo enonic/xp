@@ -30,6 +30,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formContext: ContentFormContext;
 
+        private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent):void};
+
         constructor(application: Application, siteConfig: SiteConfig, formContext: ContentFormContext) {
             super("site-view");
 
@@ -58,10 +60,22 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.appendChild(header);
 
-            this.formView = this.createFormView(formContext, this.siteConfig);
+            this.initFormView();
 
             if (this.application.getForm().getFormItems().length > 0) {
                 header.appendChild(this.createEditButton());
+            }
+
+        }
+
+        private initFormView() {
+            this.formView = this.createFormView(this.formContext, this.siteConfig);
+            this.onRendered((event) => {
+                this.toggleClass("invalid", !this.formView.isValid())
+            });
+
+            this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
+                this.toggleClass("invalid", !event.isValid())
             }
         }
 
@@ -82,7 +96,11 @@ module api.content.site.inputtype.siteconfigurator {
 
                 var tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
 
+                var formViewStateOnDialogOpen = this.formView;
+                this.unbindValidationEvent(formViewStateOnDialogOpen);
+
                 this.formView = this.createFormView(this.formContext, tempSiteConfig);
+                this.bindValidationEvent(this.formView);
 
                 var okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
@@ -92,7 +110,7 @@ module api.content.site.inputtype.siteconfigurator {
                 };
 
                 var cancelCallback = () => {
-                    this.formView = this.createFormView(this.formContext, this.siteConfig);
+                    this.revertFormViewToGivenState(formViewStateOnDialogOpen);
                     if (comboBoxToUndoSelectionOnCancel) {
                         this.undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel);
                     }
@@ -105,6 +123,13 @@ module api.content.site.inputtype.siteconfigurator {
                     cancelCallback);
                 siteConfiguratorDialog.open();
             }
+        }
+
+        private revertFormViewToGivenState(formViewStateToRevertTo: FormView) {
+            this.unbindValidationEvent(this.formView);
+            this.formView = formViewStateToRevertTo;
+            this.formView.validate(false, true);
+            this.toggleClass("invalid", !this.formView.isValid())
         }
 
         private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: SiteConfiguratorComboBox) {
@@ -142,6 +167,18 @@ module api.content.site.inputtype.siteconfigurator {
             }).done();
 
             return formView;
+        }
+
+        private bindValidationEvent(formView: FormView) {
+            if (formView) {
+                formView.onValidityChanged(this.formValidityChangedHandler);
+            }
+        }
+
+        private unbindValidationEvent(formView: FormView) {
+            if (formView) {
+                formView.unValidityChanged(this.formValidityChangedHandler);
+            }
         }
 
         getApplication(): Application {

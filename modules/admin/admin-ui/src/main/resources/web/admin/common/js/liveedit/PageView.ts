@@ -69,6 +69,8 @@ module api.liveedit {
 
         private lockedContextMenu: api.liveedit.ItemViewContextMenu;
 
+        private disableContextMenu: boolean;
+
         private registerPageModel(pageModel: PageModel, resetAction: api.ui.Action) {
             if (PageView.debug) {
                 console.log('PageView.registerPageModel', pageModel);
@@ -110,6 +112,7 @@ module api.liveedit {
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.ignorePropertyChanges = false;
+            this.disableContextMenu = false;
 
             var resetAction = new api.ui.Action('Reset');
             resetAction.onExecuted(() => {
@@ -696,6 +699,14 @@ module api.liveedit {
         private notifyItemViewRemoved(itemView: ItemView) {
             var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
+        }
+
+        setDisabledContextMenu(value: boolean) {
+            this.disableContextMenu = value;
+        }
+
+        isDisabledContextMenu(): boolean {
+            return this.disableContextMenu;
         }
     }
 }

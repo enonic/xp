@@ -64,6 +64,10 @@ module api.ui.toolbar {
             this.hasGreedySpacer = true;
         }
 
+        removeGreedySpacer() {
+            this.hasGreedySpacer = false;
+        }
+
         private foldOrExpand() {
             if (!this.isVisible()) {
                 return;

@@ -178,7 +178,6 @@ module api.liveedit {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
                 var duplicatedView = this.duplicate(duplicatedComponent);
 
-                duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
@@ -274,6 +273,7 @@ module api.liveedit {
                     setParentElement(this.getParentElement()).
                     setData(duplicate).
                     setPositionIndex(index + 1));
+
 
             parentView.addComponentView(duplicateView, index + 1);
 

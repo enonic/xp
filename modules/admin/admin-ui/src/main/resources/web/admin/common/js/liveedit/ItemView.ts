@@ -532,6 +532,9 @@ module api.liveedit {
         }
 
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (this.getPageView().isDisabledContextMenu()) {
+                return;
+            }
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
             }
@@ -650,6 +653,11 @@ module api.liveedit {
             if (!silent) {
                 new ItemViewDeselectedEvent(this).fire();
             }
+        }
+
+        isDraggableView(): boolean {
+            return !(api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
+                     api.ObjectHelper.iFrameSafeInstanceOf(this, PageView));
         }
 
         private stopTextEditMode() {

@@ -39,6 +39,29 @@
       .slick-viewport {
 
         .slick-row {
+
+          .slick-cell {
+            .toggle {
+              cursor: move;
+              &.expand, &.collapse {
+                cursor: pointer;
+              }
+            }
+          }
+
+          .selected {
+            .icon {
+              color: @admin-white;
+            }
+          }
+
+          &.draggable {
+            .box-shadow(1px 5px 20px rgba(51, 51, 51, .5));
+            background-color: @admin-bg-light-blue !important;
+            box-sizing: border-box;
+            cursor: move;
+          }
+
           &:not(:hover) {
             &, &.odd {
               background-color: transparent;
@@ -50,31 +73,82 @@
 
               .menu-icon {
                 padding-left: 10px;
-                padding-top: 10px;
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 37px;
+                height: 100%;
+                cursor: pointer;
 
-                color: @admin-font-gray1;
+                &:after {
+                  content: "";
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: 0;
+                  height: 0;
+                  margin: -5px 0 0 -7px;
+                  border-left: 6px solid transparent;
+                  border-right: 6px solid transparent;
+                  border-top: 10px solid @admin-font-gray1;
+                  color: @admin-font-gray1;
+                }
+              }
+
+              &:hover {
+                .menu-icon {
+                  &:after {
+                    border-top: 10px solid @admin-dark-gray;
+                    color: @admin-dark-gray;
+                  }
+                }
+              }
+
+              &.menu-open {
+                .menu-icon {
+                  &:after {
+                    border-top: 0px solid transparent;
+                    border-bottom: 10px solid @admin-dark-gray;
+                  }
+                }
               }
 
               &.selected {
-                .menu-icon {
-                  color: #ffffff;
-                }
-              }
-
-              &:hover, &.menu-open {
-                .menu-icon {
-                  color: @admin-dark-gray;
-                }
-
-                &.selected {
+                &.menu-open {
                   .menu-icon {
-                    color: @admin-dark-gray;
+                    &:after {
+                      border-top: 0px solid transparent;
+                      border-bottom: 10px solid #ffffff;
+                    }
+                  }
+                }
+
+                .menu-icon {
+                  &:after {
+                    border-top: 10px solid #ffffff;
+                    color: #ffffff;
                   }
                 }
               }
 
             }
           }
+        }
+
+        .draggable {
+          cursor: move;
+
+          .names-and-icon-view * {
+            cursor: move;
+          }
+        }
+
+        .slick-reorder-proxy {
+          opacity: 0;
+        }
+
+        .slick-reorder-guide {
+          display: none;
         }
 
       }
@@ -94,5 +168,18 @@
   .header {
     line-height: 0.8em;
     padding: 30px 30px 20px;
+  }
+}
+
+#drag-helper {
+  position: absolute;
+  margin: 5px 3px 0px;
+  height: 30px !important;
+  width: 30px !important;
+  .border-radius(30px);
+
+  &:before {
+    line-height: 30px;
+    font-size: 20px;
   }
 }

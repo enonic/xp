@@ -300,7 +300,6 @@ module api.ui.uploader {
             } else {
                 this.setDropzoneVisible();
             }
-
             var results = this.getResultContainer().removeChildren();
 
             this.parseValues(value).forEach((val) => {
@@ -365,7 +364,7 @@ module api.ui.uploader {
             this.dropzoneContainer.setVisible(visible);
         }
 
-        private setProgressVisible(visible: boolean = true) {
+        setProgressVisible(visible: boolean = true) {
             if (visible) {
                 this.setDropzoneVisible(false);
                 this.setResultVisible(false);

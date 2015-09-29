@@ -98,8 +98,9 @@ public final class InitAppCommand
         }
         cloneCommand.call();
 
-        //Removes the .git folder
+        //Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( destinationDirectory, ".git" ) );
+        FileUtils.deleteQuietly( new File( destinationDirectory, "README.md" ) );
 
         //Remove the .gitkeep and .gitignore files
         Files.walkFileTree( destinationDirectory.toPath(), new SimpleFileVisitor<Path>()

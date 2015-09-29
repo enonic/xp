@@ -167,6 +167,10 @@ module api.form.inputtype.text {
                 this.updateEditorToolbarPos(inputOccurence);
             });
 
+            this.onRemoved((event) => {
+                api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
+            });
+
             this.onOccurrenceAdded(() => {
                 this.resetInputHeight();
                 this.updateEditorToolbarWidth();
