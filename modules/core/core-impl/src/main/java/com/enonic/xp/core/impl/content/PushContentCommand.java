@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.ResolveSyncWorkResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
@@ -61,6 +62,8 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -69,8 +72,6 @@ public class PushContentCommand
         {
             pushWithoutDependencyResolve();
         }
-
-        this.nodeService.refresh();
 
         return resultBuilder.build();
     }

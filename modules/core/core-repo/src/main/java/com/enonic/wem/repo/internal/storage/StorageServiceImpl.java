@@ -21,6 +21,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
@@ -127,9 +128,11 @@ public class StorageServiceImpl
     }
 
     @Override
-    public Node get( final NodeVersionId nodeVersionId )
+    public Node get( final NodeVersion nodeVersion )
     {
-        return this.nodeDao.get( nodeVersionId );
+        final Node node = this.nodeDao.get( nodeVersion.getNodeVersionId() );
+
+        return populateWithMetaData( node, nodeVersion );
     }
 
     @Override
@@ -187,6 +190,25 @@ public class StorageServiceImpl
             name( nodeName ).
             nodeState( branchNodeVersion.getNodeState() ).
             timestamp( branchNodeVersion.getTimestamp() ).
+            build();
+    }
+
+    private Node populateWithMetaData( final Node node, final NodeVersion nodeVersion )
+    {
+        if ( node instanceof RootNode )
+        {
+            return node;
+        }
+
+        final NodePath nodePath = nodeVersion.getNodePath();
+        final NodePath parentPath = nodePath.getParentPath();
+        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
+
+        return Node.create( node ).
+            parentPath( parentPath ).
+            name( nodeName ).
+            nodeState( NodeState.ARCHIVED ).
+            timestamp( nodeVersion.getTimestamp() ).
             build();
     }
 

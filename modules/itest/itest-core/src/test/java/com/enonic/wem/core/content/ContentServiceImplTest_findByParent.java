@@ -2,12 +2,11 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +27,8 @@ public class ContentServiceImplTest_findByParent
         createContent( ContentPath.ROOT );
         createContent( ContentPath.ROOT );
 
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
         final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
@@ -43,7 +44,6 @@ public class ContentServiceImplTest_findByParent
     public void root_no_content()
         throws Exception
     {
-
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
@@ -68,6 +68,8 @@ public class ContentServiceImplTest_findByParent
         final Content content3 = createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -95,6 +97,8 @@ public class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = childrenLevel1.getPath();
 
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
@@ -112,9 +116,10 @@ public class ContentServiceImplTest_findByParent
     public void invalid_parent_path()
         throws Exception
     {
-
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childrenLevel1 = createContent( rootContent.getPath() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -138,6 +143,8 @@ public class ContentServiceImplTest_findByParent
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
 
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 0 ).
@@ -159,11 +166,13 @@ public class ContentServiceImplTest_findByParent
     {
 
         final Content parentContent = createContent( ContentPath.ROOT );
-        final Content content1 = createContent( parentContent.getPath() );
-        final Content content2 = createContent( parentContent.getPath() );
-        final Content content3 = createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -191,7 +200,7 @@ public class ContentServiceImplTest_findByParent
 
         refresh();
 
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ), "draft" );
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 10 ).
@@ -210,12 +219,14 @@ public class ContentServiceImplTest_findByParent
     {
 
         final Content parentContent = createContent( ContentPath.ROOT );
-        final Content content1 = createContent( parentContent.getPath() );
-        final Content content2 = createContent( parentContent.getPath() );
-        final Content content3 = createContent( parentContent.getPath() );
-        final Content content4 = createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
+        createContent( parentContent.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 2 ).
@@ -237,9 +248,11 @@ public class ContentServiceImplTest_findByParent
     {
         final Content parentContent = createContent( ContentPath.ROOT );
         final Content content1 = createContent( parentContent.getPath() );
-        final Content content1_1 = createContent( content1.getPath() );
+        createContent( content1.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).

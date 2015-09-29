@@ -11,14 +11,12 @@ import com.google.common.io.ByteSource;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.wem.repo.internal.snapshot.SnapshotService;
 import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
@@ -42,11 +40,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -321,6 +320,7 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -339,9 +339,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByVersionId( final NodeVersionId blobKey )
+    public Node getByNodeVersion( final NodeVersion nodeVersion )
     {
-        return this.storageService.get( blobKey );
+        return this.storageService.get( nodeVersion );
     }
 
     @Override
@@ -408,11 +408,13 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void refresh()
+    public void refresh( final RefreshMode refreshMode )
     {
-        final Context context = ContextAccessor.current();
-
-        this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) );
+        RefreshCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            refreshMode( refreshMode ).
+            build().
+            execute();
     }
 
     @Override

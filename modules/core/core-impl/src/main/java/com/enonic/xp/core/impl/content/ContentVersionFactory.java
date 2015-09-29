@@ -56,7 +56,7 @@ class ContentVersionFactory
 
     private Node getNode( final NodeVersion nodeVersion )
     {
-        return nodeService.getByVersionId( nodeVersion.getNodeVersionId() );
+        return nodeService.getByNodeVersion( nodeVersion );
     }
 
 }

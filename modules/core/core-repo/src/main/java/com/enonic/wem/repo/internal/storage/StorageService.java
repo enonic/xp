@@ -32,7 +32,7 @@ public interface StorageService
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
-    Node get( final NodeVersionId nodeVersionId );
+    Node get( final NodeVersion nodeVersion );
 
     BranchNodeVersion getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 

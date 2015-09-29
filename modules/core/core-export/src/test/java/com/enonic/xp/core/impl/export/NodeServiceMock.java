@@ -37,11 +37,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -289,7 +290,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node getByVersionId( final NodeVersionId nodeVersionid )
+    public Node getByNodeVersion( final NodeVersion nodeVersion )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -331,6 +332,12 @@ class NodeServiceMock
     }
 
     @Override
+    public void refresh( final RefreshMode refreshMode )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public RootNode getRoot()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -358,14 +365,7 @@ class NodeServiceMock
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
-
-
-    @Override
-    public void refresh()
-    {
-
-    }
-
+    
     @Override
     public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
     {

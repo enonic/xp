@@ -6,7 +6,8 @@ import com.google.common.annotations.Beta;
 public enum NodeState
 {
     DEFAULT( "default" ),
-    PENDING_DELETE( "pending_delete" );
+    PENDING_DELETE( "pending_delete" ),
+    ARCHIVED( "archived" );
 
     private final String value;
 
