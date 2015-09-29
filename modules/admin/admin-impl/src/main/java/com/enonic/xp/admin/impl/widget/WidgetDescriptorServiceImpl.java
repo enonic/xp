@@ -3,10 +3,10 @@ package com.enonic.xp.admin.impl.widget;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptors;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
 public final class WidgetDescriptorServiceImpl
