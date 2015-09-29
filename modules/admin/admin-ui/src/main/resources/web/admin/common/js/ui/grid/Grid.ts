@@ -436,6 +436,10 @@ module api.ui.grid {
             this.slickGrid.onDrag.subscribe(callback);
         }
 
+        subscribeOnDragInit(callback: (e, args) => void) {
+            this.slickGrid.onDragInit.subscribe(callback);
+        }
+
         subscribeOnDragEnd(callback: (e, args) => void) {
             this.slickGrid.onDragEnd.subscribe(callback);
         }
