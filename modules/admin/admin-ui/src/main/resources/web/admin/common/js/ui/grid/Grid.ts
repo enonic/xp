@@ -75,7 +75,9 @@ module api.ui.grid {
         }
 
         mask() {
-            this.loadMask.show();
+            if (this.isVisible()) {
+                this.loadMask.show();
+            }
         }
 
         unmask() {
