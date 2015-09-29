@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import com.enonic.xp.content.Content;
 
-public class NewContentPublishItem
+public class ContentPublishItemJson
 {
     private final String id;
 
@@ -20,7 +20,7 @@ public class NewContentPublishItem
 
     private final boolean valid;
 
-    public NewContentPublishItem( Builder builder )
+    public ContentPublishItemJson( Builder builder )
     {
         this.id = builder.id;
         this.path = builder.path;
@@ -124,7 +124,7 @@ public class NewContentPublishItem
             return this;
         }
 
-        public NewContentPublishItem build()
+        public ContentPublishItemJson build()
         {
             this.id = content.getId().toString();
             this.path = content.getPath().toString();
@@ -133,7 +133,7 @@ public class NewContentPublishItem
             this.type = content.getType().toString();
             this.valid = content.isValid();
 
-            return new NewContentPublishItem( this );
+            return new ContentPublishItemJson( this );
         }
     }
 

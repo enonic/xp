@@ -24,7 +24,7 @@ module api.content {
 
         getRequestPath(): api.rest.Path {
             console.log("aa");
-            return api.rest.Path.fromParent(super.getResourcePath(), "newResolvePublishContent");
+            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
         }
     }
 }

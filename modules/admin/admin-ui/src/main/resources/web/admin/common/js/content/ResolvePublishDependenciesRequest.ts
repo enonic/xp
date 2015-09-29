@@ -23,7 +23,7 @@ module api.content {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "newResolvePublishContent");
+            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
         }
     }
 }
