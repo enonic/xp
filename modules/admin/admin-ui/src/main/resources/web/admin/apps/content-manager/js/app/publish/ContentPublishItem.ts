@@ -119,11 +119,11 @@ module app.publish {
         }
 
         /**
-         * Builds array of ContentPublishItem[] from resolved contents.
+         * Builds array of ContentPublishItem[] from NewContentPublishItems.
          */
-        static getResolvedContents(jsonItems: ResolvedPublishContentJson[]): ContentPublishItem[] {
+        static fromNewContentPublishItems(jsonItems: NewContentPublishItem[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            jsonItems.forEach((obj: ResolvedPublishContentJson) => {
+            jsonItems.forEach((obj: NewContentPublishItem) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;

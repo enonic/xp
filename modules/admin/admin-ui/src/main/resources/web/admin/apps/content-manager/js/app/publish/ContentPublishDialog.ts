@@ -23,7 +23,7 @@ module app.publish {
 
         private modelName: string;
 
-        private selectionItems: SelectionPublishItem<ContentPublishRequestedItem>[] = [];
+        private selectionItems: SelectionPublishItem<ContentPublishItem>[] = [];
 
         private publishButton: DialogButton;
 
@@ -39,13 +39,13 @@ module app.publish {
 
         private selectedContents: ContentSummary[];
 
-        private initialContentsResolvedWithChildren: ContentsResolved<ContentPublishRequestedItem> = new ContentsResolved<ContentPublishRequestedItem>();
+        private initialContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
-        private initialContentsResolvedWithoutChildren: ContentsResolved<ContentPublishRequestedItem> = new ContentsResolved<ContentPublishRequestedItem>();
+        private initialContentsResolvedWithoutChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
-        private dependenciesContentsResolvedWithChildren: ContentsResolved<ContentPublishDependencyItem> = new ContentsResolved<ContentPublishDependencyItem>();
+        private dependenciesContentsResolvedWithChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
-        private dependenciesContentsResolvedWithoutChildren: ContentsResolved<ContentPublishDependencyItem> = new ContentsResolved<ContentPublishDependencyItem>();
+        private dependenciesContentsResolvedWithoutChildren: ContentsResolved<ContentPublishItem> = new ContentsResolved<ContentPublishItem>();
 
         private includeChildrenCheckedListener: () => void;
 
@@ -161,7 +161,7 @@ module app.publish {
             this.initSelectionItems();
             this.initialItemsView.clear();
 
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
+            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
                 if (!item.isHidden()) {
                     this.initialItemsView.appendChild(item);
                 }
@@ -204,13 +204,13 @@ module app.publish {
 
             this.selectionItems = [];
 
-            var pushRequestedItems: ContentPublishRequestedItem[] = this.includeChildItemsCheck.isChecked()
+            var pushRequestedItems: ContentPublishItem[] = this.includeChildItemsCheck.isChecked()
                 ? this.initialContentsResolvedWithChildren.getContentsResolved()
                 : this.initialContentsResolvedWithoutChildren.getContentsResolved();
 
-            pushRequestedItems.forEach((content: ContentPublishRequestedItem) => {
-                var item: SelectionPublishItem<ContentPublishRequestedItem> = new SelectionPublishItemBuilder<ContentPublishRequestedItem>().create().
-                    setViewer(new app.publish.ResolvedPublishContentViewer<ContentPublishRequestedItem>()).
+            pushRequestedItems.forEach((content: ContentPublishItem) => {
+                var item: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
+                    setViewer(new app.publish.ResolvedPublishContentViewer<ContentPublishItem>()).
                     setContent(content).
                     setIsCheckBoxEnabled(false).
                     setRemovable(true).
@@ -231,7 +231,7 @@ module app.publish {
             });
         }
 
-        private removeSelectionItem(item: SelectionPublishItem<ContentPublishRequestedItem>) {
+        private removeSelectionItem(item: SelectionPublishItem<ContentPublishItem>) {
             var index = this.indexOf(item);
             if (index < 0) {
                 return;
@@ -245,7 +245,7 @@ module app.publish {
             }
         }
 
-        private indexOf(item: SelectionPublishItem<ContentPublishRequestedItem>): number {
+        private indexOf(item: SelectionPublishItem<ContentPublishItem>): number {
             for (var i = 0; i < this.selectionItems.length; i++) {
                 if (item.getBrowseItem().getId() == this.selectionItems[i].getBrowseItem().getId()) {
                     return i;
@@ -254,7 +254,7 @@ module app.publish {
             return -1;
         }
 
-        private removeFromInitialSelection(item: SelectionPublishItem<ContentPublishRequestedItem>) {
+        private removeFromInitialSelection(item: SelectionPublishItem<ContentPublishItem>) {
             for (var i = 0; i < this.selectedContents.length; i++) {
                 if (item.getBrowseItem().getId() == this.selectedContents[i].getId()) {
                     this.selectedContents.splice(i, 1);
@@ -280,8 +280,8 @@ module app.publish {
          * @param publishRequestedSelectionItems
          */
         private restoreUncheckedState(unCheckedRequestedContentsIds: string[],
-                                      publishRequestedSelectionItems: SelectionPublishItem<ContentPublishRequestedItem>[]) {
-            publishRequestedSelectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
+                                      publishRequestedSelectionItems: SelectionPublishItem<ContentPublishItem>[]) {
+            publishRequestedSelectionItems.forEach((item: SelectionPublishItem<ContentPublishItem>)  => {
                 if (unCheckedRequestedContentsIds.indexOf(item.getBrowseItem().getId()) > -1) {
                     item.setChecked(false);
                 }
@@ -326,7 +326,7 @@ module app.publish {
         private renderResolvedDependenciesItems() {
             this.dependenciesItemsView.clear();
 
-            var dependenciesItems: ContentsResolved<ContentPublishDependencyItem> =
+            var dependenciesItems: ContentsResolved<ContentPublishItem> =
                 this.includeChildItemsCheck.isChecked() ?
                 this.dependenciesContentsResolvedWithChildren :
                 this.dependenciesContentsResolvedWithoutChildren;
@@ -338,7 +338,7 @@ module app.publish {
             }
 
             // append dependencies to view
-            dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishDependencyItem)  => {
+            dependenciesItems.getContentsResolved().forEach((dependency: ContentPublishItem)  => {
                 var dependencyView: SelectionPublishItem<ContentPublishItem> = new SelectionPublishItemBuilder<ContentPublishItem>().create().
                     setViewer(new app.publish.ResolvedDependantContentViewer<ContentPublishItem>()).
                     setContent(dependency).
@@ -376,9 +376,9 @@ module app.publish {
         private initResolvedPublishItems(json: NewResolvePublishContentJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.requestedContents));
+                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.requestedContents));
             } else {
-                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.requestedContents));
+                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.requestedContents));
             }
         }
 
@@ -388,9 +388,9 @@ module app.publish {
         private initResolvedDependenciesItems(json: NewResolvePublishContentJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.dependenciesContentsResolvedWithChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependentContents));
+                this.dependenciesContentsResolvedWithChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.dependentContents));
             } else {
-                this.dependenciesContentsResolvedWithoutChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependentContents));
+                this.dependenciesContentsResolvedWithoutChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.dependentContents));
             }
         }
 
@@ -419,13 +419,27 @@ module app.publish {
 
         private getTotalCountToPublish(): number {
             var result = 0;
-            this.selectionItems.forEach((item: SelectionPublishItem<ContentPublishRequestedItem>)  => {
-                var model: ContentPublishRequestedItem = item.getBrowseItem().getModel();
-                result += model.getChildrenCount() + model.getDependantsCount();
-                if (model.getCompareStatus() != api.content.CompareStatus.EQUAL) {
+
+            result += this.getCountToPublish(this.includeChildItemsCheck.isChecked()
+                ? this.initialContentsResolvedWithChildren
+                : this.initialContentsResolvedWithoutChildren);
+
+            result += this.getCountToPublish(this.includeChildItemsCheck.isChecked()
+                ? this.dependenciesContentsResolvedWithChildren
+                : this.dependenciesContentsResolvedWithoutChildren);
+
+            console.log("bb");
+            return result;
+        }
+
+        private getCountToPublish(contentsResolved: ContentsResolved<ContentPublishItem>): number {
+            var result = 0;
+            contentsResolved.getContentsResolved().forEach((contentPublishItem: ContentPublishItem) => {
+                if (contentPublishItem.getCompareStatus() != api.content.CompareStatus.EQUAL) {
                     result++;
                 }
             });
+            console.log("bb");
             return result;
         }
 
@@ -447,7 +461,7 @@ module app.publish {
         private contentItemsAreValid(contentPublishItems: ContentsResolved<ContentPublishItem>): boolean {
             var result = true;
 
-            contentPublishItems.getContentsResolved().forEach((content: ContentPublishRequestedItem) => {
+            contentPublishItems.getContentsResolved().forEach((content: ContentPublishItem) => {
                 var contentName = content.getName(),
                     invalid = !content.isValid() || !content.getDisplayName() || contentName.isUnnamed();
                 if (invalid) {
