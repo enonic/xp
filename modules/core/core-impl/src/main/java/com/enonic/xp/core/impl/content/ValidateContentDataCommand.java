@@ -10,6 +10,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
+import com.enonic.xp.core.impl.content.validate.ValueValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
@@ -102,6 +103,7 @@ final class ValidateContentDataCommand
                         {
                             this.resultBuilder.addAll(
                                 new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
+                            this.resultBuilder.addAll( new ValueValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
                         }
 
                     }
@@ -115,6 +117,7 @@ final class ValidateContentDataCommand
         if ( contentType != null )
         {
             this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( contentData.getRoot() ) );
+            this.resultBuilder.addAll( new ValueValidator( contentType.getForm() ).validate( contentData.getRoot() ) );
         }
     }
 
@@ -135,6 +138,7 @@ final class ValidateContentDataCommand
 
                 final Form mixinForm = mixin.getForm();
                 this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
+                this.resultBuilder.addAll( new ValueValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
             }
         }
     }
