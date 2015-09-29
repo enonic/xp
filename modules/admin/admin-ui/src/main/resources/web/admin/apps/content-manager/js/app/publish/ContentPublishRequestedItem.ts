@@ -7,6 +7,7 @@ module app.publish {
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import CompareStatus = api.content.CompareStatus;
+    import NewContentPublishItem = api.content.json.NewContentPublishItem;
     import ResolvedPublishRequestedContentJson = api.content.json.ResolvedPublishRequestedContentJson;
     import ResolvedPublishDependencyContentJson = api.content.json.ResolvedPublishDependencyContentJson;
     import ContentName = api.content.ContentName;
@@ -59,9 +60,9 @@ module app.publish {
          * Builds array of ContentPublishItem[] from contents that were returned as initially requsted to publish.
          * Returned array should correspond to contents with ids used for ResolvePublishDependenciesRequest.
          */
-        static getPushRequestedContents(jsonItems: ResolvedPublishRequestedContentJson[]): ContentPublishRequestedItem[] {
+        static getPushRequestedContents(jsonItems: NewContentPublishItem[]): ContentPublishRequestedItem[] {
             var array: ContentPublishRequestedItem[] = [];
-            jsonItems.forEach((obj: ResolvedPublishRequestedContentJson) => {
+            jsonItems.forEach((obj: NewContentPublishItem) => {
                 array.push(new ContentPublishRequestedItemBuilder().fromJson(obj).build());
             });
             return array;
@@ -75,11 +76,11 @@ module app.publish {
 
         dependantsCount: number;
 
-        fromJson(json: ResolvedPublishRequestedContentJson): ContentPublishRequestedItemBuilder {
+        fromJson(json: NewContentPublishItem): ContentPublishRequestedItemBuilder {
             super.fromJson(json);
 
-            this.childrenCount = json.childrenCount;
-            this.dependantsCount = json.dependantsCount;
+            this.childrenCount = 0; //TODO Why do you need this number json.childrenCount;
+            this.dependantsCount = 0; //TODO Why do you need this number json.dependantsCount;
 
             return this;
         }
@@ -132,9 +133,9 @@ module app.publish {
             return true;
         }
 
-        static getPushDependenciesContents(jsonItems: ResolvedPublishDependencyContentJson[]): ContentPublishDependencyItem[] {
+        static getPushDependenciesContents(jsonItems: NewContentPublishItem[]): ContentPublishDependencyItem[] {
             var array: ContentPublishDependencyItem[] = [];
-            jsonItems.forEach((obj: ResolvedPublishDependencyContentJson) => {
+            jsonItems.forEach((obj: NewContentPublishItem) => {
                 array.push(new ContentPublishDependencyItemBuilder().fromJson(obj).build());
             });
             return array;
@@ -146,10 +147,10 @@ module app.publish {
 
         child: boolean;
 
-        fromJson(json: ResolvedPublishDependencyContentJson): ContentPublishDependencyItemBuilder {
+        fromJson(json: NewContentPublishItem): ContentPublishDependencyItemBuilder {
             super.fromJson(json);
 
-            this.child = json.child;
+            this.child = true;//TODO why do we need json.child;
 
             return this;
         }

@@ -3,6 +3,7 @@
 ///<reference path='ContentJson.ts' />
 ///<reference path='ContentPermissionsJson.ts' />
 ///<reference path='ExtraDataJson.ts' />
+///<reference path='NewContentPublishItem.ts' />
 ///<reference path='ContentQueryResultJson.ts' />
 ///<reference path='CompareContentResultJson.ts' />
 ///<reference path='CompareContentResultsJson.ts' />
@@ -18,6 +19,7 @@
 ///<reference path='OrderExprWrapperJson.ts' />
 ///<reference path='SetOrderUpdateJson.ts' />
 ///<reference path='SetChildOrderAndReorderJson.ts' />
+///<reference path='NewResolvePublishContentJson.ts' />
 ///<reference path='ResolvedPublishContentJson.ts' />
 ///<reference path='ResolvedPublishRequestedContentJson.ts' />
 ///<reference path='ResolvePublishDependenciesResultJson.ts' />

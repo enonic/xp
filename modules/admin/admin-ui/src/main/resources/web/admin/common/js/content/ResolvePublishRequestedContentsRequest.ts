@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ResolvePublishRequestedContentsRequest extends ContentResourceRequest<api.content.json.ResolvePublishRequestedContentsResultJson, any> {
+    export class ResolvePublishRequestedContentsRequest extends ContentResourceRequest<api.content.json.NewResolvePublishContentJson, any> {
 
         private ids: ContentId[] = [];
 
@@ -23,7 +23,8 @@ module api.content {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishRequestedContents");
+            console.log("aa");
+            return api.rest.Path.fromParent(super.getResourcePath(), "newResolvePublishContent");
         }
     }
 }

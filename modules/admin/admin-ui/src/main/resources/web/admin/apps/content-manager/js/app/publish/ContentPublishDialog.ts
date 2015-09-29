@@ -7,6 +7,7 @@ module app.publish {
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson
+    import NewResolvePublishContentJson = api.content.json.NewResolvePublishContentJson;
     import GetDependantsResultJson = api.content.json.ResolvePublishDependenciesResultJson;
     import CompareStatus = api.content.CompareStatus;
     import ContentId = api.content.ContentId;
@@ -295,7 +296,7 @@ module app.publish {
             var resolvePublishRequestedContentsRequest = new api.content.ResolvePublishRequestedContentsRequest(this.getSelectedContentsIds(),
                 this.includeChildItemsCheck.isChecked());
 
-            return resolvePublishRequestedContentsRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishDependenciesResultJson>) => {
+            return resolvePublishRequestedContentsRequest.send().then((jsonResponse: api.rest.JsonResponse<NewResolvePublishContentJson>) => {
                 this.initResolvedPublishItems(jsonResponse.getResult());
                 this.renderResolvedPublishItems();
             });
@@ -312,7 +313,7 @@ module app.publish {
                 var resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.getSelectedContentsIds(),
                     this.includeChildItemsCheck.isChecked());
 
-                return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<GetDependantsResultJson>) => {
+                return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<NewResolvePublishContentJson>) => {
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
                 });
@@ -372,24 +373,24 @@ module app.publish {
         /**
          * Inits arrays of properties that store results of performing resolve request.
          */
-        private initResolvedPublishItems(json: ResolvePublishDependenciesResultJson) {
+        private initResolvedPublishItems(json: NewResolvePublishContentJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.pushRequestedContents));
+                this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.requestedContents));
             } else {
-                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.pushRequestedContents));
+                this.initialContentsResolvedWithoutChildren.setContentsResolved(ContentPublishRequestedItem.getPushRequestedContents(json.requestedContents));
             }
         }
 
         /**
          * Inits arrays of properties that store results of performing resolve request.
          */
-        private initResolvedDependenciesItems(json: GetDependantsResultJson) {
+        private initResolvedDependenciesItems(json: NewResolvePublishContentJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
-                this.dependenciesContentsResolvedWithChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependenciesContents));
+                this.dependenciesContentsResolvedWithChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependentContents));
             } else {
-                this.dependenciesContentsResolvedWithoutChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependenciesContents));
+                this.dependenciesContentsResolvedWithoutChildren.setContentsResolved(ContentPublishDependencyItem.getPushDependenciesContents(json.dependentContents));
             }
         }
 

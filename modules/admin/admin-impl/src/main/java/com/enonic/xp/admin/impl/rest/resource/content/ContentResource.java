@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -55,6 +56,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJso
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.NewContentPublishItem;
 import com.enonic.xp.admin.impl.rest.resource.content.json.NewResolvePublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
@@ -72,6 +74,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
@@ -395,12 +398,12 @@ public final class ContentResource
     @Path("newResolvePublishContent")
     public NewResolvePublishContentJson newResolvePublishContent( final ResolvePublishDependenciesJson params )
     {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
 
         final ResolvePublishDependenciesResult result =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
-                contentIds( contentIds ).
+                contentIds( requestedContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 
@@ -408,8 +411,35 @@ public final class ContentResource
         final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
+        final Map<ContentId, CompareContentResult> compareContentResultsMap = compareResults.getCompareContentResultsMap();
 
+        final NewResolvePublishContentJson.Builder resolvePublishContentJsonBuilder = NewResolvePublishContentJson.create().
+            totalNumber( resolvedContents.getSize() ).
+            hasChildren( params.includeChildren() );
 
+        final ContentIconUrlResolver contentIconUrlResolver = new ContentIconUrlResolver( this.contentTypeService );
+
+        resolvedContentIds.stream().
+            forEach( contentId -> {
+                final Content content = resolvedContents.getContentById( contentId );
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( contentId );
+
+                final NewContentPublishItem contentPublishItem = NewContentPublishItem.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).build();
+
+                if ( requestedContentIds.contains( contentId ) )
+                {
+                    resolvePublishContentJsonBuilder.addRequested( contentPublishItem );
+                }
+                else
+                {
+                    resolvePublishContentJsonBuilder.addDependent( contentPublishItem );
+                }
+            } );
+
+        return resolvePublishContentJsonBuilder.build();
     }
 
 

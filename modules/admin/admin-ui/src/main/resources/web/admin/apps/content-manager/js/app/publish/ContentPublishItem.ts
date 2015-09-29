@@ -9,6 +9,7 @@ module app.publish {
     import CompareStatus = api.content.CompareStatus;
     import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson;
     import ResolvedPublishContentJson = api.content.json.ResolvedPublishContentJson;
+    import NewContentPublishItem = api.content.json.NewContentPublishItem;
     import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
@@ -176,7 +177,7 @@ module app.publish {
             }
         }
 
-        fromJson(json: ResolvedPublishContentJson): ContentPublishItemBuilder {
+        fromJson(json: NewContentPublishItem): ContentPublishItemBuilder {
             this.id = json.id;
             this.path = ContentPath.fromString(json.path);
             this.compareStatus = <CompareStatus>CompareStatus[json.compareStatus];

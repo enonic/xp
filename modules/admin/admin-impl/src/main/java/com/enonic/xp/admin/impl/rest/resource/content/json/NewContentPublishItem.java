@@ -18,7 +18,7 @@ public class NewContentPublishItem
 
     private final String type;
 
-    private final boolean isValid;
+    private final boolean valid;
 
     public NewContentPublishItem( Builder builder )
     {
@@ -29,7 +29,7 @@ public class NewContentPublishItem
         this.iconUrl = builder.iconUrl;
         this.name = builder.name;
         this.type = builder.type;
-        this.isValid = builder.isValid;
+        this.valid = builder.valid;
     }
 
     public static Builder create()
@@ -82,7 +82,7 @@ public class NewContentPublishItem
     @SuppressWarnings("unused")
     public boolean isValid()
     {
-        return isValid;
+        return valid;
     }
 
     public static class Builder
@@ -98,7 +98,7 @@ public class NewContentPublishItem
 
         protected String type;
 
-        protected boolean isValid;
+        protected boolean valid;
 
         protected Content content;
 
@@ -131,7 +131,7 @@ public class NewContentPublishItem
             this.displayName = content.getDisplayName();
             this.name = content.getName().toString();
             this.type = content.getType().toString();
-            this.isValid = content.isValid();
+            this.valid = content.isValid();
 
             return new NewContentPublishItem( this );
         }
