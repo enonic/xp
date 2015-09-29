@@ -7,8 +7,6 @@ module app.publish {
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
     import CompareStatus = api.content.CompareStatus;
-    import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson;
-    import ResolvedPublishContentJson = api.content.json.ResolvedPublishContentJson;
     import NewContentPublishItem = api.content.json.NewContentPublishItem;
     import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;

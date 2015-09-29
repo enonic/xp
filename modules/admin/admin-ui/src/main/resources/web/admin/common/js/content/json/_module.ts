@@ -20,8 +20,4 @@
 ///<reference path='SetOrderUpdateJson.ts' />
 ///<reference path='SetChildOrderAndReorderJson.ts' />
 ///<reference path='NewResolvePublishContentJson.ts' />
-///<reference path='ResolvedPublishContentJson.ts' />
-///<reference path='ResolvedPublishRequestedContentJson.ts' />
-///<reference path='ResolvePublishDependenciesResultJson.ts' />
-///<reference path='ResolvePublishRequestedContentsResultJson.ts' />
 

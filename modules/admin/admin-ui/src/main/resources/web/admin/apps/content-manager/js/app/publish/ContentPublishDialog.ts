@@ -6,16 +6,14 @@ module app.publish {
     import ContentSummary = api.content.ContentSummary;
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
-    import ResolvePublishDependenciesResultJson = api.content.json.ResolvePublishRequestedContentsResultJson
     import NewResolvePublishContentJson = api.content.json.NewResolvePublishContentJson;
-    import GetDependantsResultJson = api.content.json.ResolvePublishDependenciesResultJson;
     import CompareStatus = api.content.CompareStatus;
     import ContentId = api.content.ContentId;
 
     /**
      * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
-     * Resolved items are converted into array of SelectionPublishItem<ContentPublishRequestedItem> items and stored in selectionItems property.
-     * ContentPublishRequestedItem contains info for the initially checked item with number of children and dependants items that will get published with it.
+     * Resolved items are converted into array of SelectionPublishItem<ContentPublishItem> items and stored in selectionItems property.
+     * ContentPublishItem contains info for the initially checked item with number of children and dependants items that will get published with it.
      * Dependant items number will change depending on includeChildren checkbox state as
      * resolved dependencies usually differ in that case.
      */
