@@ -67,10 +67,10 @@ module app.view {
                         this.addImageSizeToUrl(item);
                     }
                     if (!this.image.isLoaded()) {
-                        this.mask.show();
+                        this.showMask();
                     }
                 } else {
-                    this.mask.show();
+                    this.showMask();
                     if (item.isRenderable()) {
                         this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
                         this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
@@ -86,6 +86,12 @@ module app.view {
 
         public getItem(): ViewItem<ContentSummary> {
             return this.item;
+        }
+
+        private showMask() {
+            if (this.isVisible()) {
+                this.mask.show();
+            }
         }
 
     }
