@@ -51,6 +51,46 @@ public class ContentServiceImplTest_push
         assertEquals( 1, push.getPushedContent().getSize() );
     }
 
+
+    @Test
+    public void push_12_content()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        for ( int i = 0; i <= 12; i++ )
+        {
+            createContent( "content-" + i, content.getPath() );
+        }
+
+        refresh();
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeChildren( true ).
+            build() );
+
+        assertEquals( 14, push.getPushedContent().getSize() );
+    }
+
+    private void createContent( final String id, final ContentPath parent )
+    {
+        this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( id ).
+            parent( parent ).
+            type( ContentTypeName.folder() ).
+            build() );
+    }
+
     @Ignore
     @Test
     public void push_deleted()

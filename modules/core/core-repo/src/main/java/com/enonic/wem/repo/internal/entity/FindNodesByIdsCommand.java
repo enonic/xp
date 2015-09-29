@@ -40,6 +40,7 @@ public class FindNodesByIdsCommand
                     addValues( this.ids.getAsStrings() ).
                     build() ).
                 build() ).
+            size( ids.getSize() ).
             addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) ).
             setOrderExpressions( this.orderExpressions ).
             build(), InternalContext.from( ContextAccessor.current() ) );
