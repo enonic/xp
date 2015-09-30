@@ -1,22 +1,21 @@
 module api.content.json {
 
-    export interface ResolvedPublishContentJson {
+    export interface ContentPublishItemJson {
 
         id: string;
 
         path: string;
 
-        compareStatus: string;
+        iconUrl: string;
 
         displayName: string;
 
-        name: string;
+        compareStatus: string;
 
-        iconUrl: string;
+        name: string;
 
         type: string;
 
         valid: boolean;
-
     }
 }

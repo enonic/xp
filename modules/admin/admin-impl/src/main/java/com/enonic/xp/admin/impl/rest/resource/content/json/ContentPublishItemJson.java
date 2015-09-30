@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import com.enonic.xp.content.Content;
 
-public class NewContentPublishItem
+public class ContentPublishItemJson
 {
     private final String id;
 
@@ -18,9 +18,9 @@ public class NewContentPublishItem
 
     private final String type;
 
-    private final boolean isValid;
+    private final boolean valid;
 
-    public NewContentPublishItem( Builder builder )
+    public ContentPublishItemJson( Builder builder )
     {
         this.id = builder.id;
         this.path = builder.path;
@@ -29,7 +29,7 @@ public class NewContentPublishItem
         this.iconUrl = builder.iconUrl;
         this.name = builder.name;
         this.type = builder.type;
-        this.isValid = builder.isValid;
+        this.valid = builder.valid;
     }
 
     public static Builder create()
@@ -82,7 +82,7 @@ public class NewContentPublishItem
     @SuppressWarnings("unused")
     public boolean isValid()
     {
-        return isValid;
+        return valid;
     }
 
     public static class Builder
@@ -98,7 +98,7 @@ public class NewContentPublishItem
 
         protected String type;
 
-        protected boolean isValid;
+        protected boolean valid;
 
         protected Content content;
 
@@ -124,16 +124,16 @@ public class NewContentPublishItem
             return this;
         }
 
-        public NewContentPublishItem build()
+        public ContentPublishItemJson build()
         {
             this.id = content.getId().toString();
             this.path = content.getPath().toString();
             this.displayName = content.getDisplayName();
             this.name = content.getName().toString();
             this.type = content.getType().toString();
-            this.isValid = content.isValid();
+            this.valid = content.isValid();
 
-            return new NewContentPublishItem( this );
+            return new ContentPublishItemJson( this );
         }
     }
 

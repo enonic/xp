@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -45,6 +46,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissio
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentNameJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
@@ -55,15 +57,12 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJso
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.NewResolvePublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolveDependantsRequestParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishRequestedContentsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.attachment.Attachment;
@@ -72,6 +71,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
@@ -392,79 +392,56 @@ public final class ContentResource
     }
 
     @POST
-    @Path("newResolvePublishContent")
-    public NewResolvePublishContentJson newResolvePublishContent( final ResolvePublishDependenciesJson params )
+    @Path("resolvePublishContent")
+    public ResolvePublishContentResultJson resolvePublishContent( final ResolvePublishDependenciesJson params )
     {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
 
+        //Resolves the publish dependencies
         final ResolvePublishDependenciesResult result =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
-                contentIds( contentIds ).
+                contentIds( requestedContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 
+        //Retrieves the requested and dependent contents
         final ContentIds resolvedContentIds = result.contentIds();
         final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
+
+        //Retrieves the requested and dependent CompareContentResults
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
+        final Map<ContentId, CompareContentResult> compareContentResultsMap = compareResults.getCompareContentResultsMap();
 
+        //Prepares the JSON result
+        final ResolvePublishContentResultJson.Builder resolvePublishContentJsonBuilder = ResolvePublishContentResultJson.create();
+        final ContentIconUrlResolver contentIconUrlResolver = new ContentIconUrlResolver( this.contentTypeService );
+        resolvedContentIds.stream().
+            map( contentId -> resolvedContents.getContentById( contentId ) ).
+            sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
+            forEach( content -> {
 
-    }
+                final ContentId contentId = content.getId();
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( contentId );
 
+                final ContentPublishItemJson contentPublishItem = ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).build();
 
-    @POST
-    @Path("resolvePublishRequestedContents")
-    public ResolvePublishRequestedContentsResultJson resolvePublishRequestedContents( final ResolvePublishDependenciesJson params )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
+                if ( requestedContentIds.contains( contentId ) )
+                {
+                    resolvePublishContentJsonBuilder.addRequested( contentPublishItem );
+                }
+                else
+                {
+                    resolvePublishContentJsonBuilder.addDependent( contentPublishItem );
+                }
 
-        final ResolvePublishDependenciesResult result =
-            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                target( ContentConstants.BRANCH_MASTER ).
-                contentIds( contentIds ).
-                includeChildren( params.includeChildren() ).
-                build() );
+            } );
 
-        final ContentIds resolvedContentIds = result.contentIds();
-        final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
-        final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
-
-        return ResolvePublishRequestedContentsResultJsonFactory.create().
-            resolvedPublishDependencies( result ).
-            iconUrlResolver( newContentIconUrlResolver() ).
-            resolvedContents( resolvedContents ).
-            compareContentResults( compareResults ).
-            build().
-            createJson();
-    }
-
-    @POST
-    @Path("resolvePublishDependencies")
-    public ResolvePublishDependenciesResultJson resolvePublishDependencies( final ResolveDependantsRequestParamsJson params )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-
-        final ResolvePublishDependenciesResult result =
-            contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
-                target( ContentConstants.BRANCH_MASTER ).
-                contentIds( contentIds ).
-                includeChildren( params.includeChildren() ).
-                build() );
-
-        final ContentIds resolvedContentIds = result.contentIds();
-        final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
-        final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
-
-        return ResolvePublishDependenciesResultJsonFactory.create().
-            resolvedPublishDependencies( result ).
-            iconUrlResolver( newContentIconUrlResolver() ).
-            resolvedContents( resolvedContents ).
-            compareContentResults( compareResults ).
-            build().
-            createJson();
+        return resolvePublishContentJsonBuilder.build();
     }
 
     @POST
