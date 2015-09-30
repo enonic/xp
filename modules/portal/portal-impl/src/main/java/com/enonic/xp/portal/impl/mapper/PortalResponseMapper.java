@@ -26,7 +26,7 @@ public final class PortalResponseMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "status", this.response.getStatus() );
+        gen.value( "status", this.response.getStatus().value() );
         gen.value( "contentType", this.response.getContentType() );
         gen.value( "postProcess", this.response.isPostProcess() );
 

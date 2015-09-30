@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.script.ScriptValue;
@@ -23,7 +25,7 @@ public final class PortalResponseSerializer
     public PortalResponse serialize()
     {
         PortalResponse.Builder builder = PortalResponse.create();
-        builder.status( HttpStatus.METHOD_NOT_ALLOWED.value() );
+        builder.status( HttpStatus.METHOD_NOT_ALLOWED );
 
         if ( ( value == null ) || !value.isObject() )
         {
@@ -45,13 +47,13 @@ public final class PortalResponseSerializer
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
-        builder.status( status != null ? status : HttpStatus.OK.value() );
+        builder.status( status != null ? HttpStatus.from( status ): HttpStatus.OK );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final String type = ( value != null ) ? value.getValue( String.class ) : null;
-        builder.contentType( type != null ? type : "text/html" );
+        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.create( "text", "html" ) );
     }
 
     private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )
@@ -62,7 +64,7 @@ public final class PortalResponseSerializer
             return;
         }
 
-        builder.status( Response.Status.SEE_OTHER.getStatusCode() );
+        builder.status( HttpStatus.from( Response.Status.SEE_OTHER.getStatusCode() ) );
         builder.header( "Location", redirect );
     }
 

@@ -58,10 +58,6 @@ public final class ImageRenderer
         }
 
         portalResponseBuilder.body( html.toString() ).contentType( MediaType.create( "text", "html" ) ).postProcess( false );
-        return new PortalResponseSerializer( portalResponseBuilder.build() ).serialize();
-
-        
-        portalResponseBuilder.body( html.toString() ).contentType( "text/html" ).postProcess( false );
         return portalResponseBuilder.build();
     }
 

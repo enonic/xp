@@ -1,6 +1,6 @@
 {
   "status": 202,
-  "contentType": "text/html; charset=utf-8",
+  "contentType": "text/html",
   "postProcess": true,
   "headers": {
     "X-Custom-Header": "value1",

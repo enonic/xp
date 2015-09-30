@@ -25,7 +25,7 @@ public class ControllerScriptImpl_filterResponseTest
 
         execute( "myapplication:/site/pages/mypage/mypage.js" );
 
-        assertEquals( HttpStatus.ACCEPTED.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.ACCEPTED, this.portalResponse.getStatus() );
         assertJson( "simple", getResponseAsJson() );
         assertHtml( "simple", getResponseAsString() );
     }
@@ -42,7 +42,7 @@ public class ControllerScriptImpl_filterResponseTest
 
         execute( "myapplication:/site/pages/nofilters/nofilters.js" );
 
-        assertEquals( HttpStatus.OK.value(), this.portalResponse.getStatus() );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertJson( "nofilters", getResponseAsJson() );
         assertHtml( "nofilters", getResponseAsString() );
     }
