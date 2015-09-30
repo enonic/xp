@@ -47,7 +47,6 @@ public class BranchPath
             return false;
         }
         return !( path != null ? !path.equals( that.path ) : that.path != null );
-
     }
 
     @Override

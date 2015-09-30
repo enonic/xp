@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.cache;
 import java.util.Map;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -74,11 +73,4 @@ public class PathCacheImpl
 
         return id;
     }
-
-    @Override
-    public ImmutableSet<String> getChildren( final CachePath path )
-    {
-        return ImmutableSet.copyOf( childMap.get( path ) );
-    }
-
 }
