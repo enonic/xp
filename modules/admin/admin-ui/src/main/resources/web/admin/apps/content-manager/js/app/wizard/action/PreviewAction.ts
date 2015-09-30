@@ -11,8 +11,12 @@ module app.wizard.action {
             this.onExecuted(() => {
                     if (wizard.hasUnsavedChanges()) {
                         wizard.setRequireValid(true);
+                        var previewDialog = window.open('', 'preview'); // opening preview this way because
+                                                                        // if open in q.then(...) browser sees window as pop-up
                         wizard.updatePersistedItem().
-                            then(this.showPreviewDialog).
+                            then((content) => {
+                                previewDialog.location.href = this.getPreviewDialogURI(content);
+                            }).
                             catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                             done();
                     } else {
@@ -23,8 +27,12 @@ module app.wizard.action {
         }
 
         showPreviewDialog(content: api.content.Content) {
-            window.open(api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW,
-                api.content.Branch.DRAFT), 'preview');
+            window.open(this.getPreviewDialogURI(content), 'preview');
+        }
+
+        private getPreviewDialogURI(content: api.content.Content): string {
+            return api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW,
+                api.content.Branch.DRAFT);
         }
 
     }
