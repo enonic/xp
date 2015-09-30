@@ -417,24 +417,29 @@ public final class ContentResource
         //Prepares the JSON result
         final ResolvePublishContentResultJson.Builder resolvePublishContentJsonBuilder = ResolvePublishContentResultJson.create();
         final ContentIconUrlResolver contentIconUrlResolver = new ContentIconUrlResolver( this.contentTypeService );
-        resolvedContentIds.forEach( contentId -> {
-            final Content content = resolvedContents.getContentById( contentId );
-            final CompareContentResult compareContentResult = compareContentResultsMap.get( contentId );
+        resolvedContentIds.stream().
+            map( contentId -> resolvedContents.getContentById( contentId ) ).
+            sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
+            forEach( content -> {
 
-            final ContentPublishItemJson contentPublishItem = ContentPublishItemJson.create().
-                content( content ).
-                compareStatus( compareContentResult.getCompareStatus().name() ).
-                iconUrl( contentIconUrlResolver.resolve( content ) ).build();
+                final ContentId contentId = content.getId();
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( contentId );
 
-            if ( requestedContentIds.contains( contentId ) )
-            {
-                resolvePublishContentJsonBuilder.addRequested( contentPublishItem );
-            }
-            else
-            {
-                resolvePublishContentJsonBuilder.addDependent( contentPublishItem );
-            }
-        } );
+                final ContentPublishItemJson contentPublishItem = ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).build();
+
+                if ( requestedContentIds.contains( contentId ) )
+                {
+                    resolvePublishContentJsonBuilder.addRequested( contentPublishItem );
+                }
+                else
+                {
+                    resolvePublishContentJsonBuilder.addDependent( contentPublishItem );
+                }
+
+            } );
 
         return resolvePublishContentJsonBuilder.build();
     }
