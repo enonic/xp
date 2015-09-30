@@ -9,7 +9,7 @@ module api.ui.button {
 
         constructor(actions: Action[]) {
             super();
-            this.addClass("cycle-button icon-devices icon-medium");
+            this.addClass("cycle-button icon-screen icon-medium");
             this.actionList = actions;
 
             if (this.actionList.length > 0) {

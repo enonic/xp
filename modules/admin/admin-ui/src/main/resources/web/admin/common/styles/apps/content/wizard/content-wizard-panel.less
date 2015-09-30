@@ -8,6 +8,12 @@
     }
   }
 
+  &.form {
+    .page-components-view {
+      display: none !important;
+    }
+  }
+
   .wizard-step-deck-panel {
     .form-view {
       margin-top: 0px;
@@ -118,7 +124,7 @@
         height: 100%;
 
         .button.content-wizard-toolbar-publish-button {
-          .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%));
+          .button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 30%), false);
           &:disabled {
             background-color: @admin-font-gray1;
           }

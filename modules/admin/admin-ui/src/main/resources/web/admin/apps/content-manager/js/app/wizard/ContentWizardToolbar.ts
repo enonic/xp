@@ -35,8 +35,8 @@ module app.wizard {
             this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params.publishAction);
 
             super.addElement(this.contentWizardToolbarPublishControls);
-            super.addElement(this.componentsViewToggler);
             super.addElement(this.contextWindowToggler);
+            super.addElement(this.componentsViewToggler);
             super.addElement(this.cycleViewModeButton);
         }
 

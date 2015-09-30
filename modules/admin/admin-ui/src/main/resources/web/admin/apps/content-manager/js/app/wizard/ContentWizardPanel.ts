@@ -922,6 +922,7 @@ module app.wizard {
             this.getSplitPanel().addClass("toggle-live");
             this.getSplitPanel().removeClass("toggle-form toggle-split prerendered");
             this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -930,6 +931,7 @@ module app.wizard {
             this.getSplitPanel().addClass("toggle-split");
             this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
             this.getMainToolbar().toggleClass("live", true);
+            this.toggleClass("form", false);
             this.openLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
@@ -938,6 +940,7 @@ module app.wizard {
             this.getSplitPanel().addClass("toggle-form");
             this.getSplitPanel().removeClass("toggle-live toggle-split prerendered");
             this.getMainToolbar().toggleClass("live", false);
+            this.toggleClass("form", true);
             this.closeLiveEdit();
             ResponsiveManager.fireResizeEvent();
         }
