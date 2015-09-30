@@ -398,6 +398,9 @@ module app.browse {
                                     if (updateResult[i].getId() === el.getId()) {
                                         updateResult[i].updateNodeData(el);
                                         this.updateStatisticsPreview(el); // update preview item
+                                        if (el.getContentId().equals(this.detailsPanel.getItem().getModel().getContentId())) {
+                                            this.detailsPanel.setContentStatus(el.getCompareStatus());
+                                        }
                                         results.push(updateResult[i]);
                                         break;
                                     }
@@ -443,6 +446,9 @@ module app.browse {
                 merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
                     if (node.getData() && node.getData().getContentSummary()) {
                         new api.content.ContentDeletedEvent(node.getData().getContentSummary().getContentId()).fire();
+                        if (node.getData().getContentSummary().getContentId().equals(this.detailsPanel.getItem().getModel().getContentId())) {
+                            this.detailsPanel.setContentStatus(node.getData().getCompareStatus());
+                        }
                     }
                 });
 
@@ -483,6 +489,9 @@ module app.browse {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
                                     pendingResult[i].updateNodeData(el);
+                                    if (el.getContentId().equals(this.detailsPanel.getItem().getModel().getContentId())) {
+                                        this.detailsPanel.setContentStatus(el.getCompareStatus());
+                                    }
                                     break;
                                 }
                             }
@@ -508,6 +517,9 @@ module app.browse {
                                 if (publishResult[i].getId() === el.getId()) {
                                     new api.content.ContentPublishedEvent(new api.content.ContentId(el.getId())).fire();
                                     publishResult[i].updateNodeData(el);
+                                    if (el.getContentId().equals(this.detailsPanel.getItem().getModel().getContentId())) {
+                                        this.detailsPanel.setContentStatus(el.getCompareStatus());
+                                    }
                                     break;
                                 }
                             }

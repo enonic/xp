@@ -251,17 +251,33 @@
   }
 }
 
-.widget {
+.widget-view {
 
   margin: 0 0 2px 0;
 
-  .widget-content {
-    margin-left: 5px;
-    overflow: hidden;
-    .transition(all 0.1s ease-in-out);
+  margin-left: 5px;
+  overflow: hidden;
+  .transition(all 0.1s ease-in-out);
 
-    .panel {
-      position: relative;
+  .panel {
+    position: relative;
+  }
+
+  .status-widget-item-view {
+    position: relative;
+    padding: 10px 10px 10px;
+    text-align: center;
+
+    span {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      font-size: 20px;
+      background-color: @admin-white;
+
+      &.equal {
+        color: @admin-green;
+      }
     }
   }
 
@@ -296,9 +312,11 @@
 
   &.expanded {
 
-    .widget-content {
-      padding: 5px 0 5px 0;
-      height: 100%;
+    padding: 5px 0 5px 0;
+    height: 100%;
+
+    .status-widget-item-view {
+      font-size: 20px;
     }
 
     .widget-toggle-button {
