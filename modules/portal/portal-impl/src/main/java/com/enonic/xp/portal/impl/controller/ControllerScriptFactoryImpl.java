@@ -26,7 +26,7 @@ public final class ControllerScriptFactoryImpl
     public ControllerScript fromScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );
-        return new ControllerScriptImpl( exports, this.postProcessor, this.scriptService );
+        return new ControllerScriptImpl( exports, this.postProcessor );
     }
 
     @Reference

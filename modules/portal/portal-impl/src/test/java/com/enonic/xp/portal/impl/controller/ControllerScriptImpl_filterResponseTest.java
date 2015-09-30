@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -9,6 +10,7 @@ import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class ControllerScriptImpl_filterResponseTest
     extends AbstractControllerTest
 {

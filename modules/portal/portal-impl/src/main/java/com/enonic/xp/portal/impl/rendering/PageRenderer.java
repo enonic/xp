@@ -1,28 +1,41 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
     implements Renderer<Content>
 {
+    private final static Logger LOG = LoggerFactory.getLogger( PageRenderer.class );
+
     private ControllerScriptFactory controllerScriptFactory;
 
     private PostProcessor postProcessor;
+
+    private FilterExecutor filterExecutor;
 
     @Override
     public Class<Content> getType()
@@ -44,6 +57,9 @@ public final class PageRenderer
         {
             portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
+
+        portalResponse = executeResponseFilters( portalRequest, portalResponse );
+        portalResponse = this.postProcessor.processResponse( portalRequest, portalResponse );
 
         return portalResponse;
     }
@@ -74,6 +90,51 @@ public final class PageRenderer
         return this.postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
     }
 
+    private PortalResponse executeResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        if ( portalResponse.getFilters().isEmpty() )
+        {
+            return portalResponse;
+        }
+
+        PortalRequestAccessor.set( portalRequest );
+        try
+        {
+            return applyResponseFilters( portalRequest, portalResponse );
+        }
+        finally
+        {
+            PortalRequestAccessor.remove();
+        }
+    }
+
+    private PortalResponse applyResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        ImmutableList<String> filterNames = portalResponse.getFilters();
+
+        PortalResponse filterResponse = portalResponse;
+        final Set<String> executedFilters = new HashSet<>();
+
+        while ( !filterNames.isEmpty() )
+        {
+            final String filterName = filterNames.get( 0 );
+            filterNames = filterNames.subList( 1, filterNames.size() );
+            if ( executedFilters.contains( filterName ) )
+            {
+                // skip filter already executed
+                LOG.warn( "Skipping response filter '{}', already executed in current request.", filterName );
+                continue;
+            }
+
+            filterResponse = PortalResponse.create( filterResponse ).clearFilters().filters( filterNames ).build();
+
+            filterResponse = this.filterExecutor.executeResponseFilter( filterName, portalRequest, filterResponse );
+            executedFilters.add( filterName );
+        }
+
+        return filterResponse;
+    }
+
     @Reference
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
@@ -85,4 +146,11 @@ public final class PageRenderer
     {
         this.postProcessor = postProcessor;
     }
+
+    @Reference
+    public void setScriptService( final PortalScriptService scriptService )
+    {
+        this.filterExecutor = new FilterExecutor( scriptService );
+    }
+
 }
