@@ -463,6 +463,12 @@ module api.dom {
         }
 
         private registerChildElement(child: Element, index?: number) {
+            // first unregister element from parent if it has one
+            // no need to do it with dom nodes because html takes care of this
+            if (child.parentElement) {
+                child.parentElement.unregisterChildElement(child);
+            }
+
             var parentNode = child.getHTMLElement().parentNode;
             // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
             // then parentElement will be null but parentNode will not
@@ -773,6 +779,13 @@ module api.dom {
             this.getEl().addEventListener("mousewheel", listener);
             // Firefox
             this.getEl().addEventListener("DOMMouseScroll", listener);
+        }
+
+        unScrolled(listener: (event: WheelEvent) => void) {
+            // IE9, Chrome, Safari, Opera
+            this.getEl().removeEventListener("mousewheel", listener);
+            // Firefox
+            this.getEl().removeEventListener("DOMMouseScroll", listener);
         }
 
         onClicked(listener: (event: MouseEvent) => void) {

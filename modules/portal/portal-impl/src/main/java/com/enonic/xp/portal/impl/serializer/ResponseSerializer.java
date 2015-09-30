@@ -30,8 +30,8 @@ public final class ResponseSerializer
     public void serialize( final HttpServletResponse response )
         throws Exception
     {
-        response.setStatus( this.portalResponse.getStatus() );
-        response.setContentType( this.portalResponse.getContentType() );
+        response.setStatus( this.portalResponse.getStatus().value() );
+        response.setContentType( this.portalResponse.getContentType().toString() );
 
         serializeHeaders( response, this.portalResponse.getHeaders() );
         serializeBody( response, this.portalResponse.getBody() );

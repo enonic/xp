@@ -9,6 +9,7 @@ exports.send = function (message) {
     bean.bcc = [].concat(__.nullOrValue(message.bcc));
     bean.replyTo = [].concat(__.nullOrValue(message.replyTo));
     bean.body = __.nullOrValue(message.body);
+    bean.contentType = __.nullOrValue(message.contentType);
     bean.headers = __.nullOrValue(message.headers);
 
     return bean.send();

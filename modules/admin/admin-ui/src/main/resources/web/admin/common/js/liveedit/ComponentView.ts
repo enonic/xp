@@ -162,15 +162,9 @@ module api.liveedit {
 
         private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
             var actions = actions || [];
+
+            actions.push(this.createSelectParentAction());
             actions.push(this.createInsertAction());
-            actions.push(new api.ui.Action("Select parent").onExecuted(() => {
-                var parentView: ItemView = this.getParentItemView();
-                if (parentView) {
-                    this.deselect();
-                    parentView.select(null, ItemViewContextMenuPosition.TOP);
-                    parentView.scrollComponentIntoView();
-                }
-            }));
             actions.push(new api.ui.Action("Reset").onExecuted(() => {
                 this.component.reset();
             }));
@@ -184,7 +178,6 @@ module api.liveedit {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
                 var duplicatedView = this.duplicate(duplicatedComponent);
 
-                duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
@@ -280,6 +273,7 @@ module api.liveedit {
                     setParentElement(this.getParentElement()).
                     setData(duplicate).
                     setPositionIndex(index + 1));
+
 
             parentView.addComponentView(duplicateView, index + 1);
 

@@ -14,6 +14,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.impl.WebHandlerTestSupport;
 
 import static org.junit.Assert.*;
@@ -34,7 +35,7 @@ public class PortalDispatcherTest
         addHandler( dispatcher );
 
         this.handler.response = PortalResponse.create().
-            status( 200 ).
+            status( HttpStatus.OK ).
             build();
     }
 
@@ -55,8 +56,8 @@ public class PortalDispatcherTest
         throws Exception
     {
         this.handler.response = PortalResponse.create().
-            status( 200 ).
-            contentType( "text/plain" ).
+            status( HttpStatus.OK ).
+            contentType( com.google.common.net.MediaType.create( "text", "plain"  ) ).
             body( "Hello World" ).
             build();
 
@@ -107,7 +108,7 @@ public class PortalDispatcherTest
         throws Exception
     {
         this.handler.response = PortalResponse.create().
-            status( 200 ).
+            status( HttpStatus.OK ).
             header( "X-Header", "Value" ).
             build();
 

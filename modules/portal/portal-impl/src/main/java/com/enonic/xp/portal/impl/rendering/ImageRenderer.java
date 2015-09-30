@@ -5,6 +5,8 @@ import java.text.MessageFormat;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -55,6 +57,10 @@ public final class ImageRenderer
             html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
         }
 
+        portalResponseBuilder.body( html.toString() ).contentType( MediaType.create( "text", "html" ) ).postProcess( false );
+        return new PortalResponseSerializer( portalResponseBuilder.build() ).serialize();
+
+        
         portalResponseBuilder.body( html.toString() ).contentType( "text/html" ).postProcess( false );
         return portalResponseBuilder.build();
     }

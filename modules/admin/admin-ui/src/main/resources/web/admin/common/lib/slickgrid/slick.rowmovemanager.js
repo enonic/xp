@@ -33,7 +33,7 @@
 
         function handleDragInit(e, dd) {
             // prevent the grid from cancelling drag'n'drop by default
-            e.stopImmediatePropagation();
+            //e.stopImmediatePropagation();
         }
 
         function handleDragStart(e, dd) {

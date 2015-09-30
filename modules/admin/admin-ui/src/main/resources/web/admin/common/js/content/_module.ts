@@ -95,4 +95,8 @@
 ///<reference path='ThumbnailUploader.ts' />
 
 ///<reference path='EditContentEvent.ts' />
+///<reference path='TreeGridItemClickedEvent.ts' />
 
+///<reference path='Widget.ts' />
+///<reference path='WidgetDescriptorResourceRequest.ts' />
+///<reference path='GetWidgetsByInterfaceRequest.ts' />

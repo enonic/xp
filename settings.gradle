@@ -6,6 +6,7 @@ include 'core:core-security'
 include 'core:core-image'
 include 'core:core-export'
 include 'core:core-mail'
+include 'core:core-elasticsearch'
 include 'core:core-impl'
 
 include 'script:script-api'

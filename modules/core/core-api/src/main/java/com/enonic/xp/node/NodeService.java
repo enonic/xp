@@ -4,13 +4,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.snapshot.DeleteSnapshotParams;
-import com.enonic.xp.snapshot.DeleteSnapshotsResult;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.xp.util.BinaryReference;
 
 @Beta

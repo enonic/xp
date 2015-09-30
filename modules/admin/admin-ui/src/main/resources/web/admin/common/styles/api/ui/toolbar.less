@@ -13,10 +13,19 @@
     display: inline-block;
     padding: 7px 14px;
 
-    &.icon-search {
-      font-size: 16px;
-      padding: 10px 14px 8px 14px;
+    &.pull-right {
+      float: right;
     }
+
+    &[class*="icon-"] {
+      font-size: 16px;
+      line-height: 24px;
+
+      span {
+        display: none;
+      }
+    }
+
   }
 
   .toggle-slide {
@@ -26,6 +35,7 @@
   .fold-button {
     height: @toolbar-height;
     line-height: @toolbar-height;
+    margin-right: 18px;
     padding: 0 27px 0 17px;
     text-align: center;
     overflow: visible;
@@ -48,12 +58,24 @@
     .dropdown {
       display: none;
       position: absolute;
-      margin-top: -1px;
+      margin: -1px 0px 0px 8px;
       left: 0;
       z-index: @z-index-toolbar-element;
-      padding: 0 10px;
+      padding: 4px;
       background-color: @admin-white;
-      .box-shadow(-1px 1px 2px 0px rgba(0, 0, 0, 0.3));
+      .material-layer-shadow();
+
+      .button {
+        width: 100%;
+        padding: 5px;
+        &:hover {
+          background-color: @admin-bg-light-gray;
+        }
+
+        span {
+          line-height: 1em;
+        }
+      }
 
       & > * {
         display: block;
@@ -73,6 +95,15 @@
   &.content-browse-toolbar, &.user-browse-toolbar {
     button {
       vertical-align: top;
+    }
+  }
+
+  @media screen and (min-width: 540px) and (max-width: 1920px) {
+    &.content-browse-toolbar {
+      button {
+        z-index: 4;
+        position: relative;
+      }
     }
   }
 }

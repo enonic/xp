@@ -9,6 +9,8 @@ import java.nio.file.WatchKey;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.logging.StyledTextOutput;
+import org.gradle.logging.StyledTextOutputFactory;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -47,6 +49,8 @@ public class WatchTask
     public void watch()
         throws IOException
     {
+        printDeprecationWarning();
+
         if ( this.task == null || this.dir == null )
         {
             return;
@@ -156,5 +160,27 @@ public class WatchTask
         }
 
         throw new IllegalStateException( String.valueOf( eventKind ) );
+    }
+
+    private void printDeprecationWarning()
+    {
+        final StyledTextOutput out = getServices().get( StyledTextOutputFactory.class ).create( WatchTask.class );
+
+        out.println();
+        out.style( StyledTextOutput.Style.Failure );
+        out.println( "!! WARNING !!" );
+
+        out.println();
+        out.style( StyledTextOutput.Style.Info );
+        out.println( "Watch task has been deprecated and will be removed in the next version. Please start using Gradle" );
+        out.println( "continuous mode:" );
+        out.println();
+        out.println( "  gradle -t deploy" );
+        out.println();
+        out.println( "If you are running an old version of Gradle that does not support this, please upgrade Gradle." );
+        out.println();
+        out.println( "  * Continuous build: https://docs.gradle.org/current/userguide/continuous_build.html" );
+        out.println( "  * Upgrade wrapper:  https://docs.gradle.org/current/userguide/gradle_wrapper.html" );
+        out.println();
     }
 }

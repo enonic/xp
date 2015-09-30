@@ -2,6 +2,10 @@
   padding: 10px;
   background-color: @admin-bg-light-gray;
 
+  &.invalid {
+    background-color: @admin-input-red;
+  }
+
   .form-element-spacing(15px);
 
   &.collapsed {
@@ -29,12 +33,12 @@
       }
     }
 
-    .collapse-button, .remove-button {
+    .edit-button, .remove-button {
       cursor: pointer;
       text-decoration: none;
     }
 
-    .collapse-button {
+    .edit-button {
       float: right;
       margin: 17px 20px 0px 20px;
       font-size: 13px;

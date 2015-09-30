@@ -27,6 +27,7 @@ module api.ui.uploader {
         url?: string;
         allowBrowse?: boolean;
         allowDrop?: boolean;
+        dropAlwaysAllowed?: boolean;            // allow drop no matter if the dropzone is visible
         resultAlwaysVisisble?: boolean;         // never hide the result
         dropzoneAlwaysVisible?: boolean;       // never hide the dropzone
         allowTypes?: {title: string; extensions: string}[];
@@ -143,6 +144,54 @@ module api.ui.uploader {
             }
 
             this.onRemoved((event) => this.destroyHandler.call(this, event));
+
+            this.listenToDragEvents();
+        }
+
+        private listenToDragEvents() {
+            var dragOverEl;
+            // make use of the fact that when dragging
+            // first drag enter occurs on the child element and after that
+            // drag leave occurs on the parent element that we came from
+            // meaning that to know when we left some element
+            // we need to compare it to the one currently dragged over
+            this.onDragEnter((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    var targetEl = <HTMLElement> event.target;
+
+                    if (!dragOverEl) {
+
+                        if (Uploader.debug) {
+                            console.log('drag entered, adding class');
+                        }
+                        this.addClass('dragover');
+                    }
+                    dragOverEl = targetEl;
+                }
+            });
+
+            this.onDragLeave((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    var targetEl = <HTMLElement> event.target;
+
+                    if (dragOverEl == targetEl) {
+                        if (Uploader.debug) {
+                            console.log('drag left, removing class');
+                        }
+                        this.removeClass('dragover');
+                        dragOverEl = undefined;
+                    }
+                }
+            });
+
+            this.onDrop((event: DragEvent) => {
+                if (this.config.dropAlwaysAllowed) {
+                    if (Uploader.debug) {
+                        console.log('drag drop removing class');
+                    }
+                    this.removeClass('dragover');
+                }
+            });
         }
 
         public setResetVisible(visible: boolean) {
@@ -164,7 +213,10 @@ module api.ui.uploader {
                     console.log('Initing uploader', this);
                 }
                 if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(this.dropzone.getId());
+                    this.uploader = this.initUploader(
+                        this.dropzone.getId(),
+                        this.config.dropAlwaysAllowed ? this.getId() : this.dropzone.getId()
+                    );
 
                     if (this.value) {
                         this.setValue(this.value);
@@ -209,6 +261,9 @@ module api.ui.uploader {
             if (this.config.allowDrop == undefined) {
                 this.config.allowDrop = true;
             }
+            if (this.config.dropAlwaysAllowed == undefined) {
+                this.config.dropAlwaysAllowed = false;
+            }
             if (this.config.dropzoneAlwaysVisible == undefined) {
                 this.config.dropzoneAlwaysVisible = false;
             }
@@ -245,7 +300,6 @@ module api.ui.uploader {
             } else {
                 this.setDropzoneVisible();
             }
-
             var results = this.getResultContainer().removeChildren();
 
             this.parseValues(value).forEach((val) => {
@@ -310,7 +364,7 @@ module api.ui.uploader {
             this.dropzoneContainer.setVisible(visible);
         }
 
-        private setProgressVisible(visible: boolean = true) {
+        setProgressVisible(visible: boolean = true) {
             if (visible) {
                 this.setDropzoneVisible(false);
                 this.setResultVisible(false);
@@ -450,7 +504,7 @@ module api.ui.uploader {
             return files.length > 0;
         }
 
-        private initUploader(elId: string) {
+        private initUploader(browseId: string, dropId: string) {
 
             if (!plupload) {
                 throw new Error("Uploader: plupload not found, check if it is included in page.");
@@ -460,10 +514,10 @@ module api.ui.uploader {
                 multipart_params: this.config.params,
                 runtimes: 'html5,flash,silverlight,html4',
                 multi_selection: this.config.allowMultiSelection,
-                browse_button: this.config.allowBrowse ? elId : undefined,
+                browse_button: this.config.allowBrowse ? browseId : undefined,
                 url: this.config.url,
                 multipart: true,
-                drop_element: this.config.allowDrop ? elId : undefined,
+                drop_element: this.config.allowDrop ? dropId : undefined,
                 flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
                 silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
                 filters: {

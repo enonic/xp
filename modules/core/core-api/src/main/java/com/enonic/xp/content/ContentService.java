@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 import com.google.common.annotations.Beta;
@@ -69,6 +70,9 @@ public interface ContentService
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
+
+    @Deprecated
+    InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
 
     String getBinaryKey( ContentId contentId, BinaryReference binaryReference );
 

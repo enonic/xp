@@ -1,98 +1,94 @@
 package com.enonic.xp.core.impl.i18n;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.Locale;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
+import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.resource.FileResource;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 
 import static org.junit.Assert.*;
 
 public class LocaleServiceImplTest
 {
-
     private LocaleServiceImpl localeService;
-
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-
-    private void writeFile( final File dir, final String path, final String value )
-        throws Exception
-    {
-        final File file = new File( dir, path );
-        file.getParentFile().mkdirs();
-        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
-    }
 
     @Before
     public void before()
         throws Exception
     {
-        localeService = new LocaleServiceImpl();
-
-        final File applicationsDir = this.temporaryFolder.newFolder( "applications" );
-
-        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en_US_1.properties", "d = phrases_en_US_1.properties" );
-        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en_US.properties", "b = phrases_en_US.properties" );
-        writeFile( applicationsDir, "myapplication/site/i18n/phrases_en.properties", "a = phrases_en.properties" );
-        writeFile( applicationsDir, "myapplication/site/i18n/phrases.properties", "c = phrases.properties" );
-
+        this.localeService = new LocaleServiceImpl();
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
-            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            final String path = resourceKey.getApplicationKey().toString() + resourceKey.getPath().toString();
-            final File resourceFile = new File( applicationsDir, path );
-            return new FileResource( resourceKey, resourceFile );
-        } );
-        localeService.setResourceService( resourceService );
+        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( this::loadResource );
+        this.localeService.setResourceService( resourceService );
     }
 
+    private Resource loadResource( final InvocationOnMock invocation )
+    {
+        final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+        final String path = resourceKey.getName();
+        final URL url = getClass().getResource( path.substring( path.lastIndexOf( '/' ) + 1 ) );
+
+        if ( url == null )
+        {
+            throw new IllegalArgumentException( "Could not find resource [" + path + "]" );
+        }
+
+        return new UrlResource( resourceKey, url );
+    }
 
     @Test
     public void get_bundle()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
-        Object[] result = {"a", "c"};
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
 
         assertNotNull( bundle );
-        assertArrayEquals( bundle.getKeys().toArray(), result );
+        assertEquals( 8, bundle.getKeys().size() );
+        assertEquals( "en", bundle.localize( "msg" ) );
     }
 
     @Test
     public void get_bundle_with_country()
         throws Exception
     {
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.US );
-        Object[] result = {"a", "b", "c"};
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.US );
 
         assertNotNull( bundle );
-        assertArrayEquals( bundle.getKeys().toArray(), result );
+        assertEquals( 9, bundle.getKeys().size() );
+        assertEquals( "en_US", bundle.localize( "msg" ) );
     }
 
     @Test
     public void get_bundle_with_variant()
         throws Exception
     {
-        Locale locale = new Locale( "en", "US", "1" );
-        MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), locale );
-        Object[] result = {"a", "b", "c", "d"};
+        final Locale locale = new Locale( "en", "US", "1" );
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), locale );
 
         assertNotNull( bundle );
-        assertArrayEquals( bundle.getKeys().toArray(), result );
+        assertEquals( 10, bundle.getKeys().size() );
+        assertEquals( "en_US_1", bundle.localize( "msg" ) );
+    }
+
+    @Test
+    public void get_UTF8_chars()
+    {
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
+
+        assertNotNull( bundle );
+        assertEquals( "æøå", bundle.localize( "norwegian" ) );
+        assertEquals( "ÄäÜüß", bundle.localize( "german" ) );
+        assertEquals( "ŁĄŻĘĆŃŚŹ", bundle.localize( "polish" ) );
+        assertEquals( "ЯБГДЖЙ", bundle.localize( "russian" ) );
+        assertEquals( "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ", bundle.localize( "japanese" ) );
     }
 }

@@ -146,15 +146,8 @@ module api.liveedit {
         private createRegionContextMenuActions() {
             var actions: api.ui.Action[] = [];
 
+            actions.push(this.createSelectParentAction());
             actions.push(this.createInsertAction());
-            actions.push(new api.ui.Action('Select parent').onExecuted(() => {
-                var parentView: ItemView = this.getParentItemView();
-                if (parentView) {
-                    this.deselect();
-                    parentView.select(null, ItemViewContextMenuPosition.TOP);
-                    parentView.scrollComponentIntoView();
-                }
-            }));
             actions.push(new api.ui.Action('Reset').onExecuted(() => {
                 this.deselect();
                 this.empty();

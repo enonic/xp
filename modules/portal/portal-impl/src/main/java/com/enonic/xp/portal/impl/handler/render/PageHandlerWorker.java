@@ -114,7 +114,7 @@ final class PageHandlerWorker
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        this.response.status( HttpStatus.TEMPORARY_REDIRECT.value() );
+        this.response.status( HttpStatus.TEMPORARY_REDIRECT );
         this.response.header( "Location", targetUrl );
     }
 

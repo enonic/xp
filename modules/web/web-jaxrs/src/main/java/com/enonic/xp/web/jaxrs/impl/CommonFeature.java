@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.jaxrs.impl.exception.JsonExceptionMapper;
+import com.enonic.xp.web.jaxrs.impl.image.RenderedImageProvider;
 import com.enonic.xp.web.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.web.jaxrs.impl.multipart.MultipartFormReader;
 
@@ -20,6 +21,7 @@ public final class CommonFeature
         context.register( new MultipartFormReader() );
         context.register( new JsonObjectProvider() );
         context.register( new JsonExceptionMapper() );
+        context.register( new RenderedImageProvider() );
         return true;
     }
 }

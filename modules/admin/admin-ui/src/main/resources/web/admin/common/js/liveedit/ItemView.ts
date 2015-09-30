@@ -532,6 +532,9 @@ module api.liveedit {
         }
 
         showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (this.getPageView().isDisabledContextMenu()) {
+                return;
+            }
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
             }
@@ -650,6 +653,11 @@ module api.liveedit {
             if (!silent) {
                 new ItemViewDeselectedEvent(this).fire();
             }
+        }
+
+        isDraggableView(): boolean {
+            return !(api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
+                     api.ObjectHelper.iFrameSafeInstanceOf(this, PageView));
         }
 
         private stopTextEditMode() {
@@ -815,6 +823,21 @@ module api.liveedit {
             return new api.ui.Action('Insert').setChildActions(this.getInsertActions());
         }
 
+        protected createSelectParentAction(): api.ui.Action {
+            var action = new api.ui.Action("Select parent");
+
+            action.setSortOrder(0);
+            action.onExecuted(() => {
+                var parentView: ItemView = this.getParentItemView();
+                if (parentView) {
+                    this.deselect();
+                    parentView.select(null, ItemViewContextMenuPosition.TOP);
+                    parentView.scrollComponentIntoView();
+                }
+            });
+
+            return action;
+        }
 
         protected createInsertSubAction(typeAsString: string, label: string, cls: string): api.ui.Action {
             var action = new api.ui.Action(label).onExecuted(() => {

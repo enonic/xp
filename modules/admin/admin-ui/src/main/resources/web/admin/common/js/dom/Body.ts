@@ -14,8 +14,7 @@ module api.dom {
 
             super(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(body)).
-                setLoadExistingChildren(loadExistingChildren).
-                setParentElement(html));
+                setLoadExistingChildren(loadExistingChildren));
 
             html.appendChild(this);
 

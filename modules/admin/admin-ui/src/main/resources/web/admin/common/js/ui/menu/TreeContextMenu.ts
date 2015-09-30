@@ -3,14 +3,19 @@ module api.ui.menu {
     export class TreeContextMenu extends api.dom.DlEl {
         private itemClickListeners: {(item: TreeMenuItem): void}[] = [];
 
+        private actions: api.ui.Action[] = [];
+
         constructor(actions?: api.ui.Action[], appendToBody = true) {
             super("context-menu");
 
             if (actions) {
-                for (var i = 0; i < actions.length; i++) {
-                    this.addAction(actions[i]);
-                }
+                actions.sort(function (action1: api.ui.Action, action2: api.ui.Action) {
+                    return action1.getSortOrder() - action2.getSortOrder();
+                }).forEach((action: api.ui.Action) => {
+                    this.addAction(action);
+                });
             }
+
             if (appendToBody) {
                 api.dom.Body.get().appendChild(this);
                 api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
@@ -28,6 +33,7 @@ module api.ui.menu {
             var menuItem = this.createMenuItem(action);
             var subItems = [];
             this.appendChild(menuItem);
+            this.actions.push(action);
 
             if (childActions.length > 0) {
                 for (var i = 0; i < childActions.length; i++) {
@@ -40,6 +46,7 @@ module api.ui.menu {
                 });
             }
             else {
+
                 menuItem.onClicked((event: MouseEvent) => {
                     this.notifyItemClicked();
 
@@ -59,8 +66,18 @@ module api.ui.menu {
 
         setActions(actions: api.ui.Action[]): TreeContextMenu {
             this.removeChildren();
+            this.clearActionListeners();
+
+            this.actions = [];
+
             this.addActions(actions);
             return this;
+        }
+
+        clearActionListeners() {
+            this.actions.forEach((action) => {
+                action.clearListeners();
+            });
         }
 
         onItemClicked(listener: () => void) {
@@ -76,6 +93,18 @@ module api.ui.menu {
         private notifyItemClicked() {
             this.itemClickListeners.forEach((listener: ()=>void) => {
                 listener();
+            });
+        }
+
+        onBeforeAction(listener: (action: api.ui.Action) => void) {
+            this.actions.forEach((action: api.ui.Action) => {
+                action.onBeforeExecute(listener);
+            });
+        }
+
+        onAfterAction(listener: (action: api.ui.Action) => void) {
+            this.actions.forEach((action: api.ui.Action) => {
+                action.onAfterExecute(listener);
             });
         }
 
