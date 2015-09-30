@@ -103,7 +103,7 @@ module app.publish {
         }
 
         private getResolveTasks(): wemQ.Promise<any>[] {
-            return [this.resolvePublishRequestedContentsAndUpdateView(), this.resolveAllDependenciesIfNeededAndUpdateView()];
+            return [this.resolvePublishDependenciesIfNeededAndUpdateView()];
         }
 
         show() {
@@ -176,14 +176,7 @@ module app.publish {
             var resolveTasks: wemQ.Promise<any>[] = [];
 
             this.includeChildrenCheckedListener = () => {
-                if ((this.includeChildItemsCheck.isChecked() && !this.initialContentsResolvedWithChildren.isAlreadyResolved()) ||
-                    (!this.includeChildItemsCheck.isChecked() && !this.initialContentsResolvedWithoutChildren.isAlreadyResolved())) {
-                    resolveTasks.push(this.resolvePublishRequestedContentsAndUpdateView());
-                } else {
-                    this.renderResolvedPublishItems();
-                    this.countItemsToPublishAndUpdateCounterElements();
-                }
-                resolveTasks.push(this.resolveAllDependenciesIfNeededAndUpdateView());
+                resolveTasks.push(this.resolvePublishDependenciesIfNeededAndUpdateView());
                 this.runResolveTasks(resolveTasks);
             };
 
@@ -287,23 +280,9 @@ module app.publish {
         }
 
         /**
-         * Perform request to resolve publish items, init and render results.
-         */
-        private resolvePublishRequestedContentsAndUpdateView(): wemQ.Promise<any> {
-
-            var resolvePublishRequestedContentsRequest = new api.content.ResolvePublishRequestedContentsRequest(this.getSelectedContentsIds(),
-                this.includeChildItemsCheck.isChecked());
-
-            return resolvePublishRequestedContentsRequest.send().then((jsonResponse: api.rest.JsonResponse<NewResolvePublishContentJson>) => {
-                this.initResolvedPublishItems(jsonResponse.getResult());
-                this.renderResolvedPublishItems();
-            });
-        }
-
-        /**
          * Perform request to resolve dependency items of passed item.
          */
-        private resolveAllDependenciesIfNeededAndUpdateView(): wemQ.Promise<any> {
+        private resolvePublishDependenciesIfNeededAndUpdateView(): wemQ.Promise<any> {
 
             if ((this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithChildren.isAlreadyResolved()) ||
                 (!this.includeChildItemsCheck.isChecked() && !this.dependenciesContentsResolvedWithoutChildren.isAlreadyResolved())) {
@@ -311,7 +290,9 @@ module app.publish {
                 var resolveDependenciesRequest = new api.content.ResolvePublishDependenciesRequest(this.getSelectedContentsIds(),
                     this.includeChildItemsCheck.isChecked());
 
-                return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<NewResolvePublishContentJson>) => {
+                return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ResolvePublishContentResultJson>) => {
+                    this.initResolvedPublishItems(jsonResponse.getResult());
+                    this.renderResolvedPublishItems();
                     this.initResolvedDependenciesItems(jsonResponse.getResult());
                     this.renderResolvedDependenciesItems();
                 });
@@ -371,7 +352,7 @@ module app.publish {
         /**
          * Inits arrays of properties that store results of performing resolve request.
          */
-        private initResolvedPublishItems(json: NewResolvePublishContentJson) {
+        private initResolvedPublishItems(json: ResolvePublishContentResultJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
                 this.initialContentsResolvedWithChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.requestedContents));
@@ -383,7 +364,7 @@ module app.publish {
         /**
          * Inits arrays of properties that store results of performing resolve request.
          */
-        private initResolvedDependenciesItems(json: NewResolvePublishContentJson) {
+        private initResolvedDependenciesItems(json: ResolvePublishContentResultJson) {
 
             if (this.includeChildItemsCheck.isChecked()) {
                 this.dependenciesContentsResolvedWithChildren.setContentsResolved(ContentPublishItem.fromNewContentPublishItems(json.dependentContents));
@@ -426,7 +407,6 @@ module app.publish {
                 ? this.dependenciesContentsResolvedWithChildren
                 : this.dependenciesContentsResolvedWithoutChildren);
 
-            console.log("bb");
             return result;
         }
 
@@ -437,7 +417,6 @@ module app.publish {
                     result++;
                 }
             });
-            console.log("bb");
             return result;
         }
 
