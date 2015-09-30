@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ResolvePublishRequestedContentsRequest extends ContentResourceRequest<api.content.json.NewResolvePublishContentJson, any> {
+    export class ResolvePublishRequestedContentsRequest extends ContentResourceRequest<api.content.json.ResolvePublishContentResultJson, any> {
 
         private ids: ContentId[] = [];
 

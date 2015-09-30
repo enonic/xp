@@ -6,7 +6,7 @@ module app.publish {
     import ContentSummary = api.content.ContentSummary;
     import DialogButton = api.ui.dialog.DialogButton;
     import PublishContentRequest = api.content.PublishContentRequest;
-    import NewResolvePublishContentJson = api.content.json.NewResolvePublishContentJson;
+    import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
     import CompareStatus = api.content.CompareStatus;
     import ContentId = api.content.ContentId;
 

@@ -1,6 +1,6 @@
 module api.content.json {
 
-    export interface NewContentPublishItem {
+    export interface ContentPublishItemJson {
 
         id: string;
 
