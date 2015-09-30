@@ -8,9 +8,9 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.script.ScriptValue;
 
 public final class ThymeleafProcessor
 {

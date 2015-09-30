@@ -37,18 +37,16 @@ public class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( createdNode.id() ).
-            resolveHasChild( false ).
             build().
             execute();
 
         assertEquals( createdNode, fetchedNode );
+
+        printBranchIndex();
     }
 
     @Test
@@ -73,63 +71,13 @@ public class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( createdNode.id() ).
-            resolveHasChild( false ).
             build().
             execute();
 
         assertNull( fetchedNode );
     }
-
-    @Test
-    public void get_by_id_resolve_hasChild()
-        throws Exception
-    {
-        final CreateNodeParams createNodeParams = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node createdNode = createNode( createNodeParams );
-
-        createNode( CreateNodeParams.create().
-            parent( createdNode.path() ).
-            name( "child-1" ).
-            build() );
-
-        final Node fetchedNode = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            id( createdNode.id() ).
-            resolveHasChild( true ).
-            build().
-            execute();
-
-        assertTrue( fetchedNode.getHasChildren() );
-
-        final Node fetchedNodeSkipResolve = GetNodeByIdCommand.create().
-            versionService( this.versionService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            id( createdNode.id() ).
-            resolveHasChild( false ).
-            build().
-            execute();
-
-        assertFalse( fetchedNodeSkipResolve.getHasChildren() );
-    }
-
 }

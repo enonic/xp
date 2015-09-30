@@ -33,7 +33,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() ||  portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
         {
             return portalResponse;
         }

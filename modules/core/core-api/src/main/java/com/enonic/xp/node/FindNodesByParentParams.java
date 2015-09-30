@@ -73,7 +73,7 @@ public class FindNodesByParentParams
 
         private NodeId parentId;
 
-        private Integer size = 10;
+        private Integer size = -1;
 
         private Integer from = 0;
 
@@ -121,9 +121,14 @@ public class FindNodesByParentParams
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkArgument( parentId != null || parentPath != null, "Either parent-path or parent-id must be set" );
+        }
 
         public FindNodesByParentParams build()
         {
+            validate();
             return new FindNodesByParentParams( this );
         }
     }

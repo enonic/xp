@@ -2,44 +2,28 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodeByPathCommand
     extends AbstractNodeCommand
 {
     private final NodePath path;
 
-    private final boolean resolveHasChild;
-
     private GetNodeByPathCommand( final Builder builder )
     {
         super( builder );
         path = builder.path;
-        resolveHasChild = builder.resolveHasChild;
     }
 
     public Node execute()
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId currentVersion = this.queryService.get( path, IndexContext.from( context ) );
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
-
-        return resolveHasChild ? NodeHasChildResolver.create().
-            queryService( this.queryService ).
-            build().
-            resolve( node ) : node;
+        return this.storageService.get( path, InternalContext.from( context ) );
     }
 
     public static Builder create()
@@ -58,8 +42,6 @@ public class GetNodeByPathCommand
     {
         private NodePath path;
 
-        private boolean resolveHasChild = true;
-
         private Builder()
         {
             super();
@@ -73,12 +55,6 @@ public class GetNodeByPathCommand
         public Builder nodePath( NodePath path )
         {
             this.path = path;
-            return this;
-        }
-
-        public Builder resolveHasChild( boolean resolveHasChild )
-        {
-            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

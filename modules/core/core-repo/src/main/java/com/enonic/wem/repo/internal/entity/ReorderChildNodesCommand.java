@@ -29,17 +29,19 @@ public class ReorderChildNodesCommand
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : params )
         {
-            final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId(), false );
+            final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
             final Node nodeToMoveBefore =
-                reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore(), false );
-            final Node parentNode = doGetByPath( nodeToMove.parentPath(), false );
+                reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore() );
+
+            final Node parentNode = GetNodeByPathCommand.create( this ).
+                nodePath( nodeToMove.parentPath() ).
+                build().
+                execute();
 
             final Node reorderedNode = ReorderChildNodeCommand.create().
-                queryService( this.queryService ).
-                nodeDao( this.nodeDao ).
-                branchService( this.branchService ).
-                versionService( this.versionService ).
                 indexServiceInternal( this.indexServiceInternal ).
+                searchService( this.searchService ).
+                storageService( this.storageService ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).
                 nodeToMoveBefore( nodeToMoveBefore ).

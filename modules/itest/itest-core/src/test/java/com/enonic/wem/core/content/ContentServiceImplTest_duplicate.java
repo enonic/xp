@@ -6,8 +6,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DuplicateContentParams;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_duplicate extends AbstractContentServiceTest {
     @Override

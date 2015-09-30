@@ -22,7 +22,7 @@ public final class DeleteNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final Node node = doGetById( nodeId, false );
+        final Node node = doGetById( nodeId );
 
         if ( node != null )
         {

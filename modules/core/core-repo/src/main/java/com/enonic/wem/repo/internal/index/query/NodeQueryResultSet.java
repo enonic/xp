@@ -1,22 +1,22 @@
 package com.enonic.wem.repo.internal.index.query;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 
 public class NodeQueryResultSet
 {
-    private final LinkedHashSet<NodeId> nodeIds;
+    private final LinkedList<NodeId> nodeIds;
 
     private final NodeId first;
 
     private final NodeId last;
 
-    private NodeQueryResultSet( LinkedHashSet<NodeId> nodeIds, final NodeId first, final NodeId last )
+    private NodeQueryResultSet( LinkedList<NodeId> nodeIds, final NodeId first, final NodeId last )
     {
         this.nodeIds = nodeIds;
         this.first = first;
@@ -25,10 +25,10 @@ public class NodeQueryResultSet
 
     public static NodeQueryResultSet empty()
     {
-        return new NodeQueryResultSet( Sets.newLinkedHashSet(), null, null );
+        return new NodeQueryResultSet( Lists.newLinkedList(), null, null );
     }
 
-    public LinkedHashSet<NodeId> getNodeIds()
+    public LinkedList<NodeId> getNodeIds()
     {
         return nodeIds;
     }
@@ -58,16 +58,16 @@ public class NodeQueryResultSet
         return this.nodeIds.size();
     }
 
-    public static NodeQueryResultSet from( final Set<NodeQueryResultEntry> entries )
+    public static NodeQueryResultSet from( final List<NodeQueryResultEntry> entries )
     {
         if ( entries.isEmpty() )
         {
-            return new NodeQueryResultSet( Sets.newLinkedHashSet(), null, null );
+            return new NodeQueryResultSet( Lists.newLinkedList(), null, null );
         }
 
         final NodeId first = entries.iterator().next().getId();
 
-        final LinkedHashSet<NodeId> nodeIds = Sets.newLinkedHashSet();
+        final LinkedList<NodeId> nodeIds = Lists.newLinkedList();
 
         NodeId last = null;
 

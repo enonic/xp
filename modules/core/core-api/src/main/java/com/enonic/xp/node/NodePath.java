@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 
 @Beta
 public final class NodePath
+    implements Comparable<NodePath>
 {
     public final static NodePath ROOT = new NodePath( "/" );
 
@@ -306,6 +307,17 @@ public final class NodePath
         {
             return name;
         }
+    }
+
+    @Override
+    public int compareTo( final NodePath o )
+    {
+        if ( o.equals( this ) )
+        {
+            return 0;
+        }
+
+        return this.refString.compareTo( o.refString );
     }
 
     public final static class Builder

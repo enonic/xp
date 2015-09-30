@@ -5,10 +5,10 @@ import java.util.concurrent.Callable;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.branch.Branch;
 
 final class ContextImpl
     implements Context

@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -35,7 +37,7 @@ public final class DuplicateNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = doGetById( nodeId, false );
+        final Node existingNode = doGetById( nodeId );
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
@@ -43,7 +45,11 @@ public final class DuplicateNodeCommand
             name( newNodeName );
         attachBinaries( existingNode, createNodeParams );
 
-        final Node duplicatedNode = doCreateNode( createNodeParams.build(), this.binaryBlobStore );
+        final Node duplicatedNode = CreateNodeCommand.create( this ).
+            params( createNodeParams.build() ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
             add( existingNode.id(), duplicatedNode.id() );
@@ -51,6 +57,8 @@ public final class DuplicateNodeCommand
         storeChildNodes( existingNode, duplicatedNode, builder );
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
+
+        this.indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
@@ -63,7 +71,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
             from( 0 ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node node : findNodesByParentResult.getNodes() )
@@ -75,7 +83,11 @@ public final class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
-            final Node newChildNode = this.doCreateNode( paramsBuilder.build(), this.binaryBlobStore );
+            final Node newChildNode = CreateNodeCommand.create( this ).
+                params( paramsBuilder.build() ).
+                binaryBlobStore( binaryBlobStore ).
+                build().
+                execute();
 
             builder.add( node.id(), newChildNode.id() );
 
@@ -106,7 +118,7 @@ public final class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( duplicatedParent.path() ).
             from( 0 ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node node : findNodesByParentResult.getNodes() )
@@ -134,10 +146,14 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            doUpdateNode( UpdateNodeParams.create().
-                id( node.id() ).
-                editor( toBeEdited -> toBeEdited.data = data ).
-                build(), this.binaryBlobStore );
+            UpdateNodeCommand.create( this ).
+                params( UpdateNodeParams.create().
+                    id( node.id() ).
+                    editor( toBeEdited -> toBeEdited.data = data ).
+                    build() ).
+                binaryBlobStore( binaryBlobStore ).
+                build().
+                execute();
         }
     }
 
@@ -150,9 +166,13 @@ public final class DuplicateNodeCommand
         while ( !resolvedUnique )
         {
             final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
-            Node foundNode = this.doGetByPath( checkIfExistsPath, false );
 
-            if ( foundNode == null )
+            final boolean exists = CheckNodeExistsCommand.create( this ).
+                nodePath( checkIfExistsPath ).
+                build().
+                execute();
+
+            if ( !exists )
             {
                 resolvedUnique = true;
             }

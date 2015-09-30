@@ -30,8 +30,6 @@ class ContentQueryNodeQueryTranslator
 
         processContentTypesNames( contentQuery, builder );
 
-        builder.resolveHasChild( true );
-
         return builder.build();
     }
 

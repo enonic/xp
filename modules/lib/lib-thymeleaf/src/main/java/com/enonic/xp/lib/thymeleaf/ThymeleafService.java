@@ -9,9 +9,9 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
-import com.enonic.xp.portal.view.ViewFunctionService;
 
 public final class ThymeleafService
     implements ScriptBean

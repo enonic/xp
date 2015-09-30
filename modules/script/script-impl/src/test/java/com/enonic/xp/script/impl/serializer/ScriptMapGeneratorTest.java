@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.script.impl.AbstractScriptTest;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.impl.AbstractScriptTest;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public class ScriptMapGeneratorTest

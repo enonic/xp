@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
+import com.enonic.wem.repo.internal.ReturnFields;
 
 public class ElasticsearchQuery
 {
@@ -33,8 +33,6 @@ public class ElasticsearchQuery
 
     private final int size;
 
-    private final boolean explain;
-
     private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
     private final ReturnFields returnFields;
@@ -48,14 +46,8 @@ public class ElasticsearchQuery
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.size = builder.size;
         this.from = builder.from;
-        this.explain = builder.explain;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
         this.returnFields = builder.returnFields;
-    }
-
-    public boolean isExplain()
-    {
-        return explain;
     }
 
     public ImmutableSet<AbstractAggregationBuilder> getAggregations()
@@ -96,11 +88,6 @@ public class ElasticsearchQuery
     public int getSize()
     {
         return size;
-    }
-
-    boolean doExplain()
-    {
-        return explain;
     }
 
     public ReturnFields getReturnFields()
@@ -157,8 +144,6 @@ public class ElasticsearchQuery
         private int from = 0;
 
         private int size = DEFAULT_SIZE;
-
-        private final boolean explain = false;
 
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 

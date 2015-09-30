@@ -126,11 +126,11 @@ public class ResourceServiceImplTest
     {
         ResourceKeys resourceKeys;
 
-        Mockito.when( bundle.getEntryPaths("/site/pages") ).thenReturn(
+        Mockito.when( bundle.getEntryPaths( "/site/pages" ) ).thenReturn(
             Collections.enumeration( Arrays.asList( "/default/", "/rss/", "/readme.md", "/person_default_page.jpg" ) ) );
 
         //Finds folders for a specific path
-        resourceKeys = resourceService.findFolders( applicationKey, "/site/pages");
+        resourceKeys = resourceService.findFolders( applicationKey, "/site/pages" );
         assertEquals( 2, resourceKeys.getSize() );
 
     }

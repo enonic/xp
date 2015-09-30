@@ -195,10 +195,10 @@ module app.wizard {
 
             } while (!(api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, RegionView) ||
 
-                       ( api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, LayoutComponentView) &&  // lets drag items inside the 'main' region between layouts
-                         (parentComponentNode.isExpanded() && parentComponentNode.getChildren().length > 0) ) ||
+                     ( api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, LayoutComponentView) &&  // lets drag items inside the 'main' region between layouts
+                       (parentComponentNode.isExpanded() && parentComponentNode.getChildren().length > 0) ) ||
 
-                       api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, PageView))
+                     api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, PageView))
 
                      || (parentComponentNode.calcLevel() >= calcLevel && !isFirstChildPosition));
 

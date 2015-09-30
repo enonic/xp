@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
@@ -13,7 +14,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteService;
 

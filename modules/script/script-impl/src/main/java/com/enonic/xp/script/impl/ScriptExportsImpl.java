@@ -1,8 +1,8 @@
 package com.enonic.xp.script.impl;
 
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.resource.ResourceKey;
 
 final class ScriptExportsImpl
     implements ScriptExports

@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
 
@@ -12,9 +12,9 @@ public class NodeManualOrderValueResolver
 
     public static final Long START_ORDER_VALUE = 0L;
 
-    public static LinkedHashSet<NodeIdOrderValue> resolve( final LinkedHashSet<NodeId> orderedNodeIds )
+    public static LinkedList<NodeIdOrderValue> resolve( final LinkedList<NodeId> orderedNodeIds )
     {
-        final LinkedHashSet<NodeIdOrderValue> result = Sets.newLinkedHashSet();
+        final LinkedList<NodeIdOrderValue> result = Lists.newLinkedList();
 
         Long currentValue = START_ORDER_VALUE;
 
@@ -30,9 +30,9 @@ public class NodeManualOrderValueResolver
 
     public static class NodeIdOrderValue
     {
-        private Long manualOrderValue;
+        private final Long manualOrderValue;
 
-        private NodeId nodeId;
+        private final NodeId nodeId;
 
         public NodeIdOrderValue( final NodeId nodeId, final Long manualOrderValue )
         {

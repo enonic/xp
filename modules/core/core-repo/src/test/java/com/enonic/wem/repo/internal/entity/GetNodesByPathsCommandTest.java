@@ -42,12 +42,9 @@ public class GetNodesByPathsCommandTest
                 addNodePath( createdNode1.path() ).
                 addNodePath( createdNode2.path() ).
                 build() ).
-            resolveHasChild( true ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -60,12 +57,9 @@ public class GetNodesByPathsCommandTest
     {
         final Nodes result = GetNodesByPathsCommand.create().
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).
-            resolveHasChild( true ).
-            branchService( this.branchService ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

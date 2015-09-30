@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
 import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 @Beta
 public class NodeVersions
@@ -13,12 +13,18 @@ public class NodeVersions
 {
     private final NodeId nodeId;
 
-    private final ImmutableSortedSet<NodeVersion> nodeVersions;
+    private final ImmutableList<NodeVersion> nodeVersions;
 
     private NodeVersions( Builder builder )
     {
         this.nodeId = builder.nodeId;
-        this.nodeVersions = ImmutableSortedSet.copyOf( builder.nodeVersions );
+        this.nodeVersions = ImmutableList.copyOf( builder.nodeVersions );
+    }
+
+    private NodeVersions( final NodeId nodeId, final ImmutableList<NodeVersion> nodeVersions )
+    {
+        this.nodeId = nodeId;
+        this.nodeVersions = nodeVersions;
     }
 
     public NodeId getNodeId()
@@ -26,9 +32,23 @@ public class NodeVersions
         return nodeId;
     }
 
+    public static NodeVersions empty()
+    {
+        return new NodeVersions( null, ImmutableList.of() );
+    }
+
     public static Builder create( final NodeId nodeId )
     {
         return new Builder( nodeId );
+    }
+
+    public NodeVersionIds getNodeVersionIds()
+    {
+        final NodeVersionIds.Builder builder = NodeVersionIds.create();
+
+        nodeVersions.forEach( ( nodeVersion ) -> builder.add( nodeVersion.getNodeVersionId() ) );
+
+        return builder.build();
     }
 
     @Override
@@ -44,7 +64,7 @@ public class NodeVersions
 
     public static final class Builder
     {
-        private final SortedSet<NodeVersion> nodeVersions = Sets.newTreeSet();
+        private final List<NodeVersion> nodeVersions = Lists.newLinkedList();
 
         private final NodeId nodeId;
 

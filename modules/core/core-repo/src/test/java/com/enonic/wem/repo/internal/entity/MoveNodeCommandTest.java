@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -13,6 +12,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -44,11 +44,9 @@ public class MoveNodeCommandTest
         final Node beforeMove = getNodeById( node.id() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -71,11 +69,9 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.parentPath() ).
@@ -100,11 +96,9 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
@@ -129,11 +123,9 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( child.path() ).
@@ -164,57 +156,15 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode" ) ).
             newParent( newParent.path() ).
             build().
             execute();
     }
-
-    @Test
-    public void move_node_already_exists_force()
-        throws Exception
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            name( "mynode" ).
-            parent( NodePath.ROOT ).
-            setNodeId( NodeId.from( "mynode" ) ).
-            build() );
-
-        final Node newParent = createNode( CreateNodeParams.create().
-            name( "new-parent" ).
-            parent( NodePath.ROOT ).
-            setNodeId( NodeId.from( "newparent" ) ).
-            build() );
-
-        final Node equalNode = createNode( CreateNodeParams.create().
-            name( "mynode" ).
-            parent( newParent.path() ).
-            build() );
-
-        MoveNodeCommand.create().
-            queryService( this.queryService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            id( node.id() ).
-            newNodeName( NodeName.from( "mynode" ) ).
-            newParent( newParent.path() ).
-            overwriteExisting( true ).
-            build().
-            execute();
-
-        assertNotNull( getNodeById( node.id() ) );
-        assertEquals( "mynode-copy", getNodeById( node.id() ).name().toString() );
-        assertNotNull( getNodeById( equalNode.id() ) );
-    }
-
 
     @Test
     public void move_to_new_parent()
@@ -233,11 +183,9 @@ public class MoveNodeCommandTest
             build() );
 
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( node.id() ).
             newParent( newParent.path() ).
             build().
@@ -253,30 +201,18 @@ public class MoveNodeCommandTest
     public void move_with_children()
         throws Exception
     {
-        final Node parentNode = createNode( CreateNodeParams.create().
-            name( "myparent" ).
+        final Node parent = createNode( CreateNodeParams.create().
+            name( "parent" ).
+            setNodeId( NodeId.from( "parent" ) ).
             parent( NodePath.ROOT ).
-            setNodeId( NodeId.from( "myparent" ) ).
             permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
-            build() );
-
-        final Node node = createNode( CreateNodeParams.create().
-            name( "mynode" ).
-            parent( parentNode.path() ).
-            setNodeId( NodeId.from( "mynode" ) ).
-            inheritPermissions( true ).
             build() );
 
         final Node child1 = createNode( CreateNodeParams.create().
             name( "child1" ).
-            parent( node.path() ).
+            parent( parent.path() ).
             setNodeId( NodeId.from( "child1" ) ).
-            build() );
-
-        final Node child2 = createNode( CreateNodeParams.create().
-            name( "child2" ).
-            parent( node.path() ).
-            setNodeId( NodeId.from( "child2" ) ).
+            inheritPermissions( true ).
             build() );
 
         final Node child1_1 = createNode( CreateNodeParams.create().
@@ -285,39 +221,54 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "child1_1" ) ).
             build() );
 
-        final Node newParent = createNode( CreateNodeParams.create().
-            name( "new-parent" ).
-            parent( NodePath.ROOT ).
-            setNodeId( NodeId.from( "newparent" ) ).
+        final Node child1_2 = createNode( CreateNodeParams.create().
+            name( "child1_2" ).
+            parent( child1.path() ).
+            setNodeId( NodeId.from( "child1_2" ) ).
             build() );
 
-        assertEquals( 1, getVersions( node ).getHits() );
-        assertEquals( 1, getVersions( child1 ).getHits() );
-        assertEquals( 1, getVersions( child2 ).getHits() );
+        final Node child1_1_1 = createNode( CreateNodeParams.create().
+            name( "child1_1_1" ).
+            parent( child1_1.path() ).
+            setNodeId( NodeId.from( "child1_1_1" ) ).
+            build() );
 
-        assertNotNull( getNodeByPath( NodePath.create( node.path(), child1.name().toString() ).build() ) );
+        final Node newParent = createNode( CreateNodeParams.create().
+            name( "newParent" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "newParent" ) ).
+            build() );
+
+        assertEquals( 1, getVersions( child1 ).getHits() );
+        assertEquals( 1, getVersions( child1_1 ).getHits() );
+        assertEquals( 1, getVersions( child1_2 ).getHits() );
+        assertNotNull( getNodeByPath( NodePath.create( child1.path(), child1_1.name().toString() ).build() ) );
 
         final Node movedNode = MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            id( node.id() ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            id( child1.id() ).
             newParent( newParent.path() ).
             build().
             execute();
 
-        assertEquals( 2, getVersions( node ).getHits() );
-        assertEquals( 1, getVersions( child1 ).getHits() );
-        assertEquals( 1, getVersions( child2 ).getHits() );
+        refresh();
 
-        assertNull( getNodeByPath( NodePath.create( node.path(), child1.name().toString() ).build() ) );
-        assertNotNull( getNodeByPath( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
+        assertEquals( 2, getVersions( child1 ).getHits() );
+        assertEquals( 1, getVersions( child1_1 ).getHits() );
+        assertEquals( 1, getVersions( child1_2 ).getHits() );
 
-        final Node movedChild1 = getNodeById( child1.id() );
-        final Node movedChild2 = getNodeById( child2.id() );
-        final Node movedChild1_1 = getNodeById( child1_1.id() );
+        final NodePath previousChild1Path = child1_1.path();
+        assertNull( getNodeByPath( previousChild1Path ) );
+
+        final NodePath newChild1Path = NodePath.create( movedNode.path(), child1_1.name().toString() ).
+            build();
+        assertNotNull( getNodeByPath( newChild1Path ) );
+
+        final Node movedChild1 = getNodeById( child1_1.id() );
+        final Node movedChild2 = getNodeById( child1_2.id() );
+        final Node movedChild1_1 = getNodeById( child1_1_1.id() );
 
         assertEquals( newParent.path(), movedNode.parentPath() );
         assertEquals( movedNode.path(), movedChild1.parentPath() );
@@ -325,7 +276,7 @@ public class MoveNodeCommandTest
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
         assertEquals( false, movedNode.inheritsPermissions() );
-        assertEquals( node.getPermissions(), movedNode.getPermissions() );
+        assertEquals( child1.getPermissions(), movedNode.getPermissions() );
     }
 
     @Test
@@ -367,11 +318,9 @@ public class MoveNodeCommandTest
         try
         {
             MoveNodeCommand.create().
-                queryService( this.queryService ).
                 indexServiceInternal( this.indexServiceInternal ).
-                branchService( this.branchService ).
-                nodeDao( this.nodeDao ).
-                versionService( this.versionService ).
+                storageService( this.storageService ).
+                searchService( this.searchService ).
                 id( deleteUngrantedNode.id() ).
                 newParent( createGrantedNewParent.path() ).
                 build().
@@ -388,11 +337,9 @@ public class MoveNodeCommandTest
         try
         {
             MoveNodeCommand.create().
-                queryService( this.queryService ).
                 indexServiceInternal( this.indexServiceInternal ).
-                branchService( this.branchService ).
-                nodeDao( this.nodeDao ).
-                versionService( this.versionService ).
+                storageService( this.storageService ).
+                searchService( this.searchService ).
                 id( deleteGrantedNode.id() ).
                 newParent( createUngrantedNewParent.path() ).
                 build().
@@ -406,11 +353,9 @@ public class MoveNodeCommandTest
 
         // Tests the correct behaviour if both rights are granted
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( deleteGrantedNode.id() ).
             newParent( createGrantedNewParent.path() ).
             build().
@@ -422,11 +367,11 @@ public class MoveNodeCommandTest
         assertEquals( "mynode2", movedNode.name().toString() );
     }
 
-    private FindNodeVersionsResult getVersions( final Node node )
+    private NodeVersionQueryResult getVersions( final Node node )
     {
         return GetNodeVersionsCommand.create().
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

@@ -2,9 +2,9 @@ package com.enonic.xp.script.impl.bean;
 
 import org.junit.Test;
 
-import com.enonic.xp.script.impl.AbstractScriptTest;
-import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.impl.AbstractScriptTest;
 
 import static org.junit.Assert.*;
 

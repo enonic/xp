@@ -22,7 +22,10 @@ final class DeleteNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        final Node node = doGetByPath( this.nodePath, false );
+        final Node node = GetNodeByPathCommand.create( this ).
+            nodePath( nodePath ).
+            build().
+            execute();
 
         if ( node != null )
         {

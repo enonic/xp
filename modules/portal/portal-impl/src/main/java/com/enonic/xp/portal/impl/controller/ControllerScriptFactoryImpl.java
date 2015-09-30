@@ -5,8 +5,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
-import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 
 @Component
 public final class ControllerScriptFactoryImpl

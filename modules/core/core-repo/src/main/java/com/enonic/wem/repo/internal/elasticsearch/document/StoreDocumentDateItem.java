@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.elasticsearch.document;
 import java.time.Instant;
 import java.util.Date;
 
-import com.enonic.xp.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
+import com.enonic.xp.index.IndexPath;
 
 public class StoreDocumentDateItem
     extends AbstractStoreDocumentItem<Date>

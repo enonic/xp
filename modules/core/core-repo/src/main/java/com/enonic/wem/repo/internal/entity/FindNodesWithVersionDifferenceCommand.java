@@ -1,20 +1,22 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeVersionDiffQuery;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 public class FindNodesWithVersionDifferenceCommand
 {
-    private final NodeVersionDiffQuery query;
+    private final FindNodesWithVersionDifferenceParams params;
 
-    private final VersionService versionService;
+    private final SearchService searchService;
 
     private FindNodesWithVersionDifferenceCommand( Builder builder )
     {
-        query = builder.query;
-        versionService = builder.versionService;
+        params = builder.query;
+        searchService = builder.searchService;
     }
 
     public static Builder create()
@@ -24,28 +26,33 @@ public class FindNodesWithVersionDifferenceCommand
 
     public NodeVersionDiffResult execute()
     {
-        return this.versionService.diff( query, ContextAccessor.current().getRepositoryId() );
+        return this.searchService.search( NodeVersionDiffQuery.create().
+            source( params.getSource() ).
+            target( params.getTarget() ).
+            nodePath( params.getNodePath() ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static final class Builder
     {
-        private NodeVersionDiffQuery query;
+        private FindNodesWithVersionDifferenceParams query;
 
-        private VersionService versionService;
+        private SearchService searchService;
 
         private Builder()
         {
         }
 
-        public Builder query( NodeVersionDiffQuery query )
+        public Builder query( FindNodesWithVersionDifferenceParams query )
         {
             this.query = query;
             return this;
         }
 
-        public Builder versionService( VersionService versionService )
+        public Builder searchService( final SearchService searchService )
         {
-            this.versionService = versionService;
+            this.searchService = searchService;
             return this;
         }
 

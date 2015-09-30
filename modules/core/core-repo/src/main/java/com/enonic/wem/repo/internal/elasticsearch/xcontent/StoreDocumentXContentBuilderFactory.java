@@ -13,26 +13,26 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.repo.internal.elasticsearch.FieldNameResolver;
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 
 public class StoreDocumentXContentBuilderFactory
-    extends AbstractXContentBuilderFactor
+    extends AbstractXContentBuilderFactory
 {
 
     private StoreDocumentXContentBuilderFactory()
     {
     }
 
-    public static XContentBuilder create( final StoreDocument storeDocument )
+    public static XContentBuilder create( final IndexDocument indexDocument )
     {
         try
         {
             final XContentBuilder builder = startBuilder();
-            addDocumentAnalyzer( builder, storeDocument );
-            addIndexDocumentItems( builder, storeDocument );
+            addDocumentAnalyzer( builder, indexDocument );
+            addIndexDocumentItems( builder, indexDocument );
             endBuilder( builder );
             return builder;
         }
@@ -43,10 +43,10 @@ public class StoreDocumentXContentBuilderFactory
     }
 
 
-    private static void addDocumentAnalyzer( final XContentBuilder builder, final StoreDocument storeDocument )
+    private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument indexDocument )
         throws Exception
     {
-        final String analyzer = storeDocument.getAnalyzer();
+        final String analyzer = indexDocument.getAnalyzer();
 
         if ( !Strings.isNullOrEmpty( analyzer ) )
         {
@@ -54,7 +54,7 @@ public class StoreDocumentXContentBuilderFactory
         }
     }
 
-    private static void addIndexDocumentItems( final XContentBuilder result, final StoreDocument storeDocument )
+    private static void addIndexDocumentItems( final XContentBuilder result, final IndexDocument indexDocument )
         throws Exception
     {
         final Multimap<String, Object> fieldMultiValueMap = ArrayListMultimap.create();
@@ -62,7 +62,7 @@ public class StoreDocumentXContentBuilderFactory
         // OrderBy should only have one value, add to own one-value-map
         final Map<String, Object> orderByMap = Maps.newHashMap();
 
-        final Set<AbstractStoreDocumentItem> indexDocumentItems = storeDocument.getStoreDocumentItems();
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = indexDocument.getStoreDocumentItems();
 
         for ( AbstractStoreDocumentItem item : indexDocumentItems )
         {

@@ -43,17 +43,15 @@ public interface NodeService
 
     NodeComparisons compare( NodeIds ids, Branch target );
 
-    FindNodeVersionsResult findVersions( GetNodeVersionsParams params );
+    NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
-
-    NodeVersionDiffResult diff( NodeVersionDiffQuery query );
 
     Node setChildOrder( SetNodeChildOrderParams params );
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    Node getByVersionId( NodeVersionId nodeVersionid );
+    Node getByNodeVersion( NodeVersion nodeVersion );
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
@@ -64,6 +62,8 @@ public interface NodeService
     DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param );
 
     SnapshotResults listSnapshots();
+
+    void refresh( RefreshMode refreshMode );
 
     void deleteSnapshotRespository();
 
@@ -80,6 +80,10 @@ public interface NodeService
     RootNode getRoot();
 
     Node importNode( final ImportNodeParams params );
+
+    NodesHasChildrenResult hasChildren( final Nodes nodes );
+
+    boolean hasChildren( final Node node );
 
     boolean nodeExists( final NodeId nodeId );
 

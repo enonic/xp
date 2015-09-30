@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePublishRequest;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.ResolveSyncWorkResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
@@ -61,6 +62,8 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -75,28 +78,33 @@ public class PushContentCommand
 
     private void pushWithoutDependencyResolve()
     {
-        final GetContentByIdsParams getContentParams = new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false );
-        final boolean validContents = ensureValidContents( getContentByIds( getContentParams ) );
+        final Contents contentsToPush = getContentByIds( new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false ) );
 
-        if ( validContents )
+        final boolean validContents = ensureValidContents( contentsToPush );
+
+        if ( !validContents )
         {
-            NodeIds.Builder pushContentsIds = NodeIds.create();
-            NodeIds.Builder deletedContentsIds = NodeIds.create();
-            for ( CompareContentResult compareResult : getContentsComparisons() )
-            {
-                if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
-                {
-                    deletedContentsIds.add( NodeId.from( compareResult.getContentId() ) );
-                }
-                else
-                {
-                    pushContentsIds.add( NodeId.from( compareResult.getContentId() ) );
-                }
-            }
-
-            doPushNodes( pushContentsIds.build() );
-            doDeleteNodes( deletedContentsIds.build() );
+            return;
         }
+
+        NodeIds.Builder pushContentsIds = NodeIds.create();
+        NodeIds.Builder deletedContentsIds = NodeIds.create();
+
+        for ( CompareContentResult compareResult : getContentsComparisons() )
+        {
+            if ( compareResult.getCompareStatus() == CompareStatus.PENDING_DELETE )
+            {
+                deletedContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+            }
+            else
+            {
+                pushContentsIds.add( NodeId.from( compareResult.getContentId() ) );
+            }
+        }
+
+        doPushNodes( pushContentsIds.build() );
+        doDeleteNodes( deletedContentsIds.build() );
+
     }
 
     private CompareContentResults getContentsComparisons()
@@ -127,14 +135,14 @@ public class PushContentCommand
 
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
+            final ResolveSyncWorkResult syncWorkResult = resolveSyncWork( contentId );
 
             resultsBuilder.add( syncWorkResult );
         }
         return resultsBuilder.build();
     }
 
-    private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
+    private ResolveSyncWorkResult resolveSyncWork( final ContentId contentId )
     {
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
@@ -148,6 +156,11 @@ public class PushContentCommand
         for ( final ResolveSyncWorkResult result : results )
         {
             final NodeIds nodesToPush = NodeIds.from( result.getNodePublishRequests().getNodeIds() );
+
+            if ( nodesToPush.isEmpty() )
+            {
+                return;
+            }
 
             final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToPush ) ) );
 
@@ -185,7 +198,6 @@ public class PushContentCommand
             branch( target ).
             build() ) );
 
-
         if ( !deletedContents.isEmpty() )
         {
             eventPublisher.publish(
@@ -198,9 +210,9 @@ public class PushContentCommand
         final List<ContentPath> publishedContentPaths = pushNodesResult.getSuccessfull().stream().
             map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
             collect( toList() );
-        publishedContentPaths.addAll(pushNodesResult.getChildrenSuccessfull().stream().
+        publishedContentPaths.addAll( pushNodesResult.getChildrenSuccessfull().stream().
             map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
-            collect( toList() ));
+            collect( toList() ) );
         if ( !publishedContentPaths.isEmpty() )
         {
             final ContentPaths contentPaths = ContentPaths.from( publishedContentPaths );
@@ -273,13 +285,13 @@ public class PushContentCommand
 
     private void appendPushNodesResult( final PushNodesResult pushNodesResult )
     {
-        this.resultBuilder.addPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+        this.resultBuilder.addPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull(), false ) );
 
-        this.resultBuilder.addChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
+        this.resultBuilder.addChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull(), false ) );
 
         for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
         {
-            final Content content = translator.fromNode( failedNode.getNode() );
+            final Content content = translator.fromNode( failedNode.getNode(), false );
 
             final PushContentsResult.FailedReason failedReason;
 

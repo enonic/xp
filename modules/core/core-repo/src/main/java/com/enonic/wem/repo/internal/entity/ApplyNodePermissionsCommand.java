@@ -1,12 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
@@ -34,21 +33,14 @@ final class ApplyNodePermissionsCommand
 
     public int execute()
     {
-        final Node node = doGetById( params.getNodeId(), false );
+        final Node node = doGetById( params.getNodeId() );
+
         if ( node == null )
         {
             return 0;
         }
 
-        final StopWatch stopWatch = new StopWatch();
-
-        LOG.info( "Applying permissions to descendants of node [" + node.id() + "] " + node.path() );
-        stopWatch.start();
-        final int appliedNodeCount = applyPermissionsToChildren( node );
-        stopWatch.stop();
-        LOG.info( "Permissions applied to " + appliedNodeCount + " nodes. Total time: " + stopWatch.toString() );
-
-        return appliedNodeCount;
+        return applyPermissionsToChildren( node );
     }
 
     private int applyPermissionsToChildren( final Node parent )
@@ -57,8 +49,9 @@ final class ApplyNodePermissionsCommand
 
         final FindNodesByParentParams findByParentParams = FindNodesByParentParams.create().
             parentPath( parent.path() ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
             build();
+
         final Nodes children = doFindNodesByParent( findByParentParams ).getNodes();
 
         int appliedNodeCount = 0;
@@ -93,8 +86,13 @@ final class ApplyNodePermissionsCommand
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
-        doStoreNode( updatedNode );
-        return updatedNode;
+        final Node result = StoreNodeCommand.create( this ).
+            node( updatedNode ).
+            updateMetadataOnly( false ).
+            build().
+            execute();
+
+        return result;
     }
 
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )

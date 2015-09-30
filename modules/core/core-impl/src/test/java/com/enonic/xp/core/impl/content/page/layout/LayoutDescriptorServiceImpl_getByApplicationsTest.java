@@ -18,8 +18,7 @@ public class LayoutDescriptorServiceImpl_getByApplicationsTest
         final Application application = createApplication( "fooapplication" );
         createDescriptors( "fooapplication:fooapplication-layout-descr" );
 
-        mockResources( application, "/site/layouts",
-                       "site/layouts/fooapplication-layout-descr/" );
+        mockResources( application, "/site/layouts", "site/layouts/fooapplication-layout-descr/" );
 
         final LayoutDescriptors result = this.service.getByApplication( application.getKey() );
 

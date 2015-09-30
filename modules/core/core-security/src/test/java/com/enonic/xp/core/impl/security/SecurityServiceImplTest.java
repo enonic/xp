@@ -7,14 +7,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.repo.internal.branch.storage.BranchServiceImpl;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
-import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
+import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.search.SearchServiceImpl;
+import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
+import com.enonic.wem.repo.internal.version.VersionServiceImpl;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -72,13 +75,17 @@ public class SecurityServiceImplTest
 
     private NodeDaoImpl nodeDao;
 
-    private ElasticsearchVersionService versionService;
+    private VersionServiceImpl versionService;
 
-    private ElasticsearchBranchService branchService;
+    private BranchServiceImpl branchService;
 
     private ElasticsearchIndexServiceInternal indexService;
 
-    private ElasticsearchQueryService queryService;
+    private SearchServiceImpl searchService;
+
+    private StorageServiceImpl storageService;
+
+    private ElasticsearchSearchDao searchDao;
 
     @Override
     @Before
@@ -89,28 +96,37 @@ public class SecurityServiceImplTest
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
 
-        this.branchService = new ElasticsearchBranchService();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
+        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        storageDao.setClient( this.client );
+
+        this.branchService = new BranchServiceImpl();
+        this.branchService.setStorageDao( storageDao );
+
+        this.versionService = new VersionServiceImpl();
+        this.versionService.setStorageDao( storageDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
-
-        this.versionService = new ElasticsearchVersionService();
-        this.versionService.setElasticsearchDao( elasticsearchDao );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
-        this.queryService = new ElasticsearchQueryService();
-        this.queryService.setElasticsearchDao( elasticsearchDao );
+        this.searchDao = new ElasticsearchSearchDao();
+        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+
+        this.searchService = new SearchServiceImpl();
+        this.searchService.setSearchDao( this.searchDao );
+
+        this.storageService = new StorageServiceImpl();
+        this.storageService.setBranchService( this.branchService );
+        this.storageService.setVersionService( this.versionService );
+        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setIndexServiceInternal( this.indexService );
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
-        this.nodeService.setQueryService( queryService );
-        this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
-        this.nodeService.setBranchService( branchService );
+        this.nodeService.setSearchService( searchService );
+        this.nodeService.setStorageService( storageService );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
@@ -756,6 +772,8 @@ public class SecurityServiceImplTest
                 password( "123456" ).
                 build();
 
+            refresh();
+
             final PrincipalQuery query = PrincipalQuery.create().userStore( UserStoreKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
@@ -763,6 +781,8 @@ public class SecurityServiceImplTest
             assertEquals( queryResult.getTotalSize(), 0 );
 
             final User user1 = securityService.createUser( createUser1 );
+
+            refresh();
 
             queryResult = securityService.query( query );
 

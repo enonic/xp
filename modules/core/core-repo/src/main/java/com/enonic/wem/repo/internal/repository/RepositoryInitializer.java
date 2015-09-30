@@ -68,7 +68,7 @@ public final class RepositoryInitializer
         indexServiceInternal.refresh( storageIndexName, searchIndexName );
     }
 
-    void waitForInitialized( final RepositoryId repositoryId )
+    private void waitForInitialized( final RepositoryId repositoryId )
     {
         LOG.info( "Waiting for cluster to be initialized" );
 

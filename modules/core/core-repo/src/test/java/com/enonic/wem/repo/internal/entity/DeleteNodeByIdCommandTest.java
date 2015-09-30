@@ -57,10 +57,6 @@ public class DeleteNodeByIdCommandTest
             build() );
         refresh();
 
-        assertNotNull( getNodeById( parentNode.id() ) );
-        assertNotNull( getNodeById( childNode.id() ) );
-        assertNotNull( getNodeById( childChildNode.id() ) );
-
         doDeleteNode( parentNode.id() );
 
         assertNull( getNodeById( parentNode.id() ) );

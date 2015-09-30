@@ -82,11 +82,9 @@ public class ResolveSyncWorkCommandTest
             nodeId( RootNode.UUID ).
             includeChildren( true ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -148,11 +146,9 @@ public class ResolveSyncWorkCommandTest
             nodeId( node1_1.id() ).
             includeChildren( true ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -211,11 +207,9 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( getNodeByPath( NodePath.ROOT ).id() ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -401,6 +395,8 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( node1_1_1, node2.path() );
 
+        refresh();
+
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
@@ -411,11 +407,9 @@ public class ResolveSyncWorkCommandTest
     private void moveNode( Node moveMe, NodePath to )
     {
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( moveMe.id() ).
             newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
             newParent( to ).
@@ -523,11 +517,9 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -570,15 +562,15 @@ public class ResolveSyncWorkCommandTest
 
         final Node node1Duplicate = duplicateNode( node1 );
 
+        refresh();
+
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1Duplicate.id() ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -983,6 +975,8 @@ public class ResolveSyncWorkCommandTest
         final Node a2d = getNodeByPath( NodePath.create( "/s1-copy/a2" ).build() );
         final Node a2_1d = getNodeByPath( NodePath.create( "/s1-copy/a2/a2_1" ).build() );
 
+        refresh();
+
         final ResolveSyncWorkResult result = resolveSyncWorkResult( s1d.id(), true );
 
         final NodePublishRequests requests = result.getNodePublishRequests();
@@ -1050,11 +1044,9 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -1206,10 +1198,8 @@ public class ResolveSyncWorkCommandTest
         SetNodeStateCommand.create().
             params( setNodeStateParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -1217,11 +1207,9 @@ public class ResolveSyncWorkCommandTest
     void moveNode( final String nodeId, final NodePath newParent, final String newName )
     {
         MoveNodeCommand.create().
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             id( NodeId.from( nodeId ) ).
             newNodeName( NodeName.from( newName ) ).
             newParent( newParent ).
@@ -1235,10 +1223,8 @@ public class ResolveSyncWorkCommandTest
             id( node.id() ).
             newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
             indexServiceInternal( this.indexServiceInternal ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -1248,12 +1234,10 @@ public class ResolveSyncWorkCommandTest
     {
         return DuplicateNodeCommand.create().
             id( node1.id() ).
-            versionService( versionService ).
             indexServiceInternal( indexServiceInternal ).
-            nodeDao( nodeDao ).
-            queryService( queryService ).
-            branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -1288,11 +1272,9 @@ public class ResolveSyncWorkCommandTest
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
             target( WS_OTHER ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             includeChildren( includeChildren ).
             build().
             execute();

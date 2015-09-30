@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
@@ -36,7 +36,7 @@ public class SetNodeChildOrderCommand
 
     public Node execute()
     {
-        final Node parentNode = doGetById( nodeId, false );
+        final Node parentNode = doGetById( nodeId );
 
         checkContextUserPermissionOrAdmin( parentNode );
 
@@ -51,9 +51,12 @@ public class SetNodeChildOrderCommand
 
         final Node editedNode = Node.create( parentNode ).childOrder( childOrder ).build();
 
-        doStoreNode( editedNode );
+        StoreNodeCommand.create( this ).
+            node( editedNode ).
+            build().
+            execute();
 
-        return doGetById( editedNode.id(), false );
+        return doGetById( editedNode.id() );
     }
 
     private void checkContextUserPermissionOrAdmin( final Node parentNode )
@@ -63,26 +66,29 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
-        final NodeQueryResult childNodeResult = queryService.find( NodeQuery.create().
+        final NodeQueryResult childNodeResult = searchService.search( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
-            size( QueryService.GET_ALL_SIZE_FLAG ).
-            build(), IndexContext.from( ContextAccessor.current() ) );
+            size( SearchService.GET_ALL_SIZE_FLAG ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
+        final LinkedList<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 
-        final LinkedHashSet<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
+        final LinkedList<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
             NodeManualOrderValueResolver.resolve( childNodeIds );
 
         for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )
         {
             // TODO: Bulk?
 
-            final Node node = doGetById( nodeIdOrderValue.getNodeId(), false );
+            final Node node = doGetById( nodeIdOrderValue.getNodeId() );
 
             final Node editedNode = Node.create( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
 
-            doStoreNode( editedNode );
+            StoreNodeCommand.create( this ).
+                node( editedNode ).
+                build().
+                execute();
         }
     }
 

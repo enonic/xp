@@ -2,14 +2,14 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -52,8 +52,12 @@ public class PushNodesCommand
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
-        final Nodes nodes =
-            doGetByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
+        final Nodes nodes = FindNodesByIdsCommand.create( this ).
+            ids( ids ).
+            orderExpressions( OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ) ).
+            searchService( this.searchService ).
+            build().
+            execute();
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
@@ -61,8 +65,7 @@ public class PushNodesCommand
         {
             final NodeComparison nodeComparison = CompareNodeCommand.create().
                 nodeId( node.id() ).
-                versionService( this.versionService ).
-                branchService( this.branchService ).
+                storageService( this.storageService ).
                 target( this.target ).
                 build().
                 execute();
@@ -79,7 +82,8 @@ public class PushNodesCommand
                 continue;
             }
 
-            final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
+            final NodeVersionId nodeVersionId =
+                this.storageService.getBranchNodeVersion( node.id(), InternalContext.from( context ) ).getVersionId();
 
             if ( nodeVersionId == null )
             {
@@ -98,50 +102,67 @@ public class PushNodesCommand
 
             if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
             {
-                updateNodeChildrenWithNewMetadata( node, builder );
+                updateTargetChildrenMetaData( node, builder );
             }
         }
+
+        indexServiceInternal.refresh( IndexNameResolver.resolveSearchIndexName( ContextAccessor.current().getRepositoryId() ) );
 
         return builder.build();
     }
 
-    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder )
+    private void updateTargetChildrenMetaData( final Node node, PushNodesResult.Builder resultBuilder )
     {
-        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( node.path() ).
-            build() );
+        // So, we have moved a node, and the pushed it.
+        // The children of the pushed node are all changed, and every equal node on target must get updated meta-data.
+        // If the child node does not exist in target, just ignore it, no moving necessary
 
         final Context context = ContextAccessor.current();
 
+        final Context targetContext = ContextBuilder.create().
+            authInfo( context.getAuthInfo() ).
+            branch( this.target ).
+            repositoryId( context.getRepositoryId() ).
+            build();
+
+        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
+            params( FindNodesByParentParams.create().
+                parentPath( node.path() ).
+                childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
+                build() ).
+            build().
+            execute();
+
         for ( final Node child : result.getNodes() )
         {
-            ContextBuilder.create().
-                authInfo( context.getAuthInfo() ).
-                branch( this.target ).
-                repositoryId( context.getRepositoryId() ).
-                build().runWith( () -> updateNodeMetadata( child ) );
+            final Node nodeInTarget = targetContext.callWith( () -> GetNodeByIdCommand.create( this ).
+                id( child.id() ).
+                build().
+                execute() );
 
-            resultBuilder.addChildSuccess( child );
+            if ( nodeInTarget != null )
+            {
+                targetContext.runWith( () -> StoreNodeCommand.create( this ).
+                    node( child ).
+                    updateMetadataOnly( true ).
+                    build().
+                    execute() );
 
-            updateNodeChildrenWithNewMetadata( child, resultBuilder );
+                resultBuilder.addChildSuccess( child );
+
+                updateTargetChildrenMetaData( child, resultBuilder );
+            }
         }
     }
 
     private void doPushNode( final Context context, final Node node, final NodeVersionId nodeVersionId )
     {
-        this.branchService.store( StoreBranchDocument.create().
-            nodeVersionId( nodeVersionId ).
-            node( node ).
-            build(), BranchContext.from( this.target, context.getRepositoryId() ) );
-
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
+        this.storageService.updateVersion( node, nodeVersionId, InternalContext.create( context ).
             branch( this.target ).
-            repositoryId( context.getRepositoryId() ).
-            authInfo( context.getAuthInfo() ).
             build() );
     }
 
-    boolean targetParentExists( final Node node, final Context currentContext )
+    private boolean targetParentExists( final Node node, final Context currentContext )
     {
         if ( node.isRoot() || node.parentPath().equals( NodePath.ROOT ) )
         {
@@ -150,14 +171,10 @@ public class PushNodesCommand
 
         final Context targetContext = createTargetContext( currentContext );
 
-        final Node targetParent = targetContext.callWith( () -> doGetByPath( node.parentPath(), false ) );
-
-        if ( targetParent == null )
-        {
-            return false;
-        }
-
-        return true;
+        return targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
+            nodePath( node.parentPath() ).
+            build().
+            execute() );
     }
 
     private Context createTargetContext( final Context currentContext )

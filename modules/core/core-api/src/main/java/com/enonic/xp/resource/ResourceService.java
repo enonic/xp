@@ -8,5 +8,5 @@ public interface ResourceService
 
     ResourceKeys findResourceKeys( ApplicationKey applicationKey, String path, String filePattern, boolean recurse );
 
-    ResourceKeys findFolders(ApplicationKey key, String path);
+    ResourceKeys findFolders( ApplicationKey key, String path );
 }

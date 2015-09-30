@@ -106,8 +106,6 @@ public class ContentServiceImpl
 
     private NodeService nodeService;
 
-    private ContentNodeTranslator contentNodeTranslator;
-
     private EventPublisher eventPublisher;
 
     private MediaInfoService mediaInfoService;
@@ -117,6 +115,8 @@ public class ContentServiceImpl
     private MixinService mixinService;
 
     private SiteService siteService;
+
+    private ContentNodeTranslator translator;
 
     public ContentServiceImpl()
     {
@@ -153,7 +153,7 @@ public class ContentServiceImpl
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
@@ -181,7 +181,7 @@ public class ContentServiceImpl
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
@@ -213,7 +213,7 @@ public class ContentServiceImpl
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
@@ -228,7 +228,7 @@ public class ContentServiceImpl
         return UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
             siteService( this.siteService ).
@@ -243,7 +243,7 @@ public class ContentServiceImpl
         return UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
@@ -258,7 +258,7 @@ public class ContentServiceImpl
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             params( params ).
             build().
@@ -271,7 +271,7 @@ public class ContentServiceImpl
         return PushContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
@@ -290,7 +290,7 @@ public class ContentServiceImpl
         return ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
@@ -310,7 +310,7 @@ public class ContentServiceImpl
         return GetContentByIdCommand.create( contentId ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -332,7 +332,7 @@ public class ContentServiceImpl
         return GetContentByIdsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -344,7 +344,7 @@ public class ContentServiceImpl
         return GetContentByPathCommand.create( path ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -367,7 +367,7 @@ public class ContentServiceImpl
         return GetContentByPathsCommand.create( paths ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -379,7 +379,7 @@ public class ContentServiceImpl
         return FindContentByParentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -393,7 +393,7 @@ public class ContentServiceImpl
         final ContentPath targetPath = translateNodePathToContentPath( createdNode.path() );
         eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DUPLICATE, targetPath ) );
 
-        return contentNodeTranslator.fromNode( createdNode );
+        return translator.fromNode( createdNode, true );
     }
 
     @Override
@@ -436,7 +436,7 @@ public class ContentServiceImpl
 
             eventPublisher.publish( builder.build() );
 
-            return contentNodeTranslator.fromNode( movedNode );
+            return translator.fromNode( movedNode, true );
         }
         catch ( MoveNodeException e )
         {
@@ -458,7 +458,7 @@ public class ContentServiceImpl
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -471,7 +471,7 @@ public class ContentServiceImpl
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
@@ -505,7 +505,7 @@ public class ContentServiceImpl
         return FindContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             from( params.getFrom() ).
@@ -521,7 +521,7 @@ public class ContentServiceImpl
         return GetActiveContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             branches( params.getBranches() ).
@@ -539,7 +539,7 @@ public class ContentServiceImpl
                 childOrder( params.getChildOrder() ).
                 build() );
 
-            final Content content = contentNodeTranslator.fromNode( node );
+            final Content content = translator.fromNode( node, true );
 
             if ( !params.isSilent() )
             {
@@ -599,7 +599,7 @@ public class ContentServiceImpl
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
 
@@ -704,12 +704,6 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
-    {
-        this.contentNodeTranslator = contentNodeTranslator;
-    }
-
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
@@ -731,5 +725,11 @@ public class ContentServiceImpl
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
+    }
+
+    @Reference
+    public void setTranslator( final ContentNodeTranslator translator )
+    {
+        this.translator = translator;
     }
 }

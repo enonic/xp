@@ -2,20 +2,18 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class FindNodesByParentCommand
     extends AbstractNodeCommand
@@ -41,28 +39,47 @@ public class FindNodesByParentCommand
     public FindNodesByParentResult execute()
     {
         NodePath parentPath = params.getParentPath();
+
         if ( parentPath == null )
         {
-            parentPath = getPathFromId( params.getParentId() );
-            if ( parentPath == null )
+            Node parent = GetNodeByIdCommand.create( this ).
+                id( params.getParentId() ).
+                build().
+                execute();
+
+            if ( parent == null )
             {
-                return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0L ).hits( 0L ).build();
+                return FindNodesByParentResult.empty();
             }
+
+            parentPath = parent.path();
         }
 
-        final ChildOrder order = NodeChildOrderResolver.create().
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
+        final ChildOrder order = NodeChildOrderResolver.create( this ).
             nodePath( parentPath ).
             childOrder( params.getChildOrder() ).
             build().
             resolve();
 
-        final NodeQuery query = createByPathQuery( order, parentPath );
+        final NodeQueryResult nodeQueryResult = this.searchService.search( NodeQuery.create().
+            parent( parentPath ).
+            query( new QueryExpr( order.getOrderExpressions() ) ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
+            setOrderExpressions( order.getOrderExpressions() ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+        if ( nodeQueryResult.getHits() == 0 )
+        {
+            return FindNodesByParentResult.create().
+                hits( nodeQueryResult.getHits() ).
+                totalHits( nodeQueryResult.getTotalHits() ).
+                nodes( Nodes.empty() ).
+                build();
+        }
 
-        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
+        final Nodes nodes = this.storageService.get( nodeQueryResult.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).
@@ -71,28 +88,6 @@ public class FindNodesByParentCommand
             build();
     }
 
-    private NodeQuery createByPathQuery( final ChildOrder order, final NodePath parentPath )
-    {
-        return NodeQuery.create().
-            parent( parentPath ).
-            query( new QueryExpr( order.getOrderExpressions() ) ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            countOnly( params.isCountOnly() ).
-            build();
-    }
-
-    private NodePath getPathFromId( final NodeId nodeId )
-    {
-        final Context context = ContextAccessor.current();
-        final NodeVersionId currentVersion = this.queryService.get( nodeId, IndexContext.from( context ) );
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-        final Node currentNode = nodeDao.getByVersionId( currentVersion );
-        return currentNode == null ? null : currentNode.path();
-    }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>

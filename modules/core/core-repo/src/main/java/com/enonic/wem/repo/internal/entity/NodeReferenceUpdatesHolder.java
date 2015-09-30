@@ -10,7 +10,7 @@ import com.enonic.xp.util.Reference;
 
 final class NodeReferenceUpdatesHolder
 {
-    private ImmutableMap<NodeId, NodeId> references;
+    private final ImmutableMap<NodeId, NodeId> references;
 
     private NodeReferenceUpdatesHolder( final Builder builder )
     {
@@ -34,7 +34,7 @@ final class NodeReferenceUpdatesHolder
 
     static class Builder
     {
-        private Map<NodeId, NodeId> references = Maps.newHashMap();
+        private final Map<NodeId, NodeId> references = Maps.newHashMap();
 
         Builder add( final NodeId from, final NodeId to )
         {

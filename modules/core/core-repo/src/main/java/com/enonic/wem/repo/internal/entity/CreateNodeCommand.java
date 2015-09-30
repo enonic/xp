@@ -92,7 +92,6 @@ public final class CreateNodeCommand
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
-            hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
             permissions( permissions ).
@@ -103,7 +102,11 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        return this.doStoreNode( newNode );
+        return StoreNodeCommand.create( this ).
+            node( newNode ).
+            updateMetadataOnly( false ).
+            build().
+            execute();
     }
 
     private AttachedBinaries storeAndAttachBinaries()
@@ -154,10 +157,16 @@ public final class CreateNodeCommand
     {
         if ( NodePath.ROOT.equals( params.getParent() ) )
         {
-            return doGetByPath( NodePath.ROOT, false );
+            return GetNodeByPathCommand.create( this ).
+                nodePath( NodePath.ROOT ).
+                build().
+                execute();
         }
 
-        final Node parentNode = doGetByPath( params.getParent(), false );
+        final Node parentNode = GetNodeByPathCommand.create( this ).
+            nodePath( params.getParent() ).
+            build().
+            execute();
 
         if ( parentNode == null )
         {
@@ -254,7 +263,7 @@ public final class CreateNodeCommand
     {
         if ( this.params.getNodeId() != null )
         {
-            final Node existingNode = doGetById( this.params.getNodeId(), false );
+            final Node existingNode = doGetById( this.params.getNodeId() );
 
             if ( existingNode != null )
             {
@@ -264,9 +273,12 @@ public final class CreateNodeCommand
 
         NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
 
-        Node existingNode = doGetByPath( nodePath, false );
+        final boolean exists = CheckNodeExistsCommand.create( this ).
+            nodePath( nodePath ).
+            build().
+            execute();
 
-        if ( existingNode != null )
+        if ( exists )
         {
             throw new NodeAlreadyExistAtPathException( nodePath );
         }

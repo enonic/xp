@@ -132,6 +132,7 @@ public class FindNodesByParentCommandTest
             createNode( CreateNodeParams.create().
                 parent( createdNode.path() ).
                 name( "my-child-" + i ).
+                setNodeId( NodeId.from( "my-child-" + i ) ).
                 data( data ).
                 build() );
         }
@@ -156,11 +157,10 @@ public class FindNodesByParentCommandTest
         final FindNodesByParentResult result = FindNodesByParentCommand.create().
             params( FindNodesByParentParams.create().
                 parentPath( createdNode.path() ).
-                build() ).queryService( queryService ).
-            branchService( branchService ).
+                build() ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
-            nodeDao( nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -204,18 +204,14 @@ public class FindNodesByParentCommandTest
 
         refresh();
 
-        printContentRepoIndex();
-
         // Use default parent ordering; name
         FindNodesByParentResult result = FindNodesByParentCommand.create().
             params( FindNodesByParentParams.create().
                 parentPath( createdNode.path() ).
                 build() ).
-            queryService( queryService ).
-            branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
-            nodeDao( nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -233,11 +229,9 @@ public class FindNodesByParentCommandTest
                 parentPath( createdNode.path() ).
                 childOrder( ChildOrder.from( "order ASC" ) ).
                 build() ).
-            queryService( queryService ).
-            branchService( branchService ).
             indexServiceInternal( indexServiceInternal ).
-            versionService( versionService ).
-            nodeDao( nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -269,11 +263,9 @@ public class FindNodesByParentCommandTest
                     principal( TEST_DEFAULT_USER.getKey() ).
                     build() ) ).
                 build() ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 

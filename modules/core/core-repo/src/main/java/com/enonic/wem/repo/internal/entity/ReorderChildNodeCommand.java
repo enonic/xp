@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -94,7 +94,7 @@ public class ReorderChildNodeCommand
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+        return searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
@@ -103,9 +103,10 @@ public class ReorderChildNodeCommand
             manualOrderValue( newOrderValue ).
             build();
 
-        doStoreNode( updatedNode );
-
-        return updatedNode;
+        return StoreNodeCommand.create( this ).
+            node( updatedNode ).
+            build().
+            execute();
     }
 
     private NodeQuery createFirstNodeBeforeInsertQuery( final Long nodeAfterOrderValue )
@@ -128,7 +129,7 @@ public class ReorderChildNodeCommand
     private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
     {
         final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
-        final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId, false );
+        final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId );
 
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
     }
@@ -141,7 +142,7 @@ public class ReorderChildNodeCommand
     private Long resolveInsertLastOrderValue( final NodeQueryResult result )
     {
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
-        final Node lastNode = doGetById( lastNodeId, false );
+        final Node lastNode = doGetById( lastNodeId );
 
         return lastNode.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }

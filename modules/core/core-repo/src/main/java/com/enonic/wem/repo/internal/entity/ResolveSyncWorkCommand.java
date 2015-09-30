@@ -6,18 +6,21 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 
 public class ResolveSyncWorkCommand
@@ -49,7 +52,7 @@ public class ResolveSyncWorkCommand
         this.processedIds = Sets.newHashSet();
         this.allPossibleNodesAreIncluded = false;
 
-        final Node publishRootNode = doGetById( builder.nodeId, false );
+        final Node publishRootNode = doGetById( builder.nodeId );
 
         if ( publishRootNode == null )
         {
@@ -73,9 +76,15 @@ public class ResolveSyncWorkCommand
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
-        for ( final NodeId nodeId : diff.getNodesWithDifferences() )
+        final Nodes nodes = GetNodesByIdsCommand.create( this ).
+            ids( diff.getNodesWithDifferences() ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        for ( final Node node : nodes )
         {
-            resolveDiffWithNodeIdAsInput( nodeId, ResolveContext.requested() );
+            resolveDiffWithNodeIdAsInput( node, ResolveContext.requested() );
         }
 
         return resultBuilder.setInitialReasonNodeId( this.publishRootNode.id() ).build();
@@ -91,12 +100,13 @@ public class ResolveSyncWorkCommand
         }
 
         return FindNodesWithVersionDifferenceCommand.create().
-            versionService( this.versionService ).
-            query( NodeVersionDiffQuery.create().
+            query( FindNodesWithVersionDifferenceParams.create().
                 target( target ).
                 source( ContextAccessor.current().getBranch() ).
                 nodePath( this.publishRootNode.path() ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
                 build() ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -113,25 +123,17 @@ public class ResolveSyncWorkCommand
         doResolveDiff( node, resolveContext );
     }
 
-    private void resolveDiffWithNodeIdAsInput( final NodeId nodeId, final ResolveContext resolveContext )
+    private void resolveDiffWithNodeIdAsInput( final Node node, final ResolveContext resolveContext )
     {
-        if ( isProcessed( nodeId ) )
+        if ( isProcessed( node.id() ) )
         {
             return;
         }
 
-        this.processedIds.add( nodeId );
+        this.processedIds.add( node.id() );
 
-        final Node node = doGetById( nodeId, false );
+        doResolveDiff( node, resolveContext );
 
-        if ( node == null )
-        {
-            // does not exist in source workspace, skip
-        }
-        else
-        {
-            doResolveDiff( node, resolveContext );
-        }
     }
 
     private void doResolveDiff( final Node node, final ResolveContext resolveContext )
@@ -161,7 +163,10 @@ public class ResolveSyncWorkCommand
     {
         if ( !node.isRoot() && !node.parentPath().equals( NodePath.ROOT ) )
         {
-            final Node thisParentNode = doGetByPath( node.parentPath(), false );
+            final Node thisParentNode = GetNodeByPathCommand.create( this ).
+                nodePath( node.parentPath() ).
+                build().
+                execute();
 
             final NodeComparison nodeComparison = getNodeComparison( thisParentNode.id() );
 
@@ -176,16 +181,26 @@ public class ResolveSyncWorkCommand
     {
         final ImmutableList<Property> references = node.data().getProperties( ValueTypes.REFERENCE );
 
+        final NodeIds.Builder referredNodeIds = NodeIds.create();
+
         for ( final Property reference : references )
         {
             if ( reference.hasNotNullValue() )
             {
-                final NodeId referredNodeId = reference.getReference().getNodeId();
+                referredNodeIds.add( reference.getReference().getNodeId() );
+            }
+        }
 
-                if ( !this.processedIds.contains( referredNodeId ) )
-                {
-                    resolveDiffWithNodeIdAsInput( referredNodeId, ResolveContext.referredFrom( node.id() ) );
-                }
+        final Nodes referredNodes = GetNodesByIdsCommand.create( this ).
+            ids( referredNodeIds.build() ).
+            build().
+            execute();
+
+        for ( final Node referredNode : referredNodes )
+        {
+            if ( !this.processedIds.contains( referredNode.id() ) )
+            {
+                resolveDiffWithNodeIdAsInput( referredNode, ResolveContext.referredFrom( node.id() ) );
             }
         }
     }
@@ -205,8 +220,7 @@ public class ResolveSyncWorkCommand
     {
         return CompareNodeCommand.create().
             target( this.target ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
             nodeId( nodeId ).
             build().
             execute();
@@ -253,7 +267,7 @@ public class ResolveSyncWorkCommand
     }
 
 
-    public void addRequestedOrChild( final NodeId nodeId, boolean isDelete )
+    private void addRequestedOrChild( final NodeId nodeId, boolean isDelete )
     {
         if ( nodeId.equals( this.publishRootNode.id() ) )
         {
@@ -268,11 +282,14 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            final Node node = doGetById( nodeId, false );
+            final Node node = doGetById( nodeId );
 
             final NodePath parentPath = node.parentPath();
 
-            final Node parentNode = doGetByPath( parentPath, false );
+            final Node parentNode = GetNodeByPathCommand.create( this ).
+                nodePath( parentPath ).
+                build().
+                execute();
 
             if ( isDelete )
             {
@@ -369,7 +386,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId, "nodeId must be provided" );

@@ -1,19 +1,38 @@
 package com.enonic.wem.repo.internal.elasticsearch.result;
 
-import org.elasticsearch.action.get.GetResponse;
+import java.util.Map;
 
-import com.enonic.wem.repo.internal.index.result.GetResult;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.index.get.GetField;
+
+import com.enonic.wem.repo.internal.ReturnValues;
+import com.enonic.wem.repo.internal.storage.GetResult;
 
 public class GetResultFactory
 {
     public static GetResult create( final GetResponse getResponse )
     {
-
         if ( !getResponse.isExists() )
         {
             return GetResult.empty();
         }
 
-        return new GetResult( SearchResultEntriesFactory.create( getResponse ) );
+        final Map<String, GetField> hitFieldMap = getResponse.getFields();
+
+        final ReturnValues.Builder builder = ReturnValues.create();
+
+        for ( final String fieldName : hitFieldMap.keySet() )
+        {
+            final GetField getField = hitFieldMap.get( fieldName );
+
+            builder.add( fieldName, getField.getValues() );
+        }
+
+        return GetResult.create().
+            id( getResponse.getId() ).
+            resultFieldValues( builder.build() ).
+            build();
     }
+
+
 }

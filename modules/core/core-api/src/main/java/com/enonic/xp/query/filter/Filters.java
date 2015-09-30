@@ -1,31 +1,26 @@
 package com.enonic.xp.query.filter;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public class Filters
-    extends AbstractImmutableEntitySet<Filter>
+    extends AbstractImmutableEntityList<Filter>
 {
-    public Filters( final ImmutableSet<Filter> set )
+    private Filters( final ImmutableList<Filter> set )
     {
         super( set );
     }
 
     public static Filters from( final Filter... filter )
     {
-        return new Filters( ImmutableSet.copyOf( filter ) );
-    }
-
-    public static Filters from( final ImmutableSet<Filter> filters )
-    {
-        return new Filters( filters );
+        return new Filters( ImmutableList.copyOf( filter ) );
     }
 
     public static Builder create()
@@ -35,7 +30,7 @@ public class Filters
 
     public static class Builder
     {
-        private Set<Filter> filters = Sets.newLinkedHashSet();
+        private List<Filter> filters = Lists.newLinkedList();
 
         private Builder()
         {
@@ -44,7 +39,11 @@ public class Filters
 
         public Builder add( final Filter filter )
         {
-            this.filters.add( filter );
+            if ( filter != null )
+            {
+                this.filters.add( filter );
+            }
+
             return this;
         }
 
@@ -56,10 +55,7 @@ public class Filters
 
         public Filters build()
         {
-            return new Filters( ImmutableSet.copyOf( this.filters ) );
+            return new Filters( ImmutableList.copyOf( this.filters ) );
         }
-
-
     }
-
 }

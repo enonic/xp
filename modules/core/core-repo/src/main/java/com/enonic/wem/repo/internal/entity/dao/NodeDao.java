@@ -7,9 +7,9 @@ import com.enonic.xp.node.Nodes;
 
 public interface NodeDao
 {
-    public NodeVersionId store( Node node );
+    NodeVersionId store( Node node );
 
-    public Node getByVersionId( final NodeVersionId nodeVersionId );
+    Node get( final NodeVersionId nodeVersionId );
 
-    public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds );
+    Nodes get( final NodeVersionIds nodeVersionIds );
 }

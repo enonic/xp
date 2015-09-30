@@ -2,47 +2,39 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.Collection;
 
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 
+
 public interface ElasticsearchDao
 {
-    public String store( IndexRequest indexRequest );
+    void store( Collection<IndexDocument> indexDocuments );
 
-    public void store( Collection<StoreDocument> storeDocuments );
+    boolean delete( DeleteDocument deleteDocument );
 
-    public boolean delete( DeleteRequest deleteRequest );
+    SearchResult search( ElasticsearchQuery query );
 
-    public boolean delete( DeleteDocument deleteDocument );
+    long count( ElasticsearchQuery query );
 
-    public SearchResult find( ElasticsearchQuery query );
+    SnapshotResult snapshot( final SnapshotParams params );
 
-    public GetResult get( GetQuery getQuery );
+    RestoreResult restoreSnapshot( final RestoreParams params );
 
-    public long count( ElasticsearchQuery query );
+    SnapshotInfo getSnapshot( final String snapshotName );
 
-    public SnapshotResult snapshot( final SnapshotParams params );
+    void deleteSnapshot( final String snapshotName );
 
-    public RestoreResult restoreSnapshot( final RestoreParams params );
+    void deleteSnapshotRepository();
 
-    public SnapshotInfo getSnapshot( final String snapshotName );
-
-    public void deleteSnapshot( final String snapshotName );
-
-    public void deleteSnapshotRepository();
-
-    public SnapshotResults listSnapshots();
+    SnapshotResults listSnapshots();
 
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -42,6 +43,11 @@ class ContentNodeHelper
     {
         final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
         return ContentPath.from( contentPath );
+    }
+
+    public static NodePath translateContentParentToNodeParentPath( final ContentPath parentContentPath )
+    {
+        return NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
     public static NodeIds toNodeIds( final ContentIds contentIds )

@@ -2,14 +2,10 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeVersionId;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
@@ -39,32 +35,12 @@ public class StoreNodeCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId nodeVersionId;
-
-        if ( !updateMetadataOnly )
+        if ( updateMetadataOnly )
         {
-            nodeVersionId = nodeDao.store( node );
-
-            this.versionService.store( NodeVersionDocument.create().
-                nodeId( node.id() ).
-                nodeVersionId( nodeVersionId ).
-                nodePath( node.path() ).
-                timestamp( node.getTimestamp() ).
-                build(), context.getRepositoryId() );
-        }
-        else
-        {
-            nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
+            return this.storageService.updateMetadata( this.node, InternalContext.from( context ) );
         }
 
-        this.branchService.store( StoreBranchDocument.create().
-            node( node ).
-            nodeVersionId( nodeVersionId ).
-            build(), BranchContext.from( context ) );
-
-        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.from( context ) );
-
-        return this.nodeDao.getByVersionId( nodeVersionId );
+        return this.storageService.store( this.node, InternalContext.from( context ) );
     }
 
     public static final class Builder
@@ -109,4 +85,6 @@ public class StoreNodeCommand
             return new StoreNodeCommand( this );
         }
     }
+
+
 }

@@ -19,7 +19,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -33,6 +32,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")

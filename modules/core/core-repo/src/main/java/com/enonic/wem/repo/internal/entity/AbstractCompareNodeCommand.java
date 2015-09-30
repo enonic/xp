@@ -2,42 +2,38 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 public class AbstractCompareNodeCommand
 {
     private final Branch target;
 
-    private final VersionService versionService;
-
-    private final BranchService branchService;
+    private final StorageService storageService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
         target = builder.target;
-        versionService = builder.versionService;
-        this.branchService = builder.branchService;
+        this.storageService = builder.storageService;
     }
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final NodeBranchVersion sourceWsVersion = this.branchService.get( nodeId, BranchContext.from( context ) );
-        final NodeBranchVersion targetWsVersion =
-            this.branchService.get( nodeId, BranchContext.from( this.target, context.getRepositoryId() ) );
+        final BranchNodeVersion sourceWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) );
+        final BranchNodeVersion targetWsVersion = storageService.getBranchNodeVersion( nodeId, InternalContext.create( context ).
+            branch( this.target ).
+            build() );
 
         final CompareStatus compareStatus = CompareStatusResolver.create().
-            repositoryId( context.getRepositoryId() ).
             source( sourceWsVersion ).
             target( targetWsVersion ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             resolve();
 
@@ -49,13 +45,7 @@ public class AbstractCompareNodeCommand
     {
         private Branch target;
 
-        private VersionService versionService;
-
-        private BranchService branchService;
-
-        Builder()
-        {
-        }
+        private StorageService storageService;
 
         @SuppressWarnings("unchecked")
         public B target( final Branch target )
@@ -65,23 +55,16 @@ public class AbstractCompareNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B versionService( final VersionService versionService )
+        public B storageService( final StorageService storageService )
         {
-            this.versionService = versionService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B branchService( final BranchService branchService )
-        {
-            this.branchService = branchService;
+            this.storageService = storageService;
             return (B) this;
         }
 
         void validate()
         {
             Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( versionService );
+            Preconditions.checkNotNull( storageService );
         }
 
         public AbstractCompareNodeCommand build()

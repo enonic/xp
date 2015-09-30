@@ -17,8 +17,11 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.core.impl.content.validate.DataValidationError;
+import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -26,9 +29,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.core.impl.content.validate.DataValidationError;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -99,14 +99,14 @@ final class UpdateContentCommand
             modifier( getCurrentUser().getKey() ).
             build();
 
-        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeParams( updateContentTranslatorParams );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams );
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
         eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
 
         eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.UPDATE, editedContent.getPath() ) );
 
-        return translator.fromNode( editedNode );
+        return translator.fromNode( editedNode, true );
     }
 
     private Content processContent( final Content contentBeforeChange, Content editedContent )

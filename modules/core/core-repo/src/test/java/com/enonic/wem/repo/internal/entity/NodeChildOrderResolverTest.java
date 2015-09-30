@@ -29,8 +29,6 @@ public class NodeChildOrderResolverTest
         final ChildOrder childOrder = ChildOrder.from( "myField DESC" );
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             nodePath( NodePath.create( "myPath" ).build() ).
             childOrder( childOrder ).
             build().
@@ -49,21 +47,17 @@ public class NodeChildOrderResolverTest
             params( CreateRootNodeParams.create().
                 childOrder( childOrder ).
                 build() ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( NodePath.ROOT ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             resolve();
 
@@ -84,11 +78,9 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( parent.path() ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             resolve();
 

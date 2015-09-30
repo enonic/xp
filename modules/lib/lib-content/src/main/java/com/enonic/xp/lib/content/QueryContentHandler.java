@@ -8,13 +8,13 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
+import com.enonic.xp.script.ScriptValue;
 
 public final class QueryContentHandler
     extends BaseContextHandler

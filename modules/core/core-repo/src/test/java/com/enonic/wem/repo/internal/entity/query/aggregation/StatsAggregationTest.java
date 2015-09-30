@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.xp.aggregation.Aggregation;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
@@ -18,7 +19,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static org.junit.Assert.*;
 

@@ -1,12 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class NodeChildOrderResolver
     extends AbstractNodeCommand
@@ -34,16 +30,12 @@ public class NodeChildOrderResolver
             return this.childOrder;
         }
 
-        final NodeVersionId parentNodeVersion = this.queryService.get( this.parentPath, IndexContext.from( ContextAccessor.current() ) );
+        final Node parent = GetNodeByPathCommand.create( this ).
+            nodePath( this.parentPath ).
+            build().
+            execute();
 
-        if ( parentNodeVersion == null )
-        {
-            return ChildOrder.defaultOrder();
-        }
-
-        final Node parentNode = this.nodeDao.getByVersionId( parentNodeVersion );
-
-        return parentNode.getChildOrder();
+        return parent == null ? ChildOrder.defaultOrder() : parent.getChildOrder();
     }
 
     public static Builder create()
@@ -51,6 +43,10 @@ public class NodeChildOrderResolver
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
@@ -63,11 +59,9 @@ public class NodeChildOrderResolver
         {
         }
 
-        @Override
-        public Builder nodeDao( final NodeDao nodeDao )
+        private Builder( final AbstractNodeCommand source )
         {
-            this.nodeDao = nodeDao;
-            return this;
+            super( source );
         }
 
         public Builder nodePath( final NodePath nodePath )

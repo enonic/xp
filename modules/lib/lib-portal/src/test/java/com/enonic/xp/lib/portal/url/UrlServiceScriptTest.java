@@ -7,9 +7,9 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
 public class UrlServiceScriptTest

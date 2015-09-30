@@ -94,7 +94,7 @@ module app.wizard {
                     var selectedItemId = this.tree.getDataId(event.getItemView());
                     this.tree.selectNode(selectedItemId);
 
-                    if(!event.getPosition()) {
+                    if (!event.getPosition()) {
                         this.scrollToItem(selectedItemId);
                     }
                 }
@@ -176,7 +176,7 @@ module app.wizard {
             this.clickListener = (event, data) => {
                 var elem = new api.dom.ElementHelper(event.target);
 
-                if(this.sameRowClicked(data.row)) {
+                if (this.sameRowClicked(data.row)) {
                     this.hideContextMenu();
                 }
 
@@ -191,7 +191,7 @@ module app.wizard {
                 }
                 this.tree.getGrid().selectRow(data.row);
 
-                if(this.isMenuIconClicked(data.cell)) {
+                if (this.isMenuIconClicked(data.cell)) {
                     this.showContextMenu(data.row, {x: event.pageX, y: event.pageY});
                 }
 
