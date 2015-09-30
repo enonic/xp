@@ -156,22 +156,19 @@ public class PushContentCommand
         for ( final ResolveSyncWorkResult result : results )
         {
             final NodeIds nodesToPush = NodeIds.from( result.getNodePublishRequests().getNodeIds() );
-
-            if ( nodesToPush.isEmpty() )
+            if ( !nodesToPush.isEmpty() )
             {
-                return;
+                final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToPush ) ) );
+
+                final boolean validContents = ensureValidContents( contents );
+
+                if ( validContents )
+                {
+                    doPushNodes( nodesToPush );
+                }
             }
 
-            final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToPush ) ) );
-
-            final boolean validContents = ensureValidContents( contents );
-
-            if ( validContents )
-            {
-                doPushNodes( nodesToPush );
-
-                doDeleteNodes( result );
-            }
+            doDeleteNodes( result );
         }
     }
 
