@@ -62,3 +62,17 @@ exports.failSendMail = function () {
     assert.assertEquals('Should be false', false, result);
 
 };
+
+exports.sendMailWithContentType = function () {
+
+    var result = mail.send({
+        subject: 'test subject',
+        body: 'test body',
+        to: 'to@bar.com',
+        from: 'from@bar.com',
+        contentType: 'text/html'
+    });
+
+    assert.assertEquals('Should be true', true, result);
+
+};
