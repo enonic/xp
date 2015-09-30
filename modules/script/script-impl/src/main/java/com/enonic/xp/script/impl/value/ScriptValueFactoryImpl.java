@@ -2,8 +2,8 @@ package com.enonic.xp.script.impl.value;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.util.NashornHelper;
 
 public final class ScriptValueFactoryImpl
     implements ScriptValueFactory

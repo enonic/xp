@@ -5,11 +5,11 @@ import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesWithVersionDifferenceParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionDiffQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -37,6 +37,8 @@ public class FindNodesWithVersionDifferenceCommandTest
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() );
+
+        refresh();
 
         assertEquals( 2, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
@@ -315,11 +317,9 @@ public class FindNodesWithVersionDifferenceCommandTest
         MoveNodeCommand.create().
             newParent( newParent.path() ).
             id( node.id() ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -332,7 +332,9 @@ public class FindNodesWithVersionDifferenceCommandTest
 
     private NodeVersionDiffResult getDiff( final Branch source, final Branch target, final NodePath nodePath )
     {
-        final NodeVersionDiffQuery.Builder queryBuilder = NodeVersionDiffQuery.create().
+        refresh();
+
+        final FindNodesWithVersionDifferenceParams.Builder queryBuilder = FindNodesWithVersionDifferenceParams.create().
             target( target ).
             source( source );
 
@@ -342,7 +344,7 @@ public class FindNodesWithVersionDifferenceCommandTest
         }
 
         return FindNodesWithVersionDifferenceCommand.create().
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             query( queryBuilder.build() ).
             build().
             execute();
@@ -357,12 +359,10 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }
@@ -373,10 +373,8 @@ public class FindNodesWithVersionDifferenceCommandTest
             ids( NodeIds.from( createdNode.id() ) ).
             target( target ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

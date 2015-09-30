@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.wem.repo.internal.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
-public class RepositoryStorageSettingsProvider
+class RepositoryStorageSettingsProvider
     extends AbstractRepositorySettingsProvider
 {
-    public static final String STORAGE_SETTINGS_FILE_PATTERN = "-storage-settings.json";
+    private static final String STORAGE_SETTINGS_FILE_PATTERN = "-storage-settings.json";
 
     private final static String PREFIX = "/META-INF/index/settings/";
 

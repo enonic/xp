@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.event.impl;
 
-import com.enonic.xp.event.Event;
 import com.enonic.xp.admin.event.impl.json.EventJson;
+import com.enonic.xp.event.Event;
 
 final class EventJsonWrapper
 {

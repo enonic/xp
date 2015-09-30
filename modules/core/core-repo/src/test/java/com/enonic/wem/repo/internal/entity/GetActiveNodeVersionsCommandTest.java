@@ -44,10 +44,8 @@ public class GetActiveNodeVersionsCommandTest
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
-            versionService( this.versionService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             nodeId( node.id() ).
             branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
@@ -61,10 +59,8 @@ public class GetActiveNodeVersionsCommandTest
         updateNode( node, CTX_DEFAULT );
 
         final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
-            versionService( this.versionService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             nodeId( node.id() ).
             branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
@@ -87,11 +83,9 @@ public class GetActiveNodeVersionsCommandTest
         context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute() );
     }

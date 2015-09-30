@@ -102,10 +102,10 @@ module app.wizard.page {
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.liveEditIFrame.onShown(() => {
-               if(!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
-                   this.loadMask.show();
-                   this.loadMaskCanBeShown = true;
-               }
+                if (!this.loadMaskCanBeShown && this.liveEditFrameIsVisible()) {
+                    this.loadMask.show();
+                    this.loadMaskCanBeShown = true;
+                }
 
             });
 
@@ -177,7 +177,7 @@ module app.wizard.page {
         }
 
         public load() {
-            if(this.loadMaskCanBeShown) {
+            if (this.loadMaskCanBeShown) {
                 this.loadMask.show();
             }
 

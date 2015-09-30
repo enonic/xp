@@ -7,23 +7,28 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResultEntry;
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQuery;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.branch.search.NodeBranchQueryResultEntry;
+import com.enonic.wem.repo.internal.branch.storage.BranchIndexPath;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 import com.enonic.wem.repo.internal.repository.RepositorySearchIndexSettingsProvider;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repository.RepositoryId;
 
 @Component
@@ -34,7 +39,7 @@ public class IndexServiceImpl
 
     private IndexServiceInternal indexServiceInternal;
 
-    private BranchService branchService;
+    private SearchService searchService;
 
     private NodeDao nodeDao;
 
@@ -55,16 +60,22 @@ public class IndexServiceImpl
 
         for ( final Branch branch : params.getBranches() )
         {
-            final NodeBranchQueryResult results = this.branchService.findAll( NodeBranchQuery.create().
-                from( 0 ).
-                size( QueryService.GET_ALL_SIZE_FLAG ).
-                build(), BranchContext.from( branch, params.getRepositoryId() ) );
+            final CompareExpr compareExpr =
+                CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
+                                    ValueExpr.string( branch.getName() ) );
+
+            final NodeBranchQueryResult results = this.searchService.search( NodeBranchQuery.create().
+                query( QueryExpr.from( compareExpr ) ).
+                size( SearchService.GET_ALL_SIZE_FLAG ).
+                build(), InternalContext.create( ContextAccessor.current() ).
+                branch( branch ).
+                build() );
 
             for ( final NodeBranchQueryResultEntry result : results )
             {
-                final Node node = this.nodeDao.getByVersionId( result.getNodeVersionId() );
+                final Node node = this.nodeDao.get( result.getNodeVersionId() );
 
-                this.indexServiceInternal.store( node, result.getNodeVersionId(), IndexContext.create().
+                this.indexServiceInternal.store( node, result.getNodeVersionId(), InternalContext.create( ContextAccessor.current() ).
                     repositoryId( params.getRepositoryId() ).
                     branch( branch ).
                     build() );
@@ -112,9 +123,9 @@ public class IndexServiceImpl
     }
 
     @Reference
-    public void setBranchService( final BranchService branchService )
+    public void setSearchService( final SearchService searchService )
     {
-        this.branchService = branchService;
+        this.searchService = searchService;
     }
 
     @Reference

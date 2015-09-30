@@ -20,14 +20,17 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.branch.storage.BranchServiceImpl;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
-import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.search.ElasticsearchSearchDao;
+import com.enonic.wem.repo.internal.elasticsearch.storage.ElasticsearchStorageDao;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.search.SearchServiceImpl;
+import com.enonic.wem.repo.internal.storage.StorageServiceImpl;
+import com.enonic.wem.repo.internal.version.VersionServiceImpl;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
@@ -38,7 +41,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslator;
+import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
@@ -111,17 +114,21 @@ public class AbstractContentServiceTest
 
     protected ContentTypeRegistry contentTypeRegistry;
 
-    protected ContentNodeTranslator contentNodeTranslator;
+    protected ContentNodeTranslatorImpl translator;
 
     private NodeDaoImpl nodeDao;
 
-    private ElasticsearchVersionService versionService;
+    private VersionServiceImpl versionService;
 
-    private ElasticsearchBranchService branchService;
+    private BranchServiceImpl branchService;
 
     private ElasticsearchIndexServiceInternal indexService;
 
-    private ElasticsearchQueryService queryService;
+    private StorageServiceImpl storageService;
+
+    private SearchServiceImpl searchService;
+
+    private ElasticsearchSearchDao searchDao;
 
     @Before
     public void setUp()
@@ -135,35 +142,42 @@ public class AbstractContentServiceTest
 
         this.binaryBlobStore = new FileBlobStore( "test" );
 
-        this.queryService = new ElasticsearchQueryService();
-        this.queryService.setElasticsearchDao( elasticsearchDao );
+        final ElasticsearchStorageDao storageDao = new ElasticsearchStorageDao();
+        storageDao.setClient( this.client );
 
-        this.branchService = new ElasticsearchBranchService();
-        this.branchService.setElasticsearchDao( elasticsearchDao );
+        this.branchService = new BranchServiceImpl();
+        this.branchService.setStorageDao( storageDao );
 
-        this.versionService = new ElasticsearchVersionService();
-        this.versionService.setElasticsearchDao( elasticsearchDao );
+        this.versionService = new VersionServiceImpl();
+        this.versionService.setStorageDao( storageDao );
 
         this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setBranchService( this.branchService );
 
         this.contentService = new ContentServiceImpl();
 
+        this.storageService = new StorageServiceImpl();
+        this.storageService.setBranchService( this.branchService );
+        this.storageService.setVersionService( this.versionService );
+        this.storageService.setNodeDao( this.nodeDao );
+        this.storageService.setIndexServiceInternal( this.indexService );
+
+        this.searchDao = new ElasticsearchSearchDao();
+        this.searchDao.setElasticsearchDao( this.elasticsearchDao );
+
+        this.searchService = new SearchServiceImpl();
+        this.searchService.setSearchDao( this.searchDao );
+
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexService );
-        this.nodeService.setQueryService( queryService );
-        this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
-        this.nodeService.setBranchService( branchService );
+        this.nodeService.setStorageService( storageService );
+        this.nodeService.setSearchService( searchService );
 
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeRegistry = Mockito.mock( ContentTypeRegistry.class );
-
-        this.contentNodeTranslator = new ContentNodeTranslator();
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
@@ -179,13 +193,16 @@ public class AbstractContentServiceTest
         contentTypeService.setMixinService( mixinService );
         contentTypeService.setContentTypeRegistry( new ContentTypeRegistryImpl() );
 
+        this.translator = new ContentNodeTranslatorImpl();
+        this.translator.setNodeService( this.nodeService );
+
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
         this.contentService.setSiteService( siteService );
-        this.contentService.setContentNodeTranslator( this.contentNodeTranslator );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
+        this.contentService.setTranslator( this.translator );
 
         createContentRepository();
         waitForClusterHealth();
@@ -203,10 +220,8 @@ public class AbstractContentServiceTest
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexService );
-        nodeService.setQueryService( queryService );
-        nodeService.setNodeDao( nodeDao );
-        nodeService.setVersionService( versionService );
-        nodeService.setBranchService( branchService );
+        nodeService.setSearchService( searchService );
+        nodeService.setStorageService( storageService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
         repositoryInitializer.initializeRepository( repository.getId() );

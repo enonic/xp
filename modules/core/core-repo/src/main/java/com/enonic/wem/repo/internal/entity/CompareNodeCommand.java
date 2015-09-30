@@ -43,7 +43,7 @@ public class CompareNodeCommand
         }
 
         @Override
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId );

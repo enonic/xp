@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.UpdateNodeParams;
 
@@ -39,11 +39,11 @@ public class GetNodeVersionsCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
+        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -64,11 +64,13 @@ public class GetNodeVersionsCommandTest
         doUpdateNode( node );
         doUpdateNode( node );
 
-        final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
+        refresh();
+
+        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
             nodeId( node.id() ).
-            versionService( this.versionService ).
+            searchService( this.searchService ).
             build().
             execute();
 
@@ -76,6 +78,7 @@ public class GetNodeVersionsCommandTest
 
         final NodeVersions nodeVersions = result.getNodeVersions();
         Instant previousTimestamp = null;
+
         for ( final NodeVersion nodeVersion : nodeVersions )
         {
             assertTrue( previousTimestamp == null || nodeVersion.getTimestamp().isBefore( previousTimestamp ) );
@@ -92,12 +95,10 @@ public class GetNodeVersionsCommandTest
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
-            queryService( this.queryService ).
             indexServiceInternal( this.indexServiceInternal ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

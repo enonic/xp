@@ -12,8 +12,8 @@ import com.google.common.base.Joiner;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.Undefined;
 
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.util.NashornHelper;
 
 import static org.junit.Assert.*;
 

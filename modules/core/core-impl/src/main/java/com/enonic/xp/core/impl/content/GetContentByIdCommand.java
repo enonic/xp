@@ -29,7 +29,7 @@ final class GetContentByIdCommand
         try
         {
             final Node node = nodeService.getById( nodeId );
-            return translator.fromNode( node );
+            return translator.fromNode( node, true );
         }
         catch ( NoNodeWithIdFoundException | NodeNotFoundException e )
         {

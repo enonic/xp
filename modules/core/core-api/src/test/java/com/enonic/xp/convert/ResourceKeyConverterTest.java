@@ -19,7 +19,8 @@ public class ResourceKeyConverterTest
     public void testToString()
     {
         assertEquals( ResourceKey.from( "myapplication:/some/path" ), Converters.convert( "myapplication:/some/path", ResourceKey.class ) );
-        assertEquals( ResourceKey.from( "myapplication:/some/path" ), Converters.convertOrDefault( null, ResourceKey.class, ResourceKey.from( "myapplication:/some/path" ) ) );
+        assertEquals( ResourceKey.from( "myapplication:/some/path" ),
+                      Converters.convertOrDefault( null, ResourceKey.class, ResourceKey.from( "myapplication:/some/path" ) ) );
 
     }
 

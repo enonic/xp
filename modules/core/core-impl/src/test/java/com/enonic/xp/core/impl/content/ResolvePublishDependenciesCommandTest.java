@@ -31,9 +31,9 @@ public class ResolvePublishDependenciesCommandTest
 
     private ContentTypeService contentTypeService;
 
-    private ContentNodeTranslator contentNodeTranslator;
-
     private EventPublisher eventPublisher;
+
+    private ContentNodeTranslator translator;
 
     @Before
     public void setUp()
@@ -41,8 +41,8 @@ public class ResolvePublishDependenciesCommandTest
     {
         this.nodeService = Mockito.mock( NodeService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.contentNodeTranslator = Mockito.mock( ContentNodeTranslator.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.translator = Mockito.mock( ContentNodeTranslator.class );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -70,7 +70,7 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ), ContentId.from( "s2" ) ) ).
             target( ContentConstants.BRANCH_MASTER ).
@@ -95,7 +95,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
@@ -106,7 +106,7 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             target( ContentConstants.BRANCH_MASTER ).
@@ -132,7 +132,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ),
                                        createContent( "s3", "s3Name", ContentPath.ROOT, true ) ) );
@@ -146,7 +146,7 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             target( ContentConstants.BRANCH_MASTER ).
@@ -173,7 +173,7 @@ public class ResolvePublishDependenciesCommandTest
         Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
             thenReturn( Nodes.empty() );
 
-        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+        Mockito.when( translator.fromNodes( Mockito.isA( Nodes.class ), Mockito.isA( boolean.class ) ) ).
             thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
                                        createContent( "s2", "s2Name", ContentPath.ROOT, true ),
                                        createContent( "s3", "s3Name", ContentPath.ROOT, true ) ) );
@@ -186,7 +186,7 @@ public class ResolvePublishDependenciesCommandTest
         final ResolvePublishDependenciesResult result = ResolvePublishDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            translator( this.contentNodeTranslator ).
+            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             target( ContentConstants.BRANCH_MASTER ).

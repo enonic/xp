@@ -18,6 +18,7 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RootNode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.security.PrincipalKey;
@@ -109,6 +110,8 @@ public final class ContentInitializer
                 build() );
 
             LOG.info( "Created content root-node: " + root.path() );
+
+            nodeService.refresh( RefreshMode.ALL );
 
             nodeService.push( NodeIds.from( root.id() ), ContentConstants.BRANCH_MASTER );
         }

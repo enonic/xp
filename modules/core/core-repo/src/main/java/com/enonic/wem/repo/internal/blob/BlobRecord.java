@@ -7,7 +7,7 @@ public abstract class BlobRecord
 {
     private final BlobKey key;
 
-    public BlobRecord( final BlobKey key )
+    protected BlobRecord( final BlobKey key )
     {
         this.key = key;
     }

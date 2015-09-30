@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
@@ -57,7 +57,7 @@ public class NodeOrderTest
                 OrderExpr.Direction.ASC ) ) ).
             build();
 
-        final NodeQueryResult nodeQueryResult = queryService.find( distanceQuery, IndexContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = searchService.search( distanceQuery, InternalContext.from( ContextAccessor.current() ) );
 
         final Iterator<NodeId> iterator = nodeQueryResult.getNodeIds().iterator();
         assertEquals( node4.id(), iterator.next() );
@@ -88,7 +88,7 @@ public class NodeOrderTest
 
         printContentRepoIndex();
 
-        final NodeQueryResult nodeQueryResult = queryService.find( fulltextQuery, IndexContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = searchService.search( fulltextQuery, InternalContext.from( ContextAccessor.current() ) );
 
         assertEquals( 4, nodeQueryResult.getHits() );
 

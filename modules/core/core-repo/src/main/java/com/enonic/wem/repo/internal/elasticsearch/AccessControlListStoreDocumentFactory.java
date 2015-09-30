@@ -4,14 +4,14 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentStringItem;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentStringItem;
 
 public class AccessControlListStoreDocumentFactory
 {

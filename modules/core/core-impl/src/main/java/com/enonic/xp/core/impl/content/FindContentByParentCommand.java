@@ -29,21 +29,11 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
-
-        populateParentIdentificator( findNodesParam );
-
-        findNodesParam.
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            childOrder( params.getChildOrder() ).
-            build();
-
-        final FindNodesByParentResult result = nodeService.findByParent( findNodesParam.build() );
+        final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
 
         final Nodes nodes = result.getNodes();
 
-        Contents contents = this.translator.fromNodes( nodes );
+        final Contents contents = this.translator.fromNodes( nodes, true );
 
         return FindContentByParentResult.create().
             contents( contents ).
@@ -52,7 +42,22 @@ final class FindContentByParentCommand
             build();
     }
 
-    private void populateParentIdentificator( final FindNodesByParentParams.Builder findNodesParam )
+    private FindNodesByParentParams createFindNodesByParentParams()
+    {
+        final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
+
+        setNodePathOrIdAsIdentifier( findNodesParam );
+
+        findNodesParam.
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            childOrder( params.getChildOrder() ).
+            build();
+
+        return findNodesParam.build();
+    }
+
+    private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )
     {
         if ( params.getParentPath() == null && params.getParentId() == null )
         {

@@ -1,10 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -25,6 +22,7 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 
@@ -47,22 +45,12 @@ final class DeleteContentCommand
         try
         {
             final Contents deletedContents = doExecute();
+
             for ( Content deletedContent : deletedContents )
             {
-                if ( deletedContent != null )
-                {
-                    if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
-                    {
-                        eventPublisher.publish(
-                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-                    }
-                    else
-                    {
-                        eventPublisher.publish(
-                            ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
-                    }
-                }
+                publishEvents( deletedContent );
             }
+
             return deletedContents;
         }
         catch ( NodeAccessException e )
@@ -73,49 +61,42 @@ final class DeleteContentCommand
 
     private Contents doExecute()
     {
-        //Gets the node to delete
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
-        //Executes the deletion on the node and the sub nodes
-        final Set<Node> nodesToDelete = Sets.newLinkedHashSet();
+        final Nodes.Builder nodesToDelete = Nodes.create();
         recursiveDelete( nodeToDelete, nodesToDelete );
 
-        return translator.fromNodes( Nodes.from( nodesToDelete ) );
+        return this.translator.fromNodes( nodesToDelete.build(), false );
     }
 
-    private void recursiveDelete( Node nodeToDelete, Set<Node> deletedNodes )
+    private void recursiveDelete( Node nodeToDelete, Nodes.Builder deletedNodes )
     {
         final CompareStatus status = getCompareStatus( nodeToDelete );
 
         if ( status == CompareStatus.NEW )
         {
-            //If the current node is new, deletes it
-            final Node deletedNode = nodeService.deleteByPath( nodeToDelete.path() );
+            final Node deletedNode = nodeService.deleteById( nodeToDelete.id() );
             deletedNodes.add( deletedNode );
         }
         else
         {
-            //Else, marks the current node as PENDING_DELETE
-            final SetNodeStateParams setNodeStateParams = SetNodeStateParams.create().
+            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( SetNodeStateParams.create().
                 nodeId( nodeToDelete.id() ).
                 nodeState( NodeState.PENDING_DELETE ).
-                build();
-            final SetNodeStateResult setNodeStateResult = this.nodeService.setNodeState( setNodeStateParams );
-            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes().getSet() );
+                build() );
 
-            //Recursive call for the children
-            if ( nodeToDelete.getHasChildren() )
+            deletedNodes.addAll( setNodeStateResult.getUpdatedNodes() );
+
+            this.nodeService.refresh( RefreshMode.SEARCH );
+
+            final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
+                parentPath( nodeToDelete.path() ).
+                build() );
+
+            for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
             {
-                final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
-                    parentPath( nodeToDelete.path() ).
-                    build();
-                final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( findNodesByParentParams );
-
-                for ( Node childNodeToDelete : findNodesByParentResult.getNodes() )
-                {
-                    recursiveDelete( childNodeToDelete, deletedNodes );
-                }
+                recursiveDelete( childNodeToDelete, deletedNodes );
             }
         }
     }
@@ -136,6 +117,22 @@ final class DeleteContentCommand
         }
         return compare.getCompareStatus();
     }
+
+    private void publishEvents( final Content deletedContent )
+    {
+        if ( deletedContent != null )
+        {
+            if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+            {
+                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
+            }
+            else
+            {
+                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+            }
+        }
+    }
+
 
     public static Builder create()
     {

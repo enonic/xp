@@ -7,6 +7,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.translator.QueryFieldNameResolver;
 import com.enonic.xp.query.aggregation.AbstractHistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -17,12 +18,19 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 
 public class AggregationQueryBuilderFactory
 {
-    public static Set<AbstractAggregationBuilder> create( final AggregationQueries aggregationQueries )
+    private final QueryFieldNameResolver fieldNameResolver;
+
+    public AggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    {
+        this.fieldNameResolver = fieldNameResolver;
+    }
+
+    public Set<AbstractAggregationBuilder> create( final AggregationQueries aggregationQueries )
     {
         return doCreate( aggregationQueries );
     }
 
-    private static Set<AbstractAggregationBuilder> doCreate( final AggregationQueries aggregationQueries )
+    private Set<AbstractAggregationBuilder> doCreate( final AggregationQueries aggregationQueries )
     {
         Set<AbstractAggregationBuilder> aggregationBuilders = Sets.newHashSet();
 
@@ -32,19 +40,23 @@ public class AggregationQueryBuilderFactory
 
             if ( aggregationQuery instanceof TermsAggregationQuery )
             {
-                aggregationBuilder = TermsAggregationQueryBuilderFactory.create( (TermsAggregationQuery) aggregationQuery );
+                aggregationBuilder =
+                    new TermsAggregationQueryBuilderFactory( fieldNameResolver ).create( (TermsAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractRangeAggregationQuery )
             {
-                aggregationBuilder = RangeAggregationQueryBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery );
+                aggregationBuilder =
+                    new RangeAggregationQueryBuilderFactory( fieldNameResolver ).create( (AbstractRangeAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractHistogramAggregationQuery )
             {
-                aggregationBuilder = HistogramAggregationQueryBuilderFactory.create( (AbstractHistogramAggregationQuery) aggregationQuery );
+                aggregationBuilder = new HistogramAggregationQueryBuilderFactory( fieldNameResolver ).create(
+                    (AbstractHistogramAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof MetricAggregationQuery )
             {
-                aggregationBuilder = MetricAggregationQueryBuilderFactory.create( (MetricAggregationQuery) aggregationQuery );
+                aggregationBuilder =
+                    new MetricAggregationQueryBuilderFactory( fieldNameResolver ).create( (MetricAggregationQuery) aggregationQuery );
             }
             else
             {
@@ -59,8 +71,7 @@ public class AggregationQueryBuilderFactory
         return aggregationBuilders;
     }
 
-    private static void handleSubAggregations( final AggregationQuery aggregationQuery,
-                                               final AbstractAggregationBuilder aggregationBuilder )
+    private void handleSubAggregations( final AggregationQuery aggregationQuery, final AbstractAggregationBuilder aggregationBuilder )
     {
         if ( aggregationQuery instanceof BucketAggregationQuery && aggregationBuilder instanceof AggregationBuilder )
         {

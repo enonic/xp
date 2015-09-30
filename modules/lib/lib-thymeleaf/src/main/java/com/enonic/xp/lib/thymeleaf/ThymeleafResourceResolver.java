@@ -5,10 +5,10 @@ import java.io.InputStream;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
-import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.bean.BeanContext;
 
 final class ThymeleafResourceResolver
     implements IResourceResolver

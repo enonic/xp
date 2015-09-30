@@ -1,9 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -15,10 +12,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
-import org.elasticsearch.action.admin.indices.stats.IndexStats;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
-import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.osgi.service.component.annotations.Component;
@@ -27,11 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.IndexSettings;
@@ -40,7 +32,6 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 
 
 @Component
@@ -75,9 +66,7 @@ public class ElasticsearchIndexServiceInternal
     @Override
     public void refresh( final String... indexNames )
     {
-        this.client.admin().indices().refresh(
-            new RefreshRequestBuilder( this.client.admin().indices() ).setIndices( indexNames ).request() ).
-            actionGet();
+        client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
     }
 
     @Override
@@ -125,31 +114,6 @@ public class ElasticsearchIndexServiceInternal
         {
             throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
         }
-    }
-
-    @Override
-    public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId )
-    {
-        IndicesStatsRequest indicesStatsRequest = new IndicesStatsRequest();
-        indicesStatsRequest.listenerThreaded( false );
-        indicesStatsRequest.clear();
-
-        final String storageName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-
-        final IndicesStatsResponse response =
-            this.client.admin().indices().stats( indicesStatsRequest ).actionGet( INDICES_RESPONSE_TIMEOUT );
-
-        final Map<String, IndexStats> indicesMap = response.getIndices();
-
-        final Set<String> indexNames = Sets.newHashSet();
-
-        // TODO as filter
-        indexNames.addAll( indicesMap.keySet().stream().filter(
-            indexName -> indexName.startsWith( storageName ) || ( indexName.startsWith( searchIndexName ) ) ).collect(
-            Collectors.toList() ) );
-
-        return indexNames;
     }
 
     @Override
@@ -208,9 +172,9 @@ public class ElasticsearchIndexServiceInternal
     }
 
     @Override
-    public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
+    public void store( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( nodeVersionId ).
             branch( context.getBranch() ).
@@ -218,11 +182,11 @@ public class ElasticsearchIndexServiceInternal
             build().
             create();
 
-        elasticsearchDao.store( storeDocuments );
+        elasticsearchDao.store( indexDocuments );
     }
 
     @Override
-    public void delete( final NodeId nodeId, final IndexContext context )
+    public void delete( final NodeId nodeId, final InternalContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getBranch().getName();

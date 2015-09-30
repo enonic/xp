@@ -18,6 +18,18 @@ public class FindNodesByParentResult
         hits = builder.hits;
     }
 
+    private FindNodesByParentResult( final long hits, final long totalHits, final Nodes nodes )
+    {
+        this.hits = hits;
+        this.totalHits = totalHits;
+        this.nodes = nodes;
+    }
+
+    public static FindNodesByParentResult empty()
+    {
+        return new FindNodesByParentResult( 0, 0, Nodes.empty() );
+    }
+
     public static Builder create()
     {
         return new Builder();

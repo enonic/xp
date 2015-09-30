@@ -1,17 +1,24 @@
 package com.enonic.wem.repo.internal.branch;
 
+import com.enonic.wem.repo.internal.InternalContext;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
+import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersions;
 import com.enonic.xp.node.NodeId;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 
 public interface BranchService
 {
-    public void store( final StoreBranchDocument storeBranchDocument, final BranchContext context );
+    String store( final StoreBranchDocument storeBranchDocument, final InternalContext context );
 
-    public void delete( final NodeId nodeId, final BranchContext context );
+    void delete( final NodeId nodeId, final InternalContext context );
 
-    public NodeBranchVersion get( final NodeId nodeId, final BranchContext context );
+    BranchNodeVersion get( final NodeId nodeId, final InternalContext context );
 
-    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext branchContext );
+    BranchNodeVersions get( final NodeIds nodeIds, final InternalContext context );
+
+    BranchNodeVersion get( final NodePath nodePath, final InternalContext context );
+
+    BranchNodeVersions get( final NodePaths nodePath, final InternalContext context );
 }

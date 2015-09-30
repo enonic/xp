@@ -22,7 +22,7 @@ public final class BlobKeyCreator
         return createKey( new ByteArrayInputStream( data ) );
     }
 
-    public static BlobKey createKey( final InputStream in )
+    private static BlobKey createKey( final InputStream in )
         throws IOException
     {
         return createKey( in, new OutputStream()

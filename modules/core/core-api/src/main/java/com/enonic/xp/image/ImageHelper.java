@@ -179,7 +179,7 @@ public final class ImageHelper
     {
         return scaleSquare( source, size, 0.5, 0.5 );
     }
-    
+
     public static BufferedImage scaleSquare( final BufferedImage source, final int size, final double xOffset, final double yOffset )
     {
         int width = source.getWidth();

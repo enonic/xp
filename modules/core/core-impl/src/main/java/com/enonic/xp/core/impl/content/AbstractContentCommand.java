@@ -11,20 +11,20 @@ import com.enonic.xp.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
 {
-    final ContentNodeTranslator translator;
-
     final NodeService nodeService;
 
     final ContentTypeService contentTypeService;
 
     final EventPublisher eventPublisher;
 
+    final ContentNodeTranslator translator;
+
     AbstractContentCommand( final Builder builder )
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
-        this.translator = builder.translator;
         this.eventPublisher = builder.eventPublisher;
+        this.translator = builder.translator;
     }
 
     Content getContent( final ContentId contentId )
@@ -47,21 +47,20 @@ abstract class AbstractContentCommand
 
         private ContentTypeService contentTypeService;
 
-        private ContentNodeTranslator translator;
-
         private EventPublisher eventPublisher;
+
+        private ContentNodeTranslator translator;
 
         Builder()
         {
-
         }
 
         Builder( final AbstractContentCommand source )
         {
-            this.translator = source.translator;
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
+            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
@@ -96,8 +95,8 @@ abstract class AbstractContentCommand
         {
             Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
             Preconditions.checkNotNull( contentTypeService, "contentTypesService cannot be null" );
-            Preconditions.checkNotNull( translator, "translator cannot be null" );
             Preconditions.checkNotNull( eventPublisher, "eventPublisher cannot be null" );
+            Preconditions.checkNotNull( translator, "translator cannot be null" );
         }
     }
 

@@ -41,15 +41,21 @@ public class ImportNodeCommand
 
     public Node execute()
     {
-        final Node existingNode = doGetByPath( this.importNode.path(), false );
+        final boolean exists = CheckNodeExistsCommand.create( this ).
+            nodePath( this.importNode.path() ).
+            build().
+            execute();
 
-        if ( existingNode == null )
+        if ( !exists )
         {
             return createNode();
         }
         else
         {
-            return updateNode( existingNode );
+            return updateNode( GetNodeByPathCommand.create( this ).
+                nodePath( this.importNode.path() ).
+                build().
+                execute() );
         }
     }
 
@@ -71,7 +77,12 @@ public class ImportNodeCommand
             setNodeId( this.importNode.id() ).
             build();
 
-        return doCreateNode( createNodeParams, this.binaryBlobStore, this.importNode.getTimestamp() );
+        return CreateNodeCommand.create( this ).
+            params( createNodeParams ).
+            timestamp( this.importNode.getTimestamp() ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
     }
 
     private Node updateNode( final Node existingNode )
@@ -89,9 +100,12 @@ public class ImportNodeCommand
                 }
             } ).build();
 
-        return doUpdateNode( updateNodeParams, this.binaryBlobStore );
+        return UpdateNodeCommand.create( this ).
+            params( updateNodeParams ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
     }
-
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>

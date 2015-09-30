@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptors;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -15,8 +17,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.admin.widget.WidgetDescriptor;
-import com.enonic.xp.admin.widget.WidgetDescriptors;
 import com.enonic.xp.xml.XmlException;
 
 final class GetWidgetDescriptorsByInterfaceCommand

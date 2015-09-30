@@ -20,7 +20,6 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.EditableNode;
-import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -38,11 +37,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionDiffQuery;
-import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -248,12 +248,6 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -272,7 +266,7 @@ class NodeServiceMock
     }
 
     @Override
-    public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params )
+    public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -296,7 +290,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node getByVersionId( final NodeVersionId nodeVersionid )
+    public Node getByNodeVersion( final NodeVersion nodeVersion )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -338,6 +332,12 @@ class NodeServiceMock
     }
 
     @Override
+    public void refresh( final RefreshMode refreshMode )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public RootNode getRoot()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -365,7 +365,7 @@ class NodeServiceMock
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
-
+    
     @Override
     public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
     {
@@ -392,6 +392,18 @@ class NodeServiceMock
 
     @Override
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodesHasChildrenResult hasChildren( final Nodes nodes )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public boolean hasChildren( final Node node )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

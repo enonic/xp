@@ -21,7 +21,7 @@ final class UserMapper
         gen.value( "email", value.getEmail() );
         gen.value( "key", value.getKey() );
         gen.value( "login", value.getLogin() );
-        gen.value( "userStore", value.getKey() != null ? value.getKey().getUserStore() : null  );
+        gen.value( "userStore", value.getKey() != null ? value.getKey().getUserStore() : null );
         gen.value( "modifiedTime", value.getModifiedTime() );
     }
 

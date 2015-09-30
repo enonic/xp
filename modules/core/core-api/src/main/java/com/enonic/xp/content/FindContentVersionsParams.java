@@ -5,6 +5,8 @@ import com.google.common.annotations.Beta;
 @Beta
 public class FindContentVersionsParams
 {
+    private final static int DEFAULT_SIZE = 10;
+
     private final ContentId contentId;
 
     private final int from;
@@ -44,9 +46,9 @@ public class FindContentVersionsParams
     {
         private ContentId contentId;
 
-        private int from;
+        private int from = 0;
 
-        private int size;
+        private int size = DEFAULT_SIZE;
 
         private Builder()
         {

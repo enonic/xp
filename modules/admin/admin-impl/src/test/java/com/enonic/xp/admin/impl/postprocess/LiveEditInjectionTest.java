@@ -76,7 +76,7 @@ public class LiveEditInjectionTest
 
         final List<String> list = this.injection.inject( this.portalRequest, this.portalResponse, HtmlTag.BODY_END );
         assertNotNull( list );
-        
+
         final String result = list.get( 0 );
         assertNotNull( result );
         assertEquals( readResource( "liveEditInjectionBodyEnd.html" ).trim() + "\n", result );

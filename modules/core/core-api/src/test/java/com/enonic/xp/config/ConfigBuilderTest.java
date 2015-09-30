@@ -128,7 +128,7 @@ public class ConfigBuilderTest
     public void testLoad()
     {
         final Configuration config1 = ConfigBuilder.create().
-            load(getClass(), "ConfigLoaderTest.properties").
+            load( getClass(), "ConfigLoaderTest.properties" ).
             add( "key3", "value3" ).
             build();
 

@@ -58,7 +58,8 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
             final RenderMode renderMode = getRenderingMode( portalRequest );
             final MediaType contentType = portalResponse.getContentType();
-            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().equals( MediaType.create( "text", "html" ) ) )
+            if ( renderMode == RenderMode.EDIT && contentType != null &&
+                contentType.withoutParameters().equals( MediaType.create( "text", "html" ) ) )
             {
                 final Object bodyObj = portalResponse.getBody();
                 if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )

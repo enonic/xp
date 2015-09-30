@@ -4,6 +4,6 @@ public enum ClusterStatusCode
 {
     RED,
     YELLOW,
-    GREEN;
+    GREEN
 
 }

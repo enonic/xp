@@ -24,23 +24,28 @@ public final class RenameNodeCommand
     {
         final NodeId nodeId = params.getNodeId();
 
-        final Node nodeToBeRenamed = doGetById( nodeId, true );
+        final Node nodeToBeRenamed = doGetById( nodeId );
 
         final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 
-        final Node renamedNode = doMoveNode( parentPath, params.getNewNodeName(), params.getNodeId() );
-
-        return NodeHasChildResolver.create().
-            queryService( this.queryService ).
+        final Node renamedNode = MoveNodeCommand.create( this ).
+            id( params.getNodeId() ).
+            newParent( parentPath ).
+            newNodeName( params.getNewNodeName() ).
             build().
-            resolve( renamedNode );
+            execute();
+
+        return renamedNode;
     }
 
     private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
     {
         final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
-        final Node existingNodeAtTargetPath = doGetByPath( targetPath, false );
+        final Node existingNodeAtTargetPath = GetNodeByPathCommand.create( this ).
+            nodePath( targetPath ).
+            build().
+            execute();
 
         if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath.id() ) )
         {

@@ -69,8 +69,7 @@ public class ImportNodeCommandTest
         final NodeComparison comparison = CompareNodeCommand.create().
             nodeId( NodeId.from( "abc" ) ).
             target( CTX_OTHER.getBranch() ).
-            branchService( this.branchService ).
-            versionService( this.versionService ).
+            storageService( this.storageService ).
             build().
             execute();
 
@@ -170,11 +169,9 @@ public class ImportNodeCommandTest
         return ImportNodeCommand.create().
             importNode( importNode ).
             binaryBlobStore( this.binaryBlobStore ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

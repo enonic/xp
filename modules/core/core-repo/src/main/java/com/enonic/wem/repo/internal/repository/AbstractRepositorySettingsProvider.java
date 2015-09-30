@@ -16,11 +16,11 @@ import com.google.common.io.Resources;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.xp.repository.RepositoryId;
 
-public class AbstractRepositorySettingsProvider
+class AbstractRepositorySettingsProvider
 {
     private final static ObjectMapper mapper = create();
 
-    protected static JsonNode doGet( final RepositoryId repositoryId, final String fileName )
+    static JsonNode doGet( final RepositoryId repositoryId, final String fileName )
     {
         try
         {
@@ -37,7 +37,7 @@ public class AbstractRepositorySettingsProvider
         }
     }
 
-    public static ObjectMapper create()
+    private static ObjectMapper create()
     {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );

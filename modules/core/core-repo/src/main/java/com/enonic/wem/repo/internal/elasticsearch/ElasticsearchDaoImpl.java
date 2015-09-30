@@ -22,10 +22,7 @@ import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -44,16 +41,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.elasticsearch.document.IndexDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexException;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.search.result.SearchResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
@@ -66,7 +61,7 @@ import com.enonic.xp.repository.RepositoryId;
 public class ElasticsearchDaoImpl
     implements ElasticsearchDao
 {
-    private static final boolean DEFAULT_REFRESH = true;
+    private static final boolean DEFAULT_REFRESH = false;
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
@@ -92,38 +87,23 @@ public class ElasticsearchDaoImpl
     }
 
     @Override
-    public String store( final IndexRequest indexRequest )
+    public void store( final Collection<IndexDocument> indexDocuments )
     {
-        final IndexResponse indexResponse = this.client.index( indexRequest ).
-            actionGet( storeTimeout );
-
-        return indexResponse.getId();
-    }
-
-    @Override
-    public void store( final Collection<StoreDocument> storeDocuments )
-    {
-        for ( StoreDocument storeDocument : storeDocuments )
+        for ( IndexDocument indexDocument : indexDocuments )
         {
-            final String id = storeDocument.getId();
+            final String id = indexDocument.getId();
 
-            final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
+            final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
-                index( storeDocument.getIndexName() ).
-                type( storeDocument.getIndexTypeName() ).
+                index( indexDocument.getIndexName() ).
+                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( storeDocument.isRefreshAfterOperation() );
+                refresh( indexDocument.isRefreshAfterOperation() );
 
             this.client.index( req ).actionGet( storeTimeout );
         }
-    }
-
-    @Override
-    public boolean delete( final DeleteRequest deleteRequest )
-    {
-        return doDelete( deleteRequest );
     }
 
     @Override
@@ -146,42 +126,18 @@ public class ElasticsearchDaoImpl
     }
 
     @Override
-    public SearchResult find( final ElasticsearchQuery query )
+    public SearchResult search( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
             client( this.client ).
-            resolvedSize( query.getSize() == QueryService.GET_ALL_SIZE_FLAG ? resolveSize( query ) : query.getSize() ).
+            resolvedSize( query.getSize() == SearchService.GET_ALL_SIZE_FLAG ? resolveSize( query ) : query.getSize() ).
             build().
             create();
 
-        //System.out.println( searchRequest.toString() );
+        //System.out.println( "######################\n\r" + searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
-    }
-
-    @Override
-    public GetResult get( final GetQuery getQuery )
-    {
-        final GetRequest getRequest = new GetRequest( getQuery.getIndexName() ).
-            type( getQuery.getIndexTypeName() ).
-            preference( searchPreference ).
-            id( getQuery.getId() );
-
-        if ( getQuery.getReturnFields().isNotEmpty() )
-        {
-            getRequest.fields( getQuery.getReturnFields().getReturnFieldNames() );
-        }
-
-        if ( getQuery.getRouting() != null )
-        {
-            getRequest.routing( getQuery.getRouting() );
-        }
-
-        final GetResponse getResponse = client.get( getRequest ).
-            actionGet( searchTimeout );
-
-        return GetResultFactory.create( getResponse );
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
@@ -202,21 +158,6 @@ public class ElasticsearchDaoImpl
             throw new IndexException( "Search request failed", e );
         }
     }
-
-    /*
-    private void printExplain( final SearchResponse searchResponse )
-    {
-        final SearchHits hits = searchResponse.getHits();
-
-        for ( final SearchHit hit : hits )
-        {
-            System.out.println( "-----------------" );
-            System.out.println( "Hit: " + hit.getId() );
-            System.out.println( hit.getExplanation().toString() );
-            System.out.println( "==================" );
-        }
-    }
-    */
 
     @Override
     public long count( final ElasticsearchQuery query )
@@ -428,7 +369,7 @@ public class ElasticsearchDaoImpl
 
     private int resolveSize( final ElasticsearchQuery query )
     {
-        if ( query.getSize() == QueryService.GET_ALL_SIZE_FLAG )
+        if ( query.getSize() == SearchService.GET_ALL_SIZE_FLAG )
         {
             return safeLongToInt( this.count( query ) );
         }

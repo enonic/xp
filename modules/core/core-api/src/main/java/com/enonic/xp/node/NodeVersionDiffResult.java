@@ -20,6 +20,11 @@ public class NodeVersionDiffResult
         return nodesWithDifferences;
     }
 
+    public static NodeVersionDiffResult empty()
+    {
+        return new NodeVersionDiffResult( NodeIds.empty() );
+    }
+
     public static Builder create()
     {
         return new Builder();

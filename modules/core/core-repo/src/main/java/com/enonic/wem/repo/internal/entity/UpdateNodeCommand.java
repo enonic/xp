@@ -46,7 +46,7 @@ public final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Node persistedNode = doGetById( params.getId(), false );
+        final Node persistedNode = doGetById( params.getId() );
 
         if ( persistedNode == null )
         {
@@ -85,12 +85,12 @@ public final class UpdateNodeCommand
 
         if ( !this.params.isDryRun() )
         {
-            doStoreNode( updatedNode );
-
-            return NodeHasChildResolver.create().
-                queryService( this.queryService ).
+            StoreNodeCommand.create( this ).
+                node( updatedNode ).
                 build().
-                resolve( updatedNode );
+                execute();
+
+            return updatedNode;
         }
         else
         {

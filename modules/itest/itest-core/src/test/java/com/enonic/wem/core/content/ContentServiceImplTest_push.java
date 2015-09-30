@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.content.Content;
@@ -38,17 +39,59 @@ public class ContentServiceImplTest_push
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PushContentParams pushParams = PushContentParams.create().
+        refresh();
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( false ).
-            build();
-
-        final PushContentsResult push = this.contentService.push( pushParams );
+            resolveDependencies( false ).
+            build() );
 
         assertEquals( 1, push.getPushedContent().getSize() );
     }
 
+
+    @Test
+    public void push_12_content()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        for ( int i = 0; i <= 12; i++ )
+        {
+            createContent( "content-" + i, content.getPath() );
+        }
+
+        refresh();
+
+        final PushContentsResult push = this.contentService.push( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeChildren( true ).
+            build() );
+
+        assertEquals( 14, push.getPushedContent().getSize() );
+    }
+
+    private void createContent( final String id, final ContentPath parent )
+    {
+        this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( id ).
+            parent( parent ).
+            type( ContentTypeName.folder() ).
+            build() );
+    }
+
+    @Ignore
     @Test
     public void push_deleted()
         throws Exception
@@ -65,6 +108,8 @@ public class ContentServiceImplTest_push
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( false ).
             build();
+
+        refresh();
 
         this.contentService.push( pushParams );
 
@@ -135,6 +180,8 @@ public class ContentServiceImplTest_push
             target( CTX_OTHER.getBranch() ).
             allowPublishOutsideSelection( allowPublishOutsideSelection ).
             build();
+
+        refresh();
 
         return this.contentService.push( pushParams );
     }

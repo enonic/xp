@@ -31,10 +31,8 @@ public class AccessControlTest
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setQueryService( queryService );
-        this.nodeService.setNodeDao( nodeDao );
-        this.nodeService.setVersionService( versionService );
-        this.nodeService.setBranchService( branchService );
+        this.nodeService.setStorageService( storageService );
+        this.nodeService.setSearchService( searchService );
 
         this.createDefaultRootNode();
     }
@@ -60,7 +58,7 @@ public class AccessControlTest
             permissions( aclList ).
             build();
 
-        final Node node = this.nodeService.create( params );
+        this.nodeService.create( params );
         refresh();
     }
 
@@ -110,12 +108,9 @@ public class AccessControlTest
     {
         return GetNodeByIdCommand.create().
             id( nodeId ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
-            branchService( this.branchService ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeDao( this.nodeDao ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
             build().
             execute();
     }

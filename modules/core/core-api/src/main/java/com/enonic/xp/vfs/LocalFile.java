@@ -80,6 +80,8 @@ final class LocalFile
             final Stream<Path> list = Files.list( this.path );
 
             list.forEach( ( path ) -> virtualFiles.add( VirtualFiles.from( path ) ) );
+
+            list.close();
         }
         catch ( final IOException e )
         {

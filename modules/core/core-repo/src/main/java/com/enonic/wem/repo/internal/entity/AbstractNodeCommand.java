@@ -1,27 +1,17 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.storage.StorageService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
@@ -36,112 +26,21 @@ abstract class AbstractNodeCommand
 
     final IndexServiceInternal indexServiceInternal;
 
-    final NodeDao nodeDao;
+    final StorageService storageService;
 
-    final BranchService branchService;
-
-    final VersionService versionService;
-
-    final QueryService queryService;
+    final SearchService searchService;
 
     AbstractNodeCommand( final Builder builder )
     {
         this.indexServiceInternal = builder.indexServiceInternal;
-        this.nodeDao = builder.nodeDao;
-        this.branchService = builder.branchService;
-        this.versionService = builder.versionService;
-        this.queryService = builder.queryService;
+        this.storageService = builder.storageService;
+        this.searchService = builder.searchService;
     }
 
-    Node updateNodeMetadata( final Node node )
-    {
-        return StoreNodeCommand.create( this ).
-            node( node ).
-            updateMetadataOnly( true ).
-            build().
-            execute();
-    }
-
-    Node doStoreNode( final Node node )
-    {
-        return StoreNodeCommand.create( this ).
-            node( node ).
-            build().
-            execute();
-    }
-
-    Node doMoveNode( final NodePath newParentPath, final NodeName nodeName, final NodeId nodeId )
-    {
-        return MoveNodeCommand.create( this ).
-            id( nodeId ).
-            newParent( newParentPath ).
-            newNodeName( nodeName ).
-            build().
-            execute();
-    }
-
-    Node doGetByPath( final NodePath path, final boolean resolveHasChild )
-    {
-        return GetNodeByPathCommand.create( this ).
-            nodePath( path ).
-            resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
-    Node doGetById( final NodeId id, final boolean resolveHasChild )
+    Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create( this ).
             id( id ).
-            resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
-    Nodes doGetByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
-    {
-        return GetNodesByIdsCommand.create( this ).
-            ids( ids ).
-            orderExpressions( orderExprs ).
-            resolveHasChild( resolveHasChild ).
-            build().
-            execute();
-    }
-
-
-    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore )
-    {
-        return CreateNodeCommand.create( this ).
-            params( params ).
-            binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore, final Instant timestamp )
-    {
-        return CreateNodeCommand.create( this ).
-            params( params ).
-            timestamp( timestamp ).
-            binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-
-    Node doUpdateNode( final UpdateNodeParams params, final BlobStore binaryBlobStore )
-    {
-        return UpdateNodeCommand.create( this ).
-            params( params ).
-            binaryBlobStore( binaryBlobStore ).
-            build().
-            execute();
-    }
-
-    Node doDeleteNode( final NodeId nodeId )
-    {
-        return DeleteNodeByIdCommand.create( this ).
-            nodeId( nodeId ).
             build().
             execute();
     }
@@ -150,11 +49,12 @@ abstract class AbstractNodeCommand
     {
         return FindNodesByParentCommand.create( this ).
             params( params ).
+            searchService( this.searchService ).
             build().
             execute();
     }
 
-    protected PrincipalKey getCurrentPrincipalKey()
+    PrincipalKey getCurrentPrincipalKey()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
@@ -170,7 +70,11 @@ abstract class AbstractNodeCommand
         }
         else
         {
-            final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath, false ) );
+            final Node node = NodeHelper.runAsAdmin( () -> GetNodeByPathCommand.create( this ).
+                nodePath( parentPath ).
+                build().
+                execute() );
+
             if ( node == null || node.getPermissions().isEmpty() )
             {
                 throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath.toString() + "]" );
@@ -183,13 +87,9 @@ abstract class AbstractNodeCommand
     {
         IndexServiceInternal indexServiceInternal;
 
-        NodeDao nodeDao;
+        StorageService storageService;
 
-        BranchService branchService;
-
-        VersionService versionService;
-
-        QueryService queryService;
+        SearchService searchService;
 
         Builder()
         {
@@ -198,10 +98,8 @@ abstract class AbstractNodeCommand
         Builder( final AbstractNodeCommand source )
         {
             this.indexServiceInternal = source.indexServiceInternal;
-            this.nodeDao = source.nodeDao;
-            this.branchService = source.branchService;
-            this.queryService = source.queryService;
-            this.versionService = source.versionService;
+            this.storageService = source.storageService;
+            this.searchService = source.searchService;
         }
 
         @SuppressWarnings("unchecked")
@@ -212,40 +110,24 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B branchService( final BranchService branchService )
+        public B storageService( final StorageService storageService )
         {
-            this.branchService = branchService;
+            this.storageService = storageService;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B versionService( final VersionService versionService )
+        public B searchService( final SearchService searchService )
         {
-            this.versionService = versionService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B queryService( final QueryService queryService )
-        {
-            this.queryService = queryService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B nodeDao( final NodeDao nodeDao )
-        {
-            this.nodeDao = nodeDao;
+            this.searchService = searchService;
             return (B) this;
         }
 
         void validate()
         {
             Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
-            Preconditions.checkNotNull( versionService, "versionService not set" );
-            Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
-            Preconditions.checkNotNull( branchService, "branchService not set" );
-            Preconditions.checkNotNull( queryService, "queryService not set" );
+            Preconditions.checkNotNull( storageService, "storageService not set" );
+            Preconditions.checkNotNull( searchService, "searchService not set" );
         }
     }
 }

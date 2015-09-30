@@ -2,11 +2,10 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.search.SearchService;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 
@@ -23,27 +22,33 @@ public class SetNodeStateCommand
 
     public SetNodeStateResult execute()
     {
-        final Node node = doGetById( this.params.getNodeId(), false );
+        final Node node = doGetById( this.params.getNodeId() );
 
         final SetNodeStateResult.Builder setNodeStateResultBuilder = SetNodeStateResult.create();
-        if( this.params.isRecursive() )
+
+        if ( this.params.isRecursive() )
         {
-            setNodeStateWithChildren(node, this.params.getNodeState(), setNodeStateResultBuilder);
-        } else
+            setNodeStateWithChildren( node, setNodeStateResultBuilder );
+        }
+        else
         {
-            setNodeState(node, this.params.getNodeState(), setNodeStateResultBuilder);
+            setNodeState( node, setNodeStateResultBuilder );
         }
 
         return setNodeStateResultBuilder.build();
     }
 
-    private Node setNodeState( final Node node, final NodeState nodeState, final SetNodeStateResult.Builder setNodeStateResultBuilder)
+    private Node setNodeState( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )
     {
         final Node updatedNode = Node.create( node ).
             nodeState( this.params.getNodeState() ).
             build();
 
-        updateNodeMetadata( updatedNode );
+        StoreNodeCommand.create( this ).
+            node( updatedNode ).
+            updateMetadataOnly( true ).
+            build().
+            execute();
 
         setNodeStateResultBuilder.addUpdatedNode( updatedNode );
 
@@ -51,22 +56,18 @@ public class SetNodeStateCommand
     }
 
 
-    private Node setNodeStateWithChildren( final Node node, final NodeState nodeState,
-                                           final SetNodeStateResult.Builder setNodeStateResultBuilder )
+    private Node setNodeStateWithChildren( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )
     {
-        //Updates the current node state
-        final Node updatedNode = setNodeState( node, nodeState, setNodeStateResultBuilder );
+        final Node updatedNode = setNodeState( node, setNodeStateResultBuilder );
 
+        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( node.path() ).
+            size( SearchService.GET_ALL_SIZE_FLAG ).
+            build() );
 
-        //Finds the children
-        FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().parentPath( node.path() ).size(
-            QueryService.GET_ALL_SIZE_FLAG ).build();
-        final FindNodesByParentResult result = doFindNodesByParent( findNodesByParentParams );
-
-        //Updates the children state
         for ( final Node child : result.getNodes() )
         {
-            setNodeStateWithChildren( child, nodeState, setNodeStateResultBuilder );
+            setNodeStateWithChildren( child, setNodeStateResultBuilder );
         }
 
         return updatedNode;
@@ -104,7 +105,7 @@ public class SetNodeStateCommand
         }
 
         @Override
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );

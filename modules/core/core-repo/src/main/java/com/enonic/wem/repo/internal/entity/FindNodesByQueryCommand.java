@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResultEntry;
 import com.enonic.xp.context.ContextAccessor;
@@ -27,7 +27,7 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = searchService.search( query, InternalContext.from( ContextAccessor.current() ) );
 
         final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).
@@ -36,7 +36,7 @@ public class FindNodesByQueryCommand
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNode( doGetById( resultEntry.getId(), query.resolveHasChild() ) );
+            resultBuilder.addNode( doGetById( resultEntry.getId() ) );
         }
 
         return resultBuilder.build();
