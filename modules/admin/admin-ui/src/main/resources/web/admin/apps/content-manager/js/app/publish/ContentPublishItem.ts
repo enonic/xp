@@ -119,9 +119,9 @@ module app.publish {
         /**
          * Builds array of ContentPublishItem[] from NewContentPublishItems.
          */
-        static fromNewContentPublishItems(jsonItems: NewContentPublishItem[]): ContentPublishItem[] {
+        static fromNewContentPublishItems(jsonItems: ContentPublishItemJson[]): ContentPublishItem[] {
             var array: ContentPublishItem[] = [];
-            jsonItems.forEach((obj: NewContentPublishItem) => {
+            jsonItems.forEach((obj: ContentPublishItemJson) => {
                 array.push(new ContentPublishItemBuilder().fromJson(obj).build());
             });
             return array;
@@ -175,7 +175,7 @@ module app.publish {
             }
         }
 
-        fromJson(json: NewContentPublishItem): ContentPublishItemBuilder {
+        fromJson(json: ContentPublishItemJson): ContentPublishItemBuilder {
             this.id = json.id;
             this.path = ContentPath.fromString(json.path);
             this.compareStatus = <CompareStatus>CompareStatus[json.compareStatus];
