@@ -395,53 +395,59 @@ public final class ContentResource
     @Path("resolvePublishContent")
     public ResolvePublishContentResultJson resolvePublishContent( final ResolvePublishDependenciesJson params )
     {
+        //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
+        final List<ContentPublishItemJson> requestedContentPublishItemList = resolveContentPublishItems( requestedContentIds );
 
         //Resolves the publish dependencies
-        final ResolvePublishDependenciesResult result =
+        final ResolvePublishDependenciesResult resolvePublishDependenciesResult =
             contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
                 target( ContentConstants.BRANCH_MASTER ).
                 contentIds( requestedContentIds ).
                 includeChildren( params.includeChildren() ).
                 build() );
 
-        //Retrieves the requested and dependent contents
-        final ContentIds resolvedContentIds = result.contentIds();
-        final Contents resolvedContents = contentService.getByIds( new GetContentByIdsParams( resolvedContentIds ) );
+        //Resolved the dependent ContentPublishItem
+        final List<ContentId> dependentContentIdList = resolvePublishDependenciesResult.contentIds().
+            stream().
+            filter( contentId -> !requestedContentIds.contains( contentId ) ).
+            collect( Collectors.toList() );
+        final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
+        final List<ContentPublishItemJson> dependentContentPublishItemList = resolveContentPublishItems( dependentContentIds );
 
-        //Retrieves the requested and dependent CompareContentResults
-        final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( resolvedContentIds, ContentConstants.BRANCH_MASTER ) );
-        final Map<ContentId, CompareContentResult> compareContentResultsMap = compareResults.getCompareContentResultsMap();
+        //Returns the JSON result
+        return ResolvePublishContentResultJson.create().
+            setRequestedContents( requestedContentPublishItemList ).
+            setDependentContents( dependentContentPublishItemList ).
+            build();
+    }
 
-        //Prepares the JSON result
-        final ResolvePublishContentResultJson.Builder resolvePublishContentJsonBuilder = ResolvePublishContentResultJson.create();
+    private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds )
+    {
+        //Prepares an icon url resolver
         final ContentIconUrlResolver contentIconUrlResolver = new ContentIconUrlResolver( this.contentTypeService );
-        resolvedContentIds.stream().
-            map( contentId -> resolvedContents.getContentById( contentId ) ).
+
+        //Retrieves the contents
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+
+        //Retrieves the compare contents
+        final CompareContentResults compareContentResults =
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+        final Map<ContentId, CompareContentResult> compareContentResultsMap = compareContentResults.getCompareContentResultsMap();
+
+        // Sorts the contents by path and for each
+        return contents.stream().
             sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-            forEach( content -> {
-
-                final ContentId contentId = content.getId();
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( contentId );
-
-                final ContentPublishItemJson contentPublishItem = ContentPublishItemJson.create().
+            map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
                     content( content ).
                     compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).build();
-
-                if ( requestedContentIds.contains( contentId ) )
-                {
-                    resolvePublishContentJsonBuilder.addRequested( contentPublishItem );
-                }
-                else
-                {
-                    resolvePublishContentJsonBuilder.addDependent( contentPublishItem );
-                }
-
-            } );
-
-        return resolvePublishContentJsonBuilder.build();
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
+            collect( Collectors.toList() );
     }
 
     @POST

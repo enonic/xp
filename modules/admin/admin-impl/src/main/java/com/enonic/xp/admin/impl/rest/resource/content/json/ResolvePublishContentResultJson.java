@@ -34,23 +34,23 @@ public class ResolvePublishContentResultJson
     public static final class Builder
     {
 
-        private final List<ContentPublishItemJson> requestedContents = Lists.newLinkedList();
+        private List<ContentPublishItemJson> requestedContents = Lists.newLinkedList();
 
-        private final List<ContentPublishItemJson> dependentContents = Lists.newLinkedList();
+        private List<ContentPublishItemJson> dependentContents = Lists.newLinkedList();
 
         private Builder()
         {
         }
 
-        public Builder addRequested( final ContentPublishItemJson requested )
+        public Builder setRequestedContents( final List<ContentPublishItemJson> requestedContents )
         {
-            this.requestedContents.add( requested );
+            this.requestedContents = requestedContents;
             return this;
         }
 
-        public Builder addDependent( final ContentPublishItemJson dependent )
+        public Builder setDependentContents( final List<ContentPublishItemJson> dependentContents )
         {
-            this.dependentContents.add( dependent );
+            this.dependentContents = dependentContents;
             return this;
         }
 
