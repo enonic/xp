@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -14,14 +15,6 @@ final class AssetUrlBuilder
     extends PortalUrlBuilder<AssetUrlParams>
 {
 
-    private ApplicationKey getApplication()
-    {
-        return new ApplicationResolver().
-            portalRequest( this.portalRequest ).
-            application( this.params.getApplication() ).
-            resolve();
-    }
-
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
@@ -29,9 +22,30 @@ final class AssetUrlBuilder
         appendPart( url, this.portalRequest.getContentPath().toString() );
         appendPart( url, "_" );
         appendPart( url, "asset" );
-        appendPart( url, getApplication().toString() );
+
+        Application application = resolveApplication();
+        String applicationKey = application.getKey().toString();
+        String modifiedTime = Long.toString( application.getModifiedTime().getEpochSecond() );
+        appendPart( url, applicationKey + ":" + modifiedTime );
+
         appendPart( url, this.params.getPath() );
     }
+
+    private Application resolveApplication()
+    {
+        final ApplicationKey applicationKey = new ApplicationResolver().
+            portalRequest( this.portalRequest ).
+            application( this.params.getApplication() ).
+            resolve();
+
+        final Application application = this.applicationService.getApplication( applicationKey );
+        if ( application == null )
+        {
+            throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );
+        }
+        return application;
+    }
+
 
     @Override
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
