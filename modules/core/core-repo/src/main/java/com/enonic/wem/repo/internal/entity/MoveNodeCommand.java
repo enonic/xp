@@ -10,6 +10,7 @@ import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersions;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.search.SearchService;
+import com.enonic.wem.repo.internal.storage.MoveNodeParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
@@ -163,19 +164,11 @@ public class MoveNodeCommand
                 nodeToMoveBuilder.inheritPermissions( false );
             }
 
-            movedNode = StoreNodeCommand.create( this ).
-                node( nodeToMoveBuilder.build() ).
-                updateMetadataOnly( false ).
-                build().
-                execute();
+            movedNode = doStore( nodeToMoveBuilder.build(), false );
         }
         else
         {
-            movedNode = StoreNodeCommand.create( this ).
-                updateMetadataOnly( true ).
-                node( nodeToMoveBuilder.build() ).
-                build().
-                execute();
+            movedNode = doStore( nodeToMoveBuilder.build(), true );
         }
 
         for ( final BranchNodeVersion branchNodeVersion : branchNodeVersions )
@@ -184,6 +177,14 @@ public class MoveNodeCommand
         }
 
         return movedNode;
+    }
+
+    private Node doStore( final Node movedNode, final boolean metadataOnly )
+    {
+        return this.storageService.move( MoveNodeParams.create().
+            node( movedNode ).
+            updateMetadataOnly( metadataOnly ).
+            build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
     private NodeName getNodeName( final BranchNodeVersion branchNodeVersion )

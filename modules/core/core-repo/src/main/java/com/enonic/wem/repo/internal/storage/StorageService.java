@@ -16,6 +16,8 @@ import com.enonic.xp.node.Nodes;
 
 public interface StorageService
 {
+    Node move( final MoveNodeParams params, final InternalContext context );
+
     Node store( final Node node, final InternalContext context );
 
     void delete( final NodeId nodeId, final InternalContext context );

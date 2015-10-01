@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.storage.MoveNodeParams;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
@@ -142,11 +143,10 @@ public class PushNodesCommand
 
             if ( nodeInTarget != null )
             {
-                targetContext.runWith( () -> StoreNodeCommand.create( this ).
-                    node( child ).
+                this.storageService.move( MoveNodeParams.create().
                     updateMetadataOnly( true ).
-                    build().
-                    execute() );
+                    node( child ).
+                    build(), InternalContext.from( targetContext ) );
 
                 resultBuilder.addSuccess( child.id() );
 

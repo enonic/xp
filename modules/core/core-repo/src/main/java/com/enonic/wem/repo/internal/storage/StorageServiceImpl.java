@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.repo.internal.InternalContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.branch.MoveBranchDocument;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersion;
 import com.enonic.wem.repo.internal.branch.storage.BranchNodeVersions;
@@ -46,18 +47,42 @@ public class StorageServiceImpl
     @Override
     public Node store( final Node node, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId;
+        final NodeVersionId nodeVersionId = nodeDao.store( node );
+        doStoreVersion( node, context, nodeVersionId );
 
-        nodeVersionId = nodeDao.store( node );
+        return storeBranchAndIndex( node, context, nodeVersionId );
+    }
 
+    private void doStoreVersion( final Node node, final InternalContext context, final NodeVersionId nodeVersionId )
+    {
         this.versionService.store( NodeVersionDocument.create().
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodePath( node.path() ).
             timestamp( node.getTimestamp() ).
             build(), context );
+    }
 
-        return storeBranchAndIndex( node, context, nodeVersionId );
+    @Override
+    public Node move( final MoveNodeParams params, final InternalContext context )
+    {
+        final BranchNodeVersion branchNodeVersion = this.branchService.get( params.getNode().id(), context );
+
+        final NodeVersionId nodeVersionId;
+
+        if ( params.isUpdateMetadataOnly() )
+        {
+            nodeVersionId = branchNodeVersion.getVersionId();
+
+        }
+        else
+        {
+            nodeVersionId = nodeDao.store( params.getNode() );
+        }
+
+        doStoreVersion( params.getNode(), context, nodeVersionId );
+
+        return moveInBranchAndIndex( params.getNode(), nodeVersionId, branchNodeVersion.getNodePath(), context );
     }
 
     @Override
@@ -246,6 +271,21 @@ public class StorageServiceImpl
 
         return node;
     }
+
+    private Node moveInBranchAndIndex( final Node node, final NodeVersionId nodeVersionId, final NodePath previousPath,
+                                       final InternalContext context )
+    {
+        this.branchService.move( MoveBranchDocument.create().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            previousPath( previousPath ).
+            build(), context );
+
+        this.indexServiceInternal.store( node, nodeVersionId, context );
+
+        return node;
+    }
+
 
     private boolean canRead( final Node node )
     {

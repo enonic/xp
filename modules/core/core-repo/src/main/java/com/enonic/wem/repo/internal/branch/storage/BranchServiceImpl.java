@@ -15,6 +15,7 @@ import com.enonic.wem.repo.internal.ReturnFields;
 import com.enonic.wem.repo.internal.StorageSettings;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.branch.MoveBranchDocument;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.cache.BranchPath;
 import com.enonic.wem.repo.internal.cache.PathCache;
@@ -45,8 +46,14 @@ public class BranchServiceImpl
 
     private final PathCache pathCache = new PathCacheImpl();
 
+
     @Override
     public String store( final StoreBranchDocument storeBranchDocument, final InternalContext context )
+    {
+        return doStore( storeBranchDocument, context );
+    }
+
+    private String doStore( final StoreBranchDocument storeBranchDocument, final InternalContext context )
     {
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( storeBranchDocument, context );
         final String id = this.storageDao.store( storeRequest );
@@ -57,10 +64,29 @@ public class BranchServiceImpl
     }
 
     @Override
+    public String move( final MoveBranchDocument moveBranchDocument, final InternalContext context )
+    {
+        this.pathCache.evict( createPath( moveBranchDocument.getPreviousPath(), context ) );
+
+        return doStore( StoreBranchDocument.create().
+            node( moveBranchDocument.getNode() ).
+            nodeVersionId( moveBranchDocument.getNodeVersionId() ).
+            build(), context );
+    }
+
+    @Override
     public void delete( final NodeId nodeId, final InternalContext context )
     {
+        final BranchNodeVersion branchNodeVersion = doGetById( nodeId, context );
+
+        if ( branchNodeVersion == null )
+        {
+            return;
+        }
+
         storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
-        pathCache.evict( new BranchDocumentId( nodeId, context.getBranch() ).toString() );
+
+        pathCache.evict( createPath( branchNodeVersion.getNodePath(), context ) );
     }
 
     @Override

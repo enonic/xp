@@ -1,68 +1,47 @@
 package com.enonic.wem.repo.internal.cache;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class PathCacheImpl
     implements PathCache
 {
-    private final Map<CachePath, String> pathMap = Maps.newHashMap();
+    private final LoadingCache<CachePath, String> pathCache;
 
-    private final Map<String, CachePath> idMap = Maps.newHashMap();
+    public PathCacheImpl()
+    {
+        pathCache = CacheBuilder.newBuilder().maximumSize( 10000 ).build( createCacheLoader() );
+    }
+
+    private final CacheLoader<CachePath, String> createCacheLoader()
+    {
+        return new CacheLoader<CachePath, String>()
+        {
+            @Override
+            public String load( final CachePath key )
+                throws Exception
+            {
+                return null;
+            }
+        };
+    }
 
     @Override
     public void cache( final CachePath path, final String id )
     {
-        final CachePath parentPath = path.getParentPath();
-
-        doPut( path, id, parentPath );
-    }
-
-    private synchronized void doPut( final CachePath path, final String id, final CachePath parentPath )
-    {
-        final CachePath existingEntry = idMap.get( id );
-
-        if ( existingEntry != null )
-        {
-            idMap.remove( id );
-            pathMap.remove( existingEntry );
-        }
-
-        pathMap.put( path, id );
-        idMap.put( id, path );
+        this.pathCache.put( path, id );
     }
 
     @Override
-    public void evict( final CachePath nodePath )
+    public void evict( final CachePath path )
     {
-        doRemove( nodePath );
-    }
-
-    @Override
-    public void evict( final String id )
-    {
-        doRemove( id );
-    }
-
-    private synchronized void doRemove( final String id )
-    {
-        final CachePath cachePath = idMap.get( id );
-        idMap.remove( id );
-        pathMap.remove( cachePath );
-    }
-
-    private synchronized void doRemove( final CachePath path )
-    {
-        final String id = pathMap.remove( path );
-        idMap.remove( id );
+        this.pathCache.invalidate( path );
     }
 
     @Override
     public String get( final CachePath path )
     {
-        final String id = pathMap.get( path );
-
-        return id;
+        return this.pathCache.getIfPresent( path );
     }
 }

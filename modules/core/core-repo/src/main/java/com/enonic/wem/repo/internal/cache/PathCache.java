@@ -6,7 +6,5 @@ public interface PathCache
 
     void evict( final CachePath path );
 
-    void evict( final String id );
-
     String get( final CachePath path );
 }

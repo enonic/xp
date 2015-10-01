@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.cache;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
@@ -10,12 +9,6 @@ import static org.junit.Assert.*;
 
 public class PathCacheImplTest
 {
-    @Before
-    public void setUp()
-        throws Exception
-    {
-
-    }
 
     @Test
     public void put()
@@ -41,6 +34,34 @@ public class PathCacheImplTest
         cache.evict( a );
         assertNull( cache.get( a ) );
     }
+
+
+    @Test
+    public void update_entry()
+        throws Exception
+    {
+        final PathCacheImpl cache = new PathCacheImpl();
+
+        cache.cache( createPath( "/oldPath" ), "1" );
+        cache.cache( createPath( "/newPath" ), "1" );
+
+        assertEquals( "1", cache.get( createPath( "/newPath" ) ) );
+    }
+
+    @Test
+    public void update_entry_2()
+        throws Exception
+    {
+        final PathCacheImpl cache = new PathCacheImpl();
+
+        cache.cache( createPath( "/oldPath" ), "1" );
+        cache.cache( createPath( "/oldPath" ), "2" );
+        cache.cache( createPath( "/newPath" ), "1" );
+
+        assertEquals( "2", cache.get( createPath( "/oldPath" ) ) );
+        assertEquals( "1", cache.get( createPath( "/newPath" ) ) );
+    }
+
 
     private CachePath createPath( final String path )
     {
