@@ -68,20 +68,34 @@ module api.ui.grid {
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
 
-            this.loadMask = new api.ui.mask.LoadMask(this);
-
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
         }
 
         mask() {
             if (this.isVisible()) {
-                this.loadMask.show();
+                if (this.loadMask) {
+                    this.loadMask.show();
+                }
+                else { //lazy mask init
+                    if (this.getParentElement()) {
+                        this.createLoadMask();
+                        this.loadMask.show();
+                    }
+                    else {
+                        this.onAdded(() => {
+                            this.createLoadMask();
+                        });
+                    }
+                }
             }
         }
 
         unmask() {
-            this.loadMask.hide();
+            if (this.loadMask) {
+                this.loadMask.hide();
+            }
+
         }
 
         private autoRenderGridOnDataChanges(dataView: DataView<T>) {
@@ -95,6 +109,11 @@ module api.ui.grid {
                 this.invalidateRows(args.rows);
                 this.render();
             });
+        }
+
+        private createLoadMask() {
+            this.loadMask = new api.ui.mask.LoadMask(this);
+            this.getParentElement().appendChild(this.loadMask);
         }
 
         setSelectionModel(selectionModel: Slick.SelectionModel<T, any>) {
