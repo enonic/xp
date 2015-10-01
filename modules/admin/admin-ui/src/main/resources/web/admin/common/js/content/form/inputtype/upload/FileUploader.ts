@@ -71,10 +71,6 @@ module api.content.form.inputtype.upload {
             this.uploader = this.createUploader();
             this.uploaderWrapper = this.createUploaderWrapper(property);
 
-            if (property.hasNonNullValue()) {
-                this.showFileName(property);
-            }
-
             if (this.getContext().contentId) {
                 this.uploader.setValue(this.getContext().contentId.toString());
                 if (property.getValue() != null) {
