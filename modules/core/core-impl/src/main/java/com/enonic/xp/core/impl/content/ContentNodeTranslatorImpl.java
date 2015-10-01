@@ -43,7 +43,8 @@ public class ContentNodeTranslatorImpl
 
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
-        return doTranslate( node, resolveHasChildren );
+        final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
+        return doTranslate( node, hasChildren );
     }
 
     private Contents doTranslate( final Nodes nodes, final NodesHasChildrenResult nodeHasChildren )
